@@ -62,13 +62,13 @@ as they are completed.
 
 ### 1.2 Motor limits per stage ([#2](https://github.com/prjemian/ad_hoc_diffractometer/issues/2))
 
-- [ ] Add `limits: tuple[float, float]` attribute to `Stage`
+- [x] Add `limits: tuple[float, float]` attribute to `Stage`
       (min_angle, max_angle in degrees); default (-180, 180)
-- [ ] Add `Stage.in_limits(angle_deg)` method
-- [ ] Add `AdHocDiffractometer.check_limits(**angles)` method that
+- [x] Add `Stage.in_limits(angle_deg)` method
+- [x] Add `AdHocDiffractometer.check_limits(**angles)` method that
       verifies all supplied angles are within their stage limits
-- [ ] Validate limits at construction: min < max
-- [ ] Tests covering valid, invalid, and boundary cases
+- [x] Validate limits at construction: min < max
+- [x] Tests covering valid, invalid, and boundary cases
 
 ### 1.3 Kappa alpha queryable on the geometry instance ([#3](https://github.com/prjemian/ad_hoc_diffractometer/issues/3))
 
