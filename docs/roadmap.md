@@ -131,18 +131,25 @@ be implemented first.
       `references/2020-12-13-fourcc-alignment-7-id-c/`
 - [ ] Depends on: #7 (2.3), #5 (2.1 U matrix), #6 (2.2 UB matrix), #26 (2.5)
 
-### 2.5 Sample dict on AdHocDiffractometer ([#26](https://github.com/prjemian/ad_hoc_diffractometer/issues/26))
+### 2.5 Sample dict on AdHocDiffractometer ([#25](https://github.com/prjemian/ad_hoc_diffractometer/issues/25))
 
-- [ ] New `Sample` class (`sample.py`): `name`, `lattice` (Lattice), `reflections`
-      (ReflectionList), `U` (3×3 or None), `UB` (3×3 or None)
-- [ ] Default sample: `"test"`, cubic lattice a=1 Å, empty reflections, U/UB=None
-- [ ] `AdHocDiffractometer.samples` — ordered dict, initialised with `"test"`
-- [ ] `AdHocDiffractometer.sample` — property for the active sample (get/set by
-      name or object)
-- [ ] `AdHocDiffractometer.add_reflection()` delegates to the active sample's
+- [x] New `Sample` class (`sample.py`): `name`, `lattice` (Lattice),
+      `reflections` (ReflectionList), `U` (3×3 or None), `UB` (3×3 or None);
+      `__eq__`, `__repr__`
+- [x] `SampleDict` class: guarded ordered dict; rejects non-Sample values,
+      blocks remove/replace/pop/clear of the active sample; `_samples` is a
+      read-only property so the container itself cannot be replaced
+- [x] Default sample: `"test"`, cubic lattice a=1 Å, empty reflections,
+      U=None, UB=None
+- [x] `AdHocDiffractometer.samples` — `SampleDict`, initialised with `"test"`
+- [x] `AdHocDiffractometer.sample` — property for the active sample (get/set
+      by name or object)
+- [x] `AdHocDiffractometer.add_sample()` / `remove_sample()` — guarded CRUD
+- [x] `AdHocDiffractometer.add_reflection()` delegates to the active sample's
       `ReflectionList`
-- [ ] U and UB matrices live on `Sample`, not on the geometry
-- [ ] Depends on: #7 (2.3); required by: #5 (2.1), #6 (2.2), #25 (2.4)
+- [x] U and UB matrices live on `Sample`, not on the geometry
+- [x] `Lattice.__eq__` added (compares all six parameters)
+- [x] 37 new tests in `test_sample.py`
 
 ---
 

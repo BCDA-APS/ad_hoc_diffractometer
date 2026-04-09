@@ -456,9 +456,9 @@ def test_add_reflection_explicit_wavelength_overrides(psic_geom):
     assert r.wavelength == pytest.approx(0.7107)
 
 
-def test_add_reflection_stored_in_reflections(psic_geom):
+def test_add_reflection_stored_in_active_sample(psic_geom):
     psic_geom.add_reflection("r1", hkl=(1, 0, 0), angles=_PSIC_ANGLES)
-    assert "r1" in psic_geom.reflections
+    assert "r1" in psic_geom.sample.reflections
 
 
 def test_add_reflection_geometry_name_set(psic_geom):
