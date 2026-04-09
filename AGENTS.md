@@ -17,6 +17,31 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
 
 ---
 
+## Issue and PR workflow
+
+1. **Before writing any code**, set the issue status to "In progress" on the
+   GitHub project board:
+   ```bash
+   # Find the project item ID for the issue, then update its status field
+   gh api graphql -f query='...'   # see project board queries below
+   ```
+
+2. **Open a PR** with a body that includes a closing reference as a bullet,
+   followed by any remarks and the agent/model signature:
+   ```
+   - closes #N
+
+   <optional additional context>
+
+   Contributed by: OpenCode (argo/claudesonnet46)
+   ```
+   The `closes #N` keyword triggers GitHub automation: when the PR is merged
+   the issue is closed and the project card moves to "Done" automatically.
+
+3. **Never close issues manually** — let the merge automation do it.
+
+---
+
 ## Project overview
 
 `ad_hoc_diffractometer` is a Python package for describing multi-circle
