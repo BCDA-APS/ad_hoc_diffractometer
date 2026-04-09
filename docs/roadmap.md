@@ -128,7 +128,56 @@ be implemented first.
 - [ ] Detector tilt / offset angles (correction for non-ideal alignment)
 - [ ] Relevant primarily when using area detectors rather than point detectors
 
-### 3.4 Diffractometer inclination with respect to the incident beam
+### 3.4 Alternative calculation engines
+
+The hkl (Miller index) formalism is the primary calculation engine
+implemented here, following Busing & Levy (1967) and You (1999).  Users
+have requested additional calculation engines:
+
+- [ ] **Q-space engine**: calculate in terms of the scattering vector
+      Q = (Qx, Qy, Qz) in Å⁻¹ rather than (h, k, l) in reciprocal
+      lattice units.  Useful when the crystal structure is unknown or
+      when doing diffuse scattering or liquid/amorphous studies.
+      Relationship: Q = 2π · UB · h, so Q and hkl are interconvertible
+      given UB.
+- [ ] **d-spacing / 2θ engine**: express positions in terms of d-spacing
+      (Å) and/or 2θ (degrees) directly.  Requires wavelength (item 1.1).
+- [ ] **Reciprocal lattice unit (rlu) engine**: express Q in units of
+      the reciprocal lattice vectors rather than Å⁻¹, i.e. fractional
+      Miller indices without requiring integer h, k, l.
+- [ ] Design consideration: engines should be pluggable — a common
+      interface that can be swapped without changing the diffractometer
+      geometry description.
+
+### 3.5 Surface geometry: incidence and emergence angles
+
+Surface diffraction geometries (zaxis, s2d2, sixc, psic in surface mode)
+require calculation and control of additional angles beyond the standard
+hkl mapping:
+
+- [ ] **Angle of incidence (αi)**: angle between the incident beam and
+      the sample surface.  For zaxis this is the alpha motor angle;
+      for s2d2 it is the mu motor angle; for psic it must be computed
+      from the motor angles and a surface normal reference vector.
+- [ ] **Angle of emergence / exit (αf)**: angle between the diffracted
+      beam and the sample surface.  A compound function of the detector
+      motor angles and the surface normal.
+- [ ] **In-plane / out-of-plane decomposition**: decompose Q into
+      components parallel (Q‖) and perpendicular (Q⊥) to the sample
+      surface.  Requires a surface normal reference vector (item 3.2).
+- [ ] **Critical angle and evanescent wave conditions**: for GIXD,
+      the incidence angle relative to the critical angle determines
+      whether the beam is in total external reflection (surface-sensitive)
+      or bulk-penetrating.  May be out of scope for this package but
+      worth noting.
+- [ ] **Specular condition**: αi = αf constraint, useful as an operating
+      mode for reflectometry.
+- [ ] Reference: Lohmeier & Vlieg (1993); You (1999) eqs. 10-11;
+      Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
+- [ ] Raised by users; closely related to item 3.2 (azimuthal reference
+      vector) and item 3.4 (diffractometer inclination).
+
+### 3.6 Diffractometer inclination with respect to the incident beam
 
 - [ ] Some instruments (or experimental configurations) mount the entire
       diffractometer at a non-zero angle relative to the incident beam
