@@ -576,6 +576,19 @@ class Lattice:
             param_strs.append(f"{p}={fmt(val, self.precision)} {unit}")
         return f"Lattice({self._system}: {', '.join(param_strs)})"
 
+    def __eq__(self, other: object) -> bool:
+        """True if all six lattice parameters are identical."""
+        if not isinstance(other, Lattice):
+            return NotImplemented
+        return (
+            self._a == other._a
+            and self._b == other._b
+            and self._c == other._c
+            and self._alpha == other._alpha
+            and self._beta == other._beta
+            and self._gamma == other._gamma
+        )
+
     def __repr__(self) -> str:
         return (
             f"Lattice(system={self._system!r}, "

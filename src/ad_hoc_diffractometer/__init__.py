@@ -35,6 +35,8 @@ from .lattice import reciprocal_vectors
 from .reflection import Reflection
 from .reflection import ReflectionList
 from .rotation import rotation_matrix
+from .sample import Sample
+from .sample import SampleDict
 from .stage import Stage
 
 __all__ = [
@@ -59,6 +61,8 @@ __all__ = [
     "AdHocDiffractometer",
     "Reflection",
     "ReflectionList",
+    "Sample",
+    "SampleDict",
     # factories
     "list_geometries",
     "get_geometry",
