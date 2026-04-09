@@ -41,8 +41,9 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
 3. **Never close issues manually** — let the merge automation do it.
 
 4. **All code changes must be made on a feature branch**, never directly on
-   `main`.  Branch names must start with the issue number followed by a
-   short, hyphen-separated description of the topic:
+   `main` — the only exception is truly trivial changes (e.g. a one-word
+   typo fix in a doc comment).  Branch names must start with the issue
+   number followed by a short, hyphen-separated description of the topic:
    ```
    <issue-number>-<concise-topic>
    ```
