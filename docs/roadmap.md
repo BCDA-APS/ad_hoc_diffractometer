@@ -108,12 +108,57 @@ be implemented first.
 
 ### 3.1 Diffraction mode / operating constraints
 
-- [ ] Mode name attribute on `AdHocDiffractometer`
-      (e.g. "bisecting", "fixed-chi", "fixed-phi", "reference-vector")
-- [ ] Frozen angle values: which stages are held fixed in a given mode
+Modes are a first-class concern of the geometry description, not an
+afterthought.  A mode specifies which degrees of freedom are
+constrained during a diffraction calculation, and which are free.
+The user should be able to declare available modes as part of the
+geometry definition passed to `AdHocDiffractometer`, analogously to
+how stages are declared.
+
+**Interface design questions to resolve:**
+
+- [ ] **Mode declaration in the geometry dict / constructor**: the
+      `AdHocDiffractometer` constructor (or the factory functions)
+      should accept a `modes` argument — a list or dict of named
+      mode objects — so that the available modes are part of the
+      geometry description, not set separately after construction.
+      Example sketch:
+      ```python
+      AdHocDiffractometer(
+          name="psic",
+          stages=[...],
+          modes={
+              "bisecting":   BisectingMode(),
+              "fixed_chi":   FixedAngleMode(stage="chi", value=90.0),
+              "fixed_phi":   FixedAngleMode(stage="phi", value=0.0),
+          },
+          default_mode="bisecting",
+      )
+      ```
+- [ ] **Mode object interface**: each mode must declare:
+      - which stages it constrains (and to what values or relationships)
+      - which stages remain free
+      - any additional constraints (e.g. bisecting: ω = 2θ/2;
+        reference-vector: Q || N)
+      - a method `constrain(geometry, hkl) -> dict[stage_name, angle]`
+        that computes the constrained angle set for a given (h, k, l)
+- [ ] **Active mode**: `AdHocDiffractometer` holds a reference to the
+      currently active mode; switching modes changes which constraints
+      are applied during angle calculations
+- [ ] **Geometry-specific modes**: factory functions should pre-populate
+      the modes dict with the canonical modes for that geometry.
+      For example, psic() should include bisecting, fixed-chi, fixed-mu,
+      and reference-vector modes as defined by You (1999).
+- [ ] **Mode name attribute**: current mode name accessible as a property
+- [ ] **Frozen angle values**: stages held fixed in a given mode
       (matches SPEC #G0 frozen motor values; see spec_G_lines.md)
-- [ ] Cut points: SPEC-style branch selection per axis
+- [ ] **Cut points**: SPEC-style branch selection per axis determining
+      which of the multiple valid angle solutions is chosen
       (matches SPEC #G4; see spec_G_lines.md)
+- [ ] Reference: You (1999) section on operating modes and constraints;
+      Walko (2016) section 3.3 "Operating Modes";
+      Busing & Levy (1967) section on angle settings.
+- [ ] Depends on: 2.0, 2.2 (angle calculations require UB matrix).
 
 ### 3.2 Azimuthal reference vector
 
