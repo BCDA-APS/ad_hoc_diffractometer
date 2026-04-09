@@ -84,7 +84,7 @@ axes are the same; only the sign convention for positive rotation differs.
 ### Crystallography Connection and Common Naming
 
 The introduction of lattice constants a, b, c, alpha, beta, gamma and wavelength
-lambda sets up the UB matrix formalism of Busing & Levy (1967), Acta Cryst. 22, 
+lambda sets up the UB matrix formalism of Busing & Levy (1967), Acta Cryst. 22,
 457-464.
 
 #### The B matrix

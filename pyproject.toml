@@ -24,3 +24,35 @@ testpaths = ["tests"]
 
 [tool.hatch.envs.default]
 features = ["dev"]
+
+[tool.ruff]
+line-length = 88
+exclude = [
+    "references/",   # reference documents, not our source code
+    "docs/",         # documentation
+    "*.ipynb",       # Jupyter notebooks
+]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+]
+# isort is handled by the standalone isort pre-commit hook with
+# force_single_line = true; ruff's I rules are intentionally omitted
+# to avoid conflicts between the two.
+ignore = [
+    "E501", # line too long -- tolerate slight overruns beyond 88 chars
+]
+
+[tool.ruff.format]
+# line-length is inherited from [tool.ruff] above
+
+[tool.isort]
+profile = "black"
+line_length = 88
+force_single_line = true
+known_first_party = ["ad_hoc_diffractometer"]

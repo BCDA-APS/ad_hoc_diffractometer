@@ -12,7 +12,6 @@ Based on:
 
 import numpy as np
 
-
 # ---------------------------------------------------------------------------
 # Standard basis vectors in the You (1999) / problem2.md convention:
 #   xHat = vertical, yHat = longitudinal (beam), zHat = lateral
@@ -52,17 +51,20 @@ def rotation_matrix(axis, angle_deg):
     c = np.cos(theta)
     s = np.sin(theta)
     nx, ny, nz = n
-    skew = np.array([
-        [ 0,  -nz,  ny],
-        [ nz,   0, -nx],
-        [-ny,  nx,   0],
-    ])
+    skew = np.array(
+        [
+            [0, -nz, ny],
+            [nz, 0, -nx],
+            [-ny, nx, 0],
+        ]
+    )
     return c * np.eye(3) + (1 - c) * np.outer(n, n) + s * skew
 
 
 # ---------------------------------------------------------------------------
 # Diffractometer stage and geometry description
 # ---------------------------------------------------------------------------
+
 
 class Stage:
     """
@@ -95,7 +97,7 @@ class Stage:
         Current angle setting in degrees.  Default is 0.0.
     """
 
-    def __init__(self, name, axis, parent=None, role='sample', angle=0.0):
+    def __init__(self, name, axis, parent=None, role="sample", angle=0.0):
         self.name = name
         self.axis = np.asarray(axis, dtype=float)
         self.parent = parent
@@ -155,12 +157,12 @@ class AdHocDiffractometer:
     """
 
     DEFAULT_BASIS = {
-        'vertical':     XHAT,
-        'longitudinal': YHAT,
-        'lateral':      ZHAT,
+        "vertical": XHAT,
+        "longitudinal": YHAT,
+        "lateral": ZHAT,
     }
 
-    def __init__(self, name, stages, basis=None, description=''):
+    def __init__(self, name, stages, basis=None, description=""):
         self.name = name
         self.description = description
         self.basis = basis if basis is not None else dict(self.DEFAULT_BASIS)
@@ -185,8 +187,8 @@ class AdHocDiffractometer:
         self._check_no_cycles()
 
         # Build ordered lists per role
-        self.sample_stages = self._ordered_stages('sample')
-        self.detector_stages = self._ordered_stages('detector')
+        self.sample_stages = self._ordered_stages("sample")
+        self.detector_stages = self._ordered_stages("detector")
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -214,25 +216,20 @@ class AdHocDiffractometer:
         names = list(self.basis.keys())
 
         if len(vecs) != 3:
-            raise ValueError(
-                f"Basis must contain exactly 3 vectors; got {len(vecs)}."
-            )
+            raise ValueError(f"Basis must contain exactly 3 vectors; got {len(vecs)}.")
 
-        for name, v in zip(names, vecs):
+        for name, v in zip(names, vecs, strict=False):
             v = np.asarray(v, dtype=float)
             if v.shape != (3,):
                 raise ValueError(
-                    f"Basis vector {name!r} must be 3-dimensional; "
-                    f"got shape {v.shape}."
+                    f"Basis vector {name!r} must be 3-dimensional; got shape {v.shape}."
                 )
             if np.linalg.norm(v) == 0.0:
-                raise ValueError(
-                    f"Basis vector {name!r} must be non-zero."
-                )
+                raise ValueError(f"Basis vector {name!r} must be non-zero.")
 
         atol = 1e-10
-        for i, (n1, v1) in enumerate(zip(names, vecs)):
-            for n2, v2 in zip(names[i + 1:], vecs[i + 1:]):
+        for i, (n1, v1) in enumerate(zip(names, vecs, strict=False)):
+            for n2, v2 in zip(names[i + 1 :], vecs[i + 1 :], strict=False):
                 v1n = np.asarray(v1, dtype=float) / np.linalg.norm(v1)
                 v2n = np.asarray(v2, dtype=float) / np.linalg.norm(v2)
                 dot = np.dot(v1n, v2n)
@@ -274,7 +271,9 @@ class AdHocDiffractometer:
         while remaining:
             max_iter -= 1
             if max_iter < 0:
-                raise RuntimeError("Could not determine stacking order; check parent chain.")
+                raise RuntimeError(
+                    "Could not determine stacking order; check parent chain."
+                )
             for s in remaining:
                 if s.parent is None or s.parent not in role_names:
                     ordered.append(s)
@@ -360,6 +359,7 @@ class AdHocDiffractometer:
 # Predefined geometry factories
 # ---------------------------------------------------------------------------
 
+
 def geometry_psic():
     """
     You (1999) '4S+2D' six-circle diffractometer (psic geometry).
@@ -380,15 +380,15 @@ def geometry_psic():
                DOI: 10.1107/S0021889899001223
     """
     stages = [
-        Stage('mu',    +XHAT,  parent=None,  role='sample'),
-        Stage('eta',   -ZHAT,  parent='mu',  role='sample'),
-        Stage('chi',   +YHAT,  parent='eta', role='sample'),
-        Stage('phi',   -ZHAT,  parent='chi', role='sample'),
-        Stage('nu',    +XHAT,  parent=None,  role='detector'),
-        Stage('delta', -ZHAT,  parent='nu',  role='detector'),
+        Stage("mu", +XHAT, parent=None, role="sample"),
+        Stage("eta", -ZHAT, parent="mu", role="sample"),
+        Stage("chi", +YHAT, parent="eta", role="sample"),
+        Stage("phi", -ZHAT, parent="chi", role="sample"),
+        Stage("nu", +XHAT, parent=None, role="detector"),
+        Stage("delta", -ZHAT, parent="nu", role="detector"),
     ]
     return AdHocDiffractometer(
-        name='psic',
+        name="psic",
         stages=stages,
         description="You (1999) 4S+2D six-circle diffractometer",
     )
@@ -414,9 +414,9 @@ def geometry_fourc():
     # Busing & Levy right-handed basis: x=lateral, y=longitudinal (beam), z=vertical
     # Right-handed: lateral x longitudinal = vertical => xHat x yHat = zHat
     basis = {
-        'lateral':      np.array([1.0, 0.0, 0.0]),  # x: scattering vector at zero angles
-        'longitudinal': np.array([0.0, 1.0, 0.0]),  # y: along the beam
-        'vertical':     np.array([0.0, 0.0, 1.0]),  # z: vertical
+        "lateral": np.array([1.0, 0.0, 0.0]),  # x: scattering vector at zero angles
+        "longitudinal": np.array([0.0, 1.0, 0.0]),  # y: along the beam
+        "vertical": np.array([0.0, 0.0, 1.0]),  # z: vertical
     }
     ZHAT_BL = np.array([0.0, 0.0, 1.0])
     YHAT_BL = np.array([0.0, 1.0, 0.0])
@@ -426,13 +426,13 @@ def geometry_fourc():
         # floor and shares the same vertical axis as omega but is mechanically
         # decoupled (Busing & Levy Fig. 1; same relationship as S1-1/S2-1 in
         # our equipment description).
-        Stage('omega',     -ZHAT_BL, parent=None,    role='sample'),
-        Stage('chi',       +YHAT_BL, parent='omega', role='sample'),
-        Stage('phi',       -ZHAT_BL, parent='chi',   role='sample'),
-        Stage('two_theta', -ZHAT_BL, parent=None,    role='detector'),
+        Stage("omega", -ZHAT_BL, parent=None, role="sample"),
+        Stage("chi", +YHAT_BL, parent="omega", role="sample"),
+        Stage("phi", -ZHAT_BL, parent="chi", role="sample"),
+        Stage("two_theta", -ZHAT_BL, parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
-        name='fourc',
+        name="fourc",
         stages=stages,
         basis=basis,
         description="Busing & Levy (1967) four-circle Eulerian diffractometer",
@@ -463,17 +463,17 @@ def geometry_sixc():
     """
     stages = [
         # Shared base (rotary table) -- treated as sample for rotation product
-        Stage('alpha', +XHAT,  parent=None,    role='sample'),
+        Stage("alpha", +XHAT, parent=None, role="sample"),
         # Sample stack on top of alpha
-        Stage('omega', +YHAT,  parent='alpha', role='sample'),
-        Stage('chi',   +YHAT,  parent='omega', role='sample'),
-        Stage('phi',   +YHAT,  parent='chi',   role='sample'),
+        Stage("omega", +YHAT, parent="alpha", role="sample"),
+        Stage("chi", +YHAT, parent="omega", role="sample"),
+        Stage("phi", +YHAT, parent="chi", role="sample"),
         # Detector stack also rooted at alpha
-        Stage('delta', -ZHAT,  parent='alpha', role='detector'),
-        Stage('gamma', +XHAT,  parent='delta', role='detector'),
+        Stage("delta", -ZHAT, parent="alpha", role="detector"),
+        Stage("gamma", +XHAT, parent="delta", role="detector"),
     ]
     return AdHocDiffractometer(
-        name='sixc',
+        name="sixc",
         stages=stages,
         description=(
             "Lohmeier & Vlieg (1993) six-circle surface diffractometer. "
@@ -587,4 +587,3 @@ def b_matrix(b1, b2, b3):
     # and B = (np.column_stack([b1, b2, b3]) / (2*pi)).T
     B = np.column_stack([b1, b2, b3]).T / (2 * np.pi)
     return B
-
