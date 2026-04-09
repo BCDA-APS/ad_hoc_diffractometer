@@ -35,19 +35,32 @@ as they are completed.
 
 ## Priority 1 — Near-term (needed for diffraction calculations)
 
-### 1.1 Wavelength / energy
+### 1.1 Wavelength / energy ([#1](https://github.com/prjemian/ad_hoc_diffractometer/issues/1))
 
 - [ ] New class or module `radiation.py` (or attribute on a future
       `Experiment` class)
-- [ ] Store wavelength λ (Å) as primary quantity
+- [ ] Store wavelength λ (Å) as primary quantity; **default: Cu Kα, λ = 1.5406 Å**
 - [ ] Compute photon energy E (keV) lazily: E = hc/λ = 12.39842 / λ
 - [ ] Compute wave number k (Å⁻¹) lazily: k = 2π/λ
 - [ ] Validate: λ > 0; reasonable range warning (e.g. 0.01 – 10 Å)
 - [ ] Display precision via `display.fmt()`
 - [ ] `__str__` reports λ and E
-- [ ] Tests covering valid inputs, invalid inputs, lazy recomputation
+- [ ] Provide named constants for common laboratory lines
+      (Cu Kα ≈ 1.5406 Å, Mo Kα ≈ 0.7107 Å, Ag Kα ≈ 0.5594 Å, Co Kα ≈ 1.7902 Å)
+- [ ] Tests covering valid inputs, invalid inputs, lazy recomputation, and default value
 
-### 1.2 Motor limits per stage
+### 1.1a Neutron radiation source support ([#8](https://github.com/prjemian/ad_hoc_diffractometer/issues/8))
+
+- [ ] Add a `source_type` parameter (or separate subclasses) to distinguish `"xray"` and
+      `"neutron"` radiation
+- [ ] For neutrons: store λ (Å) as primary; compute E (meV) lazily via de Broglie:
+      E = 81.8042 / λ²
+- [ ] Ensure `__str__` reports the correct energy units for each source type
+- [ ] Validate that energy/wavelength conversions are not mixed across source types
+- [ ] Tests covering both source types, unit correctness, and invalid cross-type usage
+- [ ] See also: 1.1 (X-ray wavelength/energy, issue #1)
+
+### 1.2 Motor limits per stage ([#2](https://github.com/prjemian/ad_hoc_diffractometer/issues/2))
 
 - [ ] Add `limits: tuple[float, float]` attribute to `Stage`
       (min_angle, max_angle in degrees); default (-180, 180)
@@ -57,7 +70,7 @@ as they are completed.
 - [ ] Validate limits at construction: min < max
 - [ ] Tests covering valid, invalid, and boundary cases
 
-### 1.3 Kappa alpha queryable on the geometry instance
+### 1.3 Kappa alpha queryable on the geometry instance ([#3](https://github.com/prjemian/ad_hoc_diffractometer/issues/3))
 
 - [ ] Store `kappa_alpha_deg` as an attribute on the `AdHocDiffractometer`
       instance returned by kappa factory functions (kappa4c, kappa4c_h,
@@ -72,7 +85,7 @@ as they are completed.
 These items require motor-angle-to-phi-frame vector conversion, which must
 be implemented first.
 
-### 2.0 Motor-angle-to-phi-frame conversion
+### 2.0 Motor-angle-to-phi-frame conversion ([#4](https://github.com/prjemian/ad_hoc_diffractometer/issues/4))
 
 - [ ] Function `angles_to_phi_vector(geometry, hkl_or_q, **motor_angles)`
       that computes the scattering vector in the phi-axis frame from a set
@@ -80,21 +93,21 @@ be implemented first.
 - [ ] This is the missing link needed for U and UB computation
 - [ ] Reference: Busing & Levy (1967), You (1999)
 
-### 2.1 U matrix (orientation matrix)
+### 2.1 U matrix (orientation matrix) ([#5](https://github.com/prjemian/ad_hoc_diffractometer/issues/5))
 
 - [ ] Implement Busing & Levy (1967) two-reflection algorithm (eqs. 23-27)
 - [ ] Requires: two orienting reflections (hkl + motor angles), B matrix
 - [ ] Returns orthonormal U (3×3)
 - [ ] Depends on 2.0
 
-### 2.2 UB matrix
+### 2.2 UB matrix ([#6](https://github.com/prjemian/ad_hoc_diffractometer/issues/6))
 
 - [ ] Compute UB = U @ B
 - [ ] Also implement Busing & Levy (1967) three-reflection direct method
       (eqs. 29-31) for UB without known lattice parameters
 - [ ] Depends on 2.1
 
-### 2.3 Orienting reflections
+### 2.3 Orienting reflections ([#7](https://github.com/prjemian/ad_hoc_diffractometer/issues/7))
 
 - [ ] Data structure to store primary and secondary orienting reflections:
       hkl (Miller indices), motor angles at which the reflection was found,
@@ -106,7 +119,7 @@ be implemented first.
 
 ## Priority 3 — Later (instrument-specific, operational)
 
-### 3.1 Diffraction mode / operating constraints
+### 3.1 Diffraction mode / operating constraints ([#9](https://github.com/prjemian/ad_hoc_diffractometer/issues/9))
 
 Modes are a first-class concern of the geometry description, not an
 afterthought.  A mode specifies which degrees of freedom are
@@ -160,20 +173,20 @@ how stages are declared.
       Busing & Levy (1967) section on angle settings.
 - [ ] Depends on: 2.0, 2.2 (angle calculations require UB matrix).
 
-### 3.2 Azimuthal reference vector
+### 3.2 Azimuthal reference vector ([#11](https://github.com/prjemian/ad_hoc_diffractometer/issues/11))
 
 - [ ] A reference direction (surface normal, crystal axis, or arbitrary
       vector) used to define the azimuthal angle ψ
 - [ ] Needed for surface diffraction modes and azimuthal scans
 - [ ] Reference: Busing & Levy (1967); You (1999) eqs. 10-11
 
-### 3.3 Detector geometry parameters
+### 3.3 Detector geometry parameters ([#10](https://github.com/prjemian/ad_hoc_diffractometer/issues/10))
 
 - [ ] Sample-to-detector distance (mm or m)
 - [ ] Detector tilt / offset angles (correction for non-ideal alignment)
 - [ ] Relevant primarily when using area detectors rather than point detectors
 
-### 3.4 Alternative calculation engines
+### 3.4 Alternative calculation engines ([#12](https://github.com/prjemian/ad_hoc_diffractometer/issues/12))
 
 The hkl (Miller index) formalism is the primary calculation engine
 implemented here, following Busing & Levy (1967) and You (1999).  Users
@@ -194,7 +207,7 @@ have requested additional calculation engines:
       interface that can be swapped without changing the diffractometer
       geometry description.
 
-### 3.5 Surface geometry: incidence and emergence angles
+### 3.5 Surface geometry: incidence and emergence angles ([#13](https://github.com/prjemian/ad_hoc_diffractometer/issues/13))
 
 Surface diffraction geometries (zaxis, s2d2, sixc, psic in surface mode)
 require calculation and control of additional angles beyond the standard
@@ -222,7 +235,7 @@ hkl mapping:
 - [ ] Raised by users; closely related to item 3.2 (azimuthal reference
       vector) and item 3.4 (diffractometer inclination).
 
-### 3.6 Scans about an arbitrary reciprocal-space vector
+### 3.6 Scans about an arbitrary reciprocal-space vector ([#14](https://github.com/prjemian/ad_hoc_diffractometer/issues/14))
 
 Diffractometers are often used to scan motor angles such that the
 scattering vector Q traces a specific path in reciprocal space relative
@@ -254,7 +267,7 @@ to a chosen reference direction.  Two important classes:
       ITC Vol. C, Sec. 2.2.6 (ψ scan via ω, χ, φ adjustment).
 - [ ] Depends on: 2.0, 2.2, 3.1, 3.2.
 
-### 3.7 Diffractometer inclination with respect to the incident beam
+### 3.7 Diffractometer inclination with respect to the incident beam ([#15](https://github.com/prjemian/ad_hoc_diffractometer/issues/15))
 
 - [ ] Some instruments (or experimental configurations) mount the entire
       diffractometer at a non-zero angle relative to the incident beam
