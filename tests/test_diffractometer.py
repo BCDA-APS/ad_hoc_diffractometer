@@ -1484,3 +1484,189 @@ def test_b_matrix_i16_convention(a, b, c, alpha, beta, gamma, context):
         B = b_matrix(b1, b2, b3)
         rec_matrix = np.column_stack([b1, b2, b3])
         np.testing.assert_allclose(rec_matrix, 2 * np.pi * B.T, atol=1e-10)
+
+
+# ---------------------------------------------------------------------------
+# Tests for Stage.limits and Stage.in_limits()
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "limits, context",
+    [
+        pytest.param((-180.0, 180.0), does_not_raise(), id="default-limits"),
+        pytest.param((0.0, 360.0), does_not_raise(), id="zero-to-360"),
+        pytest.param((-90.0, 90.0), does_not_raise(), id="symmetric-90"),
+        pytest.param(
+            (0.0, 0.0),
+            pytest.raises(ValueError, match=re.escape("must be less than max")),
+            id="invalid-equal-limits",
+        ),
+        pytest.param(
+            (10.0, -10.0),
+            pytest.raises(ValueError, match=re.escape("must be less than max")),
+            id="invalid-reversed-limits",
+        ),
+        pytest.param(
+            (180.0, -180.0),
+            pytest.raises(ValueError, match=re.escape("must be less than max")),
+            id="invalid-reversed-full-range",
+        ),
+    ],
+)
+def test_stage_limits_validation(limits, context):
+    with context:
+        s = Stage("mu", XHAT, limits=limits)
+        assert s.limits == limits
+
+
+@pytest.mark.parametrize(
+    "limits, angle, expected, context",
+    [
+        pytest.param((-180.0, 180.0), 0.0, True, does_not_raise(), id="zero-in-range"),
+        pytest.param(
+            (-180.0, 180.0), 180.0, True, does_not_raise(), id="at-max-boundary"
+        ),
+        pytest.param(
+            (-180.0, 180.0), -180.0, True, does_not_raise(), id="at-min-boundary"
+        ),
+        pytest.param((-180.0, 180.0), 90.0, True, does_not_raise(), id="inside-range"),
+        pytest.param(
+            (-180.0, 180.0), 180.1, False, does_not_raise(), id="just-above-max"
+        ),
+        pytest.param(
+            (-180.0, 180.0), -180.1, False, does_not_raise(), id="just-below-min"
+        ),
+        pytest.param((0.0, 90.0), 45.0, True, does_not_raise(), id="asymmetric-inside"),
+        pytest.param(
+            (0.0, 90.0), -1.0, False, does_not_raise(), id="asymmetric-below-min"
+        ),
+        pytest.param(
+            (0.0, 90.0), 91.0, False, does_not_raise(), id="asymmetric-above-max"
+        ),
+        pytest.param(
+            (-180.0, 180.0), 360.0, False, does_not_raise(), id="outside-full-range"
+        ),
+    ],
+)
+def test_stage_in_limits(limits, angle, expected, context):
+    with context:
+        s = Stage("mu", XHAT, limits=limits)
+        assert s.in_limits(angle) == expected
+
+
+def test_stage_default_limits():
+    """Default limits are (-180, 180) for all roles."""
+    for role in ("sample", "detector"):
+        s = Stage("test", XHAT, role=role)
+        assert s.limits == (-180.0, 180.0)
+
+
+def test_stage_limits_setter_updates():
+    """Limits can be updated after construction."""
+    s = Stage("mu", XHAT)
+    s.limits = (-90.0, 90.0)
+    assert s.limits == (-90.0, 90.0)
+    assert s.in_limits(89.0) is True
+    assert s.in_limits(91.0) is False
+
+
+def test_stage_limits_setter_invalid_after_construction():
+    """Setting invalid limits after construction raises ValueError."""
+    s = Stage("mu", XHAT)
+    with pytest.raises(ValueError, match=re.escape("must be less than max")):
+        s.limits = (10.0, 5.0)
+
+
+# ---------------------------------------------------------------------------
+# Tests for AdHocDiffractometer.check_limits()
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "stage_limits, angles, context",
+    [
+        pytest.param(
+            {},
+            {"mu": 0.0, "eta": 0.0, "chi": 0.0, "phi": 0.0},
+            does_not_raise(),
+            id="all-zero-default-limits",
+        ),
+        pytest.param(
+            {},
+            {"mu": 179.9, "eta": -179.9},
+            does_not_raise(),
+            id="near-boundary-inside",
+        ),
+        pytest.param(
+            {},
+            {"mu": 180.0},
+            does_not_raise(),
+            id="exactly-at-max-boundary",
+        ),
+        pytest.param(
+            {},
+            {"mu": -180.0},
+            does_not_raise(),
+            id="exactly-at-min-boundary",
+        ),
+        pytest.param(
+            {},
+            {"mu": 181.0},
+            pytest.raises(ValueError, match=re.escape("outside their limits")),
+            id="single-violation-above-max",
+        ),
+        pytest.param(
+            {},
+            {"mu": -181.0},
+            pytest.raises(ValueError, match=re.escape("outside their limits")),
+            id="single-violation-below-min",
+        ),
+        pytest.param(
+            {"mu": (-90.0, 90.0)},
+            {"mu": 91.0},
+            pytest.raises(ValueError, match=re.escape("outside their limits")),
+            id="custom-limit-violated",
+        ),
+        pytest.param(
+            {"mu": (-90.0, 90.0)},
+            {"mu": 90.0},
+            does_not_raise(),
+            id="custom-limit-at-boundary",
+        ),
+    ],
+)
+def test_check_limits(stage_limits, angles, context):
+    """check_limits raises ValueError listing all violations."""
+    g = psic()
+    for stage_name, lims in stage_limits.items():
+        g.stage(stage_name).limits = lims
+    with context:
+        g.check_limits(**angles)
+
+
+def test_check_limits_multiple_violations():
+    """All violations are reported in a single ValueError."""
+    g = psic()
+    g.stage("mu").limits = (-90.0, 90.0)
+    g.stage("eta").limits = (-45.0, 45.0)
+    with pytest.raises(ValueError) as exc_info:
+        g.check_limits(mu=100.0, eta=50.0, chi=0.0)
+    msg = str(exc_info.value)
+    assert "'mu'" in msg
+    assert "'eta'" in msg
+    # chi=0 is valid — must not appear in error
+    assert "'chi'" not in msg
+
+
+def test_check_limits_unknown_stage_raises():
+    """An unknown stage name must raise KeyError (not ValueError)."""
+    g = psic()
+    with pytest.raises(KeyError):
+        g.check_limits(bogus=10.0)
+
+
+def test_check_limits_empty_call():
+    """Calling check_limits with no arguments must not raise."""
+    g = psic()
+    g.check_limits()
