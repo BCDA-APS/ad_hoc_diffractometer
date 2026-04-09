@@ -10,6 +10,8 @@ import numpy as np
 from .constants import XHAT
 from .constants import YHAT
 from .constants import ZHAT
+from .reflection import Reflection
+from .reflection import ReflectionList
 from .stage import Stage
 
 
@@ -110,6 +112,12 @@ class AdHocDiffractometer:
         # Build ordered lists per role
         self.sample_stages = self._ordered_stages("sample")
         self.detector_stages = self._ordered_stages("detector")
+
+        # Ordered collection of named orienting reflections with or1/or2 management
+        self.reflections: ReflectionList = ReflectionList(
+            geometry_name=self.name,
+            valid_stages=set(self._stages),
+        )
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -283,6 +291,42 @@ class AdHocDiffractometer:
                 "The following stages have angles outside their limits:\n"
                 + "\n".join(violations)
             )
+
+    # ------------------------------------------------------------------
+    # Reflections — convenience wrapper around self.reflections
+    # ------------------------------------------------------------------
+
+    def add_reflection(
+        self,
+        name: str,
+        hkl: tuple[float, float, float],
+        angles: dict[str, float],
+        wavelength: float | None = None,
+    ) -> Reflection:
+        """
+        Add a named orienting reflection recorded on this geometry.
+
+        Delegates to ``self.reflections.add()``.  If ``wavelength`` is
+        None the geometry's current wavelength is inherited.
+
+        Parameters
+        ----------
+        name : str
+            Unique label (e.g. ``"r1"``, ``"Si_111"``).
+        hkl : tuple of float
+            Miller indices (h, k, l).
+        angles : dict[str, float]
+            Motor angles in degrees keyed by stage name.  Keys must be
+            stage names of this geometry.
+        wavelength : float or None
+            Wavelength in Å.  If None, inherits ``self.wavelength``.
+
+        Returns
+        -------
+        Reflection
+        """
+        wl = wavelength if wavelength is not None else self._wavelength
+        return self.reflections.add(name=name, hkl=hkl, angles=angles, wavelength=wl)
 
     def sample_rotation_matrix(self) -> np.ndarray:
         """

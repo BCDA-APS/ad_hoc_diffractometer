@@ -32,6 +32,8 @@ from .lattice import Lattice
 from .lattice import b_matrix
 from .lattice import lattice_vectors
 from .lattice import reciprocal_vectors
+from .reflection import Reflection
+from .reflection import ReflectionList
 from .rotation import rotation_matrix
 from .stage import Stage
 
@@ -55,6 +57,8 @@ __all__ = [
     "Stage",
     # geometry
     "AdHocDiffractometer",
+    "Reflection",
+    "ReflectionList",
     # factories
     "list_geometries",
     "get_geometry",
