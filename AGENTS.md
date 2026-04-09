@@ -40,6 +40,16 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
 
 3. **Never close issues manually** — let the merge automation do it.
 
+4. **After a PR is merged**, if the completed issue corresponds to a section
+   in `docs/roadmap.md`, check its top-level box from `[ ]` to `[x]` and
+   commit the change directly to `main`:
+   ```bash
+   # Edit docs/roadmap.md: change [ ] to [x] on the section's status line
+   git add docs/roadmap.md
+   git commit -m "DOC Mark <section> complete in roadmap (closes #N)"
+   git push
+   ```
+
 ---
 
 ## Project overview
