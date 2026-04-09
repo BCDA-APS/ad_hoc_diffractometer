@@ -281,3 +281,56 @@ def test_sample_U_UB_independent_per_sample(psic_geom):
     psic_geom.sample.U = np.eye(3)  # set on "test"
     psic_geom.sample = "silicon"
     assert psic_geom.sample.U is None  # "silicon" still has None
+
+
+# ---------------------------------------------------------------------------
+# Sample.parent
+# ---------------------------------------------------------------------------
+
+
+def test_default_sample_parent_is_geometry(psic_geom):
+    """Default 'test' sample's parent is the owning geometry."""
+    assert psic_geom.sample.parent is psic_geom
+
+
+def test_add_sample_sets_parent(psic_geom):
+    s = psic_geom.add_sample("silicon", Lattice(a=5.431))
+    assert s.parent is psic_geom
+
+
+def test_remove_sample_clears_parent(psic_geom):
+    s = psic_geom.add_sample("silicon", Lattice(a=5.431))
+    psic_geom.remove_sample("silicon")
+    assert s.parent is None
+
+
+def test_standalone_sample_parent_is_none():
+    """Sample constructed without a geometry has parent=None."""
+    from ad_hoc_diffractometer.reflection import ReflectionList
+
+    rl = ReflectionList(geometry_name="test", valid_stages=set())
+    s = Sample(name="standalone", lattice=Lattice(a=1.0), reflections=rl)
+    assert s.parent is None
+
+
+def test_sample_parent_excluded_from_eq(psic_geom):
+    """Two samples with same content but different parents compare equal."""
+    from ad_hoc_diffractometer.reflection import ReflectionList
+
+    rl = ReflectionList(geometry_name="test", valid_stages=set())
+    s_standalone = Sample(name="test", lattice=Lattice(a=1.0), reflections=rl)
+    # psic_geom.sample has parent=psic_geom; standalone has parent=None
+    # They should still be equal (content-based)
+    assert psic_geom.sample == s_standalone
+
+
+def test_sample_repr_shows_geometry_name(psic_geom):
+    assert "psic" in repr(psic_geom.sample)
+
+
+def test_sample_repr_shows_no_parent_for_standalone():
+    from ad_hoc_diffractometer.reflection import ReflectionList
+
+    rl = ReflectionList(geometry_name="test", valid_stages=set())
+    s = Sample(name="standalone", lattice=Lattice(a=1.0), reflections=rl)
+    assert "(no parent)" in repr(s)

@@ -34,6 +34,8 @@ from .lattice import Lattice
 from .lattice import b_matrix
 from .lattice import lattice_vectors
 from .lattice import reciprocal_vectors
+from .orientation import ub_from_one_reflection
+from .orientation import ub_identity
 from .reflection import Reflection
 from .reflection import ReflectionList
 from .rotation import rotation_matrix
@@ -67,6 +69,9 @@ __all__ = [
     "ReflectionList",
     "Sample",
     "SampleDict",
+    # orientation
+    "ub_identity",
+    "ub_from_one_reflection",
     # factories
     "list_geometries",
     "get_geometry",
