@@ -199,13 +199,13 @@ The B matrix follows the I16 convention: `(b1, b2, b3) = 2π * B.T`.
 | Citation | What it defines |
 |---|---|
 | Busing & Levy, Acta Cryst. 22, 457-464 (1967) | Four-circle geometry, B matrix, U matrix, UB matrix |
-| You, J. Appl. Cryst. 32, 614-623 (1999) DOI:10.1107/S0021889899001223 | psic 4S+2D six-circle; axis sign conventions (mixed handedness) |
-| Lohmeier & Vlieg, J. Appl. Cryst. 26, 706-716 (1993) | sixc surface geometry |
-| Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) | Geometry survey; S/D designation system; kappa, zaxis, s2d2 |
 | Bloch, J. Appl. Cryst. 18, 33-36 (1985) | Z-axis geometry |
-| Evans-Lutterodt & Tang, J. Appl. Cryst. 28, 318-326 (1995) | S2D2 geometry |
 | Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987) | Five-circle geometry |
+| Lohmeier & Vlieg, J. Appl. Cryst. 26, 706-716 (1993) | sixc surface geometry |
+| Evans-Lutterodt & Tang, J. Appl. Cryst. 28, 318-326 (1995) | S2D2 geometry |
+| You, J. Appl. Cryst. 32, 614-623 (1999) DOI:10.1107/S0021889899001223 | psic 4S+2D six-circle; axis sign conventions (mixed handedness) |
 | ITC Vol. C, Sec. 2.2.6 (2006) DOI:10.1107/97809553602060000577 | Kappa 50° convention; normal-beam equatorial geometry |
+| Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) | Geometry survey; S/D designation system; kappa, zaxis, s2d2 |
 
 ---
 
