@@ -1,5 +1,10 @@
 # Change History
 
+User-facing changes by release.  See [docs/roadmap.md](docs/roadmap.md)
+for planned future work and
+[GitHub Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues)
+for the full issue tracker.
+
 ## Release v0.1
 
 Released 2026-04-09.
