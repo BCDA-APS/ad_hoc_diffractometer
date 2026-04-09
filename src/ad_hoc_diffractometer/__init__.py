@@ -9,8 +9,10 @@ from .axes import parse_axis
 from .constants import XHAT
 from .constants import YHAT
 from .constants import ZHAT
+from .display import allclose
 from .display import fmt
 from .display import get_precision
+from .display import precision_atol
 from .display import set_precision
 from .factories import KAPPA_ALPHA_DEFAULT
 from .factories import fivec
@@ -48,6 +50,8 @@ __all__ = [
     "get_precision",
     "set_precision",
     "fmt",
+    "precision_atol",
+    "allclose",
     # axes
     "parse_axis",
     "axis_label",
