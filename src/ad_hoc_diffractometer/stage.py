@@ -42,6 +42,14 @@ class Stage:
         'sample' or 'detector', for bookkeeping.  Default is 'sample'.
     angle : float, optional
         Current angle setting in degrees.  Default is 0.0.
+    limits : tuple of (float, float), optional
+        (min_angle, max_angle) in degrees.  Default is (-180.0, 180.0).
+        Must satisfy min_angle < max_angle.
+
+    Raises
+    ------
+    ValueError
+        If limits[0] >= limits[1].
     """
 
     def __init__(
@@ -51,12 +59,44 @@ class Stage:
         parent: str | None = None,
         role: str = "sample",
         angle: float = 0.0,
+        limits: tuple[float, float] = (-180.0, 180.0),
     ):
         self.name = name
         self.axis = np.asarray(axis, dtype=float)
         self.parent = parent
         self.role = role
         self.angle = angle
+        self.limits = limits  # validated via property setter
+
+    @property
+    def limits(self) -> tuple[float, float]:
+        """Motor angle limits (min_angle, max_angle) in degrees."""
+        return self._limits
+
+    @limits.setter
+    def limits(self, value: tuple[float, float]) -> None:
+        lo, hi = float(value[0]), float(value[1])
+        if lo >= hi:
+            raise ValueError(
+                f"Stage {self.name!r}: limits min ({lo}) must be less than max ({hi})."
+            )
+        self._limits = (lo, hi)
+
+    def in_limits(self, angle_deg: float) -> bool:
+        """
+        Return True if angle_deg is within [min_angle, max_angle] (inclusive).
+
+        Parameters
+        ----------
+        angle_deg : float
+            Angle to test, in degrees.
+
+        Returns
+        -------
+        bool
+        """
+        lo, hi = self._limits
+        return lo <= angle_deg <= hi
 
     def rotation_matrix(self) -> np.ndarray:
         """Return the 3x3 rotation matrix for the current angle setting."""
@@ -65,5 +105,6 @@ class Stage:
     def __repr__(self) -> str:
         return (
             f"Stage(name={self.name!r}, axis={self.axis}, "
-            f"parent={self.parent!r}, role={self.role!r}, angle={self.angle})"
+            f"parent={self.parent!r}, role={self.role!r}, angle={self.angle}, "
+            f"limits={self.limits})"
         )

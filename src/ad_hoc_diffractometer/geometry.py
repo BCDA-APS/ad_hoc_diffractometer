@@ -196,6 +196,39 @@ class AdHocDiffractometer:
         """Set the angle of a named stage in degrees."""
         self._stages[name].angle = angle_deg
 
+    def check_limits(self, **angles: float) -> None:
+        """
+        Verify that all supplied angles are within their stage limits.
+
+        Parameters
+        ----------
+        **angles : float
+            Keyword arguments mapping stage name to angle in degrees,
+            e.g. check_limits(mu=10.0, eta=30.0).
+
+        Raises
+        ------
+        KeyError
+            If a supplied stage name does not exist in this geometry.
+        ValueError
+            If any supplied angle is outside its stage's limits.  The
+            message names every out-of-range stage, its angle, and its
+            limits, so all violations are reported in one call.
+        """
+        violations: list[str] = []
+        for name, angle in angles.items():
+            stage = self._stages[name]  # raises KeyError for unknown stages
+            if not stage.in_limits(angle):
+                lo, hi = stage.limits
+                violations.append(
+                    f"  {name!r}: angle {angle} deg is outside limits [{lo}, {hi}]"
+                )
+        if violations:
+            raise ValueError(
+                "The following stages have angles outside their limits:\n"
+                + "\n".join(violations)
+            )
+
     def sample_rotation_matrix(self) -> np.ndarray:
         """
         Compute the total sample rotation matrix Z = R_floor * ... * R_top.

@@ -40,7 +40,15 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
 
 3. **Never close issues manually** — let the merge automation do it.
 
-4. **After a PR is merged**, if the completed issue corresponds to a section
+4. **All code changes must be made on a feature branch**, never directly on
+   `main`.  Branch names must start with the issue number followed by a
+   short, hyphen-separated description of the topic:
+   ```
+   <issue-number>-<concise-topic>
+   ```
+   Examples: `2-motor-limits`, `1-wavelength-energy`, `9-diffraction-modes`
+
+5. **After a PR is merged**, if the completed issue corresponds to a section
    in `docs/roadmap.md`, check its top-level box from `[ ]` to `[x]` and
    commit the change directly to `main`:
    ```bash
@@ -49,6 +57,8 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    git commit -m "DOC Mark <section> complete in roadmap (closes #N)"
    git push
    ```
+
+Contributed by: OpenCode (argo/claudesonnet46)
 
 ---
 
