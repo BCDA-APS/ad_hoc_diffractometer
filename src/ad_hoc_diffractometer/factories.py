@@ -445,6 +445,7 @@ def kappa4c(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
             f"Four-circle kappa diffractometer, vertical detector (laboratory). "
             f"Kappa alpha = {alpha_deg} deg."
         ),
+        kappa_alpha_deg=alpha_deg,
     )
 
 
@@ -493,6 +494,7 @@ def kappa4c_h(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
             f"Four-circle kappa diffractometer, lateral detector (synchrotron). "
             f"Kappa alpha = {alpha_deg} deg."
         ),
+        kappa_alpha_deg=alpha_deg,
     )
 
 
@@ -548,6 +550,7 @@ def kappa6c(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
             f"(lateral detector, synchrotron). "
             f"Kappa alpha = {alpha_deg} deg."
         ),
+        kappa_alpha_deg=alpha_deg,
     )
 
 

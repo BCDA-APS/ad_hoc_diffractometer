@@ -72,11 +72,11 @@ wave number, and named laboratory lines are out of scope here — see #21.
 
 ### 1.3 Kappa alpha queryable on the geometry instance ([#3](https://github.com/prjemian/ad_hoc_diffractometer/issues/3))
 
-- [ ] Store `kappa_alpha_deg` as an attribute on the `AdHocDiffractometer`
+- [x] Store `kappa_alpha_deg` as an attribute on the `AdHocDiffractometer`
       instance returned by kappa factory functions (kappa4c, kappa4c_h,
       kappa6c); currently baked only into the axis vector
-- [ ] Add a `kappa_alpha` property or metadata dict to the instance
-- [ ] Tests verifying the value is correct and matches the axis vector
+- [x] Add a `kappa_alpha_deg` property on the instance; `None` for non-kappa geometries
+- [x] Tests verifying the value is correct and matches the axis vector
 
 ---
 

@@ -425,3 +425,48 @@ def test_geometry_axes(factory, stage_name, expected_axis, context):
     with context:
         g = factory()
         np.testing.assert_allclose(g.stage(stage_name).axis, expected_axis, atol=1e-12)
+
+
+# ---------------------------------------------------------------------------
+# kappa_alpha_deg on kappa factory instances
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "factory, alpha_deg, context",
+    [
+        pytest.param(kappa4c, 50.0, does_not_raise(), id="kappa4c-default-alpha"),
+        pytest.param(kappa4c_h, 50.0, does_not_raise(), id="kappa4c_h-default-alpha"),
+        pytest.param(kappa6c, 50.0, does_not_raise(), id="kappa6c-default-alpha"),
+        pytest.param(kappa4c, 45.0, does_not_raise(), id="kappa4c-custom-alpha-45"),
+        pytest.param(kappa4c_h, 35.0, does_not_raise(), id="kappa4c_h-custom-alpha-35"),
+        pytest.param(kappa6c, 55.0, does_not_raise(), id="kappa6c-custom-alpha-55"),
+    ],
+)
+def test_kappa_alpha_deg_stored(factory, alpha_deg, context):
+    """kappa_alpha_deg on the instance matches the alpha_deg passed to the factory."""
+    with context:
+        g = factory(alpha_deg=alpha_deg)
+        assert g.kappa_alpha_deg == pytest.approx(alpha_deg)
+
+
+@pytest.mark.parametrize(
+    "factory, alpha_deg, context",
+    [
+        pytest.param(kappa4c, 50.0, does_not_raise(), id="kappa4c-axis-matches-50"),
+        pytest.param(kappa4c, 45.0, does_not_raise(), id="kappa4c-axis-matches-45"),
+        pytest.param(kappa6c, 55.0, does_not_raise(), id="kappa6c-axis-matches-55"),
+    ],
+)
+def test_kappa_alpha_deg_matches_axis_vector(factory, alpha_deg, context):
+    """kappa_alpha_deg is consistent with the kappa stage axis vector."""
+    from ad_hoc_diffractometer import kappa_axis
+    from ad_hoc_diffractometer.factories import _BASIS_BL
+    from ad_hoc_diffractometer.factories import _BASIS_YOU
+
+    with context:
+        g = factory(alpha_deg=alpha_deg)
+        kax = g.stage("kappa").axis
+        basis = _BASIS_YOU if factory is kappa6c else _BASIS_BL
+        expected_axis = kappa_axis(g.kappa_alpha_deg, basis=basis)
+        np.testing.assert_allclose(kax, expected_axis, atol=1e-12)
