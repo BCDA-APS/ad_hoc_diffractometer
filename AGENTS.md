@@ -38,6 +38,18 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    The `closes #N` keyword triggers GitHub automation: when the PR is merged
    the issue is closed and the project card moves to "Done" automatically.
 
+   Every PR must also have its **milestone** and **project board** set:
+   ```bash
+   # Set milestone when creating the PR
+   gh pr create --milestone "Priority N — ..." ...
+
+   # Add the PR to the project board immediately after creation
+   gh api repos/OWNER/REPO/pulls/N --jq '.node_id' | xargs -I{} \
+     gh api graphql -f query='mutation {
+       addProjectV2ItemById(input: {projectId: "PROJECT_ID", contentId: "{}"})
+       { item { id } } }'
+   ```
+
 3. **Never close issues manually** — let the merge automation do it.
 
 4. **All code changes must be made on a feature branch**, never directly on

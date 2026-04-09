@@ -135,6 +135,7 @@ class AdHocDiffractometer:
                 geometry_name=self.name,
                 valid_stages=set(self._stages),
             ),
+            parent=self,
         )
         self.__samples._data[_DEFAULT_SAMPLE_NAME] = _default
 
@@ -390,6 +391,7 @@ class AdHocDiffractometer:
                 geometry_name=self.name,
                 valid_stages=set(self._stages),
             ),
+            parent=self,
         )
         self.__samples._data[name] = s  # bypass guard: add is always safe
         return s
@@ -399,7 +401,9 @@ class AdHocDiffractometer:
         Remove a sample from the dict.
 
         The active sample cannot be removed; select a different sample
-        first.  Delegates to SampleDict which enforces this invariant.
+        first.  Clears ``sample.parent`` on the removed sample so that any
+        external reference to it knows it is detached.  Delegates to
+        SampleDict which enforces the active-sample invariant.
 
         Raises
         ------
@@ -408,7 +412,9 @@ class AdHocDiffractometer:
         ValueError
             If the sample is the currently active sample.
         """
-        del self.__samples[name]  # SampleDict raises KeyError or ValueError
+        s = self.__samples[name]  # raises KeyError if not found
+        del self.__samples[name]  # raises ValueError if active
+        s.parent = None  # break the back-reference
 
     # ------------------------------------------------------------------
     # Reflections — convenience wrapper targeting the active sample
