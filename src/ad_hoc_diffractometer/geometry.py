@@ -45,6 +45,10 @@ class AdHocDiffractometer:
             {'vertical': XHAT, 'longitudinal': YHAT, 'lateral': ZHAT}
     description : str, optional
         Free-text description of the geometry.
+    wavelength : float or None, optional
+        X-ray or neutron wavelength in Å.  Must match the units used for
+        unit cell edge lengths.  Default is None (unset).  Must be > 0
+        if provided.
 
     Attributes
     ----------
@@ -52,6 +56,8 @@ class AdHocDiffractometer:
         Stages with role='sample', in stacking order (floor first).
     detector_stages : list of Stage
         Stages with role='detector', in stacking order (floor first).
+    wavelength : float or None
+        Wavelength in Å, or None if not set.
     """
 
     DEFAULT_BASIS = {
@@ -66,10 +72,12 @@ class AdHocDiffractometer:
         stages: list[Stage],
         basis: dict | None = None,
         description: str = "",
+        wavelength: float | None = None,
     ):
         self.name = name
         self.description = description
         self.basis = basis if basis is not None else dict(self.DEFAULT_BASIS)
+        self.wavelength = wavelength  # validated via property setter
 
         # Validate basis vectors
         self._check_basis()
@@ -185,6 +193,23 @@ class AdHocDiffractometer:
         return ordered
 
     # ------------------------------------------------------------------
+    # Wavelength
+    # ------------------------------------------------------------------
+
+    @property
+    def wavelength(self) -> float | None:
+        """Wavelength in Å, or None if not set."""
+        return self._wavelength
+
+    @wavelength.setter
+    def wavelength(self, value: float | None) -> None:
+        if value is not None:
+            value = float(value)
+            if value <= 0:
+                raise ValueError(f"wavelength must be > 0 Å; got {value}.")
+        self._wavelength = value
+
+    # ------------------------------------------------------------------
     # Public interface
     # ------------------------------------------------------------------
 
@@ -261,10 +286,17 @@ class AdHocDiffractometer:
     def summary(self) -> None:
         """Print a human-readable summary of the geometry."""
         from .axes import axis_label
+        from .display import fmt
+
+        if self._wavelength is not None:
+            wl_str = f"{fmt(self._wavelength)} Å"
+        else:
+            wl_str = "not set"
 
         lines = [
             f"AdHocDiffractometer: {self.name}",
             f"  {self.description}",
+            f"  λ = {wl_str}",
             "",
             "  Basis vectors:",
         ]
