@@ -12,6 +12,10 @@ from .constants import YHAT
 from .constants import ZHAT
 from .reflection import Reflection
 from .reflection import ReflectionList
+from .sample import _DEFAULT_LATTICE
+from .sample import _DEFAULT_SAMPLE_NAME
+from .sample import Sample
+from .sample import SampleDict
 from .stage import Stage
 
 
@@ -118,6 +122,21 @@ class AdHocDiffractometer:
             geometry_name=self.name,
             valid_stages=set(self._stages),
         )
+
+        # Samples: a SampleDict guarded against removing the active sample
+        # or inserting non-Sample values.  The active name is shared via a
+        # one-element list so SampleDict always sees the current selection.
+        self._active_ref: list[str] = [_DEFAULT_SAMPLE_NAME]
+        self.__samples = SampleDict(active_ref=self._active_ref)
+        _default = Sample(
+            name=_DEFAULT_SAMPLE_NAME,
+            lattice=_DEFAULT_LATTICE,
+            reflections=ReflectionList(
+                geometry_name=self.name,
+                valid_stages=set(self._stages),
+            ),
+        )
+        self.__samples._data[_DEFAULT_SAMPLE_NAME] = _default
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -293,7 +312,106 @@ class AdHocDiffractometer:
             )
 
     # ------------------------------------------------------------------
-    # Reflections — convenience wrapper around self.reflections
+    # Samples
+    # ------------------------------------------------------------------
+
+    @property
+    def _samples(self) -> SampleDict:
+        """
+        The guarded sample dict.  Read-only property prevents replacement
+        of the entire dict (``g._samples = something`` raises AttributeError).
+        """
+        return self.__samples
+
+    @property
+    def samples(self) -> SampleDict:
+        """
+        The guarded SampleDict of all samples.
+
+        Supports read-only iteration (``for name in g.samples``, ``g.samples[name]``).
+        Mutation goes through ``add_sample()`` / ``remove_sample()`` to keep
+        invariants intact.
+        """
+        return self.__samples
+
+    @property
+    def sample(self) -> Sample:
+        """The currently active Sample."""
+        return self.__samples[self._active_ref[0]]
+
+    @sample.setter
+    def sample(self, value: str | Sample) -> None:
+        """
+        Set the active sample by name or Sample object.
+
+        Raises
+        ------
+        KeyError
+            If the name is not in the sample dict.
+        """
+        name = value.name if isinstance(value, Sample) else value
+        if name not in self.__samples:
+            raise KeyError(f"No sample named {name!r}. Add it first with add_sample().")
+        self._active_ref[0] = name
+
+    def add_sample(
+        self,
+        name: str,
+        lattice=None,
+    ) -> Sample:
+        """
+        Add a new sample and return it.
+
+        Parameters
+        ----------
+        name : str
+            Unique label for this sample.
+        lattice : Lattice or None
+            Crystal lattice.  If None, defaults to cubic a = 1 Å.
+
+        Returns
+        -------
+        Sample
+
+        Raises
+        ------
+        ValueError
+            If a sample with that name already exists.
+        """
+        if name in self.__samples:
+            raise ValueError(f"A sample named {name!r} already exists.")
+        from .lattice import Lattice as _Lattice
+
+        lat = lattice if lattice is not None else _Lattice(a=1.0)
+        s = Sample(
+            name=name,
+            lattice=lat,
+            reflections=ReflectionList(
+                geometry_name=self.name,
+                valid_stages=set(self._stages),
+            ),
+        )
+        self.__samples._data[name] = s  # bypass guard: add is always safe
+        return s
+
+    def remove_sample(self, name: str) -> None:
+        """
+        Remove a sample from the dict.
+
+        The active sample cannot be removed; select a different sample
+        first.  Delegates to SampleDict which enforces this invariant.
+
+        Raises
+        ------
+        KeyError
+            If the sample does not exist.
+        ValueError
+            If the sample is the currently active sample.
+        """
+        del self.__samples[name]  # SampleDict raises KeyError or ValueError
+
+    # ------------------------------------------------------------------
+    # Reflections — convenience wrapper targeting the active sample
     # ------------------------------------------------------------------
 
     def add_reflection(
@@ -304,10 +422,10 @@ class AdHocDiffractometer:
         wavelength: float | None = None,
     ) -> Reflection:
         """
-        Add a named orienting reflection recorded on this geometry.
+        Add a named orienting reflection to the active sample.
 
-        Delegates to ``self.reflections.add()``.  If ``wavelength`` is
-        None the geometry's current wavelength is inherited.
+        Delegates to ``self.sample.reflections.add()``.  If ``wavelength``
+        is None the geometry's current wavelength is inherited.
 
         Parameters
         ----------
@@ -316,8 +434,7 @@ class AdHocDiffractometer:
         hkl : tuple of float
             Miller indices (h, k, l).
         angles : dict[str, float]
-            Motor angles in degrees keyed by stage name.  Keys must be
-            stage names of this geometry.
+            Motor angles in degrees keyed by stage name.
         wavelength : float or None
             Wavelength in Å.  If None, inherits ``self.wavelength``.
 
@@ -326,7 +443,12 @@ class AdHocDiffractometer:
         Reflection
         """
         wl = wavelength if wavelength is not None else self._wavelength
-        return self.reflections.add(name=name, hkl=hkl, angles=angles, wavelength=wl)
+        return self.sample.reflections.add(
+            name=name,
+            hkl=hkl,
+            angles=angles,
+            wavelength=wl,
+        )
 
     def sample_rotation_matrix(self) -> np.ndarray:
         """
