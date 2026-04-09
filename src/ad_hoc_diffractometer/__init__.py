@@ -1,18 +1,5 @@
 """
-ad_hoc_diffractometer — multi-circle diffractometer geometry calculations.
-
-Suggested import alias:  import ad_hoc_diffractometer as ahd
-
-Based on (chronological):
-  Busing & Levy, Acta Cryst. 22, 457-464 (1967)
-  J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).
-  E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
-  M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993).
-  K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995).
-  H. You, J. Appl. Cryst. 32, 614-623 (1999). DOI: 10.1107/S0021889899001223
-  International Tables for Crystallography, Vol. C, Section 2.2.6 (2006).
-    DOI: 10.1107/97809553602060000577
-  D.A. Walko, Reference Module in Materials Science and Materials Engineering (2016).
+ad_hoc_diffractometer — Multi-circle diffractometer geometry and related calculations.
 """
 
 from .axes import axis_from_physical
