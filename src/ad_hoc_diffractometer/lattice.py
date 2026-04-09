@@ -576,17 +576,29 @@ class Lattice:
             param_strs.append(f"{p}={fmt(val, self.precision)} {unit}")
         return f"Lattice({self._system}: {', '.join(param_strs)})"
 
-    def __eq__(self, other: object) -> bool:
-        """True if all six lattice parameters are identical."""
+    def __eq__(self, other: object, atol: float | None = None) -> bool:
+        """
+        True if all six lattice parameters agree within tolerance.
+
+        Parameters
+        ----------
+        other : object
+        atol : float or None
+            Absolute tolerance.  If None, derived from the current display
+            precision via ``display.precision_atol()``.
+
+        Returns
+        -------
+        bool
+        """
         if not isinstance(other, Lattice):
             return NotImplemented
-        return (
-            self._a == other._a
-            and self._b == other._b
-            and self._c == other._c
-            and self._alpha == other._alpha
-            and self._beta == other._beta
-            and self._gamma == other._gamma
+        from .display import allclose
+
+        return allclose(
+            [self._a, self._b, self._c, self._alpha, self._beta, self._gamma],
+            [other._a, other._b, other._c, other._alpha, other._beta, other._gamma],
+            atol=atol,
         )
 
     def __repr__(self) -> str:

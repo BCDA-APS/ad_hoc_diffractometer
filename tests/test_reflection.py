@@ -180,6 +180,57 @@ def test_reflection_eq_not_implemented_for_non_reflection():
     assert r != "not a reflection"
 
 
+def test_reflection_eq_within_default_tolerance():
+    """hkl values differing by less than default atol compare equal."""
+    r1 = Reflection(
+        name="r1", hkl=(1.0, 0.0, 0.0), angles={"mu": 20.0}, geometry_name="psic"
+    )
+    r2 = Reflection(
+        name="r1", hkl=(1.0000003, 0.0, 0.0), angles={"mu": 20.0}, geometry_name="psic"
+    )
+    assert r1 == r2  # within default atol=5e-7
+
+
+def test_reflection_eq_outside_default_tolerance():
+    r1 = Reflection(
+        name="r1", hkl=(1.0, 0.0, 0.0), angles={"mu": 20.0}, geometry_name="psic"
+    )
+    r2 = Reflection(
+        name="r1", hkl=(1.001, 0.0, 0.0), angles={"mu": 20.0}, geometry_name="psic"
+    )
+    assert r1 != r2
+
+
+def test_reflection_eq_explicit_atol():
+    r1 = Reflection(
+        name="r1", hkl=(1.0, 0.0, 0.0), angles={"mu": 20.0}, geometry_name="psic"
+    )
+    r2 = Reflection(
+        name="r1", hkl=(1.005, 0.0, 0.0), angles={"mu": 20.0}, geometry_name="psic"
+    )
+    assert r1.__eq__(r2, atol=0.01) is True
+    assert r1.__eq__(r2, atol=0.001) is False
+
+
+def test_reflection_eq_angles_tolerance():
+    """Angle values also compared with tolerance."""
+    r1 = Reflection(name="r1", hkl=(1, 0, 0), angles={"mu": 20.0}, geometry_name="psic")
+    r2 = Reflection(
+        name="r1", hkl=(1, 0, 0), angles={"mu": 20.0000003}, geometry_name="psic"
+    )
+    assert r1 == r2  # within default atol
+
+
+def test_reflection_eq_wavelength_tolerance():
+    r1 = Reflection(
+        name="r1", hkl=(1, 0, 0), angles={}, wavelength=1.5406000, geometry_name="psic"
+    )
+    r2 = Reflection(
+        name="r1", hkl=(1, 0, 0), angles={}, wavelength=1.5406003, geometry_name="psic"
+    )
+    assert r1 == r2  # within default atol
+
+
 # ---------------------------------------------------------------------------
 # ReflectionList construction
 # ---------------------------------------------------------------------------
