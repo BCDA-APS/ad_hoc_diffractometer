@@ -1,0 +1,250 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{parskip}
+\usepackage{hyperref}
+
+\geometry{margin=1in}
+
+\title{Diffractometer Geometry: Problems 1 and 2}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Equipment Overview}
+
+A piece of mechanical equipment consists of two independent stacks of rotary stages.
+All rotational axes coincide ideally at a single point of intersection, at which the
+object to be examined is mounted.
+
+\subsection*{Reference Frame}
+
+We define a right-handed coordinate system with basis vectors assigned as follows:
+
+\begin{align*}
+\hat{x} &= \text{longitudinal (toward equipment, our line of sight)} \\
+\hat{y} &= \text{lateral (to our left)} \\
+\hat{z} &= \text{vertical (normal to the floor, pointing upward)}
+\end{align*}
+
+This satisfies the right-hand rule: $\hat{x} \times \hat{y} = \hat{z}$.
+
+\subsection*{Equipment Description}
+
+The equipment consists of two independent stacks of rotary stages. In the default
+orientation (all angles at $0^\circ$), the stacks are described as follows.
+
+\textbf{Stack 1 --- Detector Stack}
+
+\begin{itemize}
+  \item \textbf{S1-1}: rotation axis in the vertical direction ($+\hat{z}$).
+    Sign of rotation consistent with the coordinate system (right-hand rule about $+\hat{z}$).
+  \item \textbf{S1-2}: sits on S1-1. Rotation axis in the lateral direction ($+\hat{y}$).
+    Positive rotation takes $+\hat{x}$ toward $+\hat{z}$.
+    The detector is mounted on a radial arm on S1-2, directed toward the point of intersection.
+\end{itemize}
+
+\textbf{Stack 2 --- Sample Stack}
+
+\begin{itemize}
+  \item \textbf{S2-1}: rotation axis in the vertical direction ($+\hat{z}$).
+    Axis is colinear with S1-1; the two stages are mechanically independent.
+    Sign of rotation consistent with the coordinate system.
+  \item \textbf{S2-2}: sits on S2-1. Rotation axis in the lateral direction ($+\hat{y}$).
+    Same sign of rotation as S1-2.
+  \item \textbf{S2-3}: sits on S2-2. Rotation axis in the longitudinal direction ($+\hat{x}$).
+    Sign of rotation consistent with the coordinate system (right-hand rule about $+\hat{x}$).
+  \item \textbf{S2-4}: sits on S2-3. Rotation axis in the vertical direction ($+\hat{z}$).
+    Sign of rotation consistent with the coordinate system.
+\end{itemize}
+
+%-----------------------------------------------------------------------
+\section*{Problem 1}
+
+\subsection*{Basis Vector Assignment}
+
+We assign basis vectors to the reference frame as follows:
+
+\begin{align*}
+\hat{x} &= \text{longitudinal} \\
+\hat{y} &= \text{lateral} \\
+\hat{z} &= \text{vertical}
+\end{align*}
+
+Right-handedness is confirmed by $\hat{x} \times \hat{y} = \hat{z}$.
+
+\subsection*{Stage Orientations and Sign of Rotation}
+
+The sign of rotation follows the right-hand rule: the thumb points along the
+positive axis vector and the fingers curl in the direction of positive rotation.
+
+\textbf{Stack 1 --- Detector Stack}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Stage & Physical Axis & Axis Vector & Positive Rotation \\
+\midrule
+S1-1 & vertical & $+\hat{z}$ & CCW viewed from $+\hat{z}$ \\
+S1-2 & lateral  & $+\hat{y}$ & $+\hat{x}$ toward $+\hat{z}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The detector is mounted on a radial arm on S1-2, directed inward toward the sample point.
+
+\textbf{Stack 2 --- Sample Stack}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Stage & Physical Axis & Axis Vector & Positive Rotation \\
+\midrule
+S2-1 & vertical     & $+\hat{z}$ & CCW viewed from $+\hat{z}$ \\
+S2-2 & lateral      & $+\hat{y}$ & $+\hat{x}$ toward $+\hat{z}$ \\
+S2-3 & longitudinal & $+\hat{x}$ & $+\hat{y}$ toward $+\hat{z}$ \\
+S2-4 & vertical     & $+\hat{z}$ & CCW viewed from $+\hat{z}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+S2-1 and S1-1 share the same axis of rotation but are mechanically independent.
+
+\subsection*{Computing the Orientation Matrix \textbf{U}}
+
+\textbf{Step 1 --- Define the lab frame.}
+The lab frame is fixed with basis $\{\hat{x},\, \hat{y},\, \hat{z}\}$ as assigned above.
+
+\textbf{Step 2 --- Rotation matrix for each stage.}
+Each stage $i$ with unit rotation axis $\hat{n}_i$ and rotation angle $\theta_i$
+contributes a rotation matrix $\mathbf{R}_i(\theta_i)$ via the Rodrigues formula:
+
+\begin{equation}
+  \mathbf{R}_i(\theta_i)
+  = \mathbf{I}\cos\theta_i
+  + (1 - \cos\theta_i)\,(\hat{n}_i \otimes \hat{n}_i)
+  + \sin\theta_i\,[\hat{n}_i]_\times
+\end{equation}
+
+where $[\hat{n}]_\times$ is the skew-symmetric cross-product matrix:
+
+\begin{equation}
+  [\hat{n}]_\times =
+  \begin{pmatrix}
+     0   & -n_z &  n_y \\
+     n_z &  0   & -n_x \\
+    -n_y &  n_x &  0
+  \end{pmatrix}
+\end{equation}
+
+\textbf{Step 3 --- Compose the sample stack rotations.}
+The total rotation applied to the sample is the ordered product of stage matrices,
+from outermost (floor) to innermost (top):
+
+\begin{equation}
+  \mathbf{R}_\text{sample}
+  = \mathbf{R}_\text{S2-1}(\theta_1)\,
+    \mathbf{R}_\text{S2-2}(\theta_2)\,
+    \mathbf{R}_\text{S2-3}(\theta_3)\,
+    \mathbf{R}_\text{S2-4}(\theta_4)
+\end{equation}
+
+The order is significant: each stage rotates everything mounted above it.
+
+\textbf{Step 4 --- Define \textbf{U}.}
+The orientation matrix $\mathbf{U}$ maps a reference vector $\mathbf{h}$ expressed
+in the crystal (sample) frame to its direction in the lab frame:
+
+\begin{equation}
+  \mathbf{h}_\text{lab} = \mathbf{R}_\text{sample}\,\mathbf{U}\,\mathbf{h}_\text{crystal}
+\end{equation}
+
+Given two non-parallel reference vectors measured at known stage angles, $\mathbf{U}$
+is determined by:
+
+\begin{equation}
+  \mathbf{U}
+  = \mathbf{R}_\text{sample}^{-1}\,
+    \mathbf{M}_\text{lab}\,
+    \mathbf{M}_\text{crystal}^{-1}
+\end{equation}
+
+where the columns of $\mathbf{M}_\text{lab}$ and $\mathbf{M}_\text{crystal}$ are the
+reference vectors in the lab and crystal frames respectively, with the third column
+taken as the cross product of the first two to complete the basis.
+
+%-----------------------------------------------------------------------
+\section*{Problem 2}
+
+\subsection*{Are Different Basis Assignments Possible?}
+
+Yes. The assignment of $\{\hat{x}, \hat{y}, \hat{z}\}$ to the three physical directions
+was a choice, not a necessity. Any right-handed assignment is valid. For three physical
+directions there are \textbf{6 possible right-handed assignments}:
+
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+Assignment & $\hat{x}$ & $\hat{y}$ & $\hat{z}$ \\
+\midrule
+1 (chosen) & longitudinal & lateral      & vertical     \\
+2          & lateral      & vertical     & longitudinal \\
+3          & vertical     & longitudinal & lateral      \\
+4          & lateral      & longitudinal & vertical     \\
+5          & longitudinal & vertical     & lateral      \\
+6          & vertical     & lateral      & longitudinal \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Assignments 1--3 are cyclic (even) permutations of (longitudinal, lateral, vertical);
+assignments 4--6 are anti-cyclic (odd) permutations. Both sets are right-handed.
+
+\subsection*{Stage Axis Vectors Under Each Assignment}
+
+The physical rotation axes are unchanged; only their coordinate expression varies.
+
+\begin{center}
+\begin{tabular}{lllllllll}
+\toprule
+Stage & Physical Axis & A1 & A2 & A3 & A4 & A5 & A6 \\
+\midrule
+S1-1 & vertical     & $+\hat{z}$ & $+\hat{x}$ & $+\hat{y}$ & $+\hat{z}$ & $+\hat{y}$ & $+\hat{x}$ \\
+S1-2 & lateral      & $+\hat{y}$ & $+\hat{z}$ & $+\hat{x}$ & $+\hat{x}$ & $+\hat{z}$ & $+\hat{y}$ \\
+S2-1 & vertical     & $+\hat{z}$ & $+\hat{x}$ & $+\hat{y}$ & $+\hat{z}$ & $+\hat{y}$ & $+\hat{x}$ \\
+S2-2 & lateral      & $+\hat{y}$ & $+\hat{z}$ & $+\hat{x}$ & $+\hat{x}$ & $+\hat{z}$ & $+\hat{y}$ \\
+S2-3 & longitudinal & $+\hat{x}$ & $+\hat{y}$ & $+\hat{z}$ & $+\hat{y}$ & $+\hat{x}$ & $+\hat{z}$ \\
+S2-4 & vertical     & $+\hat{z}$ & $+\hat{x}$ & $+\hat{y}$ & $+\hat{z}$ & $+\hat{y}$ & $+\hat{x}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Effect on \textbf{U}}
+
+The matrix $\mathbf{U}$ does not change physically --- it encodes the same geometric
+relationship regardless of basis choice. What changes is its numerical representation.
+
+Let $\mathbf{P}$ be the $3 \times 3$ orthogonal permutation matrix that transforms
+coordinates from one basis assignment to another, satisfying $\mathbf{P}^{-1} = \mathbf{P}^\top$.
+Then the orientation matrix under the new assignment is:
+
+\begin{equation}
+  \mathbf{U}' = \mathbf{P}\,\mathbf{U}\,\mathbf{P}^\top
+\end{equation}
+
+This is a similarity transformation, which preserves:
+
+\begin{itemize}
+  \item The eigenvalues of $\mathbf{U}$ (same rotation angles),
+  \item $\det(\mathbf{U}') = \det(\mathbf{U}) = +1$ (proper rotation),
+  \item The physical meaning of the orientation.
+\end{itemize}
+
+Only the numerical entries of $\mathbf{U}$ differ between assignments. The choice of
+basis is purely a convention.
+
+\end{document}
