@@ -35,30 +35,16 @@ as they are completed.
 
 ## Priority 1 — Near-term (needed for diffraction calculations)
 
-### 1.1 Wavelength / energy ([#1](https://github.com/prjemian/ad_hoc_diffractometer/issues/1))
+### 1.1 Wavelength on AdHocDiffractometer ([#1](https://github.com/prjemian/ad_hoc_diffractometer/issues/1))
 
-- [ ] New class or module `radiation.py` (or attribute on a future
-      `Experiment` class)
-- [ ] Store wavelength λ (Å) as primary quantity; **default: Cu Kα, λ = 1.5406 Å**
-- [ ] Compute photon energy E (keV) lazily: E = hc/λ = 12.39842 / λ
-- [ ] Compute wave number k (Å⁻¹) lazily: k = 2π/λ
-- [ ] Validate: λ > 0; reasonable range warning (e.g. 0.01 – 10 Å)
-- [ ] Display precision via `display.fmt()`
-- [ ] `__str__` reports λ and E
-- [ ] Provide named constants for common laboratory lines
-      (Cu Kα ≈ 1.5406 Å, Mo Kα ≈ 0.7107 Å, Ag Kα ≈ 0.5594 Å, Co Kα ≈ 1.7902 Å)
-- [ ] Tests covering valid inputs, invalid inputs, lazy recomputation, and default value
+Units are fixed as Å to match unit cell edge lengths.  Energy conversions,
+wave number, and named laboratory lines are out of scope here — see #21.
 
-### 1.1a Neutron radiation source support ([#8](https://github.com/prjemian/ad_hoc_diffractometer/issues/8))
-
-- [ ] Add a `source_type` parameter (or separate subclasses) to distinguish `"xray"` and
-      `"neutron"` radiation
-- [ ] For neutrons: store λ (Å) as primary; compute E (meV) lazily via de Broglie:
-      E = 81.8042 / λ²
-- [ ] Ensure `__str__` reports the correct energy units for each source type
-- [ ] Validate that energy/wavelength conversions are not mixed across source types
-- [ ] Tests covering both source types, unit correctness, and invalid cross-type usage
-- [ ] See also: 1.1 (X-ray wavelength/energy, issue #1)
+- [ ] Add `wavelength: float | None` attribute to `AdHocDiffractometer`; default `None`
+- [ ] Validate on assignment: if not `None`, must be `> 0`; raise `ValueError` otherwise
+- [ ] `summary()` reports `λ = {value} Å` when set, `λ not set` when `None`
+- [ ] Display value via `display.fmt()`
+- [ ] Tests: default is `None`, valid assignment, invalid (≤ 0), display in `summary()`
 
 ### 1.2 Motor limits per stage ([#2](https://github.com/prjemian/ad_hoc_diffractometer/issues/2))
 
@@ -302,6 +288,32 @@ to a chosen reference direction.  Two important classes:
       the beam axis by default
 - [ ] Raised by users; priority to be determined once Priority 1 and 2
       items are complete
+
+### 3.8 Energy / wave-number conversions and named radiation lines ([#21](https://github.com/prjemian/ad_hoc_diffractometer/issues/21))
+
+Useful for reporting and cross-checking but not load-bearing for diffraction
+angle calculations.  Depends on #1 (wavelength on `AdHocDiffractometer`).
+
+- [ ] Compute photon energy E (keV) lazily: E = 12.39842 / λ (Å)
+- [ ] Compute wave number k (Å⁻¹) lazily: k = 2π / λ
+- [ ] `summary()` optionally reports E alongside λ
+- [ ] Named constants for common laboratory lines:
+      Cu Kα ≈ 1.5406 Å, Mo Kα ≈ 0.7107 Å, Ag Kα ≈ 0.5594 Å, Co Kα ≈ 1.7902 Å
+- [ ] Tests covering conversions, lazy recomputation, and named constant values
+- [ ] Related to: #8 (neutron source — independent, different formula)
+
+### 3.9 Neutron radiation source support ([#8](https://github.com/prjemian/ad_hoc_diffractometer/issues/8))
+
+Moved from Priority 1.  Wavelength storage (#1) is the only prerequisite;
+this issue is independent of the X-ray energy conversion issue (#21).
+
+- [ ] Add a `source_type` parameter (or separate subclasses) to distinguish
+      `"xray"` and `"neutron"` radiation
+- [ ] For neutrons: compute E (meV) lazily via de Broglie: E = 81.8042 / λ²
+- [ ] `summary()` reports the correct energy units for each source type
+- [ ] Validate that energy/wavelength conversions are not mixed across source types
+- [ ] Tests covering both source types, unit correctness, and invalid cross-type usage
+- [ ] Related to: #21 (X-ray energy conversion — independent, different formula)
 
 ---
 
