@@ -40,11 +40,11 @@ as they are completed.
 Units are fixed as Å to match unit cell edge lengths.  Energy conversions,
 wave number, and named laboratory lines are out of scope here — see #21.
 
-- [ ] Add `wavelength: float | None` attribute to `AdHocDiffractometer`; default `None`
-- [ ] Validate on assignment: if not `None`, must be `> 0`; raise `ValueError` otherwise
-- [ ] `summary()` reports `λ = {value} Å` when set, `λ not set` when `None`
-- [ ] Display value via `display.fmt()`
-- [ ] Tests: default is `None`, valid assignment, invalid (≤ 0), display in `summary()`
+- [x] Add `wavelength: float | None` attribute to `AdHocDiffractometer`; default `None`
+- [x] Validate on assignment: if not `None`, must be `> 0`; raise `ValueError` otherwise
+- [x] `summary()` reports `λ = {value} Å` when set, `λ not set` when `None`
+- [x] Display value via `display.fmt()`
+- [x] Tests: default is `None`, valid assignment, invalid (≤ 0), display in `summary()`
 
 ### 1.2 Motor limits per stage ([#2](https://github.com/prjemian/ad_hoc_diffractometer/issues/2))
 
