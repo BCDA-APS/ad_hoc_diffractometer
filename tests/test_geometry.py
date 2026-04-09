@@ -421,3 +421,80 @@ def test_check_limits_unknown_stage_raises(psic_geom):
 def test_check_limits_empty_call(psic_geom):
     """Calling check_limits with no arguments must not raise."""
     psic_geom.check_limits()
+
+
+# ---------------------------------------------------------------------------
+# wavelength attribute
+# ---------------------------------------------------------------------------
+
+
+def test_wavelength_default_is_none(psic_geom):
+    """Default wavelength is None (unset)."""
+    assert psic_geom.wavelength is None
+
+
+@pytest.mark.parametrize(
+    "value, context",
+    [
+        pytest.param(1.5406, does_not_raise(), id="cu-kalpha"),
+        pytest.param(0.7107, does_not_raise(), id="mo-kalpha"),
+        pytest.param(0.001, does_not_raise(), id="very-short"),
+        pytest.param(100.0, does_not_raise(), id="very-long"),
+        pytest.param(None, does_not_raise(), id="unset-none"),
+        pytest.param(
+            0.0,
+            pytest.raises(ValueError, match=re.escape("must be > 0")),
+            id="invalid-zero",
+        ),
+        pytest.param(
+            -1.0,
+            pytest.raises(ValueError, match=re.escape("must be > 0")),
+            id="invalid-negative",
+        ),
+    ],
+)
+def test_wavelength_assignment(value, context, psic_geom):
+    with context:
+        psic_geom.wavelength = value
+        assert psic_geom.wavelength == value
+
+
+def test_wavelength_constructor():
+    """wavelength can be supplied at construction time."""
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    # default
+    assert g.wavelength is None
+    # via setter after construction
+    g.wavelength = 1.5406
+    assert g.wavelength == pytest.approx(1.5406)
+
+
+def test_wavelength_invalid_at_construction():
+    """Supplying an invalid wavelength at construction raises ValueError."""
+    from ad_hoc_diffractometer import XHAT
+    from ad_hoc_diffractometer import Stage
+
+    stages = [Stage("a", XHAT, role="sample")]
+    with pytest.raises(ValueError, match=re.escape("must be > 0")):
+        AdHocDiffractometer("test", stages, wavelength=-1.0)
+
+
+def test_wavelength_reset_to_none(psic_geom):
+    """Wavelength can be cleared back to None after being set."""
+    psic_geom.wavelength = 1.5406
+    psic_geom.wavelength = None
+    assert psic_geom.wavelength is None
+
+
+def test_wavelength_in_summary(psic_geom, capsys):
+    """summary() reports wavelength when set and 'not set' when None."""
+    psic_geom.summary()
+    out = capsys.readouterr().out
+    assert "not set" in out
+
+    psic_geom.wavelength = 1.5406
+    psic_geom.summary()
+    out = capsys.readouterr().out
+    assert "1.540600 Å" in out
