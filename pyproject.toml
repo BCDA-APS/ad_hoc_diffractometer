@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ad_hoc_diffractometer"
+version = "0.1.0"
+description = "Multi-circle diffractometer geometry calculations"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ad_hoc_diffractometer"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.hatch.envs.default]
+features = ["dev"]

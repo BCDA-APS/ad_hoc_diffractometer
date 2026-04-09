@@ -1,0 +1,1552 @@
+706
+J. A.ppL Cryst. (1993). 26, 706-716
+
+Angle Calculations for a Six-Circle Surface X-ray Diffractometer
+BY MARTIN LOHMEIERAND ELIAS VLIEG
+F O M Institute for Atomic and Molecular _Physics, Kruislaan 407, 1098 SJ Amsterdam, The Netherlands
+(Received 7 January 1993; accepted 14 May 1993)
+
+Abstract
+
+Angle calculations are presented for a new type of
+diffractometer suitable for surface X-ray diffraction.
+The new geometry results from combining the
+four-circle and the z-axis geometries and involves six
+circles. Instruments based on this concept can be
+operated in different diffraction geometries. Compared to the four-circle and z-axis geometries, a larger
+fraction of the reciprocal space perpendicular to the
+sample is available to experiments when all six circles
+are used. This results in an improved out-of-plane
+resolution in any X-ray structure study. In each
+geometry, either the angle of incidence or the outgoing
+angle of the X-rays can be chosen. At the same time,
+the surface normal can be aligned in the horizontal
+diffractometer plane, providing optimum resolution
+and sample illumination. All equations are given in
+closed form. The different modes of operation are
+compared and operation schemes are discussed.
+1. Introduction
+
+The study of single-crystal surfaces by X-ray
+diffraction in recent years has resulted in the evolution
+of several types of diffractometers, employing different
+diffraction geometries (Feidenhans'l, 1989).
+Many of the constructions go back to the four-circle
+normal-beam-geometry machine, worked out thoroughly by Busing & Levy (1967). This basically
+consists of three sample circles and one detector circle.
+While this type of diffractometer is well suited to bulk
+crystallography, it lacks the flexibility to deal with the
+specific boundary conditions required in surface X-ray
+diffraction, the most important of these being control
+over the X-ray angle of incidence on the sample, flin,
+and the outgoing angle, flout- In order to increase the
+surface sensitivity, one works at either grazing angles
+of incidence or small outgoing angles. A small angle
+of incidence results in low penetration depths and thus
+in low background levels from thermal diffuse or
+fluorescent bulk scattering. Small outgoing angles
+similarly result in low background levels because the
+outgoing beam can only emerge from the close vicinity
+of the surface. Small outgoing angles also yield high
+© 1993 International Union of Crystallography
+Printed in Great Britain - all rights reserved
+
+in-plane resolution if the detector slits are aligned
+with diffraction rods of the sample.
+In addition, both the incoming and outgoing angles
+can be set close to the critical angle tic, at which total
+external reflection can enhance the reflected intensities
+by a factor of four. Thus, in order to avoid intensity
+variations related to refraction, flin and flout have
+to be fixed or have to be sufficiently large compared
+with flc.
+The four-circle diffractometer allows the setting of
+flin and flout, for which useful procedures have been
+given by Mochrie (1988) and Robinson (1988a).
+However, this can only be accomplished by tilting the
+sample, which leads to undesirable correction factors
+caused by the changing resolution of the incoming
+beam incident on the tilted sample (Robinson, 1988b).
+This difficulty is overcome by the five-circle type of
+diffractometer (Gibbs, Ocko, Zehner & Mochrie,
+1990), for which Vlieg, Van der Veen, Macdonald &
+Miller (1987) have given angle calculations. This
+instrument is based on the four-circle type but
+features an additional rotary table on which the whole
+setup, including the sample and the detector, rests.
+The additional degree of freedom is used to align the
+surface normal in the horizontal diffractometer plane,
+which avoids complicated resolution corrections and
+guarantees maximum sample illumination.
+A generally different approach has been undertaken
+by Brennan & Eisenberger (1984). By redistributing
+the four degrees of freedom on two detector and two
+sample circles in the so-called z-axis geometry, one
+obtains a diffractometer with two circles directly set
+to flin and flout. In principle, this allows for a larger
+perpendicular momentum transfer qi than does a
+five-circle instrument, resulting in better positional
+resolution in structure studies perpendicular to the
+sample surface (Vlieg, Robinson & Kern, 1990). The
+required angle settings for the z-axis geometry have
+been calculated by Bloch (1985). While this concept is
+intuitively attractive for surface X-ray diffraction, it
+has the disadvantage that the sample surface normal
+has to be aligned with the diffractometer axis. This
+makes an additional sample-tilt stage necessary,
+whose settings are fixed once the sample is aligned.
+The horizontal alignment gives the same benefits as
+Journal of Applied Crystallography
+ISSN 0021-8898 © 1993
+
+MARTIN LOHMEIER AND ELIAS VLIEG
+
+707
+
+discussed for the five-circle case. One further is useful, in order to allow for straightforward
+advantage of the z-axis geometry is that so-called co numerical implementation. All the procedures descans (Stout & Jensen, 1968) can be performed by scribed below have been thoroughly numerically
+rotating only the co circle. These types of scans are tested* and have been successfully implemented in the
+frequently used in surface X-ray structure determina- control program of the six-circle diffractometer at
+tions and are, in the four- and five-circle geometries, ESRF, S P E C (Certified Scientific Software, 1992).
+only approached by ~0 scans. The differences, however,
+are often negligible for practical cases. Typically, the
+2. The six-circle diffractometer
+co axis is also more accurate than the (usually) smaller
+q~ axis.
+2.1. Definition
+By combining the five-circle and z-axis characterisThe present six-circle diffractometer is based on
+tics into a six-circle instrument, one eliminates the
+disadvantages of the particular modes (extra tilt stage the five-circle diffractometer layout given by Gibbs et
+or limited perpendicular momentum transfer) and al. (1990). The five-circle type is extended by an
+obtains a more flexible instrument. The six-circle additional 7 circle, which facilitates out-of-plane
+diffractometer can equivalently be considered as a positioning of the detector. There are six degrees of
+five-circle instrument with an additional out-of-plane freedom in total, which can be subdivided into one
+detector arm or as a z-axis machine with a complete shared, two detector and three sample degrees of
+two-circle sample goniometer. Six-circle instruments freedom.
+The diffractometer is shown with all angles set to
+are being constructed at several laboratories, for
+example, at the European Synchrotron Radiation zero in Fig. 1 and with all angles having values in the
+Facility (ESRF, Grenoble, France) (Ferrer, 1992) and first quadrant in Fig. 2. The laboratory-frame
+at the Photon Factory (Tsukuba, Japan) (Takahashi, coordinates x, y and z are chosen such that, with all
+angles set to zero, the horizontal diffractometer plane
+Nakatani, Takahashi, Zhang & Ando, 1993).
+In this paper, we present closed-form equations for lies in the yz plane, the X-ray beam impinges on the
+the angle settings of a six-circle diffractometer for a sample along the positive-y direction and the ¢p axis
+given reflection (hkl) under the boundary conditions points along the positive-z direction. Note that this is
+specified above, i.e. for either a fixed incoming angle the convention used by Busing & Levy (1967) but in
+or a fixed outgoing angle and for the horizontal- our case the z axis is horizontal whereas their z axis
+surface-normal condition. By taking full advantage of was vertical. This orientation has no effect on the
+the two extra sample circles that are necessary in outcome of the angle calculations.
+The sample is mounted on the q~ axis, which can
+comparison with the z-axis machine, the instrument
+can be operated in various geometries. In addition to rotate about the 7~ axis. Both the Z and tp circles
+incorporating all previously mentioned advantages of
+the different types of diffractometers, the six-circle
+*Suitable computer code is available on request from the authors.
+diffractometer features a larger accessible q± range
+compared with the four-circle and z-axis geometries
+for the important boundary conditions of work at
+either small incoming or small outgoing angles.
+The paper is structured as follows. §2 describes the
+different circles of the diffractometer and treats the
+different geometries in which the instrument can be
+used. §3 is dedicated to transformations between
+different coordinate frames, which are used for the
+calculation of the angle settings. In §4, all the basic
+),-circle ~
+~ ' t t °J'circlc'
+equations that govern the angle settings are derived.
+~'-cv;,-c./c '
+The setting of the detector angle 6 is independent of
+the geometry used and is derived in §5. All the
+remaining angle settings in the z-axis mode are given
+in §6. §7 deals with the corresponding angle settings
+in the five-circle geometry. In §8, the different
+geometries are compared. Concepts for using the
+diffractometer are discussed and the increase in the
+available reciprocal-space fraction in the six-circle
+geometry is demonstrated. Finally, a mirror image of
+the instrument is described in the Appendix.
+Fig. 1. A schematic drawing of the six-circle diffractometer with all
+circles set to the zero position.
+All equations are given in matrix form, where this
+
+708
+
+A SIX-CIRCLE SURFACE X-RAY D I F F R A C T O M E T E R
+
+are supported by the 09 circle, which rests on the main
+diffractometer mount. The detector is mounted on the
+), circle, which is fixed to the detector arm. The latter
+can rotate about the ~ axis, which coincides with the
+co axis. The whole setup is mounted on top of a rotary
+table, which gives the sixth degree of freedom about
+the a axis.
+The 09 zero position is chosen to agree with the
+convention used by Busing & Levy (1967) and is thus
+different from the one used by Vlieg et al. (1987).
+2.2. Modes of operation
+With six degrees of freedom, the diffractometer can
+operate in different geometries, which we call
+operation modes. In a diffraction experiment, one has
+to fulfil the general diffraction condition, i.e. the
+momentum transfer vector Q must match a point (hkl)
+in reciprocal space. This consumes three degrees of
+freedom. A fourth degree of freedom is used to work
+at either a fixed incoming angle flirt or a fixed outgoing
+angle flout, or to work under the ilia = flout condition.
+We do not discuss the case where flin and flout are fixed
+simultaneously because then q± cannot be specified.
+The fifth boundary condition is used to keep the
+surface normal in the horizontal plane. This leaves an
+ambiguity with respect to the last degree of freedom,
+which can be resolved by fixing one or more of the
+diffractometer angles to a given value.
+We distinguish between the following modes of
+operation (see also Table 1).
+z-axis mode. In this mode, the sample circles Z and
+q~ are fixed such that the surface normal lies in the
+horizontal plane and coincides with the diffractometer
+o9 axis. The other four circles (~, 6, 7, e)) are used to
+satisfy the diffraction equation and one of the three fl
+
+x
+
+t!
+co
+
+~l
+
+I to
+
+~
+
+O-
+
+Table 11 Distribution of the boundary conditions over
+the six degrees of freedom
+In each geometry, the values of three angles are set to fulfil the
+diffraction condition and a fourth angle is fixed by one of the fl
+conditions, leaving two remaining degrees of freedom to distinguish
+between the modes of operation.
+Mode of
+operation
+z axis
+Five circle/7
+Five circle/~
+Four circle
+Six circle
+
+ct
+
+Fixed angles
+~
+Z
+
+q3
+
+4"
+
+4"
+
+Surface normal
+horizontal
+
+x/t
+~/~
+Ctmax:I:
+
+x/l"
+~max~
+
+4
+x/
+
+,/
+
+4
+
+* Value given by alignment of surface normal with 09 axis.
+t Set to any required value.
+:I: Depending on which limit is met, either c~ or 1' is set to its
+maximum value.
+
+conditions. Thus, in this mode, all six degrees of
+freedom are used.
+Five-circle mode. Either ~ or a is fixed and the values
+of the remaining five angles are obtained from the
+diffraction condition, one of the fl conditions and the
+surface-normal condition. If ~ is set to zero, this mode
+is identical with the mode given by Vlieg et al. (1987).
+Setting ~ to nonzero values allows the accessing of
+larger q. values, as is discussed in §8.
+Four-circle mode. This mode is identical to the
+five-circle mode except that the condition of the
+surface normal is given up. Both a and ~ are fixed to
+given values.
+In addition to these modes, we introduce the
+so-called six-circle mode. This mode is identical to the
+z-axis mode until either a or ~ exceed their limit values.
+In these cases, a or ~ is set to its limit value and the
+remaining five circles are calculated in the five-circle
+mode. An important extension of the z-axis mode is
+hereby achieved. Whereas ~0 and Z are fixed in the
+z-axis mode, now the full ranges of ~o and X are
+utilized. This effectively increases the available q.
+range, as is shown below.
+3. Coordinate transformations
+In order to derive convenient expressions for the
+diffraction and boundary conditions, it is necessary to
+work in different coordinate frames attached to the
+different circles and to be able to transform equations
+between these frames.
+Reciprocal-space coordinates are written as
+H = hbl + kb2 + / b 3 ,
+
+Fig. 2. The diffractometer with all circles having a setting in the
+first quadrant.
+
+(1)
+
+where the bi denote reciprocal-lattice vectors, which
+are related to the real lattice vectors ai by
+a i " b j = 2~z(~i, j.
+
+(2)
+
+MARTIN LOHMEIER AND ELIAS VLIEG
+The transformation of H into laboratory-frame
+coordinates Hla b o r into a coordinate frame fixed to
+a detector circle can be envisaged in three steps. First,
+H is converted into a Cartesian coordinate frame
+vector Hcart by a matrix B:
+Hcart = BH.
+
+E00
+b1
+
+B =
+
+b 2 COS f13
+
+b 3 COS f12
+
+b 2 sin f13
+
+- b 3 sin f12 COS ~1
+
+0
+
+1/a 3
+
+J
+•
+
+(4)
+
+The second step is to establish the orientational
+relationship between the Cartesian coordinate system
+and the diffractometer tp axis. This can be described
+by the orientation matrix U:
+H~o = U n c a r t .
+
+(5)
+
+In the third step, one can attach Cartesian
+coordinate frames to each of the six diffractometer
+axes. The transformation of H~, into these frames is
+accomplished by successive application of the
+following rotation matrices, which can easily be
+derived from Fig. 2:
+A=
+
+F=
+
+X=
+
+Ei0 01 Ecossin!l
+[!o o j Ecossin!]
+Ecos,Os,n,l Ecoss,nOJ
+cos~
+sin ~
+
+-sin~
+cos ~
+
+;
+
+cos7
+sin 7
+
+-siny
+cos 7
+
+;
+
+0
+-sinz
+
+1
+0
+0 cos
+
+;
+
+A=
+
+~=
+
+4~=
+
+4.1. The diffraction equation
+For constructive interference between diffracted
+beams to occur, the momentum transfer vector
+Q - K : - K i must match a reciprocal-lattice vector
+H = hbl + kb2 + / b 3 :
+
+(3)
+
+We choose a Cartesian frame (ex, ey, ez) such that ex
+is parallel to bl, ey lies in the plane of bl and bz and
+ez is perpendicular to that plane. The matrix B
+contains all lattice parameters of the sample. It has
+been given by Busing & Levy (1967) for our particular
+choice of (ex, e r, ez) in the form
+
+-sin6
+0
+
+cos6
+0
+
+-sine)
+0
+
+cos co
+0
+
+;
+
+-sinq)
+0
+
+cosq~
+0
+
+0 .
+1
+
+H = K : - Ki,
+
+By this convention, q~ transforms a vector from the
+qg-axis frame into the ;(-axis frame, X transforms this
+vector into the w-axis frame etc:
+A-2
+,d-I
+f'-I
+H~o L H x x H ~ ~ H~ ~ Hlab---"*H a--'H6----'H,:.
+
+4. Basic equations
+
+In the following, we derive the basic equations that
+determine the settings of all six diffractometer circles
+for a given reflection (hkl) and either a fixed angle of
+incidence flin or a fixed outgoing angle flout and the
+horizontal-surface-normal condition.
+
+(7)
+
+where Ki and K: are the momentum vectors of the
+incoming and outgoing X-rays, respectively.
+In bulk diffraction, Bragg peaks occur if h, k and l
+are all integers whereas, in surface X-ray diffraction,
+h and k can have fractional values because of surface
+reconstruction (larger surface unit cell) and l may
+assume any value because of the absence of periodicity
+perpendicular to the surface.* In order to scan peak
+profiles or diffuse intensity distributions, we must
+allow h, k and l to have any real values.
+Equation (7) can be evaluated in any coordinate
+frame. However, it is convenient to do this
+in the a-axis frame. The incoming-beam vector
+Ki,la b = (0, K , 0) points along the y direction of the
+laboratory frame and the A - 1 matrix transforms this
+vector into the a-axis frame:
+Ki, ~ = A - l Ki ' lab"
+
+(8)
+
+The length of K~ is given by K = 2re~)., where ). is the
+wavelength of the incoming X-rays.
+The outgoing-beam vector points along the
+direction of the detector-frame y axis and has the same
+length, K. It can thus be written as
+Kf.~ = AffKi. lab.
+
+;
+
+(6)
+
+709
+
+(9)
+
+Finally, the reciprocal-lattice vector H is, in the
+a-axis frame, given by
+(10)
+
+H, = f2X~UBH.
+
+Substituting (8), (9) and (10) into (7), one obtains
+f2XcbUBH = (AF - A
+
+-
+
+1)Ki, lab,
+
+(11)
+
+which is the basic diffraction equation for the six-circle
+diffractometer. Equation (11) couples all six angles of
+the diffractometer to the reciprocal-space coordinates
+(hkl).
+
+Procedures for finding the elements of U rely on
+(11), written in the form
+UBH =Q,r
+
+(12)
+
+* In surface X-ray diffraction, the low-energy electron diffraction
+(LEED) convention is most often followed, in which h and k are in
+the surface plane and l denotes the direction perpendicular to the
+surface. It is not necessary to follow this convention, but choosing
+a different unit cell leads in general to a more complicated indexing
+of reciprocal space. For simplicity, ! is used here to denote the
+direction perpendicular to the surface. The angle calculations as
+presented in the following, however, are not based on this
+assumption.
+
+710
+
+A SIX-CIRCLE SURFACE X-RAY D I F F R A C T O M E T E R
+
+to the surface. Writing (11) as
+
+with
+Q~, = ~ - I X - ' E 2 - 1 ( A F -
+
+A-X)K,,,~a,.
+
+(13)
+~r
+
+= OX4~UB(H/K)
+
++ A -1
+
+,
+
+(17)
+
+Suitable recipes have been given by Busing & Levy
+(1967).
+substituting this into (16),
+4.2. Definition of incoming and outgoing angles
+In order to describe the angle between the incoming
+beam and the sample surface, fli,, and the corresponding angle of the outgoing beam, flout, we define the
+surface normal as the vector perpendicular to the
+optical sample surface. To account for the difference
+between the z axis of the q>axis frame and the optical
+surface normal, two angles a and z are introduced.
+The corresponding matrices are
+I cosa
+Z=
+0
+
+T=
+
+-sino-
+
+0 sinai
+1
+0 ;
+0 cosa
+
+-sinz
+0
+
+cosz
+0
+
+Ecos,
+
+.
+
+(14)
+
+A -1
+
+= - s i n flin,
+
+(15)
+
+where S = TS.
+Equivalently, the outgoing angle flout is defined as
+the angle between the outgoing beam and its
+projection on the optical surface by
+
+OX~S
+
+AF
+
+= sin flout.
+
+(16)
+
+flirt and flout cannot be selected independently but
+are coupled by the momentum transfer perpendicular
+
+~ X ~ U B ( H / K ) + A-1
+
+= sin flout,
+
+1
+
+(18)
+and combining this with (15), one gets
+
+or
+
+The deviation of the optical surface normal (described
+by S and T) from the crystallographic orientation
+(described by UB) is equivalent to the sample miscut.
+The values of the two angles a and z can be found by
+observing the reflection of a laser light source from
+the sample. The values of - g and -q~ are a and r,
+respectively, if the reflected spot does not move under
+rotations.
+The angle of incidence flin is defined as the angle
+between the incoming beam and its projection on the
+optical surface. This can be expressed in the a-axis
+frame by the scalar product of the surface normal
+(equivalent to the z axis in the sample frame) and the
+incoming beam (pointing along the y axis in the
+laboratory frame):
+f2X~S
+
+f~X~S 0
+
+I
+
+i I [ S - t U B ( H / K ) ] - sin flin = sin flout
+
+(19)
+
+sin flin + sin flout=(1/K)(S-1UBU)3 •
+
+(20)
+
+This equation can be used for calculating flin from flout
+or vice versa, if the momentum-transfer vector H is
+given. This means that one generally has to choose
+between the following useful boundary conditions:
+(i) flio fixed;
+(ii) flout fixed;
+(iii) flin = flout"
+
+4.3. Horizontal surface normal
+It is important to have the sample oriented with its
+surface normal horizontal (i.e. in the laboratory yz
+plane) for two reasons. First, it leads to a well defined
+illuminated surface area, which is close to the central
+part of the beam, i.e. receives the highest flux. Second,
+it avoids complicated resolution corrections in scans
+with large q±, which would otherwise be necessary
+due to tilting of the sample with respect to the
+incoming beam (Robinson, 1988b). In general, the
+calculation of resolution effects is very complicated
+and is strongly dependent on the experimental
+geometry chosen. For example, for a focused
+synchrotron beam line, the divergence in the
+horizontal plane is much larger than in the vertical
+plane. By aligning the surface normal with the
+horizontal plane, the surface diffraction rod is aligned
+with the large divergence direction of the beam. This
+leads to maximum in-plane resolution and maximum
+peak intensity if flout is kept small.
+The horizontal-surface-normal condition can be
+written in the a-axis frame as
+E2X~S
+
+A-1
+
+-0.
+
+(21)
+
+MARTIN LOHMEIER
+
+5. Detector angle ii
+
+711
+
+or, written in components:
+
+The first angle to be calculated is the detector angle
+3 because this can be done regardless of the mode of
+operation of the diffractometer. Equation (11) can be
+written as H~ = Q~. The lengths of these vectors have
+to be equal. Since f2, X and • are unitary, this gives
+H 2 = H 2 = I(Ar -- A-'
+
+AND ELIAS VLIEG
+
+)Ki, lab]2 .
+
+(22)
+
+This can be evaluated as
+
+(l/K), n ~ 2,
+
+_,<d
+
+['cos co sin 6 cos 7 - sin co(cos 6 cos 7 + cos o07
+= -|sin co sin 6 cos 7 + cos co(cos 6 cos 7 - cos 00J.
+!
+[_
+sin 7 + sin
+(31)
+
+H ,z = 2K2(1 - cos 6 cos 7 cos ~ + sin 7 sin 00
+(23)
+or
+
+6 = arccos {[1 - Hz/(2K 2) + sin ~, sin ~]
+x [cos ~, cos ~ ] - t } .
+
+(24)
+
+Given the reflection H = h k l , the settings of the
+rotary table ~ and the out-of-plane detector angle 7,
+one can calculate 6 from (24). Note, however, that
+and 7 will depend on the operation mode.
+The scattering angle, 20, can now be calculated as
+follows:
+
+E°l°][
+
+cos 20 = K f • K i / K 2 = A A F 1
+
+0
+
+1
+0
+
+(25)
+
+F r o m the z c o m p o n e n t of the last equation, the
+values of ~ and 7 can be obtained, depending on
+whether flin or flout is fixed or flin -= f/out:
+fli, fixed: ~ = flin,
+7 = flout = arcsin [(H,o,a/K) - - sin flin];
+flout fixed:
+
+7 = flout,
+= flin ---- arcsin [(H~,a/K) - sin flout];
+
+fli, = flout:
+
+(32a)
+
+(32b)
+
+~ = Y = flin = flout = arcsin ( H o . a / 2 K ) .
+(32c)
+
+Note that, in all three cases, ~ equals the angle of
+incidence fl~n and 7 equals the outgoing angle flou,.
+The x and y c o m p o n e n t s of (31) can be used to
+derive an expression for co:*
+co = arctan [H~,, 2 sin 3 cos 7 - Ho. 1(cos 6 cos 7 - cos ~),
+
+or
+
+cos 2 0 = c o s c ~ c o s T c o s 6 - s i n ~ s i n T .
+
+(26)
+
+For e = 7 = 0, one obtains a four-circle diffractometer
+and (26) reduces to 20 = 6. C o m b i n i n g (24) and (26),
+one obtains"
+cos 20 = 1 - (HE/2K2),
+
+(33)
+The setting of the detector-arm angle 3 has already
+been given in §5.
+
+(27)
+
+7. Angle settings in the five- and four-circle modes
+
+from which follows
+2 sin 0 = IHI/K,
+
+(28)
+
+which is Bragg's law, if one writes [HI = 2re n / d , where
+d is the distance between two lattice planes and n is
+an integer.
+
+6. Angle settings in the z-axis mode
+In the z-axis mode, one aligns the optical surface
+n o r m a l with the diffractometer co axis by fixing q9 and
+X at
+~p = - z ,
+
+(29a)
+
+Z = - a.
+
+(29b)
+
+With these settings, the surface normal lies in the
+horizontal diffractometer plane, i.e. (21) is satisfied.
+The settings of the remaining four circles can easily
+be found by rewriting (11) in the co-axis frame:
+H~ = X~UBH
+
+H~. t sin 6 cos 7 + Ho,. 2(cos 6 cos 7 - cos ~)]
+
+= f 2 - I ( A F -- A - l ) K i , lab
+
+(30)
+
+In the five-circle mode, either ~ or 7 is fixed and the
+remaining angle 7 or ~ is set to satisfy the
+horizontal-surface-normal condition. In the fourcircle mode, both ~ and 7 can be set to fixed values,
+but the horizontal-surface-normal condition has to
+be given up.
+The calculation of the remaining four circles in the
+form given below requires the knowledge of the angle
+of incidence ilia" In cases where one wants to fix flou,
+instead, or work with the flin = flout condition, one can
+use (20) to calculate flin"
+First, procedures for the calculation of 7 and ~ are
+presented, followed by calculation schemes for the
+corresponding settings of co, Z and cp.
+
+* F o r numerical e v a l u a t i o n of ~, the f o u r - q u a d r a n t twoa r g u m e n t a r c t a n function, as i m p l e m e n t e d in m a n y m o d e r n
+compilers, should be used. We simply refer to this function as the
+arctan function subsequently.
+
+712
+
+A SIX-CIRCLE SURFACE X-RAY DIFFRACTOMETER
+
+7.1. Settings of the rotary table ~ and out-@plane
+angle 7
+
+becomes
+
+Hv'lC°Sv+H~'2sinv
+]
+COS 1" - - H~ 1 sin v) cos fli, - H~, 3 sin f l i n
+L(H,I2 cos v - H~,I sin v) sin flin + H~,3 COS fli,_]
+
+(1)[K
+
+Combining the horizontal-surface-normal condition (21) and the angle of incidence, given by (15), in
+the laboratory frame, and writing them in vector
+notation, one obtains
+
+YS
+
+[!]r 01
+=
+
+-
+
+sin
+
+L cos
+
+flin
+flin
+
+(Hv 2
+
+=
+(34)
+
+,
+
+where Y is defined by
+
+[ s,ncos, ]
+
+cos 20 -- 1
+.
+tan ~ cos 20 + sin V/cos c~
+
+v can be eliminated by combining the y and z
+components of (41) in the form
+(/)2 - - W2)
+
+Y = AY2X~.
+
+(35)
+
+The unitary matrix Y transforms the vector on the
+left-hand side of (34) into the one on the right-hand
+side. F r o m (34), one cannot uniquely calculate Y
+because an initial rotation about (0, 0, 1) or a final
+rotation about ( 0 , - s i n flin, COS fli,) would result in
+the same transformation. However, one can absorb
+this ambiguity into a single rotation angle v if Y is
+written as
+
+Y = Z-XNZYo,
+
+(36)
+
+(41)
+
+sin
+
+flin - - (/33 - - W3) COS flin :
+
+0.
+
+(42)
+
+One obtains
+[(1 - cos 20) sin
+
+flin
+
+--
+
+(Hv, a/k)] cos~
+
+Y
+--.a
+
++ cos 20 cos//in sin e = -- COS flin sin ~.
+
+(43)
+
+~c
+
+=r:b
+
+=:c
+
+Solving for c~, one obtains
+=2arctan[b+(b
+
+2+a 2-c2) 1/2,a+c].
+
+(44)
+
+Alternatively, one can solve (43) for y:
+y = - a r c s i n {cos 20 sin c~ + [tan fli,(1 - cos 20)
+
+where ¥o is a particular solution of (34). Construction
+of such a particular solution is easily accomplished
+and a suitable recipe has been given in Vlieg et al.
+(1987). Z is given by
+
+Z =
+
+[i 0
+
+c o s flin
+
+-sin
+
+flirt
+
+0]
+
+sin
+
+flin
+
+[cosy sinv
+-sinv
+0
+
+cosy
+0
+
+Thus, from (44), ~ can be calculated for a given
+such that the surface normal is horizontal. Alternatively, (45) gives the corresponding value of ? for a
+given ~.
+7.2. Settings of the sample circles 09, Z and ¢p
+
+.
+
+(38)
+
+In order to find the settings of the remaining three
+circles, the diffraction condition (11) is written in the
+form
+RH~o = Q~,
+(46)
+where H~o = U B H and
+
+The angle v can be found using the general
+diffraction equation (11). Defining
+
+Hv = Z Y o U B H ,
+
+(39)
+
+Q~ = (AF - A - 1)Ki,la b
+
+(AAF - I)
+
+.
+
+(40)
+
+=:¥
+
+v
+
+=:W
+
+Note that Hv can be directly evaluated from (39) and
+is independent of v.
+With substitution for cos c5 using (24) and (27), (40)
+
+(48)
+
+In order to derive the elements of the matrix R, a
+trick similar to that of the preceding section can be
+used by writing
+R = D-
+
+v
+
+(47)
+
+is the momentum-transfer vector in the c~-axis frame
+and the R matrix is defined as
+R = f2X~.
+
+one derives
+
+Z -~N(H,]K) =
+
+(45)
+
+(37)
+
+COS f l i n J
+
+and N is defined as
+
+N=
+
+--(1/cos flin)(Hv, 3/K)] cos 0~}.
+
+1~DRo '
+
+(49)
+
+where R0 is a particular solution of (46). D is defined
+by
+
+D(QJQ~) =
+
+(50)
+
+MARTIN
+
+LOHMEIER
+
+and ~ is given by
+t/, =
+
+[i o o 1
+cos ~
+- s i n ~,
+
+sin ~, .
+cos
+
+(51)
+
+The value of ~, can be determined from the
+angle-of-incidence condition. If one writes (15) in the
+laboratory frame,
+AD-I~DRo
+
+I01101
+
+S 0
+
+1 =-sinilia,
+
+(52)
+
+LIJLOJ
+and defines
+V = AD-
+
+(53)
+
+1
+
+and
+u = DRoS
+
+(54)
+
+,
+
+(52) becomes
+(u21/2,2 + u3 V2,3) cos ~ + (u3 I/2.2 - u: V2, L) sin
+•
+
+y
+
+•
+
+"
+
+--.a
+
+'~r
+
+-.b
+
+= sin ill, - V2, l u l ,
+•
+
+•
+
+(55)
+
+~c
+which is of the same form as (43) and can be solved
+using (44).
+~p having been found, R can be evaluated using (49).
+Writing (48) in components [cf. Busing & Levy
+(1967)]"
+
+I
+
+cos to cos ~ cos ~0 - sin to sin q~
+R = ]sin to cos Xcos ~o - cos to sin tp
+/
+L
+sin Xcos ~0
+cos to cos Xsin ~o + sin to cos ~0
+cos co cos ~0 - sin to cos Xsin tp
+- s i n Xsin ~0
+
+AND
+
+conditions and the horizontal-surface-normal condition. In practice, however, one encounters physical
+limits on some of the six circles, which necessitate the
+finding of an 'optimum mode' for a given scattering
+situation. The range of the X circle, for instance, is
+typically restricted by the fact that the U H V chamber
+(which may be heavy and which can have many
+flanges holding other U H V equipment) is coupled to
+the Z circle by elastic bellows. Although in situ X circles
+are currently not yet available, these will also have
+limited ranges owing to size/weight restrictions of the
+U H V chamber. Fitting the vacuum chamber directly
+to the X circle, on the other hand, places severe weight
+limits on the vacuum chamber (Feidenhans'l, 1986),
+which compromises in situ X-ray measurements, for
+example, during sample preparation. For this reason,
+latest-generation surface X-ray diffractometers are
+mostly of the bellows type.
+The effective ranges of both the ~ and y circles are
+limited by the dimensions of the beryllium window
+through which the X-ray beams enter and leave the
+U H V chamber. Fitting beryllium windows to
+stainless-steel chambers is a rather delicate and
+expensive matter and thus cannot be done in
+arbitrarily large dimensions.
+As pointed out in the Introduction, one of the most
+important boundary conditions in surface X-ray
+diffraction is to work at either grazing angles of
+incidence flirt -- typically of the order of 1° - or small
+outgoing angles flout. The three angles mentioned
+above (c~,), and X) mainly affect the maximum
+perpendicular momentum transfer q± that can be
+reached by the diffractometer in the different modes.
+In the z-axis mode, this can be seen from (32), which
+gives the following limits for small incoming and small
+outgoing angles:
+ilia small:
+
+sin co sin XJ,
+cos X
+
+max.
+q±.¢/K
+=/-/max/k"
+• , q~, 3 / , x
+,~,
+--
+
+1
+
+cos to sin Z [
+-
+
+713
+
+ELIAS VLIEG
+
+/_/max/k"
+• • to, 3/•"
+
+= sin ~)max-~- sin ilia
+
+(56)
+
+sin ~max;
+
+one obtains the settings of the three circles co, X and
+q~ a s
+
+flout small"
+
+_max,v ~
+q.l..~p/l~
+
+(60a)
+
+l_/max/k"
+••~.31•,
+
+,.~ / _ / m a x / k "
+
+co -- - a r c t a n [R23, R13]
+
+(57)
+
+X = arcsin (R23 + R23) 1/2
+
+(58)
+
+q~ = arctan [ - R 3 2 , - R 3 ~ ] ,
+
+(59)
+
+where the more obvious ;~ = arccos (R33) has not been
+used for numerical reasons.
+8. D i s c u s s i o n
+
+Both the z-axis and five-circle modes can be used to
+measure diffraction intensities at a given set (h, k, l)
+while simultaneously satisfying one of the three fl
+
+__
+
+• • to,
+
+3/•"
+
+= sin t~max -~- sin flo,t
+-~ sin
+
+0~ma x.
+
+(60b)
+
+H~,,3 ~ Hto,3 is exact if the orientation angle a equals
+zero. In most cases, a will be small enough to make
+this a good approximation.
+In the five-circle mode, the following approximations hold:
+flin -~ ~ - ~,
+
+(61a)
+
+flout ' ~ ~ -Jr- ~(,
+
+(61b)
+
+714
+
+A SIX-CIRCLE SURFACE X-RAY DIFFRACTOMETER
+
+from which, in c o m b i n a t i o n with (20), the following
+restrictions can be derived:
+flin s m a l l :
+
+-max/v
+
+X ~ ~, q±, ~o/-~
+= H m~3~/K
+
+"-~ sin (~max ..{_]zmax[);
+flout small:
+
+(62a)
+
+_max/r.-"
+
+Z ~- - - ~ , q±,q,I t "
+__ T-/max / / . (
+- - ~.~ ~, 3/.tx
+
+-~ sin (~max + [xmax[).
+
+(62b)
+
+In the last approximation, use has l~een made of the
+fact that Z can assume positive as well as negative
+values.
+One can now use (60) and (62) to characterize the
+different operation modes with respect to the
+accessible reciprocal-space region. The range available
+in the five-circle mode given by Vlieg et al. (1987) is
+obtained by taking ~, = 0. In that case, Z ~- 0 for small
+flout, leading to q±.
+_max/v
+~,/_,x ~_ sin (~max). The smallest range
+available is in this five-circle (~, = 0) mode, for small
+fli,. For small flout, the range is approximately the
+same as for the z-axis geometry if cxmax= ~)max. O f
+course, one can reach larger q± in the z-axis mode,
+but only at the expense of having both fli. and flout
+large. The six-circle geometry, on the other hand,
+allows for large q± and small fli, or flout at the same
+time. As a numerical example, we discuss the case
+where emax= ~max and 0cmax and ~max have typical
+values of 25 and 15 °, respectively. C o m p a r e d to the
+five-circle (~, = 0) mode at small flin, with this
+geometry one gains an increase in available
+
+O~ = l]in
+
+l space of about
+(a) 60% when either working at small flout in the
+~,--0 m o d e or working in the z-axis mode with
+flirt or flout small and
+(b) 150% when working in the six-circle mode at
+either small flin or small floutIn the z-axis geometry, the two weakest circles
+(X and ~) are fixed. Therefore, there are mechanical
+advantages to working in the z-axis mode until one
+of the two limits of (60) is met. One can then set either
+or ~, to its m a x i m u m value and compute the
+corresponding angle ~, or ~ as well as 09, ~ and ~0 in
+the five-circle mode. Thus, by using X and ~o in the
+five-circle mode, with ~, or ~ at its m a x i m u m value, it
+is possible to reach larger q± values than in the z-axis
+mode, where X is fixed. This is illustrated in Fig. 3.
+Instead of using a full ~, circle, one might, for
+simplicity, even consider two independent detectors,
+positioned at 7 = 0 and.7 = Ymax"This will also m a k e
+larger q± values accessible. The five-circle mode with
+an appropriate ;t range will smoothly join the two
+detector positions. This Option is currently being
+implemented at the surface X-ray diffractometer at
+D a r e s b u r y Laboratory, England (Norris, Taylor,
+Moore & Harris, 1987).
+The five-circle mode offers one more possibility: as
+one of the six circles (~ or ~,) is fixed beforehand, one
+could use this last degree of freedom to optimize
+motor movements between two scans at different
+(h, k, I) values. Because all angle-determining equations are given in closed form, computation of the five
+angles is very fast, even on a simple PC, while circle
+rotation times consume a growing fraction of the
+
+~in
+
+~in
+
+js"
+
+oo,
+(a)
+(b)
+(c)
+Fig. 3. Schematic top-plane view of the different geometries for the case of a large qi, a small incoming angle ilia and a large outgoing
+angle flout- The incoming and outgoing X-ray beams should pass through the beryllium windows (dashed lines), but may become
+obstructed by the UHV chamber (thick solid lines). The diffracting sample is drawn as a shaded block. (a) z-axis geometry.
+cc= Bin, ~' = flo.t- The outgoing beam is blocked. (b) Five-circle (~, = 0) geometry. Outgoing beam and UHV chamber are aligned,
+X rotates the sample with respect to the chamber. The incoming beam is blocked. (c) Five-circle (~, :~ 0) geometry, ct is set to its
+maximum value, such that the incoming beam is just not blocked by the chamber, y and ~ define the outgoing angle flou,.Note that the
+outgoing beam is also not blocked.
+
+MARTIN LOHMEIER AND ELIAS VLIEG
+available beam time with the advent of ever more
+powerful synchrotron X-ray sources. One could thus
+minimize this time numerically within the constraints
+of the three angles ~, 7 and Z.
+
+Under the mirror transformation, the incomingand outgoing-X-ray-beam vectors are changed:
+
+mKi,lab
+
+Ki, lab -~ KIi, lab =
+K f,
+
+Many thanks are due to Ing. H. G. Ficke for
+preparing the diffractometer sketches. Professor
+Dr J. F. Van der Veen is acknowledged for a critical
+reading of the manuscript. This work is part of the
+research program of the Stichting voor Fundamenteel
+Onderzoek der Materie (FOM) and is made possible
+by financial support from the Nederlandse Organisatie voor Wetenschappelijk Onderzoek (NWO) and the
+Netherlands Technology Foundation.
+
+715
+
+(64a)
+
+lab ~ K~r.lab = MK/. lab"
+
+(64b)
+
+All rotation matrices, A, A, F, [2, X and 4) [(6)], and
+the two orientation matrices, Z and T [(14)], are
+altered according to
+W~
+
+W' = M W M - 1
+
+(65)
+
+= M WM,
+
+where M = M - l has been used. Note that neither U B
+nor H are changed.
+The diffraction condition (11) then becomes
+MQMMXMM~MUBH
+= (MAMMFM
+
+APPENDIX A
+A mirror image of the diffractometer
+
+,:::, £2X ~ M U B H
+
+The calculations carried out so far only apply to one
+specific diffractometer set-up, in which the X-ray beam
+enters the sample along the positi~,e y coordinate of
+the laboratory frame. In order to demonstrate how
+these concepts can be adapted to a different
+diffractometer or beam-line geometry, the necessary
+changes for one common example are described here.
+An obvious variant of the set-up as defined above is
+a mirror image of the diffractometer, in which all the
+circles and the beam line and detector orientations are
+mirrored in the laboratory-frame x z plane. This
+mirror image is illustrated in Fig. 4. The transformation can most easily be mediated by a mirror matrix
+M:
+M=
+
+-1
+0
+
+-- M A - 1 M ) M K i , lab
+
+.
+
+= ( A F - A - l)Ki. lab,
+
+(66)
+
+where M 2 = I has been used in the last step.
+Correspondingly, (20) becomes
+sin flin + sin flout = ( 1 / K ) ( S - ~ M U B H ) 3
+
+M~MMXMM~MMSM
+
+E!I
+
+MA-
+
+XMM
+
+1
+
+L0j
+
+= - sin ~in
+
+(63)
+
+CJ
+
+:~j ~I~x'
+
+(67)
+
+The angle-of-incidence and outgoing-angle conditions, (15) and (16), do not change, which can easily
+be proved, for example, for the angle of incidence:
+
+= -- sin flin,
+x
+
+•
+
+¢O'~
+
+jJ
+
+/j *tec,or
+
+(68)
+
+where M(0, 0, 1) = (0, 0, 1) has been used.
+Similarly, the horizontal-surface-normal condition,
+(21), is invariant. Therefore, under the mirror
+transformation defined by (64) and (65), the only
+noninvariant term is U B . Thus, the angle calculations
+derived in this paper are also valid for the mirrored
+diffractometer, provided U B is changed into M UB.
+
+References
+
+/
+Fig. 4. Mirror image of the diffractometer. All the circles of Fig. 1
+are mirrored in the xz plane.
+
+BLOCH, J. M. (1985). J. Appl. Cryst. 18, 33-36.
+BRENNAN, S. • EISENBERGER, P. (1984). Nucl. Instrum.
+Methods, A222, 164-167.
+BusING, W. R. & LEVY,H. A. (1967). Acta Cryst. 22, 457-464.
+Certified Scientific Software (1992). SPEC. PO Box 802168,
+Chicago, IL 60680, USA.
+FEIDENHANS'L, R. (1986). PhD thesis, Riso National
+Laboratory, DK-4000 Roskilde, Denmark.
+
+716
+
+A SIX-CIRCLE SURFACE X-RAY DIFFRACTOMETER
+
+FEIDENHANS'L,R. (1989). Surf Sci. Rep. 10, 105-188.
+FERRER, S. (1992). Personal communication.
+GIBBS, D., OCKO, B. M., ZEHNER, D. M. & MOCHRIE,
+S. G. J. (1990). Phys. Rev. B, 42, 7330-7334.
+MOCHRIE, S. G. J. (1988). J. Appl. Cryst. 21, 1-3.
+NORRIS, C., TAYLOR,J. S. G., MOORE, P. R. & HARRIS,N. W.
+(1987). Daresbury Annual Report No. 124. SERC
+Daresbury Laboratory, Warrington WA4 4AD, England.
+ROBINSON, I. K. (1988a). Rev. Sci. Instrum. 60, 1541-1544.
+ROBINSON, I. K. (1988b). Aust. J. Phys. 41, 359-367.
+
+STOUT, G. H. & JENSEN, L. H. (1968). X-ray Structure
+Determination. New York: Macmillan.
+TAKAHASHI,T., NAKATANI,S., TAKAHASHI,M., ZHANG, X. W.
+& ANDO, M. (1993). Construction of Six-Circle Surface
+X-ray Diffractometer. Proceedings of IVC-12/ICSS-8,
+The Hague, 1992. Surf Sci. In the press.
+VLIEG, E., ROBINSON,I. K. & KERN, K. (1990). Surf Sci. 233,
+248-254.
+VLIEG, E., VANDER VEEN,J. F., MACDONALD,J. E. & MILLER,
+M. (1987). J. Appl. Cryst. 20, 330-337.
+
+

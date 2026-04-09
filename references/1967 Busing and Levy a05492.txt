@@ -1,0 +1,1190 @@
+457
+
+Acta Cryst. (1967). 22, 457
+
+Angle Calculations for 3- and 4- Circle X-ray and Neutron Diffraetometers*
+BY WILLIAM R. BUSING AND HENRI A. LEVY
+
+Chemistry Division, Oak Ridge National Laboratory, Oak Ridge, Tennessee 37830, U.S.A.
+(Received 13 June 1966)
+Methods are derived for calculations useful in the operation of 3- and 4-circle X-ray or neutron singlecrystal diffractometers. These include: (1) establishing the sample orientation from the cell parameters
+and the observed angles for two reflections, or from the observed angles for three reflections only, (2)
+calculating the angles for observing a given reflection either in a special setting or at a specified azimuthal
+angle, (3) obtaining the vectors needed for calculating absorption corrections, and (4) u sing observations of several reflections to refine cell and orientation parameters by the method of le ast squares.
+It appears that 3- and 4-circle X-ray or neutron diffractometers will be used increasingly in the next few years.
+For this reason it seems desirable to present in a compact way some mathematical procedures that can be
+used with these instruments to establish sample orientation and to calculate setting angles. All of the techniques described here have been tested and found useful
+in our work with the Oak Ridge automatic 3-circle
+neutron diffractometer (Busing, Smith, Peterson &
+Levy, 1964) and the Oak Ridge computer-controlled
+4-circle X-ray diffractometer (Busing, Ellison & Levy,
+1965). Some of these calculations have been discussed
+in a less general way by others (Furnas & Harker,
+1955; Arndt & Phillips, 1957; Willis, 1961 ; Santoro &
+Zocchi, 1964; Wooster, 1964; Rollett, 1965).
+Calculations of this type will almost certainly be
+performed by means of a high-speed computer, and
+algorithms for many of the procedures are presented
+elsewhere (Busing & Levy, 1966). Matrix arithmetic is
+used extensively because the expressions in expanded
+form would often be too cumbersome to be useful.
+Definition of diffractometer angles
+
+The instrument arrangement which we will take as
+standard is illustrated schematically in Fig. 1(a), which
+shows the instrument axis as vertical. Perpendicular to
+this axis and passing through the instrument center is
+a horizontal plane. The primary beam lies in this horizontal plane and is directed at the sample which is
+located at the instrument center. The counter also lies
+in the horizontal plane and rotates about the instrument axis to make an angle 20 with the primary beam
+direction. The instrument angles may be adjusted so
+that a diffracted beam is horizontal and enters the center of the counter.
+Moving the counter through an angle of 20 causes
+the crystal orienter and sample to turn through an
+angle of 0 about the vertical axis. The orienter may also
+be rotated independently through an additional angle co
+* Research sponsored by the U.S. Atomic Energy Commission under contract with the Union Carbide Corporation.
+
+about the same axis. In this way the 2' axis which lies
+in the horizontal plane is positioned to make an angle
+of 0+6o with the primary beam direction. The reflecting-plane normal (scattering vector), which bisects the
+angle between the diffracted beam and the reverse
+primary beam, thus makes an angle of co with the plane
+of the 2' ring.
+The ~0 shaft is supported from the 2' ring which permits the (0 axis to be set at an angle 2" from the vertical
+instrument axis. The sample is assumed to be rigidly
+attached to the ~0 shaft so that it can be turned about
+this axis.
+The diffractometer with all angles set to zero is
+shown schematically in Fig. l(b). The senses of O, 20,
+co, and 2' are defined by Fig. l(a), which shows the instrument with these angles in the first quadrant. The
+zero position for ~0is chosen arbitrarily, and the figure
+shows the direction of rotation which increases this
+angle.
+Also shown in Fig. l(a) is the angle ~u which measures
+the rotation of the sample about the normal to the
+reflecting plane of interest. With this type of diffractometer ~u motion is achieved not by the rotation of a
+single shaft but rather as the result of a combination
+of changes in co, 2", and (p. The choice of zero for gt will
+be discussed below.
+These definitions will be assumed throughout this
+paper, but the results can be applied to instruments
+with other conventions by making the appropriate
+transformations. The 3-circle diffractometer can usually
+be regarded as a special case for which co is constrained
+to be zero.
+Coordinate transformations
+Let v be the column vector describing some physical
+vector v in terms of the right-handed reciprocal lattice
+vectors b~ so that
+3
+
+v= Z ribs.
+
+(1)
+
+i=1
+
+It will be convenient to define several systems of righthanded cartesian axes which may also be used to describe v.
+
+458
+
+ANGLE CALCULATIONS
+
+F O R 3- A N D 4 - C I R C L E D I F F R A C T O M E T E R S
+
+Let vc be the description in terms of the crystal cartesian axes which are attached in some way to the
+reciprocal lattice. If we choose the x axis parallel to b~,
+the y axis in the plane of bl and b2, and the z axis
+perpendicular to that plane, then
+ve = B v
+where
+B=
+
+(! 1 b2 cOSfl3
+b2 sin f13
+0
+
+(2)
+
+b3 cOsfl2
+1/a3
+
+)
+
+- b3 sin/32 cos ~1 •
+
+(3)
+
+Here the ai's and ei's and the b~'s and fl~'s are the direct
+and reciprocal lattice parameters, respectively. This expression is related to transformations discussed by
+Patterson (1959a) and by Rollett (1965), and although
+our crystal cartesian system is different from those
+chosen by these authors, nothing in this paper except
+the above expression for matrix B depends upon this
+choice.
+Let the ~0-axis system be a set of cartesian axes rigidly
+attached to the ~0 shaft of the instrument. When all instrument angles are set to zero this system has the
+orientation shown in Fig. l(b) with the x axis along the
+scattering vector, the y axis in the direction of the
+primary beam, and the z axis in the vertical instrumentaxis direction.
+Let U be the orthogonal matrix which relates this
+~0-axis system to the crystal cartesian system so that
+% = U re.
+
+(4)
+
+tached to the counter shaft. Again these cartesian axes
+will be chosen to coincide with the ~0-axis system when
+all the instrument angles are zero. A vector v is transformed to these systems as follows:
+v t = O v0=N v~o
+(11)
+V2o=O v o = M vo,
+(12)
+where
+O=
+
+N=Of~=
+with v = c o + 0 ,
+and
+M=t~ ~ =
+
+-sin 0
+0
+
+(cosy
+sinv
+- s i n v cosv
+0
+0
+
+where
+*=
+
+[ cos(o s i n q
+l-si0n ~0 cos~,
+0
+(
+
+coax
+
+X=
+\-sinz
+
+(s)
+(6)
+(7)
+
+0\
+
+0 sin0ZI
+1
+0 cos,~/,
+
+f~=
+
+i)
+
+(14)
+
+-sin~u
+0
+
+cos/~
+0
+
+(15)
+
+with/~ = co- O.
+All angles except Z can be considered to be left-handed
+rotations about their respective axes.
+
+/ - .......
+PRIMARY
+
+/
+
+/
+I/
+
+I
+
+I
+
+i
+
+(o)
+
+/
+
+~
+
+.IL._~,,-
+
+(8)
+
+(9)
+
+U
+(b)
+
+and
+cos co sin o9 ! )
+- s i n o 9 cos o9
+0
+0
+.
+
+(13)
+,
+
+(cos. sin.
+
+U will be called the orientation matrix since it depends
+on the way in which the crystal has been mounted and
+also on the arc settings if a goniometer head is used.
+U may readily be derived for certain special orientations, and in later sections we will consider general
+ways of obtaining U.
+In a similar way let us define three more cartesian
+systems attached to the Z, co, and 0 axes, respectively,
+and coincident with the ~-axis system when all instrument angles are zero. The vector I, is transformed to
+these systems as follows:
+
+vx=~ % ,
+vo,=X vx ,
+v0 = f~ vo,,
+
+cosO
+0
+
+(10)
+
+Finally let us define a laboratory system fixed with respect to the primary beam and a 20-axis system at-
+
+Fig. ]. Schematic representation of a 4-circle diEractometer.
+(a) The configuration when each instrument angle has a value
+in the first quadrant. (b) The instrument with all angles set
+to zero. The coordinate axes are those of the ~0-axis, z-axis,
+co-axis, 0-axis, 20-axis, and laboratory systems which are
+all coincident under these conditions.
+
+WILLIAM
+
+R. B U S I N G A N D H E N R I
+
+Throughout this paper we will assume the following
+ideal conditions: a perfect diffractometer, a centered
+point sample with no mosaic spread, and a point
+source of monochromatic radiation. The deviations
+from these assumptions which are found in practice
+usually do not invalidate the calculations to be described. One exception is the presence of the a-doublet
+in the X-ray spectrum, the effect of which will be mentioned in the section on least-squares refinement.
+To observe a reflection in the ideal diffractometer
+setting shown in Fig. 1(a) it is necessary for 0 to satisfy
+the Bragg equation and for the plane normal to lie
+along the x axis of the 0 coordinate system. If h, k,
+and l are the indices of the reflecting plane then the corresponding column vector in the reciprocal lattice system is
+
+The length q of this vector which is the reciprocal of
+the interplanar spacing i n / k is readily found from its
+components in any one of our cartesian systems. For
+example
+q=(h~ + h22 + h23)÷
+(17)
+where
+h c = B h.
+The Bragg equation is then
+(18)
+
+The plane normal will have the desired direction if
+h0=~ X • U B h
+
+(19)
+
+has the form
+
+Equations (17) to (20) can be regarded as the fundamental equations for this diffractometer.
+
+u~=
+
+cos co cos Z cos y - s i n co sin y \
+cos co cos,z sin y + s i n co cos y )
+cos co sin Z
+
+We will now show how the orientation matrix U can
+be obtained from the observation of two reflections
+from non-parallel planes of known indices provided
+that the cell parameters are known. For reasons which
+will become apparent we will call these two reflections
+the primary and secondary orienting reflections. Let
+their indices be hi and h2, respectively.
+From the observation of the instrument angles co, Z,
+and y which center the diffracted beam in the counter
+we can obtain u~, the description in the y-axis system
+of a unit vector which has the direction of the plane
+normal:
+(21)
+
+(22)
+
+In this way two unit vectors ulv and u2v can be obtained from the observed angles of the primary and
+secondary orienting reflections, respectively.
+Since the indices and cell parameters are known we
+can calculate the scattering vectors in the crystal cartesian system:
+hie = B hi
+}
+(23)
+h2e = B h2.
+Ideally the desired matrix U should perform the transformations
+h l ~ = U hlc
+}
+and
+(24)
+h2~ = U h2c,
+so that the calculated hl~ and h2~ have the directions
+of the observed ux~ and u2,, respectively. However, because of experimental errors in the angle measurements
+or uncertainties in the cell parameters, it is not in
+general possible to find an orthogonal matrix U which
+satisfies both conditions. That is to say, the angle subtended by hlc and h2c may in general differ slightly
+from that subtended by u~ and u2~.
+In order to avoid this difficulty we will require that
+h~ be parallel to u~ as before, but h2~ will only be constrained to lie in the plane of u1~ and u2~. Thus the
+primary reflection determines the direction of a vector
+in the crystal, and the secondary reflection establishes
+an angle of rotation about this axis.
+Define a right-handed orthogonal unit-vector triple,
+tic, t2c, t3c, in the crystal cartesian system so that tic is
+parallel to hie, t2c lies in the plane of hlc and h2c, and
+t3c is perpendicular to this plane. Define another such
+triple, t~, t2~, t3~, in the y-axis system based in the
+same way on u~ and u2~. Then, since these two unitvector triples can be exactly superimposed on each
+other, the desired orthogonal matrix U will satisfy exactly the equations
+
+tn~ = U tnc; n = 1, 2, 3.
+Evaluating the orientation matrix
+
+u~=~X~u0=~X~
+
+459
+
+or in expanded form:
+
+Basic diffractometer equations
+
+sin 0 = 2q/2.
+
+A. LEVY
+
+(25)
+
+These three vector equations can be written as one
+matrix equation
+T~ = U Tc
+(26)
+where Tc is the matrix with columns tic, tzc, and t3e and
+T, is similarly constructed from tl,, t2,, and t3,. Then
+U = T , T c -1 = T,'Fc
+
+(27)
+
+since Te can be shown to be orthogonal.
+A procedure for use
+when the lattice parameters are unknown
+
+When the unit-ceU parameters are unknown it is still
+possible to obtain the matrix UB if the setting angles
+can be observed for three reflections with known (or
+assumed) indices. Given 20~, co~, Xt, and y~ for reflec-
+
+460
+
+ANGLE
+
+CALCULATIONS
+
+F O R 3- A N D 4 - C I R C L E D I F F R A C T O M E T E R S
+
+where ule is obtained by equation (22). For each of the
+three reflections the matrix UB must perform the transformation
+hie = U B hi,
+(29)
+
+the only position available with most three-circle instruments.
+Assume that the diffractometer initially has all angles
+set to zero. The vector h e can be brought to the scattering position by first rotating p to bring it into the plane
+of the Z ring and then changing Z to bring it to the
+horizontal plane. The required angle changes are
+
+where hi is the vector of indices. Then if H e is a matrix
+made up of the three column vectors hi e, and if H is
+similarly constructed from hi, we have
+
+and
+
+tion i, we can compute the scattering vector in the
+~0-axis system"
+
+hie = (2sin 01/2)ui e ,
+
+(28)
+
+H~ = U B H
+
+(30)
+
+U B = H e H -1 .
+
+(31)
+
+and
+The reflections chosen must correspond to reciprocal
+lattice vectors which are not coplanar or the matrix H
+will be singular. The indices should be assigned so that
+the vectors can be described with reference to a righthanded coordinate system, and it can be shown that
+the determinant IU BI (which has an absolute value
+equal to the unit cell volume) will be positive if and
+only if this condition is met.
+When the matrix U B has been obtained it is possible to derive from it the corresponding cell parameters. Let us compute the matrix
+UBUB=BUUB=BB.
+It can be shown that
+
+(32)
+
+g B = G -x
+
+(33)
+
+where G -1 is the reciprocal metric tensor with elements
+(G-1)ij=bi
+
+(34)
+
+. bj .
+
+Then G is the metric tensor (see, e.g. Patterson, 1959b)
+with elements
+Gij"= a t . aj
+(35)
+and the direct lattice parameters are given by:
+
+at= G~t
+
+}
+
+and
+
+(36)
+
+~0= atan (he2, he1)
+
+z = a t a n [he3' (hel
+2 +he2)
+2 ].
+
+(38)
+
+In the above equations and throughout this paper
+the expression
+c~=atan (y, x)
+(39)
+defines an angle a = arc tan (y/x) in the quadrant for
+which the signs of sin c~and cos e are those of y and x,
+respectively.
+The expressions given above yield angles with
+-90°_<Z_<90 ° because the square root is taken as
+positive. An alternative setting
+fp'= 180 o + ~0 }
+
+(40)
+
+Z'=180°-Z
+corresponds to a rotation of 180 ° about the scattering
+vector (~u' = 180 o + V).
+In the bisecting position the Bragg angle which can
+be reached may be limited by the fact that the Z ring
+lies between the counter and the source. Higher Bragg
+angles can be reached if o) is allowed to take values
+which turn the Z ring past the counter so that its plane
+is more or less parallel to the reflecting plane. Usually
+the greatest range can be obtained by constraining X
+to be 90 o.
+Consider the instrument with 2' = 90 o and the other
+angles set to zero. The vector h e can be brought into
+the horizontal plane by rotating ~0 and it can then be
+brought to the scattering position by changing co. The
+expressions for these angles are
+
+cos eel= Gje/aja~; i # j # k # i.
+
+~0= atan (he1, - he2)
+and
+
+Angle calculations for special cases
+
+[
+c o = a t a n [ - (hel
+2 + he2)
+2 -~, h~o3].
+
+Once the matrix UB has been evaluated it is possible
+to obtain
+he = U B h
+
+/
+J
+
+(37)
+
+for any set of indices h, and ways of computing instrument angles which bring this vector into the ideal
+reflecting position will now be discussed. With a fourcircle instrument this reflecting condition can be established in an unlimited number of ways corresponding
+to various values of V, the angle of rotation of the
+sample about the scattering vector. It will be useful
+to consider two special cases in which one of the instrument angles is fixed at a convenient value.
+First let us consider the bisecting position in which
+co is constrained to be zero so that the plane of the
+2" ring bisects the angle defined by the reverse primary
+and diffracted beams. This arrangement permits access
+to all reflections with 0 below an upper limit, and it is
+
+(41)
+
+J
+
+Compared with the bisecting position these settings
+correspond to a 90 ° rotation about the scattering
+vector.
+Reflections with vectors nearly parallel to the ~a axis
+are inaccessible in this arrangement because of interference between the 2' ring and the counter or primary
+beam. The apex angles of the cones which are lost become large at low Bragg angles. Three alternative settings are available:
+(o'
+Z'
+co'
+~u'
+
+1
+
+2
+
+3
+
+180°+(o
+90°
+-co
+180°+V
+
+~0
+-90°
+180°-o)
+180°+V
+
+180°+~0
+-90°
+180°+o)
+V
+
+but the use of these may not reduce the amount of
+interference significantly.
+
+WILLIAM
+
+R. B U S I N G
+
+AND
+
+HENRI
+
+Angles for a specified azimuth
+
+We will now consider the problem of computing the
+diffractometer settings for some specified value of the
+azimuthal angle, V. Let us define an instrument-angle
+matrix
+R=K~ X @
+(42)
+which transforms a vector from the (a-axis system to
+the 0-axis system. For the vector to be in the scattering
+position we must have
+R h~ = h 0 =
+
+R0 = ~ 0 X0 ~ 0 .
+
+(44)
+
+In order to rotate the sample about the reflecting-plane
+normal through an angle ~, measured from this zero
+position we generate a new matrix
+R = ~F R0
+
+(45)
+
+where
+• --
+
+(1
+0
+0
+
+0
+cos ~
+-sin V
+
+0 )
+sin ~
+cosv
+
+cos o9 cos Z cos ~ - sin o9 sin ~0
+- sin 09 cos 2" cos t # - cos 09 sin
+- sin Z cos (a
+
+R=
+
+( sin
+T-cos ~
+0
+
+Tsin 9
+0
+
+0)
+
+0
++1
+
+(51)
+
+and we have
+(a = atan ( - Rib R12)
+and
+
+o9_--=90 °
+
+l
+l
+
+(52)
+
+The transformations (49) are still valid for this singular
+case.
+N o w let us consider in more detail the choice of the
+instrument setting at which we define ~u to be zero.
+We could, for example, use the bisecting position as a
+reference, and then we would have
+(53)
+
+since COo= 0 . But this choice has the disadvantage of
+depending on the sample mounting so that the definition of V would not in general be comparable for different specimens. To overcome this limitation we will
+describe a way of defining the reference position in
+terms of the crystal lattice itself.
+
+cos co cos Z sin ~ + sin o9 cos
+- sin 09 cos Z sin (p + cos 09 cos
+- sin 2' sin (a
+
+and we see that
+
+(5o)
+
+Thus the co and (0 motions have become redundant,
+and this can easily be understood in terms of the instrument geometry when Z is zero or 180°. It can be
+shown that the continuity of an azimuthal scan can
+best be attained by selecting co = 90 ° for this singular
+case. The matrix then becomes
+
+R0 = X0 ~ o
+
+(46)
+
+The problem then is to extract from this orthogonal
+matrix R the values of the instrument angles co, Z, and ~0
+to which it corresponds.
+Expanding equation (42) we have:
+
+R=
+
+461
+
+(_+cos(co_+(a) s i n ( c o + ~ ) i )
+-T-sin (co _+(a) cos (co + q~)
+0
+0 _+
+
+R=
+
+(43)
+
+Choose some diffractometer setting which satisfies
+this condition and define V = 0 for this configuration.
+We can then evaluate
+
+A. L E V Y
+
+cos co s i n ! )
+- s i n 09 sin
+cos
+
+(47)
+
+(The more obvious expression, 2"= arc cos R33, is not
+used because round-off could cause excessive errors in
+2' when R33-~ + 1.) By taking the positive square root
+in the expression for Z we are choosing sin Z > 0 so that
+0 - < Z < 180 °. An equally valid solution for the same
+value of V is
+Z'=-Z
+}
+~0'= 180 ° + q~
+(49)
+co'= 1 8 0 ° + o 9 .
+
+Let h be the plane normal of the reflection to be
+observed and let us specify a reference vector h0 which
+is not parallel to h. Then choose as the zero of ~, that
+setting for which h lies in the scattering direction and
+h0 lies in the horizontal plane of the instrument on the
+same side as the diffracted beam (i.e., so that in the
+0-axis system its z component is zero and its y component is positive).
+The computation of R0 based on this definition is
+analogous to the determination of U described above.
+The vectors
+ho = U B h
+}
+and
+(54)
+h0~ = U B h0
+
+In practice it is usually the range of co which is limited
+by the mechanics of the instrument. The procedure
+should be to compute angles using equations (48),
+test co, and make the transformations (49) if it is out
+of range. If both solutions are out of range then the
+specified value of V is not accessible for this reflection.
+A singular case occurs if R33 = + 1. Then cos Z = + 1,
+sin Z = 0 , and the matrix becomes
+
+are first evaluated. Then the matrix T o is constructed
+with columns equal to ti~, t2~, and t3~, the components
+of a right-handed orthogonal unit vector triple defined
+to have tl~0 parallel to h~, t2~o in the plane of h~ and
+h0~, and t3~ perpendicular to this plane.
+Now we note that our definition of zero V requires
+the orthogonal matrix R0 to rotate this unit vector
+triple into coincidence with the axes of the 0 coordinate
+
+and
+
+AC22-2
+
+z = a t a n [(R]I + R322)~', R33], ]
+~0= atan ( - R32, - R 3 3 ,
+l
+09 = atan (R13, - R23) •
+
+(48)
+
+462
+
+A N G L E C A L C U L A T I O N S F O R 3- A N D 4 - C I R C L E D I F F R A C T O M E T E R S
+
+system. The matrix which describes these axes in the
+0-system is just the identity matrix so that we have
+RoT~ = 1
+
+and
+R0=T~-I = ' r ¢ .
+
+(55)
+
+Vectors for calculating absorption corrections
+
+In order to calculate absorption corrections it is generally necessary to compute for each reflection the
+direction cosines of the diffracted beam and of the
+reverse primary beam referred to some coordinate system in which the sample shape is described (see, e.g.,
+Busing & Levy, 1957). The (0-axis system may often
+be a suitable reference system, and the required direction cosines are just the components of the appropriate
+unit vectors in this system. Let p and d represent unit
+vectors in the primary and diffracted beam directions,
+respectively, so that
+Pl = d20 =
+
+(Z)
+
+(56)
+
+Then the required vectors are
+and
+
+- p ~ = - q ) X N p~
+~ - ~
+d~,=(I) X M de0,
+
+/
+l
+
+(57)
+
+and expanding we obtain
+
+(sin(O+co)cosT.cos(o+cos(O+co)sin~)
+sin (0 + co) cos 7. sin (O~ cos (0 + co) cos
+sin (0 + co) sin 2:
+
+(58)
+
+where the upper and lower signs apply to -p~, and do,
+respectively.
+If a sample has natural faces it may be preferable to
+refer its description to the crystal cartesian system. In
+this case the desired vectors, - p c and de, are readily
+obtained by multiplying - p ~ and dr by [l.
+Refinement of lattice and orientation parameters
+
+So far we have established the matrix UB either from
+known cell parameters and observations of two reflections or from observations of three reflections alone.
+A better procedure would be to observe angles for
+several reflections and to use the method of leastsquares to refine the cell parameters and orientation
+parameters simultaneously. Computer programs are
+available (see, e.g., Busing & Levy, 1962) which, when
+given a list of trial parameters, a set of observations,
+and a procedure for calculating the quantity comparable with these observations, will refine specified parameters by the method of least-squares. Analytical expressions for the required derivatives are not needed
+since these are computed numerically.
+The parameter list includes the three axial lengths
+and three interaxial angles of the direct unit cell. In
+some eases these will be subject to constraints imposed
+
+by the symmetry of the crystal system. Angles with
+fixed values of 90 ° or 120 ° are simply not varied in the
+least-squares procedure. Two or more parameters can
+be constrained to be equal by choosing one of them
+to be varied and setting the others equal to it. Since
+numerical derivatives are obtained by recalculating the
+function after adding an increment to the corresponding parameter, these derivatives will be correct if the
+constraint is applied immediately after each parameter
+is incremented.
+The wavelength may also be included in the parameter list since it is not always precisely known (especially
+in neutron diffraction work). It is clear, however, that
+the wavelength is redundant with the axial lengths and
+the four of these parameters cannot be adjusted simultaneously.
+The sample orientation is represented in the parameter list by the six angles cob ZI, (Ol, 0.)2, X2, and (O2 for
+the primary and secondary orienting reflections. Only
+three of these angles can be varied, however, since only
+three parameters are required to define orientation.
+The variables must include two angles of the primary
+reflection chosen to define the direction of this vector,
+and one angle of the secondary reflection chosen to
+measure rotation of the sample about this primary
+vector. For example, if cob X1, coz, and 7.2 are all near
+zero and if (Ol and (O2 differ by about 90 °, then Za, (oa,
+and 7.z or cob 7.1, and 7.2 are suitable variables.
+After refinement, the angles col, 7.a, and (Ol define the
+best estimate of the direction of ha, and the calculated
+angles for this reflection based on the new parameters
+will correspond exactly to this vector. The angles co2,
+1'2, and (O2 no longer define h2, however, because only
+one of them has been varied. Instead they represent a
+vector direction which will yield the best estimate of
+the orientation matrix U. Calculation of angles for hz
+will correctly yield the best estimate of a setting for this
+reflection, but these angles will generally not be the
+same as the refined parameters.
+A reciprocal lattice vector has three independent
+properties consisting of two directional parameters and
+a length which is related to the corresponding Bragg
+angle. We will consider six ways of observing these
+variables or combinations of them, identifying these
+ways as observations of types 1 to 6. For each type of
+observation we will show how the corresponding calculated value can be obtained from the known instrument settings and the assumed trial parameters.
+In the course of these calculations it will be convenient to distinguish the instrument dial readings and
+their matrices by the subscript d (e.g., (oa and ~ a ) ,
+since these will not in general be equal to the ideal ~.
+angles used earlier in this paper. Similarly, calculated
+angles and their matrices will be identified by the sul~
+script c.
+
+Type 1 observations
+Several ways of measuring the Bragg angle are essentially equivalent to centering the diffracted beam in the
+
+WILLIAM
+
+R. B U S I N G A N D H E N R I
+
+A. LEVY
+
+463
+
+counter and using the counter angle, 20a, as the observation. The corresponding calculated quantity is
+20c= 20 where 0 is obtained from the trial parameters
+by means of equations (17) and (18).
+
+so that the calculated angle is either
+
+Type 2 observations
+
+Here ux is obtained from the trial parameters and the ~o
+dial setting:
+ux=~a U B h/q .
+(70)
+
+If the counter angle is adjusted to center the diffracted beam horizontally in the aperture, then 20a
+may be used as an observation even though the beam
+may not be centered vertically.
+In deriving the corresponding 20e it will be useful to
+recall the diffraction equation
+d = p + 2 sin 0 u .
+
+(59)
+
+Here d, p, and u are unit vectors in the directions of
+the diffracted beam, the primary beam, and the scattering vector, respectively. Evaluating d in the laboratory
+system we obtain
+dz =
+
+u093) )
+
+[(sin z 2 0 - 4 s i n E0 2 ,
+[ cos 20
+\ 2 sin 0 u o93
+
+(60)
+
+Here dzz has been derived from the fact that dt makes
+an angle of 20 with pt which is directed along the y axis.
+The component d 1 3 is obtained from the diffraction
+equation (59) remembering that pl3 = 0 and that ut3 =
+u093. Finally da is derived from the requirement that d
+be a unit vector.
+The quantity to be computed is the value of the
+counter angle, 20e, which makes d20,1= 0. We have
+
+d2o= Oc
+
+Oc d~
+
+(dll, dl2)
+
+t
+
+Yc = Z c + 180 °
+
+In this case and in others to be described below we
+have two widely separated solutions both of which are
+physically reasonable. A simple computational procedure is to select the result which is closest to the observation, adding or subtracting 360 ° if necessary to
+make the quantities comparable.
+
+Type 4 observations
+Vertical centering of the diffracted beam can also be
+obtained by adjusting ~0a provided that coa is not nearly
+0 or 180 o. Let this r;a be taken as an observation.
+Again the requirement is that u093= 0, but Za is known
+and ~0e is to be calculated. We have
+u09=Xa ~e u~
+
+uo~3= - sin Za (cos ~0cu~l+ sin ~ocu~2)+ cos Xau~3. (72)
+Then the equation for ~0e is
+sin Zau~l cos ~0c+ sin Xau# sin (Pc = cos Xau~3
+where
+
+u~ = U B h/ q .
+
+(63)
+
+where
+
+(75)
+
+(64)
+
+Again the appropriate solution is chosen as for observations of type 3. The two solutions become complex or equal if e2+fZ-g2<O, but this does not occur
+if the type of observation is chosen in a sensible way.
+
+(65)
+
+and the Bragg angle 0 is again obtained from equations
+(17) and (18). It is readily seen that the result reduces
+to that for type 1 if the scattering vector is horizontal
+so that Uo~3= 0.
+
+Type 3 observations
+It is possible to center the diffracted beam vertically
+in the counter by adjusting Za provided that cog is not
+nearly + 90 o. Let the value of Za for this condition be
+taken as an observation.
+The requirement is that d2o,3 = 0, and from equations (60) and (61) we see that this reduces to u093=0.
+Now
+u09= Xcuz
+(66)
+and
+u093= - sin ZcUxl+ cos Xcux3= 0
+(67)
+A C22-2"
+
+(73)
+
+(74)
+
+The vector u09 is obtained from the trial parameters and
+the Z and ~ dial settings:
+u09=Xa@aU B h/q,
+
+(71)
+
+and
+
+[
+r/= atan (f, e)
+y = atan [(e2+f Z - g 2 ) ~, g] .
+
+and the desired expression is
+20c = atan [(sin 2 2 0 - 4 sin 2 0 u,ov2~, cos 20] .
+
+(69)
+
+(62)
+
+so that
+20c=atan
+
+(68)
+
+Equation (73) is an expression of the form
+e cos ~0e+fsin ~0e=g
+which has solutions
+~oc= r/_+ y
+]
+
+(61)
+
+and
+d2o, 1 = c o s 20cdtl - s i n 20cdl2 = 0
+
+z c = a t a n (b/Z3 , UX1)
+or
+
+Observations of types 5 and 6
+Consider the observation that the Bragg condition
+is satisfied so that the intensity of the reflection is
+maximized. It is important to note that this condition
+can be observed with configurations other than that
+of Fig. 1(a) if the counter aperture is large enough. The
+requirement is only that the scattering vector u makes
+an angle of 9 0 ° + 0 with the primary beam direction,
+that is
+ut2 = - sin 0.
+(76)
+Now
+
+u~=Neu09
+
+(77)
+
+and
+Ul2 =
+
+--
+
+sin veu~ol+ cos veu092
+
+(78)
+
+so that the condition becomes
+u09z cos ve-u~ol sin vc = - s i n 0 .
+
+(79)
+
+464
+
+ANGLE
+
+CALCULATIONS
+
+F O R 3- A N D 4 - C I R C L E D I F F R A C T O M E T E R S
+
+Here u,o can be evaluated from the trial parameters and
+instrument settings:
+uo~= Xa aPa U B h / q ,
+
+(80)
+
+and 0 is calculated from equations (17) and (18).
+Equation (79) has the form of (74) and solutions for
+ve are given by (75).
+Let a type 5 observation be the value of coa which
+establishes the Bragg condition when 20a is fixed. Then
+the corresponding calculated value is
+coo= v c - 20a/2.
+
+(81)
+
+Let a type 6 observation be the value of 20a which
+establishes the Bragg condition for a given coa. Then
+the calculated quantity is
+20c= 2(vc-coa) .
+
+(82)
+
+In each case there will be two computed values corresponding to the two solutions for vc, and the appropriate one is selected as described above.
+
+from the paper-tape output of our 3-circle neutron
+diffractometer and used them to improve the cell and
+orientation parameters for subsequent angle calculations.
+In principle it is possible to include in the list of
+variables parameters which measure the systematic errors of the experiment. These would include angular
+errors such as scale zero corrections or inaccurately
+directed instrument shafts as well as displacement errors due to non-intersecting axes or a poorly centered
+sample. Although we have found the adjustment of
+certain error parameters to be useful, we will present
+no further discussion of the method at this time.
+Some of the methods described here were derived
+while one of the authors (WRB) was Honorary Research Fellow, Department of Chemistry, University
+of Manchester, for the year 1962-63.
+References
+
+ARNDT,U. W. & PHILLIPS,D. C. (1957). Acta Cryst. 10, 508.
+We have used three different schemes for making
+observations for least-squares refinement. With a
+4-circle diffractometer it is possible to vary coa to establish the Bragg condition while centering the reflection
+vertically in the counter by adjusting Xa or pa. The
+reflection can then be centered horizontally by changing 20a while using a compensating coa motion to hold
+the crystal fixed in the laboratory system. The resulting
+settings are used as three observations of types 2, 3 or
+4, and 5, and both the cell parameters and orientation
+parameters are adjusted. In practice it makes little difference if the 20a measurement is used as a type 1 observation rather than type 2.
+Measurements of the Bragg angle can be used as
+type 1 observations for the determination of cell parameters. Such observations contain no information
+about the orientation and the orientation parameters
+should not be varied. In X-ray work it is difficult to
+assign an effective value to 2 unless the c~-doublet is
+resolved. For the most accurate work, therefore, the
+observations should be limited to regions of high Bragg
+angle.
+Observations of type 6 can be extracted from the
+output data of any 3- or 4-circle instrument which
+records the intensity profile for a 0-20 scan. For several
+years we have routinely obtained such observations
+
+BUSING, W. R., ELLISON,R. D. & LEVY, H. A. (1965). Abstracts of the ACA Annual Meeting, Gatlinburg, Tennessee, p. 59.
+BUSING,W. R. & LEVY,H. A. (1957). Acta Cryst. 10, 180.
+BUSING, W. R. & LEVY, H. A. (1962). ORGLS, A General
+FORTRAN Least Squares Program. ORNL-TM-271.
+Oak Ridge National Laboratory, Tennessee.
+BUSING, W. R. & LEVY, H. A. (1966). Angle Calculations
+for 3- and 4-Circle X-ray and Neutron Diffractometers.
+ORNL-4054. Oak Ridge National Laboratory, Tennessee. (Copies of this report may be obtained from the
+authors.)
+BUSING, W. R., SMITH, H. G., PETERSON, S. W. & LEVY,
+H. A. (1964). J. Phys., Paris, 25, 495.
+FURNAS, T. C. & HARKER,D. (1955). Rev. Sci. Instrum. 26,
+449.
+PATTERSON,A. L. (1959a). In International Tables for X-ray
+Crystallography, Vol.II, p.61. Birmingham: Kynoch
+Press.
+PATTERSON,A. L. (1959b). In International Tables for X-ray
+Crystallography, Vol. II, p. 56. Birmingham: Kynoch
+Press.
+ROLLETT, J. S. (1965). Computing Methods in Crystallography, pp. 22-23, 28-31. Oxford: Pergamon Press.
+SANTORO, A. & ZOCCHI, M. (1964). Acta Cryst. 17, 597.
+WILLIS, B. T. M. (1961). Some Geometrical Properties of the
+Three-Circle Goniometer. AERE-R3773. Atomic Energy
+Research Establishment, Harwell, Berks, England.
+WOOSTER, W. A. (1964). Acta Cryst. 17, 1348.
+
+
