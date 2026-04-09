@@ -107,13 +107,42 @@ be implemented first.
       (eqs. 29-31) for UB without known lattice parameters
 - [ ] Depends on 2.1
 
-### 2.3 Orienting reflections ([#7](https://github.com/prjemian/ad_hoc_diffractometer/issues/7))
+### 2.3 Orienting reflections data structure ([#7](https://github.com/prjemian/ad_hoc_diffractometer/issues/7))
 
-- [ ] Data structure to store primary and secondary orienting reflections:
-      hkl (Miller indices), motor angles at which the reflection was found,
-      wavelength used
-- [ ] Match the SPEC #G1 format (see spec_G_lines.md)
-- [ ] Tests verifying round-trip: reflection → U → predicted angles
+- [x] `Reflection` dataclass: `name`, `hkl`, `angles` (keyed by stage name),
+      `wavelength`, `geometry_name`; normalisation, validation, `__eq__`
+- [x] `ReflectionList` class: ordered dict of named reflections with
+      dict-like interface (`__getitem__`, `__delitem__`, `__contains__`,
+      `__len__`, `__iter__`), `add()`, `remove()`, `clear()`
+- [x] `ReflectionList.setor1()` / `setor2()`: designate primary/secondary
+      orienting reflections; moving a reflection between slots clears the old
+- [x] `ReflectionList.orienting_reflections` property: `[]`, `[or1]`, or
+      `[or1, or2]`
+- [x] Angle keys validated against the geometry's stage names at `add()` time
+- [x] `AdHocDiffractometer.reflections` holds the `ReflectionList`
+- [x] `AdHocDiffractometer.add_reflection()` convenience wrapper (inherits
+      geometry wavelength)
+
+### 2.4 SPEC #G1 format and reflection round-trip tests ([#25](https://github.com/prjemian/ad_hoc_diffractometer/issues/25))
+
+- [ ] Parse and emit the SPEC #G1 line format (hkl + motor angles + wavelength)
+- [ ] Tests: store a reflection → compute U → back-calculate angles, verify match
+- [ ] Verify compatibility with alignment data in
+      `references/2020-12-13-fourcc-alignment-7-id-c/`
+- [ ] Depends on: #7 (2.3), #5 (2.1 U matrix), #6 (2.2 UB matrix), #26 (2.5)
+
+### 2.5 Sample dict on AdHocDiffractometer ([#26](https://github.com/prjemian/ad_hoc_diffractometer/issues/26))
+
+- [ ] New `Sample` class (`sample.py`): `name`, `lattice` (Lattice), `reflections`
+      (ReflectionList), `U` (3×3 or None), `UB` (3×3 or None)
+- [ ] Default sample: `"test"`, cubic lattice a=1 Å, empty reflections, U/UB=None
+- [ ] `AdHocDiffractometer.samples` — ordered dict, initialised with `"test"`
+- [ ] `AdHocDiffractometer.sample` — property for the active sample (get/set by
+      name or object)
+- [ ] `AdHocDiffractometer.add_reflection()` delegates to the active sample's
+      `ReflectionList`
+- [ ] U and UB matrices live on `Sample`, not on the geometry
+- [ ] Depends on: #7 (2.3); required by: #5 (2.1), #6 (2.2), #25 (2.4)
 
 ---
 
