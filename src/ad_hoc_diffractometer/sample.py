@@ -176,23 +176,33 @@ class Sample:
         reflections: ReflectionList,
         U: np.ndarray | None = None,
         UB: np.ndarray | None = None,
+        parent=None,
     ) -> None:
         self.name = name
         self.lattice = lattice
         self.reflections = reflections
         self.U = U
         self.UB = UB
+        self.parent = parent  # owning AdHocDiffractometer, or None
 
     def __repr__(self) -> str:
         u_str = "set" if self.U is not None else "None"
         ub_str = "set" if self.UB is not None else "None"
+        parent_str = self.parent.name if self.parent is not None else "(no parent)"
         return (
-            f"Sample(name={self.name!r}, lattice={self.lattice!r}, "
+            f"Sample(name={self.name!r}, geometry={parent_str!r}, "
+            f"lattice={self.lattice!r}, "
             f"reflections={len(self.reflections)} reflection(s), "
             f"U={u_str}, UB={ub_str})"
         )
 
     def __eq__(self, other: object) -> bool:
+        """
+        True if name, lattice, U, and UB all match.
+
+        ``parent`` is excluded from equality — two samples with the same
+        content owned by different geometries are considered equal.
+        """
         if not isinstance(other, Sample):
             return NotImplemented
         u_eq = (self.U is None and other.U is None) or (

@@ -93,19 +93,20 @@ be implemented first.
 - [ ] This is the missing link needed for U and UB computation
 - [ ] Reference: Busing & Levy (1967), You (1999)
 
-### 2.1 U matrix (orientation matrix) ([#5](https://github.com/prjemian/ad_hoc_diffractometer/issues/5))
+### 2.1 `ub_from_two_reflections_bl1967` (BL1967 eqs. 23-27) ([#5](https://github.com/prjemian/ad_hoc_diffractometer/issues/5))
 
-- [ ] Implement Busing & Levy (1967) two-reflection algorithm (eqs. 23-27)
-- [ ] Requires: two orienting reflections (hkl + motor angles), B matrix
-- [ ] Returns orthonormal U (3×3)
-- [ ] Depends on 2.0
+- [ ] Implement in `orientation.py`
+- [ ] Inputs: two `Reflection` objects + known lattice (B matrix)
+- [ ] Algorithm: Gram-Schmidt orthonormal triples Tc (crystal) and Tφ (phi
+      frame); U = Tφ @ Tc.T; UB = U @ B
+- [ ] Sets `sample.U` and `sample.UB` in-place; returns UB
 
-### 2.2 UB matrix ([#6](https://github.com/prjemian/ad_hoc_diffractometer/issues/6))
+### 2.2 `ub_from_three_reflections_bl1967` (BL1967 eqs. 29-31) ([#6](https://github.com/prjemian/ad_hoc_diffractometer/issues/6))
 
-- [ ] Compute UB = U @ B
-- [ ] Also implement Busing & Levy (1967) three-reflection direct method
-      (eqs. 29-31) for UB without known lattice parameters
-- [ ] Depends on 2.1
+- [ ] Implement in `orientation.py`
+- [ ] Inputs: three `Reflection` objects; no prior lattice needed
+- [ ] Algorithm: UB = Hφ @ H⁻¹ (direct matrix inversion); U = UB @ B⁻¹
+- [ ] Sets `sample.U` and `sample.UB` in-place; returns UB
 
 ### 2.3 Orienting reflections data structure ([#7](https://github.com/prjemian/ad_hoc_diffractometer/issues/7))
 
@@ -162,6 +163,37 @@ be implemented first.
       `geometry_name` → exact string comparison
 - [x] Export `precision_atol` and `allclose` from `__init__.py`
 - [x] Tests in `test_display.py`, `test_lattice.py`, `test_reflection.py`
+
+### 2.7 `ub_from_one_reflection` — initial UB from one reflection ([#31](https://github.com/prjemian/ad_hoc_diffractometer/issues/31))
+
+- [x] `Sample.parent` attribute: back-reference to owning
+      `AdHocDiffractometer`; set by `add_sample()` and default sample
+      construction; cleared to `None` by `remove_sample()`; excluded from
+      `__eq__`; shown in `__repr__`
+- [x] Create `orientation.py` module
+- [x] `ub_identity(sample)`: sets U=I, UB=B; returns UB
+- [x] `ub_from_one_reflection(sample, reflection, reference_hkl,
+      reference_stage)`: Rodrigues rotation from crystal direction to lab
+      axis; resolves `reference_stage` from Stage, str, or None+parent;
+      sets `sample.U` and `sample.UB` in-place; returns UB
+- [x] Edge cases: parallel (U=I), anti-parallel (perpendicular axis)
+- [x] Export `ub_identity` and `ub_from_one_reflection` from `__init__.py`
+- [x] Tests in `test_orientation.py` and `test_sample.py`
+
+### 2.8 `refine_lattice_bl1967` — least-squares lattice refinement ([#32](https://github.com/prjemian/ad_hoc_diffractometer/issues/32))
+
+- [ ] Create `refinement.py` module (separate from `orientation.py`)
+- [ ] Implement `refine_lattice_bl1967(sample, reflections, ...)` using
+      BL1967 §Refinement; simultaneous cell + orientation least-squares
+- [ ] Returns result dict; updates `sample.lattice`, `sample.U`,
+      `sample.UB` in-place
+
+### 2.9 `refine_lattice_simplex` — derivative-free lattice refinement ([#33](https://github.com/prjemian/ad_hoc_diffractometer/issues/33))
+
+- [ ] Implement `refine_lattice_simplex(sample, reflections, ...)` in
+      `refinement.py` using Nelder-Mead simplex; derivative-free
+      alternative to BL1967 least squares
+- [ ] Same return dict structure as `refine_lattice_bl1967`
 
 ---
 
