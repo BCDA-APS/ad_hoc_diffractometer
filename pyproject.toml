@@ -5,8 +5,13 @@ build-backend = "hatchling.build"
 [project]
 name = "ad_hoc_diffractometer"
 version = "0.1.0"
-description = "Multi-circle diffractometer geometry calculations"
+description = "Multi-circle diffractometer geometry and related calculations"
+authors = [{ name = "Pete Jemian", email = "prjemian+chewacla@gmail.com" }]
+maintainers = [{ name = "Pete Jemian", email = "prjemian+chewacla@gmail.com" }]
 requires-python = ">=3.10"
+keywords = ["diffraction", "geometry", "crystallography", "x-ray", "neutron"]
+license = "CC-BY-4.0"
+license-files = ["LICEN[CS]E*"]
 dependencies = [
     "numpy",
 ]
@@ -19,11 +24,18 @@ dev = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/ad_hoc_diffractometer"]
 
+[tool.hatch.envs.default]
+features = ["dev"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+force_single_line = true
+known_first_party = ["ad_hoc_diffractometer"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
-[tool.hatch.envs.default]
-features = ["dev"]
 
 [tool.ruff]
 line-length = 88
@@ -50,9 +62,3 @@ ignore = [
 
 [tool.ruff.format]
 # line-length is inherited from [tool.ruff] above
-
-[tool.isort]
-profile = "black"
-line_length = 88
-force_single_line = true
-known_first_party = ["ad_hoc_diffractometer"]

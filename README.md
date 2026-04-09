@@ -17,3 +17,38 @@ Also note:
 - https://en.wikipedia.org/wiki/Quaternion
 - https://quaternion.readthedocs.io/en/latest/ (Python)
 - https://sot.github.io/Quaternion/ (Python)
+
+## INSTALL
+
+### conda/pip
+
+```bash
+conda create -y -n ad_hoc_diffractometer python
+conda activate ad_hoc_diffractometer
+pip install -e .[dev]
+```
+
+### uv
+
+[uv](https://docs.astral.sh/uv/) creates and manages virtual environments automatically:
+
+```bash
+uv sync --extra dev
+```
+
+Run commands inside the managed environment with `uv run`, e.g.:
+
+```bash
+uv run pytest
+```
+
+### hatch
+
+[hatch](https://hatch.pypa.io/) uses the `default` environment defined in
+`pyproject.toml`, which already includes the `dev` dependencies:
+
+```bash
+pip install hatch          # install hatch once, globally
+hatch env create           # create the default environment
+hatch run pytest           # run commands inside the environment
+```
