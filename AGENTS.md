@@ -4,6 +4,19 @@ This file provides context for AI coding agents working on this project.
 
 ---
 
+## Attribution
+
+Always sign your work. Every commit message, pull request description, and
+inline comment authored by an AI agent must end with:
+
+```
+Contributed by: <AgentName> (<model-id>)
+```
+
+Example: `Contributed by: OpenCode (argo/claudesonnet46)`
+
+---
+
 ## Project overview
 
 `ad_hoc_diffractometer` is a Python package for describing multi-circle
