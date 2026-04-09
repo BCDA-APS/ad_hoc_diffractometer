@@ -10,29 +10,42 @@ Based on:
   D.A. Walko, Reference Module in Materials Science and Materials Engineering (2016).
 """
 
-from .ad_hoc_diffractometer import XHAT
-from .ad_hoc_diffractometer import YHAT
-from .ad_hoc_diffractometer import ZHAT
-from .ad_hoc_diffractometer import AdHocDiffractometer
-from .ad_hoc_diffractometer import Stage
-from .ad_hoc_diffractometer import b_matrix
-from .ad_hoc_diffractometer import geometry_fourc
-from .ad_hoc_diffractometer import geometry_psic
-from .ad_hoc_diffractometer import geometry_sixc
-from .ad_hoc_diffractometer import lattice_vectors
-from .ad_hoc_diffractometer import reciprocal_vectors
-from .ad_hoc_diffractometer import rotation_matrix
+from .axes import axis_from_physical
+from .axes import axis_label
+from .axes import parse_axis
+from .constants import XHAT
+from .constants import YHAT
+from .constants import ZHAT
+from .factories import geometry_fourc
+from .factories import geometry_psic
+from .factories import geometry_sixc
+from .geometry import AdHocDiffractometer
+from .lattice import b_matrix
+from .lattice import lattice_vectors
+from .lattice import reciprocal_vectors
+from .rotation import rotation_matrix
+from .stage import Stage
 
 __all__ = [
+    # constants
     "XHAT",
     "YHAT",
     "ZHAT",
+    # axes
+    "parse_axis",
+    "axis_label",
+    "axis_from_physical",
+    # rotation
     "rotation_matrix",
+    # stage
     "Stage",
+    # geometry
     "AdHocDiffractometer",
+    # factories
     "geometry_psic",
     "geometry_fourc",
     "geometry_sixc",
+    # lattice
     "lattice_vectors",
     "reciprocal_vectors",
     "b_matrix",

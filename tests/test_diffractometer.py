@@ -2,6 +2,7 @@
 Unit tests for ad_hoc_diffractometer.
 
 Covers:
+  - axes: parse_axis(), axis_label(), axis_from_physical()
   - rotation_matrix()
   - Stage class
   - AdHocDiffractometer class (construction, validation, ordering,
@@ -28,11 +29,14 @@ from ad_hoc_diffractometer import YHAT
 from ad_hoc_diffractometer import ZHAT
 from ad_hoc_diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer import Stage
+from ad_hoc_diffractometer import axis_from_physical
+from ad_hoc_diffractometer import axis_label
 from ad_hoc_diffractometer import b_matrix
 from ad_hoc_diffractometer import geometry_fourc
 from ad_hoc_diffractometer import geometry_psic
 from ad_hoc_diffractometer import geometry_sixc
 from ad_hoc_diffractometer import lattice_vectors
+from ad_hoc_diffractometer import parse_axis
 from ad_hoc_diffractometer import reciprocal_vectors
 from ad_hoc_diffractometer import rotation_matrix
 
@@ -65,6 +69,172 @@ def Rz(deg):
     t = np.deg2rad(deg)
     c, s = np.cos(t), np.sin(t)
     return np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
+
+
+# ---------------------------------------------------------------------------
+# Tests for axes: parse_axis(), axis_label(), axis_from_physical()
+# ---------------------------------------------------------------------------
+
+_STANDARD_BASIS = {
+    "vertical": XHAT,
+    "longitudinal": YHAT,
+    "lateral": ZHAT,
+}
+
+
+@pytest.mark.parametrize(
+    "label, expected, context",
+    [
+        # Signed Cartesian labels
+        pytest.param("+x", +XHAT, does_not_raise(), id="plus-x"),
+        pytest.param("-x", -XHAT, does_not_raise(), id="minus-x"),
+        pytest.param("+y", +YHAT, does_not_raise(), id="plus-y"),
+        pytest.param("-y", -YHAT, does_not_raise(), id="minus-y"),
+        pytest.param("+z", +ZHAT, does_not_raise(), id="plus-z"),
+        pytest.param("-z", -ZHAT, does_not_raise(), id="minus-z"),
+        # Case insensitive
+        pytest.param("+X", +XHAT, does_not_raise(), id="plus-X-uppercase"),
+        pytest.param("-Z", -ZHAT, does_not_raise(), id="minus-Z-uppercase"),
+        # Physical direction names (require basis)
+        pytest.param(
+            "vertical",
+            +XHAT,
+            does_not_raise(),
+            id="physical-vertical-no-sign",
+        ),
+        pytest.param(
+            "+vertical",
+            +XHAT,
+            does_not_raise(),
+            id="physical-plus-vertical",
+        ),
+        pytest.param(
+            "-vertical",
+            -XHAT,
+            does_not_raise(),
+            id="physical-minus-vertical",
+        ),
+        pytest.param(
+            "-lateral",
+            -ZHAT,
+            does_not_raise(),
+            id="physical-minus-lateral",
+        ),
+        pytest.param(
+            "+longitudinal",
+            +YHAT,
+            does_not_raise(),
+            id="physical-plus-longitudinal",
+        ),
+        # Failures
+        pytest.param(
+            "vertical",
+            None,
+            pytest.raises(ValueError, match=re.escape("basis dict is required")),
+            id="invalid-physical-name-no-basis",
+        ),
+        pytest.param(
+            "+bogus",
+            None,
+            pytest.raises(ValueError, match=re.escape("basis dict is required")),
+            id="invalid-unknown-label-no-basis",
+        ),
+    ],
+)
+def test_parse_axis(label, expected, context):
+    # Cartesian labels (+x, -z, etc.) don't need a basis.
+    # Physical direction names do.  Failure cases explicitly test no-basis behaviour.
+    is_cartesian = label.strip().lower().lstrip("+-") in ("x", "y", "z")
+    is_failure = expected is None
+    if is_cartesian or is_failure:
+        basis = None
+    else:
+        basis = _STANDARD_BASIS
+    with context:
+        result = parse_axis(label, basis=basis)
+        np.testing.assert_array_equal(result, expected)
+
+
+@pytest.mark.parametrize(
+    "label, basis, expected, context",
+    [
+        pytest.param(
+            "+x", None, +XHAT, does_not_raise(), id="cartesian-no-basis-needed"
+        ),
+        pytest.param(
+            "vertical",
+            _STANDARD_BASIS,
+            +XHAT,
+            does_not_raise(),
+            id="physical-with-basis",
+        ),
+        pytest.param(
+            "-lateral",
+            _STANDARD_BASIS,
+            -ZHAT,
+            does_not_raise(),
+            id="physical-minus-with-basis",
+        ),
+        pytest.param(
+            "+bogus",
+            _STANDARD_BASIS,
+            None,
+            pytest.raises(ValueError, match=re.escape("not found in basis dict")),
+            id="invalid-direction-not-in-basis",
+        ),
+    ],
+)
+def test_parse_axis_with_basis(label, basis, expected, context):
+    with context:
+        result = parse_axis(label, basis=basis)
+        np.testing.assert_array_equal(result, expected)
+
+
+@pytest.mark.parametrize(
+    "vector, expected_label, context",
+    [
+        pytest.param(+XHAT, "+x", does_not_raise(), id="plus-xhat"),
+        pytest.param(-XHAT, "-x", does_not_raise(), id="minus-xhat"),
+        pytest.param(+YHAT, "+y", does_not_raise(), id="plus-yhat"),
+        pytest.param(-YHAT, "-y", does_not_raise(), id="minus-yhat"),
+        pytest.param(+ZHAT, "+z", does_not_raise(), id="plus-zhat"),
+        pytest.param(-ZHAT, "-z", does_not_raise(), id="minus-zhat"),
+        # Non-standard vector falls back to numeric formatting
+        pytest.param(
+            np.array([0.5, 0.5, 0.0]),
+            "[0.5, 0.5, 0]",
+            does_not_raise(),
+            id="non-standard-vector-numeric",
+        ),
+    ],
+)
+def test_axis_label(vector, expected_label, context):
+    with context:
+        assert axis_label(vector) == expected_label
+
+
+@pytest.mark.parametrize(
+    "direction, sign, expected, context",
+    [
+        pytest.param("vertical", "+", +XHAT, does_not_raise(), id="plus-vertical"),
+        pytest.param("vertical", "-", -XHAT, does_not_raise(), id="minus-vertical"),
+        pytest.param("lateral", "-", -ZHAT, does_not_raise(), id="minus-lateral"),
+        pytest.param(
+            "longitudinal", "+", +YHAT, does_not_raise(), id="plus-longitudinal"
+        ),
+        pytest.param(
+            "bogus",
+            "+",
+            None,
+            pytest.raises(ValueError, match=re.escape("not found in basis dict")),
+            id="invalid-unknown-direction",
+        ),
+    ],
+)
+def test_axis_from_physical(direction, sign, expected, context):
+    with context:
+        result = axis_from_physical(direction, sign, _STANDARD_BASIS)
+        np.testing.assert_array_equal(result, expected)
 
 
 # ---------------------------------------------------------------------------
