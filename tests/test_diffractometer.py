@@ -7,7 +7,7 @@ Covers:
   - Stage class
   - AdHocDiffractometer class (construction, validation, ordering,
     set_angle, sample_rotation_matrix, detector_rotation_matrix)
-  - geometry_psic(), geometry_fourc(), geometry_sixc() factories
+  - psic(), fourc_v(), sixc() factories
   - lattice_vectors()
   - reciprocal_vectors()
   - b_matrix()
@@ -32,13 +32,22 @@ from ad_hoc_diffractometer import Stage
 from ad_hoc_diffractometer import axis_from_physical
 from ad_hoc_diffractometer import axis_label
 from ad_hoc_diffractometer import b_matrix
-from ad_hoc_diffractometer import geometry_fourc
-from ad_hoc_diffractometer import geometry_psic
-from ad_hoc_diffractometer import geometry_sixc
+from ad_hoc_diffractometer import fivec
+from ad_hoc_diffractometer import fourc_h
+from ad_hoc_diffractometer import fourc_v
+from ad_hoc_diffractometer import kappa4c
+from ad_hoc_diffractometer import kappa4c_h
+from ad_hoc_diffractometer import kappa6c
+from ad_hoc_diffractometer import kappa_axis
 from ad_hoc_diffractometer import lattice_vectors
+from ad_hoc_diffractometer import list_geometries
 from ad_hoc_diffractometer import parse_axis
+from ad_hoc_diffractometer import psic
 from ad_hoc_diffractometer import reciprocal_vectors
 from ad_hoc_diffractometer import rotation_matrix
+from ad_hoc_diffractometer import s2d2
+from ad_hoc_diffractometer import sixc
+from ad_hoc_diffractometer import zaxis
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -599,7 +608,7 @@ def test_stacking_order(stages, role, expected_order, context):
 )
 def test_set_angle(stage_name, angle, context):
     with context:
-        g = geometry_psic()
+        g = psic()
         g.set_angle(stage_name, angle)
         assert g.stage(stage_name).angle == angle
 
@@ -646,7 +655,7 @@ def test_set_angle(stage_name, angle, context):
 )
 def test_psic_sample_rotation(angles, expected_Z, context):
     with context:
-        g = geometry_psic()
+        g = psic()
         for name, val in angles.items():
             g.set_angle(name, val)
         assert_matrix_close(g.sample_rotation_matrix(), expected_Z)
@@ -677,10 +686,139 @@ def test_psic_sample_rotation(angles, expected_Z, context):
 )
 def test_psic_detector_rotation(angles, expected_D, context):
     with context:
-        g = geometry_psic()
+        g = psic()
         for name, val in angles.items():
             g.set_angle(name, val)
         assert_matrix_close(g.detector_rotation_matrix(), expected_D)
+
+
+# ---------------------------------------------------------------------------
+# Tests for kappa_axis()
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "alpha_deg, expected, context",
+    [
+        # At alpha=0: pure vertical (degenerate) — invalid
+        pytest.param(
+            0.0,
+            None,
+            pytest.raises(ValueError, match=re.escape("must be in (0, 90)")),
+            id="invalid-alpha-zero",
+        ),
+        # At alpha=90: pure lateral — invalid
+        pytest.param(
+            90.0,
+            None,
+            pytest.raises(ValueError, match=re.escape("must be in (0, 90)")),
+            id="invalid-alpha-90",
+        ),
+        # Negative alpha — invalid
+        pytest.param(
+            -10.0,
+            None,
+            pytest.raises(ValueError, match=re.escape("must be in (0, 90)")),
+            id="invalid-alpha-negative",
+        ),
+        # Default 50 deg: cos(50)*xhat + sin(50)*zhat
+        pytest.param(
+            50.0,
+            np.cos(np.deg2rad(50)) * XHAT + np.sin(np.deg2rad(50)) * ZHAT,
+            does_not_raise(),
+            id="alpha-50-default",
+        ),
+        # Near-vertical: small alpha
+        pytest.param(
+            1.0,
+            np.cos(np.deg2rad(1)) * XHAT + np.sin(np.deg2rad(1)) * ZHAT,
+            does_not_raise(),
+            id="alpha-1-near-vertical",
+        ),
+        # Near-lateral: large alpha
+        pytest.param(
+            89.0,
+            np.cos(np.deg2rad(89)) * XHAT + np.sin(np.deg2rad(89)) * ZHAT,
+            does_not_raise(),
+            id="alpha-89-near-lateral",
+        ),
+        # 45 deg: equal components
+        pytest.param(
+            45.0,
+            np.array([np.sqrt(2) / 2, 0.0, np.sqrt(2) / 2]),
+            does_not_raise(),
+            id="alpha-45-equal-components",
+        ),
+    ],
+)
+def test_kappa_axis(alpha_deg, expected, context):
+    with context:
+        result = kappa_axis(alpha_deg)
+        np.testing.assert_allclose(result, expected, atol=1e-12)
+
+
+@pytest.mark.parametrize(
+    "alpha_deg, context",
+    [
+        pytest.param(50.0, does_not_raise(), id="kappa-axis-is-unit-vector-50"),
+        pytest.param(30.0, does_not_raise(), id="kappa-axis-is-unit-vector-30"),
+        pytest.param(70.0, does_not_raise(), id="kappa-axis-is-unit-vector-70"),
+    ],
+)
+def test_kappa_axis_is_unit_vector(alpha_deg, context):
+    with context:
+        ax = kappa_axis(alpha_deg)
+        np.testing.assert_allclose(np.linalg.norm(ax), 1.0, atol=1e-12)
+
+
+@pytest.mark.parametrize(
+    "context",
+    [pytest.param(does_not_raise(), id="kappa-axis-missing-basis-key")],
+)
+def test_kappa_axis_bad_basis(context):
+    with pytest.raises(ValueError, match=re.escape("missing: 'lateral'")):
+        kappa_axis(50.0, basis={"vertical": XHAT, "longitudinal": YHAT})
+
+
+# ---------------------------------------------------------------------------
+# Tests for list_geometries()
+# ---------------------------------------------------------------------------
+
+
+def test_list_geometries_returns_all_factories():
+    geoms = list_geometries()
+    expected = {
+        "psic",
+        "fourc_v",
+        "fourc_h",
+        "sixc",
+        "kappa4c",
+        "kappa4c_h",
+        "kappa6c",
+        "zaxis",
+        "s2d2",
+        "fivec",
+    }
+    assert set(geoms.keys()) == expected
+
+
+def test_list_geometries_values_are_callable():
+    for name, func in list_geometries().items():
+        assert callable(func), f"{name} is not callable"
+
+
+def test_list_geometries_instantiate_all():
+    """Every registered factory must instantiate without error."""
+    for name, func in list_geometries().items():
+        g = func()
+        assert g.name == name, f"Factory {name!r} returned name {g.name!r}"
+
+
+def test_list_geometries_returns_copy():
+    """Mutating the returned dict must not affect the registry."""
+    geoms = list_geometries()
+    geoms.clear()
+    assert len(list_geometries()) > 0
 
 
 # ---------------------------------------------------------------------------
@@ -692,7 +830,7 @@ def test_psic_detector_rotation(angles, expected_D, context):
     "factory, expected_name, sample_names, detector_names, context",
     [
         pytest.param(
-            geometry_psic,
+            psic,
             "psic",
             ["mu", "eta", "chi", "phi"],
             ["nu", "delta"],
@@ -700,20 +838,76 @@ def test_psic_detector_rotation(angles, expected_D, context):
             id="psic-stage-lists",
         ),
         pytest.param(
-            geometry_fourc,
-            "fourc",
+            fourc_v,
+            "fourc_v",
             ["omega", "chi", "phi"],
             ["two_theta"],
             does_not_raise(),
-            id="fourc-stage-lists",
+            id="fourc_v-stage-lists",
         ),
         pytest.param(
-            geometry_sixc,
+            fourc_h,
+            "fourc_h",
+            ["omega", "chi", "phi"],
+            ["two_theta"],
+            does_not_raise(),
+            id="fourc_h-stage-lists",
+        ),
+        pytest.param(
+            sixc,
             "sixc",
             ["alpha", "omega", "chi", "phi"],
             ["delta", "gamma"],
             does_not_raise(),
             id="sixc-stage-lists",
+        ),
+        pytest.param(
+            kappa4c,
+            "kappa4c",
+            ["komega", "kappa", "kphi"],
+            ["two_theta"],
+            does_not_raise(),
+            id="kappa4c-stage-lists",
+        ),
+        pytest.param(
+            kappa4c_h,
+            "kappa4c_h",
+            ["komega", "kappa", "kphi"],
+            ["two_theta"],
+            does_not_raise(),
+            id="kappa4c_h-stage-lists",
+        ),
+        pytest.param(
+            kappa6c,
+            "kappa6c",
+            ["mu", "komega", "kappa", "kphi"],
+            ["nu", "delta"],
+            does_not_raise(),
+            id="kappa6c-stage-lists",
+        ),
+        pytest.param(
+            zaxis,
+            "zaxis",
+            ["alpha", "Z"],
+            ["delta", "gamma"],
+            does_not_raise(),
+            id="zaxis-stage-lists",
+        ),
+        pytest.param(
+            s2d2,
+            "s2d2",
+            ["mu", "Z"],
+            ["nu", "delta"],
+            does_not_raise(),
+            id="s2d2-stage-lists",
+        ),
+        pytest.param(
+            fivec,
+            "fivec",
+            ["mu", "omega", "chi", "phi"],
+            ["two_theta"],
+            does_not_raise(),
+            id="fivec-stage-lists",
         ),
     ],
 )
@@ -730,50 +924,98 @@ def test_geometry_factories(
 @pytest.mark.parametrize(
     "factory, stage_name, expected_parent, context",
     [
+        # psic
+        pytest.param(psic, "mu", None, does_not_raise(), id="psic-mu-on-floor"),
+        pytest.param(psic, "nu", None, does_not_raise(), id="psic-nu-on-floor"),
+        pytest.param(psic, "eta", "mu", does_not_raise(), id="psic-eta-on-mu"),
+        pytest.param(psic, "chi", "eta", does_not_raise(), id="psic-chi-on-eta"),
+        pytest.param(psic, "phi", "chi", does_not_raise(), id="psic-phi-on-chi"),
+        pytest.param(psic, "delta", "nu", does_not_raise(), id="psic-delta-on-nu"),
+        # fourc_v: omega and two_theta both on floor (decoupled)
         pytest.param(
-            geometry_psic, "mu", None, does_not_raise(), id="psic-mu-on-floor"
+            fourc_v, "omega", None, does_not_raise(), id="fourc_v-omega-on-floor"
         ),
         pytest.param(
-            geometry_psic, "nu", None, does_not_raise(), id="psic-nu-on-floor"
-        ),
-        pytest.param(geometry_psic, "eta", "mu", does_not_raise(), id="psic-eta-on-mu"),
-        pytest.param(
-            geometry_psic, "chi", "eta", does_not_raise(), id="psic-chi-on-eta"
-        ),
-        pytest.param(
-            geometry_psic, "phi", "chi", does_not_raise(), id="psic-phi-on-chi"
-        ),
-        pytest.param(
-            geometry_psic, "delta", "nu", does_not_raise(), id="psic-delta-on-nu"
-        ),
-        pytest.param(
-            geometry_fourc, "omega", None, does_not_raise(), id="fourc-omega-on-floor"
-        ),
-        pytest.param(
-            geometry_fourc,
+            fourc_v,
             "two_theta",
             None,
             does_not_raise(),
-            id="fourc-two_theta-on-floor-decoupled",
+            id="fourc_v-two_theta-decoupled",
         ),
         pytest.param(
-            geometry_fourc, "chi", "omega", does_not_raise(), id="fourc-chi-on-omega"
+            fourc_v, "chi", "omega", does_not_raise(), id="fourc_v-chi-on-omega"
+        ),
+        pytest.param(fourc_v, "phi", "chi", does_not_raise(), id="fourc_v-phi-on-chi"),
+        # fourc_h
+        pytest.param(
+            fourc_h,
+            "two_theta",
+            None,
+            does_not_raise(),
+            id="fourc_h-two_theta-decoupled",
+        ),
+        # sixc: shared alpha base
+        pytest.param(sixc, "alpha", None, does_not_raise(), id="sixc-alpha-on-floor"),
+        pytest.param(
+            sixc, "omega", "alpha", does_not_raise(), id="sixc-omega-on-alpha"
         ),
         pytest.param(
-            geometry_fourc, "phi", "chi", does_not_raise(), id="fourc-phi-on-chi"
+            sixc, "delta", "alpha", does_not_raise(), id="sixc-delta-on-alpha"
         ),
         pytest.param(
-            geometry_sixc, "alpha", None, does_not_raise(), id="sixc-alpha-on-floor"
+            sixc, "gamma", "delta", does_not_raise(), id="sixc-gamma-on-delta"
+        ),
+        # kappa4c: komega and two_theta both on floor (decoupled)
+        pytest.param(
+            kappa4c, "komega", None, does_not_raise(), id="kappa4c-komega-on-floor"
         ),
         pytest.param(
-            geometry_sixc, "omega", "alpha", does_not_raise(), id="sixc-omega-on-alpha"
+            kappa4c,
+            "two_theta",
+            None,
+            does_not_raise(),
+            id="kappa4c-two_theta-decoupled",
         ),
         pytest.param(
-            geometry_sixc, "delta", "alpha", does_not_raise(), id="sixc-delta-on-alpha"
+            kappa4c, "kappa", "komega", does_not_raise(), id="kappa4c-kappa-on-komega"
         ),
         pytest.param(
-            geometry_sixc, "gamma", "delta", does_not_raise(), id="sixc-gamma-on-delta"
+            kappa4c, "kphi", "kappa", does_not_raise(), id="kappa4c-kphi-on-kappa"
         ),
+        # kappa6c
+        pytest.param(kappa6c, "mu", None, does_not_raise(), id="kappa6c-mu-on-floor"),
+        pytest.param(kappa6c, "nu", None, does_not_raise(), id="kappa6c-nu-on-floor"),
+        pytest.param(
+            kappa6c, "komega", "mu", does_not_raise(), id="kappa6c-komega-on-mu"
+        ),
+        pytest.param(
+            kappa6c, "kappa", "komega", does_not_raise(), id="kappa6c-kappa-on-komega"
+        ),
+        pytest.param(
+            kappa6c, "kphi", "kappa", does_not_raise(), id="kappa6c-kphi-on-kappa"
+        ),
+        # zaxis: shared alpha base
+        pytest.param(zaxis, "alpha", None, does_not_raise(), id="zaxis-alpha-on-floor"),
+        pytest.param(zaxis, "Z", "alpha", does_not_raise(), id="zaxis-Z-on-alpha"),
+        pytest.param(
+            zaxis, "delta", "alpha", does_not_raise(), id="zaxis-delta-on-alpha"
+        ),
+        pytest.param(
+            zaxis, "gamma", "delta", does_not_raise(), id="zaxis-gamma-on-delta"
+        ),
+        # s2d2: mu/nu both on floor, Z on mu, delta on nu
+        pytest.param(s2d2, "mu", None, does_not_raise(), id="s2d2-mu-on-floor"),
+        pytest.param(s2d2, "nu", None, does_not_raise(), id="s2d2-nu-on-floor"),
+        pytest.param(s2d2, "Z", "mu", does_not_raise(), id="s2d2-Z-on-mu"),
+        pytest.param(s2d2, "delta", "nu", does_not_raise(), id="s2d2-delta-on-nu"),
+        # fivec: shared mu base
+        pytest.param(fivec, "mu", None, does_not_raise(), id="fivec-mu-on-floor"),
+        pytest.param(fivec, "omega", "mu", does_not_raise(), id="fivec-omega-on-mu"),
+        pytest.param(
+            fivec, "two_theta", "mu", does_not_raise(), id="fivec-two_theta-on-mu"
+        ),
+        pytest.param(fivec, "chi", "omega", does_not_raise(), id="fivec-chi-on-omega"),
+        pytest.param(fivec, "phi", "chi", does_not_raise(), id="fivec-phi-on-chi"),
     ],
 )
 def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
@@ -786,53 +1028,42 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
     "factory, stage_name, expected_axis, context",
     [
         pytest.param(
-            geometry_psic,
-            "mu",
-            +XHAT,
-            does_not_raise(),
-            id="psic-mu-vertical-right-handed",
+            psic, "mu", +XHAT, does_not_raise(), id="psic-mu-vertical-right-handed"
         ),
         pytest.param(
-            geometry_psic,
-            "eta",
-            -ZHAT,
-            does_not_raise(),
-            id="psic-eta-lateral-left-handed",
+            psic, "eta", -ZHAT, does_not_raise(), id="psic-eta-lateral-left-handed"
         ),
         pytest.param(
-            geometry_psic,
+            psic,
             "chi",
             +YHAT,
             does_not_raise(),
             id="psic-chi-longitudinal-right-handed",
         ),
         pytest.param(
-            geometry_psic,
-            "phi",
-            -ZHAT,
-            does_not_raise(),
-            id="psic-phi-lateral-left-handed",
+            psic, "phi", -ZHAT, does_not_raise(), id="psic-phi-lateral-left-handed"
         ),
         pytest.param(
-            geometry_psic,
-            "nu",
-            +XHAT,
-            does_not_raise(),
-            id="psic-nu-vertical-right-handed",
+            psic, "nu", +XHAT, does_not_raise(), id="psic-nu-vertical-right-handed"
         ),
         pytest.param(
-            geometry_psic,
-            "delta",
-            -ZHAT,
+            psic, "delta", -ZHAT, does_not_raise(), id="psic-delta-lateral-left-handed"
+        ),
+        # kappa axis is a unit vector tilted 50 deg from vertical
+        pytest.param(
+            kappa4c,
+            "kappa",
+            np.cos(np.deg2rad(50)) * np.array([0, 0, 1])
+            + np.sin(np.deg2rad(50)) * np.array([1, 0, 0]),
             does_not_raise(),
-            id="psic-delta-lateral-left-handed",
+            id="kappa4c-kappa-axis-tilted",
         ),
     ],
 )
 def test_geometry_axes(factory, stage_name, expected_axis, context):
     with context:
         g = factory()
-        np.testing.assert_array_equal(g.stage(stage_name).axis, expected_axis)
+        np.testing.assert_allclose(g.stage(stage_name).axis, expected_axis, atol=1e-12)
 
 
 # ---------------------------------------------------------------------------
