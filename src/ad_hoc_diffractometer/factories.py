@@ -36,15 +36,15 @@ Walko (2016) designations:
     (S1D2)1   zaxis  (sample and detector share alpha base stage)
     S2D2      s2d2   (fully decoupled sample/detector pairs)
 
-References:
+References (chronological):
     W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967)               fourc_v / fourc_h
-    H. You, J. Appl. Cryst. 32, 614-623 (1999) DOI:10.1107/S0021889899001223   psic
-    M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993)            sixc
-    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)                 kappa, zaxis, s2d2, fivec
     J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985)                          zaxis
-    K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) s2d2
     E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987)                   fivec
+    M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993)            sixc
+    K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) s2d2
+    H. You, J. Appl. Cryst. 32, 614-623 (1999) DOI:10.1107/S0021889899001223   psic
     ITC Vol. C, Sec. 2.2.6 (2006) DOI:10.1107/97809553602060000577         kappa
+    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)                 kappa, zaxis, s2d2, fivec
 """
 
 from __future__ import annotations
