@@ -523,13 +523,13 @@ def test_kappa_alpha_deg_settable():
 def test_kappa_alpha_deg_none_for_non_kappa():
     """All non-kappa factories return None for kappa_alpha_deg."""
     from ad_hoc_diffractometer import fivec
-    from ad_hoc_diffractometer import fourc_h
-    from ad_hoc_diffractometer import fourc_v
+    from ad_hoc_diffractometer import fourch
+    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import psic
     from ad_hoc_diffractometer import s2d2
     from ad_hoc_diffractometer import sixc
     from ad_hoc_diffractometer import zaxis
 
-    for factory in (psic, fourc_v, fourc_h, sixc, zaxis, s2d2, fivec):
+    for factory in (psic, fourcv, fourch, sixc, zaxis, s2d2, fivec):
         g = factory()
         assert g.kappa_alpha_deg is None, f"{factory.__name__} should have None"

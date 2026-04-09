@@ -50,8 +50,8 @@ class AdHocDiffractometer:
         unit cell edge lengths.  Default is None (unset).  Must be > 0
         if provided.
     kappa_alpha_deg : float or None, optional
-        Kappa tilt angle in degrees for kappa geometries (kappa4c,
-        kappa4c_h, kappa6c).  None for non-kappa geometries.  Set by
+        Kappa tilt angle in degrees for kappa geometries (kappa4cv,
+        kappa4ch, kappa6c).  None for non-kappa geometries.  Set by
         the kappa factory functions; not intended to be changed after
         construction.
 
@@ -229,7 +229,7 @@ class AdHocDiffractometer:
 
         This is the angle between the kappa rotation axis and the vertical
         axis (toward the lateral axis).  Typical value: 50 deg.
-        Set by kappa factory functions (kappa4c, kappa4c_h, kappa6c).
+        Set by kappa factory functions (kappa4cv, kappa4ch, kappa6c).
         """
         return self._kappa_alpha_deg
 

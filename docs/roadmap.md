@@ -24,7 +24,7 @@ as they are completed.
 - [x] `AdHocDiffractometer` class: stacking order, basis validation,
       sample/detector rotation matrices, summary
 - [x] `@register_geometry` decorator and `list_geometries()` registry
-- [x] Geometry factories: psic, fourc_v, fourc_h, sixc, kappa4c, kappa4c_h,
+- [x] Geometry factories: psic, fourcv, fourch, sixc, kappa4cv, kappa4ch,
       kappa6c, zaxis, s2d2, fivec
 - [x] `Lattice` class: 7 crystal systems, lazy B matrix, reciprocal vectors,
       Cartesian lattice vectors, display precision
@@ -73,7 +73,7 @@ wave number, and named laboratory lines are out of scope here — see #21.
 ### 1.3 Kappa alpha queryable on the geometry instance ([#3](https://github.com/prjemian/ad_hoc_diffractometer/issues/3))
 
 - [x] Store `kappa_alpha_deg` as an attribute on the `AdHocDiffractometer`
-      instance returned by kappa factory functions (kappa4c, kappa4c_h,
+      instance returned by kappa factory functions (kappa4cv, kappa4ch,
       kappa6c); currently baked only into the axis vector
 - [x] Add a `kappa_alpha_deg` property on the instance; `None` for non-kappa geometries
 - [x] Tests verifying the value is correct and matches the axis vector

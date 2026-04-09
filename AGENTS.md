@@ -179,8 +179,8 @@ The default coordinate system follows You (1999):
 | `YHAT` (+y) | longitudinal (along beam, toward equipment) |
 | `ZHAT` (+z) | lateral (to our left facing the equipment) |
 
-The Busing & Levy (1967) convention (used in `fourc_v`, `fourc_h`,
-`kappa4c`, `kappa4c_h`) has x=lateral, y=longitudinal, z=vertical.
+The Busing & Levy (1967) convention (used in `fourcv`, `fourch`,
+`kappa4cv`, `kappa4ch`) has x=lateral, y=longitudinal, z=vertical.
 
 Basis dicts (`_BASIS_YOU`, `_BASIS_BL`) in `factories.py` encode these.
 
@@ -207,12 +207,12 @@ in `list_geometries()`.  Naming convention:
 
 | Suffix | Meaning |
 |---|---|
-| `_v` | vertical detector axis (laboratory, horizontal scattering plane) |
-| `_h` | lateral detector axis (synchrotron, vertical scattering plane) |
+| `v` | vertical detector axis (laboratory, horizontal scattering plane) |
+| `h` | lateral detector axis (synchrotron, vertical scattering plane) |
 | no suffix | detector convention unambiguous (psic, sixc) or compound (zaxis, s2d2) |
 
-Current factories: `psic`, `fourc_v`, `fourc_h`, `sixc`, `kappa4c`,
-`kappa4c_h`, `kappa6c`, `zaxis`, `s2d2`, `fivec`.
+Current factories: `psic`, `fourcv`, `fourch`, `sixc`, `kappa4cv`,
+`kappa4ch`, `kappa6c`, `zaxis`, `s2d2`, `fivec`.
 
 Walko (2016) designation system is noted in docstrings (S3D1, S4D2, etc.).
 
