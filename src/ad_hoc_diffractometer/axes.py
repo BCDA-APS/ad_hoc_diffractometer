@@ -14,9 +14,18 @@ Physical direction names ("vertical", "longitudinal", "lateral") are also
 accepted and resolved against a caller-supplied basis dict that maps each
 name to one of the three signed axis vectors.
 
+For diffractometer geometries with tilted axes (e.g. kappa), kappa_axis()
+computes the axis vector from the kappa angle alpha and the basis dict.
+
 Internal stage attributes always store the axis as a numpy array.
 This module handles only the conversion between the caller-facing string
 notation and the internal numpy representation.
+
+References
+----------
+International Tables for Crystallography, Vol. C, Section 2.2.6 (2006).
+    DOI: 10.1107/97809553602060000103
+    Confirms kappa axis tilted 50° from the omega (vertical) axis.
 """
 
 import numpy as np
@@ -176,3 +185,74 @@ def axis_from_physical(direction: str, sign: str, basis: dict) -> np.ndarray:
     array([ 0.,  0., -1.])
     """
     return parse_axis(f"{sign}{direction}", basis=basis)
+
+
+def kappa_axis(alpha_deg: float, basis: dict | None = None) -> np.ndarray:
+    """
+    Compute the kappa rotation axis vector for a kappa-geometry diffractometer.
+
+    The kappa axis lies in the vertical-lateral plane, tilted at angle alpha
+    from the vertical axis toward the lateral axis:
+
+        kappa_axis = vertical * cos(alpha) + lateral * sin(alpha)
+
+    In the You (1999) / default basis (xHat=vertical, zHat=lateral):
+
+        kappa_axis = XHAT * cos(alpha) + ZHAT * sin(alpha)
+
+    At alpha=0  the axis is purely vertical (degenerate with komega).
+    At alpha=90 the axis is purely lateral.
+    Typical value: alpha=50 degrees (Walko 2016; ITC Vol. C Sec. 2.2.6;
+    originally Enraf-Nonius).
+
+    The axis is a unit vector by construction (cos²α + sin²α = 1).
+
+    Parameters
+    ----------
+    alpha_deg : float
+        Kappa tilt angle in degrees, measured from the vertical axis toward
+        the lateral axis in the vertical-lateral plane.  Must be in (0, 90).
+    basis : dict or None
+        Mapping from physical direction names to numpy arrays.  If None,
+        the default You (1999) basis is used:
+            vertical  -> XHAT
+            lateral   -> ZHAT
+
+    Returns
+    -------
+    axis : numpy.ndarray, shape (3,)
+        Unit vector of the kappa rotation axis in the lab frame.
+
+    Raises
+    ------
+    ValueError
+        If alpha_deg is not in the open interval (0, 90) degrees, or if
+        the basis dict is missing 'vertical' or 'lateral' keys.
+
+    Examples
+    --------
+    >>> kappa_axis(50.0)                    # typical kappa, default basis
+    >>> kappa_axis(50.0, basis=my_basis)    # custom basis
+    """
+    if not (0.0 < alpha_deg < 90.0):
+        raise ValueError(
+            f"kappa alpha must be in (0, 90) degrees; got {alpha_deg}. "
+            f"At 0 the kappa axis is degenerate with komega (vertical); "
+            f"at 90 it is purely lateral."
+        )
+
+    if basis is None:
+        vertical = XHAT
+        lateral = ZHAT
+    else:
+        for key in ("vertical", "lateral"):
+            if key not in basis:
+                raise ValueError(
+                    f"basis dict must contain 'vertical' and 'lateral' keys; "
+                    f"missing: {key!r}.  Available: {list(basis.keys())}."
+                )
+        vertical = np.asarray(basis["vertical"], dtype=float)
+        lateral = np.asarray(basis["lateral"], dtype=float)
+
+    alpha_r = np.deg2rad(alpha_deg)
+    return np.cos(alpha_r) * vertical + np.sin(alpha_r) * lateral

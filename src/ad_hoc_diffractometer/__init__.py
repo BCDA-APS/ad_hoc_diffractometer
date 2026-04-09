@@ -8,10 +8,16 @@ Based on:
   H. You, J. Appl. Cryst. 32, 614-623 (1999). DOI: 10.1107/S0021889899001223
   M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993).
   D.A. Walko, Reference Module in Materials Science and Materials Engineering (2016).
+  J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).
+  K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995).
+  E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
+  International Tables for Crystallography, Vol. C, Section 2.2.6 (2006).
+    DOI: 10.1107/97809553602060000577
 """
 
 from .axes import axis_from_physical
 from .axes import axis_label
+from .axes import kappa_axis
 from .axes import parse_axis
 from .constants import XHAT
 from .constants import YHAT
@@ -19,9 +25,18 @@ from .constants import ZHAT
 from .display import fmt
 from .display import get_precision
 from .display import set_precision
-from .factories import geometry_fourc
-from .factories import geometry_psic
-from .factories import geometry_sixc
+from .factories import KAPPA_ALPHA_DEFAULT
+from .factories import fivec
+from .factories import fourc_h
+from .factories import fourc_v
+from .factories import kappa4c
+from .factories import kappa4c_h
+from .factories import kappa6c
+from .factories import list_geometries
+from .factories import psic
+from .factories import s2d2
+from .factories import sixc
+from .factories import zaxis
 from .geometry import AdHocDiffractometer
 from .lattice import CRYSTAL_SYSTEMS
 from .lattice import Lattice
@@ -44,6 +59,7 @@ __all__ = [
     "parse_axis",
     "axis_label",
     "axis_from_physical",
+    "kappa_axis",
     # rotation
     "rotation_matrix",
     # stage
@@ -51,9 +67,18 @@ __all__ = [
     # geometry
     "AdHocDiffractometer",
     # factories
-    "geometry_psic",
-    "geometry_fourc",
-    "geometry_sixc",
+    "list_geometries",
+    "KAPPA_ALPHA_DEFAULT",
+    "psic",
+    "fourc_v",
+    "fourc_h",
+    "sixc",
+    "kappa4c",
+    "kappa4c_h",
+    "kappa6c",
+    "zaxis",
+    "s2d2",
+    "fivec",
     # lattice
     "CRYSTAL_SYSTEMS",
     "Lattice",
