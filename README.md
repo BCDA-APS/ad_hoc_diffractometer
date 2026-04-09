@@ -1,4 +1,8 @@
-# Diffractometers
+# *Ad hoc* diffractometer
+
+Multi-circle diffractometer geometry and related calculations.
+
+## References
 
 Papers describing various diffractometer geometries.
 
