@@ -2,6 +2,8 @@
 
 Multi-circle diffractometer geometry and related calculations.
 
+`import ad_hoc_diffractometer as ahd`
+
 ## References
 
 Papers describing various diffractometer geometries.
