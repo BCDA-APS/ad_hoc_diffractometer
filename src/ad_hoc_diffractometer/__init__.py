@@ -16,10 +16,15 @@ from .axes import parse_axis
 from .constants import XHAT
 from .constants import YHAT
 from .constants import ZHAT
+from .display import fmt
+from .display import get_precision
+from .display import set_precision
 from .factories import geometry_fourc
 from .factories import geometry_psic
 from .factories import geometry_sixc
 from .geometry import AdHocDiffractometer
+from .lattice import CRYSTAL_SYSTEMS
+from .lattice import Lattice
 from .lattice import b_matrix
 from .lattice import lattice_vectors
 from .lattice import reciprocal_vectors
@@ -31,6 +36,10 @@ __all__ = [
     "XHAT",
     "YHAT",
     "ZHAT",
+    # display precision
+    "get_precision",
+    "set_precision",
+    "fmt",
     # axes
     "parse_axis",
     "axis_label",
@@ -46,6 +55,8 @@ __all__ = [
     "geometry_fourc",
     "geometry_sixc",
     # lattice
+    "CRYSTAL_SYSTEMS",
+    "Lattice",
     "lattice_vectors",
     "reciprocal_vectors",
     "b_matrix",
