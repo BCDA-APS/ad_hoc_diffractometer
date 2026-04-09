@@ -128,6 +128,28 @@ be implemented first.
 - [ ] Detector tilt / offset angles (correction for non-ideal alignment)
 - [ ] Relevant primarily when using area detectors rather than point detectors
 
+### 3.4 Diffractometer inclination with respect to the incident beam
+
+- [ ] Some instruments (or experimental configurations) mount the entire
+      diffractometer at a non-zero angle relative to the incident beam
+      direction — for example, tilted to access a specific range of
+      incidence angles or to accommodate a grazing-incidence geometry
+- [ ] This is distinct from the individual motor angles; it is a property
+      of the overall instrument mounting
+- [ ] Representation options to consider:
+      - A single tilt angle (rotation about a specified axis)
+      - A full 3×3 rotation matrix describing the lab-frame orientation
+        of the diffractometer coordinate system relative to the beam
+      - Euler angles or a quaternion
+- [ ] The inclination would modify the effective basis vectors seen by the
+      beam, and would need to be folded into the sample and detector
+      rotation matrix products
+- [ ] Reference: relevant for grazing-incidence X-ray diffraction (GIXD)
+      and for instruments where the diffractometer is not aligned with
+      the beam axis by default
+- [ ] Raised by users; priority to be determined once Priority 1 and 2
+      items are complete
+
 ---
 
 ## Notes
