@@ -6,13 +6,13 @@ _GEOMETRY_REGISTRY under its function name.  Use list_geometries() to
 retrieve all registered factories as a {name: callable} dict.
 
 Naming convention:
-    Eulerian geometries:     fourc_v, fourc_h, sixc, psic
-    Kappa geometries:        kappa4c, kappa4c_h, kappa6c
+    Eulerian geometries:     fourcv, fourch, sixc, psic
+    Kappa geometries:        kappa4cv, kappa4ch, kappa6c
     Inclined geometries:     zaxis, s2d2, fivec
 
-Detector axis suffix convention (_v / _h):
-    _v  ->  vertical detector axis   (laboratory / horizontal scattering plane)
-    _h  ->  lateral   detector axis  (synchrotron / vertical scattering plane)
+Detector axis suffix convention (v / h):
+    v  ->  vertical detector axis   (laboratory / horizontal scattering plane)
+    h  ->  lateral   detector axis  (synchrotron / vertical scattering plane)
 
     Walko (2016): "at synchrotron sources the scattering plane is usually
     vertical, to take advantage of the (typically) s-polarization of the
@@ -21,23 +21,23 @@ Detector axis suffix convention (_v / _h):
     Where no suffix is given, the geometry has no single-axis 2theta detector
     (inclined geometries) or the detector convention is unambiguous (psic, sixc).
 
-    fourc_v (vertical detector) is the default/laboratory convention.
-    kappa4c (vertical detector) is the default/laboratory convention.
+    fourcv (vertical detector) is the default/laboratory convention.
+    kappa4cv (vertical detector) is the default/laboratory convention.
 
 Kappa angle (alpha) convention (Walko 2016; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):
     The kappa axis lies in the vertical-lateral plane, tilted alpha degrees
     from the vertical axis toward the lateral axis.  Typical value: 50 deg.
 
 Walko (2016) designations:
-    S3D1      fourc_v, fourc_h, kappa4c, kappa4c_h
+    S3D1      fourcv, fourch, kappa4cv, kappa4ch
     S4D2      psic, kappa6c
     (S3D2)1   sixc   (sample and detector share base stage)
-    (S3D1)1   fivec  (fourc_v mounted on vertical base)
+    (S3D1)1   fivec  (fourcv mounted on vertical base)
     (S1D2)1   zaxis  (sample and detector share alpha base stage)
     S2D2      s2d2   (fully decoupled sample/detector pairs)
 
 References (chronological):
-    W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967)               fourc_v / fourc_h
+    W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967)               fourcv / fourch
     J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985)                          zaxis
     E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987)                   fivec
     M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993)            sixc
@@ -94,14 +94,14 @@ def list_geometries() -> dict[str, type]:
     Returns
     -------
     dict
-        Keys are factory function names (e.g. 'psic', 'fourc_v', 'kappa4c').
+        Keys are factory function names (e.g. 'psic', 'fourcv', 'kappa4cv').
         Values are the callable factory functions.
 
     Examples
     --------
     >>> from ad_hoc_diffractometer import list_geometries
     >>> list_geometries()
-    {'psic': <function psic ...>, 'fourc_v': <function fourc_v ...>, ...}
+    {'psic': <function psic ...>, 'fourcv': <function fourcv ...>, ...}
     >>> list_geometries()['psic']()   # instantiate by name
     AdHocDiffractometer(name='psic', ...)
     """
@@ -120,7 +120,7 @@ def get_geometry(name: str):
     ----------
     name : str
         Name of the geometry, as registered by @register_geometry
-        (e.g. 'psic', 'fourc_v', 'kappa4c').
+        (e.g. 'psic', 'fourcv', 'kappa4cv').
 
     Returns
     -------
@@ -139,8 +139,8 @@ def get_geometry(name: str):
     >>> factory = get_geometry("psic")
     >>> factory()
     AdHocDiffractometer(name='psic', ...)
-    >>> get_geometry("kappa4c")(alpha_deg=50)
-    AdHocDiffractometer(name='kappa4c', ...)
+    >>> get_geometry("kappa4cv")(alpha_deg=50)
+    AdHocDiffractometer(name='kappa4cv', ...)
     """
     if name not in _GEOMETRY_REGISTRY:
         available = sorted(_GEOMETRY_REGISTRY.keys())
@@ -162,7 +162,7 @@ def make_geometry(name: str, **kwargs) -> AdHocDiffractometer:
     Parameters
     ----------
     name : str
-        Name of the geometry (e.g. 'psic', 'fourc_v', 'kappa4c').
+        Name of the geometry (e.g. 'psic', 'fourcv', 'kappa4cv').
     **kwargs
         Keyword arguments forwarded to the factory function.  Most factories
         take no arguments; kappa factories accept alpha_deg.
@@ -182,8 +182,8 @@ def make_geometry(name: str, **kwargs) -> AdHocDiffractometer:
     >>> from ad_hoc_diffractometer import make_geometry
     >>> make_geometry("psic")
     AdHocDiffractometer(name='psic', ...)
-    >>> make_geometry("kappa4c", alpha_deg=50)
-    AdHocDiffractometer(name='kappa4c', ...)
+    >>> make_geometry("kappa4cv", alpha_deg=50)
+    AdHocDiffractometer(name='kappa4cv', ...)
     >>> make_geometry("kappa6c", alpha_deg=55)
     AdHocDiffractometer(name='kappa6c', ...)
     """
@@ -261,7 +261,7 @@ def psic() -> AdHocDiffractometer:
 
 
 @register_geometry
-def fourc_v() -> AdHocDiffractometer:
+def fourcv() -> AdHocDiffractometer:
     """
     Busing & Levy (1967) four-circle Eulerian diffractometer, vertical detector.
 
@@ -297,7 +297,7 @@ def fourc_v() -> AdHocDiffractometer:
         Stage("two_theta", -_ZHAT_BL, parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
-        name="fourc_v",
+        name="fourcv",
         stages=stages,
         basis=_BASIS_BL,
         description=(
@@ -308,7 +308,7 @@ def fourc_v() -> AdHocDiffractometer:
 
 
 @register_geometry
-def fourc_h() -> AdHocDiffractometer:
+def fourch() -> AdHocDiffractometer:
     """
     Busing & Levy (1967) four-circle Eulerian diffractometer, lateral detector.
 
@@ -341,7 +341,7 @@ def fourc_h() -> AdHocDiffractometer:
         Stage("two_theta", -_XHAT_BL, parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
-        name="fourc_h",
+        name="fourch",
         stages=stages,
         basis=_BASIS_BL,
         description=(
@@ -401,13 +401,13 @@ KAPPA_ALPHA_DEFAULT = 50.0
 
 
 @register_geometry
-def kappa4c(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
+def kappa4cv(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
     """
     Four-circle kappa diffractometer, vertical detector (laboratory default).
 
     Walko (2016) designation: S3D1.
 
-    The chi circle of a standard Eulerian fourc_v is replaced by a kappa arm.
+    The chi circle of a standard Eulerian fourcv is replaced by a kappa arm.
     The kappa axis lies in the vertical-lateral plane, tilted alpha degrees
     from the vertical toward the lateral axis.
 
@@ -438,24 +438,25 @@ def kappa4c(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
         Stage("two_theta", -_ZHAT_BL, parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
-        name="kappa4c",
+        name="kappa4cv",
         stages=stages,
         basis=_BASIS_BL,
         description=(
             f"Four-circle kappa diffractometer, vertical detector (laboratory). "
             f"Kappa alpha = {alpha_deg} deg."
         ),
+        kappa_alpha_deg=alpha_deg,
     )
 
 
 @register_geometry
-def kappa4c_h(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
+def kappa4ch(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
     """
     Four-circle kappa diffractometer, lateral detector (synchrotron).
 
     Walko (2016) designation: S3D1.
 
-    Identical to kappa4c() but the two_theta (detector) axis is lateral,
+    Identical to kappa4cv() but the two_theta (detector) axis is lateral,
     corresponding to the synchrotron configuration with a vertical
     scattering plane.
 
@@ -486,13 +487,14 @@ def kappa4c_h(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
         Stage("two_theta", -_XHAT_BL, parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
-        name="kappa4c_h",
+        name="kappa4ch",
         stages=stages,
         basis=_BASIS_BL,
         description=(
             f"Four-circle kappa diffractometer, lateral detector (synchrotron). "
             f"Kappa alpha = {alpha_deg} deg."
         ),
+        kappa_alpha_deg=alpha_deg,
     )
 
 
@@ -503,7 +505,7 @@ def kappa6c(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
 
     Walko (2016) designation: S4D2.
 
-    Extends the kappa4c geometry with two additional axes (mu, nu) in
+    Extends the kappa4cv geometry with two additional axes (mu, nu) in
     the style of the psic geometry (You 1999), giving full orientation freedom.
     This is the synchrotron configuration with a lateral detector.
 
@@ -548,6 +550,7 @@ def kappa6c(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
             f"(lateral detector, synchrotron). "
             f"Kappa alpha = {alpha_deg} deg."
         ),
+        kappa_alpha_deg=alpha_deg,
     )
 
 
@@ -649,12 +652,12 @@ def s2d2() -> AdHocDiffractometer:
 @register_geometry
 def fivec() -> AdHocDiffractometer:
     """
-    Five-circle diffractometer (fourc_v mounted on a vertical base).
+    Five-circle diffractometer (fourcv mounted on a vertical base).
 
     Walko (2016) designation: (S3D1)1.
     Basis: xHat=vertical, yHat=longitudinal, zHat=lateral.
 
-    A standard Eulerian four-circle (fourc_v) is mounted on a fifth vertical
+    A standard Eulerian four-circle (fourcv) is mounted on a fifth vertical
     rotation stage (mu) as a base.  The sample and detector motions are coupled
     through mu.  This provides an additional degree of freedom for accessing
     wider regions of reciprocal space, particularly at synchrotron sources.
@@ -687,7 +690,7 @@ def fivec() -> AdHocDiffractometer:
         stages=stages,
         basis=_BASIS_YOU,
         description=(
-            "Five-circle diffractometer: fourc_v on vertical mu base "
+            "Five-circle diffractometer: fourcv on vertical mu base "
             "(Vlieg et al. 1987; Walko 2016 (S3D1)1). "
             "Sample and detector coupled through mu."
         ),
