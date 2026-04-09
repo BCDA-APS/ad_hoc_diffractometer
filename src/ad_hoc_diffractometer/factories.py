@@ -108,6 +108,88 @@ def list_geometries() -> dict[str, type]:
     return dict(_GEOMETRY_REGISTRY)
 
 
+def get_geometry(name: str):
+    """
+    Return the registered factory function for the named geometry.
+
+    This is the primitive lookup — it returns the callable factory, not an
+    instance.  Use make_geometry() if you want an AdHocDiffractometer
+    instance directly.
+
+    Parameters
+    ----------
+    name : str
+        Name of the geometry, as registered by @register_geometry
+        (e.g. 'psic', 'fourc_v', 'kappa4c').
+
+    Returns
+    -------
+    callable
+        The factory function for the named geometry.
+
+    Raises
+    ------
+    ValueError
+        If no geometry with that name is registered, with a message listing
+        the available names.
+
+    Examples
+    --------
+    >>> from ad_hoc_diffractometer import get_geometry
+    >>> factory = get_geometry("psic")
+    >>> factory()
+    AdHocDiffractometer(name='psic', ...)
+    >>> get_geometry("kappa4c")(alpha_deg=50)
+    AdHocDiffractometer(name='kappa4c', ...)
+    """
+    if name not in _GEOMETRY_REGISTRY:
+        available = sorted(_GEOMETRY_REGISTRY.keys())
+        raise ValueError(
+            f"No geometry named {name!r} is registered. "
+            f"Available geometries: {available}."
+        )
+    return _GEOMETRY_REGISTRY[name]
+
+
+def make_geometry(name: str, **kwargs) -> AdHocDiffractometer:
+    """
+    Instantiate a geometry by name, passing keyword arguments to its factory.
+
+    Looks up the factory for the named geometry via get_geometry() and calls
+    it with the supplied kwargs.  This is the most convenient entry point for
+    config-driven or programmatic geometry selection.
+
+    Parameters
+    ----------
+    name : str
+        Name of the geometry (e.g. 'psic', 'fourc_v', 'kappa4c').
+    **kwargs
+        Keyword arguments forwarded to the factory function.  Most factories
+        take no arguments; kappa factories accept alpha_deg.
+
+    Returns
+    -------
+    AdHocDiffractometer
+        A fully configured diffractometer geometry instance.
+
+    Raises
+    ------
+    ValueError
+        If no geometry with that name is registered.
+
+    Examples
+    --------
+    >>> from ad_hoc_diffractometer import make_geometry
+    >>> make_geometry("psic")
+    AdHocDiffractometer(name='psic', ...)
+    >>> make_geometry("kappa4c", alpha_deg=50)
+    AdHocDiffractometer(name='kappa4c', ...)
+    >>> make_geometry("kappa6c", alpha_deg=55)
+    AdHocDiffractometer(name='kappa6c', ...)
+    """
+    return get_geometry(name)(**kwargs)
+
+
 # ---------------------------------------------------------------------------
 # Shared basis definitions
 # ---------------------------------------------------------------------------

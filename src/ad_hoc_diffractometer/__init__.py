@@ -29,10 +29,12 @@ from .factories import KAPPA_ALPHA_DEFAULT
 from .factories import fivec
 from .factories import fourc_h
 from .factories import fourc_v
+from .factories import get_geometry
 from .factories import kappa4c
 from .factories import kappa4c_h
 from .factories import kappa6c
 from .factories import list_geometries
+from .factories import make_geometry
 from .factories import psic
 from .factories import s2d2
 from .factories import sixc
@@ -68,6 +70,8 @@ __all__ = [
     "AdHocDiffractometer",
     # factories
     "list_geometries",
+    "get_geometry",
+    "make_geometry",
     "KAPPA_ALPHA_DEFAULT",
     "psic",
     "fourc_v",

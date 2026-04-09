@@ -35,12 +35,14 @@ from ad_hoc_diffractometer import b_matrix
 from ad_hoc_diffractometer import fivec
 from ad_hoc_diffractometer import fourc_h
 from ad_hoc_diffractometer import fourc_v
+from ad_hoc_diffractometer import get_geometry
 from ad_hoc_diffractometer import kappa4c
 from ad_hoc_diffractometer import kappa4c_h
 from ad_hoc_diffractometer import kappa6c
 from ad_hoc_diffractometer import kappa_axis
 from ad_hoc_diffractometer import lattice_vectors
 from ad_hoc_diffractometer import list_geometries
+from ad_hoc_diffractometer import make_geometry
 from ad_hoc_diffractometer import parse_axis
 from ad_hoc_diffractometer import psic
 from ad_hoc_diffractometer import reciprocal_vectors
@@ -819,6 +821,100 @@ def test_list_geometries_returns_copy():
     geoms = list_geometries()
     geoms.clear()
     assert len(list_geometries()) > 0
+
+
+# ---------------------------------------------------------------------------
+# Tests for get_geometry() and make_geometry()
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "name, context",
+    [
+        pytest.param("psic", does_not_raise(), id="get-psic"),
+        pytest.param("fourc_v", does_not_raise(), id="get-fourc_v"),
+        pytest.param("fourc_h", does_not_raise(), id="get-fourc_h"),
+        pytest.param("sixc", does_not_raise(), id="get-sixc"),
+        pytest.param("kappa4c", does_not_raise(), id="get-kappa4c"),
+        pytest.param("kappa4c_h", does_not_raise(), id="get-kappa4c_h"),
+        pytest.param("kappa6c", does_not_raise(), id="get-kappa6c"),
+        pytest.param("zaxis", does_not_raise(), id="get-zaxis"),
+        pytest.param("s2d2", does_not_raise(), id="get-s2d2"),
+        pytest.param("fivec", does_not_raise(), id="get-fivec"),
+        pytest.param(
+            "bogus",
+            pytest.raises(ValueError, match=re.escape("No geometry named")),
+            id="get-invalid-name-raises",
+        ),
+        pytest.param(
+            "",
+            pytest.raises(ValueError, match=re.escape("No geometry named")),
+            id="get-empty-string-raises",
+        ),
+    ],
+)
+def test_get_geometry(name, context):
+    with context:
+        factory = get_geometry(name)
+        assert callable(factory)
+        assert factory.__name__ == name
+
+
+def test_get_geometry_error_lists_available():
+    """Error message for unknown name must list available geometry names."""
+    with pytest.raises(ValueError, match=re.escape("Available geometries")):
+        get_geometry("bogus")
+
+
+@pytest.mark.parametrize(
+    "name, kwargs, context",
+    [
+        pytest.param("psic", {}, does_not_raise(), id="make-psic-no-kwargs"),
+        pytest.param("fourc_v", {}, does_not_raise(), id="make-fourc_v-no-kwargs"),
+        pytest.param("kappa4c", {}, does_not_raise(), id="make-kappa4c-default-alpha"),
+        pytest.param(
+            "kappa4c",
+            {"alpha_deg": 50.0},
+            does_not_raise(),
+            id="make-kappa4c-explicit-alpha-50",
+        ),
+        pytest.param(
+            "kappa6c",
+            {"alpha_deg": 55.0},
+            does_not_raise(),
+            id="make-kappa6c-explicit-alpha-55",
+        ),
+        pytest.param(
+            "bogus",
+            {},
+            pytest.raises(ValueError, match=re.escape("No geometry named")),
+            id="make-invalid-name-raises",
+        ),
+    ],
+)
+def test_make_geometry(name, kwargs, context):
+    with context:
+        g = make_geometry(name, **kwargs)
+        assert isinstance(g, AdHocDiffractometer)
+        assert g.name == name
+
+
+def test_make_geometry_returns_correct_instance():
+    """make_geometry and the factory function must return equivalent instances."""
+    g1 = make_geometry("psic")
+    g2 = psic()
+    assert g1.name == g2.name
+    assert [s.name for s in g1.sample_stages] == [s.name for s in g2.sample_stages]
+    assert [s.name for s in g1.detector_stages] == [s.name for s in g2.detector_stages]
+
+
+def test_make_geometry_kappa_alpha_forwarded():
+    """Keyword args must be forwarded to the factory (kappa alpha test)."""
+    g = make_geometry("kappa4c", alpha_deg=45.0)
+    expected = np.cos(np.deg2rad(45)) * np.array([0, 0, 1]) + np.sin(
+        np.deg2rad(45)
+    ) * np.array([1, 0, 0])
+    np.testing.assert_allclose(g.stage("kappa").axis, expected, atol=1e-12)
 
 
 # ---------------------------------------------------------------------------
