@@ -49,15 +49,10 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    ```
    Examples: `2-motor-limits`, `1-wavelength-energy`, `9-diffraction-modes`
 
-5. **After a PR is merged**, if the completed issue corresponds to a section
-   in `docs/roadmap.md`, check its top-level box from `[ ]` to `[x]` and
-   commit the change directly to `main`:
-   ```bash
-   # Edit docs/roadmap.md: change [ ] to [x] on the section's status line
-   git add docs/roadmap.md
-   git commit -m "DOC Mark <section> complete in roadmap (closes #N)"
-   git push
-   ```
+5. **On the feature branch**, if the completed issue corresponds to a section
+   in `docs/roadmap.md`, check its box from `[ ]` to `[x]` as part of the
+   same branch and include it in the PR.  The roadmap update is accepted when
+   the PR is merged — no separate post-merge commit to `main` is needed.
 
 Contributed by: OpenCode (argo/claudesonnet46)
 
