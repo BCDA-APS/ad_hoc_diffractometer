@@ -6,4 +6,3 @@ the HYou diffractometer (per his journal article 1999 J Appl Cryst 32 614-623, D
 - xHat: vertical
 - yHat: longitudinal (along the incoming beam direction)
 - zHat: lateral
-

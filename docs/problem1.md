@@ -4,15 +4,15 @@ We have a piece of equipment we'll use to examine an object.  The equipment will
 
 ## Reference frame
 
-We'll describe our reference frame for now with reference only to the floor.  
+We'll describe our reference frame for now with reference only to the floor.
 
 - vertical: The positive vertical direction is normal to the plane of the floor
-  and points out of the floor.  
+  and points out of the floor.
 - longitudinal: The positive longitudinal direction is along our line of sight
   towards the equipment and normal to the vertical direction.
 - lateral: The lateral direction is normal to both the vertical and
   longitudinal directions, which positive direction is to our left.
-  
+
 We can see the equipment by looking in the positive longitudinal direction,
 normal to the lateral-vertical plane.
 
@@ -21,7 +21,7 @@ normal to the lateral-vertical plane.
 There is a piece of mechanical equipment consisting of various rotary stages.
 No translational stages are involved. The rotational axes of all stages coincide
 ideally at a single point of intersection in a cartesian space. The object to be
-examined is mounted at this point of intersection.  
+examined is mounted at this point of intersection.
 
 In practice, due to engineering precision, this point of intersection devolves
 into a 3-D volume termed a "sphere of confusion".

@@ -10,20 +10,18 @@ Based on:
   D.A. Walko, Reference Module in Materials Science and Materials Engineering (2016).
 """
 
-from .ad_hoc_diffractometer import (
-    XHAT,
-    YHAT,
-    ZHAT,
-    rotation_matrix,
-    Stage,
-    AdHocDiffractometer,
-    geometry_psic,
-    geometry_fourc,
-    geometry_sixc,
-    lattice_vectors,
-    reciprocal_vectors,
-    b_matrix,
-)
+from .ad_hoc_diffractometer import XHAT
+from .ad_hoc_diffractometer import YHAT
+from .ad_hoc_diffractometer import ZHAT
+from .ad_hoc_diffractometer import AdHocDiffractometer
+from .ad_hoc_diffractometer import Stage
+from .ad_hoc_diffractometer import b_matrix
+from .ad_hoc_diffractometer import geometry_fourc
+from .ad_hoc_diffractometer import geometry_psic
+from .ad_hoc_diffractometer import geometry_sixc
+from .ad_hoc_diffractometer import lattice_vectors
+from .ad_hoc_diffractometer import reciprocal_vectors
+from .ad_hoc_diffractometer import rotation_matrix
 
 __all__ = [
     "XHAT",
