@@ -70,6 +70,20 @@ as they are completed.
 - [x] Validate limits at construction: min < max
 - [x] Tests covering valid, invalid, and boundary cases
 
+### 1.4 Split unit tests into module-specific files ([#17](https://github.com/prjemian/ad_hoc_diffractometer/issues/17))
+
+- [ ] Create `tests/test_axes.py`, `test_rotation.py`, `test_stage.py`, `test_geometry.py`, `test_factories.py`, `test_display.py`
+- [ ] Migrate all tests from `tests/test_diffractometer.py` into the appropriate new file
+- [ ] Remove `tests/test_diffractometer.py` once migration is complete
+- [ ] Verify full test suite still passes
+
+### 1.5 GitHub Actions workflow for unit testing ([#18](https://github.com/prjemian/ad_hoc_diffractometer/issues/18))
+
+- [ ] Create `.github/workflows/tests.yml`
+- [ ] Trigger on `push` and `pull_request` to `main`
+- [ ] Matrix over all supported Python versions (`3.10`, `3.11`, `3.12`, `3.13`)
+- [ ] Install with `pip install -e .[dev]` and run `python -m pytest`
+
 ### 1.3 Kappa alpha queryable on the geometry instance ([#3](https://github.com/prjemian/ad_hoc_diffractometer/issues/3))
 
 - [ ] Store `kappa_alpha_deg` as an attribute on the `AdHocDiffractometer`
