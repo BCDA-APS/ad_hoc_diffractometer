@@ -14,11 +14,11 @@ from .display import get_precision
 from .display import set_precision
 from .factories import KAPPA_ALPHA_DEFAULT
 from .factories import fivec
-from .factories import fourc_h
-from .factories import fourc_v
+from .factories import fourch
+from .factories import fourcv
 from .factories import get_geometry
-from .factories import kappa4c
-from .factories import kappa4c_h
+from .factories import kappa4ch
+from .factories import kappa4cv
 from .factories import kappa6c
 from .factories import list_geometries
 from .factories import make_geometry
@@ -61,11 +61,11 @@ __all__ = [
     "make_geometry",
     "KAPPA_ALPHA_DEFAULT",
     "psic",
-    "fourc_v",
-    "fourc_h",
+    "fourcv",
+    "fourch",
     "sixc",
-    "kappa4c",
-    "kappa4c_h",
+    "kappa4cv",
+    "kappa4ch",
     "kappa6c",
     "zaxis",
     "s2d2",

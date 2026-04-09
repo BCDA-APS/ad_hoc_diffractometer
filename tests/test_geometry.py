@@ -498,3 +498,38 @@ def test_wavelength_in_summary(psic_geom, capsys):
     psic_geom.summary()
     out = capsys.readouterr().out
     assert "1.540600 Å" in out
+
+
+# ---------------------------------------------------------------------------
+# kappa_alpha_deg attribute
+# ---------------------------------------------------------------------------
+
+
+def test_kappa_alpha_deg_default_is_none(psic_geom):
+    """Non-kappa geometries have kappa_alpha_deg = None."""
+    assert psic_geom.kappa_alpha_deg is None
+
+
+def test_kappa_alpha_deg_settable():
+    """kappa_alpha_deg can be set on a bare AdHocDiffractometer."""
+    from ad_hoc_diffractometer import XHAT
+    from ad_hoc_diffractometer import Stage
+
+    stages = [Stage("a", XHAT, role="sample")]
+    g = AdHocDiffractometer("test", stages, kappa_alpha_deg=50.0)
+    assert g.kappa_alpha_deg == pytest.approx(50.0)
+
+
+def test_kappa_alpha_deg_none_for_non_kappa():
+    """All non-kappa factories return None for kappa_alpha_deg."""
+    from ad_hoc_diffractometer import fivec
+    from ad_hoc_diffractometer import fourch
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer import s2d2
+    from ad_hoc_diffractometer import sixc
+    from ad_hoc_diffractometer import zaxis
+
+    for factory in (psic, fourcv, fourch, sixc, zaxis, s2d2, fivec):
+        g = factory()
+        assert g.kappa_alpha_deg is None, f"{factory.__name__} should have None"

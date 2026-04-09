@@ -49,6 +49,11 @@ class AdHocDiffractometer:
         X-ray or neutron wavelength in Å.  Must match the units used for
         unit cell edge lengths.  Default is None (unset).  Must be > 0
         if provided.
+    kappa_alpha_deg : float or None, optional
+        Kappa tilt angle in degrees for kappa geometries (kappa4cv,
+        kappa4ch, kappa6c).  None for non-kappa geometries.  Set by
+        the kappa factory functions; not intended to be changed after
+        construction.
 
     Attributes
     ----------
@@ -58,6 +63,8 @@ class AdHocDiffractometer:
         Stages with role='detector', in stacking order (floor first).
     wavelength : float or None
         Wavelength in Å, or None if not set.
+    kappa_alpha_deg : float or None
+        Kappa tilt angle in degrees, or None for non-kappa geometries.
     """
 
     DEFAULT_BASIS = {
@@ -73,11 +80,13 @@ class AdHocDiffractometer:
         basis: dict | None = None,
         description: str = "",
         wavelength: float | None = None,
+        kappa_alpha_deg: float | None = None,
     ):
         self.name = name
         self.description = description
         self.basis = basis if basis is not None else dict(self.DEFAULT_BASIS)
         self.wavelength = wavelength  # validated via property setter
+        self.kappa_alpha_deg = kappa_alpha_deg
 
         # Validate basis vectors
         self._check_basis()
@@ -208,6 +217,27 @@ class AdHocDiffractometer:
             if value <= 0:
                 raise ValueError(f"wavelength must be > 0 Å; got {value}.")
         self._wavelength = value
+
+    # ------------------------------------------------------------------
+    # Kappa alpha
+    # ------------------------------------------------------------------
+
+    @property
+    def kappa_alpha_deg(self) -> float | None:
+        """
+        Kappa tilt angle in degrees, or None for non-kappa geometries.
+
+        This is the angle between the kappa rotation axis and the vertical
+        axis (toward the lateral axis).  Typical value: 50 deg.
+        Set by kappa factory functions (kappa4cv, kappa4ch, kappa6c).
+        """
+        return self._kappa_alpha_deg
+
+    @kappa_alpha_deg.setter
+    def kappa_alpha_deg(self, value: float | None) -> None:
+        if value is not None:
+            value = float(value)
+        self._kappa_alpha_deg = value
 
     # ------------------------------------------------------------------
     # Public interface
