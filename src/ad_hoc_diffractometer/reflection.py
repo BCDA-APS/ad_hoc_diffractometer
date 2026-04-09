@@ -78,23 +78,55 @@ class Reflection:
                     f"Reflection wavelength must be > 0 Å; got {self.wavelength}."
                 )
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: object, atol: float | None = None) -> bool:
         """
-        True if all fields match.
+        True if all fields match within tolerance.
+
+        String fields (``name``, ``geometry_name``) are compared exactly.
+        Numeric fields (``hkl``, ``angles`` values, ``wavelength``) are
+        compared with ``np.allclose`` at an absolute tolerance derived from
+        the current display precision (or an explicit ``atol``).
 
         Two reflections from different geometries are never equal even if
         hkl and angle values coincide, because the angle keys carry
         different physical meanings.
+
+        Parameters
+        ----------
+        other : object
+        atol : float or None
+            Absolute tolerance.  If None, derived from the current display
+            precision via ``display.precision_atol()``.
         """
         if not isinstance(other, Reflection):
             return NotImplemented
-        return (
-            self.name == other.name
-            and self.hkl == other.hkl
-            and self.angles == other.angles
-            and self.wavelength == other.wavelength
-            and self.geometry_name == other.geometry_name
-        )
+        if self.name != other.name:
+            return False
+        if self.geometry_name != other.geometry_name:
+            return False
+        if set(self.angles) != set(other.angles):
+            return False
+
+        from .display import allclose
+
+        if not allclose(self.hkl, other.hkl, atol=atol):
+            return False
+
+        # Compare angle values in a consistent key order
+        keys = sorted(self.angles)
+        if not allclose(
+            [self.angles[k] for k in keys],
+            [other.angles[k] for k in keys],
+            atol=atol,
+        ):
+            return False
+
+        # wavelength: both None, or both numeric and close
+        if self.wavelength is None and other.wavelength is None:
+            return True
+        if self.wavelength is None or other.wavelength is None:
+            return False
+        return allclose(self.wavelength, other.wavelength, atol=atol)
 
     def __repr__(self) -> str:
         wl = f"{self.wavelength} Å" if self.wavelength is not None else "not set"

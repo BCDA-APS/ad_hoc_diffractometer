@@ -840,3 +840,38 @@ def test_instance_precision_overrides_package():
         assert "a=5.000000" not in str(lat)
     finally:
         ahd.set_precision(original)
+
+
+# ---------------------------------------------------------------------------
+# Lattice.__eq__ with tolerance
+# ---------------------------------------------------------------------------
+
+
+def test_lattice_eq_identical():
+    assert Lattice(a=5.431) == Lattice(a=5.431)
+
+
+def test_lattice_eq_within_default_tolerance():
+    """Values differing by less than half a unit in the 6th decimal place."""
+    a = 5.4310000
+    b = 5.4310003  # differs by 3e-7, within atol=5e-7
+    assert Lattice(a=a) == Lattice(a=b)
+
+
+def test_lattice_eq_outside_default_tolerance():
+    a = 5.4310000
+    b = 5.4320000  # differs by 1e-3, outside atol=5e-7
+    assert Lattice(a=a) != Lattice(a=b)
+
+
+def test_lattice_eq_explicit_atol():
+    assert Lattice(a=5.431).__eq__(Lattice(a=5.432), atol=0.01) is True
+    assert Lattice(a=5.431).__eq__(Lattice(a=5.451), atol=0.01) is False
+
+
+def test_lattice_eq_not_implemented_for_non_lattice():
+    assert Lattice(a=5.431).__eq__("not a lattice") is NotImplemented
+
+
+def test_lattice_eq_different_parameters():
+    assert Lattice(a=5.431) != Lattice(a=5.431, c=10.0)  # tetragonal vs cubic

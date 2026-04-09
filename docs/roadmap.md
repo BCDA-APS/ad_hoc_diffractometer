@@ -148,8 +148,20 @@ be implemented first.
 - [x] `AdHocDiffractometer.add_reflection()` delegates to the active sample's
       `ReflectionList`
 - [x] U and UB matrices live on `Sample`, not on the geometry
-- [x] `Lattice.__eq__` added (compares all six parameters)
+- [x] `Lattice.__eq__` added (compares all six parameters, exact — see 2.6)
 - [x] 37 new tests in `test_sample.py`
+
+### 2.6 Tolerance-aware `__eq__` for Lattice and Reflection ([#29](https://github.com/prjemian/ad_hoc_diffractometer/issues/29))
+
+- [x] Add `precision_atol(digits=None)` to `display.py`: returns
+      `0.5 * 10**(-digits)` — half a unit in the last displayed decimal place
+- [x] Add `allclose(a, b, atol=None, digits=None)` to `display.py`: wraps
+      `np.allclose` with `rtol=0` and the precision-derived tolerance
+- [x] `Lattice.__eq__`: pack six parameters into arrays → `np.allclose`
+- [x] `Reflection.__eq__`: hkl and angle values → `np.allclose`; name and
+      `geometry_name` → exact string comparison
+- [x] Export `precision_atol` and `allclose` from `__init__.py`
+- [x] Tests in `test_display.py`, `test_lattice.py`, `test_reflection.py`
 
 ---
 
