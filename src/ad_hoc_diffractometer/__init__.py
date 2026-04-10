@@ -39,6 +39,8 @@ from .orientation import ub_from_one_reflection
 from .orientation import ub_from_three_reflections_bl1967
 from .orientation import ub_from_two_reflections_bl1967
 from .orientation import ub_identity
+from .refinement import refine_lattice_bl1967
+from .refinement import refine_lattice_simplex
 from .reflection import Reflection
 from .reflection import ReflectionList
 from .rotation import rotation_matrix
@@ -104,6 +106,9 @@ __all__ = [
     "lattice_vectors",
     "reciprocal_vectors",
     "b_matrix",
+    # refinement
+    "refine_lattice_bl1967",
+    "refine_lattice_simplex",
     # spec
     "FourcG1",
     "parse_fourc_g1",

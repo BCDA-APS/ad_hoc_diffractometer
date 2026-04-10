@@ -182,18 +182,21 @@ be implemented first.
 
 ### 2.8 `refine_lattice_bl1967` — least-squares lattice refinement ([#32](https://github.com/prjemian/ad_hoc_diffractometer/issues/32))
 
-- [ ] Create `refinement.py` module (separate from `orientation.py`)
-- [ ] Implement `refine_lattice_bl1967(sample, reflections, ...)` using
+- [x] Create `refinement.py` module (separate from `orientation.py`)
+- [x] Implement `refine_lattice_bl1967(sample, reflections, ...)` using
       BL1967 §Refinement; simultaneous cell + orientation least-squares
-- [ ] Returns result dict; updates `sample.lattice`, `sample.U`,
+- [x] `refine_all=False` (default): refine only the free params for the
+      current crystal system; `refine_all=True`: all six params free
+- [x] Returns result dict; updates `sample.lattice`, `sample.U`,
       `sample.UB` in-place
 
 ### 2.9 `refine_lattice_simplex` — derivative-free lattice refinement ([#33](https://github.com/prjemian/ad_hoc_diffractometer/issues/33))
 
-- [ ] Implement `refine_lattice_simplex(sample, reflections, ...)` in
+- [x] Implement `refine_lattice_simplex(sample, reflections, ...)` in
       `refinement.py` using Nelder-Mead simplex; derivative-free
       alternative to BL1967 least squares
-- [ ] Same return dict structure as `refine_lattice_bl1967`
+- [x] `refine_all` option (same semantics as `refine_lattice_bl1967`)
+- [x] Same return dict structure as `refine_lattice_bl1967`
 
 ---
 
