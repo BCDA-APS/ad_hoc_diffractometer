@@ -10,6 +10,8 @@ Covers:
   - Both functions work with no UB set (graceful fallback)
   - Both functions work with no wavelength set (graceful fallback)
   - Regression against Align4Pete.log output values
+  - g.wh and g.pa properties (#51): property access returns the same
+    string as the module-level functions; both are @property descriptors
 """
 
 import pytest
@@ -246,3 +248,70 @@ class TestPa:
                 break
         else:
             pytest.fail("No 'reciprocal space' line found in pa() output")
+
+
+# ---------------------------------------------------------------------------
+# g.wh and g.pa properties (#51)
+# ---------------------------------------------------------------------------
+
+
+class TestWhPaProperties:
+    """g.wh and g.pa are @property descriptors on AdHocDiffractometer."""
+
+    def test_wh_is_property(self):
+        """AdHocDiffractometer.wh must be a property descriptor."""
+        from ad_hoc_diffractometer import AdHocDiffractometer
+
+        assert isinstance(AdHocDiffractometer.wh, property)
+
+    def test_pa_is_property(self):
+        """AdHocDiffractometer.pa must be a property descriptor."""
+        from ad_hoc_diffractometer import AdHocDiffractometer
+
+        assert isinstance(AdHocDiffractometer.pa, property)
+
+    def test_wh_property_equals_function(self, sapphire_geom):
+        """g.wh returns the same string as wh(g)."""
+        assert sapphire_geom.wh == wh(sapphire_geom)
+
+    def test_pa_property_equals_function(self, sapphire_geom):
+        """g.pa returns the same string as pa(g)."""
+        assert sapphire_geom.pa == pa(sapphire_geom)
+
+    def test_wh_property_returns_str(self, bare_geom):
+        """g.wh returns a str even when nothing is configured."""
+        bare_geom.wavelength = 1.5406
+        assert isinstance(bare_geom.wh, str)
+
+    def test_pa_property_returns_str(self, bare_geom):
+        """g.pa returns a str even when nothing is configured."""
+        bare_geom.wavelength = 1.5406
+        assert isinstance(bare_geom.pa, str)
+
+    def test_wh_property_contains_hkl(self, sapphire_geom):
+        """g.wh contains the 'H K L' line."""
+        assert "H K L" in sapphire_geom.wh
+
+    def test_pa_property_contains_geometry_name(self, sapphire_geom):
+        """g.pa contains the geometry name."""
+        assert "fourcv" in sapphire_geom.pa
+
+    def test_wh_property_not_callable(self, sapphire_geom):
+        """g.wh is a str, not callable — consistent with property semantics."""
+        assert not callable(sapphire_geom.wh)
+
+    def test_pa_property_not_callable(self, sapphire_geom):
+        """g.pa is a str, not callable — consistent with property semantics."""
+        assert not callable(sapphire_geom.pa)
+
+    def test_wh_property_same_result_psic(self):
+        """g.wh works for psic geometry too."""
+        g = psic()
+        g.wavelength = 1.5406
+        assert g.wh == wh(g)
+
+    def test_pa_property_same_result_psic(self):
+        """g.pa works for psic geometry too."""
+        g = psic()
+        g.wavelength = 1.5406
+        assert g.pa == pa(g)
