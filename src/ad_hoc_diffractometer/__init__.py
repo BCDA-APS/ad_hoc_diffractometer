@@ -2,6 +2,8 @@
 ad_hoc_diffractometer — Multi-circle diffractometer geometry and related calculations.
 """
 
+import logging
+
 from ._version import __version__
 from .axes import axis_from_physical
 from .axes import axis_label
@@ -54,6 +56,10 @@ from .spec import g1_to_sample
 from .spec import parse_fourc_g1
 from .spec import sample_to_g1
 from .stage import Stage
+
+logger = logging.getLogger(__name__)
+
+logger = logging.getLogger(__name__)
 
 __all__ = [
     # version

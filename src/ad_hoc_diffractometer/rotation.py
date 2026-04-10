@@ -5,7 +5,13 @@ Provides the Rodrigues rotation formula for computing 3x3 rotation matrices
 from a unit axis vector and an angle.
 """
 
+import logging
+
 import numpy as np
+
+logger = logging.getLogger(__name__)
+
+logger = logging.getLogger(__name__)
 
 
 def rotation_matrix(axis: np.ndarray, angle_deg: float) -> np.ndarray:

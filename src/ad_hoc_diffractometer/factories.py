@@ -69,6 +69,7 @@ References (chronological):
 
 from __future__ import annotations
 
+import logging
 from importlib.metadata import entry_points
 
 import numpy as np
@@ -79,6 +80,8 @@ from .constants import YHAT
 from .constants import ZHAT
 from .geometry import AdHocDiffractometer
 from .stage import Stage
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Registry
@@ -157,10 +160,10 @@ def _load_entry_point_geometries() -> None:
                 try:
                     factory = ep.load()
                     _GEOMETRY_REGISTRY[ep.name] = factory
-                except Exception:  # noqa: BLE001
-                    pass  # broken plugin — skip silently
-    except Exception:  # noqa: BLE001
-        pass  # importlib.metadata unavailable — no-op
+                except Exception as exc:  # noqa: BLE001
+                    logger.debug("Skipping broken entry point %r: %s", ep.name, exc)
+    except Exception as exc:  # noqa: BLE001
+        logger.debug("entry_points() failed; no plugins loaded: %s", exc)
 
 
 def list_geometries() -> dict[str, type]:
@@ -496,6 +499,7 @@ def kappa4cv(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
     The chi circle of a standard Eulerian fourcv is replaced by a kappa arm.
     The kappa axis lies in the vertical-lateral plane, tilted alpha degrees
     from the vertical toward the lateral axis.
+
 
     Basis (Busing & Levy convention): x=lateral, y=longitudinal, z=vertical.
 

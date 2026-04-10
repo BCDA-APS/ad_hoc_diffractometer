@@ -27,7 +27,11 @@ considered equal when they agree to within half a unit in the last
 explicit tolerance can be supplied to override this default.
 """
 
+import logging
+
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Package-level default
@@ -146,6 +150,7 @@ def fmt(value: float, digits: int | None = None) -> str:
     digits : int or None
         Number of decimal places.  If None, uses the package-level default
         from get_precision().
+
 
     Returns
     -------
