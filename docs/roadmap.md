@@ -454,6 +454,50 @@ angle calculations.  Depends on #1 (wavelength on `AdHocDiffractometer`).
 - [ ] Tests covering conversions, lazy recomputation, and named constant values
 - [ ] Related to: #8 (neutron source — independent, different formula)
 
+### 3.8b Dynamic versioning with hatch-vcs ([#59](https://github.com/prjemian/ad_hoc_diffractometer/issues/59))
+
+- [ ] Add ``hatch-vcs`` to ``[build-system] requires``; remove hardcoded
+      ``version``; add ``dynamic = ["version"]``
+- [ ] ``[tool.hatch.version] source = "vcs"`` with ``tag-pattern`` requiring
+      three-component SemVer (``v0.3.0``, etc.); ignores old ``v0.1`` / ``v0.2``
+- [ ] ``[tool.hatch.build.hooks.vcs] version-file`` bakes version into wheel
+- [ ] CI: add ``fetch-depth: 0`` to ``actions/checkout``
+- [ ] Existing tags ``v0.1`` and ``v0.2`` retagged as ``v0.1.0`` and ``v0.2.0``;
+      ``v0.3.0.dev0`` marks start of current development line
+
+### 3.8c 100% test coverage ([#60](https://github.com/prjemian/ad_hoc_diffractometer/issues/60))
+
+Current coverage: 93% (119 uncovered lines).  ``pytest-cov`` is installed.
+
+- [ ] Add coverage config to ``pyproject.toml``: ``fail_under = 100``,
+      ``branch = true``, ``addopts = "--cov=..."``
+- [ ] Test ``_nelder_mead_numpy`` directly; mock scipy absence to exercise
+      the simplex fallback path (largest gap: 76 lines in ``refinement.py``)
+- [ ] Add missing tests for all other uncovered branches across
+      ``geometry.py``, ``orientation.py``, ``sample.py``, ``reflection.py``,
+      ``factories.py``, ``spec.py``, ``lattice.py``, ``stage.py``
+
+### 3.8d Add logging support ([#61](https://github.com/prjemian/ad_hoc_diffractometer/issues/61))
+
+- [ ] ``logging.getLogger(__name__)`` in each source module; root logger
+      ``"ad_hoc_diffractometer"`` lets users configure all output at once
+- [ ] Default level ``WARNING`` (Python's default) — silent unless user
+      configures a handler
+- [ ] ``logger.debug()`` in ``factories`` broken-plugin skip,
+      ``refinement._nelder_mead_numpy`` non-convergence, ``geometry.wh/pa``
+      silent exception catches
+- [ ] ``logger.warning()`` alongside ``warnings.warn`` in ``orientation.py``
+- [ ] Tests via ``caplog`` fixture; contribute to 100% coverage goal (#60)
+
+### 3.8e Sphinx documentation ([#57](https://github.com/prjemian/ad_hoc_diffractometer/issues/57))
+
+- [ ] Allow either reST or Markdown source
+- [ ] Refactor existing content in ``docs/``
+- [ ] Render Jupyter notebooks
+- [ ] Sections: main page, User Guide (diataxis.fr), API (AutoAPI),
+      Install, Changes (render ``CHANGES.md``)
+- [ ] GitHub Actions workflow to build and publish docs
+
 ### 3.9 Neutron radiation source support ([#8](https://github.com/prjemian/ad_hoc_diffractometer/issues/8))
 
 Moved from Priority 1.  Wavelength storage (#1) is the only prerequisite;
