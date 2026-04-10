@@ -7,6 +7,20 @@ for the full issue tracker.
 
 ## Unreleased
 
+### Fixed
+
+- ``fourcv`` / ``fourch`` / ``kappa4cv`` / ``kappa4ch`` stage axes corrected
+  (#66): the ``v``/``h`` suffix describes the **scattering plane** (not the
+  detector axis); ``fourcv`` (vertical scattering plane) now has omega, chi,
+  phi, and ttheta on the lateral/longitudinal axes; ``fourch`` (horizontal
+  scattering plane, matching BL1967 Fig. 1b) has omega, chi, phi, and ttheta
+  on the vertical/lateral axes; same corrections applied to ``kappa4cv`` /
+  ``kappa4ch``.  Stage axis assignments now use ``_BASIS_BL["lateral"]`` etc.
+  for self-documenting physical-direction notation.
+- ``two_theta`` stage name renamed to ``ttheta`` throughout all factories,
+  tests, and supporting modules.
+- AGENTS.md suffix table corrected.
+
 ### Added
 
 - Logging support (#61): ``logging.getLogger(__name__)`` added to all

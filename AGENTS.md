@@ -219,8 +219,8 @@ in `list_geometries()`.  Naming convention:
 
 | Suffix | Meaning |
 |---|---|
-| `v` | vertical detector axis (laboratory, horizontal scattering plane) |
-| `h` | lateral detector axis (synchrotron, vertical scattering plane) |
+| `v` | vertical scattering plane (synchrotron) — ttheta rotates about the lateral axis |
+| `h` | horizontal scattering plane (laboratory) — ttheta rotates about the vertical axis |
 | no suffix | detector convention unambiguous (psic, sixc) or compound (zaxis, s2d2) |
 
 Current factories: `psic`, `fourcv`, `fourch`, `sixc`, `kappa4cv`,

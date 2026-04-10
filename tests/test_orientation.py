@@ -456,7 +456,7 @@ def test_angles_to_phi_vector_fourcv_all_zero_gives_zero():
     """fourcv: all-zero angles → Q_phi = 0."""
     g = fourcv()
     g.wavelength = 1.0
-    Q = angles_to_phi_vector(g, omega=0, chi=0, phi=0, two_theta=0)
+    Q = angles_to_phi_vector(g, omega=0, chi=0, phi=0, ttheta=0)
     np.testing.assert_allclose(Q, np.zeros(3), atol=1e-12)
 
 
@@ -469,12 +469,12 @@ def test_angles_to_phi_vector_fourcv_bisecting_magnitude():
     """
     g = fourcv()
     g.wavelength = _LAMBDA_CU_KA
-    two_theta = 28.4474  # Si (111) at Cu Kα
+    ttheta_deg = 28.4474  # Si (111) at Cu Kα
     Q = angles_to_phi_vector(
-        g, omega=two_theta / 2.0, chi=0.0, phi=0.0, two_theta=two_theta
+        g, omega=ttheta_deg / 2.0, chi=0.0, phi=0.0, ttheta=ttheta_deg
     )
     expected_mag = (
-        4.0 * math.pi / _LAMBDA_CU_KA * math.sin(math.radians(two_theta / 2.0))
+        4.0 * math.pi / _LAMBDA_CU_KA * math.sin(math.radians(ttheta_deg / 2.0))
     )
     np.testing.assert_allclose(np.linalg.norm(Q), expected_mag, rtol=1e-6)
 
@@ -1080,7 +1080,7 @@ def test_ub_from_one_reflection_error_branches(reference_stage, reference_hkl, m
     g.add_reflection(
         "r1",
         hkl=(0, 0, 1),
-        angles={"omega": 20.0, "chi": 0.0, "phi": 0.0, "two_theta": 40.0},
+        angles={"omega": 20.0, "chi": 0.0, "phi": 0.0, "ttheta": 40.0},
     )
     with pytest.raises(ValueError, match=match):
         ub_from_one_reflection(
@@ -1125,7 +1125,7 @@ def test_ub_from_one_reflection_antiparallel_Bh_and_r(hkl, reference_stage, desc
     g.add_reflection(
         "r1",
         hkl=hkl,
-        angles={"omega": 20.0, "chi": 0.0, "phi": 0.0, "two_theta": 40.0},
+        angles={"omega": 20.0, "chi": 0.0, "phi": 0.0, "ttheta": 40.0},
     )
     UB = ub_from_one_reflection(
         g.sample,
@@ -1149,7 +1149,7 @@ def test_ub_from_one_reflection_normal_rotation():
     g.add_reflection(
         "r1",
         hkl=(0, 0, 1),
-        angles={"omega": 20.0, "chi": 0.0, "phi": 0.0, "two_theta": 40.0},
+        angles={"omega": 20.0, "chi": 0.0, "phi": 0.0, "ttheta": 40.0},
     )
     # B @ (0,0,1) is along z-axis; chi axis is along x-axis → angle ≈ 90°
     # This is neither parallel (0°) nor anti-parallel (180°), so the else branch fires.
@@ -1187,9 +1187,9 @@ def test_ub_from_three_linalg_error_on_H_inv_raises():
     g.sample.lattice = Lattice(a=1.0)
     ub_identity(g.sample)
     for name, hkl, ang in [
-        ("r1", (1, 0, 0), {"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0}),
-        ("r2", (0, 1, 0), {"omega": 30.0, "chi": 0.0, "phi": 90.0, "two_theta": 60.0}),
-        ("r3", (0, 0, 1), {"omega": 30.0, "chi": 90.0, "phi": 30.0, "two_theta": 60.0}),
+        ("r1", (1, 0, 0), {"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0}),
+        ("r2", (0, 1, 0), {"omega": 30.0, "chi": 0.0, "phi": 90.0, "ttheta": 60.0}),
+        ("r3", (0, 0, 1), {"omega": 30.0, "chi": 90.0, "phi": 30.0, "ttheta": 60.0}),
     ]:
         g.add_reflection(name, hkl=hkl, angles=ang)
 
@@ -1212,9 +1212,9 @@ def test_ub_from_three_singular_B_inv_sets_U_none():
     g.wavelength = TWO_PI
     g.sample.lattice = Lattice(a=1.0)
     for name, hkl, ang in [
-        ("r1", (1, 0, 0), {"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0}),
-        ("r2", (0, 1, 0), {"omega": 30.0, "chi": 0.0, "phi": 90.0, "two_theta": 60.0}),
-        ("r3", (0, 0, 1), {"omega": 30.0, "chi": 90.0, "phi": 30.0, "two_theta": 60.0}),
+        ("r1", (1, 0, 0), {"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0}),
+        ("r2", (0, 1, 0), {"omega": 30.0, "chi": 0.0, "phi": 90.0, "ttheta": 60.0}),
+        ("r3", (0, 0, 1), {"omega": 30.0, "chi": 90.0, "phi": 30.0, "ttheta": 60.0}),
     ]:
         g.add_reflection(name, hkl=hkl, angles=ang)
 
@@ -1251,9 +1251,9 @@ def test_ub_from_three_left_handed_H_logs_warning(caplog):
     ub_identity(g.sample)
     # Swap r2 and r3 → det(H) < 0 → left-handed
     for name, hkl, ang in [
-        ("r1", (1, 0, 0), {"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0}),
-        ("r2", (0, 0, 1), {"omega": 30.0, "chi": 90.0, "phi": 30.0, "two_theta": 60.0}),
-        ("r3", (0, 1, 0), {"omega": 30.0, "chi": 0.0, "phi": 90.0, "two_theta": 60.0}),
+        ("r1", (1, 0, 0), {"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0}),
+        ("r2", (0, 0, 1), {"omega": 30.0, "chi": 90.0, "phi": 30.0, "ttheta": 60.0}),
+        ("r3", (0, 1, 0), {"omega": 30.0, "chi": 0.0, "phi": 90.0, "ttheta": 60.0}),
     ]:
         g.add_reflection(name, hkl=hkl, angles=ang)
 

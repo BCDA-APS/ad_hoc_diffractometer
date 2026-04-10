@@ -4,7 +4,7 @@ spec.py — SPEC #G1 line parser and emitter for fourc geometry.
 The SPEC diffractometer control software stores the complete geometry state
 in ``#G`` header lines at the start of every scan.  This module handles the
 ``#G1`` line for the **fourc** geometry only (Busing & Levy convention,
-Eulerian four-circle: omega, chi, phi, two_theta).
+Eulerian four-circle: omega, chi, phi, ttheta).
 
 .. warning::
    The ``#G1`` field layout is **geometry-specific**.  The implementation
@@ -74,7 +74,7 @@ class FourcG1(NamedTuple):
         Secondary orienting reflection Miller indices.
     or1_two_theta, or1_omega, or1_chi, or1_phi : float
         Primary reflection motor angles (degrees).
-        Note: SPEC fourc uses ``2θ, θ(=omega), χ, φ`` — **not** ``two_theta``.
+        Note: SPEC fourc uses ``2θ, θ(=omega), χ, φ`` — mapped to our stage name ``ttheta``.
     unused1 : tuple of float
         Two unused zeros following the primary angles (indices 22–23).
     or2_two_theta, or2_omega, or2_chi, or2_phi : float
@@ -336,7 +336,7 @@ def g1_to_sample(g1: FourcG1, geometry) -> None:
 
     Sets the active sample's lattice from the direct-lattice parameters in
     ``g1``, adds the two orienting reflections (using fourc motor-angle names
-    ``omega``, ``chi``, ``phi``, ``two_theta``), designates them as or1 and
+    ``omega``, ``chi``, ``phi``, ``ttheta``), designates them as or1 and
     or2, and sets the geometry wavelength to ``g1.lambda1``.
 
     Parameters
@@ -355,7 +355,7 @@ def g1_to_sample(g1: FourcG1, geometry) -> None:
       the secondary reflection object but is not set on the geometry (SPEC
       always uses the same wavelength for both in fourc).
     - The fourc motor-angle keys are ``omega``, ``chi``, ``phi``,
-      ``two_theta``.  SPEC's ``#G1`` stores ``2θ, θ, χ, φ`` for each
+      ``ttheta``.  SPEC's ``#G1`` stores ``2θ, θ, χ, φ`` for each
       reflection; ``θ`` is mapped to ``omega``.
 
     Examples
@@ -398,13 +398,13 @@ def g1_to_sample(g1: FourcG1, geometry) -> None:
 
     # fourc angle mapping: SPEC stores (2θ, θ, χ, φ); θ maps to omega
     or1_angles = {
-        "two_theta": g1.or1_two_theta,
+        "ttheta": g1.or1_two_theta,
         "omega": g1.or1_omega,
         "chi": g1.or1_chi,
         "phi": g1.or1_phi,
     }
     or2_angles = {
-        "two_theta": g1.or2_two_theta,
+        "ttheta": g1.or2_two_theta,
         "omega": g1.or2_omega,
         "chi": g1.or2_chi,
         "phi": g1.or2_phi,
@@ -462,7 +462,7 @@ def sample_to_g1(geometry) -> FourcG1:
       using the package's standard computation.
     - If only one orienting reflection is designated (or2 not set), the
       secondary reflection fields are filled with zeros.
-    - The fourc motor-angle keys ``omega``, ``chi``, ``phi``, ``two_theta``
+    - The fourc motor-angle keys ``omega``, ``chi``, ``phi``, ``ttheta``
       are mapped back to SPEC's ``θ, χ, φ, 2θ`` field order.
 
     Examples
@@ -526,7 +526,7 @@ def sample_to_g1(geometry) -> FourcG1:
     # Primary orienting reflection
     or1: Reflection = ors[0]
     or1_h, or1_k, or1_l = or1.hkl
-    or1_two_theta = or1.angles.get("two_theta", 0.0)
+    or1_two_theta = or1.angles.get("ttheta", 0.0)
     or1_omega = or1.angles.get("omega", 0.0)
     or1_chi = or1.angles.get("chi", 0.0)
     or1_phi = or1.angles.get("phi", 0.0)
@@ -536,7 +536,7 @@ def sample_to_g1(geometry) -> FourcG1:
     if len(ors) >= 2:
         or2: Reflection = ors[1]
         or2_h, or2_k, or2_l = or2.hkl
-        or2_two_theta = or2.angles.get("two_theta", 0.0)
+        or2_two_theta = or2.angles.get("ttheta", 0.0)
         or2_omega = or2.angles.get("omega", 0.0)
         or2_chi = or2.angles.get("chi", 0.0)
         or2_phi = or2.angles.get("phi", 0.0)
