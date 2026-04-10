@@ -418,6 +418,40 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
         pytest.param(
             psic, "delta", -ZHAT, does_not_raise(), id="psic-delta-lateral-left-handed"
         ),
+        # sixc — LV1993 Fig. 1 and §2.1:
+        #   alpha, gamma: vertical (+x), right-handed
+        #   omega, phi, delta: lateral (-z), left-handed
+        #   chi: longitudinal (+y), right-handed
+        pytest.param(
+            sixc,
+            "alpha",
+            +XHAT,
+            does_not_raise(),
+            id="sixc-alpha-vertical-right-handed",
+        ),
+        pytest.param(
+            sixc, "omega", -ZHAT, does_not_raise(), id="sixc-omega-lateral-left-handed"
+        ),
+        pytest.param(
+            sixc,
+            "chi",
+            +YHAT,
+            does_not_raise(),
+            id="sixc-chi-longitudinal-right-handed",
+        ),
+        pytest.param(
+            sixc, "phi", -ZHAT, does_not_raise(), id="sixc-phi-lateral-left-handed"
+        ),
+        pytest.param(
+            sixc, "delta", -ZHAT, does_not_raise(), id="sixc-delta-lateral-left-handed"
+        ),
+        pytest.param(
+            sixc,
+            "gamma",
+            +XHAT,
+            does_not_raise(),
+            id="sixc-gamma-vertical-right-handed",
+        ),
         pytest.param(
             kappa4cv,
             "kappa",

@@ -515,19 +515,25 @@ def sixc(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
     """
     Lohmeier & Vlieg (1993) six-circle surface diffractometer (sixc geometry).
 
+    Also known as the IUCr six-circle diffractometer.
     Walko (2016) designation: (S3D2)1.
     Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.
 
     Sample and detector stacks share the alpha (rotary table) base stage,
     making this a coupled geometry.  Useful for surface diffraction.
 
+    From Fig. 1 and §2.1 of Lohmeier & Vlieg (1993):
+        alpha and gamma rotate about the vertical axis (x in LV convention).
+        omega, phi, and delta all rotate about the lateral axis (z in LV).
+        chi rotates about the longitudinal axis (y in LV).
+
     Stack (floor first):
         alpha (shared base): vertical,     right-handed  [rotary table]
-          --> omega (sample):     longitudinal, right-handed
-                --> chi:          longitudinal, right-handed
-                      --> phi:    longitudinal, right-handed
-          --> delta (detector):   lateral,      left-handed
-                --> gamma:        vertical,     right-handed
+          --> omega (sample):  lateral,      left-handed
+                --> chi:       longitudinal, right-handed
+                      --> phi: lateral,      left-handed
+          --> delta (detector): lateral,     left-handed
+                --> gamma:      vertical,    right-handed
 
     Reference: M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993).
     """
@@ -536,9 +542,9 @@ def sixc(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
     LONGITUDINAL = basis["longitudinal"]
     stages = [
         Stage("alpha", +VERTICAL, parent=None, role="sample"),
-        Stage("omega", +LONGITUDINAL, parent="alpha", role="sample"),
+        Stage("omega", -LATERAL, parent="alpha", role="sample"),
         Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
-        Stage("phi", +LONGITUDINAL, parent="chi", role="sample"),
+        Stage("phi", -LATERAL, parent="chi", role="sample"),
         Stage("delta", -LATERAL, parent="alpha", role="detector"),
         Stage("gamma", +VERTICAL, parent="delta", role="detector"),
     ]
@@ -548,7 +554,7 @@ def sixc(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
         basis=basis,
         description=(
             "Lohmeier & Vlieg (1993) six-circle surface diffractometer "
-            "(Walko S(3D2)1). "
+            "(IUCr six-circle; Walko S(3D2)1). "
             "Sample and detector share the alpha (rotary table) base stage."
         ),
     )
