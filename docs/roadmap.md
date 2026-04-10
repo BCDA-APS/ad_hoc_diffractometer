@@ -430,17 +430,16 @@ lattice, reflections, UB matrices, wavelength, azimuthal reference — to
 and from a JSON-compatible dictionary.  Supports documentation, archival,
 diagnostics, and programmatic reconstruction.
 
-- [ ] Each class (`AdHocDiffractometer`, `Sample`, `Lattice`,
-      `ReflectionList`, `Reflection`, `Stage`) exposes a `to_dict()`
-      method returning a JSON-serialisable ``dict``
-- [ ] Matching `from_dict()` class methods reconstruct each object from
-      such a dict
-- [ ] Top-level dict includes metadata: creation timestamp, software name
-      (``"ad_hoc_diffractometer"``), and package version
-- [ ] Round-trip: ``from_dict(obj.to_dict())`` reproduces the object
-      (verified by ``__eq__``)
-- [ ] Tests covering each class, full geometry round-trip, and JSON
-      serialisability
+- [x] `Lattice`, `Reflection`, `ReflectionList`, `Sample`, and
+      `AdHocDiffractometer` each expose `to_dict()` / `from_dict()`
+- [x] Top-level dict includes ``_meta``: software name, package version,
+      and ISO-8601 UTC creation timestamp
+- [x] All dicts are JSON-serialisable (verified by ``json.dumps``)
+- [x] Full round-trip: ``AdHocDiffractometer.from_dict(g.to_dict())``
+      restores name, wavelength, stages (roles, angles, limits),
+      samples (lattice, reflections, or1/or2, U, UB), active sample,
+      azimuthal reference, kappa_alpha_deg
+- [x] 69 tests in ``test_export.py``; all pass
 
 ### 3.8 Energy / wave-number conversions and named radiation lines ([#21](https://github.com/prjemian/ad_hoc_diffractometer/issues/21))
 

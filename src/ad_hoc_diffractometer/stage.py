@@ -108,3 +108,51 @@ class Stage:
             f"parent={self.parent!r}, role={self.role!r}, angle={self.angle}, "
             f"limits={self.limits})"
         )
+
+    def to_dict(self) -> dict:
+        """
+        Return a JSON-serialisable ``dict`` representing this stage.
+
+        Returns
+        -------
+        dict
+            Keys: ``"name"`` (str), ``"axis"`` (list of 3 float),
+            ``"role"`` (str), ``"parent"`` (str or None),
+            ``"angle"`` (float), ``"limits"`` (list of 2 float).
+        """
+        return {
+            "name": self.name,
+            "axis": [float(x) for x in self.axis],
+            "role": self.role,
+            "parent": self.parent,
+            "angle": float(self.angle),
+            "limits": [float(self.limits[0]), float(self.limits[1])],
+        }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Stage":
+        """
+        Reconstruct a :class:`Stage` from a dict produced by :meth:`to_dict`.
+
+        Parameters
+        ----------
+        d : dict
+            Must contain ``"name"``, ``"axis"``, ``"role"``.  ``"parent"``,
+            ``"angle"``, and ``"limits"`` are optional (defaulting to
+            ``None``, ``0.0``, and ``(-180.0, 180.0)`` respectively).
+
+        Returns
+        -------
+        Stage
+        """
+        import numpy as np
+
+        s = cls(
+            name=d["name"],
+            axis=np.array(d["axis"], dtype=float),
+            role=d["role"],
+            parent=d.get("parent"),
+            limits=tuple(d.get("limits", (-180.0, 180.0))),
+        )
+        s.angle = float(d.get("angle", 0.0))
+        return s
