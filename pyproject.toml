@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "ad_hoc_diffractometer"
-version = "0.2.0"
+dynamic = ["version"]
 description = "Multi-circle diffractometer geometry and related calculations"
 authors = [{ name = "Pete Jemian", email = "prjemian+chewacla@gmail.com" }]
 maintainers = [{ name = "Pete Jemian", email = "prjemian+chewacla@gmail.com" }]
@@ -18,7 +18,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "hatch-vcs",
     "pytest",
+    "pytest-cov",
 ]
 
 [project.entry-points."ad_hoc_diffractometer.geometries"]
@@ -32,6 +34,15 @@ kappa6c  = "ad_hoc_diffractometer.factories:kappa6c"
 zaxis    = "ad_hoc_diffractometer.factories:zaxis"
 s2d2     = "ad_hoc_diffractometer.factories:s2d2"
 fivec    = "ad_hoc_diffractometer.factories:fivec"
+
+[tool.hatch.version]
+source = "vcs"
+# Require three-component SemVer tags (v0.3.0, v0.4.0, ...);
+# this intentionally ignores the legacy two-component tags v0.1 and v0.2.
+tag-pattern = "v(?P<version>[0-9]+\\.[0-9]+\\.[0-9].*)"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/ad_hoc_diffractometer/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ad_hoc_diffractometer"]
