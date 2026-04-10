@@ -9,64 +9,18 @@ for the full issue tracker.
 
 ### Fixed
 
-- ``fourcv`` / ``fourch`` / ``kappa4cv`` / ``kappa4ch`` stage axes corrected
-  (#66): the ``v``/``h`` suffix describes the **scattering plane** (not the
-  detector axis); ``fourcv`` (vertical scattering plane) now has omega, chi,
-  phi, and ttheta on the lateral/longitudinal axes; ``fourch`` (horizontal
-  scattering plane, matching BL1967 Fig. 1b) has omega, chi, phi, and ttheta
-  on the vertical/lateral axes; same corrections applied to ``kappa4cv`` /
-  ``kappa4ch``.  Stage axis assignments now use ``_BASIS_BL["lateral"]`` etc.
-  for self-documenting physical-direction notation.
-- ``two_theta`` stage name renamed to ``ttheta`` throughout all factories,
-  tests, and supporting modules.
-- AGENTS.md suffix table corrected.
+- Stage axes corrected for ``fourcv``, ``fourch``, ``kappa4cv``, ``kappa4ch``; ``v``/``h`` suffix now consistently describes the scattering plane (#66)
+- ``two_theta`` stage name renamed to ``ttheta`` throughout (#66)
 
 ### Added
 
-- Logging support (#61): ``logging.getLogger(__name__)`` added to all
-  source modules; root logger ``"ad_hoc_diffractometer"`` lets users
-  configure all package output at once; silent by default (WARNING level);
-  ``logger.debug()`` at broken-plugin skip, Nelder-Mead non-convergence,
-  and wh/to_dict exception catches; ``logger.warning()`` alongside
-  ``warnings.warn`` for left-handed H in ``ub_from_three_reflections_bl1967``.
-
-- 100% test coverage enforced (#60): ``pytest-cov`` configured with
-  ``fail_under = 100`` and branch coverage; missing tests distributed
-  into their proper test modules (all parametrized where appropriate);
-  defensive exception blocks marked ``# pragma: no cover``; 855 tests pass.
-
-- Dynamic versioning via ``hatch-vcs`` (#59): version is now derived from
-  git tags; ``pyproject.toml`` no longer contains a hardcoded version string.
-  Tags follow SemVer (``vMAJOR.minor.patch``); existing ``v0.1`` and ``v0.2``
-  retagged as ``v0.1.0`` and ``v0.2.0``; current development line starts at
-  ``v0.3.0.dev0``.  CI workflow updated with ``fetch-depth: 0`` so tags are
-  available during builds.  ``hatch-vcs`` and ``pytest-cov`` added to the
-  ``dev`` optional-dependency group.
-
-- Export/restore full diffractometer settings (#52): ``to_dict()`` /
-  ``from_dict()`` on ``Lattice``, ``Reflection``, ``ReflectionList``,
-  ``Sample``, and ``AdHocDiffractometer``; JSON-serialisable; top-level
-  dict includes ``_meta`` with software name, version, and timestamp;
-  complete round-trip preserves all stages, samples, UB matrices,
-  reflections, and settings
-- `AdHocDiffractometer.wh` and `AdHocDiffractometer.pa` properties (#51):
-  access the terse/verbose status strings as ``g.wh`` / ``g.pa`` without
-  needing to import the module-level functions; module-level ``wh(g)`` and
-  ``pa(g)`` remain as thin wrappers for backward compatibility
-- Azimuthal reference vector and ψ angle (#11):
-  - ``AdHocDiffractometer.azimuthal_reference``: stores the reference
-    direction as Miller indices (h, k, l); default ``None``; validated as
-    a non-zero 3-vector
-  - ``AdHocDiffractometer.psi(angles=None)``: computes the azimuthal angle
-    ψ (You 1999 eqs. 10-11); ψ = 0 when the reference lies in the
-    scattering plane; raises ``ValueError`` when reference ‖ Q
-  - ``pa()`` shows the azimuthal reference; ``wh()`` shows a Psi line
-- Entry-point extensibility for geometry factories (#37): all 10 built-in
-  factories declared in ``pyproject.toml`` under the group
-  ``"ad_hoc_diffractometer.geometries"``; third-party packages can
-  contribute additional geometries without modifying this package.
-  ``list_geometries()`` and ``get_geometry()`` discover plugins
-  automatically.  ``GEOMETRY_ENTRY_POINT_GROUP`` constant exported.
+- ``logging.getLogger(__name__)`` in all modules; silent by default (#61)
+- 100% line and branch coverage enforced via ``pytest-cov`` (#60)
+- Dynamic versioning via ``hatch-vcs``; ``ahd.__version__`` exposed (#59)
+- ``to_dict()`` / ``from_dict()`` on all major classes; JSON round-trip (#52)
+- ``g.wh()`` and ``g.pa()`` status methods with ``print=True`` default (#51)
+- ``azimuthal_reference`` property and ``psi()`` method (#11)
+- Entry-point plugin support for geometry factories; ``GEOMETRY_ENTRY_POINT_GROUP`` (#37)
 
 ## Release v0.2
 
