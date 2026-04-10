@@ -202,6 +202,28 @@ be implemented first.
 
 ## Priority 3 — Later (instrument-specific, operational)
 
+### 3.0 Entry-point extensibility for geometry factories ([#37](https://github.com/prjemian/ad_hoc_diffractometer/issues/37))
+
+Allow third-party packages to contribute additional diffractometer
+geometries without modifying this package, using Python's standard
+``importlib.metadata`` entry-point mechanism.
+
+- [x] Declare all 10 built-in factories as entry points in
+      ``pyproject.toml`` under the group
+      ``"ad_hoc_diffractometer.geometries"``
+- [x] ``_load_entry_point_geometries()``: discovers and loads plugins
+      from the entry-point group at first call; idempotent; silently
+      skips broken plugins
+- [x] ``list_geometries()`` and ``get_geometry()`` call the loader
+      automatically — no explicit registration needed for plugins
+- [x] Export ``GEOMETRY_ENTRY_POINT_GROUP`` constant so callers can
+      reference the group name without importing from internal modules
+- [x] Third-party plugin authoring documented in the ``factories.py``
+      module docstring
+- [x] Tests: all 10 built-ins appear after ``list_geometries()``;
+      mock-based test for a simulated plugin; ``get_geometry()``
+      discovers plugins; ``GEOMETRY_ENTRY_POINT_GROUP`` correct value
+
 ### 3.1 Diffraction mode / operating constraints ([#9](https://github.com/prjemian/ad_hoc_diffractometer/issues/9))
 
 Modes are a first-class concern of the geometry description, not an

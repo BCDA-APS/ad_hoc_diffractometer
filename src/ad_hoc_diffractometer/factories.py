@@ -5,6 +5,26 @@ Each factory is decorated with @register_geometry, which registers it in
 _GEOMETRY_REGISTRY under its function name.  Use list_geometries() to
 retrieve all registered factories as a {name: callable} dict.
 
+Extension via entry points
+--------------------------
+Third-party packages can contribute additional geometry factories by
+declaring an entry point in the ``"ad_hoc_diffractometer.geometries"``
+group in their ``pyproject.toml``::
+
+    [project.entry-points."ad_hoc_diffractometer.geometries"]
+    my_geom = "my_package.module:my_factory_function"
+
+The factory function must accept no required arguments (it may accept
+keyword arguments) and return an ``AdHocDiffractometer`` instance.
+Entry-point geometries are discovered and loaded automatically when
+``list_geometries()`` or ``get_geometry()`` is first called; they do NOT
+need to call ``@register_geometry`` themselves.
+
+The built-in geometries (psic, fourcv, fourch, sixc, kappa4cv, kappa4ch,
+kappa6c, zaxis, s2d2, fivec) are also declared as entry points in the
+package's own ``pyproject.toml`` under the same group, so they are
+discoverable by any code that inspects installed entry points.
+
 Naming convention:
     Eulerian geometries:     fourcv, fourch, sixc, psic
     Kappa geometries:        kappa4cv, kappa4ch, kappa6c
@@ -49,6 +69,8 @@ References (chronological):
 
 from __future__ import annotations
 
+from importlib.metadata import entry_points
+
 import numpy as np
 
 from .axes import kappa_axis
@@ -63,17 +85,31 @@ from .stage import Stage
 # ---------------------------------------------------------------------------
 
 #: Maps factory function name -> factory callable.
-#: Populated automatically by @register_geometry.
+#: Populated first by @register_geometry at import time, then supplemented
+#: by installed third-party entry points the first time list_geometries()
+#: or get_geometry() is called.
 _GEOMETRY_REGISTRY: dict[str, type] = {}
+
+#: Set to True once entry-point discovery has run, so it only runs once.
+_EP_LOADED: bool = False
+
+#: Entry-point group name for geometry plugins.
+GEOMETRY_ENTRY_POINT_GROUP = "ad_hoc_diffractometer.geometries"
 
 
 def register_geometry(func):
     """
     Decorator that registers a geometry factory in _GEOMETRY_REGISTRY.
 
-    The function is stored under its own __name__, so the registry key
-    is always identical to the callable's name.  The function is returned
-    unchanged; this decorator has no runtime effect on the factory itself.
+    The function is stored under its own ``__name__``, so the registry
+    key is always identical to the callable's name.  The function is
+    returned unchanged; this decorator has no runtime effect on the
+    factory itself.
+
+    Third-party packages do **not** need to use this decorator — they
+    can instead declare an entry point in the
+    ``"ad_hoc_diffractometer.geometries"`` group in their
+    ``pyproject.toml`` and the factory will be discovered automatically.
 
     Example
     -------
@@ -85,26 +121,75 @@ def register_geometry(func):
     return func
 
 
+def _load_entry_point_geometries() -> None:
+    """
+    Discover and load geometry factories from installed entry points.
+
+    Scans the ``"ad_hoc_diffractometer.geometries"`` entry-point group
+    for all installed packages (including this package itself) and adds
+    any factories not already present in ``_GEOMETRY_REGISTRY``.
+
+    This function is called automatically — and only once — by
+    ``list_geometries()`` and ``get_geometry()``.  It is idempotent:
+    repeated calls after the first are no-ops.
+
+    Notes
+    -----
+    Built-in factories are registered via ``@register_geometry`` at
+    import time, so they are always present even if entry-point discovery
+    fails.  Entry-point discovery supplements the registry with any
+    third-party plugins that are installed but were not decorated with
+    ``@register_geometry``.
+
+    If loading a particular entry point raises an exception (e.g. the
+    plugin package is broken), that entry point is silently skipped so
+    that the rest of the registry is unaffected.
+    """
+    global _EP_LOADED  # noqa: PLW0603
+    if _EP_LOADED:
+        return
+    _EP_LOADED = True
+
+    try:
+        eps = entry_points(group=GEOMETRY_ENTRY_POINT_GROUP)
+        for ep in eps:
+            if ep.name not in _GEOMETRY_REGISTRY:
+                try:
+                    factory = ep.load()
+                    _GEOMETRY_REGISTRY[ep.name] = factory
+                except Exception:  # noqa: BLE001
+                    pass  # broken plugin — skip silently
+    except Exception:  # noqa: BLE001
+        pass  # importlib.metadata unavailable — no-op
+
+
 def list_geometries() -> dict[str, type]:
     """
     Return a copy of the geometry registry as {name: factory_callable}.
 
-    All entries were registered via @register_geometry at import time.
+    Includes all built-in geometries (registered via ``@register_geometry``
+    at import time) plus any third-party geometry plugins installed as
+    entry points in the ``"ad_hoc_diffractometer.geometries"`` group.
+
+    Entry-point discovery runs automatically the first time this function
+    is called; subsequent calls use the already-populated registry.
 
     Returns
     -------
     dict
-        Keys are factory function names (e.g. 'psic', 'fourcv', 'kappa4cv').
+        Keys are factory names (e.g. ``'psic'``, ``'fourcv'``).
         Values are the callable factory functions.
 
     Examples
     --------
     >>> from ad_hoc_diffractometer import list_geometries
-    >>> list_geometries()
-    {'psic': <function psic ...>, 'fourcv': <function fourcv ...>, ...}
+    >>> sorted(list_geometries())
+    ['fivec', 'fourch', 'fourcv', 'kappa4ch', 'kappa4cv', 'kappa6c',
+     'psic', 's2d2', 'sixc', 'zaxis']
     >>> list_geometries()['psic']()   # instantiate by name
     AdHocDiffractometer(name='psic', ...)
     """
+    _load_entry_point_geometries()
     return dict(_GEOMETRY_REGISTRY)
 
 
@@ -142,6 +227,7 @@ def get_geometry(name: str):
     >>> get_geometry("kappa4cv")(alpha_deg=50)
     AdHocDiffractometer(name='kappa4cv', ...)
     """
+    _load_entry_point_geometries()
     if name not in _GEOMETRY_REGISTRY:
         available = sorted(_GEOMETRY_REGISTRY.keys())
         raise ValueError(

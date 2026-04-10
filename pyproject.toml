@@ -21,6 +21,18 @@ dev = [
     "pytest",
 ]
 
+[project.entry-points."ad_hoc_diffractometer.geometries"]
+psic     = "ad_hoc_diffractometer.factories:psic"
+fourcv   = "ad_hoc_diffractometer.factories:fourcv"
+fourch   = "ad_hoc_diffractometer.factories:fourch"
+sixc     = "ad_hoc_diffractometer.factories:sixc"
+kappa4cv = "ad_hoc_diffractometer.factories:kappa4cv"
+kappa4ch = "ad_hoc_diffractometer.factories:kappa4ch"
+kappa6c  = "ad_hoc_diffractometer.factories:kappa6c"
+zaxis    = "ad_hoc_diffractometer.factories:zaxis"
+s2d2     = "ad_hoc_diffractometer.factories:s2d2"
+fivec    = "ad_hoc_diffractometer.factories:fivec"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/ad_hoc_diffractometer"]
 

@@ -5,6 +5,17 @@ for planned future work and
 [GitHub Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues)
 for the full issue tracker.
 
+## Unreleased
+
+### Added
+
+- Entry-point extensibility for geometry factories (#37): all 10 built-in
+  factories declared in ``pyproject.toml`` under the group
+  ``"ad_hoc_diffractometer.geometries"``; third-party packages can
+  contribute additional geometries without modifying this package.
+  ``list_geometries()`` and ``get_geometry()`` discover plugins
+  automatically.  ``GEOMETRY_ENTRY_POINT_GROUP`` constant exported.
+
 ## Release v0.2
 
 Released 2026-04-10.
