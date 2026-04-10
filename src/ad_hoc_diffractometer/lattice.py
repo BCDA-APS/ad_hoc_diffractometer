@@ -608,6 +608,67 @@ class Lattice:
             f"alpha={self._alpha}, beta={self._beta}, gamma={self._gamma})"
         )
 
+    # ------------------------------------------------------------------
+    # Serialisation
+    # ------------------------------------------------------------------
+
+    def to_dict(self) -> dict:
+        """
+        Return a JSON-serialisable ``dict`` representing this lattice.
+
+        All six parameters are always stored (even constrained ones), so
+        the dict is unambiguous regardless of crystal system.
+
+        Returns
+        -------
+        dict
+            Keys: ``"a"``, ``"b"``, ``"c"``, ``"alpha"``, ``"beta"``,
+            ``"gamma"`` (all ``float``).
+
+        Examples
+        --------
+        >>> Lattice(a=4.785, c=12.991, gamma=120).to_dict()
+        {'a': 4.785, 'b': 4.785, 'c': 12.991, 'alpha': 90.0, 'beta': 90.0, 'gamma': 120.0}
+        """
+        return {
+            "a": self._a,
+            "b": self._b,
+            "c": self._c,
+            "alpha": self._alpha,
+            "beta": self._beta,
+            "gamma": self._gamma,
+        }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> Lattice:
+        """
+        Reconstruct a ``Lattice`` from a dict produced by :meth:`to_dict`.
+
+        Parameters
+        ----------
+        d : dict
+            Must contain keys ``"a"``, ``"b"``, ``"c"``, ``"alpha"``,
+            ``"beta"``, ``"gamma"``.
+
+        Returns
+        -------
+        Lattice
+
+        Examples
+        --------
+        >>> Lattice.from_dict({'a': 5.431, 'b': 5.431, 'c': 5.431,
+        ...                    'alpha': 90.0, 'beta': 90.0, 'gamma': 90.0})
+        Lattice(system='cubic', a=5.431, b=5.431, c=5.431, ...)
+        """
+        return cls(
+            a=d["a"],
+            b=d["b"],
+            c=d["c"],
+            alpha=d["alpha"],
+            beta=d["beta"],
+            gamma=d["gamma"],
+        )
+
 
 # ---------------------------------------------------------------------------
 # Standalone functions (kept for backward compatibility and direct use)
