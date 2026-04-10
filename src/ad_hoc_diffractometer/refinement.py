@@ -813,7 +813,11 @@ def refine_lattice_simplex(
     try:
         from scipy.optimize import minimize  # type: ignore[import]
 
-        options = {"maxiter": max_iter, "xatol": tol**0.5, "fatol": tol}
+        options = {
+            "maxiter": max_iter,
+            "xatol": tol**0.5,
+            "fatol": tol,
+        }
         res = minimize(cost, p0, method="Nelder-Mead", options=options)
         p_opt = res.x
         n_iter = res.nit

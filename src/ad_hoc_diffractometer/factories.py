@@ -69,6 +69,7 @@ References (chronological):
 
 from __future__ import annotations
 
+import inspect
 import logging
 from importlib.metadata import entry_points
 
@@ -339,7 +340,7 @@ def psic() -> AdHocDiffractometer:
         Stage("delta", -ZHAT, parent="nu", role="detector"),
     ]
     return AdHocDiffractometer(
-        name="psic",
+        name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_YOU,
         description=(
@@ -386,7 +387,7 @@ def fourcv() -> AdHocDiffractometer:
         Stage("two_theta", -_ZHAT_BL, parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
-        name="fourcv",
+        name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_BL,
         description=(
@@ -430,7 +431,7 @@ def fourch() -> AdHocDiffractometer:
         Stage("two_theta", -_XHAT_BL, parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
-        name="fourch",
+        name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_BL,
         description=(
@@ -470,7 +471,7 @@ def sixc() -> AdHocDiffractometer:
         Stage("gamma", +XHAT, parent="delta", role="detector"),
     ]
     return AdHocDiffractometer(
-        name="sixc",
+        name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_YOU,
         description=(
@@ -528,7 +529,7 @@ def kappa4cv(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
         Stage("two_theta", -_ZHAT_BL, parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
-        name="kappa4cv",
+        name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_BL,
         description=(
@@ -577,7 +578,7 @@ def kappa4ch(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
         Stage("two_theta", -_XHAT_BL, parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
-        name="kappa4ch",
+        name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_BL,
         description=(
@@ -632,7 +633,7 @@ def kappa6c(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
         Stage("delta", -ZHAT, parent="nu", role="detector"),
     ]
     return AdHocDiffractometer(
-        name="kappa6c",
+        name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_YOU,
         description=(
@@ -681,7 +682,7 @@ def zaxis() -> AdHocDiffractometer:
         Stage("gamma", +XHAT, parent="delta", role="detector"),
     ]
     return AdHocDiffractometer(
-        name="zaxis",
+        name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_YOU,
         description=(
@@ -728,7 +729,7 @@ def s2d2() -> AdHocDiffractometer:
         Stage("delta", -ZHAT, parent="nu", role="detector"),
     ]
     return AdHocDiffractometer(
-        name="s2d2",
+        name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_YOU,
         description=(
@@ -776,7 +777,7 @@ def fivec() -> AdHocDiffractometer:
         Stage("two_theta", -ZHAT, parent="mu", role="detector"),
     ]
     return AdHocDiffractometer(
-        name="fivec",
+        name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_YOU,
         description=(
