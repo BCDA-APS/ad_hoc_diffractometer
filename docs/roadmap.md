@@ -280,10 +280,17 @@ how stages are declared.
 
 ### 3.2 Azimuthal reference vector ([#11](https://github.com/prjemian/ad_hoc_diffractometer/issues/11))
 
-- [ ] A reference direction (surface normal, crystal axis, or arbitrary
-      vector) used to define the azimuthal angle ψ
-- [ ] Needed for surface diffraction modes and azimuthal scans
-- [ ] Reference: Busing & Levy (1967); You (1999) eqs. 10-11
+- [x] `azimuthal_reference` property on `AdHocDiffractometer`: stores the
+      reference direction as Miller indices (h, k, l); default ``None``;
+      validated as a non-zero 3-vector; settable after construction
+- [x] `psi(angles=None)` method: computes azimuthal angle ψ from current
+      (or supplied) motor angles and the active sample's UB matrix;
+      ψ = 0 when the reference lies in the scattering plane (You 1999
+      eqs. 10-11); raises ``ValueError`` for parallel n ‖ Q
+- [x] `pa()` shows the azimuthal reference hkl (or "not set")
+- [x] `wh()` shows a Psi line (or "not available" when undefined)
+- [x] Tests: psi=0 / psi=90 analytically verified; property validation;
+      error cases; status command integration
 
 ### 3.3 Detector geometry parameters ([#10](https://github.com/prjemian/ad_hoc_diffractometer/issues/10))
 

@@ -60,6 +60,10 @@ class AdHocDiffractometer:
         kappa4ch, kappa6c).  None for non-kappa geometries.  Set by
         the kappa factory functions; not intended to be changed after
         construction.
+    azimuthal_reference : tuple of float or None, optional
+        Azimuthal reference direction as Miller indices (h, k, l).  Used
+        by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)
+        means no reference is set.  Must be a non-zero vector.
 
     Attributes
     ----------
@@ -71,6 +75,8 @@ class AdHocDiffractometer:
         Wavelength in Å, or None if not set.
     kappa_alpha_deg : float or None
         Kappa tilt angle in degrees, or None for non-kappa geometries.
+    azimuthal_reference : tuple of float or None
+        Azimuthal reference vector (h, k, l), or None if not set.
     """
 
     DEFAULT_BASIS = {
@@ -87,12 +93,14 @@ class AdHocDiffractometer:
         description: str = "",
         wavelength: float | None = None,
         kappa_alpha_deg: float | None = None,
+        azimuthal_reference: tuple[float, float, float] | None = None,
     ):
         self.name = name
         self.description = description
         self.basis = basis if basis is not None else dict(self.DEFAULT_BASIS)
         self.wavelength = wavelength  # validated via property setter
         self.kappa_alpha_deg = kappa_alpha_deg
+        self.azimuthal_reference = azimuthal_reference  # validated via property setter
 
         # Validate basis vectors
         self._check_basis()
@@ -266,6 +274,62 @@ class AdHocDiffractometer:
         if value is not None:
             value = float(value)
         self._kappa_alpha_deg = value
+
+    @property
+    def azimuthal_reference(self) -> tuple[float, float, float] | None:
+        """
+        Azimuthal reference vector as Miller indices (h, k, l), or ``None``.
+
+        The azimuthal reference defines the direction in reciprocal space
+        used to set the azimuthal angle ψ = 0.  ψ is zero when this vector
+        lies in the scattering plane (the plane containing the incident beam
+        and the scattering vector Q).
+
+        Setting to ``None`` clears the reference (ψ becomes undefined).
+
+        Setting to a tuple ``(h, k, l)`` stores it as a tuple of three
+        floats.  Any three-element sequence is accepted.
+
+        Parameters
+        ----------
+        value : tuple of float or None
+            Miller indices of the azimuthal reference direction, e.g.
+            ``(0, 0, 1)`` for the surface normal of a (001)-cut crystal.
+
+        Raises
+        ------
+        ValueError
+            If the value is not ``None`` and cannot be interpreted as a
+            length-3 sequence of numbers, or if the vector is the zero
+            vector.
+
+        Examples
+        --------
+        >>> g = psic()
+        >>> g.azimuthal_reference = (0, 0, 1)   # c-axis surface normal
+        >>> g.azimuthal_reference
+        (0.0, 0.0, 1.0)
+        >>> g.azimuthal_reference = None          # clear reference
+        """
+        return self._azimuthal_reference
+
+    @azimuthal_reference.setter
+    def azimuthal_reference(self, value: tuple[float, float, float] | None) -> None:
+        if value is None:
+            self._azimuthal_reference = None
+            return
+        try:
+            h, k, l = (float(x) for x in value)  # noqa: E741
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                "azimuthal_reference must be a length-3 sequence of numbers "
+                f"or None; got {value!r}."
+            ) from exc
+        if h == 0.0 and k == 0.0 and l == 0.0:
+            raise ValueError(
+                "azimuthal_reference must be a non-zero vector; (0, 0, 0) is not allowed."
+            )
+        self._azimuthal_reference = (h, k, l)
 
     # ------------------------------------------------------------------
     # Public interface
@@ -520,6 +584,143 @@ class AdHocDiffractometer:
         Q_phi = angles_to_phi_vector(self, **angles)
         hkl = np.linalg.solve(sample.UB, Q_phi)
         return (float(hkl[0]), float(hkl[1]), float(hkl[2]))
+
+    def psi(self, angles: dict[str, float] | None = None) -> float:
+        """
+        Compute the azimuthal angle ψ (psi) for the given motor angles.
+
+        ψ is the rotation of the azimuthal reference vector about the
+        scattering vector Q, measured from the zero-ψ position.  ψ = 0
+        when the reference vector lies in the scattering plane (the plane
+        containing the incident beam direction and Q).
+
+        Algorithm (You 1999, eqs. 10-11):
+
+        1. Compute ``Q_phi`` from the motor angles via
+           :func:`angles_to_phi_vector`.
+        2. Express the reference direction in the phi frame:
+           ``n_phi = UB @ n_hkl``  (maps reciprocal-lattice direction to
+           phi frame in the same units as Q).
+        3. Project both ``n_phi`` and the incident-beam direction
+           ``y_hat`` (the ``'longitudinal'`` basis vector) onto the plane
+           perpendicular to ``Q_phi``.
+        4. ψ = ``atan2(Q_hat · (y_perp × n_perp), y_perp · n_perp)``
+           where all vectors are unit vectors in the perpendicular plane.
+
+        Parameters
+        ----------
+        angles : dict[str, float] or None
+            Motor angles in degrees, keyed by stage name.  If ``None``
+            (default), the current stage angles are used.
+
+        Returns
+        -------
+        psi : float
+            Azimuthal angle in degrees, in the range (-180, 180].
+
+        Raises
+        ------
+        ValueError
+            If ``self.wavelength`` is None.
+        ValueError
+            If ``self.sample.UB`` is None.
+        ValueError
+            If ``self.azimuthal_reference`` is None (no reference set).
+        ValueError
+            If the reference vector is parallel to Q (ψ is undefined).
+
+        Notes
+        -----
+        The zero-ψ reference direction is the component of the incident
+        beam (``'longitudinal'`` basis vector) perpendicular to Q.  This
+        matches the SPEC and You (1999) convention: ψ = 0 when the
+        reference vector lies in the scattering plane.
+
+        The incident beam direction is taken from the geometry's basis
+        dict under the key ``'longitudinal'``.  For You (1999) geometries
+        this is YHAT; for Busing & Levy geometries it is also YHAT.
+
+        Examples
+        --------
+        >>> import ad_hoc_diffractometer as ahd
+        >>> g = ahd.fourcv()
+        >>> g.wavelength = 1.5406
+        >>> g.azimuthal_reference = (0, 0, 1)
+        >>> # ... set UB, move motors ...
+        >>> psi = g.psi()
+
+        References
+        ----------
+        You, J. Appl. Cryst. 32, 614-623 (1999), eqs. 10-11.
+        """
+        import math
+
+        if self.wavelength is None:
+            raise ValueError("psi() requires geometry.wavelength to be set.")
+        if self.sample.UB is None:
+            raise ValueError(
+                "psi() requires a UB matrix on the active sample. "
+                "Call ub_identity() or ub_from_two_reflections_bl1967() first."
+            )
+        if self.azimuthal_reference is None:
+            raise ValueError(
+                "psi() requires azimuthal_reference to be set on the geometry. "
+                "Set geometry.azimuthal_reference = (h, k, l) first."
+            )
+
+        if angles is None:
+            angles = {s.name: s.angle for s in self._stages.values()}
+
+        from .orientation import angles_to_phi_vector
+
+        Q_phi = angles_to_phi_vector(self, **angles)
+        Q_mag = np.linalg.norm(Q_phi)
+        if Q_mag < 1e-14:
+            raise ValueError("psi() is undefined when Q = 0 (all motors at zero).")
+        Q_hat = Q_phi / Q_mag
+
+        # Reference direction in phi frame
+        n_hkl = np.asarray(self.azimuthal_reference, dtype=float)
+        n_phi = self.sample.UB @ n_hkl
+        n_mag = np.linalg.norm(n_phi)
+        if n_mag < 1e-14:
+            raise ValueError(
+                "Azimuthal reference vector maps to zero in the phi frame. "
+                "Check that the UB matrix is non-singular."
+            )
+        n_hat = n_phi / n_mag
+
+        # Incident beam direction from basis ('longitudinal' key)
+        y_hat = np.asarray(
+            self.basis.get("longitudinal", np.array([0.0, 1.0, 0.0])),
+            dtype=float,
+        )
+        y_hat = y_hat / np.linalg.norm(y_hat)
+
+        # Project n and y onto the plane perpendicular to Q
+        n_perp = n_hat - np.dot(n_hat, Q_hat) * Q_hat
+        y_perp = y_hat - np.dot(y_hat, Q_hat) * Q_hat
+
+        n_perp_mag = np.linalg.norm(n_perp)
+        y_perp_mag = np.linalg.norm(y_perp)
+
+        if n_perp_mag < 1e-10:
+            raise ValueError(
+                "The azimuthal reference vector is parallel to Q; "
+                "psi is undefined at this reflection."
+            )
+        if y_perp_mag < 1e-10:
+            raise ValueError(
+                "The incident beam direction is parallel to Q; "
+                "psi is undefined at this motor position."
+            )
+
+        n_perp_hat = n_perp / n_perp_mag
+        y_perp_hat = y_perp / y_perp_mag
+
+        cos_psi = float(np.clip(np.dot(y_perp_hat, n_perp_hat), -1.0, 1.0))
+        sin_psi = float(np.dot(Q_hat, np.cross(y_perp_hat, n_perp_hat)))
+        return math.degrees(math.atan2(sin_psi, cos_psi))
 
     def sample_rotation_matrix(self) -> np.ndarray:
         """

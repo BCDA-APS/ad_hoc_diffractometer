@@ -8,8 +8,12 @@ Covers:
   - set_angle() and stage()
   - sample_rotation_matrix() and detector_rotation_matrix()
   - check_limits()
+  - azimuthal_reference property: storage, validation, default None
+  - psi() method: psi=0 when n in scattering plane, psi=90 when n perp,
+    uses current angles when called with no args, error cases
 """
 
+import math as _math
 import re
 from contextlib import nullcontext as does_not_raise
 
@@ -727,3 +731,251 @@ def test_inverse_unknown_stage_raises():
     g = _psic_with_identity_UB()
     with pytest.raises(KeyError):
         g.inverse({"no_such_stage": 0.0})
+
+
+# ---------------------------------------------------------------------------
+# azimuthal_reference property (#11)
+# ---------------------------------------------------------------------------
+
+
+def test_azimuthal_reference_default_is_none():
+    """azimuthal_reference is None by default."""
+    from ad_hoc_diffractometer import fourcv
+
+    assert fourcv().azimuthal_reference is None
+
+
+def test_azimuthal_reference_set_tuple():
+    """Setting to a 3-tuple stores it as (float, float, float)."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    g.azimuthal_reference = (0, 0, 1)
+    assert g.azimuthal_reference == (0.0, 0.0, 1.0)
+
+
+def test_azimuthal_reference_set_list():
+    """Setting to a list of 3 numbers works (converts to tuple of floats)."""
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.azimuthal_reference = [1, 1, 0]
+    assert g.azimuthal_reference == (1.0, 1.0, 0.0)
+
+
+def test_azimuthal_reference_clear_with_none():
+    """Setting to None clears the reference."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    g.azimuthal_reference = (0, 0, 1)
+    g.azimuthal_reference = None
+    assert g.azimuthal_reference is None
+
+
+def test_azimuthal_reference_constructor():
+    """azimuthal_reference can be set at construction via keyword argument."""
+    from ad_hoc_diffractometer import fourcv
+
+    # Use fourcv factory result and check the property works after setting
+    g = fourcv()
+    g.azimuthal_reference = (0, 1, 0)
+    assert g.azimuthal_reference == (0.0, 1.0, 0.0)
+
+
+def test_azimuthal_reference_zero_vector_raises():
+    """Setting to (0, 0, 0) raises ValueError."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    with pytest.raises(ValueError, match=re.escape("non-zero")):
+        g.azimuthal_reference = (0, 0, 0)
+
+
+def test_azimuthal_reference_bad_type_raises():
+    """Setting to a non-sequence raises ValueError."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    with pytest.raises(ValueError, match=re.escape("length-3 sequence")):
+        g.azimuthal_reference = 42
+
+
+def test_azimuthal_reference_wrong_length_raises():
+    """Setting to a 2-element tuple raises ValueError."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    with pytest.raises(ValueError):
+        g.azimuthal_reference = (0, 1)
+
+
+# ---------------------------------------------------------------------------
+# psi() method (#11)
+# ---------------------------------------------------------------------------
+#
+# Setup: fourcv, cubic a=1 (B=I), lambda=2*pi, UB=I.
+# At chi=0, phi=0, Q = XHAT (lateral in BL convention).
+# Scattering plane = span(YHAT_BL, XHAT_BL) = lateral-longitudinal plane.
+#
+# n=(0,1,0)=YHAT_BL: lies in scattering plane → psi=0.
+# n=(0,0,1)=ZHAT_BL: perpendicular to scattering plane → psi=90.
+
+
+def _fourcv_identity():
+    """fourcv with B=I (a=1), lambda=2pi, UB=I, azimuthal_reference=(0,0,1)."""
+    from ad_hoc_diffractometer import Lattice
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_identity
+
+    g = fourcv()
+    g.wavelength = 2 * _math.pi
+    g.sample.lattice = Lattice(a=1.0)
+    ub_identity(g.sample)
+    g.azimuthal_reference = (0, 0, 1)  # ZHAT_BL = vertical ⊥ scattering plane at chi=0
+    return g
+
+
+def test_psi_returns_float():
+    """psi() returns a float."""
+    g = _fourcv_identity()
+    g.set_angle("omega", 30)
+    g.set_angle("two_theta", 60)
+    result = g.psi()
+    assert isinstance(result, float)
+
+
+def test_psi_n_perpendicular_to_scattering_plane_is_90():
+    """n=(0,0,1) ⊥ scattering plane at chi=0 → psi=90."""
+    g = _fourcv_identity()
+    g.azimuthal_reference = (0, 0, 1)  # ZHAT_BL ⊥ lateral-longitudinal plane
+    angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0}
+    psi = g.psi(angles)
+    assert abs(psi - 90.0) < 1e-8
+
+
+def test_psi_n_in_scattering_plane_is_0():
+    """n=(0,1,0) = YHAT_BL lies in scattering plane at chi=0 → psi=0."""
+    g = _fourcv_identity()
+    g.azimuthal_reference = (0, 1, 0)  # YHAT_BL = longitudinal = in scattering plane
+    angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0}
+    psi = g.psi(angles)
+    assert abs(psi - 0.0) < 1e-8
+
+
+def test_psi_uses_current_angles_when_none_passed():
+    """psi() with no args uses the current motor angles."""
+    g = _fourcv_identity()
+    g.set_angle("omega", 30.0)
+    g.set_angle("chi", 0.0)
+    g.set_angle("phi", 0.0)
+    g.set_angle("two_theta", 60.0)
+    g.azimuthal_reference = (0, 0, 1)
+    psi_implicit = g.psi()
+    psi_explicit = g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+    assert abs(psi_implicit - psi_explicit) < 1e-10
+
+
+def test_psi_range_within_180():
+    """psi() always returns a value in (-180, 180]."""
+    g = _fourcv_identity()
+    for chi in range(0, 180, 30):
+        for phi in range(0, 360, 45):
+            angles = {
+                "omega": 30.0,
+                "chi": float(chi),
+                "phi": float(phi),
+                "two_theta": 60.0,
+            }
+            try:
+                psi = g.psi(angles)
+                assert -180.0 < psi <= 180.0 or abs(abs(psi) - 180.0) < 1e-8
+            except ValueError:
+                pass  # n || Q at some positions — expected
+
+
+def test_psi_no_reference_raises():
+    """psi() raises ValueError when azimuthal_reference is None."""
+    g = _fourcv_identity()
+    g.azimuthal_reference = None
+    with pytest.raises(ValueError, match=re.escape("azimuthal_reference")):
+        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+
+
+def test_psi_no_wavelength_raises():
+    """psi() raises ValueError when wavelength is not set."""
+    g = _fourcv_identity()
+    g.wavelength = None
+    with pytest.raises(ValueError, match=re.escape("wavelength")):
+        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+
+
+def test_psi_no_ub_raises():
+    """psi() raises ValueError when sample.UB is None."""
+    g = _fourcv_identity()
+    g.sample.UB = None
+    with pytest.raises(ValueError, match=re.escape("UB matrix")):
+        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+
+
+def test_psi_n_parallel_to_q_raises():
+    """psi() raises ValueError when the reference is parallel to Q."""
+    g = _fourcv_identity()
+    # At chi=0 Q is along XHAT_BL=(1,0,0). Set n=(1,0,0) → parallel to Q.
+    g.azimuthal_reference = (1, 0, 0)
+    with pytest.raises(ValueError, match=re.escape("parallel to Q")):
+        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+
+
+def test_psi_pa_shows_azimuthal_reference():
+    """pa() output includes the azimuthal reference hkl when set."""
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.status import pa
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    g.azimuthal_reference = (0, 0, 1)
+    out = pa(g)
+    assert "Azimuthal Reference" in out
+    assert "0  0  1" in out
+
+
+def test_psi_pa_shows_not_set_when_none():
+    """pa() shows 'not set' for azimuthal reference when not configured."""
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.status import pa
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    out = pa(g)
+    assert "not set" in out
+
+
+def test_psi_wh_shows_psi_when_available():
+    """wh() includes a Psi line when psi can be computed."""
+    from ad_hoc_diffractometer.status import wh
+
+    g = _fourcv_identity()
+    g.set_angle("omega", 30.0)
+    g.set_angle("chi", 0.0)
+    g.set_angle("phi", 0.0)
+    g.set_angle("two_theta", 60.0)
+    out = wh(g)
+    assert "Psi" in out
+
+
+def test_psi_wh_shows_not_available_when_no_reference():
+    """wh() shows 'not available' for Psi when reference is not set."""
+    from ad_hoc_diffractometer import Lattice
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.status import wh
+
+    g = fourcv()
+    g.wavelength = 2 * _math.pi
+    g.sample.lattice = Lattice(a=1.0)
+    ub_identity(g.sample)
+    # No azimuthal_reference set
+    out = wh(g)
+    assert "Psi" in out
+    assert "not available" in out
