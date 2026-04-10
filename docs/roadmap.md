@@ -124,13 +124,13 @@ be implemented first.
 - [x] `AdHocDiffractometer.add_reflection()` convenience wrapper (inherits
       geometry wavelength)
 
-### 2.4 SPEC #G1 format and reflection round-trip tests ([#25](https://github.com/prjemian/ad_hoc_diffractometer/issues/25))
+### 2.4 SPEC #G1 format and reflection round-trip tests ([#26](https://github.com/prjemian/ad_hoc_diffractometer/issues/26))
 
-- [ ] Parse and emit the SPEC #G1 line format (hkl + motor angles + wavelength)
-- [ ] Tests: store a reflection → compute U → back-calculate angles, verify match
-- [ ] Verify compatibility with alignment data in
+- [x] Parse and emit the SPEC #G1 line format (hkl + motor angles + wavelength)
+- [x] Tests: store a reflection → compute UB → verify UB @ or1_hkl ∥ Q_phi(or1)
+- [x] Verify compatibility with alignment data in
       `references/2020-12-13-fourcc-alignment-7-id-c/`
-- [ ] Depends on: #7 (2.3), #5 (2.1 U matrix), #6 (2.2 UB matrix), #26 (2.5)
+- [x] Depends on: #7 (2.3), #5 (2.1 U matrix), #6 (2.2 UB matrix), #26 (2.5)
 
 ### 2.5 Sample dict on AdHocDiffractometer ([#25](https://github.com/prjemian/ad_hoc_diffractometer/issues/25))
 
