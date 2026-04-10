@@ -1288,3 +1288,40 @@ def test_geometry_summary_no_wavelength(capsys):
     g = fourcv()
     g.summary()
     assert "not set" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------
+# Logging — wh() emits DEBUG when HKL / psi cannot be computed
+# ---------------------------------------------------------------------------
+
+
+def test_wh_logs_debug_when_hkl_unavailable(caplog):
+    """wh() emits a DEBUG log when HKL cannot be computed (no UB set)."""
+    import logging
+
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    with caplog.at_level(logging.DEBUG, logger="ad_hoc_diffractometer.geometry"):
+        g.wh(print=False)
+
+    assert any("wh" in r.message.lower() for r in caplog.records)
+    assert any(r.levelno == logging.DEBUG for r in caplog.records)
+
+
+def test_wh_logs_debug_when_psi_unavailable(caplog):
+    """wh() emits a DEBUG log when psi cannot be computed (no azimuthal reference)."""
+    import logging
+
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_identity
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    ub_identity(g.sample)
+    # No azimuthal_reference → psi() raises → logger.debug fires
+    with caplog.at_level(logging.DEBUG, logger="ad_hoc_diffractometer.geometry"):
+        g.wh(print=False)
+
+    assert any("psi" in r.message.lower() for r in caplog.records)

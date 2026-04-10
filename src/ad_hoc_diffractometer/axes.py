@@ -28,11 +28,15 @@ International Tables for Crystallography, Vol. C, Section 2.2.6 (2006).
     Confirms kappa axis tilted 50° from the omega (vertical) axis.
 """
 
+import logging
+
 import numpy as np
 
 from .constants import XHAT
 from .constants import YHAT
 from .constants import ZHAT
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Canonical signed-axis string notation
@@ -193,6 +197,7 @@ def kappa_axis(alpha_deg: float, basis: dict | None = None) -> np.ndarray:
 
     The kappa axis lies in the vertical-lateral plane, tilted at angle alpha
     from the vertical axis toward the lateral axis:
+
 
         kappa_axis = vertical * cos(alpha) + lateral * sin(alpha)
 

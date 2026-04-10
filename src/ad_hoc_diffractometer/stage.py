@@ -6,9 +6,13 @@ is stored internally as a signed numpy array (the internal representation).
 The caller-facing +x/-z string notation is handled in axes.py.
 """
 
+import logging
+
 import numpy as np
 
 from .rotation import rotation_matrix
+
+logger = logging.getLogger(__name__)
 
 
 class Stage:

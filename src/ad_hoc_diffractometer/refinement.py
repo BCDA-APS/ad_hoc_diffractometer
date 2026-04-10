@@ -43,6 +43,7 @@ Nelder & Mead, The Computer Journal 7(4), 308-313 (1965).
 
 from __future__ import annotations
 
+import logging
 import math
 
 import numpy as np
@@ -50,6 +51,8 @@ import numpy as np
 from .lattice import _SYSTEM_FREE_PARAMS
 from .lattice import Lattice
 from .orientation import angles_to_phi_vector
+
+logger = logging.getLogger(__name__)
 
 # All six cell parameters, in the order stored internally.
 _ALL_CELL_PARAMS = ("a", "b", "c", "alpha", "beta", "gamma")
@@ -955,4 +958,10 @@ def _nelder_mead_numpy(
                 simplex[1:] = simplex[0] + sigma * (simplex[1:] - simplex[0])
                 fvals[1:] = np.array([f(simplex[i]) for i in range(1, n + 1)])
 
+    if not converged:
+        logger.debug(
+            "Nelder-Mead did not converge after %d iterations (tol=%.2g).",
+            n_iter,
+            tol,
+        )
     return simplex[0], n_iter, converged

@@ -6,6 +6,7 @@ The stacking order is encoded via the parent attribute of each Stage.
 """
 
 import builtins
+import logging
 
 import numpy as np
 
@@ -19,6 +20,8 @@ from .sample import _DEFAULT_SAMPLE_NAME
 from .sample import Sample
 from .sample import SampleDict
 from .stage import Stage
+
+logger = logging.getLogger(__name__)
 
 
 class AdHocDiffractometer:
@@ -775,16 +778,16 @@ class AdHocDiffractometer:
             current_angles = {s.name: s.angle for s in self._stages.values()}
             hkl = self.inverse(current_angles)
             hkl_str = "  {:g}  {:g}  {:g}".format(*[self._clean_zero(v) for v in hkl])
-        except Exception:  # noqa: BLE001
-            pass
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("wh: could not compute HKL: %s", exc)
         lines.append(f"H K L = {hkl_str}")
 
         # Azimuthal angle ψ
         psi_str = "not available"
         try:
             psi_str = f"{self.psi():.4g}"
-        except Exception:  # noqa: BLE001
-            pass
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("wh: could not compute psi: %s", exc)
         lines.append(f"Psi = {psi_str}")
 
         # Wavelength
@@ -1087,7 +1090,8 @@ class AdHocDiffractometer:
             from importlib.metadata import version as _version
 
             _pkg_version = _version("ad_hoc_diffractometer")
-        except Exception:  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("Could not read package version: %s", exc)
             _pkg_version = "unknown"
 
         stages = [s.to_dict() for s in self._stages.values()]

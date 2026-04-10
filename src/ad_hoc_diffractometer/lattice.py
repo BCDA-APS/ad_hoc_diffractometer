@@ -16,9 +16,13 @@ Based on:
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 
 from .display import fmt
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Crystal system definitions

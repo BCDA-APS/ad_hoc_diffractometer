@@ -1232,3 +1232,35 @@ def test_ub_from_three_singular_B_inv_sets_U_none():
 
     assert g.sample.U is None
     assert UB is not None
+
+
+def test_ub_from_three_left_handed_H_logs_warning(caplog):
+    """ub_from_three emits a WARNING log alongside warnings.warn for left-handed H."""
+    import logging
+    import math
+
+    from ad_hoc_diffractometer import Lattice
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.orientation import ub_from_three_reflections_bl1967
+
+    TWO_PI = 2 * math.pi
+    g = fourcv()
+    g.wavelength = TWO_PI
+    g.sample.lattice = Lattice(a=1.0)
+    ub_identity(g.sample)
+    # Swap r2 and r3 → det(H) < 0 → left-handed
+    for name, hkl, ang in [
+        ("r1", (1, 0, 0), {"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0}),
+        ("r2", (0, 0, 1), {"omega": 30.0, "chi": 90.0, "phi": 30.0, "two_theta": 60.0}),
+        ("r3", (0, 1, 0), {"omega": 30.0, "chi": 0.0, "phi": 90.0, "two_theta": 60.0}),
+    ]:
+        g.add_reflection(name, hkl=hkl, angles=ang)
+
+    with caplog.at_level(logging.WARNING, logger="ad_hoc_diffractometer.orientation"):
+        ub_from_three_reflections_bl1967(g.sample, "r1", "r2", "r3")
+
+    assert any(
+        "left-handed" in r.message.lower() or "det(H)" in r.message
+        for r in caplog.records
+    )

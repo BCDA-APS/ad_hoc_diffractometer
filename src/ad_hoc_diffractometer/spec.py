@@ -38,10 +38,13 @@ Busing & Levy, Acta Cryst. 22, 457-464 (1967).
 
 from __future__ import annotations
 
+import logging
 from typing import NamedTuple
 
 from .lattice import Lattice
 from .reflection import Reflection
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Data container

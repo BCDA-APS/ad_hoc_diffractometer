@@ -27,8 +27,11 @@ Typical usage::
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from dataclasses import field
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass

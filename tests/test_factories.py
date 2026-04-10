@@ -669,6 +669,38 @@ class TestEntryPointExtensibility:
             fac._GEOMETRY_REGISTRY.clear()
             fac._GEOMETRY_REGISTRY.update(original_registry)
 
+    def test_broken_plugin_logs_debug(self, caplog):
+        """A broken entry point emits a DEBUG message to the package logger."""
+        import logging
+        from unittest.mock import MagicMock
+        from unittest.mock import patch
+
+        import ad_hoc_diffractometer.factories as _fac
+
+        broken_ep = MagicMock()
+        broken_ep.name = "broken_log_test"
+        broken_ep.load.side_effect = ImportError("oops")
+
+        original_ep_loaded = _fac._EP_LOADED
+        original_registry = dict(_fac._GEOMETRY_REGISTRY)
+        _fac._EP_LOADED = False
+        try:
+            with patch(
+                "ad_hoc_diffractometer.factories.entry_points",
+                return_value=[broken_ep],
+            ):
+                with caplog.at_level(
+                    logging.DEBUG,
+                    logger="ad_hoc_diffractometer.factories",
+                ):
+                    _fac._load_entry_point_geometries()
+            assert any("broken_log_test" in r.message for r in caplog.records)
+            assert any(r.levelno == logging.DEBUG for r in caplog.records)
+        finally:
+            _fac._EP_LOADED = original_ep_loaded
+            _fac._GEOMETRY_REGISTRY.clear()
+            _fac._GEOMETRY_REGISTRY.update(original_registry)
+
     def test_outer_importlib_exception_silently_ignored(self):
         """_load_entry_point_geometries swallows errors from entry_points() itself."""
         from unittest.mock import patch

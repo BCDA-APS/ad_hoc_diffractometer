@@ -39,10 +39,14 @@ You, J. Appl. Cryst. 32, 614-623 (1999)
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 
 from .rotation import rotation_matrix
 from .stage import Stage
+
+logger = logging.getLogger(__name__)
 
 
 def angles_to_phi_vector(geometry, **motor_angles: float) -> np.ndarray:
@@ -745,13 +749,13 @@ def ub_from_three_reflections_bl1967(
         )
 
     if det_H < 0:
-        warnings.warn(
+        msg = (
             f"det(H) = {det_H:.6g} < 0: the three hkl triples form a "
             "left-handed system.  U may have det(U) = -1.  Consider "
-            "swapping r1 and r2 to restore a right-handed system.",
-            UserWarning,
-            stacklevel=2,
+            "swapping r1 and r2 to restore a right-handed system."
         )
+        logger.warning(msg)
+        warnings.warn(msg, UserWarning, stacklevel=2)
 
     # --- BL1967 eq. 31: UB = Hφ @ H⁻¹ -------------------------------------
     try:
