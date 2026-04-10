@@ -14,6 +14,7 @@ for the full issue tracker.
 
 ### Added
 
+- All factory functions accept ``basis`` as an optional argument; ``BASIS_YOU`` and ``BASIS_BL`` exported publicly; stage axes expressed as ``VERTICAL``/``LATERAL``/``LONGITUDINAL`` local aliases for readability and extensibility (#67)
 - ``logging.getLogger(__name__)`` in all modules; silent by default (#61)
 - 100% line and branch coverage enforced via ``pytest-cov`` (#60)
 - Dynamic versioning via ``hatch-vcs``; ``ahd.__version__`` exposed (#59)
