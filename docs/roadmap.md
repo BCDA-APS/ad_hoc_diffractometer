@@ -372,6 +372,17 @@ to a chosen reference direction.  Two important classes:
 - [ ] Raised by users; priority to be determined once Priority 1 and 2
       items are complete
 
+### 3.7b `wh()` and `pa()` status commands ([#38](https://github.com/prjemian/ad_hoc_diffractometer/issues/38))
+
+- [x] `wh(geometry)` — terse one-screen status: current HKL (via `inverse()`),
+      wavelength, and motor-angle table (SPEC-style column names)
+- [x] `pa(geometry)` — verbose parameter listing: geometry name, orienting
+      reflections with angles and hkl, real- and reciprocal-space lattice
+      constants, wavelength
+- [x] Both functions return a `str`; graceful fallback when UB or wavelength
+      not set; modelled on Align4Pete.log SPEC output
+- [x] Exported from `__init__.py`; 35 tests in `test_status.py`
+
 ### 3.8 Energy / wave-number conversions and named radiation lines ([#21](https://github.com/prjemian/ad_hoc_diffractometer/issues/21))
 
 Useful for reporting and cross-checking but not load-bearing for diffraction
