@@ -233,50 +233,49 @@ The user should be able to declare available modes as part of the
 geometry definition passed to `AdHocDiffractometer`, analogously to
 how stages are declared.
 
-**Interface design questions to resolve:**
-
-- [ ] **Mode declaration in the geometry dict / constructor**: the
-      `AdHocDiffractometer` constructor (or the factory functions)
-      should accept a `modes` argument — a list or dict of named
-      mode objects — so that the available modes are part of the
-      geometry description, not set separately after construction.
-      Example sketch:
+- [x] **Mode declaration in the geometry dict / constructor**: the
+      `AdHocDiffractometer` constructor accepts a `modes` argument —
+      a dict or `ModeDict` of named mode objects — and a `default_mode`
+      argument so that the available modes and the active mode are part
+      of the geometry description, not set separately after construction.
       ```python
       AdHocDiffractometer(
           name="psic",
           stages=[...],
           modes={
-              "bisecting":   BisectingMode(),
+              "bisecting":   BisectingMode("eta", "delta",
+                                 frozen_angles={"mu": 0.0, "nu": 0.0}),
               "fixed_chi":   FixedAngleMode(stage="chi", value=90.0),
               "fixed_phi":   FixedAngleMode(stage="phi", value=0.0),
           },
           default_mode="bisecting",
       )
       ```
-- [ ] **Mode object interface**: each mode must declare:
-      - which stages it constrains (and to what values or relationships)
-      - which stages remain free
-      - any additional constraints (e.g. bisecting: ω = 2θ/2;
-        reference-vector: Q || N)
-      - a method `constrain(geometry, hkl) -> dict[stage_name, angle]`
-        that computes the constrained angle set for a given (h, k, l)
-- [ ] **Active mode**: `AdHocDiffractometer` holds a reference to the
-      currently active mode; switching modes changes which constraints
-      are applied during angle calculations
-- [ ] **Geometry-specific modes**: factory functions should pre-populate
-      the modes dict with the canonical modes for that geometry.
-      For example, psic() should include bisecting, fixed-chi, fixed-mu,
-      and reference-vector modes as defined by You (1999).
-- [ ] **Mode name attribute**: current mode name accessible as a property
-- [ ] **Frozen angle values**: stages held fixed in a given mode
-      (matches SPEC #G0 frozen motor values; see spec_G_lines.md)
-- [ ] **Cut points**: SPEC-style branch selection per axis determining
-      which of the multiple valid angle solutions is chosen
-      (matches SPEC #G4; see spec_G_lines.md)
-- [ ] Reference: You (1999) section on operating modes and constraints;
-      Walko (2016) section 3.3 "Operating Modes";
-      Busing & Levy (1967) section on angle settings.
-- [ ] Depends on: 2.0, 2.2 (angle calculations require UB matrix).
+- [x] **Mode object interface**: `DiffractionMode` ABC in `mode.py`
+      declares `constrained_stages`, `frozen_angles`, `cut_points`, and
+      `apply_cut_point(stage, angle)`; `FixedAngleMode` and
+      `BisectingMode` are the two built-in concrete subclasses.
+- [x] **Active mode**: `AdHocDiffractometer.mode_name` (read/write
+      property) and `AdHocDiffractometer.mode` (read-only, returns the
+      active `DiffractionMode` object or `None`).
+- [x] **Geometry-specific modes**: factory functions pre-populate the
+      modes dict with canonical modes.  psic: bisecting, fixed_chi,
+      fixed_phi, fixed_mu (You 1999); fourcv / fourch: bisecting,
+      fixed_chi, fixed_phi (BL1967); kappa4cv / kappa4ch: bisecting,
+      fixed_kphi; kappa6c: bisecting, fixed_kphi, fixed_mu.
+- [x] **Mode name attribute**: `geometry.mode_name` (str or None).
+- [x] **Frozen angle values**: `DiffractionMode.frozen_angles` dict;
+      mirrors SPEC #G0 frozen motor values.
+- [x] **Cut points (per mode)**: `DiffractionMode.cut_points` dict and
+      `apply_cut_point(stage, angle)` method; mirrors SPEC #G4.
+- [x] **Cut points (per geometry)**: `AdHocDiffractometer.cut_points`
+      dict for geometry-level SPEC #G4 defaults.
+- [x] **Serialisation**: `to_dict` / `from_dict` round-trips modes
+      (`FixedAngleMode`, `BisectingMode`), `mode_name`, and `cut_points`
+      as part of the geometry export; all JSON-serialisable.
+- [x] **ModeDict**: guarded ordered dict; rejects non-`DiffractionMode`
+      values; exported from `__init__.py`.
+- [x] 73 tests in `test_mode.py`; 100% line and branch coverage.
 
 ### 3.2 Azimuthal reference vector ([#11](https://github.com/prjemian/ad_hoc_diffractometer/issues/11))
 

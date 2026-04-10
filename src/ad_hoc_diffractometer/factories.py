@@ -110,6 +110,8 @@ from .constants import XHAT
 from .constants import YHAT
 from .constants import ZHAT
 from .geometry import AdHocDiffractometer
+from .mode import BisectingMode
+from .mode import FixedAngleMode
 from .stage import Stage
 
 logger = logging.getLogger(__name__)
@@ -373,6 +375,21 @@ def psic(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
         Stage("nu", +VERTICAL, parent=None, role="detector"),
         Stage("delta", -LATERAL, parent="nu", role="detector"),
     ]
+    # Canonical modes from You (1999) section on operating modes.
+    # "bisecting": eta = delta/2, mu = nu = 0  (symmetric reflection geometry)
+    # "fixed_chi":  chi held at a fixed angle (default 90°)
+    # "fixed_phi":  phi held at a fixed angle (default 0°)
+    # "fixed_mu":   mu held at a fixed angle  (default 0°)
+    modes = {
+        "bisecting": BisectingMode(
+            sample_stage="eta",
+            detector_stage="delta",
+            frozen_angles={"mu": 0.0, "nu": 0.0},
+        ),
+        "fixed_chi": FixedAngleMode(stage="chi", value=90.0),
+        "fixed_phi": FixedAngleMode(stage="phi", value=0.0),
+        "fixed_mu": FixedAngleMode(stage="mu", value=0.0),
+    }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
@@ -381,6 +398,8 @@ def psic(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
             "You (1999) 4S+2D six-circle diffractometer "
             "(lateral detector, vertical scattering plane, synchrotron)"
         ),
+        modes=modes,
+        default_mode="bisecting",
     )
 
 
@@ -419,6 +438,12 @@ def fourcv(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
         Stage("phi", -LATERAL, parent="chi", role="sample"),
         Stage("ttheta", -LATERAL, parent=None, role="detector"),
     ]
+    # Canonical four-circle modes (BL1967 / standard practice)
+    modes = {
+        "bisecting": BisectingMode(sample_stage="omega", detector_stage="ttheta"),
+        "fixed_chi": FixedAngleMode(stage="chi", value=90.0),
+        "fixed_phi": FixedAngleMode(stage="phi", value=0.0),
+    }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
@@ -427,6 +452,8 @@ def fourcv(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
             "Busing & Levy (1967) four-circle Eulerian diffractometer "
             "(vertical scattering plane, lateral ttheta, synchrotron)"
         ),
+        modes=modes,
+        default_mode="bisecting",
     )
 
 
@@ -464,6 +491,12 @@ def fourch(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
         Stage("phi", -VERTICAL, parent="chi", role="sample"),
         Stage("ttheta", -VERTICAL, parent=None, role="detector"),
     ]
+    # Canonical four-circle modes (BL1967 / standard practice)
+    modes = {
+        "bisecting": BisectingMode(sample_stage="omega", detector_stage="ttheta"),
+        "fixed_chi": FixedAngleMode(stage="chi", value=90.0),
+        "fixed_phi": FixedAngleMode(stage="phi", value=0.0),
+    }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
@@ -472,6 +505,8 @@ def fourch(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
             "Busing & Levy (1967) four-circle Eulerian diffractometer "
             "(horizontal scattering plane, vertical ttheta, laboratory)"
         ),
+        modes=modes,
+        default_mode="bisecting",
     )
 
 
@@ -573,6 +608,11 @@ def kappa4cv(
         Stage("kphi", -LATERAL, parent="kappa", role="sample"),
         Stage("ttheta", -LATERAL, parent=None, role="detector"),
     ]
+    # Canonical kappa four-circle modes
+    modes = {
+        "bisecting": BisectingMode(sample_stage="komega", detector_stage="ttheta"),
+        "fixed_kphi": FixedAngleMode(stage="kphi", value=0.0),
+    }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
@@ -582,6 +622,8 @@ def kappa4cv(
             f"(synchrotron). Kappa alpha = {alpha_deg} deg."
         ),
         kappa_alpha_deg=alpha_deg,
+        modes=modes,
+        default_mode="bisecting",
     )
 
 
@@ -627,6 +669,11 @@ def kappa4ch(
         Stage("kphi", -VERTICAL, parent="kappa", role="sample"),
         Stage("ttheta", -VERTICAL, parent=None, role="detector"),
     ]
+    # Canonical kappa four-circle modes
+    modes = {
+        "bisecting": BisectingMode(sample_stage="komega", detector_stage="ttheta"),
+        "fixed_kphi": FixedAngleMode(stage="kphi", value=0.0),
+    }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
@@ -636,6 +683,8 @@ def kappa4ch(
             f"(laboratory). Kappa alpha = {alpha_deg} deg."
         ),
         kappa_alpha_deg=alpha_deg,
+        modes=modes,
+        default_mode="bisecting",
     )
 
 
@@ -687,6 +736,16 @@ def kappa6c(
         Stage("nu", +VERTICAL, parent=None, role="detector"),
         Stage("delta", -LATERAL, parent="nu", role="detector"),
     ]
+    # Canonical six-circle kappa modes (psic-style, You 1999)
+    modes = {
+        "bisecting": BisectingMode(
+            sample_stage="komega",
+            detector_stage="delta",
+            frozen_angles={"mu": 0.0, "nu": 0.0},
+        ),
+        "fixed_kphi": FixedAngleMode(stage="kphi", value=0.0),
+        "fixed_mu": FixedAngleMode(stage="mu", value=0.0),
+    }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
@@ -697,6 +756,8 @@ def kappa6c(
             f"Kappa alpha = {alpha_deg} deg."
         ),
         kappa_alpha_deg=alpha_deg,
+        modes=modes,
+        default_mode="bisecting",
     )
 
 
