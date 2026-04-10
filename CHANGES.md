@@ -9,6 +9,12 @@ for the full issue tracker.
 
 ### Added
 
+- Export/restore full diffractometer settings (#52): ``to_dict()`` /
+  ``from_dict()`` on ``Lattice``, ``Reflection``, ``ReflectionList``,
+  ``Sample``, and ``AdHocDiffractometer``; JSON-serialisable; top-level
+  dict includes ``_meta`` with software name, version, and timestamp;
+  complete round-trip preserves all stages, samples, UB matrices,
+  reflections, and settings
 - `AdHocDiffractometer.wh` and `AdHocDiffractometer.pa` properties (#51):
   access the terse/verbose status strings as ``g.wh`` / ``g.pa`` without
   needing to import the module-level functions; module-level ``wh(g)`` and

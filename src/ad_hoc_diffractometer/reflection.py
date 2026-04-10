@@ -136,6 +136,50 @@ class Reflection:
             f"geometry_name={self.geometry_name!r})"
         )
 
+    def to_dict(self) -> dict:
+        """
+        Return a JSON-serialisable ``dict`` representing this reflection.
+
+        Returns
+        -------
+        dict
+            Keys: ``"name"`` (str), ``"hkl"`` (list of 3 float),
+            ``"angles"`` (dict str→float), ``"wavelength"`` (float or None),
+            ``"geometry_name"`` (str or None).
+        """
+        return {
+            "name": self.name,
+            "hkl": list(self.hkl),
+            "angles": dict(self.angles),
+            "wavelength": self.wavelength,
+            "geometry_name": self.geometry_name,
+        }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> Reflection:
+        """
+        Reconstruct a :class:`Reflection` from a dict produced by
+        :meth:`to_dict`.
+
+        Parameters
+        ----------
+        d : dict
+            Must contain ``"name"``, ``"hkl"``, ``"angles"``.
+            ``"wavelength"`` and ``"geometry_name"`` are optional (default
+            ``None``).
+
+        Returns
+        -------
+        Reflection
+        """
+        return cls(
+            name=d["name"],
+            hkl=tuple(d["hkl"]),
+            angles=d["angles"],
+            wavelength=d.get("wavelength"),
+            geometry_name=d.get("geometry_name"),
+        )
+
 
 class ReflectionList:
     """
@@ -332,3 +376,52 @@ class ReflectionList:
         if self._or2_name is not None:
             result.append(self._data[self._or2_name])
         return result
+
+    def to_dict(self) -> dict:
+        """
+        Return a JSON-serialisable ``dict`` representing this reflection list.
+
+        Returns
+        -------
+        dict
+            Keys: ``"geometry_name"`` (str or None), ``"reflections"`` (list
+            of reflection dicts in insertion order), ``"or1"`` (name str or
+            None), ``"or2"`` (name str or None).
+        """
+        return {
+            "geometry_name": self.geometry_name,
+            "reflections": [r.to_dict() for r in self._data.values()],
+            "or1": self._or1_name,
+            "or2": self._or2_name,
+        }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> ReflectionList:
+        """
+        Reconstruct a :class:`ReflectionList` from a dict produced by
+        :meth:`to_dict`.
+
+        Parameters
+        ----------
+        d : dict
+            Must contain ``"reflections"`` (list of reflection dicts).
+            ``"geometry_name"``, ``"or1"``, and ``"or2"`` are optional.
+
+        Returns
+        -------
+        ReflectionList
+        """
+        geometry_name = d.get("geometry_name", "unknown")
+        # valid_stages: rebuild from the angle keys of all reflections
+        valid_stages: set[str] = set()
+        for rd in d.get("reflections", []):
+            valid_stages.update(rd.get("angles", {}).keys())
+        rl = cls(geometry_name=geometry_name, valid_stages=valid_stages)
+        for rd in d.get("reflections", []):
+            r = Reflection.from_dict(rd)
+            rl._data[r.name] = r
+        if d.get("or1") and d["or1"] in rl._data:
+            rl._or1_name = d["or1"]
+        if d.get("or2") and d["or2"] in rl._data:
+            rl._or2_name = d["or2"]
+        return rl

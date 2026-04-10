@@ -218,3 +218,57 @@ class Sample:
         return (
             self.name == other.name and self.lattice == other.lattice and u_eq and ub_eq
         )
+
+    def to_dict(self) -> dict:
+        """
+        Return a JSON-serialisable ``dict`` representing this sample.
+
+        Returns
+        -------
+        dict
+            Keys: ``"name"`` (str), ``"lattice"`` (lattice dict),
+            ``"reflections"`` (reflection-list dict), ``"U"`` (3×3 list or
+            None), ``"UB"`` (3×3 list or None).
+        """
+        return {
+            "name": self.name,
+            "lattice": self.lattice.to_dict(),
+            "reflections": self.reflections.to_dict(),
+            "U": self.U.tolist() if self.U is not None else None,
+            "UB": self.UB.tolist() if self.UB is not None else None,
+        }
+
+    @classmethod
+    def from_dict(cls, d: dict, parent=None) -> Sample:
+        """
+        Reconstruct a :class:`Sample` from a dict produced by :meth:`to_dict`.
+
+        Parameters
+        ----------
+        d : dict
+            Must contain ``"name"``, ``"lattice"``, ``"reflections"``.
+            ``"U"`` and ``"UB"`` are optional (default ``None``).
+        parent : AdHocDiffractometer or None
+            Geometry to attach as the parent back-reference.
+
+        Returns
+        -------
+        Sample
+        """
+        import numpy as np
+
+        from .lattice import Lattice
+        from .reflection import ReflectionList
+
+        lattice = Lattice.from_dict(d["lattice"])
+        reflections = ReflectionList.from_dict(d["reflections"])
+        U = np.array(d["U"], dtype=float) if d.get("U") is not None else None
+        UB = np.array(d["UB"], dtype=float) if d.get("UB") is not None else None
+        return cls(
+            name=d["name"],
+            lattice=lattice,
+            reflections=reflections,
+            U=U,
+            UB=UB,
+            parent=parent,
+        )

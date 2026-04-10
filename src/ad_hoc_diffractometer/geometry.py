@@ -864,3 +864,198 @@ class AdHocDiffractometer:
             f"AdHocDiffractometer(name={self.name!r}, "
             f"stages={list(self._stages.keys())})"
         )
+
+    # ------------------------------------------------------------------
+    # Serialisation
+    # ------------------------------------------------------------------
+
+    def to_dict(self) -> dict:
+        """
+        Export the complete diffractometer configuration as a
+        JSON-serialisable ``dict``.
+
+        The returned dict captures all geometry state: stage definitions,
+        current motor angles, all samples (including their lattices,
+        reflections, and U/UB matrices), the active sample name,
+        wavelength, azimuthal reference, and identifying metadata.
+
+        Returns
+        -------
+        dict
+            JSON-serialisable mapping with the following top-level keys:
+
+            ``"_meta"``
+                Sub-dict with ``"software"`` (``"ad_hoc_diffractometer"``),
+                ``"version"`` (package version string), and
+                ``"created"`` (ISO-8601 UTC timestamp).
+            ``"name"``
+                Geometry name (str).
+            ``"description"``
+                Free-text description (str).
+            ``"wavelength"``
+                Wavelength in Å (float or None).
+            ``"kappa_alpha_deg"``
+                Kappa tilt angle in degrees (float or None).
+            ``"azimuthal_reference"``
+                Miller indices [h, k, l] (list of 3 float, or None).
+            ``"basis"``
+                Dict mapping physical direction names to [x, y, z] lists.
+            ``"stages"``
+                List of stage dicts (name, axis, role, parent, angle,
+                limits).
+            ``"active_sample"``
+                Name of the currently active sample (str).
+            ``"samples"``
+                Dict mapping sample names to sample dicts.
+
+        Examples
+        --------
+        >>> import json, ad_hoc_diffractometer as ahd
+        >>> g = ahd.fourcv()
+        >>> g.wavelength = 1.5406
+        >>> d = g.to_dict()
+        >>> assert json.dumps(d)          # must be JSON-serialisable
+        >>> d["name"]
+        'fourcv'
+        >>> d["wavelength"]
+        1.5406
+        """
+        import datetime
+
+        try:
+            from importlib.metadata import version as _version
+
+            _pkg_version = _version("ad_hoc_diffractometer")
+        except Exception:  # noqa: BLE001
+            _pkg_version = "unknown"
+
+        stages = []
+        for s in self._stages.values():
+            stages.append(
+                {
+                    "name": s.name,
+                    "axis": [float(x) for x in s.axis],
+                    "role": s.role,
+                    "parent": s.parent,
+                    "angle": float(s.angle),
+                    "limits": [float(s.limits[0]), float(s.limits[1])],
+                }
+            )
+
+        samples = {
+            name: sample.to_dict() for name, sample in self.__samples._data.items()
+        }
+
+        return {
+            "_meta": {
+                "software": "ad_hoc_diffractometer",
+                "version": _pkg_version,
+                "created": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            },
+            "name": self.name,
+            "description": self.description,
+            "wavelength": self._wavelength,
+            "kappa_alpha_deg": self._kappa_alpha_deg,
+            "azimuthal_reference": (
+                list(self._azimuthal_reference)
+                if self._azimuthal_reference is not None
+                else None
+            ),
+            "basis": {k: [float(x) for x in v] for k, v in self.basis.items()},
+            "stages": stages,
+            "active_sample": self._active_ref[0],
+            "samples": samples,
+        }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "AdHocDiffractometer":
+        """
+        Reconstruct an :class:`AdHocDiffractometer` from a dict produced by
+        :meth:`to_dict`.
+
+        Parameters
+        ----------
+        d : dict
+            Dict as returned by :meth:`to_dict`.  The ``"_meta"`` key is
+            read but not validated; version mismatches do not raise.
+
+        Returns
+        -------
+        AdHocDiffractometer
+            A fully-configured geometry with all stages, samples, and
+            settings restored.
+
+        Notes
+        -----
+        Stages are reconstructed from the stored axis, role, parent, limits,
+        and angle values.  The stage parent graph is rebuilt from the stored
+        ``"parent"`` field (a name string or None).
+
+        Samples are restored via :meth:`Sample.from_dict`.  The active
+        sample is restored by name.
+
+        The factory-function identity (e.g. ``psic``, ``fourcv``) is **not**
+        stored; ``from_dict`` always returns a plain
+        :class:`AdHocDiffractometer` instance.  If you need the factory
+        function, look it up via ``get_geometry(d["name"])``.
+
+        Examples
+        --------
+        >>> import ad_hoc_diffractometer as ahd
+        >>> g = ahd.fourcv()
+        >>> g.wavelength = 1.5406
+        >>> g2 = ahd.AdHocDiffractometer.from_dict(g.to_dict())
+        >>> g2.name
+        'fourcv'
+        >>> g2.wavelength
+        1.5406
+        """
+        import numpy as np
+
+        from .sample import Sample
+        from .stage import Stage
+
+        basis = {k: np.array(v, dtype=float) for k, v in d["basis"].items()}
+
+        # Build Stage objects
+        stage_objects: dict[str, Stage] = {}
+        for sd in d["stages"]:
+            s = Stage(
+                name=sd["name"],
+                axis=np.array(sd["axis"], dtype=float),
+                role=sd["role"],
+                parent=sd.get("parent"),  # still a name string at this point
+                limits=tuple(sd["limits"]),
+            )
+            s.angle = sd["angle"]
+            stage_objects[sd["name"]] = s
+
+        stages_list = list(stage_objects.values())
+
+        geom = cls(
+            name=d["name"],
+            stages=stages_list,
+            basis=basis,
+            description=d.get("description", ""),
+            wavelength=d.get("wavelength"),
+            kappa_alpha_deg=d.get("kappa_alpha_deg"),
+            azimuthal_reference=d.get("azimuthal_reference"),
+        )
+
+        # Restore samples (skip the default 'test' sample; replace it)
+        active_name = d.get("active_sample", "test")
+        for sample_name, sd in d.get("samples", {}).items():
+            sample = Sample.from_dict(sd, parent=geom)
+            if sample_name in geom.samples._data:
+                # Replace the default sample in-place
+                geom.samples._data[sample_name] = sample
+                sample.reflections.geometry_name = geom.name
+            else:
+                geom.samples._data[sample_name] = sample
+                sample.reflections.geometry_name = geom.name
+
+        # Restore active sample
+        if active_name in geom.samples._data:
+            geom._active_ref[0] = active_name
+
+        return geom
