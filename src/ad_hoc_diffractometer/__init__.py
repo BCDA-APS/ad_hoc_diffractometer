@@ -36,6 +36,7 @@ from .lattice import lattice_vectors
 from .lattice import reciprocal_vectors
 from .orientation import angles_to_phi_vector
 from .orientation import ub_from_one_reflection
+from .orientation import ub_from_three_reflections_bl1967
 from .orientation import ub_from_two_reflections_bl1967
 from .orientation import ub_identity
 from .reflection import Reflection
@@ -76,6 +77,7 @@ __all__ = [
     "ub_identity",
     "ub_from_one_reflection",
     "ub_from_two_reflections_bl1967",
+    "ub_from_three_reflections_bl1967",
     # factories
     "list_geometries",
     "get_geometry",

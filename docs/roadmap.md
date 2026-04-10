@@ -103,10 +103,10 @@ be implemented first.
 
 ### 2.2 `ub_from_three_reflections_bl1967` (BL1967 eqs. 29-31) ([#6](https://github.com/prjemian/ad_hoc_diffractometer/issues/6))
 
-- [ ] Implement in `orientation.py`
-- [ ] Inputs: three `Reflection` objects; no prior lattice needed
-- [ ] Algorithm: UB = Hφ @ H⁻¹ (direct matrix inversion); U = UB @ B⁻¹
-- [ ] Sets `sample.U` and `sample.UB` in-place; returns UB
+- [x] Implement in `orientation.py`
+- [x] Inputs: three `Reflection` objects; no prior lattice needed
+- [x] Algorithm: UB = Hφ @ H⁻¹ (direct matrix inversion); U = UB @ B⁻¹
+- [x] Sets `sample.U` and `sample.UB` in-place; returns UB
 
 ### 2.3 Orienting reflections data structure ([#7](https://github.com/prjemian/ad_hoc_diffractometer/issues/7))
 
