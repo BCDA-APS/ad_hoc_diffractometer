@@ -202,7 +202,7 @@ def test_make_geometry_kappa_alpha_forwarded():
             fourcv,
             "fourcv",
             ["omega", "chi", "phi"],
-            ["two_theta"],
+            ["ttheta"],
             does_not_raise(),
             id="fourcv-stage-lists",
         ),
@@ -210,7 +210,7 @@ def test_make_geometry_kappa_alpha_forwarded():
             fourch,
             "fourch",
             ["omega", "chi", "phi"],
-            ["two_theta"],
+            ["ttheta"],
             does_not_raise(),
             id="fourch-stage-lists",
         ),
@@ -226,7 +226,7 @@ def test_make_geometry_kappa_alpha_forwarded():
             kappa4cv,
             "kappa4cv",
             ["komega", "kappa", "kphi"],
-            ["two_theta"],
+            ["ttheta"],
             does_not_raise(),
             id="kappa4cv-stage-lists",
         ),
@@ -234,7 +234,7 @@ def test_make_geometry_kappa_alpha_forwarded():
             kappa4ch,
             "kappa4ch",
             ["komega", "kappa", "kphi"],
-            ["two_theta"],
+            ["ttheta"],
             does_not_raise(),
             id="kappa4ch-stage-lists",
         ),
@@ -266,7 +266,7 @@ def test_make_geometry_kappa_alpha_forwarded():
             fivec,
             "fivec",
             ["mu", "omega", "chi", "phi"],
-            ["two_theta"],
+            ["ttheta"],
             does_not_raise(),
             id="fivec-stage-lists",
         ),
@@ -303,10 +303,10 @@ def test_geometry_factories(
         ),
         pytest.param(
             fourcv,
-            "two_theta",
+            "ttheta",
             None,
             does_not_raise(),
-            id="fourcv-two_theta-decoupled",
+            id="fourcv-ttheta-decoupled",
         ),
         pytest.param(
             fourcv, "chi", "omega", does_not_raise(), id="fourcv-chi-on-omega"
@@ -315,10 +315,10 @@ def test_geometry_factories(
         # fourch
         pytest.param(
             fourch,
-            "two_theta",
+            "ttheta",
             None,
             does_not_raise(),
-            id="fourch-two_theta-decoupled",
+            id="fourch-ttheta-decoupled",
         ),
         # sixc
         pytest.param(sixc, "alpha", None, does_not_raise(), id="sixc-alpha-on-floor"),
@@ -337,10 +337,10 @@ def test_geometry_factories(
         ),
         pytest.param(
             kappa4cv,
-            "two_theta",
+            "ttheta",
             None,
             does_not_raise(),
-            id="kappa4cv-two_theta-decoupled",
+            id="kappa4cv-ttheta-decoupled",
         ),
         pytest.param(
             kappa4cv, "kappa", "komega", does_not_raise(), id="kappa4cv-kappa-on-komega"
@@ -377,9 +377,7 @@ def test_geometry_factories(
         # fivec
         pytest.param(fivec, "mu", None, does_not_raise(), id="fivec-mu-on-floor"),
         pytest.param(fivec, "omega", "mu", does_not_raise(), id="fivec-omega-on-mu"),
-        pytest.param(
-            fivec, "two_theta", "mu", does_not_raise(), id="fivec-two_theta-on-mu"
-        ),
+        pytest.param(fivec, "ttheta", "mu", does_not_raise(), id="fivec-ttheta-on-mu"),
         pytest.param(fivec, "chi", "omega", does_not_raise(), id="fivec-chi-on-omega"),
         pytest.param(fivec, "phi", "chi", does_not_raise(), id="fivec-phi-on-chi"),
     ],
