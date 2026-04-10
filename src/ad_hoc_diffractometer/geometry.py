@@ -722,6 +722,79 @@ class AdHocDiffractometer:
         sin_psi = float(np.dot(Q_hat, np.cross(y_perp_hat, n_perp_hat)))
         return math.degrees(math.atan2(sin_psi, cos_psi))
 
+    @property
+    def wh(self) -> str:
+        """
+        Terse one-screen status string (the SPEC ``wh`` command).
+
+        Returns the same string as ``status.wh(self)``: current H K L
+        position, azimuthal angle ψ, wavelength, and a motor-angle table
+        with SPEC-style column names.
+
+        Read as a property so the call site reads naturally::
+
+            print(g.wh)
+
+        Returns
+        -------
+        str
+            Multi-line status string, ready to ``print()``.
+
+        See Also
+        --------
+        ad_hoc_diffractometer.status.wh : Module-level function (thin wrapper).
+
+        Examples
+        --------
+        >>> import ad_hoc_diffractometer as ahd
+        >>> g = ahd.fourcv()
+        >>> g.wavelength = 1.5406
+        >>> print(g.wh)
+        H K L = not available
+        Psi = not available
+        Lambda = 1.5406
+        <BLANKLINE>
+          TwoTheta     Theta       Chi       Phi
+             0.000     0.000     0.000     0.000
+        """
+        from .status import wh as _wh
+
+        return _wh(self)
+
+    @property
+    def pa(self) -> str:
+        """
+        Verbose parameter listing (the SPEC ``pa`` command).
+
+        Returns the same string as ``status.pa(self)``: geometry name,
+        primary and secondary orienting reflections, lattice constants
+        in real and reciprocal space, azimuthal reference, and wavelength.
+
+        Read as a property so the call site reads naturally::
+
+            print(g.pa)
+
+        Returns
+        -------
+        str
+            Multi-line parameter string, ready to ``print()``.
+
+        See Also
+        --------
+        ad_hoc_diffractometer.status.pa : Module-level function (thin wrapper).
+
+        Examples
+        --------
+        >>> import ad_hoc_diffractometer as ahd
+        >>> g = ahd.fourcv()
+        >>> print(g.pa)                     # doctest: +ELLIPSIS
+        Geometry: fourcv
+        ...
+        """
+        from .status import pa as _pa
+
+        return _pa(self)
+
     def sample_rotation_matrix(self) -> np.ndarray:
         """
         Compute the total sample rotation matrix Z = R_floor * ... * R_top.

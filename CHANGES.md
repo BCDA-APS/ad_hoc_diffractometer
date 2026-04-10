@@ -9,6 +9,10 @@ for the full issue tracker.
 
 ### Added
 
+- `AdHocDiffractometer.wh` and `AdHocDiffractometer.pa` properties (#51):
+  access the terse/verbose status strings as ``g.wh`` / ``g.pa`` without
+  needing to import the module-level functions; module-level ``wh(g)`` and
+  ``pa(g)`` remain as thin wrappers for backward compatibility
 - Azimuthal reference vector and ψ angle (#11):
   - ``AdHocDiffractometer.azimuthal_reference``: stores the reference
     direction as Miller indices (h, k, l); default ``None``; validated as

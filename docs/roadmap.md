@@ -401,6 +401,17 @@ to a chosen reference direction.  Two important classes:
 - [ ] Raised by users; priority to be determined once Priority 1 and 2
       items are complete
 
+### 3.7a Refactor `wh` and `pa` as methods ([#51](https://github.com/prjemian/ad_hoc_diffractometer/issues/51))
+
+Move `wh()` and `pa()` from standalone functions in `status.py` to methods
+on `AdHocDiffractometer`, while keeping the module-level functions as
+thin wrappers for backward compatibility.
+
+- [x] Add `AdHocDiffractometer.wh` property (delegates to `status.wh(self)`)
+- [x] Add `AdHocDiffractometer.pa` property (delegates to `status.pa(self)`)
+- [x] Module-level `wh(geometry)` and `pa(geometry)` remain as thin wrappers
+- [x] Tests: `g.wh` and `g.pa` return the same string as `wh(g)` / `pa(g)`
+
 ### 3.7b `wh()` and `pa()` status commands ([#38](https://github.com/prjemian/ad_hoc_diffractometer/issues/38))
 
 - [x] `wh(geometry)` — terse one-screen status: current HKL (via `inverse()`),
@@ -411,6 +422,25 @@ to a chosen reference direction.  Two important classes:
 - [x] Both functions return a `str`; graceful fallback when UB or wavelength
       not set; modelled on Align4Pete.log SPEC output
 - [x] Exported from `__init__.py`; 35 tests in `test_status.py`
+
+### 3.7c Export and restore full diffractometer settings ([#52](https://github.com/prjemian/ad_hoc_diffractometer/issues/52))
+
+Serialize the complete diffractometer configuration — geometry, samples,
+lattice, reflections, UB matrices, wavelength, azimuthal reference — to
+and from a JSON-compatible dictionary.  Supports documentation, archival,
+diagnostics, and programmatic reconstruction.
+
+- [ ] Each class (`AdHocDiffractometer`, `Sample`, `Lattice`,
+      `ReflectionList`, `Reflection`, `Stage`) exposes a `to_dict()`
+      method returning a JSON-serialisable ``dict``
+- [ ] Matching `from_dict()` class methods reconstruct each object from
+      such a dict
+- [ ] Top-level dict includes metadata: creation timestamp, software name
+      (``"ad_hoc_diffractometer"``), and package version
+- [ ] Round-trip: ``from_dict(obj.to_dict())`` reproduces the object
+      (verified by ``__eq__``)
+- [ ] Tests covering each class, full geometry round-trip, and JSON
+      serialisability
 
 ### 3.8 Energy / wave-number conversions and named radiation lines ([#21](https://github.com/prjemian/ad_hoc_diffractometer/issues/21))
 
