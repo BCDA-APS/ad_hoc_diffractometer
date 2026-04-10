@@ -668,3 +668,24 @@ class TestEntryPointExtensibility:
             fac._EP_LOADED = original_ep_loaded
             fac._GEOMETRY_REGISTRY.clear()
             fac._GEOMETRY_REGISTRY.update(original_registry)
+
+    def test_outer_importlib_exception_silently_ignored(self):
+        """_load_entry_point_geometries swallows errors from entry_points() itself."""
+        from unittest.mock import patch
+
+        import ad_hoc_diffractometer.factories as _fac
+
+        original_ep_loaded = _fac._EP_LOADED
+        original_registry = dict(_fac._GEOMETRY_REGISTRY)
+        _fac._EP_LOADED = False
+        try:
+            with patch(
+                "ad_hoc_diffractometer.factories.entry_points",
+                side_effect=Exception("metadata unavailable"),
+            ):
+                _fac._load_entry_point_geometries()
+            assert "psic" in _fac._GEOMETRY_REGISTRY
+        finally:
+            _fac._EP_LOADED = original_ep_loaded
+            _fac._GEOMETRY_REGISTRY.clear()
+            _fac._GEOMETRY_REGISTRY.update(original_registry)

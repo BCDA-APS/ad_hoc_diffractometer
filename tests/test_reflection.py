@@ -515,3 +515,88 @@ def test_add_reflection_stored_in_active_sample(psic_geom):
 def test_add_reflection_geometry_name_set(psic_geom):
     r = psic_geom.add_reflection("r1", hkl=(1, 0, 0), angles=_PSIC_ANGLES)
     assert r.geometry_name == "psic"
+
+
+# ---------------------------------------------------------------------------
+# Reflection.__eq__ branch coverage
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "r1_kwargs, r2_kwargs, expected_equal, context",
+    [
+        pytest.param(
+            {"name": "a", "hkl": (1, 0, 0), "angles": {"omega": 10.0}},
+            {"name": "b", "hkl": (1, 0, 0), "angles": {"omega": 10.0}},
+            False,
+            does_not_raise(),
+            id="different-name",
+        ),
+        pytest.param(
+            {
+                "name": "r",
+                "hkl": (1, 0, 0),
+                "angles": {"omega": 10.0},
+                "geometry_name": "psic",
+            },
+            {
+                "name": "r",
+                "hkl": (1, 0, 0),
+                "angles": {"omega": 10.0},
+                "geometry_name": "fourcv",
+            },
+            False,
+            does_not_raise(),
+            id="different-geometry-name",
+        ),
+        pytest.param(
+            {"name": "r", "hkl": (1, 0, 0), "angles": {"omega": 10.0}},
+            {"name": "r", "hkl": (1, 0, 0), "angles": {"omega": 10.0, "chi": 0.0}},
+            False,
+            does_not_raise(),
+            id="different-angle-keys",
+        ),
+        pytest.param(
+            {
+                "name": "r",
+                "hkl": (1, 0, 0),
+                "angles": {"omega": 10.0},
+                "wavelength": 1.5,
+            },
+            {
+                "name": "r",
+                "hkl": (1, 0, 0),
+                "angles": {"omega": 10.0},
+                "wavelength": None,
+            },
+            False,
+            does_not_raise(),
+            id="one-wavelength-none",
+        ),
+    ],
+)
+def test_reflection_eq_branches(r1_kwargs, r2_kwargs, expected_equal, context):
+    with context:
+        r1 = Reflection(**r1_kwargs)
+        r2 = Reflection(**r2_kwargs)
+        assert (r1 == r2) == expected_equal
+
+
+def test_reflection_eq_non_reflection():
+    """__eq__ returns NotImplemented for non-Reflection objects."""
+    r = Reflection("r", (1, 0, 0), {"omega": 10.0})
+    assert r.__eq__("not a reflection") is NotImplemented
+
+
+# ---------------------------------------------------------------------------
+# ReflectionList dict-interface methods
+# ---------------------------------------------------------------------------
+
+
+def test_reflectionlist_keys_values_items():
+    """keys(), values(), and items() expose the underlying reflection data."""
+    rl = ReflectionList(geometry_name="psic", valid_stages={"omega"})
+    rl.add("r1", hkl=(1, 0, 0), angles={"omega": 10.0})
+    assert "r1" in list(rl.keys())
+    assert all(isinstance(v, Reflection) for v in rl.values())
+    assert list(rl.items())[0][0] == "r1"

@@ -604,3 +604,18 @@ class TestGeometryRoundTrip:
         g2 = AdHocDiffractometer.from_dict(g.to_dict())
         assert g2._active_ref[0] == "mycrystal"
         assert g2.sample.name == "mycrystal"
+
+    def test_to_dict_version_unknown_when_metadata_raises(self):
+        """to_dict() writes version='unknown' when importlib.metadata.version raises."""
+        import importlib.metadata
+        from unittest.mock import MagicMock
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        original = importlib.metadata.version
+        importlib.metadata.version = MagicMock(side_effect=Exception("no pkg"))
+        try:
+            d = g.to_dict()
+            assert d["_meta"]["version"] == "unknown"
+        finally:
+            importlib.metadata.version = original

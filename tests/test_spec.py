@@ -407,3 +407,23 @@ class TestUBRoundTrip:
             err_msg=f"U not orthonormal for {desc}",
         )
         assert abs(np.linalg.det(U) - 1.0) < 1e-8, f"det(U) != 1 for {desc}"
+
+
+def test_sample_to_g1_only_or1_set():
+    """sample_to_g1 fills or2 fields with zeros when only or1 is designated."""
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.spec import sample_to_g1
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    g.add_reflection(
+        "r1",
+        hkl=(0, 0, 6),
+        angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "two_theta": 41.94},
+    )
+    g.sample.reflections.setor1("r1")
+    g1 = sample_to_g1(g)
+    assert g1.or2_h == 0.0
+    assert g1.or2_k == 0.0
+    assert g1.or2_l == 0.0
+    assert g1.or2_two_theta == 0.0

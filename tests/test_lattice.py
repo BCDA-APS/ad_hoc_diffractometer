@@ -249,6 +249,26 @@ def test_lattice_invalid_params(kwargs, context):
         Lattice(**kwargs)
 
 
+@pytest.mark.parametrize(
+    "args, context",
+    [
+        pytest.param(
+            ("_UNSET",) * 6,
+            pytest.raises(ValueError, match=re.escape("'a' must always be provided")),
+            id="no-a-supplied",
+        ),
+    ],
+)
+def test_deduce_system_and_params_errors(args, context):
+    """_deduce_system_and_params raises for invalid direct inputs."""
+    from ad_hoc_diffractometer.lattice import _UNSET
+    from ad_hoc_diffractometer.lattice import _deduce_system_and_params
+
+    real_args = tuple(_UNSET if a == "_UNSET" else a for a in args)
+    with context:
+        _deduce_system_and_params(*real_args)
+
+
 # ---------------------------------------------------------------------------
 # Invalid inputs — out-of-range values
 # ---------------------------------------------------------------------------

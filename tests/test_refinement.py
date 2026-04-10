@@ -495,3 +495,211 @@ class TestRefineSimplex:
     def test_unknown_reflection_name_raises(self, perturbed_geom):
         with pytest.raises(KeyError):
             refine_lattice_simplex(perturbed_geom.sample, ["r1", "r2", "no_such"])
+
+
+# ---------------------------------------------------------------------------
+# _nelder_mead_numpy — all branches
+# ---------------------------------------------------------------------------
+
+
+class TestNelderMeadNumpy:
+    """Tests for the pure-numpy Nelder-Mead fallback (all branches)."""
+
+    def test_converges_on_quadratic(self):
+        """Converges to the minimum of a simple quadratic bowl."""
+        from ad_hoc_diffractometer.refinement import _nelder_mead_numpy
+
+        x_opt, _, converged = _nelder_mead_numpy(
+            lambda x: float(x[0] ** 2 + x[1] ** 2),
+            np.array([1.0, 1.0]),
+            max_iter=500,
+            tol=1e-12,
+        )
+        assert converged
+        assert np.linalg.norm(x_opt) < 0.01
+
+    def test_expansion_branch(self):
+        """Exercises the expansion step (reflected point is better than best)."""
+        from ad_hoc_diffractometer.refinement import _nelder_mead_numpy
+
+        x0 = np.array([2.0, 2.0])
+        x_opt, _, _ = _nelder_mead_numpy(
+            lambda x: float(10 * x[0] ** 2 + x[1] ** 2),
+            x0,
+            max_iter=1000,
+            tol=1e-12,
+        )
+        assert float(10 * x_opt[0] ** 2 + x_opt[1] ** 2) < float(
+            10 * x0[0] ** 2 + x0[1] ** 2
+        )
+
+    def test_contraction_branch(self):
+        """Exercises the contraction step on the Rosenbrock function."""
+        from ad_hoc_diffractometer.refinement import _nelder_mead_numpy
+
+        x0 = np.array([0.0, 0.0])
+        x_opt, _, _ = _nelder_mead_numpy(
+            lambda x: float((1 - x[0]) ** 2 + 100 * (x[1] - x[0] ** 2) ** 2),
+            x0,
+            max_iter=2000,
+            tol=1e-10,
+        )
+        assert float((1 - x_opt[0]) ** 2 + 100 * (x_opt[1] - x_opt[0] ** 2) ** 2) < 1.0
+
+    def test_shrink_branch(self):
+        """Exercises the shrink step by making contraction always worse."""
+        from ad_hoc_diffractometer.refinement import _nelder_mead_numpy
+
+        calls = [0]
+
+        def f(x):
+            calls[0] += 1
+            val = float(np.sum(x**2))
+            if calls[0] > 10 and calls[0] % 4 == 0:
+                return val + 100.0
+            return val
+
+        x_opt, _, _ = _nelder_mead_numpy(
+            f, np.array([3.0, 3.0, 3.0]), max_iter=500, tol=1e-8
+        )
+        assert isinstance(x_opt, np.ndarray)
+
+    def test_max_iter_not_converged(self):
+        """Returns converged=False when max_iter is exhausted."""
+        from ad_hoc_diffractometer.refinement import _nelder_mead_numpy
+
+        _, n_iter, converged = _nelder_mead_numpy(
+            lambda x: float(np.sum(x**2)),
+            np.array([100.0, 100.0]),
+            max_iter=2,
+            tol=1e-20,
+        )
+        assert not converged
+        assert n_iter == 2
+
+
+# ---------------------------------------------------------------------------
+# refine_lattice_simplex — scipy fallback path
+# ---------------------------------------------------------------------------
+
+
+def test_refine_simplex_uses_numpy_fallback_when_scipy_absent(perturbed_geom):
+    """refine_lattice_simplex falls back to _nelder_mead_numpy when scipy is unavailable."""
+    import sys
+
+    from ad_hoc_diffractometer.refinement import refine_lattice_simplex
+
+    scipy_mods = {k: v for k, v in sys.modules.items() if k.startswith("scipy")}
+    for k in scipy_mods:
+        sys.modules.pop(k)
+    sys.modules["scipy"] = None  # type: ignore[assignment]
+    sys.modules["scipy.optimize"] = None  # type: ignore[assignment]
+    try:
+        result = refine_lattice_simplex(
+            perturbed_geom.sample,
+            ["r1", "r2", "r3"],
+            refine_cell=True,
+            refine_orientation=False,
+            refine_all=False,
+            max_iter=50,
+        )
+        assert "rms" in result
+    finally:
+        for k in ("scipy", "scipy.optimize"):
+            sys.modules.pop(k, None)
+        sys.modules.update(scipy_mods)
+
+
+# ---------------------------------------------------------------------------
+# _build_jacobian and _apply_delta — branch coverage
+# ---------------------------------------------------------------------------
+
+
+def test_build_jacobian_singular_UB_falls_back_to_identity(perturbed_geom):
+    """_build_jacobian uses U=I when UB is singular."""
+    from ad_hoc_diffractometer.refinement import refine_lattice_bl1967
+
+    perturbed_geom.sample.UB = np.zeros((3, 3))
+    perturbed_geom.sample.U = np.zeros((3, 3))
+    result = refine_lattice_bl1967(
+        perturbed_geom.sample,
+        ["r1", "r2", "r3"],
+        refine_cell=True,
+        refine_orientation=False,
+        refine_all=False,
+        max_iter=2,
+    )
+    assert "rms" in result
+
+
+@pytest.mark.parametrize(
+    "refine_cell, refine_orientation, refine_all",
+    [
+        pytest.param(True, True, True, id="cell-orientation-refine_all"),
+        pytest.param(False, True, False, id="orientation-only"),
+    ],
+)
+def test_apply_delta_branches(
+    refine_cell, refine_orientation, refine_all, perturbed_geom
+):
+    """_apply_delta handles refine_all=True and orientation-only correctly."""
+    from ad_hoc_diffractometer.refinement import refine_lattice_bl1967
+
+    result = refine_lattice_bl1967(
+        perturbed_geom.sample,
+        ["r1", "r2", "r3"],
+        refine_cell=refine_cell,
+        refine_orientation=refine_orientation,
+        refine_all=refine_all,
+        max_iter=3,
+    )
+    assert "rms" in result
+
+
+@pytest.mark.parametrize(
+    "refine_cell, refine_orientation, refine_all",
+    [
+        pytest.param(True, True, False, id="simplex-cell-and-orientation"),
+        pytest.param(False, True, False, id="simplex-orientation-only"),
+        pytest.param(True, False, True, id="simplex-refine_all"),
+    ],
+)
+def test_simplex_branches(refine_cell, refine_orientation, refine_all, perturbed_geom):
+    """refine_lattice_simplex cost() and reconstruction branches."""
+    from ad_hoc_diffractometer.refinement import refine_lattice_simplex
+
+    result = refine_lattice_simplex(
+        perturbed_geom.sample,
+        ["r1", "r2", "r3"],
+        refine_cell=refine_cell,
+        refine_orientation=refine_orientation,
+        refine_all=refine_all,
+        max_iter=20,
+    )
+    assert "rms" in result
+
+
+def test_bl1967_explicit_tol_skips_default(perturbed_geom):
+    """refine_lattice_bl1967 with explicit tol= skips the 'if tol is None' branch."""
+    from ad_hoc_diffractometer.refinement import refine_lattice_bl1967
+
+    result = refine_lattice_bl1967(
+        perturbed_geom.sample,
+        ["r1", "r2", "r3"],
+        tol=1e-6,
+        max_iter=2,
+    )
+    assert "rms" in result
+
+
+def test_simplex_explicit_tol_skips_default(perturbed_geom):
+    """refine_lattice_simplex with explicit tol= skips the 'if tol is None' branch."""
+    from ad_hoc_diffractometer.refinement import refine_lattice_simplex
+
+    result = refine_lattice_simplex(
+        perturbed_geom.sample,
+        ["r1", "r2", "r3"],
+        tol=1e-6,
+        max_iter=5,
+    )
+    assert "rms" in result

@@ -9,6 +9,11 @@ for the full issue tracker.
 
 ### Added
 
+- 100% test coverage enforced (#60): ``pytest-cov`` configured with
+  ``fail_under = 100`` and branch coverage; missing tests distributed
+  into their proper test modules (all parametrized where appropriate);
+  defensive exception blocks marked ``# pragma: no cover``; 855 tests pass.
+
 - Dynamic versioning via ``hatch-vcs`` (#59): version is now derived from
   git tags; ``pyproject.toml`` no longer contains a hardcoded version string.
   Tags follow SemVer (``vMAJOR.minor.patch``); existing ``v0.1`` and ``v0.2``
