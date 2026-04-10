@@ -11,8 +11,8 @@ Covers:
   - azimuthal_reference property: storage, validation, default None
   - psi() method: psi=0 when n in scattering plane, psi=90 when n perp,
     uses current angles when called with no args, error cases
-  - wh property: @property descriptor, str output, content, graceful fallbacks
-  - pa property: @property descriptor, str output, content, graceful fallbacks
+  - wh(print=False): str output, content, graceful fallbacks, stdout control
+  - pa(print=False): str output, content, graceful fallbacks, stdout control
   - _spec_motor_name static helper: SPEC column-name mapping
 """
 
@@ -937,31 +937,31 @@ def test_psi_pa_shows_azimuthal_reference():
     g = fourcv()
     g.wavelength = 1.5406
     g.azimuthal_reference = (0, 0, 1)
-    assert "Azimuthal Reference" in g.pa
-    assert "0  0  1" in g.pa
+    assert "Azimuthal Reference" in g.pa(print=False)
+    assert "0  0  1" in g.pa(print=False)
 
 
 def test_psi_pa_shows_not_set_when_none():
-    """pa property shows 'not set' for azimuthal reference when not configured."""
+    """pa method shows 'not set' for azimuthal reference when not configured."""
     from ad_hoc_diffractometer import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
-    assert "not set" in g.pa
+    assert "not set" in g.pa(print=False)
 
 
 def test_psi_wh_shows_psi_when_available():
-    """wh property includes a Psi line when psi can be computed."""
+    """wh method includes a Psi line when psi can be computed."""
     g = _fourcv_identity()
     g.set_angle("omega", 30.0)
     g.set_angle("chi", 0.0)
     g.set_angle("phi", 0.0)
     g.set_angle("two_theta", 60.0)
-    assert "Psi" in g.wh
+    assert "Psi" in g.wh(print=False)
 
 
 def test_psi_wh_shows_not_available_when_no_reference():
-    """wh property shows 'not available' for Psi when reference is not set."""
+    """wh method shows 'not available' for Psi when reference is not set."""
     from ad_hoc_diffractometer import Lattice
     from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
@@ -970,9 +970,9 @@ def test_psi_wh_shows_not_available_when_no_reference():
     g.wavelength = 2 * _math.pi
     g.sample.lattice = Lattice(a=1.0)
     ub_identity(g.sample)
-    # No azimuthal_reference set
-    assert "Psi" in g.wh
-    assert "not available" in g.wh
+    out = g.wh(print=False)
+    assert "Psi" in out
+    assert "not available" in out
 
 
 # ---------------------------------------------------------------------------
@@ -1000,43 +1000,45 @@ def test_spec_motor_name(internal, expected):
 
 
 # ---------------------------------------------------------------------------
-# wh and pa properties
+# wh() and pa() methods
 # ---------------------------------------------------------------------------
 
 
-class TestWhProperty:
-    """Tests for AdHocDiffractometer.wh — all via the property, no imports."""
+class TestWhMethod:
+    """Tests for AdHocDiffractometer.wh(print=False) — capture mode."""
 
-    def test_wh_is_property_descriptor(self):
-        assert isinstance(AdHocDiffractometer.wh, property)
+    def test_wh_is_callable(self):
+        from ad_hoc_diffractometer import fourcv
+
+        assert callable(fourcv().wh)
 
     def test_wh_returns_str(self):
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
-        assert isinstance(g.wh, str)
+        assert isinstance(g.wh(print=False), str)
 
     def test_wh_contains_hkl(self):
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
-        assert "H K L" in g.wh
+        assert "H K L" in g.wh(print=False)
 
     def test_wh_contains_lambda(self):
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
-        assert "1.5406" in g.wh
+        assert "1.5406" in g.wh(print=False)
 
     def test_wh_contains_motor_table(self):
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
-        out = g.wh
+        out = g.wh(print=False)
         assert "TwoTheta" in out
         assert "Theta" in out
 
@@ -1045,90 +1047,120 @@ class TestWhProperty:
 
         g = fourcv()
         g.wavelength = 1.5406
-        assert "not available" in g.wh
+        assert "not available" in g.wh(print=False)
 
     def test_wh_graceful_no_wavelength(self):
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
-        assert "H K L" in g.wh
-        assert "Lambda" in g.wh
+        out = g.wh(print=False)
+        assert "H K L" in out
+        assert "Lambda" in out
 
-    def test_wh_not_callable(self):
+    def test_wh_print_true_prints(self, capsys):
+        """Default print=True writes to stdout."""
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
-        assert not callable(g.wh)
+        g.wavelength = 1.5406
+        g.wh()
+        captured = capsys.readouterr()
+        assert "Lambda" in captured.out
+
+    def test_wh_print_false_no_stdout(self, capsys):
+        """print=False produces no stdout output."""
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        g.wh(print=False)
+        assert capsys.readouterr().out == ""
 
     def test_wh_psic_stage_names(self):
         from ad_hoc_diffractometer import psic
 
         g = psic()
         g.wavelength = 1.5406
-        out = g.wh
+        out = g.wh(print=False)
         assert "Mu" in out
         assert "Eta" in out
         assert "Nu" in out
         assert "Delta" in out
 
 
-class TestPaProperty:
-    """Tests for AdHocDiffractometer.pa — all via the property, no imports."""
+class TestPaMethod:
+    """Tests for AdHocDiffractometer.pa(print=False) — capture mode."""
 
-    def test_pa_is_property_descriptor(self):
-        assert isinstance(AdHocDiffractometer.pa, property)
+    def test_pa_is_callable(self):
+        from ad_hoc_diffractometer import fourcv
+
+        assert callable(fourcv().pa)
 
     def test_pa_returns_str(self):
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
-        assert isinstance(g.pa, str)
+        assert isinstance(g.pa(print=False), str)
 
     def test_pa_contains_geometry_name(self):
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
-        assert "fourcv" in g.pa
+        assert "fourcv" in g.pa(print=False)
 
     def test_pa_contains_lattice_section(self):
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
-        assert "Lattice" in g.pa
+        assert "Lattice" in g.pa(print=False)
 
     def test_pa_contains_wavelength(self):
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
-        assert "1.5406" in g.pa
+        assert "1.5406" in g.pa(print=False)
 
     def test_pa_no_reflections_shows_not_set(self):
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
-        assert "not set" in g.pa
+        assert "not set" in g.pa(print=False)
 
     def test_pa_graceful_no_wavelength(self):
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
-        assert "fourcv" in g.pa
-        assert "Lattice" in g.pa
+        out = g.pa(print=False)
+        assert "fourcv" in out
+        assert "Lattice" in out
 
-    def test_pa_not_callable(self):
+    def test_pa_print_true_prints(self, capsys):
+        """Default print=True writes to stdout."""
         from ad_hoc_diffractometer import fourcv
 
         g = fourcv()
-        assert not callable(g.pa)
+        g.wavelength = 1.5406
+        g.pa()
+        captured = capsys.readouterr()
+        assert "Geometry" in captured.out
+
+    def test_pa_print_false_no_stdout(self, capsys):
+        """print=False produces no stdout output."""
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        g.pa(print=False)
+        assert capsys.readouterr().out == ""
 
     def test_pa_psic_geometry_name(self):
         from ad_hoc_diffractometer import psic
 
         g = psic()
         g.wavelength = 1.5406
-        assert "psic" in g.pa
+        assert "psic" in g.pa(print=False)
