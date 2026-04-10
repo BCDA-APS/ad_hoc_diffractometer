@@ -11,6 +11,8 @@ Covers:
   - reference_stage type handling (Stage, str, ndarray)
   - angles_to_phi_vector(): zero angles, magnitude (Bragg law), geometry independence
     of |Q| from sample rotations, angle restoration, error cases
+  - ub_from_two_reflections_bl1967(): orthonormal U, UB=U@B, direction checks,
+    default or1/or2 resolution, string/object reflection args, error cases
 """
 
 import math
@@ -24,6 +26,7 @@ from ad_hoc_diffractometer import angles_to_phi_vector
 from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer import psic
 from ad_hoc_diffractometer import ub_from_one_reflection
+from ad_hoc_diffractometer import ub_from_two_reflections_bl1967
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.reflection import ReflectionList
 from ad_hoc_diffractometer.sample import Sample
@@ -537,3 +540,246 @@ def test_angles_to_phi_vector_unknown_stage_raises(psic_geom):
     psic_geom.wavelength = _LAMBDA_CU_KA
     with pytest.raises(KeyError):
         angles_to_phi_vector(psic_geom, no_such_stage=0.0)
+
+
+# ---------------------------------------------------------------------------
+# ub_from_two_reflections_bl1967()
+# ---------------------------------------------------------------------------
+#
+# "Clean" test case: psic geometry, cubic lattice with a = 2π so B = I.
+# With U = I (identity orientation), UB = B = I.
+#
+# Motor angles chosen so that each reflection gives Q_phi along an
+# orthogonal axis:
+#   r1: hkl = (1,0,0), mu=0 eta=30 chi=0 phi=0   nu=0 delta=60 → Q_phi ‖ XHAT
+#   r2: hkl = (0,1,0), mu=0 eta=30 chi=0 phi=90  nu=0 delta=60 → Q_phi ‖ YHAT
+#
+# BL1967 must then recover U = I exactly (both reflections are fully
+# consistent with U = I, B = I).
+
+_TWO_PI = 2.0 * math.pi
+_LAT_2PI = Lattice(a=_TWO_PI)  # cubic a = 2π → B = identity
+_R1_HKL_2PI = (1, 0, 0)
+_R1_ANG_2PI = {"mu": 0.0, "eta": 30.0, "chi": 0.0, "phi": 0.0, "nu": 0.0, "delta": 60.0}
+_R2_HKL_2PI = (0, 1, 0)
+_R2_ANG_2PI = {
+    "mu": 0.0,
+    "eta": 30.0,
+    "chi": 0.0,
+    "phi": 90.0,
+    "nu": 0.0,
+    "delta": 60.0,
+}
+
+
+@pytest.fixture
+def two_refl_geom():
+    """
+    psic geometry with cubic a=2π lattice and two orthogonal reflections.
+
+    The motor angles are constructed so that U = I is the exact solution.
+    """
+    g = psic()
+    g.wavelength = _TWO_PI
+    g.sample.lattice = _LAT_2PI
+    g.add_reflection("r1", hkl=_R1_HKL_2PI, angles=_R1_ANG_2PI)
+    g.add_reflection("r2", hkl=_R2_HKL_2PI, angles=_R2_ANG_2PI)
+    g.sample.reflections.setor1("r1")
+    g.sample.reflections.setor2("r2")
+    return g
+
+
+# --- mathematical correctness -----------------------------------------------
+
+
+def test_two_refl_U_is_orthonormal(two_refl_geom):
+    """U returned by BL1967 must satisfy U.T @ U = I and det(U) = 1."""
+    ub_from_two_reflections_bl1967(two_refl_geom.sample)
+    U = two_refl_geom.sample.U
+    np.testing.assert_allclose(U.T @ U, np.eye(3), atol=1e-10)
+    assert abs(np.linalg.det(U) - 1.0) < 1e-10
+
+
+def test_two_refl_UB_equals_U_at_B(two_refl_geom):
+    """UB must equal U @ B (U is computed first, then UB derived)."""
+    ub_from_two_reflections_bl1967(two_refl_geom.sample)
+    B = two_refl_geom.sample.lattice.B
+    np.testing.assert_allclose(
+        two_refl_geom.sample.UB,
+        two_refl_geom.sample.U @ B,
+        atol=1e-12,
+    )
+
+
+def test_two_refl_U_identity_for_aligned_crystal(two_refl_geom):
+    """When motor angles are consistent with U=I, BL1967 must recover U=I."""
+    ub_from_two_reflections_bl1967(two_refl_geom.sample)
+    np.testing.assert_allclose(two_refl_geom.sample.U, np.eye(3), atol=1e-10)
+
+
+def test_two_refl_returns_UB_array(two_refl_geom):
+    """Return value is a (3,3) ndarray equal to sample.UB."""
+    UB = ub_from_two_reflections_bl1967(two_refl_geom.sample)
+    assert isinstance(UB, np.ndarray)
+    assert UB.shape == (3, 3)
+    np.testing.assert_array_equal(UB, two_refl_geom.sample.UB)
+
+
+def test_two_refl_updates_sample_in_place(two_refl_geom):
+    """sample.U and sample.UB are set in-place (None before the call)."""
+    assert two_refl_geom.sample.U is None
+    assert two_refl_geom.sample.UB is None
+    UB = ub_from_two_reflections_bl1967(two_refl_geom.sample)
+    assert two_refl_geom.sample.U is not None
+    assert two_refl_geom.sample.UB is UB
+
+
+def test_two_refl_r1_direction_exactly_reproduced(two_refl_geom):
+    """UB @ h1 must be parallel to Q_phi of r1 (primary reflection is exact)."""
+    g = two_refl_geom
+    UB = ub_from_two_reflections_bl1967(g.sample)
+    u1_phi = angles_to_phi_vector(g, **_R1_ANG_2PI)
+    q1 = UB @ np.array(_R1_HKL_2PI, dtype=float)
+    q1_hat = q1 / np.linalg.norm(q1)
+    u1_hat = u1_phi / np.linalg.norm(u1_phi)
+    np.testing.assert_allclose(q1_hat, u1_hat, atol=1e-10)
+
+
+def test_two_refl_r2_direction_exactly_reproduced_when_consistent(two_refl_geom):
+    """UB @ h2 must be parallel to Q_phi of r2 when angles are fully consistent."""
+    g = two_refl_geom
+    UB = ub_from_two_reflections_bl1967(g.sample)
+    u2_phi = angles_to_phi_vector(g, **_R2_ANG_2PI)
+    q2 = UB @ np.array(_R2_HKL_2PI, dtype=float)
+    q2_hat = q2 / np.linalg.norm(q2)
+    u2_hat = u2_phi / np.linalg.norm(u2_phi)
+    np.testing.assert_allclose(q2_hat, u2_hat, atol=1e-10)
+
+
+# --- reflection argument variants -------------------------------------------
+
+
+def test_two_refl_string_args(two_refl_geom):
+    """r1 and r2 may be supplied as name strings."""
+    UB = ub_from_two_reflections_bl1967(two_refl_geom.sample, r1="r1", r2="r2")
+    assert UB.shape == (3, 3)
+    np.testing.assert_allclose(two_refl_geom.sample.U, np.eye(3), atol=1e-10)
+
+
+def test_two_refl_reflection_objects(two_refl_geom):
+    """r1 and r2 may be supplied as Reflection objects."""
+    g = two_refl_geom
+    r1_obj = g.sample.reflections["r1"]
+    r2_obj = g.sample.reflections["r2"]
+    UB = ub_from_two_reflections_bl1967(g.sample, r1=r1_obj, r2=r2_obj)
+    assert UB.shape == (3, 3)
+
+
+def test_two_refl_none_uses_setor1_setor2(two_refl_geom):
+    """Passing r1=None, r2=None uses the designated or1 and or2."""
+    UB_default = ub_from_two_reflections_bl1967(two_refl_geom.sample)
+    two_refl_geom.sample.U = None
+    two_refl_geom.sample.UB = None
+    UB_explicit = ub_from_two_reflections_bl1967(two_refl_geom.sample, r1="r1", r2="r2")
+    np.testing.assert_allclose(UB_default, UB_explicit, atol=1e-12)
+
+
+def test_two_refl_mixed_string_and_object(two_refl_geom):
+    """r1 as string, r2 as Reflection object (and vice-versa) both work."""
+    g = two_refl_geom
+    r2_obj = g.sample.reflections["r2"]
+    UB = ub_from_two_reflections_bl1967(g.sample, r1="r1", r2=r2_obj)
+    assert UB.shape == (3, 3)
+
+
+# --- error cases ------------------------------------------------------------
+
+
+def test_two_refl_no_parent_raises():
+    """Raises ValueError when sample has no parent geometry."""
+    rl = ReflectionList(
+        geometry_name="psic",
+        valid_stages={"mu", "eta", "chi", "phi", "nu", "delta"},
+    )
+    rl.add("r1", hkl=(0, 0, 6), angles={"mu": 0.0})
+    rl.add("r2", hkl=(1, 0, 0), angles={"mu": 0.0})
+    rl.setor1("r1")
+    rl.setor2("r2")
+    sample = Sample(name="orphan", lattice=Lattice(a=1.0), reflections=rl)
+    with pytest.raises(ValueError, match=re.escape("sample.parent")):
+        ub_from_two_reflections_bl1967(sample)
+
+
+def test_two_refl_r1_none_no_setor1_raises(psic_geom):
+    """r1=None raises when no or1 has been designated."""
+    psic_geom.wavelength = _TWO_PI
+    psic_geom.sample.lattice = _LAT_2PI
+    psic_geom.add_reflection("r1", hkl=_R1_HKL_2PI, angles=_R1_ANG_2PI)
+    # deliberately do NOT call setor1
+    with pytest.raises(ValueError, match=re.escape("no primary orienting reflection")):
+        ub_from_two_reflections_bl1967(psic_geom.sample, r1=None, r2=None)
+
+
+def test_two_refl_r2_none_no_setor2_raises(psic_geom):
+    """r2=None raises when no or2 has been designated."""
+    psic_geom.wavelength = _TWO_PI
+    psic_geom.sample.lattice = _LAT_2PI
+    psic_geom.add_reflection("r1", hkl=_R1_HKL_2PI, angles=_R1_ANG_2PI)
+    psic_geom.sample.reflections.setor1("r1")
+    # deliberately do NOT call setor2
+    with pytest.raises(
+        ValueError, match=re.escape("no secondary orienting reflection")
+    ):
+        ub_from_two_reflections_bl1967(psic_geom.sample, r2=None)
+
+
+def test_two_refl_r1_unknown_string_raises(two_refl_geom):
+    """Raises KeyError when r1 is a string not in the reflection list."""
+    with pytest.raises(KeyError):
+        ub_from_two_reflections_bl1967(two_refl_geom.sample, r1="no_such")
+
+
+def test_two_refl_r2_unknown_string_raises(two_refl_geom):
+    """Raises KeyError when r2 is a string not in the reflection list."""
+    with pytest.raises(KeyError):
+        ub_from_two_reflections_bl1967(two_refl_geom.sample, r2="no_such")
+
+
+def test_two_refl_r1_bad_type_raises(two_refl_geom):
+    """Raises TypeError when r1 is not Reflection, str, or None."""
+    with pytest.raises(TypeError, match=re.escape("r1 must be a Reflection")):
+        ub_from_two_reflections_bl1967(two_refl_geom.sample, r1=42)
+
+
+def test_two_refl_r2_bad_type_raises(two_refl_geom):
+    """Raises TypeError when r2 is not Reflection, str, or None."""
+    with pytest.raises(TypeError, match=re.escape("r2 must be a Reflection")):
+        ub_from_two_reflections_bl1967(two_refl_geom.sample, r2=3.14)
+
+
+def test_two_refl_collinear_crystal_frame_raises(psic_geom):
+    """Raises ValueError when h1c and h2c are collinear (parallel hkl in crystal frame)."""
+    psic_geom.wavelength = _TWO_PI
+    psic_geom.sample.lattice = _LAT_2PI
+    # (1,0,0) and (2,0,0) are parallel
+    psic_geom.add_reflection("r1", hkl=(1, 0, 0), angles=_R1_ANG_2PI)
+    psic_geom.add_reflection("r2", hkl=(2, 0, 0), angles=_R2_ANG_2PI)
+    psic_geom.sample.reflections.setor1("r1")
+    psic_geom.sample.reflections.setor2("r2")
+    with pytest.raises(ValueError, match=re.escape("parallel in the crystal frame")):
+        ub_from_two_reflections_bl1967(psic_geom.sample)
+
+
+def test_two_refl_collinear_phi_frame_raises(psic_geom):
+    """Raises ValueError when Q_phi vectors for r1 and r2 are collinear."""
+    psic_geom.wavelength = _TWO_PI
+    psic_geom.sample.lattice = _LAT_2PI
+    # Different hkl but identical angles → same Q_phi
+    psic_geom.add_reflection("r1", hkl=(1, 0, 0), angles=_R1_ANG_2PI)
+    psic_geom.add_reflection(
+        "r2", hkl=(0, 1, 0), angles=_R1_ANG_2PI
+    )  # same angles as r1
+    psic_geom.sample.reflections.setor1("r1")
+    psic_geom.sample.reflections.setor2("r2")
+    with pytest.raises(ValueError, match=re.escape("parallel in the phi frame")):
+        ub_from_two_reflections_bl1967(psic_geom.sample)

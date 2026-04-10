@@ -95,11 +95,11 @@ be implemented first.
 
 ### 2.1 `ub_from_two_reflections_bl1967` (BL1967 eqs. 23-27) ([#5](https://github.com/prjemian/ad_hoc_diffractometer/issues/5))
 
-- [ ] Implement in `orientation.py`
-- [ ] Inputs: two `Reflection` objects + known lattice (B matrix)
-- [ ] Algorithm: Gram-Schmidt orthonormal triples Tc (crystal) and Tφ (phi
+- [x] Implement in `orientation.py`
+- [x] Inputs: two `Reflection` objects + known lattice (B matrix)
+- [x] Algorithm: Gram-Schmidt orthonormal triples Tc (crystal) and Tφ (phi
       frame); U = Tφ @ Tc.T; UB = U @ B
-- [ ] Sets `sample.U` and `sample.UB` in-place; returns UB
+- [x] Sets `sample.U` and `sample.UB` in-place; returns UB
 
 ### 2.2 `ub_from_three_reflections_bl1967` (BL1967 eqs. 29-31) ([#6](https://github.com/prjemian/ad_hoc_diffractometer/issues/6))
 
