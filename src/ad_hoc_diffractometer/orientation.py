@@ -330,7 +330,7 @@ def ub_from_one_reflection(
         U = np.eye(3)
     elif abs(angle_rad - np.pi) < 1e-10:
         # Anti-parallel — choose any perpendicular axis
-        for candidate in (
+        for candidate in (  # pragma: no branch
             np.array([1.0, 0.0, 0.0]),
             np.array([0.0, 1.0, 0.0]),
             np.array([0.0, 0.0, 1.0]),
@@ -338,6 +338,8 @@ def ub_from_one_reflection(
             ax = np.cross(Bh_hat, candidate)
             if np.linalg.norm(ax) > 1e-10:
                 break
+        # At least one standard basis vector is guaranteed non-parallel to
+        # any unit vector, so the loop always breaks.
         U = rotation_matrix(ax, 180.0)
     else:
         ax = np.cross(Bh_hat, r_hat)

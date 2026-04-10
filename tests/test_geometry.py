@@ -1164,3 +1164,127 @@ class TestPaMethod:
         g = psic()
         g.wavelength = 1.5406
         assert "psic" in g.pa(print=False)
+
+
+# ---------------------------------------------------------------------------
+# Geometry — additional branch coverage
+# ---------------------------------------------------------------------------
+
+
+def test_geometry_repr():
+    """AdHocDiffractometer.__repr__ includes the geometry name and stage names."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    r = repr(g)
+    assert "fourcv" in r
+    assert "omega" in r
+
+
+def test_geometry_stacking_order_with_scrambled_input():
+    """_ordered_stages correctly sorts stages even when passed in reverse parent order."""
+    from ad_hoc_diffractometer import AdHocDiffractometer
+
+    phi = Stage("phi", ZHAT, role="sample", parent=None)
+    chi = Stage("chi", XHAT, role="sample", parent="phi")
+    omega = Stage("omega", YHAT, role="sample", parent="chi")
+    det = Stage("delta", ZHAT, role="detector", parent=None)
+    # Pass in scrambled order — requires multiple while-loop passes in _ordered_stages
+    g = AdHocDiffractometer("test", [omega, chi, phi, det])
+    assert [s.name for s in g.sample_stages] == ["phi", "chi", "omega"]
+
+
+def test_geometry_cycle_in_parent_chain_raises():
+    """Stage parent chain with a cycle raises ValueError."""
+    from ad_hoc_diffractometer import AdHocDiffractometer
+
+    a = Stage("a", XHAT, role="sample", parent="b")
+    b = Stage("b", ZHAT, role="sample", parent="a")
+    with pytest.raises(ValueError, match="Cycle"):
+        AdHocDiffractometer("test", [a, b])
+
+
+def test_geometry_samples_property_is_read_only():
+    """g._samples is a read-only property; direct assignment raises AttributeError."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    with pytest.raises(AttributeError):
+        g._samples = {}
+
+
+@pytest.mark.parametrize(
+    "angles, match",
+    [
+        pytest.param(
+            {"omega": 0.0, "chi": 0.0, "phi": 0.0, "two_theta": 0.0},
+            "Q = 0",
+            id="psi-q-zero",
+        ),
+    ],
+)
+def test_psi_q_zero_raises(angles, match):
+    """psi() raises when the motor angles produce Q=0."""
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_identity
+
+    g = fourcv()
+    g.wavelength = 2 * _math.pi
+    ub_identity(g.sample)
+    g.azimuthal_reference = (0, 0, 1)
+    with pytest.raises(ValueError, match=match):
+        g.psi(angles)
+
+
+def test_psi_n_maps_to_zero_raises():
+    """psi() raises when UB @ n_hkl is zero."""
+    from ad_hoc_diffractometer import Lattice
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    g.wavelength = 2 * _math.pi
+    g.sample.lattice = Lattice(a=1.0)
+    g.sample.UB = np.zeros((3, 3))
+    g.sample.U = np.zeros((3, 3))
+    g.azimuthal_reference = (0, 0, 1)
+    with pytest.raises(ValueError, match="zero in the phi frame"):
+        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+
+
+def test_pa_reflection_wavelength_none_falls_back_to_geometry_wavelength():
+    """pa() uses the geometry wavelength when a reflection has wavelength=None."""
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.reflection import Reflection
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    r = Reflection(
+        "r1",
+        hkl=(0, 0, 6),
+        angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "two_theta": 41.94},
+        wavelength=None,
+    )
+    g.sample.reflections._data["r1"] = r
+    g.sample.reflections.setor1("r1")
+    assert "1.5406" in g.pa(print=False)
+
+
+def test_geometry_summary_with_wavelength(capsys):
+    """summary() prints the geometry name and wavelength."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    g.summary()
+    out = capsys.readouterr().out
+    assert "fourcv" in out
+    assert "1.5406" in out
+
+
+def test_geometry_summary_no_wavelength(capsys):
+    """summary() reports 'not set' when wavelength is unset."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    g.summary()
+    assert "not set" in capsys.readouterr().out

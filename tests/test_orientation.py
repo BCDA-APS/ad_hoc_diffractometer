@@ -1004,3 +1004,231 @@ def test_three_refl_left_handed_H_warns(psic_geom):
         "left-handed" in str(w.message).lower() or "det(H)" in str(w.message)
         for w in caught
     ), f"Expected left-handed warning; got: {[str(w.message) for w in caught]}"
+
+
+# ---------------------------------------------------------------------------
+# angles_to_phi_vector — missing-stage error branches
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "role, stage_name, kwarg, match",
+    [
+        pytest.param(
+            "detector",
+            "delta",
+            {"delta": 10.0},
+            "no sample stages",
+            id="no-sample-stages",
+        ),
+        pytest.param(
+            "sample",
+            "omega",
+            {"omega": 10.0},
+            "no detector stages",
+            id="no-detector-stages",
+        ),
+    ],
+)
+def test_angles_to_phi_vector_stage_role_errors(role, stage_name, kwarg, match):
+    """angles_to_phi_vector raises when the geometry lacks sample or detector stages."""
+    from ad_hoc_diffractometer import ZHAT
+    from ad_hoc_diffractometer import AdHocDiffractometer
+    from ad_hoc_diffractometer import Stage
+    from ad_hoc_diffractometer.orientation import angles_to_phi_vector
+
+    g = AdHocDiffractometer(
+        "partial",
+        [Stage(stage_name, ZHAT, role=role, parent=None)],
+        wavelength=1.5,
+    )
+    with pytest.raises(ValueError, match=match):
+        angles_to_phi_vector(g, **kwarg)
+
+
+# ---------------------------------------------------------------------------
+# ub_from_one_reflection — error branches
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "reference_stage, reference_hkl, match",
+    [
+        pytest.param(
+            np.array([0.0, 0.0, 0.0]),
+            (0, 0, 1),
+            "zero",
+            id="zero-reference-stage-vector",
+        ),
+        pytest.param(
+            "chi",
+            (0, 0, 0),
+            "zero vector",
+            id="zero-Bh-from-zero-hkl",
+        ),
+    ],
+)
+def test_ub_from_one_reflection_error_branches(reference_stage, reference_hkl, match):
+    """ub_from_one_reflection raises when reference_stage or B@hkl is zero."""
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.orientation import ub_from_one_reflection
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    ub_identity(g.sample)
+    g.add_reflection(
+        "r1",
+        hkl=(0, 0, 1),
+        angles={"omega": 20.0, "chi": 0.0, "phi": 0.0, "two_theta": 40.0},
+    )
+    with pytest.raises(ValueError, match=match):
+        ub_from_one_reflection(
+            g.sample,
+            "r1",
+            reference_hkl=reference_hkl,
+            reference_stage=reference_stage,
+        )
+
+
+# ---------------------------------------------------------------------------
+# ub_from_three_reflections_bl1967 — singular B gives U=None
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "hkl, reference_stage, desc",
+    [
+        pytest.param(
+            (0, 0, 1),
+            np.array([0.0, 0.0, -1.0]),
+            "anti-parallel-z",
+            id="anti-parallel-along-z",
+        ),
+        pytest.param(
+            (1, 0, 0),
+            np.array([-1.0, 0.0, 0.0]),
+            "anti-parallel-x-forces-loop-to-second-candidate",
+            id="anti-parallel-along-x",
+        ),
+    ],
+)
+def test_ub_from_one_reflection_antiparallel_Bh_and_r(hkl, reference_stage, desc):
+    """ub_from_one_reflection handles anti-parallel Bh and r_hat (180° rotation)."""
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.orientation import ub_from_one_reflection
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    ub_identity(g.sample)
+    g.add_reflection(
+        "r1",
+        hkl=hkl,
+        angles={"omega": 20.0, "chi": 0.0, "phi": 0.0, "two_theta": 40.0},
+    )
+    UB = ub_from_one_reflection(
+        g.sample,
+        "r1",
+        reference_hkl=hkl,
+        reference_stage=reference_stage,
+    )
+    assert UB is not None, f"UB is None for {desc}"
+    assert g.sample.U is not None, f"U is None for {desc}"
+
+
+def test_ub_from_one_reflection_normal_rotation():
+    """ub_from_one_reflection with angle strictly between 0° and 180° (normal rotation)."""
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.orientation import ub_from_one_reflection
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    ub_identity(g.sample)
+    g.add_reflection(
+        "r1",
+        hkl=(0, 0, 1),
+        angles={"omega": 20.0, "chi": 0.0, "phi": 0.0, "two_theta": 40.0},
+    )
+    # B @ (0,0,1) is along z-axis; chi axis is along x-axis → angle ≈ 90°
+    # This is neither parallel (0°) nor anti-parallel (180°), so the else branch fires.
+    UB = ub_from_one_reflection(
+        g.sample,
+        "r1",
+        reference_hkl=(0, 0, 1),
+        reference_stage=np.array([1.0, 0.0, 0.0]),
+    )
+    assert UB is not None
+    assert g.sample.U is not None
+
+
+def test_gram_schmidt_triple_v1_zero_raises():
+    """_gram_schmidt_triple raises ValueError when v1 is the zero vector."""
+    from ad_hoc_diffractometer.orientation import _gram_schmidt_triple
+
+    with pytest.raises(ValueError, match="zero vector"):
+        _gram_schmidt_triple(np.array([0.0, 0.0, 0.0]), np.array([1.0, 0.0, 0.0]))
+
+
+def test_ub_from_three_linalg_error_on_H_inv_raises():
+    """ub_from_three raises ValueError when np.linalg.inv(H) raises LinAlgError."""
+    import math
+    from unittest.mock import patch
+
+    from ad_hoc_diffractometer import Lattice
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.orientation import ub_from_three_reflections_bl1967
+
+    TWO_PI = 2 * math.pi
+    g = fourcv()
+    g.wavelength = TWO_PI
+    g.sample.lattice = Lattice(a=1.0)
+    ub_identity(g.sample)
+    for name, hkl, ang in [
+        ("r1", (1, 0, 0), {"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0}),
+        ("r2", (0, 1, 0), {"omega": 30.0, "chi": 0.0, "phi": 90.0, "two_theta": 60.0}),
+        ("r3", (0, 0, 1), {"omega": 30.0, "chi": 90.0, "phi": 30.0, "two_theta": 60.0}),
+    ]:
+        g.add_reflection(name, hkl=hkl, angles=ang)
+
+    with patch("numpy.linalg.inv", side_effect=np.linalg.LinAlgError("singular")):
+        with pytest.raises(ValueError, match="linearly dependent"):
+            ub_from_three_reflections_bl1967(g.sample, "r1", "r2", "r3")
+
+
+def test_ub_from_three_singular_B_inv_sets_U_none():
+    """ub_from_three sets U=None when np.linalg.inv(B) raises LinAlgError."""
+    import math
+    from unittest.mock import patch
+
+    from ad_hoc_diffractometer import Lattice
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.orientation import ub_from_three_reflections_bl1967
+
+    TWO_PI = 2 * math.pi
+    g = fourcv()
+    g.wavelength = TWO_PI
+    g.sample.lattice = Lattice(a=1.0)
+    for name, hkl, ang in [
+        ("r1", (1, 0, 0), {"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0}),
+        ("r2", (0, 1, 0), {"omega": 30.0, "chi": 0.0, "phi": 90.0, "two_theta": 60.0}),
+        ("r3", (0, 0, 1), {"omega": 30.0, "chi": 90.0, "phi": 30.0, "two_theta": 60.0}),
+    ]:
+        g.add_reflection(name, hkl=hkl, angles=ang)
+
+    original_inv = np.linalg.inv
+    call_count = [0]
+
+    def patched_inv(m):
+        call_count[0] += 1
+        if call_count[0] >= 2:
+            raise np.linalg.LinAlgError("singular")
+        return original_inv(m)
+
+    with patch("numpy.linalg.inv", side_effect=patched_inv):
+        UB = ub_from_three_reflections_bl1967(g.sample, "r1", "r2", "r3")
+
+    assert g.sample.U is None
+    assert UB is not None

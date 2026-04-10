@@ -470,13 +470,18 @@ angle calculations.  Depends on #1 (wavelength on `AdHocDiffractometer`).
 
 Current coverage: 93% (119 uncovered lines).  ``pytest-cov`` is installed.
 
-- [ ] Add coverage config to ``pyproject.toml``: ``fail_under = 100``,
-      ``branch = true``, ``addopts = "--cov=..."``
-- [ ] Test ``_nelder_mead_numpy`` directly; mock scipy absence to exercise
-      the simplex fallback path (largest gap: 76 lines in ``refinement.py``)
-- [ ] Add missing tests for all other uncovered branches across
-      ``geometry.py``, ``orientation.py``, ``sample.py``, ``reflection.py``,
-      ``factories.py``, ``spec.py``, ``lattice.py``, ``stage.py``
+- [x] Coverage config in ``pyproject.toml``: ``fail_under = 100``,
+      ``branch = true``, ``addopts = "--cov=ad_hoc_diffractometer --cov-report=term-missing"``
+- [x] ``pytest-cov`` in ``dev`` optional dependencies
+- [x] ``_nelder_mead_numpy`` tested directly for all branches (converge,
+      expansion, contraction, shrink, max-iter); scipy absence mocked to
+      exercise the fallback path in ``refine_lattice_simplex``
+- [x] Missing tests distributed into their proper test modules (no
+      ``test_coverage.py``); all parametrized where appropriate
+- [x] Defensive ``except`` blocks that are unreachable via the public API
+      marked ``# pragma: no cover``; ``# pragma: no branch`` used for
+      guaranteed-loop-break patterns
+- [x] 100% line and branch coverage; 855 tests pass
 
 ### 3.8d Add logging support ([#61](https://github.com/prjemian/ad_hoc_diffractometer/issues/61))
 
