@@ -9,6 +9,14 @@ for the full issue tracker.
 
 ### Added
 
+- Dynamic versioning via ``hatch-vcs`` (#59): version is now derived from
+  git tags; ``pyproject.toml`` no longer contains a hardcoded version string.
+  Tags follow SemVer (``vMAJOR.minor.patch``); existing ``v0.1`` and ``v0.2``
+  retagged as ``v0.1.0`` and ``v0.2.0``; current development line starts at
+  ``v0.3.0.dev0``.  CI workflow updated with ``fetch-depth: 0`` so tags are
+  available during builds.  ``hatch-vcs`` and ``pytest-cov`` added to the
+  ``dev`` optional-dependency group.
+
 - Export/restore full diffractometer settings (#52): ``to_dict()`` /
   ``from_dict()`` on ``Lattice``, ``Reflection``, ``ReflectionList``,
   ``Sample``, and ``AdHocDiffractometer``; JSON-serialisable; top-level

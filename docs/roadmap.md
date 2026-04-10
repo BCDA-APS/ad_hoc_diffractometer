@@ -456,13 +456,14 @@ angle calculations.  Depends on #1 (wavelength on `AdHocDiffractometer`).
 
 ### 3.8b Dynamic versioning with hatch-vcs ([#59](https://github.com/prjemian/ad_hoc_diffractometer/issues/59))
 
-- [ ] Add ``hatch-vcs`` to ``[build-system] requires``; remove hardcoded
+- [x] Add ``hatch-vcs`` to ``[build-system] requires``; remove hardcoded
       ``version``; add ``dynamic = ["version"]``
-- [ ] ``[tool.hatch.version] source = "vcs"`` with ``tag-pattern`` requiring
+- [x] ``[tool.hatch.version] source = "vcs"`` with ``tag-pattern`` requiring
       three-component SemVer (``v0.3.0``, etc.); ignores old ``v0.1`` / ``v0.2``
-- [ ] ``[tool.hatch.build.hooks.vcs] version-file`` bakes version into wheel
-- [ ] CI: add ``fetch-depth: 0`` to ``actions/checkout``
-- [ ] Existing tags ``v0.1`` and ``v0.2`` retagged as ``v0.1.0`` and ``v0.2.0``;
+- [x] ``[tool.hatch.build.hooks.vcs] version-file`` bakes version into wheel
+- [x] ``ad_hoc_diffractometer.__version__`` exposed in ``__init__.py``
+- [x] CI: add ``fetch-depth: 0`` to ``actions/checkout``
+- [x] Existing tags ``v0.1`` and ``v0.2`` retagged as ``v0.1.0`` and ``v0.2.0``;
       ``v0.3.0.dev0`` marks start of current development line
 
 ### 3.8c 100% test coverage ([#60](https://github.com/prjemian/ad_hoc_diffractometer/issues/60))
