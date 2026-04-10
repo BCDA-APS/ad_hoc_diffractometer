@@ -9,6 +9,14 @@ for the full issue tracker.
 
 ### Added
 
+- Azimuthal reference vector and ψ angle (#11):
+  - ``AdHocDiffractometer.azimuthal_reference``: stores the reference
+    direction as Miller indices (h, k, l); default ``None``; validated as
+    a non-zero 3-vector
+  - ``AdHocDiffractometer.psi(angles=None)``: computes the azimuthal angle
+    ψ (You 1999 eqs. 10-11); ψ = 0 when the reference lies in the
+    scattering plane; raises ``ValueError`` when reference ‖ Q
+  - ``pa()`` shows the azimuthal reference; ``wh()`` shows a Psi line
 - Entry-point extensibility for geometry factories (#37): all 10 built-in
   factories declared in ``pyproject.toml`` under the group
   ``"ad_hoc_diffractometer.geometries"``; third-party packages can
