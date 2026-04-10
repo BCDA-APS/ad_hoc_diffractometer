@@ -533,3 +533,197 @@ def test_kappa_alpha_deg_none_for_non_kappa():
     for factory in (psic, fourcv, fourch, sixc, zaxis, s2d2, fivec):
         g = factory()
         assert g.kappa_alpha_deg is None, f"{factory.__name__} should have None"
+
+
+# ---------------------------------------------------------------------------
+# inverse()
+# ---------------------------------------------------------------------------
+
+_LAMBDA_CU_KA = 1.5406
+
+# psic angles for a convenient non-zero reflection
+_PSIC_ANGLES = {
+    "mu": 0.0,
+    "eta": 20.97,
+    "chi": 90.0,
+    "phi": 0.0,
+    "nu": 0.0,
+    "delta": 41.94,
+}
+
+
+def _psic_with_identity_UB(wavelength=_LAMBDA_CU_KA):
+    """Return a psic geometry with wavelength set and UB = I."""
+    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer import ub_identity
+
+    g = psic()
+    g.wavelength = wavelength
+    ub_identity(g.sample)  # UB = B = I  (default cubic a=1 Å)
+    return g
+
+
+def test_inverse_all_zero_gives_zero():
+    """All motor angles zero → no scattering → hkl = (0, 0, 0)."""
+    g = _psic_with_identity_UB()
+    hkl = g.inverse({"mu": 0, "eta": 0, "chi": 0, "phi": 0, "nu": 0, "delta": 0})
+    assert hkl == pytest.approx((0.0, 0.0, 0.0), abs=1e-12)
+
+
+def test_inverse_returns_tuple_of_floats():
+    """inverse() returns a tuple of three Python floats."""
+    g = _psic_with_identity_UB()
+    hkl = g.inverse({"mu": 0, "eta": 0, "chi": 0, "phi": 0, "nu": 0, "delta": 0})
+    assert isinstance(hkl, tuple)
+    assert len(hkl) == 3
+    assert all(isinstance(x, float) for x in hkl)
+
+
+def test_inverse_UB_identity_equals_Q_phi():
+    """
+    When UB = I, inverse() must return exactly Q_phi (in Å⁻¹).
+
+    UB = I implies hkl = UB⁻¹ @ Q_phi = I @ Q_phi = Q_phi.
+    """
+    from ad_hoc_diffractometer import angles_to_phi_vector
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.wavelength = _LAMBDA_CU_KA
+    g.sample.UB = np.eye(3)
+
+    Q_phi = angles_to_phi_vector(g, **_PSIC_ANGLES)
+    hkl = g.inverse(_PSIC_ANGLES)
+
+    np.testing.assert_allclose(hkl, Q_phi, atol=1e-10)
+
+
+def test_inverse_UB_scaled_identity():
+    """
+    When UB = s·I, hkl = Q_phi / s.
+
+    Scaling UB by a scalar s means hkl = (1/s)·Q_phi.
+    """
+    from ad_hoc_diffractometer import angles_to_phi_vector
+    from ad_hoc_diffractometer import psic
+
+    s = 2.5
+    g = psic()
+    g.wavelength = _LAMBDA_CU_KA
+    g.sample.UB = s * np.eye(3)
+
+    Q_phi = angles_to_phi_vector(g, **_PSIC_ANGLES)
+    hkl = g.inverse(_PSIC_ANGLES)
+
+    np.testing.assert_allclose(hkl, np.array(Q_phi) / s, atol=1e-10)
+
+
+def test_inverse_round_trip_ub_identity():
+    """
+    Round-trip: UB @ hkl == Q_phi for the result of inverse().
+
+    Whatever hkl inverse() returns, plugging it back into UB @ hkl
+    must recover Q_phi.
+    """
+    from ad_hoc_diffractometer import angles_to_phi_vector
+    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer import ub_identity
+
+    g = psic()
+    g.wavelength = _LAMBDA_CU_KA
+    ub_identity(g.sample)
+
+    Q_phi = angles_to_phi_vector(g, **_PSIC_ANGLES)
+    hkl = g.inverse(_PSIC_ANGLES)
+
+    np.testing.assert_allclose(g.sample.UB @ np.array(hkl), Q_phi, atol=1e-10)
+
+
+def test_inverse_round_trip_ub_from_one_reflection():
+    """
+    Round-trip with a physically meaningful UB from ub_from_one_reflection.
+
+    UB is set from a sapphire (006) reflection; calling inverse() on the
+    same angles must satisfy UB @ hkl == Q_phi.
+    """
+    from ad_hoc_diffractometer import Lattice
+    from ad_hoc_diffractometer import angles_to_phi_vector
+    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer import ub_from_one_reflection
+
+    g = psic()
+    g.wavelength = _LAMBDA_CU_KA
+    g.add_sample("sap", Lattice(a=4.758, c=12.991))
+    g.sample = "sap"
+    g.add_reflection("r1", hkl=(0, 0, 6), angles=_PSIC_ANGLES)
+    ub_from_one_reflection(
+        g.sample,
+        "r1",
+        reference_hkl=(0, 0, 1),
+        reference_stage=g.stage("phi"),
+    )
+
+    Q_phi = angles_to_phi_vector(g, **_PSIC_ANGLES)
+    hkl = g.inverse(_PSIC_ANGLES)
+
+    np.testing.assert_allclose(g.sample.UB @ np.array(hkl), Q_phi, atol=1e-10)
+
+
+def test_inverse_partial_angles_uses_current():
+    """Stages not in the dict keep their current angle."""
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.wavelength = _LAMBDA_CU_KA
+    g.sample.UB = np.eye(3)
+
+    # Pre-set all angles on the geometry
+    for name, angle in _PSIC_ANGLES.items():
+        g.set_angle(name, angle)
+
+    # Call with empty dict — uses the pre-set values
+    hkl_empty = g.inverse({})
+    hkl_explicit = g.inverse(_PSIC_ANGLES)
+
+    np.testing.assert_allclose(hkl_empty, hkl_explicit, atol=1e-12)
+
+
+def test_inverse_restores_stage_angles():
+    """Motor angles are restored to their original values after inverse()."""
+    g = _psic_with_identity_UB()
+    g.set_angle("eta", 99.9)
+    g.set_angle("phi", 45.0)
+
+    g.inverse({"mu": 0, "eta": 20.97, "chi": 90, "phi": 0, "nu": 0, "delta": 41.94})
+
+    assert g.stage("eta").angle == pytest.approx(99.9)
+    assert g.stage("phi").angle == pytest.approx(45.0)
+
+
+def test_inverse_no_wavelength_raises():
+    """Raises ValueError when wavelength is not set."""
+    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer import ub_identity
+
+    g = psic()
+    ub_identity(g.sample)
+    assert g.wavelength is None
+
+    with pytest.raises(ValueError, match=re.escape("wavelength must be set")):
+        g.inverse({"mu": 0, "eta": 0, "chi": 0, "phi": 0, "nu": 0, "delta": 0})
+
+
+def test_inverse_no_UB_raises():
+    """Raises ValueError when the active sample has no UB matrix."""
+    g = _psic_with_identity_UB()
+    g.sample.UB = None  # clear it
+
+    with pytest.raises(ValueError, match=re.escape("no UB matrix")):
+        g.inverse({"mu": 0, "eta": 0, "chi": 0, "phi": 0, "nu": 0, "delta": 0})
+
+
+def test_inverse_unknown_stage_raises():
+    """Raises KeyError for a stage name not in the geometry."""
+    g = _psic_with_identity_UB()
+    with pytest.raises(KeyError):
+        g.inverse({"no_such_stage": 0.0})
