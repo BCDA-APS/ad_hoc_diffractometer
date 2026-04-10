@@ -1024,20 +1024,40 @@ class AdHocDiffractometer:
             azimuthal_reference=d.get("azimuthal_reference"),
         )
 
-        # Restore samples (skip the default 'test' sample; replace it)
+        # Restore samples.
+        #
+        # Order of operations is important to avoid the SampleDict guard
+        # blocking deletion of the default "test" sample:
+        #
+        #   1. Write all restored samples into _data directly (bypass the
+        #      guard — we are building a consistent state from scratch).
+        #   2. Update the active-sample pointer to the restored active name
+        #      BEFORE removing any samples, so the guard sees the correct
+        #      active name when we delete stale entries.
+        #   3. Remove any samples that were not in the exported dict (e.g.
+        #      the default "test" sample created by __init__ that was not
+        #      present in the original geometry at export time).
         active_name = d.get("active_sample", "test")
+        saved_samples: dict[str, Sample] = {}
         for sample_name, sd in d.get("samples", {}).items():
             sample = Sample.from_dict(sd, parent=geom)
-            if sample_name in geom.samples._data:
-                # Replace the default sample in-place
-                geom.samples._data[sample_name] = sample
-                sample.reflections.geometry_name = geom.name
-            else:
-                geom.samples._data[sample_name] = sample
-                sample.reflections.geometry_name = geom.name
+            sample.reflections.geometry_name = geom.name
+            saved_samples[sample_name] = sample
 
-        # Restore active sample
+        # Write restored samples directly into _data (bypass guard)
+        geom.samples._data.update(saved_samples)
+
+        # Switch active pointer before removing stale samples (step 2)
         if active_name in geom.samples._data:
             geom._active_ref[0] = active_name
+
+        # Remove samples that were not in the exported dict (step 3).
+        # The active-sample guard now protects the correct (restored) active
+        # sample, so any stale default sample that is not the active one
+        # can be safely removed.
+        stale = [n for n in list(geom.samples._data) if n not in saved_samples]
+        for n in stale:
+            if n != geom._active_ref[0]:  # never remove the active sample
+                del geom.samples._data[n]
 
         return geom

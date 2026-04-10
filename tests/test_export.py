@@ -560,3 +560,47 @@ class TestGeometryRoundTrip:
         g.wavelength = 1.5406
         g2 = AdHocDiffractometer.from_dict(g.to_dict())
         assert g2.kappa_alpha_deg == pytest.approx(50.0)
+
+    def test_default_test_sample_removed_when_not_in_export(self):
+        """
+        The default 'test' sample created by __init__ must not appear in the
+        restored geometry if it was not present in the exported dict.
+        """
+        g = fourcv()
+        g.wavelength = 1.5406
+        # Add a named sample and make it active, then remove the default
+        g.add_sample("sapphire", Lattice(a=4.785, c=12.991, gamma=120))
+        g.sample = "sapphire"
+        g.remove_sample("test")  # 'test' is gone before export
+        assert "test" not in g.samples._data
+
+        d = g.to_dict()
+        g2 = AdHocDiffractometer.from_dict(d)
+        # The default 'test' sample must NOT have crept back in
+        assert "test" not in g2.samples._data
+        assert "sapphire" in g2.samples._data
+
+    def test_only_saved_samples_present_after_restore(self):
+        """
+        After from_dict(), the sample dict contains exactly the samples
+        that were saved — no extras, no stale defaults.
+        """
+        g = _sapphire_fourcv()
+        d = g.to_dict()
+        g2 = AdHocDiffractometer.from_dict(d)
+        assert set(g2.samples._data.keys()) == set(d["samples"].keys())
+
+    def test_active_sample_pointer_correct_after_restore(self):
+        """
+        The active-sample pointer must reference the restored active name,
+        not the stale default, even when 'test' is removed during restore.
+        """
+        g = fourcv()
+        g.wavelength = 1.5406
+        g.add_sample("mycrystal", Lattice(a=5.0))
+        g.sample = "mycrystal"
+        g.remove_sample("test")
+
+        g2 = AdHocDiffractometer.from_dict(g.to_dict())
+        assert g2._active_ref[0] == "mycrystal"
+        assert g2.sample.name == "mycrystal"
