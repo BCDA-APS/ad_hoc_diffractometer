@@ -30,9 +30,9 @@ Naming convention:
     Kappa geometries:        kappa4cv, kappa4ch, kappa6c
     Inclined geometries:     zaxis, s2d2, fivec
 
-Detector axis suffix convention (v / h):
-    v  ->  vertical detector axis   (laboratory / horizontal scattering plane)
-    h  ->  lateral   detector axis  (synchrotron / vertical scattering plane)
+Scattering-plane suffix convention (v / h):
+    v  ->  vertical   scattering plane  (synchrotron) — ttheta rotates about the lateral axis
+    h  ->  horizontal scattering plane  (laboratory)  — ttheta rotates about the vertical axis
 
     Walko (2016): "at synchrotron sources the scattering plane is usually
     vertical, to take advantage of the (typically) s-polarization of the
@@ -41,8 +41,9 @@ Detector axis suffix convention (v / h):
     Where no suffix is given, the geometry has no single-axis 2theta detector
     (inclined geometries) or the detector convention is unambiguous (psic, sixc).
 
-    fourcv (vertical detector) is the default/laboratory convention.
-    kappa4cv (vertical detector) is the default/laboratory convention.
+    fourch  (horizontal scattering plane) matches Busing & Levy (1967) Fig. 1b.
+    fourcv  (vertical   scattering plane) is the synchrotron convention.
+    kappa4ch and kappa4cv follow the same convention as fourch and fourcv.
 
 Kappa angle (alpha) convention (Walko 2016; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):
     The kappa axis lies in the vertical-lateral plane, tilted alpha degrees
@@ -353,38 +354,36 @@ def psic() -> AdHocDiffractometer:
 @register_geometry
 def fourcv() -> AdHocDiffractometer:
     """
-    Busing & Levy (1967) four-circle Eulerian diffractometer, vertical detector.
+    Four-circle Eulerian diffractometer, vertical scattering plane (synchrotron).
 
     Walko (2016) designation: S3D1.
 
-    This is the default / laboratory configuration: the detector arm swings
-    in a vertical plane (horizontal scattering plane), which minimises
-    gravitational distortions.  This is the geometry described in Busing &
-    Levy (1967).
+    Synchrotron configuration: omega and ttheta both rotate about the
+    lateral axis, so the scattering plane is vertical.  This exploits the
+    s-polarisation and tighter vertical collimation of synchrotron radiation
+    (Walko 2016).
 
     Basis (Busing & Levy convention):
-        x = lateral  (scattering vector at zero angles)
-        y = longitudinal (along the beam)
-        z = vertical
-    Right-handed: lateral x longitudinal = vertical.
+        x = lateral, y = longitudinal, z = vertical.
 
     Sample stack (floor first):
-        omega     : vertical, -z, left-handed
-        chi       : lateral,  +x, right-handed
-        phi       : vertical, -z, left-handed
+        omega     : lateral,       -x, left-handed
+        chi       : longitudinal,  +y, right-handed
+        phi       : lateral,       -x, left-handed
 
     Detector (floor, mechanically independent of sample stack):
-        two_theta : vertical, -z, left-handed
+        ttheta : lateral,       -x, left-handed
 
-    omega and two_theta share the same vertical axis; mechanically independent.
+    omega and ttheta share the same lateral axis; mechanically independent.
 
-    Reference: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+    References: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
     """
     stages = [
-        Stage("omega", -_ZHAT_BL, parent=None, role="sample"),
-        Stage("chi", +_XHAT_BL, parent="omega", role="sample"),
-        Stage("phi", -_ZHAT_BL, parent="chi", role="sample"),
-        Stage("two_theta", -_ZHAT_BL, parent=None, role="detector"),
+        Stage("omega", -_BASIS_BL["lateral"], parent=None, role="sample"),
+        Stage("chi", +_BASIS_BL["longitudinal"], parent="omega", role="sample"),
+        Stage("phi", -_BASIS_BL["lateral"], parent="chi", role="sample"),
+        Stage("ttheta", -_BASIS_BL["lateral"], parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
@@ -392,7 +391,7 @@ def fourcv() -> AdHocDiffractometer:
         basis=_BASIS_BL,
         description=(
             "Busing & Levy (1967) four-circle Eulerian diffractometer "
-            "(vertical detector, horizontal scattering plane, laboratory)"
+            "(vertical scattering plane, lateral ttheta, synchrotron)"
         ),
     )
 
@@ -400,13 +399,13 @@ def fourcv() -> AdHocDiffractometer:
 @register_geometry
 def fourch() -> AdHocDiffractometer:
     """
-    Busing & Levy (1967) four-circle Eulerian diffractometer, lateral detector.
+    Four-circle Eulerian diffractometer, horizontal scattering plane (laboratory).
 
     Walko (2016) designation: S3D1.
 
-    Synchrotron configuration: the scattering plane is vertical (horizontal
-    detector axis), exploiting the s-polarisation and tighter vertical
-    collimation of synchrotron radiation (Walko 2016).
+    Laboratory / default configuration: omega and ttheta both rotate about
+    the vertical axis, so the scattering plane is horizontal.  This is the
+    geometry described in Busing & Levy (1967), Fig. 1b.
 
     Basis (Busing & Levy convention):
         x = lateral, y = longitudinal, z = vertical.
@@ -417,18 +416,18 @@ def fourch() -> AdHocDiffractometer:
         phi       : vertical, -z, left-handed
 
     Detector (floor, mechanically independent):
-        two_theta : lateral,  -x, left-handed
+        ttheta : vertical, -z, left-handed
 
-    omega and two_theta share the same vertical axis; mechanically independent.
+    omega and ttheta share the same vertical axis; mechanically independent.
 
     Reference: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
     """
     stages = [
-        Stage("omega", -_ZHAT_BL, parent=None, role="sample"),
-        Stage("chi", +_XHAT_BL, parent="omega", role="sample"),
-        Stage("phi", -_ZHAT_BL, parent="chi", role="sample"),
-        Stage("two_theta", -_XHAT_BL, parent=None, role="detector"),
+        Stage("omega", -_BASIS_BL["vertical"], parent=None, role="sample"),
+        Stage("chi", +_BASIS_BL["lateral"], parent="omega", role="sample"),
+        Stage("phi", -_BASIS_BL["vertical"], parent="chi", role="sample"),
+        Stage("ttheta", -_BASIS_BL["vertical"], parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
@@ -436,7 +435,7 @@ def fourch() -> AdHocDiffractometer:
         basis=_BASIS_BL,
         description=(
             "Busing & Levy (1967) four-circle Eulerian diffractometer "
-            "(lateral detector, vertical scattering plane, synchrotron)"
+            "(horizontal scattering plane, vertical ttheta, laboratory)"
         ),
     )
 
@@ -493,7 +492,7 @@ KAPPA_ALPHA_DEFAULT = 50.0
 @register_geometry
 def kappa4cv(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
     """
-    Four-circle kappa diffractometer, vertical detector (laboratory default).
+    Four-circle kappa diffractometer, vertical scattering plane (synchrotron).
 
     Walko (2016) designation: S3D1.
 
@@ -501,16 +500,20 @@ def kappa4cv(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
     The kappa axis lies in the vertical-lateral plane, tilted alpha degrees
     from the vertical toward the lateral axis.
 
+    komega and ttheta both rotate about the lateral axis; the scattering
+    plane is vertical (synchrotron convention).
 
     Basis (Busing & Levy convention): x=lateral, y=longitudinal, z=vertical.
 
     Sample stack (floor first):
-        komega    : vertical, -z, left-handed
+        komega    : lateral,  -x, left-handed
         kappa     : tilted,   kappa_axis(alpha), right-handed
-        kphi      : vertical, -z, left-handed
+        kphi      : lateral,  -x, left-handed
 
     Detector (floor, mechanically independent):
-        two_theta : vertical, -z, left-handed
+        ttheta : lateral,  -x, left-handed
+
+    komega and ttheta share the same lateral axis; mechanically independent.
 
     Parameters
     ----------
@@ -523,18 +526,18 @@ def kappa4cv(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
     """
     kax = kappa_axis(alpha_deg, basis=_BASIS_BL)
     stages = [
-        Stage("komega", -_ZHAT_BL, parent=None, role="sample"),
+        Stage("komega", -_BASIS_BL["lateral"], parent=None, role="sample"),
         Stage("kappa", kax, parent="komega", role="sample"),
-        Stage("kphi", -_ZHAT_BL, parent="kappa", role="sample"),
-        Stage("two_theta", -_ZHAT_BL, parent=None, role="detector"),
+        Stage("kphi", -_BASIS_BL["lateral"], parent="kappa", role="sample"),
+        Stage("ttheta", -_BASIS_BL["lateral"], parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_BL,
         description=(
-            f"Four-circle kappa diffractometer, vertical detector (laboratory). "
-            f"Kappa alpha = {alpha_deg} deg."
+            f"Four-circle kappa diffractometer, vertical scattering plane "
+            f"(synchrotron). Kappa alpha = {alpha_deg} deg."
         ),
         kappa_alpha_deg=alpha_deg,
     )
@@ -543,13 +546,12 @@ def kappa4cv(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
 @register_geometry
 def kappa4ch(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
     """
-    Four-circle kappa diffractometer, lateral detector (synchrotron).
+    Four-circle kappa diffractometer, horizontal scattering plane (laboratory).
 
     Walko (2016) designation: S3D1.
 
-    Identical to kappa4cv() but the two_theta (detector) axis is lateral,
-    corresponding to the synchrotron configuration with a vertical
-    scattering plane.
+    Identical to kappa4cv() but komega and ttheta rotate about the vertical
+    axis, giving a horizontal scattering plane (laboratory convention).
 
     Basis (Busing & Levy convention): x=lateral, y=longitudinal, z=vertical.
 
@@ -559,7 +561,9 @@ def kappa4ch(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
         kphi      : vertical, -z, left-handed
 
     Detector (floor, mechanically independent):
-        two_theta : lateral,  -x, left-handed
+        ttheta : vertical, -z, left-handed
+
+    komega and ttheta share the same vertical axis; mechanically independent.
 
     Parameters
     ----------
@@ -572,18 +576,18 @@ def kappa4ch(alpha_deg: float = KAPPA_ALPHA_DEFAULT) -> AdHocDiffractometer:
     """
     kax = kappa_axis(alpha_deg, basis=_BASIS_BL)
     stages = [
-        Stage("komega", -_ZHAT_BL, parent=None, role="sample"),
+        Stage("komega", -_BASIS_BL["vertical"], parent=None, role="sample"),
         Stage("kappa", kax, parent="komega", role="sample"),
-        Stage("kphi", -_ZHAT_BL, parent="kappa", role="sample"),
-        Stage("two_theta", -_XHAT_BL, parent=None, role="detector"),
+        Stage("kphi", -_BASIS_BL["vertical"], parent="kappa", role="sample"),
+        Stage("ttheta", -_BASIS_BL["vertical"], parent=None, role="detector"),
     ]
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
         basis=_BASIS_BL,
         description=(
-            f"Four-circle kappa diffractometer, lateral detector (synchrotron). "
-            f"Kappa alpha = {alpha_deg} deg."
+            f"Four-circle kappa diffractometer, horizontal scattering plane "
+            f"(laboratory). Kappa alpha = {alpha_deg} deg."
         ),
         kappa_alpha_deg=alpha_deg,
     )
@@ -758,7 +762,7 @@ def fivec() -> AdHocDiffractometer:
           --> omega (sample): lateral,  -z, left-handed
                 --> chi:      lateral,  -z, left-handed (chi axis)
                       --> phi: lateral, -z, left-handed
-          --> two_theta (detector): lateral, -z, left-handed
+          --> ttheta (detector): lateral, -z, left-handed
 
     Note: the inner fourc uses the You (1999) basis (xHat=vertical) rather
     than the Busing & Levy basis, since mu is the outermost vertical axis.
@@ -774,7 +778,7 @@ def fivec() -> AdHocDiffractometer:
         Stage("chi", +YHAT, parent="omega", role="sample"),
         Stage("phi", -ZHAT, parent="chi", role="sample"),
         # Detector stack on mu
-        Stage("two_theta", -ZHAT, parent="mu", role="detector"),
+        Stage("ttheta", -ZHAT, parent="mu", role="detector"),
     ]
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,

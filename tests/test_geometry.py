@@ -826,7 +826,13 @@ def test_azimuthal_reference_wrong_length_raises():
 
 
 def _fourcv_identity():
-    """fourcv with B=I (a=1), lambda=2pi, UB=I, azimuthal_reference=(0,0,1)."""
+    """fourcv with B=I (a=1), lambda=2pi, UB=I, azimuthal_reference=(1,0,0).
+
+    With the corrected fourcv (vertical scattering plane), omega and ttheta
+    rotate about the lateral (-x) axis.  At chi=0, phi=0, omega=30, ttheta=60
+    Q points along -z (vertical).  XHAT_BL = (1,0,0) = lateral is perpendicular
+    to Q and to the scattering plane.
+    """
     from ad_hoc_diffractometer import Lattice
     from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
@@ -835,7 +841,7 @@ def _fourcv_identity():
     g.wavelength = 2 * _math.pi
     g.sample.lattice = Lattice(a=1.0)
     ub_identity(g.sample)
-    g.azimuthal_reference = (0, 0, 1)  # ZHAT_BL = vertical ⊥ scattering plane at chi=0
+    g.azimuthal_reference = (1, 0, 0)  # XHAT_BL = lateral ⊥ scattering plane at chi=0
     return g
 
 
@@ -843,25 +849,29 @@ def test_psi_returns_float():
     """psi() returns a float."""
     g = _fourcv_identity()
     g.set_angle("omega", 30)
-    g.set_angle("two_theta", 60)
+    g.set_angle("ttheta", 60)
     result = g.psi()
     assert isinstance(result, float)
 
 
 def test_psi_n_perpendicular_to_scattering_plane_is_90():
-    """n=(0,0,1) ⊥ scattering plane at chi=0 → psi=90."""
+    """n=(1,0,0) = XHAT_BL (lateral) ⊥ vertical scattering plane at chi=0 → psi=90."""
     g = _fourcv_identity()
-    g.azimuthal_reference = (0, 0, 1)  # ZHAT_BL ⊥ lateral-longitudinal plane
-    angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0}
+    g.azimuthal_reference = (1, 0, 0)  # XHAT_BL = lateral ⊥ vertical scattering plane
+    angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0}
     psi = g.psi(angles)
     assert abs(psi - 90.0) < 1e-8
 
 
 def test_psi_n_in_scattering_plane_is_0():
-    """n=(0,1,0) = YHAT_BL lies in scattering plane at chi=0 → psi=0."""
+    """n=(0,1,0) = YHAT_BL (longitudinal) lies in vertical scattering plane at chi=0 → psi=0."""
     g = _fourcv_identity()
-    g.azimuthal_reference = (0, 1, 0)  # YHAT_BL = longitudinal = in scattering plane
-    angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0}
+    g.azimuthal_reference = (
+        0,
+        1,
+        0,
+    )  # YHAT_BL = longitudinal = in vertical scattering plane
+    angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0}
     psi = g.psi(angles)
     assert abs(psi - 0.0) < 1e-8
 
@@ -872,10 +882,10 @@ def test_psi_uses_current_angles_when_none_passed():
     g.set_angle("omega", 30.0)
     g.set_angle("chi", 0.0)
     g.set_angle("phi", 0.0)
-    g.set_angle("two_theta", 60.0)
-    g.azimuthal_reference = (0, 0, 1)
+    g.set_angle("ttheta", 60.0)
+    g.azimuthal_reference = (1, 0, 0)  # lateral — perpendicular to Q at these angles
     psi_implicit = g.psi()
-    psi_explicit = g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+    psi_explicit = g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
     assert abs(psi_implicit - psi_explicit) < 1e-10
 
 
@@ -888,7 +898,7 @@ def test_psi_range_within_180():
                 "omega": 30.0,
                 "chi": float(chi),
                 "phi": float(phi),
-                "two_theta": 60.0,
+                "ttheta": 60.0,
             }
             try:
                 psi = g.psi(angles)
@@ -902,7 +912,7 @@ def test_psi_no_reference_raises():
     g = _fourcv_identity()
     g.azimuthal_reference = None
     with pytest.raises(ValueError, match=re.escape("azimuthal_reference")):
-        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
 
 
 def test_psi_no_wavelength_raises():
@@ -910,7 +920,7 @@ def test_psi_no_wavelength_raises():
     g = _fourcv_identity()
     g.wavelength = None
     with pytest.raises(ValueError, match=re.escape("wavelength")):
-        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
 
 
 def test_psi_no_ub_raises():
@@ -918,16 +928,17 @@ def test_psi_no_ub_raises():
     g = _fourcv_identity()
     g.sample.UB = None
     with pytest.raises(ValueError, match=re.escape("UB matrix")):
-        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
 
 
 def test_psi_n_parallel_to_q_raises():
     """psi() raises ValueError when the reference is parallel to Q."""
     g = _fourcv_identity()
-    # At chi=0 Q is along XHAT_BL=(1,0,0). Set n=(1,0,0) → parallel to Q.
-    g.azimuthal_reference = (1, 0, 0)
+    # With corrected fourcv at chi=0, Q is along -ZHAT_BL=(0,0,-1).
+    # Set n=(0,0,1) → parallel to Q → raises.
+    g.azimuthal_reference = (0, 0, 1)
     with pytest.raises(ValueError, match=re.escape("parallel to Q")):
-        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
 
 
 def test_psi_pa_shows_azimuthal_reference():
@@ -956,7 +967,7 @@ def test_psi_wh_shows_psi_when_available():
     g.set_angle("omega", 30.0)
     g.set_angle("chi", 0.0)
     g.set_angle("phi", 0.0)
-    g.set_angle("two_theta", 60.0)
+    g.set_angle("ttheta", 60.0)
     assert "Psi" in g.wh(print=False)
 
 
@@ -983,7 +994,7 @@ def test_psi_wh_shows_not_available_when_no_reference():
 @pytest.mark.parametrize(
     "internal,expected",
     [
-        pytest.param("two_theta", "TwoTheta", id="two_theta"),
+        pytest.param("ttheta", "TwoTheta", id="ttheta"),
         pytest.param("omega", "Theta", id="omega"),
         pytest.param("chi", "Chi", id="chi"),
         pytest.param("phi", "Phi", id="phi"),
@@ -1217,7 +1228,7 @@ def test_geometry_samples_property_is_read_only():
     "angles, match",
     [
         pytest.param(
-            {"omega": 0.0, "chi": 0.0, "phi": 0.0, "two_theta": 0.0},
+            {"omega": 0.0, "chi": 0.0, "phi": 0.0, "ttheta": 0.0},
             "Q = 0",
             id="psi-q-zero",
         ),
@@ -1248,7 +1259,7 @@ def test_psi_n_maps_to_zero_raises():
     g.sample.U = np.zeros((3, 3))
     g.azimuthal_reference = (0, 0, 1)
     with pytest.raises(ValueError, match="zero in the phi frame"):
-        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0})
+        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
 
 
 def test_pa_reflection_wavelength_none_falls_back_to_geometry_wavelength():
@@ -1261,7 +1272,7 @@ def test_pa_reflection_wavelength_none_falls_back_to_geometry_wavelength():
     r = Reflection(
         "r1",
         hkl=(0, 0, 6),
-        angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "two_theta": 41.94},
+        angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "ttheta": 41.94},
         wavelength=None,
     )
     g.sample.reflections._data["r1"] = r

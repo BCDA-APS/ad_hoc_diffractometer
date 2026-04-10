@@ -51,12 +51,12 @@ def _sapphire_fourcv():
     g.add_reflection(
         "or1",
         hkl=(0, 0, 6),
-        angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "two_theta": 41.94188},
+        angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "ttheta": 41.94188},
     )
     g.add_reflection(
         "or2",
         hkl=(1, 0, 0),
-        angles={"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0},
+        angles={"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0},
     )
     g.sample.reflections.setor1("or1")
     g.sample.reflections.setor2("or2")
@@ -226,7 +226,7 @@ class TestReflectionSerialization:
         return Reflection(
             name="r1",
             hkl=(0.0, 0.0, 6.0),
-            angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "two_theta": 41.94},
+            angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "ttheta": 41.94},
             wavelength=1.5498,
             geometry_name="fourcv",
         )
@@ -272,17 +272,17 @@ class TestReflectionListSerialization:
     def rl(self):
         r = ReflectionList(
             geometry_name="fourcv",
-            valid_stages={"omega", "chi", "phi", "two_theta"},
+            valid_stages={"omega", "chi", "phi", "ttheta"},
         )
         r.add(
             "r1",
             hkl=(0, 0, 6),
-            angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "two_theta": 41.94},
+            angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "ttheta": 41.94},
         )
         r.add(
             "r2",
             hkl=(1, 0, 0),
-            angles={"omega": 30.0, "chi": 0.0, "phi": 0.0, "two_theta": 60.0},
+            angles={"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0},
         )
         r.setor1("r1")
         r.setor2("r2")
@@ -329,12 +329,12 @@ class TestSampleSerialization:
     def sample(self):
         rl = ReflectionList(
             geometry_name="fourcv",
-            valid_stages={"omega", "chi", "phi", "two_theta"},
+            valid_stages={"omega", "chi", "phi", "ttheta"},
         )
         rl.add(
             "r1",
             hkl=(0, 0, 6),
-            angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "two_theta": 41.94},
+            angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "ttheta": 41.94},
         )
         s = Sample(
             name="sapphire",
@@ -422,7 +422,7 @@ class TestGeometryToDict:
     def test_stages_list(self, geom):
         stages = geom.to_dict()["stages"]
         assert isinstance(stages, list)
-        assert {s["name"] for s in stages} == {"omega", "chi", "phi", "two_theta"}
+        assert {s["name"] for s in stages} == {"omega", "chi", "phi", "ttheta"}
 
     def test_stage_has_required_keys(self, geom):
         for sd in geom.to_dict()["stages"]:

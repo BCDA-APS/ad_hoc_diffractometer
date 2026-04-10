@@ -233,7 +233,7 @@ class TestG1ToSample:
 
     def test_or1_angles(self, geom_a):
         ang = geom_a.sample.reflections["or1"].angles
-        assert ang["two_theta"] == pytest.approx(41.94188)
+        assert ang["ttheta"] == pytest.approx(41.94188)
         assert ang["omega"] == pytest.approx(20.97)
         assert ang["chi"] == pytest.approx(90.0)
         assert ang["phi"] == pytest.approx(0.0)
@@ -253,7 +253,7 @@ class TestG1ToSample:
         g = fourcv()
         g1_to_sample(parse_fourc_g1(_G1_LINE_C), g)
         ang = g.sample.reflections["or2"].angles
-        assert ang["two_theta"] == pytest.approx(35.392375)
+        assert ang["ttheta"] == pytest.approx(35.392375)
         assert ang["chi"] == pytest.approx(50.8925)
         assert ang["phi"] == pytest.approx(29.95)
 
@@ -419,7 +419,7 @@ def test_sample_to_g1_only_or1_set():
     g.add_reflection(
         "r1",
         hkl=(0, 0, 6),
-        angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "two_theta": 41.94},
+        angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "ttheta": 41.94},
     )
     g.sample.reflections.setor1("r1")
     g1 = sample_to_g1(g)

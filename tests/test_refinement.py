@@ -109,7 +109,7 @@ def sapphire_geom():
             "omega": 17.6428,
             "chi": 50.8925,
             "phi": 29.95,
-            "two_theta": 35.392375,
+            "ttheta": 35.392375,
         },
         wavelength=1.549802558,
     )

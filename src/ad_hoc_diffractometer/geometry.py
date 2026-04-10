@@ -948,7 +948,7 @@ class AdHocDiffractometer:
         Unknown names pass through unchanged.
         """
         _MAP = {
-            "two_theta": "TwoTheta",
+            "ttheta": "TwoTheta",
             "omega": "Theta",
             "chi": "Chi",
             "phi": "Phi",
