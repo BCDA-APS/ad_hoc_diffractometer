@@ -19,6 +19,12 @@ ub_from_two_reflections_bl1967(sample, r1, r2)
     (1967) algorithm (eqs. 23-27).  Sets ``sample.U`` and ``sample.UB``
     in-place; returns UB.
 
+ub_from_three_reflections_bl1967(sample, r1, r2, r3)
+    Compute UB directly from three reflections using the Busing & Levy (1967)
+    direct method (eqs. 29-31), without prior knowledge of the lattice.
+    Sets ``sample.UB`` in-place; also sets ``sample.U`` if a lattice B is
+    available.  Returns UB.
+
 ub_identity(sample)
     Set U = I, UB = B; return UB.  The crudest assumption.
 
@@ -582,6 +588,192 @@ def ub_from_two_reflections_bl1967(
 
     sample.U = U
     sample.UB = UB
+    return UB
+
+
+def ub_from_three_reflections_bl1967(
+    sample,
+    r1,
+    r2,
+    r3,
+) -> np.ndarray:
+    """
+    Compute UB directly from three reflections (Busing & Levy 1967, eqs. 29-31).
+
+    This method requires no prior knowledge of the lattice: it computes UB
+    directly by matrix inversion from three measured reflections.  If a
+    lattice B matrix is available on the sample, U is also derived.
+
+    Algorithm (BL1967 eqs. 28-31):
+
+    1. For each reflection i compute the phi-frame scattering vector
+       ``hiφ = angles_to_phi_vector(geometry, **ri.angles)`` (eq. 28 gives
+       the magnitude; ``angles_to_phi_vector`` already carries the full
+       vector in Å⁻¹).
+    2. Stack as column matrices::
+
+           Hφ = [h1φ | h2φ | h3φ]    (3×3, columns are phi-frame vectors)
+           H  = [h1  | h2  | h3 ]    (3×3, columns are Miller-index triples)
+
+    3. ``UB = Hφ @ inv(H)``  (eq. 31).
+    4. If ``sample.lattice`` is set: ``U = UB @ inv(B)`` (derived from UB).
+    5. Store ``sample.UB = UB`` (first) and ``sample.U = U``; return ``UB``.
+
+    Parameters
+    ----------
+    sample : Sample
+        The sample whose ``UB`` (and ``U``) attributes are updated in-place.
+        ``sample.parent`` must be a geometry with ``wavelength`` set.
+    r1, r2, r3 : Reflection or str
+        Three orienting reflections.  Each may be a ``Reflection`` object or
+        the name of a reflection in ``sample.reflections``.
+
+    Returns
+    -------
+    UB : numpy.ndarray, shape (3, 3)
+        ``sample.UB`` is set first (directly, via eq. 31), then
+        ``sample.U = UB @ inv(B)`` is derived.  Both are set in-place.
+
+    Raises
+    ------
+    KeyError
+        If any of ``r1``, ``r2``, ``r3`` is a string not found in
+        ``sample.reflections``.
+    TypeError
+        If any argument is not a ``Reflection`` or a string.
+    ValueError
+        If ``sample.parent`` is ``None``.
+    ValueError
+        If the three Miller-index column matrix ``H`` is singular
+        (``|det(H)| < tol``), i.e. the three hkl vectors are coplanar.
+    ValueError
+        If ``sample.parent.wavelength`` is ``None``.
+
+    Warns
+    -----
+    UserWarning
+        If ``det(H) < 0``, the hkl triples form a left-handed system.
+        The computation proceeds but the sign convention may give U with
+        ``det(U) = -1``; consider swapping r1 and r2 to make det(H) > 0.
+
+    Notes
+    -----
+    UB is computed first (``sample.UB = Hφ @ H⁻¹``).  U is then derived
+    as ``sample.U = UB @ B⁻¹``.  This is the opposite order from
+    ``ub_from_two_reflections_bl1967``, where U is computed first.
+
+    The method does not require a known lattice: ``H`` is formed from the
+    raw hkl indices, not from ``B @ hkl``.  However, if ``sample.lattice``
+    is the package default (cubic, a = 1 Å) rather than a measured lattice,
+    the derived U will not be physically meaningful.
+
+    If ``det(H)`` is exactly zero (degenerate reflections), ``numpy.linalg.inv``
+    will raise ``LinAlgError``, which is caught and re-raised as ``ValueError``.
+
+    Examples
+    --------
+    >>> import ad_hoc_diffractometer as ahd
+    >>> import math
+    >>> g = ahd.psic()
+    >>> g.wavelength = 2 * math.pi
+    >>> g.sample.lattice = ahd.Lattice(a=2 * math.pi)
+    >>> g.add_reflection("r1", hkl=(1, 0, 0),
+    ...     angles={"mu": 0, "eta": 30, "chi": 0, "phi": 0, "nu": 0, "delta": 60})
+    >>> g.add_reflection("r2", hkl=(0, 1, 0),
+    ...     angles={"mu": 0, "eta": 30, "chi": 0, "phi": 90, "nu": 0, "delta": 60})
+    >>> g.add_reflection("r3", hkl=(0, 0, 1),
+    ...     angles={"mu": 0, "eta": 30, "chi": 90, "phi": 30, "nu": 0, "delta": 60})
+    >>> UB = ahd.ub_from_three_reflections_bl1967(g.sample, "r1", "r2", "r3")
+
+    References
+    ----------
+    Busing & Levy, Acta Cryst. 22, 457-464 (1967), eqs. 28-31.
+    """
+    import warnings
+
+    from .reflection import Reflection
+
+    # --- Require a parent geometry -------------------------------------------
+    if sample.parent is None:
+        raise ValueError(
+            "ub_from_three_reflections_bl1967 requires sample.parent to be set "
+            "(an AdHocDiffractometer with wavelength).  Attach the sample to a "
+            "geometry before calling this function."
+        )
+    geometry = sample.parent
+
+    # --- Resolve reflections -------------------------------------------------
+    def _resolve(r, label: str) -> Reflection:
+        if isinstance(r, str):
+            r = sample.reflections[r]
+        if not isinstance(r, Reflection):
+            raise TypeError(
+                f"{label} must be a Reflection or a name string; "
+                f"got {type(r).__name__!r}."
+            )
+        return r
+
+    r1 = _resolve(r1, "r1")
+    r2 = _resolve(r2, "r2")
+    r3 = _resolve(r3, "r3")
+
+    # --- Phi-frame scattering vectors ----------------------------------------
+    h1_phi = angles_to_phi_vector(geometry, **r1.angles)
+    h2_phi = angles_to_phi_vector(geometry, **r2.angles)
+    h3_phi = angles_to_phi_vector(geometry, **r3.angles)
+
+    # --- Column matrices Hφ and H -------------------------------------------
+    H_phi = np.column_stack([h1_phi, h2_phi, h3_phi])  # 3×3
+    H = np.column_stack(
+        [
+            np.asarray(r1.hkl, dtype=float),
+            np.asarray(r2.hkl, dtype=float),
+            np.asarray(r3.hkl, dtype=float),
+        ]
+    )  # 3×3
+
+    # --- Check H is non-singular --------------------------------------------
+    det_H = float(np.linalg.det(H))
+    tol = 1e-10
+    if abs(det_H) < tol:
+        raise ValueError(
+            "The three reflections are coplanar in reciprocal space: "
+            f"det(H) = {det_H:.3g} ≈ 0.  Choose three reflections whose "
+            "Miller-index vectors are linearly independent."
+        )
+
+    if det_H < 0:
+        warnings.warn(
+            f"det(H) = {det_H:.6g} < 0: the three hkl triples form a "
+            "left-handed system.  U may have det(U) = -1.  Consider "
+            "swapping r1 and r2 to restore a right-handed system.",
+            UserWarning,
+            stacklevel=2,
+        )
+
+    # --- BL1967 eq. 31: UB = Hφ @ H⁻¹ -------------------------------------
+    try:
+        H_inv = np.linalg.inv(H)
+    except np.linalg.LinAlgError as exc:
+        raise ValueError(
+            "Cannot invert the Miller-index matrix H; the three reflections "
+            "are linearly dependent (coplanar in reciprocal space)."
+        ) from exc
+
+    UB = H_phi @ H_inv
+
+    # --- Derive U = UB @ B⁻¹ -----------------------------------------------
+    B = sample.lattice.B
+    try:
+        B_inv = np.linalg.inv(B)
+    except np.linalg.LinAlgError:
+        U = None
+    else:
+        U = UB @ B_inv
+
+    # --- Store in-place (UB first, then U) ----------------------------------
+    sample.UB = UB
+    sample.U = U
     return UB
 
 

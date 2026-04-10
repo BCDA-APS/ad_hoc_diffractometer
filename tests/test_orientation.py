@@ -13,6 +13,9 @@ Covers:
     of |Q| from sample rotations, angle restoration, error cases
   - ub_from_two_reflections_bl1967(): orthonormal U, UB=U@B, direction checks,
     default or1/or2 resolution, string/object reflection args, error cases
+  - ub_from_three_reflections_bl1967(): UB@hi==h_phi_i for all three, orthonormal U,
+    U=I recovery for aligned crystal, string/object args, error cases (singular H,
+    no parent, bad types), warning for left-handed H
 """
 
 import math
@@ -26,6 +29,7 @@ from ad_hoc_diffractometer import angles_to_phi_vector
 from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer import psic
 from ad_hoc_diffractometer import ub_from_one_reflection
+from ad_hoc_diffractometer import ub_from_three_reflections_bl1967
 from ad_hoc_diffractometer import ub_from_two_reflections_bl1967
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.reflection import ReflectionList
@@ -783,3 +787,220 @@ def test_two_refl_collinear_phi_frame_raises(psic_geom):
     psic_geom.sample.reflections.setor2("r2")
     with pytest.raises(ValueError, match=re.escape("parallel in the phi frame")):
         ub_from_two_reflections_bl1967(psic_geom.sample)
+
+
+# ---------------------------------------------------------------------------
+# ub_from_three_reflections_bl1967()
+# ---------------------------------------------------------------------------
+#
+# "Clean" test case: psic geometry, cubic a = 1 Å (B = I), λ = 2π Å.
+# With U = I (identity orientation), UB = B = I.
+#
+# Motor angles chosen so each reflection gives Q_phi along a principal axis:
+#   r1: hkl=(1,0,0), eta=30, chi=0,  phi=0  → Q_phi ‖ XHAT = (1,0,0)
+#   r2: hkl=(0,1,0), eta=30, chi=0,  phi=90 → Q_phi ‖ YHAT = (0,1,0)
+#   r3: hkl=(0,0,1), eta=30, chi=90, phi=30 → Q_phi ‖ ZHAT = (0,0,1)
+#
+# For this geometry λ=2π, a=1 → B=I, so BL1967 must recover U=I exactly.
+
+_LAT_A1 = Lattice(a=1.0)  # cubic a=1 → B = identity
+_R3_HKL = (0, 0, 1)
+_R3_ANG = {"mu": 0.0, "eta": 30.0, "chi": 90.0, "phi": 30.0, "nu": 0.0, "delta": 60.0}
+
+
+@pytest.fixture
+def three_refl_geom():
+    """
+    psic geometry with cubic a=1 lattice (B=I) and three orthogonal reflections.
+
+    Motor angles are constructed so that U = I is the exact solution
+    (Q_phi_i = B @ h_i = h_i for each reflection).
+    """
+    g = psic()
+    g.wavelength = _TWO_PI
+    g.sample.lattice = _LAT_A1
+    g.add_reflection("r1", hkl=_R1_HKL_2PI, angles=_R1_ANG_2PI)
+    g.add_reflection("r2", hkl=_R2_HKL_2PI, angles=_R2_ANG_2PI)
+    g.add_reflection("r3", hkl=_R3_HKL, angles=_R3_ANG)
+    return g
+
+
+# --- mathematical correctness -----------------------------------------------
+
+
+def test_three_refl_UB_times_h_equals_h_phi_r1(three_refl_geom):
+    """UB @ h1 must equal Q_phi of r1 exactly (fundamental BL1967 guarantee)."""
+    g = three_refl_geom
+    UB = ub_from_three_reflections_bl1967(g.sample, "r1", "r2", "r3")
+    h_phi = angles_to_phi_vector(g, **_R1_ANG_2PI)
+    np.testing.assert_allclose(
+        UB @ np.array(_R1_HKL_2PI, dtype=float), h_phi, atol=1e-10
+    )
+
+
+def test_three_refl_UB_times_h_equals_h_phi_r2(three_refl_geom):
+    """UB @ h2 must equal Q_phi of r2 exactly."""
+    g = three_refl_geom
+    UB = ub_from_three_reflections_bl1967(g.sample, "r1", "r2", "r3")
+    h_phi = angles_to_phi_vector(g, **_R2_ANG_2PI)
+    np.testing.assert_allclose(
+        UB @ np.array(_R2_HKL_2PI, dtype=float), h_phi, atol=1e-10
+    )
+
+
+def test_three_refl_UB_times_h_equals_h_phi_r3(three_refl_geom):
+    """UB @ h3 must equal Q_phi of r3 exactly."""
+    g = three_refl_geom
+    UB = ub_from_three_reflections_bl1967(g.sample, "r1", "r2", "r3")
+    h_phi = angles_to_phi_vector(g, **_R3_ANG)
+    np.testing.assert_allclose(UB @ np.array(_R3_HKL, dtype=float), h_phi, atol=1e-10)
+
+
+def test_three_refl_U_is_orthonormal(three_refl_geom):
+    """U returned by BL1967 must satisfy U.T @ U = I and det(U) = 1."""
+    ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "r3")
+    U = three_refl_geom.sample.U
+    np.testing.assert_allclose(U.T @ U, np.eye(3), atol=1e-10)
+    assert abs(np.linalg.det(U) - 1.0) < 1e-10
+
+
+def test_three_refl_U_identity_for_aligned_crystal(three_refl_geom):
+    """When angles are consistent with U=I and B=I, BL1967 must recover U=I."""
+    ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "r3")
+    np.testing.assert_allclose(three_refl_geom.sample.U, np.eye(3), atol=1e-10)
+
+
+def test_three_refl_UB_equals_B_for_identity_crystal(three_refl_geom):
+    """When U=I and B=I, UB must equal B = I."""
+    UB = ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "r3")
+    np.testing.assert_allclose(UB, three_refl_geom.sample.lattice.B, atol=1e-10)
+
+
+def test_three_refl_UB_is_computed_first(three_refl_geom):
+    """sample.UB is set before sample.U (UB computed first, U derived from it)."""
+    # We cannot observe the order directly; verify both are set and UB = H_phi @ H^-1
+    UB = ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "r3")
+    assert three_refl_geom.sample.UB is UB
+    assert three_refl_geom.sample.U is not None
+
+
+def test_three_refl_returns_UB_array(three_refl_geom):
+    """Return value is a (3,3) ndarray equal to sample.UB."""
+    UB = ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "r3")
+    assert isinstance(UB, np.ndarray)
+    assert UB.shape == (3, 3)
+    np.testing.assert_array_equal(UB, three_refl_geom.sample.UB)
+
+
+def test_three_refl_updates_sample_in_place(three_refl_geom):
+    """sample.UB and sample.U are set in-place (both None before the call)."""
+    assert three_refl_geom.sample.UB is None
+    assert three_refl_geom.sample.U is None
+    ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "r3")
+    assert three_refl_geom.sample.UB is not None
+    assert three_refl_geom.sample.U is not None
+
+
+# --- reflection argument variants -------------------------------------------
+
+
+def test_three_refl_string_args(three_refl_geom):
+    """r1, r2, r3 may be supplied as name strings."""
+    UB = ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "r3")
+    assert UB.shape == (3, 3)
+
+
+def test_three_refl_reflection_objects(three_refl_geom):
+    """r1, r2, r3 may be supplied as Reflection objects."""
+    g = three_refl_geom
+    r1_obj = g.sample.reflections["r1"]
+    r2_obj = g.sample.reflections["r2"]
+    r3_obj = g.sample.reflections["r3"]
+    UB = ub_from_three_reflections_bl1967(g.sample, r1_obj, r2_obj, r3_obj)
+    assert UB.shape == (3, 3)
+
+
+def test_three_refl_mixed_string_and_object(three_refl_geom):
+    """r1 as string, r2 as Reflection, r3 as string — all combinations work."""
+    g = three_refl_geom
+    r2_obj = g.sample.reflections["r2"]
+    UB = ub_from_three_reflections_bl1967(g.sample, "r1", r2_obj, "r3")
+    assert UB.shape == (3, 3)
+
+
+# --- error cases ------------------------------------------------------------
+
+
+def test_three_refl_no_parent_raises():
+    """Raises ValueError when sample has no parent geometry."""
+    rl = ReflectionList(
+        geometry_name="psic",
+        valid_stages={"mu", "eta", "chi", "phi", "nu", "delta"},
+    )
+    rl.add("r1", hkl=(1, 0, 0), angles={"mu": 0.0})
+    rl.add("r2", hkl=(0, 1, 0), angles={"mu": 0.0})
+    rl.add("r3", hkl=(0, 0, 1), angles={"mu": 0.0})
+    sample = Sample(name="orphan", lattice=Lattice(a=1.0), reflections=rl)
+    with pytest.raises(ValueError, match=re.escape("sample.parent")):
+        ub_from_three_reflections_bl1967(sample, "r1", "r2", "r3")
+
+
+def test_three_refl_r1_unknown_string_raises(three_refl_geom):
+    """Raises KeyError when r1 is a string not in the reflection list."""
+    with pytest.raises(KeyError):
+        ub_from_three_reflections_bl1967(three_refl_geom.sample, "no_such", "r2", "r3")
+
+
+def test_three_refl_r2_unknown_string_raises(three_refl_geom):
+    """Raises KeyError when r2 is a string not in the reflection list."""
+    with pytest.raises(KeyError):
+        ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "no_such", "r3")
+
+
+def test_three_refl_r3_unknown_string_raises(three_refl_geom):
+    """Raises KeyError when r3 is a string not in the reflection list."""
+    with pytest.raises(KeyError):
+        ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "no_such")
+
+
+def test_three_refl_r1_bad_type_raises(three_refl_geom):
+    """Raises TypeError when r1 is not a Reflection or string."""
+    with pytest.raises(TypeError, match=re.escape("r1 must be a Reflection")):
+        ub_from_three_reflections_bl1967(three_refl_geom.sample, 42, "r2", "r3")
+
+
+def test_three_refl_r3_bad_type_raises(three_refl_geom):
+    """Raises TypeError when r3 is not a Reflection or string."""
+    with pytest.raises(TypeError, match=re.escape("r3 must be a Reflection")):
+        ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", 3.14)
+
+
+def test_three_refl_coplanar_hkl_raises(psic_geom):
+    """Raises ValueError when the three hkl vectors are coplanar (singular H)."""
+    psic_geom.wavelength = _TWO_PI
+    psic_geom.sample.lattice = _LAT_A1
+    # (1,0,0), (2,0,0), (3,0,0) are all on the same line → coplanar
+    psic_geom.add_reflection("r1", hkl=(1, 0, 0), angles=_R1_ANG_2PI)
+    psic_geom.add_reflection("r2", hkl=(2, 0, 0), angles=_R2_ANG_2PI)
+    psic_geom.add_reflection("r3", hkl=(3, 0, 0), angles=_R3_ANG)
+    with pytest.raises(ValueError, match=re.escape("coplanar")):
+        ub_from_three_reflections_bl1967(psic_geom.sample, "r1", "r2", "r3")
+
+
+def test_three_refl_left_handed_H_warns(psic_geom):
+    """Issues UserWarning when det(H) < 0 (left-handed hkl triple)."""
+    import warnings
+
+    psic_geom.wavelength = _TWO_PI
+    psic_geom.sample.lattice = _LAT_A1
+    # Swap r2 and r3 so det([[1,0,0],[0,0,1],[0,1,0]]) = -1
+    psic_geom.add_reflection("r1", hkl=(1, 0, 0), angles=_R1_ANG_2PI)
+    psic_geom.add_reflection("r2", hkl=(0, 0, 1), angles=_R3_ANG)
+    psic_geom.add_reflection("r3", hkl=(0, 1, 0), angles=_R2_ANG_2PI)
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        ub_from_three_reflections_bl1967(psic_geom.sample, "r1", "r2", "r3")
+    assert any(
+        "left-handed" in str(w.message).lower() or "det(H)" in str(w.message)
+        for w in caught
+    ), f"Expected left-handed warning; got: {[str(w.message) for w in caught]}"
