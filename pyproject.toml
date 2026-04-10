@@ -16,6 +16,18 @@ dependencies = [
     "numpy",
 ]
 
+[project.entry-points."ad_hoc_diffractometer.geometries"]
+fivec    = "ad_hoc_diffractometer.factories:fivec"
+fourch   = "ad_hoc_diffractometer.factories:fourch"
+fourcv   = "ad_hoc_diffractometer.factories:fourcv"
+kappa4ch = "ad_hoc_diffractometer.factories:kappa4ch"
+kappa4cv = "ad_hoc_diffractometer.factories:kappa4cv"
+kappa6c  = "ad_hoc_diffractometer.factories:kappa6c"
+psic     = "ad_hoc_diffractometer.factories:psic"
+s2d2     = "ad_hoc_diffractometer.factories:s2d2"
+sixc     = "ad_hoc_diffractometer.factories:sixc"
+zaxis    = "ad_hoc_diffractometer.factories:zaxis"
+
 [project.optional-dependencies]
 dev = [
     "hatch-vcs",
@@ -23,23 +35,17 @@ dev = [
     "pytest-cov",
 ]
 
-[project.entry-points."ad_hoc_diffractometer.geometries"]
-psic     = "ad_hoc_diffractometer.factories:psic"
-fourcv   = "ad_hoc_diffractometer.factories:fourcv"
-fourch   = "ad_hoc_diffractometer.factories:fourch"
-sixc     = "ad_hoc_diffractometer.factories:sixc"
-kappa4cv = "ad_hoc_diffractometer.factories:kappa4cv"
-kappa4ch = "ad_hoc_diffractometer.factories:kappa4ch"
-kappa6c  = "ad_hoc_diffractometer.factories:kappa6c"
-zaxis    = "ad_hoc_diffractometer.factories:zaxis"
-s2d2     = "ad_hoc_diffractometer.factories:s2d2"
-fivec    = "ad_hoc_diffractometer.factories:fivec"
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+]
 
-[tool.hatch.version]
-source = "vcs"
-# Require three-component SemVer tags (v0.3.0, v0.4.0, ...);
-# this intentionally ignores the legacy two-component tags v0.1 and v0.2.
-tag-pattern = "v(?P<version>[0-9]+\\.[0-9]+\\.[0-9].*)"
+[tool.coverage.run]
+branch = true
+source = ["ad_hoc_diffractometer"]
 
 [tool.hatch.build.hooks.vcs]
 version-file = "src/ad_hoc_diffractometer/_version.py"
@@ -50,6 +56,12 @@ packages = ["src/ad_hoc_diffractometer"]
 [tool.hatch.envs.default]
 features = ["dev"]
 
+[tool.hatch.version]
+source = "vcs"
+# Require three-component SemVer tags (v0.3.0, v0.4.0, ...);
+# this intentionally ignores the legacy two-component tags v0.1 and v0.2.
+tag-pattern = "v(?P<version>[0-9]+\\.[0-9]+\\.[0-9].*)"
+
 [tool.isort]
 profile = "black"
 line_length = 88
@@ -59,7 +71,7 @@ known_first_party = ["ad_hoc_diffractometer"]
 [tool.pytest.ini_options]
 pythonpath = ["tests"]
 testpaths = ["tests"]
-
+addopts = "--cov=ad_hoc_diffractometer --cov-report=term-missing"
 
 [tool.ruff]
 line-length = 88
@@ -68,6 +80,9 @@ exclude = [
     "docs/",         # documentation
     "*.ipynb",       # Jupyter notebooks
 ]
+
+[tool.ruff.format]
+# line-length is inherited from [tool.ruff] above
 
 [tool.ruff.lint]
 select = [
@@ -83,6 +98,3 @@ select = [
 ignore = [
     "E501", # line too long -- tolerate slight overruns beyond 88 chars
 ]
-
-[tool.ruff.format]
-# line-length is inherited from [tool.ruff] above

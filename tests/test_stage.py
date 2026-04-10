@@ -189,3 +189,11 @@ def test_stage_in_limits(limits, angle, expected, context):
     with context:
         s = Stage("mu", XHAT, limits=limits)
         assert s.in_limits(angle) == expected
+
+
+def test_stage_repr_with_parent():
+    """Stage.__repr__ includes the parent name when parent is set."""
+    s = Stage("chi", XHAT, role="sample", parent="omega")
+    r = repr(s)
+    assert "chi" in r
+    assert "omega" in r

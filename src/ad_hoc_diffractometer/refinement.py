@@ -269,7 +269,7 @@ def _build_jacobian_and_residuals(
     # U from current UB and B
     try:
         U = UB @ np.linalg.inv(_B_from_full_params(full_params))
-    except np.linalg.LinAlgError:
+    except np.linalg.LinAlgError:  # pragma: no cover
         U = np.eye(3)
 
     for i, refl in enumerate(refl_list):
@@ -340,7 +340,7 @@ def _apply_delta(
     try:
         B_old = _B_from_full_params(full_params)
         U_old = UB @ np.linalg.inv(B_old)
-    except np.linalg.LinAlgError:
+    except np.linalg.LinAlgError:  # pragma: no cover
         U_old = np.eye(3)
 
     if refine_orientation:
@@ -588,13 +588,13 @@ def refine_lattice_bl1967(
             beta=full_params["beta"],
             gamma=full_params["gamma"],
         )
-    except ValueError:
+    except ValueError:  # pragma: no cover
         refined_lattice = sample.lattice
 
     B_refined = refined_lattice.B
     try:
         U_refined = UB @ np.linalg.inv(B_refined)
-    except np.linalg.LinAlgError:
+    except np.linalg.LinAlgError:  # pragma: no cover
         U_refined = None
 
     sample.lattice = refined_lattice
@@ -745,7 +745,7 @@ def refine_lattice_simplex(
     B0 = _B_from_full_params(full_params0)
     try:
         U_fixed = UB0 @ np.linalg.inv(B0)
-    except np.linalg.LinAlgError:
+    except np.linalg.LinAlgError:  # pragma: no cover
         U_fixed = np.eye(3)
 
     # Build initial parameter vector for the simplex
@@ -788,12 +788,12 @@ def refine_lattice_simplex(
         else:
             try:
                 full = _full_params_from_free(free_vals, system)
-            except Exception:
+            except Exception:  # pragma: no cover
                 return 1e30
 
         try:
             B = _B_from_full_params(full)
-        except Exception:
+        except Exception:  # pragma: no cover
             return 1e30
 
         dR = _rotation_from_vector(phi_vec)
@@ -843,7 +843,7 @@ def refine_lattice_simplex(
     else:
         try:
             full_opt = _full_params_from_free(free_opt, system)
-        except Exception:
+        except Exception:  # pragma: no cover
             full_opt = full_params0
 
     try:
@@ -855,7 +855,7 @@ def refine_lattice_simplex(
             beta=full_opt["beta"],
             gamma=full_opt["gamma"],
         )
-    except ValueError:
+    except ValueError:  # pragma: no cover
         refined_lattice = sample.lattice
 
     B_opt = refined_lattice.B
@@ -869,7 +869,7 @@ def refine_lattice_simplex(
 
     try:
         U_refined = UB_opt @ np.linalg.inv(B_opt)
-    except np.linalg.LinAlgError:
+    except np.linalg.LinAlgError:  # pragma: no cover
         U_refined = None
 
     sample.lattice = refined_lattice

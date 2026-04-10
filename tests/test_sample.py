@@ -334,3 +334,126 @@ def test_sample_repr_shows_no_parent_for_standalone():
     rl = ReflectionList(geometry_name="test", valid_stages=set())
     s = Sample(name="standalone", lattice=Lattice(a=1.0), reflections=rl)
     assert "(no parent)" in repr(s)
+
+
+# ---------------------------------------------------------------------------
+# SampleDict guard branches
+# ---------------------------------------------------------------------------
+
+
+def _two_sample_geom():
+    """fourcv with 'test' (active) and 's2' samples."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    g.add_sample("s2", g.sample.lattice)
+    return g
+
+
+@pytest.mark.parametrize(
+    "op, context",
+    [
+        pytest.param(
+            "replace_active",
+            pytest.raises(ValueError, match="active"),
+            id="replace-active-sample",
+        ),
+        pytest.param(
+            "del_missing",
+            pytest.raises(KeyError),
+            id="del-missing-sample",
+        ),
+        pytest.param(
+            "clear",
+            pytest.raises(ValueError, match="clear"),
+            id="clear-not-permitted",
+        ),
+        pytest.param(
+            "pop_missing_no_default",
+            pytest.raises(KeyError),
+            id="pop-missing-no-default",
+        ),
+        pytest.param(
+            "pop_active",
+            pytest.raises(ValueError, match="active"),
+            id="pop-active",
+        ),
+    ],
+)
+def test_sampledict_guards(op, context):
+    """SampleDict enforces type and active-sample invariants."""
+    from ad_hoc_diffractometer.reflection import ReflectionList
+    from ad_hoc_diffractometer.sample import Sample as _Sample
+
+    g = _two_sample_geom()
+    with context:
+        if op == "replace_active":
+            new = _Sample(
+                name="test",
+                lattice=Lattice(a=5.0),
+                reflections=ReflectionList(geometry_name="fourcv", valid_stages=set()),
+            )
+            g.samples["test"] = new
+        elif op == "del_missing":
+            del g.samples["no_such"]
+        elif op == "clear":
+            g.samples.clear()
+        elif op == "pop_missing_no_default":
+            g.samples.pop("no_such")
+        elif op == "pop_active":
+            g.samples.pop("test")
+
+
+def test_sampledict_replace_non_active():
+    """SampleDict.__setitem__ replaces a non-active sample without error."""
+    from ad_hoc_diffractometer.reflection import ReflectionList
+    from ad_hoc_diffractometer.sample import Sample as _Sample
+
+    g = _two_sample_geom()
+    g.sample = "s2"
+    new = _Sample(
+        name="test",
+        lattice=Lattice(a=5.0),
+        reflections=ReflectionList(geometry_name="fourcv", valid_stages=set()),
+    )
+    g.samples["test"] = new
+    assert g.samples["test"].lattice.a == pytest.approx(5.0)
+
+
+def test_sampledict_pop_missing_with_default():
+    """SampleDict.pop() returns the supplied default when name is missing."""
+    g = _two_sample_geom()
+    assert g.samples.pop("no_such", "sentinel") == "sentinel"
+
+
+def test_sampledict_pop_non_active_succeeds():
+    """SampleDict.pop() removes and returns a non-active sample."""
+    g = _two_sample_geom()
+    g.sample = "s2"  # make s2 active, so 'test' is non-active
+    removed = g.samples.pop("test")
+    assert removed.name == "test"
+    assert "test" not in g.samples
+
+
+def test_sampledict_iter():
+    """SampleDict supports iteration over sample names."""
+    g = _two_sample_geom()
+    names = list(g.samples)
+    assert "test" in names
+    assert "s2" in names
+
+
+def test_sampledict_repr():
+    """SampleDict.__repr__ lists the sample names."""
+    g = _two_sample_geom()
+    r = repr(g.samples)
+    assert "test" in r
+
+
+def test_sampledict_keys_values_items():
+    """SampleDict.keys(), values(), and items() expose the underlying data."""
+    g = _two_sample_geom()
+    assert "test" in g.samples.keys()
+    assert "s2" in g.samples.keys()
+    assert all(hasattr(v, "lattice") for v in g.samples.values())
+    assert any(k == "test" for k, _ in g.samples.items())
