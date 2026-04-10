@@ -5,6 +5,8 @@ Describes a diffractometer as an ordered collection of rotary stages.
 The stacking order is encoded via the parent attribute of each Stage.
 """
 
+import builtins
+
 import numpy as np
 
 from .constants import XHAT
@@ -722,8 +724,7 @@ class AdHocDiffractometer:
         sin_psi = float(np.dot(Q_hat, np.cross(y_perp_hat, n_perp_hat)))
         return math.degrees(math.atan2(sin_psi, cos_psi))
 
-    @property
-    def wh(self) -> str:
+    def wh(self, print: bool = True) -> str:
         """
         Terse one-screen status string (the SPEC ``wh`` command).
 
@@ -732,33 +733,40 @@ class AdHocDiffractometer:
         column names.  Graceful fallback text is shown for any field
         that cannot be computed (e.g. no UB matrix or no wavelength).
 
-        Read as a property so the call site reads naturally::
-
-            print(g.wh)
+        Parameters
+        ----------
+        print : bool, optional
+            If ``True`` (default), the string is printed to stdout before
+            being returned.  Pass ``print=False`` to suppress output and
+            capture the string instead (useful in tests and logging).
 
         Returns
         -------
         str
-            Multi-line status string, ready to ``print()``.
+            Multi-line status string.
 
         Examples
         --------
         >>> import ad_hoc_diffractometer as ahd
         >>> g = ahd.fourcv()
         >>> g.wavelength = 1.5406
-        >>> print(g.wh)
+        >>> g.wh()                          # prints and returns
         H K L = not available
         Psi = not available
         Lambda = 1.5406
         <BLANKLINE>
           TwoTheta     Theta       Chi       Phi
              0.000     0.000     0.000     0.000
+        >>> out = g.wh(print=False)         # capture without printing
+        >>> "Lambda" in out
+        True
 
         References
         ----------
         Align4Pete.log — ``wh`` command outputs, 7-ID-C fourc session,
         Dec 2020.
         """
+        _print = builtins.print
         lines: list[str] = []
 
         # HKL position
@@ -789,10 +797,12 @@ class AdHocDiffractometer:
         lines.append("".join(f"{self._spec_motor_name(n):>10s}" for n in stage_names))
         lines.append("".join(f"{self._stages[n].angle:>10.3f}" for n in stage_names))
 
-        return "\n".join(lines)
+        result = "\n".join(lines)
+        if print:
+            _print(result)
+        return result
 
-    @property
-    def pa(self) -> str:
+    def pa(self, print: bool = True) -> str:
         """
         Verbose parameter listing (the SPEC ``pa`` command).
 
@@ -800,28 +810,35 @@ class AdHocDiffractometer:
         (if set), lattice constants in real and reciprocal space, the
         azimuthal reference vector, and the wavelength.
 
-        Read as a property so the call site reads naturally::
-
-            print(g.pa)
+        Parameters
+        ----------
+        print : bool, optional
+            If ``True`` (default), the string is printed to stdout before
+            being returned.  Pass ``print=False`` to suppress output and
+            capture the string instead (useful in tests and logging).
 
         Returns
         -------
         str
-            Multi-line parameter string, ready to ``print()``.
+            Multi-line parameter string.
 
         Examples
         --------
         >>> import ad_hoc_diffractometer as ahd
         >>> g = ahd.fourcv()
-        >>> print(g.pa)                     # doctest: +ELLIPSIS
+        >>> g.pa()                          # prints and returns
         Geometry: fourcv
         ...
+        >>> out = g.pa(print=False)         # capture without printing
+        >>> "Geometry" in out
+        True
 
         References
         ----------
         Align4Pete.log — ``pa`` command outputs, 7-ID-C fourc session,
         Dec 2020.
         """
+        _print = builtins.print
         lines: list[str] = []
         lines.append(f"Geometry: {self.name}")
         lines.append("")
@@ -903,10 +920,13 @@ class AdHocDiffractometer:
         lam = self.wavelength
         lines.append(f"  Lambda = {lam:g}" if lam is not None else "  Lambda = not set")
 
-        return "\n".join(lines)
+        result = "\n".join(lines)
+        if print:
+            _print(result)
+        return result
 
     # ------------------------------------------------------------------
-    # Private status helpers (used by wh and pa properties)
+    # Private status helpers (used by wh and pa methods)
     # ------------------------------------------------------------------
 
     @staticmethod
