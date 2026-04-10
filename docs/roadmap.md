@@ -485,15 +485,18 @@ Current coverage: 93% (119 uncovered lines).  ``pytest-cov`` is installed.
 
 ### 3.8d Add logging support ([#61](https://github.com/prjemian/ad_hoc_diffractometer/issues/61))
 
-- [ ] ``logging.getLogger(__name__)`` in each source module; root logger
+- [x] ``logging.getLogger(__name__)`` in every source module; root logger
       ``"ad_hoc_diffractometer"`` lets users configure all output at once
-- [ ] Default level ``WARNING`` (Python's default) — silent unless user
-      configures a handler
-- [ ] ``logger.debug()`` in ``factories`` broken-plugin skip,
-      ``refinement._nelder_mead_numpy`` non-convergence, ``geometry.wh/pa``
-      silent exception catches
-- [ ] ``logger.warning()`` alongside ``warnings.warn`` in ``orientation.py``
-- [ ] Tests via ``caplog`` fixture; contribute to 100% coverage goal (#60)
+- [x] Default level ``WARNING`` (Python's default) — silent unless user
+      configures a handler; ``warnings.warn`` retained for library-facing alerts
+- [x] ``logger.debug()`` in ``factories`` broken-plugin skip and
+      outer ``entry_points()`` failure; ``refinement._nelder_mead_numpy``
+      non-convergence; ``geometry.wh`` silent HKL and psi exception catches;
+      ``geometry.to_dict`` version-lookup failure
+- [x] ``logger.warning()`` alongside ``warnings.warn`` in
+      ``orientation.ub_from_three_reflections_bl1967`` for left-handed H
+- [x] 5 tests via ``caplog`` fixture in ``test_factories``,
+      ``test_orientation``, ``test_refinement``, and ``test_geometry``
 
 ### 3.8e Sphinx documentation ([#57](https://github.com/prjemian/ad_hoc_diffractometer/issues/57))
 

@@ -9,6 +9,13 @@ for the full issue tracker.
 
 ### Added
 
+- Logging support (#61): ``logging.getLogger(__name__)`` added to all
+  source modules; root logger ``"ad_hoc_diffractometer"`` lets users
+  configure all package output at once; silent by default (WARNING level);
+  ``logger.debug()`` at broken-plugin skip, Nelder-Mead non-convergence,
+  and wh/to_dict exception catches; ``logger.warning()`` alongside
+  ``warnings.warn`` for left-handed H in ``ub_from_three_reflections_bl1967``.
+
 - 100% test coverage enforced (#60): ``pytest-cov`` configured with
   ``fail_under = 100`` and branch coverage; missing tests distributed
   into their proper test modules (all parametrized where appropriate);

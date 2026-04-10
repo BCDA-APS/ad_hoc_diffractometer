@@ -10,7 +10,13 @@ Convention follows You (1999):
     ZHAT = lateral (to our left)
 """
 
+import logging
+
 import numpy as np
+
+logger = logging.getLogger(__name__)
+
+logger = logging.getLogger(__name__)
 
 XHAT = np.array([1.0, 0.0, 0.0])
 YHAT = np.array([0.0, 1.0, 0.0])

@@ -30,10 +30,14 @@ Typical usage::
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 
 from .lattice import Lattice
 from .reflection import ReflectionList
+
+logger = logging.getLogger(__name__)
 
 # Default sample name and lattice used when a new geometry is constructed.
 _DEFAULT_SAMPLE_NAME = "test"

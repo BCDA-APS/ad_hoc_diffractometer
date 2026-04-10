@@ -679,6 +679,24 @@ def test_simplex_branches(refine_cell, refine_orientation, refine_all, perturbed
     assert "rms" in result
 
 
+def test_nelder_mead_non_convergence_logs_debug(caplog):
+    """_nelder_mead_numpy emits a DEBUG message when it does not converge."""
+    import logging
+
+    from ad_hoc_diffractometer.refinement import _nelder_mead_numpy
+
+    with caplog.at_level(logging.DEBUG, logger="ad_hoc_diffractometer.refinement"):
+        _nelder_mead_numpy(
+            lambda x: float(np.sum(x**2)),
+            np.array([100.0, 100.0]),
+            max_iter=2,
+            tol=1e-20,
+        )
+
+    assert any("did not converge" in r.message.lower() for r in caplog.records)
+    assert any(r.levelno == logging.DEBUG for r in caplog.records)
+
+
 def test_bl1967_explicit_tol_skips_default(perturbed_geom):
     """refine_lattice_bl1967 with explicit tol= skips the 'if tol is None' branch."""
     from ad_hoc_diffractometer.refinement import refine_lattice_bl1967
