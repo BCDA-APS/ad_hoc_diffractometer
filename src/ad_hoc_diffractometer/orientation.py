@@ -3,14 +3,19 @@ orientation.py — U and UB matrix computation from orienting reflections.
 
 Functions
 ---------
-ub_identity(sample)
-    Set U = I, UB = B; return UB.  The crudest assumption.
+angles_to_phi_vector(geometry, **motor_angles)
+    Convert a set of motor angles to the scattering vector expressed in the
+    phi-axis (innermost sample-stage) frame.  This is the foundational
+    computation needed for U and UB matrix determination.
 
 ub_from_one_reflection(sample, reflection, reference_hkl, reference_stage)
     Compute a provisional U and UB from one reflection using the Rodrigues
     rotation that takes the crystal direction ``B @ reference_hkl`` to the
     lab direction given by ``reference_stage``.  Sets ``sample.U`` and
     ``sample.UB`` in-place; returns UB.
+
+ub_identity(sample)
+    Set U = I, UB = B; return UB.  The crudest assumption.
 
 Future functions (separate issues):
     ub_from_two_reflections_bl1967   — Busing & Levy 1967, eqs. 23-27  (#5)
@@ -19,6 +24,7 @@ Future functions (separate issues):
 References
 ----------
 Busing & Levy, Acta Cryst. 22, 457-464 (1967)
+You, J. Appl. Cryst. 32, 614-623 (1999)
 """
 
 from __future__ import annotations
@@ -29,27 +35,137 @@ from .rotation import rotation_matrix
 from .stage import Stage
 
 
-def ub_identity(sample) -> np.ndarray:
+def angles_to_phi_vector(geometry, **motor_angles: float) -> np.ndarray:
     """
-    Set U = I (identity) and UB = B; return UB.
+    Convert a set of motor angles to the scattering vector in the phi frame.
 
-    The crudest orientation assumption: crystal axes are aligned with the
-    lab axes.  Useful as a starting point when no reflection information
-    is available at all.
+    The "phi frame" is the coordinate system seen from the innermost sample
+    stage — the frame in which crystal reflections are expressed when
+    computing the orientation (U) matrix.
+
+    Algorithm (Busing & Levy 1967, section "The phi-axis frame"):
+
+    1. Temporarily set the supplied motor angles on their stages (preserving
+       the original values so the geometry is restored afterwards).
+    2. Compute the total sample rotation matrix ``Z`` (product of all sample
+       stage rotation matrices, floor-most first).
+    3. Compute the total detector rotation matrix ``D``.
+    4. The incident-beam unit vector in the lab frame is ``ŷ`` (longitudinal
+       direction, ``geometry.basis["longitudinal"]``).
+    5. The scattered-beam unit vector in the lab frame is ``D @ ŷ``.
+    6. The scattering vector in the lab frame is::
+
+           Q_lab = (2π / λ) * (D @ ŷ - ŷ)
+
+    7. Rotate Q_lab back through the sample stack::
+
+           Q_phi = Z⁻¹ @ Q_lab = Zᵀ @ Q_lab
+
+       (Z is orthogonal, so Z⁻¹ = Zᵀ.)
 
     Parameters
     ----------
-    sample : Sample
-        The sample whose ``U`` and ``UB`` attributes are updated in-place.
+    geometry : AdHocDiffractometer
+        The diffractometer geometry.  Must have ``wavelength`` set (not None).
+    **motor_angles : float
+        Motor angles in degrees, keyed by stage name.  All stages present in
+        the geometry may be supplied; stages not supplied keep their current
+        ``angle`` attribute.  Only sample and detector stages affect the
+        result; other stages (if any) are ignored.
 
     Returns
     -------
-    UB : numpy.ndarray, shape (3, 3)
+    Q_phi : numpy.ndarray, shape (3,)
+        Scattering vector in the phi frame, in units of Å⁻¹.
+
+    Raises
+    ------
+    KeyError
+        If a supplied stage name does not exist in the geometry.
+    ValueError
+        If ``geometry.wavelength`` is None.
+    ValueError
+        If the geometry has no sample stages.
+    ValueError
+        If the geometry has no detector stages.
+
+    Notes
+    -----
+    The function modifies stage angles temporarily and restores them
+    afterwards, even if an exception is raised.  It is therefore safe to
+    call inside a ``try`` block or from multiple threads as long as each
+    call uses a separate geometry instance.
+
+    The scattering vector Q_phi is independent of which sample stage is
+    designated the "phi" axis; it is expressed in the frame of the *last*
+    sample stage in the stacking order (the one closest to the sample).
+
+    Examples
+    --------
+    >>> import ad_hoc_diffractometer as ahd
+    >>> g = ahd.psic()
+    >>> g.wavelength = 1.5406          # Cu Kα in Å
+    >>> Q_phi = ahd.angles_to_phi_vector(
+    ...     g,
+    ...     mu=0, eta=20.97, chi=90, phi=0, nu=0, delta=41.94,
+    ... )
+    >>> Q_phi  # scattering vector for sapphire (006) in phi frame
+    array([...])
+
+    References
+    ----------
+    Busing & Levy, Acta Cryst. 22, 457-464 (1967) — phi-axis frame
+    You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry conventions
     """
-    B = sample.lattice.B
-    sample.U = np.eye(3)
-    sample.UB = B.copy()
-    return sample.UB
+    if geometry.wavelength is None:
+        raise ValueError(
+            "geometry.wavelength must be set before calling angles_to_phi_vector. "
+            "Set it with e.g. geometry.wavelength = 1.5406."
+        )
+    if not geometry.sample_stages:
+        raise ValueError(
+            f"Geometry {geometry.name!r} has no sample stages; "
+            "cannot compute a phi-frame vector."
+        )
+    if not geometry.detector_stages:
+        raise ValueError(
+            f"Geometry {geometry.name!r} has no detector stages; "
+            "cannot compute a phi-frame vector."
+        )
+
+    # Validate all supplied stage names up-front (raises KeyError for unknown)
+    for name in motor_angles:
+        geometry.stage(name)  # raises KeyError if not found
+
+    # Save current angles and apply the requested ones
+    saved: dict[str, float] = {}
+    try:
+        for name, angle in motor_angles.items():
+            saved[name] = geometry.stage(name).angle
+            geometry.set_angle(name, float(angle))
+
+        # Sample rotation matrix Z and detector rotation matrix D
+        Z = geometry.sample_rotation_matrix()
+        D = geometry.detector_rotation_matrix()
+
+    finally:
+        # Restore original angles unconditionally
+        for name, angle in saved.items():
+            geometry.set_angle(name, angle)
+
+    # Incident-beam direction: longitudinal basis vector (normalised)
+    y_hat = np.asarray(geometry.basis["longitudinal"], dtype=float)
+    y_norm = np.linalg.norm(y_hat)
+    y_hat = y_hat / y_norm
+
+    # Scattering vector in lab frame: Q_lab = (2π/λ) * (D @ ŷ - ŷ)
+    two_pi_over_lambda = 2.0 * np.pi / geometry.wavelength
+    Q_lab = two_pi_over_lambda * (D @ y_hat - y_hat)
+
+    # Rotate into phi frame: Q_phi = Z^T @ Q_lab  (Z is orthogonal)
+    Q_phi = Z.T @ Q_lab
+
+    return Q_phi
 
 
 def ub_from_one_reflection(
@@ -221,3 +337,26 @@ def ub_from_one_reflection(
     sample.U = U
     sample.UB = UB
     return UB
+
+
+def ub_identity(sample) -> np.ndarray:
+    """
+    Set U = I (identity) and UB = B; return UB.
+
+    The crudest orientation assumption: crystal axes are aligned with the
+    lab axes.  Useful as a starting point when no reflection information
+    is available at all.
+
+    Parameters
+    ----------
+    sample : Sample
+        The sample whose ``U`` and ``UB`` attributes are updated in-place.
+
+    Returns
+    -------
+    UB : numpy.ndarray, shape (3, 3)
+    """
+    B = sample.lattice.B
+    sample.U = np.eye(3)
+    sample.UB = B.copy()
+    return sample.UB
