@@ -17,6 +17,8 @@ from .display import fmt
 from .display import get_precision
 from .display import precision_atol
 from .display import set_precision
+from .factories import BASIS_BL
+from .factories import BASIS_YOU
 from .factories import GEOMETRY_ENTRY_POINT_GROUP
 from .factories import KAPPA_ALPHA_DEFAULT
 from .factories import fivec
@@ -96,11 +98,13 @@ __all__ = [
     "ub_from_two_reflections_bl1967",
     "ub_from_three_reflections_bl1967",
     # factories
+    "BASIS_BL",
+    "BASIS_YOU",
     "GEOMETRY_ENTRY_POINT_GROUP",
+    "KAPPA_ALPHA_DEFAULT",
     "list_geometries",
     "get_geometry",
     "make_geometry",
-    "KAPPA_ALPHA_DEFAULT",
     "psic",
     "fourcv",
     "fourch",
