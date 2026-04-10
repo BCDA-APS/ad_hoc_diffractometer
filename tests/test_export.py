@@ -2,12 +2,15 @@
 Unit tests for to_dict() / from_dict() serialisation (#52).
 
 Covers:
+  - Stage.to_dict() / from_dict(): name, axis, role, parent, angle, limits
   - Lattice.to_dict() / from_dict(): all six params, round-trip
   - Reflection.to_dict() / from_dict(): hkl, angles, wavelength, name
   - ReflectionList.to_dict() / from_dict(): ordering, or1/or2 preserved
   - Sample.to_dict() / from_dict(): lattice, reflections, U, UB, name
-  - AdHocDiffractometer.to_dict(): _meta keys, JSON-serialisable
-  - AdHocDiffractometer.from_dict(): full round-trip for fourcv and psic
+  - AdHocDiffractometer.to_dict(): delegates stage serialisation to Stage.to_dict();
+    _meta keys, JSON-serialisable
+  - AdHocDiffractometer.from_dict(): delegates stage construction to Stage.from_dict();
+    full round-trip for fourcv and psic
   - Round-trip invariants: name, wavelength, lattice params, reflections,
     stages (names, roles, angles, limits), active sample, U/UB, azimuthal ref
   - JSON round-trip (json.dumps → json.loads → from_dict reproduces geometry)
@@ -29,6 +32,7 @@ from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.reflection import Reflection
 from ad_hoc_diffractometer.reflection import ReflectionList
 from ad_hoc_diffractometer.sample import Sample
+from ad_hoc_diffractometer.stage import Stage
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -60,6 +64,109 @@ def _sapphire_fourcv():
     g.set_angle("omega", 20.97)
     g.set_angle("chi", 90.0)
     return g
+
+
+# ---------------------------------------------------------------------------
+# Stage
+# ---------------------------------------------------------------------------
+
+
+class TestStageSerialization:
+    @pytest.fixture
+    def stage(self):
+        s = Stage(
+            name="omega",
+            axis=np.array([0.0, 0.0, -1.0]),
+            role="sample",
+            parent=None,
+            limits=(-180.0, 180.0),
+        )
+        s.angle = 20.97
+        return s
+
+    @pytest.fixture
+    def child_stage(self):
+        s = Stage(
+            name="chi",
+            axis=np.array([0.0, 1.0, 0.0]),
+            role="sample",
+            parent="omega",
+            limits=(-90.0, 90.0),
+        )
+        s.angle = 45.0
+        return s
+
+    def test_to_dict_returns_dict(self, stage):
+        assert isinstance(stage.to_dict(), dict)
+
+    def test_to_dict_has_required_keys(self, stage):
+        d = stage.to_dict()
+        assert {"name", "axis", "role", "parent", "angle", "limits"} <= set(d.keys())
+
+    def test_to_dict_name(self, stage):
+        assert stage.to_dict()["name"] == "omega"
+
+    def test_to_dict_axis_is_list(self, stage):
+        assert isinstance(stage.to_dict()["axis"], list)
+        assert len(stage.to_dict()["axis"]) == 3
+
+    def test_to_dict_axis_values(self, stage):
+        assert stage.to_dict()["axis"] == pytest.approx([0.0, 0.0, -1.0])
+
+    def test_to_dict_role(self, stage):
+        assert stage.to_dict()["role"] == "sample"
+
+    def test_to_dict_parent_none(self, stage):
+        assert stage.to_dict()["parent"] is None
+
+    def test_to_dict_parent_name(self, child_stage):
+        assert child_stage.to_dict()["parent"] == "omega"
+
+    def test_to_dict_angle(self, stage):
+        assert stage.to_dict()["angle"] == pytest.approx(20.97)
+
+    def test_to_dict_limits(self, stage):
+        assert stage.to_dict()["limits"] == pytest.approx([-180.0, 180.0])
+
+    def test_to_dict_json_serialisable(self, stage):
+        assert json.dumps(stage.to_dict())
+
+    def test_from_dict_roundtrip_name(self, stage):
+        assert Stage.from_dict(stage.to_dict()).name == stage.name
+
+    def test_from_dict_roundtrip_axis(self, stage):
+        np.testing.assert_allclose(Stage.from_dict(stage.to_dict()).axis, stage.axis)
+
+    def test_from_dict_roundtrip_role(self, stage):
+        assert Stage.from_dict(stage.to_dict()).role == stage.role
+
+    def test_from_dict_roundtrip_parent(self, child_stage):
+        assert Stage.from_dict(child_stage.to_dict()).parent == child_stage.parent
+
+    def test_from_dict_roundtrip_angle(self, stage):
+        assert Stage.from_dict(stage.to_dict()).angle == pytest.approx(stage.angle)
+
+    def test_from_dict_roundtrip_limits(self, stage):
+        assert Stage.from_dict(stage.to_dict()).limits == pytest.approx(stage.limits)
+
+    def test_geometry_to_dict_uses_stage_to_dict(self):
+        """Each stage dict in geometry.to_dict() matches Stage.to_dict()."""
+        g = fourcv()
+        g.set_angle("omega", 20.97)
+        geo_stages = {sd["name"]: sd for sd in g.to_dict()["stages"]}
+        for name, stage_obj in g._stages.items():
+            assert geo_stages[name] == stage_obj.to_dict()
+
+    def test_geometry_from_dict_uses_stage_from_dict(self):
+        """Stages restored by AdHocDiffractometer.from_dict() match Stage.from_dict()."""
+        g = fourcv()
+        g.set_angle("chi", 45.0)
+        g2 = AdHocDiffractometer.from_dict(g.to_dict())
+        for name in g._stages:
+            assert g2._stages[name].angle == pytest.approx(g._stages[name].angle)
+            np.testing.assert_allclose(g2._stages[name].axis, g._stages[name].axis)
+            assert g2._stages[name].role == g._stages[name].role
+            assert g2._stages[name].limits == pytest.approx(g._stages[name].limits)
 
 
 # ---------------------------------------------------------------------------

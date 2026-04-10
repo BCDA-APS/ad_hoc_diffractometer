@@ -929,18 +929,7 @@ class AdHocDiffractometer:
         except Exception:  # noqa: BLE001
             _pkg_version = "unknown"
 
-        stages = []
-        for s in self._stages.values():
-            stages.append(
-                {
-                    "name": s.name,
-                    "axis": [float(x) for x in s.axis],
-                    "role": s.role,
-                    "parent": s.parent,
-                    "angle": float(s.angle),
-                    "limits": [float(s.limits[0]), float(s.limits[1])],
-                }
-            )
+        stages = [s.to_dict() for s in self._stages.values()]
 
         samples = {
             name: sample.to_dict() for name, sample in self.__samples._data.items()
@@ -1017,17 +1006,10 @@ class AdHocDiffractometer:
 
         basis = {k: np.array(v, dtype=float) for k, v in d["basis"].items()}
 
-        # Build Stage objects
+        # Build Stage objects via Stage.from_dict()
         stage_objects: dict[str, Stage] = {}
         for sd in d["stages"]:
-            s = Stage(
-                name=sd["name"],
-                axis=np.array(sd["axis"], dtype=float),
-                role=sd["role"],
-                parent=sd.get("parent"),  # still a name string at this point
-                limits=tuple(sd["limits"]),
-            )
-            s.angle = sd["angle"]
+            s = Stage.from_dict(sd)
             stage_objects[sd["name"]] = s
 
         stages_list = list(stage_objects.values())
