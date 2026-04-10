@@ -2,6 +2,7 @@
 ad_hoc_diffractometer — Multi-circle diffractometer geometry and related calculations.
 """
 
+from ._version import __version__
 from .axes import axis_from_physical
 from .axes import axis_label
 from .axes import kappa_axis
@@ -55,6 +56,8 @@ from .spec import sample_to_g1
 from .stage import Stage
 
 __all__ = [
+    # version
+    "__version__",
     # constants
     "XHAT",
     "YHAT",
