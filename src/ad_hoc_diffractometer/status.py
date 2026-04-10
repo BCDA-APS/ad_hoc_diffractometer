@@ -82,6 +82,15 @@ def wh(geometry) -> str:
 
     lines.append(f"H K L = {hkl_str}")
 
+    # --- Azimuthal angle psi ------------------------------------------------
+    psi_str = "not available"
+    try:
+        psi_val = geometry.psi()
+        psi_str = f"{psi_val:.4g}"
+    except Exception:
+        pass
+    lines.append(f"Psi = {psi_str}")
+
     # --- Wavelength ---------------------------------------------------------
     lam = geometry.wavelength
     lam_str = f"{lam:g}" if lam is not None else "not set"
@@ -212,6 +221,18 @@ def pa(geometry) -> str:
         f"    reciprocal space = {a_star:.4g} {b_star:.4g} {c_star:.4g}"
         f" / {alpha_star:.4g} {beta_star:.4g} {gamma_star:.4g}"
     )
+    lines.append("")
+
+    # --- Azimuthal reference ------------------------------------------------
+    az_ref = geometry.azimuthal_reference
+    if az_ref is not None:
+        h, k, l = az_ref  # noqa: E741
+        lines.append(
+            f"  Azimuthal Reference:  H K L = "
+            f"{_clean_zero(h):g}  {_clean_zero(k):g}  {_clean_zero(l):g}"
+        )
+    else:
+        lines.append("  Azimuthal Reference:  not set")
     lines.append("")
 
     # --- Wavelength ---------------------------------------------------------
