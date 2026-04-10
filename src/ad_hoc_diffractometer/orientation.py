@@ -14,11 +14,15 @@ ub_from_one_reflection(sample, reflection, reference_hkl, reference_stage)
     lab direction given by ``reference_stage``.  Sets ``sample.U`` and
     ``sample.UB`` in-place; returns UB.
 
+ub_from_two_reflections_bl1967(sample, r1, r2)
+    Compute U and UB from two orienting reflections using the Busing & Levy
+    (1967) algorithm (eqs. 23-27).  Sets ``sample.U`` and ``sample.UB``
+    in-place; returns UB.
+
 ub_identity(sample)
     Set U = I, UB = B; return UB.  The crudest assumption.
 
 Future functions (separate issues):
-    ub_from_two_reflections_bl1967   — Busing & Levy 1967, eqs. 23-27  (#5)
     ub_from_three_reflections_bl1967 — Busing & Levy 1967, eqs. 29-31  (#6)
 
 References
@@ -334,6 +338,248 @@ def ub_from_one_reflection(
         U = rotation_matrix(ax, np.degrees(angle_rad))
 
     UB = U @ B
+    sample.U = U
+    sample.UB = UB
+    return UB
+
+
+def _gram_schmidt_triple(v1: np.ndarray, v2: np.ndarray) -> np.ndarray:
+    """
+    Build a right-handed orthonormal 3×3 matrix from two linearly independent
+    vectors using Gram-Schmidt orthogonalisation.
+
+    The columns of the returned matrix ``T`` are::
+
+        t1 = v1 / |v1|
+        t3 = t1 × v2 / |t1 × v2|
+        t2 = t3 × t1
+
+    so that ``t1 ∥ v1``, ``t2`` lies in the plane of ``v1`` and ``v2``, and
+    ``t3`` is perpendicular to that plane.  The triple ``(t1, t2, t3)`` is
+    right-handed and orthonormal.
+
+    Parameters
+    ----------
+    v1 : numpy.ndarray, shape (3,)
+        Primary vector (must be non-zero).
+    v2 : numpy.ndarray, shape (3,)
+        Secondary vector (must not be parallel to ``v1``).
+
+    Returns
+    -------
+    T : numpy.ndarray, shape (3, 3)
+        Columns are ``[t1, t2, t3]``, forming a right-handed orthonormal basis.
+
+    Raises
+    ------
+    ValueError
+        If ``v1`` is the zero vector or ``v1`` and ``v2`` are parallel
+        (cross product is zero).
+
+    Notes
+    -----
+    This is the Gram-Schmidt construction used in Busing & Levy (1967) to
+    build the orthonormal triples ``Tc`` (crystal frame) and ``Tφ`` (phi
+    frame) for the two-reflection orientation algorithm (eqs. 23-27).
+    """
+    v1 = np.asarray(v1, dtype=float)
+    v2 = np.asarray(v2, dtype=float)
+
+    n1 = np.linalg.norm(v1)
+    if n1 < 1e-14:
+        raise ValueError(
+            "_gram_schmidt_triple: v1 is the zero vector; cannot build an "
+            "orthonormal basis."
+        )
+    t1 = v1 / n1
+
+    cross = np.cross(t1, v2)
+    n_cross = np.linalg.norm(cross)
+    if n_cross < 1e-14:
+        raise ValueError(
+            "_gram_schmidt_triple: v1 and v2 are parallel (or v2 is zero); "
+            "cannot build an orthonormal basis."
+        )
+    t3 = cross / n_cross
+    t2 = np.cross(t3, t1)
+
+    return np.column_stack([t1, t2, t3])
+
+
+def ub_from_two_reflections_bl1967(
+    sample,
+    r1=None,
+    r2=None,
+) -> np.ndarray:
+    """
+    Compute U and UB from two orienting reflections (Busing & Levy 1967, eqs. 23-27).
+
+    Given two reflections with known hkl and measured motor angles, and a
+    known lattice (B matrix), this function computes the orientation matrix U
+    and then UB = U @ B, storing both on the sample.
+
+    Algorithm (BL1967 eqs. 23-27):
+
+    1. For each reflection, call ``angles_to_phi_vector()`` to get the
+       scattering vector in the phi frame: ``u1φ``, ``u2φ``.
+    2. From hkl and the lattice B matrix: ``h1c = B @ h1``, ``h2c = B @ h2``.
+    3. Build orthonormal triple ``Tc`` in the crystal frame via Gram-Schmidt:
+       ``t1c ∥ h1c``, ``t2c`` in the plane of ``h1c`` and ``h2c``,
+       ``t3c = t1c × t2c``.
+    4. Build the matching triple ``Tφ`` in the phi frame from ``u1φ``, ``u2φ``.
+    5. Compute ``U = Tφ @ Tc.T``  (eq. 27; Tc is orthogonal so Tc⁻¹ = Tc.T).
+    6. Compute ``UB = U @ B``.
+    7. Store ``sample.U = U``, ``sample.UB = UB``; return ``UB``.
+
+    Parameters
+    ----------
+    sample : Sample
+        The sample whose ``U`` and ``UB`` attributes are updated in-place.
+        ``sample.lattice`` must be set.  ``sample.parent`` must be a geometry
+        with ``wavelength`` set (it is used to call ``angles_to_phi_vector``).
+    r1 : Reflection, str, or None
+        Primary orienting reflection.  If ``None``, defaults to
+        ``sample.reflections.orienting_reflections[0]``.
+    r2 : Reflection, str, or None
+        Secondary orienting reflection.  If ``None``, defaults to
+        ``sample.reflections.orienting_reflections[1]``.
+
+    Returns
+    -------
+    UB : numpy.ndarray, shape (3, 3)
+        Sets ``sample.U`` (first) and ``sample.UB = sample.U @ B`` in-place
+        before returning.
+
+    Raises
+    ------
+    KeyError
+        If ``r1`` or ``r2`` is a string not found in ``sample.reflections``.
+    ValueError
+        If ``r1`` or ``r2`` is ``None`` and the required orienting reflection
+        has not been designated (``setor1``/``setor2`` not called).
+    ValueError
+        If ``sample.parent`` is ``None`` (needed to call
+        ``angles_to_phi_vector``).
+    ValueError
+        If ``sample.parent.wavelength`` is ``None``.
+    ValueError
+        If the two reflections are parallel in the crystal frame (h1c and
+        h2c collinear) or in the phi frame (u1φ and u2φ collinear).
+    TypeError
+        If ``r1`` or ``r2`` is not a ``Reflection``, string, or ``None``.
+
+    Notes
+    -----
+    U is computed first (``sample.U = Tφ @ Tc.T``), then UB is derived from
+    it (``sample.UB = sample.U @ B``).
+
+    The wavelength used for ``angles_to_phi_vector`` is taken from
+    ``sample.parent.wavelength``.  If a reflection carries its own
+    ``wavelength`` attribute, that is *not* used here; the geometry's
+    wavelength governs the conversion from motor angles to Q_phi.
+
+    References
+    ----------
+    Busing & Levy, Acta Cryst. 22, 457-464 (1967), eqs. 23-27.
+
+    Examples
+    --------
+    >>> import ad_hoc_diffractometer as ahd
+    >>> g = ahd.psic()
+    >>> g.wavelength = 1.5406
+    >>> g.add_sample("sapphire", ahd.Lattice(a=4.758, c=12.991))
+    >>> g.sample = "sapphire"
+    >>> g.add_reflection("r1", hkl=(0, 0, 6),
+    ...     angles={"mu": 0, "eta": 20.97, "chi": 90, "phi": 0,
+    ...             "nu": 0, "delta": 41.94})
+    >>> g.add_reflection("r2", hkl=(1, 0, 4),
+    ...     angles={"mu": 0, "eta": 23.72, "chi": 57.04, "phi": 0,
+    ...             "nu": 0, "delta": 48.13})
+    >>> g.sample.reflections.setor1("r1")
+    >>> g.sample.reflections.setor2("r2")
+    >>> UB = ahd.ub_from_two_reflections_bl1967(g.sample)
+    """
+    from .reflection import Reflection
+
+    # --- Require a parent geometry (needed for angles_to_phi_vector) ----------
+    if sample.parent is None:
+        raise ValueError(
+            "ub_from_two_reflections_bl1967 requires sample.parent to be set "
+            "(an AdHocDiffractometer with wavelength).  Attach the sample to a "
+            "geometry before calling this function."
+        )
+    geometry = sample.parent
+
+    # --- Resolve r1 -----------------------------------------------------------
+    if r1 is None:
+        ors = sample.reflections.orienting_reflections
+        if len(ors) < 1 or ors[0] is None:
+            raise ValueError(
+                "r1 is None and no primary orienting reflection (or1) has been "
+                "designated.  Call sample.reflections.setor1() first, or pass "
+                "r1 explicitly."
+            )
+        r1 = ors[0]
+    elif isinstance(r1, str):
+        r1 = sample.reflections[r1]
+    if not isinstance(r1, Reflection):
+        raise TypeError(
+            f"r1 must be a Reflection, a name string, or None; "
+            f"got {type(r1).__name__!r}."
+        )
+
+    # --- Resolve r2 -----------------------------------------------------------
+    if r2 is None:
+        ors = sample.reflections.orienting_reflections
+        if len(ors) < 2:
+            raise ValueError(
+                "r2 is None and no secondary orienting reflection (or2) has been "
+                "designated.  Call sample.reflections.setor2() first, or pass "
+                "r2 explicitly."
+            )
+        r2 = ors[1]
+    elif isinstance(r2, str):
+        r2 = sample.reflections[r2]
+    if not isinstance(r2, Reflection):
+        raise TypeError(
+            f"r2 must be a Reflection, a name string, or None; "
+            f"got {type(r2).__name__!r}."
+        )
+
+    # --- Phi-frame scattering vectors from motor angles -----------------------
+    u1_phi = angles_to_phi_vector(geometry, **r1.angles)
+    u2_phi = angles_to_phi_vector(geometry, **r2.angles)
+
+    # --- Crystal-frame vectors from hkl and B ---------------------------------
+    B = sample.lattice.B
+    h1c = B @ np.asarray(r1.hkl, dtype=float)
+    h2c = B @ np.asarray(r2.hkl, dtype=float)
+
+    # --- Build orthonormal triples via Gram-Schmidt ---------------------------
+    # Tc: crystal frame.  t1c ∥ h1c, t2c in plane(h1c, h2c), t3c = t1c × t2c.
+    try:
+        Tc = _gram_schmidt_triple(h1c, h2c)
+    except ValueError as exc:
+        raise ValueError(
+            "The two reflections are parallel in the crystal frame "
+            f"(h1c = B @ {r1.hkl} and h2c = B @ {r2.hkl} are collinear). "
+            "Choose two reflections that are not parallel."
+        ) from exc
+
+    # Tphi: phi frame.  t1φ ∥ u1φ, t2φ in plane(u1φ, u2φ), t3φ = t1φ × t2φ.
+    try:
+        Tphi = _gram_schmidt_triple(u1_phi, u2_phi)
+    except ValueError as exc:
+        raise ValueError(
+            "The two reflections are parallel in the phi frame "
+            f"(Q_phi vectors for {r1.name!r} and {r2.name!r} are collinear). "
+            "Choose two reflections that are not parallel."
+        ) from exc
+
+    # --- BL1967 eq. 27: U = Tφ @ Tc.T  (Tc orthogonal → Tc⁻¹ = Tc.T) ------
+    U = Tphi @ Tc.T
+    UB = U @ B
+
     sample.U = U
     sample.UB = UB
     return UB
