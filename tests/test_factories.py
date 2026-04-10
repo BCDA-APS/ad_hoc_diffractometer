@@ -7,6 +7,13 @@ Covers:
   - make_geometry()
   - All geometry factory functions: psic, fourcv, fourch, sixc,
     kappa4cv, kappa4ch, kappa6c, zaxis, s2d2, fivec
+  - Entry-point extensibility (#37):
+    - GEOMETRY_ENTRY_POINT_GROUP constant
+    - All 10 built-in factories declared as entry points in pyproject.toml
+      and discoverable via importlib.metadata
+    - list_geometries() / get_geometry() load plugins via entry points
+    - Mock-based test: a simulated third-party plugin is picked up
+    - Broken plugin silently skipped
 """
 
 import re
@@ -474,3 +481,190 @@ def test_kappa_alpha_deg_matches_axis_vector(factory, alpha_deg, context):
         )  # kappa4cv/kappa4ch use BL
         expected_axis = kappa_axis(g.kappa_alpha_deg, basis=basis)
         np.testing.assert_allclose(kax, expected_axis, atol=1e-12)
+
+
+# ---------------------------------------------------------------------------
+# Entry-point extensibility (#37)
+# ---------------------------------------------------------------------------
+
+_BUILTIN_NAMES = frozenset(
+    [
+        "psic",
+        "fourcv",
+        "fourch",
+        "sixc",
+        "kappa4cv",
+        "kappa4ch",
+        "kappa6c",
+        "zaxis",
+        "s2d2",
+        "fivec",
+    ]
+)
+
+
+class TestEntryPointExtensibility:
+    """Tests for the entry-point plugin mechanism (issue #37)."""
+
+    # --- GEOMETRY_ENTRY_POINT_GROUP constant --------------------------------
+
+    def test_entry_point_group_constant_value(self):
+        """GEOMETRY_ENTRY_POINT_GROUP must be the expected string."""
+        from ad_hoc_diffractometer import GEOMETRY_ENTRY_POINT_GROUP
+
+        assert GEOMETRY_ENTRY_POINT_GROUP == "ad_hoc_diffractometer.geometries"
+
+    def test_entry_point_group_exported(self):
+        """GEOMETRY_ENTRY_POINT_GROUP must be in __all__."""
+        import ad_hoc_diffractometer as ahd
+
+        assert "GEOMETRY_ENTRY_POINT_GROUP" in ahd.__all__
+
+    # --- Built-in factories declared as entry points -----------------------
+
+    def test_all_builtins_declared_as_entry_points(self):
+        """All 10 built-in factories must appear in the installed entry points."""
+        from importlib.metadata import entry_points
+
+        from ad_hoc_diffractometer import GEOMETRY_ENTRY_POINT_GROUP
+
+        eps = entry_points(group=GEOMETRY_ENTRY_POINT_GROUP)
+        names = {ep.name for ep in eps}
+        assert _BUILTIN_NAMES <= names, (
+            f"Missing from entry points: {_BUILTIN_NAMES - names}"
+        )
+
+    def test_entry_point_loads_correct_factory(self):
+        """Each built-in entry point must load to the same callable as the module."""
+        from importlib.metadata import entry_points
+
+        import ad_hoc_diffractometer.factories as fac
+        from ad_hoc_diffractometer import GEOMETRY_ENTRY_POINT_GROUP
+
+        eps = {ep.name: ep for ep in entry_points(group=GEOMETRY_ENTRY_POINT_GROUP)}
+        for name in _BUILTIN_NAMES:
+            assert name in eps
+            loaded = eps[name].load()
+            assert loaded is getattr(fac, name), (
+                f"Entry point '{name}' loaded {loaded!r}, "
+                f"expected {getattr(fac, name)!r}"
+            )
+
+    # --- list_geometries() discovers entry points --------------------------
+
+    def test_list_geometries_contains_all_builtins(self):
+        """list_geometries() must return all 10 built-in geometry names."""
+        geoms = list_geometries()
+        assert _BUILTIN_NAMES <= set(geoms.keys()), (
+            f"Missing: {_BUILTIN_NAMES - set(geoms.keys())}"
+        )
+
+    def test_list_geometries_picks_up_plugin_via_mock(self):
+        """
+        A simulated third-party plugin installed as an entry point must appear
+        in list_geometries() after the registry is reset.
+        """
+        from unittest.mock import MagicMock
+        from unittest.mock import patch
+
+        import ad_hoc_diffractometer.factories as fac
+        from ad_hoc_diffractometer import fourcv
+
+        # Build a fake entry point that loads a trivial factory
+        fake_factory = fourcv  # reuse an existing factory as the "plugin"
+        fake_ep = MagicMock()
+        fake_ep.name = "my_plugin_geom"
+        fake_ep.load.return_value = fake_factory
+
+        # Reset the EP-loaded flag so discovery runs again
+        original_ep_loaded = fac._EP_LOADED
+        original_registry = dict(fac._GEOMETRY_REGISTRY)
+        fac._EP_LOADED = False
+
+        try:
+            with patch(
+                "ad_hoc_diffractometer.factories.entry_points",
+                return_value=[fake_ep],
+            ):
+                geoms = list_geometries()
+            assert "my_plugin_geom" in geoms
+            assert geoms["my_plugin_geom"] is fake_factory
+        finally:
+            # Restore original state
+            fac._EP_LOADED = original_ep_loaded
+            fac._GEOMETRY_REGISTRY.clear()
+            fac._GEOMETRY_REGISTRY.update(original_registry)
+
+    # --- get_geometry() discovers entry points -----------------------------
+
+    def test_get_geometry_finds_builtin_via_entry_point(self):
+        """get_geometry() must resolve all built-in names."""
+        for name in _BUILTIN_NAMES:
+            factory = get_geometry(name)
+            assert callable(factory)
+            assert factory.__name__ == name
+
+    # --- Broken plugin silently skipped ------------------------------------
+
+    def test_broken_plugin_silently_skipped(self):
+        """A plugin entry point whose load() raises must not crash list_geometries()."""
+        from unittest.mock import MagicMock
+        from unittest.mock import patch
+
+        import ad_hoc_diffractometer.factories as fac
+
+        broken_ep = MagicMock()
+        broken_ep.name = "broken_plugin"
+        broken_ep.load.side_effect = ImportError("simulated broken plugin")
+
+        original_ep_loaded = fac._EP_LOADED
+        original_registry = dict(fac._GEOMETRY_REGISTRY)
+        fac._EP_LOADED = False
+
+        try:
+            with patch(
+                "ad_hoc_diffractometer.factories.entry_points",
+                return_value=[broken_ep],
+            ):
+                geoms = list_geometries()
+            # broken plugin must not appear
+            assert "broken_plugin" not in geoms
+            # built-ins still present (registered via @register_geometry)
+            assert "psic" in geoms
+        finally:
+            fac._EP_LOADED = original_ep_loaded
+            fac._GEOMETRY_REGISTRY.clear()
+            fac._GEOMETRY_REGISTRY.update(original_registry)
+
+    # --- Plugin does not override built-in ---------------------------------
+
+    def test_plugin_cannot_override_builtin(self):
+        """A plugin named 'psic' must not overwrite the built-in psic factory."""
+        from unittest.mock import MagicMock
+        from unittest.mock import patch
+
+        import ad_hoc_diffractometer.factories as fac
+        from ad_hoc_diffractometer import fourcv
+
+        impostor_ep = MagicMock()
+        impostor_ep.name = "psic"  # same name as built-in
+        impostor_ep.load.return_value = fourcv  # but different callable
+
+        original_ep_loaded = fac._EP_LOADED
+        original_registry = dict(fac._GEOMETRY_REGISTRY)
+        fac._EP_LOADED = False
+
+        try:
+            with patch(
+                "ad_hoc_diffractometer.factories.entry_points",
+                return_value=[impostor_ep],
+            ):
+                geoms = list_geometries()
+            # The built-in psic must win — plugin cannot override it
+            import ad_hoc_diffractometer.factories as fac2
+
+            assert geoms["psic"] is fac2.psic
+        finally:
+            fac._EP_LOADED = original_ep_loaded
+            fac._GEOMETRY_REGISTRY.clear()
+            fac._GEOMETRY_REGISTRY.update(original_registry)
