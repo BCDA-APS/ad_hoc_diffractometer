@@ -727,9 +727,10 @@ class AdHocDiffractometer:
         """
         Terse one-screen status string (the SPEC ``wh`` command).
 
-        Returns the same string as ``status.wh(self)``: current H K L
-        position, azimuthal angle ψ, wavelength, and a motor-angle table
-        with SPEC-style column names.
+        Shows the current reciprocal-space position (H K L), azimuthal
+        angle ψ, wavelength, and a motor-angle table with SPEC-style
+        column names.  Graceful fallback text is shown for any field
+        that cannot be computed (e.g. no UB matrix or no wavelength).
 
         Read as a property so the call site reads naturally::
 
@@ -739,10 +740,6 @@ class AdHocDiffractometer:
         -------
         str
             Multi-line status string, ready to ``print()``.
-
-        See Also
-        --------
-        ad_hoc_diffractometer.status.wh : Module-level function (thin wrapper).
 
         Examples
         --------
@@ -756,19 +753,52 @@ class AdHocDiffractometer:
         <BLANKLINE>
           TwoTheta     Theta       Chi       Phi
              0.000     0.000     0.000     0.000
-        """
-        from .status import wh as _wh
 
-        return _wh(self)
+        References
+        ----------
+        Align4Pete.log — ``wh`` command outputs, 7-ID-C fourc session,
+        Dec 2020.
+        """
+        lines: list[str] = []
+
+        # HKL position
+        hkl_str = "not available"
+        try:
+            current_angles = {s.name: s.angle for s in self._stages.values()}
+            hkl = self.inverse(current_angles)
+            hkl_str = "  {:g}  {:g}  {:g}".format(*[self._clean_zero(v) for v in hkl])
+        except Exception:  # noqa: BLE001
+            pass
+        lines.append(f"H K L = {hkl_str}")
+
+        # Azimuthal angle ψ
+        psi_str = "not available"
+        try:
+            psi_str = f"{self.psi():.4g}"
+        except Exception:  # noqa: BLE001
+            pass
+        lines.append(f"Psi = {psi_str}")
+
+        # Wavelength
+        lam = self.wavelength
+        lines.append(f"Lambda = {lam:g}" if lam is not None else "Lambda = not set")
+
+        # Motor angle table
+        lines.append("")
+        stage_names = list(self._stages.keys())
+        lines.append("".join(f"{self._spec_motor_name(n):>10s}" for n in stage_names))
+        lines.append("".join(f"{self._stages[n].angle:>10.3f}" for n in stage_names))
+
+        return "\n".join(lines)
 
     @property
     def pa(self) -> str:
         """
         Verbose parameter listing (the SPEC ``pa`` command).
 
-        Returns the same string as ``status.pa(self)``: geometry name,
-        primary and secondary orienting reflections, lattice constants
-        in real and reciprocal space, azimuthal reference, and wavelength.
+        Shows the geometry name, the two designated orienting reflections
+        (if set), lattice constants in real and reciprocal space, the
+        azimuthal reference vector, and the wavelength.
 
         Read as a property so the call site reads naturally::
 
@@ -779,10 +809,6 @@ class AdHocDiffractometer:
         str
             Multi-line parameter string, ready to ``print()``.
 
-        See Also
-        --------
-        ad_hoc_diffractometer.status.pa : Module-level function (thin wrapper).
-
         Examples
         --------
         >>> import ad_hoc_diffractometer as ahd
@@ -790,10 +816,125 @@ class AdHocDiffractometer:
         >>> print(g.pa)                     # doctest: +ELLIPSIS
         Geometry: fourcv
         ...
-        """
-        from .status import pa as _pa
 
-        return _pa(self)
+        References
+        ----------
+        Align4Pete.log — ``pa`` command outputs, 7-ID-C fourc session,
+        Dec 2020.
+        """
+        lines: list[str] = []
+        lines.append(f"Geometry: {self.name}")
+        lines.append("")
+
+        # Orienting reflections
+        sample = self.sample
+        ors = sample.reflections.orienting_reflections
+
+        def _refl_block(label: str, refl) -> list[str]:
+            if refl is None:
+                return [f"  {label}: not set"]
+            lam_r = refl.wavelength if refl.wavelength is not None else self.wavelength
+            lam_str = f"{lam_r:g}" if lam_r is not None else "not set"
+            ang_str = "  ".join(f"{v:g}" for v in refl.angles.values())
+            ang_keys = "  ".join(refl.angles.keys())
+            h, k, l = refl.hkl  # noqa: E741
+            return [
+                f"  {label} (at lambda {lam_str}):",
+                f"    {ang_keys} = {ang_str}",
+                f"    H K L = {self._clean_zero(h):g}"
+                f"  {self._clean_zero(k):g}  {self._clean_zero(l):g}",
+            ]
+
+        or1 = ors[0] if len(ors) >= 1 else None
+        or2 = ors[1] if len(ors) >= 2 else None
+        lines.extend(_refl_block("Primary Reflection", or1))
+        lines.append("")
+        lines.extend(_refl_block("Secondary Reflection", or2))
+        lines.append("")
+
+        # Lattice constants
+        lat = sample.lattice
+        lines.append("  Lattice Constants (lengths / angles):")
+        lines.append(
+            f"      real space = {lat.a:g} {lat.b:g} {lat.c:g}"
+            f" / {lat.alpha:g} {lat.beta:g} {lat.gamma:g}"
+        )
+
+        rvecs = lat.reciprocal_lattice_vectors
+        r1, r2, r3 = (
+            np.asarray(rvecs[0]),
+            np.asarray(rvecs[1]),
+            np.asarray(rvecs[2]),
+        )
+        a_star = float(np.linalg.norm(r1))
+        b_star = float(np.linalg.norm(r2))
+        c_star = float(np.linalg.norm(r3))
+
+        def _ang(u, v):
+            import math as _math
+
+            cos_a = float(
+                np.clip(
+                    np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v)), -1.0, 1.0
+                )
+            )
+            return _math.degrees(_math.acos(cos_a))
+
+        lines.append(
+            f"    reciprocal space = {a_star:.4g} {b_star:.4g} {c_star:.4g}"
+            f" / {_ang(r2, r3):.4g} {_ang(r1, r3):.4g} {_ang(r1, r2):.4g}"
+        )
+        lines.append("")
+
+        # Azimuthal reference
+        az_ref = self.azimuthal_reference
+        if az_ref is not None:
+            h, k, l = az_ref  # noqa: E741
+            lines.append(
+                f"  Azimuthal Reference:  H K L = "
+                f"{self._clean_zero(h):g}  {self._clean_zero(k):g}"
+                f"  {self._clean_zero(l):g}"
+            )
+        else:
+            lines.append("  Azimuthal Reference:  not set")
+        lines.append("")
+
+        # Wavelength
+        lam = self.wavelength
+        lines.append(f"  Lambda = {lam:g}" if lam is not None else "  Lambda = not set")
+
+        return "\n".join(lines)
+
+    # ------------------------------------------------------------------
+    # Private status helpers (used by wh and pa properties)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _clean_zero(v: float, atol: float = 1e-10) -> float:
+        """Return 0.0 if ``abs(v) < atol``, else ``v``.
+
+        Prevents ``-0.0`` or floating-point noise like ``1e-16`` from
+        appearing in status output.
+        """
+        return 0.0 if abs(v) < atol else v
+
+    @staticmethod
+    def _spec_motor_name(name: str) -> str:
+        """Map internal stage names to SPEC-style column headers.
+
+        Unknown names pass through unchanged.
+        """
+        _MAP = {
+            "two_theta": "TwoTheta",
+            "omega": "Theta",
+            "chi": "Chi",
+            "phi": "Phi",
+            "mu": "Mu",
+            "eta": "Eta",
+            "nu": "Nu",
+            "delta": "Delta",
+        }
+        return _MAP.get(name, name)
 
     def sample_rotation_matrix(self) -> np.ndarray:
         """

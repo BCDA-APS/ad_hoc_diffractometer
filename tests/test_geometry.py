@@ -11,6 +11,9 @@ Covers:
   - azimuthal_reference property: storage, validation, default None
   - psi() method: psi=0 when n in scattering plane, psi=90 when n perp,
     uses current angles when called with no args, error cases
+  - wh property: @property descriptor, str output, content, graceful fallbacks
+  - pa property: @property descriptor, str output, content, graceful fallbacks
+  - _spec_motor_name static helper: SPEC column-name mapping
 """
 
 import math as _math
@@ -928,54 +931,204 @@ def test_psi_n_parallel_to_q_raises():
 
 
 def test_psi_pa_shows_azimuthal_reference():
-    """pa() output includes the azimuthal reference hkl when set."""
+    """pa property output includes the azimuthal reference hkl when set."""
     from ad_hoc_diffractometer import fourcv
-    from ad_hoc_diffractometer.status import pa
 
     g = fourcv()
     g.wavelength = 1.5406
     g.azimuthal_reference = (0, 0, 1)
-    out = pa(g)
-    assert "Azimuthal Reference" in out
-    assert "0  0  1" in out
+    assert "Azimuthal Reference" in g.pa
+    assert "0  0  1" in g.pa
 
 
 def test_psi_pa_shows_not_set_when_none():
-    """pa() shows 'not set' for azimuthal reference when not configured."""
+    """pa property shows 'not set' for azimuthal reference when not configured."""
     from ad_hoc_diffractometer import fourcv
-    from ad_hoc_diffractometer.status import pa
 
     g = fourcv()
     g.wavelength = 1.5406
-    out = pa(g)
-    assert "not set" in out
+    assert "not set" in g.pa
 
 
 def test_psi_wh_shows_psi_when_available():
-    """wh() includes a Psi line when psi can be computed."""
-    from ad_hoc_diffractometer.status import wh
-
+    """wh property includes a Psi line when psi can be computed."""
     g = _fourcv_identity()
     g.set_angle("omega", 30.0)
     g.set_angle("chi", 0.0)
     g.set_angle("phi", 0.0)
     g.set_angle("two_theta", 60.0)
-    out = wh(g)
-    assert "Psi" in out
+    assert "Psi" in g.wh
 
 
 def test_psi_wh_shows_not_available_when_no_reference():
-    """wh() shows 'not available' for Psi when reference is not set."""
+    """wh property shows 'not available' for Psi when reference is not set."""
     from ad_hoc_diffractometer import Lattice
     from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
-    from ad_hoc_diffractometer.status import wh
 
     g = fourcv()
     g.wavelength = 2 * _math.pi
     g.sample.lattice = Lattice(a=1.0)
     ub_identity(g.sample)
     # No azimuthal_reference set
-    out = wh(g)
-    assert "Psi" in out
-    assert "not available" in out
+    assert "Psi" in g.wh
+    assert "not available" in g.wh
+
+
+# ---------------------------------------------------------------------------
+# _spec_motor_name static helper
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "internal,expected",
+    [
+        pytest.param("two_theta", "TwoTheta", id="two_theta"),
+        pytest.param("omega", "Theta", id="omega"),
+        pytest.param("chi", "Chi", id="chi"),
+        pytest.param("phi", "Phi", id="phi"),
+        pytest.param("mu", "Mu", id="mu"),
+        pytest.param("eta", "Eta", id="eta"),
+        pytest.param("nu", "Nu", id="nu"),
+        pytest.param("delta", "Delta", id="delta"),
+        pytest.param("unknown_stage", "unknown_stage", id="unknown"),
+    ],
+)
+def test_spec_motor_name(internal, expected):
+    """_spec_motor_name is a static method on AdHocDiffractometer."""
+    assert AdHocDiffractometer._spec_motor_name(internal) == expected
+
+
+# ---------------------------------------------------------------------------
+# wh and pa properties
+# ---------------------------------------------------------------------------
+
+
+class TestWhProperty:
+    """Tests for AdHocDiffractometer.wh — all via the property, no imports."""
+
+    def test_wh_is_property_descriptor(self):
+        assert isinstance(AdHocDiffractometer.wh, property)
+
+    def test_wh_returns_str(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        assert isinstance(g.wh, str)
+
+    def test_wh_contains_hkl(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        assert "H K L" in g.wh
+
+    def test_wh_contains_lambda(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        assert "1.5406" in g.wh
+
+    def test_wh_contains_motor_table(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        out = g.wh
+        assert "TwoTheta" in out
+        assert "Theta" in out
+
+    def test_wh_graceful_no_ub(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        assert "not available" in g.wh
+
+    def test_wh_graceful_no_wavelength(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        assert "H K L" in g.wh
+        assert "Lambda" in g.wh
+
+    def test_wh_not_callable(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        assert not callable(g.wh)
+
+    def test_wh_psic_stage_names(self):
+        from ad_hoc_diffractometer import psic
+
+        g = psic()
+        g.wavelength = 1.5406
+        out = g.wh
+        assert "Mu" in out
+        assert "Eta" in out
+        assert "Nu" in out
+        assert "Delta" in out
+
+
+class TestPaProperty:
+    """Tests for AdHocDiffractometer.pa — all via the property, no imports."""
+
+    def test_pa_is_property_descriptor(self):
+        assert isinstance(AdHocDiffractometer.pa, property)
+
+    def test_pa_returns_str(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        assert isinstance(g.pa, str)
+
+    def test_pa_contains_geometry_name(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        assert "fourcv" in g.pa
+
+    def test_pa_contains_lattice_section(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        assert "Lattice" in g.pa
+
+    def test_pa_contains_wavelength(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        assert "1.5406" in g.pa
+
+    def test_pa_no_reflections_shows_not_set(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        g.wavelength = 1.5406
+        assert "not set" in g.pa
+
+    def test_pa_graceful_no_wavelength(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        assert "fourcv" in g.pa
+        assert "Lattice" in g.pa
+
+    def test_pa_not_callable(self):
+        from ad_hoc_diffractometer import fourcv
+
+        g = fourcv()
+        assert not callable(g.pa)
+
+    def test_pa_psic_geometry_name(self):
+        from ad_hoc_diffractometer import psic
+
+        g = psic()
+        g.wavelength = 1.5406
+        assert "psic" in g.pa
