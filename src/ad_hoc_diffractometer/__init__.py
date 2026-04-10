@@ -40,6 +40,10 @@ from .lattice import Lattice
 from .lattice import b_matrix
 from .lattice import lattice_vectors
 from .lattice import reciprocal_vectors
+from .mode import BisectingMode
+from .mode import DiffractionMode
+from .mode import FixedAngleMode
+from .mode import ModeDict
 from .orientation import angles_to_phi_vector
 from .orientation import ub_from_one_reflection
 from .orientation import ub_from_three_reflections_bl1967
@@ -91,6 +95,11 @@ __all__ = [
     "ReflectionList",
     "Sample",
     "SampleDict",
+    # modes
+    "DiffractionMode",
+    "FixedAngleMode",
+    "BisectingMode",
+    "ModeDict",
     # orientation
     "angles_to_phi_vector",
     "ub_identity",

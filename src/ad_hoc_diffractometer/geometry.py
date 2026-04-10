@@ -13,6 +13,8 @@ import numpy as np
 from .constants import XHAT
 from .constants import YHAT
 from .constants import ZHAT
+from .mode import DiffractionMode
+from .mode import ModeDict
 from .reflection import Reflection
 from .reflection import ReflectionList
 from .sample import _DEFAULT_LATTICE
@@ -69,6 +71,19 @@ class AdHocDiffractometer:
         Azimuthal reference direction as Miller indices (h, k, l).  Used
         by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)
         means no reference is set.  Must be a non-zero vector.
+    modes : dict[str, DiffractionMode] or ModeDict or None, optional
+        Named diffraction modes available for this geometry.  Keys are
+        mode names (str); values are :class:`~mode.DiffractionMode`
+        instances.  ``None`` (default) means no modes are declared.
+    default_mode : str or None, optional
+        Name of the mode that is active at construction time.  Must be a
+        key of ``modes`` if both are supplied.  ``None`` (default) means no
+        active mode is set (``mode_name`` returns ``None``).
+    cut_points : dict[str, float] or None, optional
+        Geometry-level SPEC #G4 cut-points per stage name.  These are the
+        default cut-points when no mode-level cut-point overrides them.
+        A cut-point C for stage X means the returned angle lies in
+        ``[C, C + 360°)``.  ``None`` is equivalent to an empty dict.
 
     Attributes
     ----------
@@ -82,6 +97,12 @@ class AdHocDiffractometer:
         Kappa tilt angle in degrees, or None for non-kappa geometries.
     azimuthal_reference : tuple of float or None
         Azimuthal reference vector (h, k, l), or None if not set.
+    modes : ModeDict
+        The collection of named modes.  Empty if none were supplied.
+    mode_name : str or None
+        Name of the currently active mode, or ``None`` if no mode is set.
+    cut_points : dict[str, float]
+        Geometry-level SPEC #G4 cut-points per stage; mirrors SPEC #G4.
     """
 
     DEFAULT_BASIS = {
@@ -99,6 +120,9 @@ class AdHocDiffractometer:
         wavelength: float | None = None,
         kappa_alpha_deg: float | None = None,
         azimuthal_reference: tuple[float, float, float] | None = None,
+        modes: dict | ModeDict | None = None,
+        default_mode: str | None = None,
+        cut_points: dict[str, float] | None = None,
     ):
         self.name = name
         self.description = description
@@ -106,6 +130,24 @@ class AdHocDiffractometer:
         self.wavelength = wavelength  # validated via property setter
         self.kappa_alpha_deg = kappa_alpha_deg
         self.azimuthal_reference = azimuthal_reference  # validated via property setter
+
+        # Diffraction modes
+        if isinstance(modes, ModeDict):
+            self._modes = modes
+        else:
+            self._modes = ModeDict(modes)  # accepts None or plain dict
+
+        # Validate and set the active mode name
+        if default_mode is not None and default_mode not in self._modes:
+            available = sorted(self._modes.keys())
+            raise ValueError(
+                f"default_mode {default_mode!r} is not in the modes dict. "
+                f"Available modes: {available}."
+            )
+        self._mode_name: str | None = default_mode
+
+        # Geometry-level cut-points (SPEC #G4)
+        self.cut_points: dict[str, float] = dict(cut_points or {})
 
         # Validate basis vectors
         self._check_basis()
@@ -335,6 +377,70 @@ class AdHocDiffractometer:
                 "azimuthal_reference must be a non-zero vector; (0, 0, 0) is not allowed."
             )
         self._azimuthal_reference = (h, k, l)
+
+    # ------------------------------------------------------------------
+    # Diffraction modes
+    # ------------------------------------------------------------------
+
+    @property
+    def modes(self) -> ModeDict:
+        """
+        The collection of named diffraction modes for this geometry.
+
+        A ``ModeDict`` mapping mode name (str) to
+        :class:`~mode.DiffractionMode` instance.  Empty when no modes
+        have been declared.
+
+        Returns
+        -------
+        ModeDict
+        """
+        return self._modes
+
+    @property
+    def mode_name(self) -> str | None:
+        """
+        Name of the currently active diffraction mode, or ``None``.
+
+        Setting this property switches the active mode.  The name must
+        be a key of :attr:`modes`.
+
+        Returns
+        -------
+        str or None
+
+        Raises
+        ------
+        ValueError
+            If the supplied name is not in :attr:`modes`.
+        """
+        return self._mode_name
+
+    @mode_name.setter
+    def mode_name(self, name: str | None) -> None:
+        if name is not None and name not in self._modes:
+            available = sorted(self._modes.keys())
+            raise ValueError(
+                f"Mode {name!r} is not available in this geometry. "
+                f"Available modes: {available}."
+            )
+        self._mode_name = name
+
+    @property
+    def mode(self) -> DiffractionMode | None:
+        """
+        The currently active :class:`~mode.DiffractionMode`, or ``None``.
+
+        Equivalent to ``self.modes[self.mode_name]`` when a mode is
+        active; ``None`` when :attr:`mode_name` is ``None``.
+
+        Returns
+        -------
+        DiffractionMode or None
+        """
+        if self._mode_name is None:
+            return None
+        return self._modes[self._mode_name]
 
     # ------------------------------------------------------------------
     # Public interface
@@ -1033,6 +1139,82 @@ class AdHocDiffractometer:
     # Serialisation
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _mode_to_dict(mode: "DiffractionMode") -> dict:
+        """
+        Serialise a :class:`~mode.DiffractionMode` to a JSON-serialisable dict.
+
+        The ``"type"`` key records the class name so that :meth:`_mode_from_dict`
+        can reconstruct the correct subclass.  Currently supports
+        ``FixedAngleMode`` and ``BisectingMode``; other subclasses are
+        serialised with their class name and common fields only (they will
+        be reconstructed as the base type on round-trip, which is a no-op
+        for the abstract base class — callers should not round-trip custom
+        subclasses through ``to_dict`` / ``from_dict``).
+        """
+        from .mode import BisectingMode
+        from .mode import FixedAngleMode
+
+        d: dict = {
+            "type": type(mode).__name__,
+            "frozen_angles": dict(mode.frozen_angles),
+            "cut_points": dict(mode.cut_points),
+        }
+        if isinstance(mode, FixedAngleMode):
+            d["stage"] = mode._stage
+            d["value"] = mode._value
+        elif isinstance(mode, BisectingMode):  # pragma: no branch
+            d["sample_stage"] = mode.sample_stage
+            d["detector_stage"] = mode.detector_stage
+        return d
+
+    @staticmethod
+    def _mode_from_dict(d: dict) -> "DiffractionMode":
+        """
+        Reconstruct a :class:`~mode.DiffractionMode` from a dict produced by
+        :meth:`_mode_to_dict`.
+
+        Unknown ``"type"`` values fall back to reconstructing a plain
+        :class:`~mode.DiffractionMode`-compatible object; practically, an
+        unrecognised type is silently skipped and a ``FixedAngleMode`` with
+        no stage is not valid.  In practice this code path is unreachable
+        from the built-in types.
+        """
+        from .mode import BisectingMode
+        from .mode import DiffractionMode
+        from .mode import FixedAngleMode
+
+        type_name = d.get("type", "")
+        frozen = d.get("frozen_angles", {})
+        cuts = d.get("cut_points", {})
+
+        if type_name == "FixedAngleMode":
+            return FixedAngleMode(
+                stage=d["stage"],
+                value=d["value"],
+                cut_points=cuts or None,
+            )
+        if type_name == "BisectingMode":
+            return BisectingMode(
+                sample_stage=d["sample_stage"],
+                detector_stage=d["detector_stage"],
+                frozen_angles=frozen or None,
+                cut_points=cuts or None,
+            )
+        # Unknown type — reconstruct as a minimal anonymous subclass so the
+        # round-trip does not crash, preserving frozen_angles and cut_points.
+        # (This branch is not exercised by built-in types — pragma: no cover)
+
+        class _UnknownMode(DiffractionMode):  # pragma: no cover
+            @property
+            def constrained_stages(self) -> list[str]:
+                return list(self.frozen_angles.keys())
+
+        obj = _UnknownMode(  # pragma: no cover
+            frozen_angles=frozen or None, cut_points=cuts or None
+        )
+        return obj  # pragma: no cover
+
     def to_dict(self) -> dict:
         """
         Export the complete diffractometer configuration as a
@@ -1100,6 +1282,11 @@ class AdHocDiffractometer:
             name: sample.to_dict() for name, sample in self.__samples._data.items()
         }
 
+        # Serialise modes: each mode records its type name and constructor fields.
+        modes_dict = {}
+        for mode_name, mode_obj in self._modes.items():
+            modes_dict[mode_name] = self._mode_to_dict(mode_obj)
+
         return {
             "_meta": {
                 "software": "ad_hoc_diffractometer",
@@ -1119,6 +1306,9 @@ class AdHocDiffractometer:
             "stages": stages,
             "active_sample": self._active_ref[0],
             "samples": samples,
+            "modes": modes_dict,
+            "mode_name": self._mode_name,
+            "cut_points": dict(self.cut_points),
         }
 
     @classmethod
@@ -1179,6 +1369,12 @@ class AdHocDiffractometer:
 
         stages_list = list(stage_objects.values())
 
+        # Restore modes
+        raw_modes = d.get("modes", {})
+        restored_modes: dict[str, DiffractionMode] = {}
+        for mname, mdict in raw_modes.items():
+            restored_modes[mname] = cls._mode_from_dict(mdict)
+
         geom = cls(
             name=d["name"],
             stages=stages_list,
@@ -1187,6 +1383,9 @@ class AdHocDiffractometer:
             wavelength=d.get("wavelength"),
             kappa_alpha_deg=d.get("kappa_alpha_deg"),
             azimuthal_reference=d.get("azimuthal_reference"),
+            modes=restored_modes if restored_modes else None,
+            default_mode=d.get("mode_name"),
+            cut_points=d.get("cut_points"),
         )
 
         # Restore samples.
