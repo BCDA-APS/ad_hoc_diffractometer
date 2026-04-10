@@ -5,6 +5,52 @@ for planned future work and
 [GitHub Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues)
 for the full issue tracker.
 
+## Release v0.2
+
+Released 2026-04-10.
+
+### Added
+
+- `Reflection` / `ReflectionList` classes: named reflections with hkl,
+  motor angles, and wavelength; `setor1()` / `setor2()` designation;
+  angle-key validation against geometry stages (#7)
+- `Sample` / `SampleDict` classes: named samples with lattice, reflection
+  list, U and UB matrices; active-sample guard on `SampleDict` (#25)
+- Tolerance-aware `__eq__` for `Lattice` and `Reflection` (#29)
+- `orientation.py` — UB matrix computation module:
+  - `angles_to_phi_vector()`: motor angles → Q in the phi frame (#4)
+  - `ub_identity()`: set U = I, UB = B
+  - `ub_from_one_reflection()`: provisional UB from one reflection (#31)
+  - `ub_from_two_reflections_bl1967()`: BL1967 eqs. 23-27 (#5)
+  - `ub_from_three_reflections_bl1967()`: BL1967 eqs. 29-31 (#6)
+- `AdHocDiffractometer.inverse()`: motor angles → (h, k, l) (#34)
+- `Sample.parent`: back-reference from sample to geometry (#31)
+- `spec.py` — SPEC fourc `#G1` line support (#26):
+  - `FourcG1` named-tuple; `parse_fourc_g1()`; `emit_fourc_g1()`
+  - `g1_to_sample()`: populate geometry from a `#G1` line
+  - `sample_to_g1()`: emit current state as a `#G1` line
+  - Verified against three historical lines from Align4Pete.spec
+- `refinement.py` — lattice and orientation refinement (#32, #33):
+  - `refine_lattice_bl1967()`: iterative least-squares (BL1967
+    §Refinement); finite-difference Jacobian; no scipy required
+  - `refine_lattice_simplex()`: Nelder-Mead derivative-free minimisation;
+    uses scipy when available, pure-numpy fallback otherwise
+  - `refine_all=False` (default): refines only the free parameters for
+    the current crystal system, enforcing symmetry constraints at every
+    iteration; `refine_all=True` treats all six parameters as independent
+- `status.py` — SPEC-style status commands (#38):
+  - `wh(geometry)`: terse position report — current HKL, λ, motor table
+  - `pa(geometry)`: verbose parameters — geometry, reflections, lattice
+    constants (real + reciprocal), λ; modelled on Align4Pete.log output
+
+### Changed
+
+- `AdHocDiffractometer` now holds a `SampleDict` (`.samples`) and an
+  active-sample property (`.sample`), replacing the earlier single-sample
+  design
+- All new public symbols exported from `__init__.py` and listed in
+  `__all__`
+
 ## Release v0.1
 
 Released 2026-04-09.
