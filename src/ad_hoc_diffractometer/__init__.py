@@ -53,8 +53,6 @@ from .spec import g1_to_sample
 from .spec import parse_fourc_g1
 from .spec import sample_to_g1
 from .stage import Stage
-from .status import pa
-from .status import wh
 
 __all__ = [
     # constants
@@ -119,7 +117,4 @@ __all__ = [
     "emit_fourc_g1",
     "g1_to_sample",
     "sample_to_g1",
-    # status
-    "wh",
-    "pa",
 ]
