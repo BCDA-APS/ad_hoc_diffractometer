@@ -456,6 +456,71 @@ class AdHocDiffractometer:
             wavelength=wl,
         )
 
+    def inverse(self, angles: dict[str, float]) -> tuple[float, float, float]:
+        """
+        Convert a set of motor angles to Miller indices (h, k, l).
+
+        This is the *inverse* diffraction calculation: given where the
+        diffractometer motors are pointing, compute the reciprocal-lattice
+        point being measured.
+
+        Algorithm:
+
+        1. Compute ``Q_phi`` from the motor angles via
+           :func:`angles_to_phi_vector`.
+        2. Solve ``UB @ hkl = Q_phi`` for ``hkl``, i.e.
+           ``hkl = UB⁻¹ @ Q_phi``.
+
+        Parameters
+        ----------
+        angles : dict[str, float]
+            Motor angles in degrees, keyed by stage name.  All stages
+            present in the geometry may be supplied; stages not supplied
+            keep their current ``angle`` attribute.
+
+        Returns
+        -------
+        hkl : tuple of float
+            Miller indices ``(h, k, l)`` corresponding to the supplied
+            motor angles.
+
+        Raises
+        ------
+        KeyError
+            If a supplied stage name does not exist in the geometry.
+        ValueError
+            If ``self.wavelength`` is None.
+        ValueError
+            If the active sample has no UB matrix set
+            (``sample.UB is None``).
+        numpy.linalg.LinAlgError
+            If the UB matrix is singular and cannot be inverted.
+
+        Examples
+        --------
+        >>> import ad_hoc_diffractometer as ahd
+        >>> g = ahd.psic()
+        >>> g.wavelength = 1.5406
+        >>> ahd.ub_identity(g.sample)          # set UB = B (cubic a=1)
+        >>> hkl = g.inverse(
+        ...     {"mu": 0, "eta": 20.97, "chi": 90, "phi": 0,
+        ...      "nu": 0, "delta": 41.94}
+        ... )
+        """
+        from .orientation import angles_to_phi_vector
+
+        sample = self.sample
+        if sample.UB is None:
+            raise ValueError(
+                f"Sample {sample.name!r} has no UB matrix. "
+                "Set one with ub_identity(), ub_from_one_reflection(), or "
+                "assign sample.UB directly."
+            )
+
+        Q_phi = angles_to_phi_vector(self, **angles)
+        hkl = np.linalg.solve(sample.UB, Q_phi)
+        return (float(hkl[0]), float(hkl[1]), float(hkl[2]))
+
     def sample_rotation_matrix(self) -> np.ndarray:
         """
         Compute the total sample rotation matrix Z = R_floor * ... * R_top.
