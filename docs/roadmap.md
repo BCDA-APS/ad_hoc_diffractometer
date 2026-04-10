@@ -87,11 +87,11 @@ be implemented first.
 
 ### 2.0 Motor-angle-to-phi-frame conversion ([#4](https://github.com/prjemian/ad_hoc_diffractometer/issues/4))
 
-- [ ] Function `angles_to_phi_vector(geometry, hkl_or_q, **motor_angles)`
+- [x] Function `angles_to_phi_vector(geometry, **motor_angles)`
       that computes the scattering vector in the phi-axis frame from a set
       of motor angles
-- [ ] This is the missing link needed for U and UB computation
-- [ ] Reference: Busing & Levy (1967), You (1999)
+- [x] This is the missing link needed for U and UB computation
+- [x] Reference: Busing & Levy (1967), You (1999)
 
 ### 2.1 `ub_from_two_reflections_bl1967` (BL1967 eqs. 23-27) ([#5](https://github.com/prjemian/ad_hoc_diffractometer/issues/5))
 
