@@ -25,6 +25,12 @@ kappa6c, zaxis, s2d2, fivec) are also declared as entry points in the
 package's own ``pyproject.toml`` under the same group, so they are
 discoverable by any code that inspects installed entry points.
 
+**Geometry names must be globally unique.**  If an entry-point name
+duplicates an already-registered name (whether a built-in or a
+previously loaded plugin), a ``ValueError`` is raised at discovery time.
+This prevents silent shadowing: an external package cannot overwrite
+``fourcv``, ``psic``, or any other registered geometry.
+
 Writing a plugin factory
 ------------------------
 Each factory accepts an optional ``basis`` keyword argument (defaulting to
@@ -177,9 +183,22 @@ def _load_entry_point_geometries() -> None:
     third-party plugins that are installed but were not decorated with
     ``@register_geometry``.
 
-    If loading a particular entry point raises an exception (e.g. the
-    plugin package is broken), that entry point is silently skipped so
-    that the rest of the registry is unaffected.
+    Each geometry name must be unique across all installed packages.  If
+    an entry-point name collides with an already-registered name (whether
+    a built-in or a previously loaded plugin), a ``ValueError`` is raised
+    identifying the conflicting name and its source.  This prevents silent
+    shadowing of built-in geometries and ambiguous duplicate registrations.
+
+    If loading a particular entry point raises an exception *other than* a
+    name collision (e.g. the plugin package is broken or missing), that
+    entry point is silently skipped so that the rest of the registry is
+    unaffected.
+
+    Raises
+    ------
+    ValueError
+        If an entry-point name duplicates an already-registered geometry
+        name.
     """
     global _EP_LOADED  # noqa: PLW0603
     if _EP_LOADED:
@@ -189,12 +208,29 @@ def _load_entry_point_geometries() -> None:
     try:
         eps = entry_points(group=GEOMETRY_ENTRY_POINT_GROUP)
         for ep in eps:
-            if ep.name not in _GEOMETRY_REGISTRY:
-                try:
-                    factory = ep.load()
-                    _GEOMETRY_REGISTRY[ep.name] = factory
-                except Exception as exc:  # noqa: BLE001
-                    logger.debug("Skipping broken entry point %r: %s", ep.name, exc)
+            try:
+                factory = ep.load()
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("Skipping broken entry point %r: %s", ep.name, exc)
+                continue
+            if ep.name in _GEOMETRY_REGISTRY:
+                existing = _GEOMETRY_REGISTRY[ep.name]
+                if existing is factory:
+                    # Same callable re-declared via entry point (e.g. a built-in
+                    # that is both @register_geometry'd and listed in pyproject.toml).
+                    # This is not a conflict — skip silently.
+                    continue
+                raise ValueError(
+                    f"Geometry name {ep.name!r} is already registered. "
+                    f"Each geometry name must be unique across all installed "
+                    f"packages. The entry point {ep.name!r} from {ep.value!r} "
+                    f"conflicts with the existing registration "
+                    f"{existing!r}. "
+                    f"Rename the geometry in your package to resolve this conflict."
+                )
+            _GEOMETRY_REGISTRY[ep.name] = factory
+    except ValueError:
+        raise
     except Exception as exc:  # noqa: BLE001
         logger.debug("entry_points() failed; no plugins loaded: %s", exc)
 
