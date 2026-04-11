@@ -1474,9 +1474,6 @@ def test_detector_offset_invalid_type_raises():
         g.detector_offset = "bad"
 
 
-# Serialisation round-trips
-
-
 def test_detector_distance_round_trip():
     """detector_distance survives to_dict / from_dict."""
     import json
@@ -1542,3 +1539,171 @@ def test_detector_none_round_trip():
     assert g2.detector_distance is None
     assert g2.detector_tilt is None
     assert g2.detector_offset is None
+
+
+# ---------------------------------------------------------------------------
+# Diffractometer inclination (#15)
+# ---------------------------------------------------------------------------
+
+
+def test_inclination_matrix_default_identity():
+    """inclination_matrix is the 3×3 identity by default."""
+    import numpy as np
+
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    np.testing.assert_array_equal(g.inclination_matrix, np.eye(3))
+
+
+def test_inclination_matrix_set_valid():
+    """A valid rotation matrix can be assigned to inclination_matrix."""
+    import numpy as np
+
+    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer import rotation_matrix
+
+    g = psic()
+    R = rotation_matrix(np.array([0.0, 0.0, 1.0]), 5.0)
+    g.inclination_matrix = R
+    np.testing.assert_allclose(g.inclination_matrix, R, atol=1e-12)
+
+
+def test_inclination_matrix_wrong_shape_raises():
+    """inclination_matrix rejects non-(3,3) arrays."""
+    import re
+
+    import numpy as np
+
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    with pytest.raises(ValueError, match=re.escape("(3, 3)")):
+        g.inclination_matrix = np.eye(2)
+
+
+def test_inclination_matrix_not_orthonormal_raises():
+    """inclination_matrix rejects arrays that are not orthonormal."""
+    import re
+
+    import numpy as np
+
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    bad = np.array([[2.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+    with pytest.raises(ValueError, match=re.escape("orthonormal")):
+        g.inclination_matrix = bad
+
+
+def test_inclination_matrix_improper_rotation_raises():
+    """inclination_matrix rejects improper rotations (det = -1)."""
+    import re
+
+    import numpy as np
+
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    # Reflection matrix: det = -1
+    reflection = np.diag([-1.0, 1.0, 1.0])
+    with pytest.raises(ValueError, match=re.escape("det = +1")):
+        g.inclination_matrix = reflection
+
+
+def test_set_inclination_from_axis_angle():
+    """set_inclination() builds a rotation matrix from axis and angle."""
+    import numpy as np
+
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.set_inclination(axis=[0, 0, 1], angle_deg=0.0)
+    np.testing.assert_allclose(g.inclination_matrix, np.eye(3), atol=1e-12)
+    g.set_inclination(axis=[1, 0, 0], angle_deg=5.0)
+    # det must still be +1
+    assert abs(np.linalg.det(g.inclination_matrix) - 1.0) < 1e-10
+
+
+def test_set_inclination_zero_axis_raises():
+    """set_inclination() raises for a zero axis vector."""
+    import re
+
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    with pytest.raises(ValueError, match=re.escape("non-zero vector")):
+        g.set_inclination(axis=[0.0, 0.0, 0.0], angle_deg=5.0)
+
+
+def test_zero_inclination_reproduces_standard_q():
+    """With identity inclination, angles_to_phi_vector is unchanged."""
+    import numpy as np
+
+    from ad_hoc_diffractometer import Lattice
+    from ad_hoc_diffractometer import angles_to_phi_vector
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_identity
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    g.sample.lattice = Lattice(a=5.431)
+    ub_identity(g.sample)
+    angles = {"omega": 14.22, "chi": 0.0, "phi": 0.0, "ttheta": 28.44}
+    Q_default = angles_to_phi_vector(g, **angles)
+    g.inclination_matrix = np.eye(3)
+    Q_identity = angles_to_phi_vector(g, **angles)
+    np.testing.assert_allclose(Q_default, Q_identity, atol=1e-12)
+
+
+def test_nonzero_inclination_changes_q():
+    """A non-trivial inclination changes the Q_phi vector."""
+    import numpy as np
+
+    from ad_hoc_diffractometer import Lattice
+    from ad_hoc_diffractometer import angles_to_phi_vector
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_identity
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    g.sample.lattice = Lattice(a=5.431)
+    ub_identity(g.sample)
+    angles = {"omega": 14.22, "chi": 0.0, "phi": 0.0, "ttheta": 28.44}
+    Q_default = angles_to_phi_vector(g, **angles)
+    g.set_inclination(axis=[1, 0, 0], angle_deg=2.0)
+    Q_tilted = angles_to_phi_vector(g, **angles)
+    assert not np.allclose(Q_default, Q_tilted, atol=1e-6)
+
+
+def test_inclination_matrix_round_trip():
+    """inclination_matrix survives to_dict / from_dict."""
+    import json
+
+    import numpy as np
+
+    from ad_hoc_diffractometer import AdHocDiffractometer
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.set_inclination(axis=[0, 1, 0], angle_deg=3.0)
+    R = g.inclination_matrix.copy()
+    d = g.to_dict()
+    assert "inclination_matrix" in d
+    assert json.dumps(d)
+    g2 = AdHocDiffractometer.from_dict(d)
+    np.testing.assert_allclose(g2.inclination_matrix, R, atol=1e-12)
+
+
+def test_identity_inclination_round_trip():
+    """Identity inclination_matrix is serialised and restored."""
+    import numpy as np
+
+    from ad_hoc_diffractometer import AdHocDiffractometer
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    d = g.to_dict()
+    assert d["inclination_matrix"] == [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    g2 = AdHocDiffractometer.from_dict(d)
+    np.testing.assert_array_equal(g2.inclination_matrix, np.eye(3))

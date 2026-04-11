@@ -142,6 +142,7 @@ class AdHocDiffractometer:
         self._detector_distance: float | None = None
         self._detector_tilt: float | None = None
         self._detector_offset: tuple[float, float] | None = None
+        self._inclination_matrix: np.ndarray = np.eye(3)
 
         # Diffraction modes
         if isinstance(modes, ModeDict):
@@ -1216,6 +1217,120 @@ class AdHocDiffractometer:
 
         return _is_evanescent(self, angles, critical_angle_deg)
 
+    # ------------------------------------------------------------------
+    # Diffractometer inclination
+    # ------------------------------------------------------------------
+
+    @property
+    def inclination_matrix(self) -> np.ndarray:
+        """
+        3×3 rotation matrix describing the diffractometer inclination
+        relative to the incident beam direction.
+
+        When the entire diffractometer is mounted at a non-zero angle with
+        respect to the incident beam (e.g. tilted for grazing-incidence
+        geometry or non-standard instrument mounting), this matrix encodes
+        that orientation.
+
+        The matrix **R** is applied as follows: the effective incident-beam
+        direction in the diffractometer coordinate frame is
+        ``R.T @ ŷ`` rather than ``ŷ``.  A zero inclination (identity matrix)
+        reproduces the standard geometry exactly.
+
+        The matrix must be a proper rotation (orthonormal, det = +1).
+
+        Default: ``numpy.eye(3)`` (no inclination).
+
+        Raises
+        ------
+        ValueError
+            If the supplied array is not shape (3, 3), not orthonormal
+            within 1e-8, or has det ≠ +1.
+
+        See Also
+        --------
+        set_inclination : Set the inclination from an axis and angle.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> g = psic()
+        >>> g.inclination_matrix  # default: identity
+        array([[1., 0., 0.],
+               [0., 1., 0.],
+               [0., 0., 1.]])
+        >>> g.set_inclination(axis=[0, 0, 1], angle_deg=2.0)  # 2° about z
+        >>> np.round(g.inclination_matrix, 4)
+        array([[ 0.9994,  0.0349,  0.    ],
+               [-0.0349,  0.9994,  0.    ],
+               [ 0.    ,  0.    ,  1.    ]])
+        """
+        return self._inclination_matrix
+
+    @inclination_matrix.setter
+    def inclination_matrix(self, value: np.ndarray) -> None:
+        arr = np.asarray(value, dtype=float)
+        if arr.shape != (3, 3):
+            raise ValueError(
+                f"inclination_matrix must be a (3, 3) array; got shape {arr.shape}."
+            )
+        # Check orthonormality
+        err = np.max(np.abs(arr.T @ arr - np.eye(3)))
+        if err > 1e-8:
+            raise ValueError(
+                f"inclination_matrix must be orthonormal (R.T @ R = I); "
+                f"max deviation = {err:.2e}."
+            )
+        det = float(np.linalg.det(arr))
+        if abs(det - 1.0) > 1e-8:
+            raise ValueError(
+                f"inclination_matrix must be a proper rotation (det = +1); "
+                f"got det = {det:.8f}."
+            )
+        self._inclination_matrix = arr
+
+    def set_inclination(
+        self,
+        axis: np.ndarray | list[float],
+        angle_deg: float,
+    ) -> None:
+        """
+        Set the inclination matrix from a rotation axis and angle.
+
+        Convenience wrapper around :attr:`inclination_matrix` that uses the
+        :func:`~.rotation.rotation_matrix` function to build R from an axis
+        vector and an angle in degrees.
+
+        A zero angle resets the inclination to the identity matrix.
+
+        Parameters
+        ----------
+        axis : array-like, shape (3,)
+            Rotation axis (need not be a unit vector; it is normalised
+            internally).
+        angle_deg : float
+            Rotation angle in degrees.
+
+        Raises
+        ------
+        ValueError
+            If ``axis`` is the zero vector.
+
+        Examples
+        --------
+        >>> g = psic()
+        >>> g.set_inclination(axis=[0, 0, 1], angle_deg=2.0)
+        >>> g.set_inclination(axis=[1, 0, 0], angle_deg=0.0)  # reset
+        """
+        from .rotation import rotation_matrix
+
+        ax = np.asarray(axis, dtype=float)
+        ax_norm = np.linalg.norm(ax)
+        if ax_norm < 1e-14:
+            raise ValueError("set_inclination(): axis must be a non-zero vector.")
+        ax = ax / ax_norm
+        self.inclination_matrix = rotation_matrix(ax, float(angle_deg))
+
     def wh(self, print: bool = True) -> str:
         """
         Terse one-screen status string (the SPEC ``wh`` command).
@@ -1695,6 +1810,7 @@ class AdHocDiffractometer:
                 if self._detector_offset is not None
                 else None
             ),
+            "inclination_matrix": self._inclination_matrix.tolist(),
             "basis": {k: [float(x) for x in v] for k, v in self.basis.items()},
             "stages": stages,
             "active_sample": self._active_ref[0],
@@ -1794,6 +1910,12 @@ class AdHocDiffractometer:
         do = d.get("detector_offset")
         if do is not None:
             geom.detector_offset = tuple(do)
+
+        # Restore inclination_matrix (always present in to_dict output; the
+        # 'is None' branch guards against hand-crafted or legacy dicts)
+        inc = d.get("inclination_matrix")
+        if inc is not None:  # pragma: no branch
+            geom.inclination_matrix = np.array(inc, dtype=float)
 
         # Restore samples.
         #

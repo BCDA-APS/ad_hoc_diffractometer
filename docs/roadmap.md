@@ -446,25 +446,19 @@ to a chosen reference direction.  Two important classes:
 
 ### 3.7 Diffractometer inclination with respect to the incident beam ([#15](https://github.com/prjemian/ad_hoc_diffractometer/issues/15))
 
-- [ ] Some instruments (or experimental configurations) mount the entire
-      diffractometer at a non-zero angle relative to the incident beam
-      direction — for example, tilted to access a specific range of
-      incidence angles or to accommodate a grazing-incidence geometry
-- [ ] This is distinct from the individual motor angles; it is a property
-      of the overall instrument mounting
-- [ ] Representation options to consider:
-      - A single tilt angle (rotation about a specified axis)
-      - A full 3×3 rotation matrix describing the lab-frame orientation
-        of the diffractometer coordinate system relative to the beam
-      - Euler angles or a quaternion
-- [ ] The inclination would modify the effective basis vectors seen by the
-      beam, and would need to be folded into the sample and detector
-      rotation matrix products
-- [ ] Reference: relevant for grazing-incidence X-ray diffraction (GIXD)
-      and for instruments where the diffractometer is not aligned with
-      the beam axis by default
-- [ ] Raised by users; priority to be determined once Priority 1 and 2
-      items are complete
+- [x] `inclination_matrix` property on `AdHocDiffractometer` — a 3×3 proper
+      rotation matrix (orthonormal, det = +1); default `np.eye(3)` (no
+      inclination); validated on assignment
+- [x] `set_inclination(axis, angle_deg)` convenience method — builds the
+      rotation matrix from an axis vector and angle in degrees using the
+      existing `rotation_matrix` function
+- [x] Folded into `angles_to_phi_vector`: the effective incident-beam
+      direction becomes `R_inc.T @ ŷ`; zero inclination (identity) reproduces
+      the standard result exactly
+- [x] Serialised in `to_dict` / `from_dict` as a nested list (JSON-safe)
+- [x] 11 tests verifying default identity, set/validate, error paths,
+      Q-vector changes, and round-trip serialisation; 1023 tests total;
+      100% coverage
 
 ### 3.7a Refactor `wh` and `pa` as methods ([#51](https://github.com/prjemian/ad_hoc_diffractometer/issues/51))
 
