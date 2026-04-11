@@ -18,6 +18,7 @@ Submodules
    /autoapi/ad_hoc_diffractometer/axes/index
    /autoapi/ad_hoc_diffractometer/constants/index
    /autoapi/ad_hoc_diffractometer/display/index
+   /autoapi/ad_hoc_diffractometer/engines/index
    /autoapi/ad_hoc_diffractometer/factories/index
    /autoapi/ad_hoc_diffractometer/forward/index
    /autoapi/ad_hoc_diffractometer/geometry/index
@@ -72,6 +73,9 @@ Functions
 .. autoapisummary::
 
    ad_hoc_diffractometer.NEAREST_ANGLES
+   ad_hoc_diffractometer.Q_mag_to_two_theta
+   ad_hoc_diffractometer.Q_to_d
+   ad_hoc_diffractometer.Q_to_hkl
    ad_hoc_diffractometer.allclose
    ad_hoc_diffractometer.alpha_f
    ad_hoc_diffractometer.alpha_i
@@ -80,12 +84,17 @@ Functions
    ad_hoc_diffractometer.axis_label
    ad_hoc_diffractometer.b_matrix
    ad_hoc_diffractometer.compute_forward
+   ad_hoc_diffractometer.d_to_Q_mag
+   ad_hoc_diffractometer.d_to_two_theta
    ad_hoc_diffractometer.fivec
    ad_hoc_diffractometer.fmt
    ad_hoc_diffractometer.fourch
    ad_hoc_diffractometer.fourcv
    ad_hoc_diffractometer.get_geometry
    ad_hoc_diffractometer.get_precision
+   ad_hoc_diffractometer.hkl_to_Q
+   ad_hoc_diffractometer.hkl_to_d
+   ad_hoc_diffractometer.hkl_to_two_theta
    ad_hoc_diffractometer.hkl_trajectory
    ad_hoc_diffractometer.is_evanescent
    ad_hoc_diffractometer.is_specular
@@ -109,6 +118,8 @@ Functions
    ad_hoc_diffractometer.set_precision
    ad_hoc_diffractometer.sixc
    ad_hoc_diffractometer.trajectory_plan
+   ad_hoc_diffractometer.two_theta_to_Q_mag
+   ad_hoc_diffractometer.two_theta_to_d
    ad_hoc_diffractometer.ub_from_one_reflection
    ad_hoc_diffractometer.ub_from_three_reflections_bl1967
    ad_hoc_diffractometer.ub_from_two_reflections_bl1967
@@ -1538,6 +1549,87 @@ Package Contents
    :rtype: float
 
 
+.. py:function:: Q_mag_to_two_theta(Q_mag: float, wavelength: float) -> float
+
+   Convert |Q| to 2θ.
+
+   2θ = 2 arcsin(|Q| λ / (4π))
+
+   :param Q_mag: Magnitude of the scattering vector in Å⁻¹.
+   :type Q_mag: float
+   :param wavelength: Wavelength in Å.
+   :type wavelength: float
+
+   :returns: 2θ in degrees.
+   :rtype: float
+
+   :raises ValueError: If ``Q_mag`` < 0, ``wavelength`` ≤ 0, or the reflection is
+       unreachable (|Q| λ / (4π) > 1).
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.Q_mag_to_two_theta(2.0904, 1.5406), 2)
+   30.0
+
+
+.. py:function:: Q_to_d(Qx: float, Qy: float, Qz: float) -> float
+
+   Convert a Q-vector to the d-spacing.
+
+   d = 2π / |**Q**|
+
+   :param Qx: Scattering vector components in Å⁻¹.
+   :type Qx: float
+   :param Qy: Scattering vector components in Å⁻¹.
+   :type Qy: float
+   :param Qz: Scattering vector components in Å⁻¹.
+   :type Qz: float
+
+   :returns: d-spacing in Å.
+   :rtype: float
+
+   :raises ValueError: If |Q| = 0.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.Q_to_d(1.0, 0.0, 0.0), 6)
+   6.283185
+
+
+.. py:function:: Q_to_hkl(sample: ad_hoc_diffractometer.sample.Sample, Qx: float, Qy: float, Qz: float) -> tuple[float, float, float]
+
+   Convert a Q-vector (Å⁻¹) to Miller indices.
+
+   Solves **hkl** = UB⁻¹ · **Q**.
+
+   :param sample: Sample with a UB matrix set.
+   :type sample: Sample
+   :param Qx: Scattering vector components in Å⁻¹.
+   :type Qx: float
+   :param Qy: Scattering vector components in Å⁻¹.
+   :type Qy: float
+   :param Qz: Scattering vector components in Å⁻¹.
+   :type Qz: float
+
+   :returns: Miller indices (h, k, l).
+   :rtype: tuple of float
+
+   :raises ValueError: If ``sample.UB`` is None or singular.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> import numpy as np
+   >>> g = ahd.fourcv()
+   >>> g.sample.lattice = ahd.Lattice(a=3.905)
+   >>> ahd.ub_identity(g.sample)
+   >>> Q = ahd.hkl_to_Q(g.sample, 1, 0, 0)
+   >>> ahd.Q_to_hkl(g.sample, *Q)  # doctest: +ELLIPSIS
+   (1.0, 0.0, 0.0)
+
+
 .. py:class:: Reflection
 
    One observed reflection used for diffractometer orientation.
@@ -2247,6 +2339,51 @@ Package Contents
        for this geometry.
 
 
+.. py:function:: d_to_Q_mag(d: float) -> float
+
+   Convert a d-spacing to the magnitude of the scattering vector.
+
+   |**Q**| = 2π / d
+
+   :param d: d-spacing in Å.
+   :type d: float
+
+   :returns: |Q| in Å⁻¹.
+   :rtype: float
+
+   :raises ValueError: If ``d`` ≤ 0.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.d_to_Q_mag(1.0), 6)
+   6.283185
+
+
+.. py:function:: d_to_two_theta(d: float, wavelength: float) -> float
+
+   Convert d-spacing to 2θ using Bragg's law.
+
+   λ = 2 d sin(θ)  →  2θ = 2 arcsin(λ / (2d))
+
+   :param d: d-spacing in Å.
+   :type d: float
+   :param wavelength: Wavelength in Å.
+   :type wavelength: float
+
+   :returns: 2θ in degrees.
+   :rtype: float
+
+   :raises ValueError: If ``d`` ≤ 0, ``wavelength`` ≤ 0, or λ / (2d) > 1 (reflection
+       unreachable at this wavelength).
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.d_to_two_theta(2.0, 1.5406), 4)
+   22.6956
+
+
 .. py:function:: fivec(basis: dict = _BASIS_YOU) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
 
    Five-circle diffractometer (fourcv mounted on a vertical base).
@@ -2368,6 +2505,98 @@ Package Contents
 .. py:function:: get_precision() -> int
 
    Return the current package-level display precision (decimal places).
+
+
+.. py:function:: hkl_to_Q(sample: ad_hoc_diffractometer.sample.Sample, h: float, k: float, l: float) -> numpy.ndarray
+
+   Convert Miller indices to the scattering vector Q in Å⁻¹.
+
+   Uses the UB matrix: **Q** = UB · **hkl**.
+
+   :param sample: Sample with a UB matrix set.
+   :type sample: Sample
+   :param h: Miller indices.
+   :type h: float
+   :param k: Miller indices.
+   :type k: float
+   :param l: Miller indices.
+   :type l: float
+
+   :returns: Scattering vector (Qx, Qy, Qz) in Å⁻¹.
+   :rtype: numpy.ndarray, shape (3,)
+
+   :raises ValueError: If ``sample.UB`` is None.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.fourcv()
+   >>> g.sample.lattice = ahd.Lattice(a=3.905)
+   >>> ahd.ub_identity(g.sample)
+   >>> Q = ahd.hkl_to_Q(g.sample, 1, 0, 0)
+   >>> float(Q[0])  # doctest: +ELLIPSIS
+   1.6...
+
+
+.. py:function:: hkl_to_d(sample: ad_hoc_diffractometer.sample.Sample, h: float, k: float, l: float) -> float
+
+   Convert Miller indices to d-spacing.
+
+   d = 2π / |UB · **hkl**|
+
+   :param sample: Sample with a UB matrix set.
+   :type sample: Sample
+   :param h: Miller indices.
+   :type h: float
+   :param k: Miller indices.
+   :type k: float
+   :param l: Miller indices.
+   :type l: float
+
+   :returns: d-spacing in Å.
+   :rtype: float
+
+   :raises ValueError: If ``sample.UB`` is None or if **hkl** = (0, 0, 0).
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.fourcv()
+   >>> g.sample.lattice = ahd.Lattice(a=3.905)
+   >>> ahd.ub_identity(g.sample)
+   >>> round(ahd.hkl_to_d(g.sample, 1, 0, 0), 4)
+   3.905
+
+
+.. py:function:: hkl_to_two_theta(sample: ad_hoc_diffractometer.sample.Sample, h: float, k: float, l: float, wavelength: float) -> float
+
+   Convert Miller indices to 2θ using the UB matrix and Bragg's law.
+
+   :param sample: Sample with a UB matrix set.
+   :type sample: Sample
+   :param h: Miller indices.
+   :type h: float
+   :param k: Miller indices.
+   :type k: float
+   :param l: Miller indices.
+   :type l: float
+   :param wavelength: Wavelength in Å.
+   :type wavelength: float
+
+   :returns: 2θ in degrees.
+   :rtype: float
+
+   :raises ValueError: If ``sample.UB`` is None, ``wavelength`` ≤ 0, **hkl** = (0, 0, 0),
+       or the reflection is unreachable at this wavelength.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.fourcv()
+   >>> g.sample.lattice = ahd.Lattice(a=3.905)
+   >>> ahd.ub_identity(g.sample)
+   >>> round(ahd.hkl_to_two_theta(g.sample, 1, 0, 0, 1.5406), 4)
+   23.2066
 
 
 .. py:function:: hkl_trajectory(geometry: ad_hoc_diffractometer.geometry.AdHocDiffractometer, trajectory: dict, n_points: int, *, solution_key=NEAREST_ANGLES) -> list[dict]
@@ -3268,6 +3497,52 @@ Package Contents
    >>> plan = ahd.trajectory_plan(g, (1, 0, 0), (3, 0, 0), n_points=11)
    >>> accessible = [pt for pt in plan if pt["accessible"]]
    >>> print(f"{len(accessible)}/{len(plan)} points accessible")
+
+
+.. py:function:: two_theta_to_Q_mag(two_theta_deg: float, wavelength: float) -> float
+
+   Convert 2θ to |Q| using the Bragg relation.
+
+   |**Q**| = 4π sin(θ) / λ
+
+   :param two_theta_deg: Diffraction angle 2θ in degrees.
+   :type two_theta_deg: float
+   :param wavelength: Wavelength in Å.
+   :type wavelength: float
+
+   :returns: |Q| in Å⁻¹.
+   :rtype: float
+
+   :raises ValueError: If ``two_theta_deg`` is not in (0°, 180°) or ``wavelength`` ≤ 0.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.two_theta_to_Q_mag(30.0, 1.5406), 4)
+   2.0904
+
+
+.. py:function:: two_theta_to_d(two_theta_deg: float, wavelength: float) -> float
+
+   Convert 2θ to d-spacing using Bragg's law.
+
+   λ = 2 d sin(θ)  →  d = λ / (2 sin(θ))
+
+   :param two_theta_deg: Diffraction angle 2θ in degrees.
+   :type two_theta_deg: float
+   :param wavelength: Wavelength in Å.
+   :type wavelength: float
+
+   :returns: d-spacing in Å.
+   :rtype: float
+
+   :raises ValueError: If ``two_theta_deg`` is not in (0°, 180°) or ``wavelength`` ≤ 0.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.two_theta_to_d(22.6956, 1.5406), 4)
+   2.0
 
 
 .. py:function:: ub_from_one_reflection(sample, reflection, reference_hkl: tuple[float, float, float] = (0.0, 0.0, 1.0), reference_stage=None) -> numpy.ndarray
