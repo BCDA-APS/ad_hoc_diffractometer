@@ -1,27 +1,83 @@
 # Change History
 
-User-facing changes by release.  See [docs/roadmap.md](docs/roadmap.md)
+User-facing changes by release.  See [docs/source/roadmap.md](docs/source/roadmap.md)
 for planned future work and
 [GitHub Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues)
 for the full issue tracker.
 
 ## Unreleased
 
+## Release v0.3.0
+
+Released 2026-04-11.
+
 ### Fixed
 
-- Stage axes corrected for ``fourcv``, ``fourch``, ``kappa4cv``, ``kappa4ch``; ``v``/``h`` suffix now consistently describes the scattering plane (#66)
-- ``two_theta`` stage name renamed to ``ttheta`` throughout (#66)
+- Stage axes corrected for `fourcv`, `fourch`, `kappa4cv`, `kappa4ch`;
+  `v`/`h` suffix now consistently describes the scattering plane (#66)
+- `two_theta` stage name renamed to `ttheta` throughout (#66)
+- `Lattice.B` corrected to include the 2π factor per BL1967/SPEC convention (#78)
+- Duplicate geometry name in entry-point registry now raises `ValueError` (#71)
 
 ### Added
 
-- All factory functions accept ``basis`` as an optional argument; ``BASIS_YOU`` and ``BASIS_BL`` exported publicly; stage axes expressed as ``VERTICAL``/``LATERAL``/``LONGITUDINAL`` local aliases for readability and extensibility (#67)
-- ``logging.getLogger(__name__)`` in all modules; silent by default (#61)
-- 100% line and branch coverage enforced via ``pytest-cov`` (#60)
-- Dynamic versioning via ``hatch-vcs``; ``ahd.__version__`` exposed (#59)
-- ``to_dict()`` / ``from_dict()`` on all major classes; JSON round-trip (#52)
-- ``g.wh()`` and ``g.pa()`` status methods with ``print=True`` default (#51)
-- ``azimuthal_reference`` property and ``psi()`` method (#11)
-- Entry-point plugin support for geometry factories; ``GEOMETRY_ENTRY_POINT_GROUP`` (#37)
+- All factory functions accept `basis` as an optional argument; `BASIS_YOU`
+  and `BASIS_BL` exported publicly; stage axes expressed as
+  `VERTICAL`/`LATERAL`/`LONGITUDINAL` local aliases (#67)
+- `logging.getLogger(__name__)` in all modules; silent by default (#61)
+- 100% line and branch coverage enforced via `pytest-cov` (#60)
+- Dynamic versioning via `hatch-vcs`; `ahd.__version__` exposed (#59)
+- `to_dict()` / `from_dict()` on all major classes; JSON round-trip (#52)
+- `g.wh()` and `g.pa()` status methods with `print=True` default (#51)
+- `azimuthal_reference` property and `psi()` method (You 1999 definition) (#11)
+- Entry-point plugin support for geometry factories;
+  `GEOMETRY_ENTRY_POINT_GROUP` constant (#37)
+- Diffraction modes / operating constraints: `mode_name`, `BisectingMode`,
+  `FixedAngleMode`, `FixedAngleMode`; geometry accepts active mode (#9)
+- `forward()`: hkl → motor angles; numerical multi-solution solver with
+  seed-based bisection; returns all valid in-limits solutions (#35)
+- Surface geometry: `alpha_i()`, `alpha_f()`, `q_components()`,
+  `is_specular()`, `is_evanescent()` (#13)
+- Detector geometry parameters: `detector_distance`, `detector_tilt`,
+  `detector_offset` (#10)
+- Diffractometer inclination: `inclination_matrix` property,
+  `set_inclination()` (#15)
+- Reciprocal-space trajectory computation: `hkl_trajectory()`,
+  `psi_trajectory()`, `trajectory_plan()`, `NEAREST_ANGLES` solution-key
+  callable; BL1967 operational ψ definition (#14)
+- Alternative calculation engines — coordinate conversion functions:
+  `hkl_to_Q()`, `Q_to_hkl()`, `Q_to_d()`, `d_to_Q_mag()`, `hkl_to_d()`,
+  `d_to_two_theta()`, `two_theta_to_d()`, `hkl_to_two_theta()`,
+  `two_theta_to_Q_mag()`, `Q_mag_to_two_theta()` (#12)
+- X-ray radiation constants and conversions (NIST CODATA 2022):
+  `HC_KEV_ANGSTROM` = 12.398 419 843 320 026 keV·Å (exact),
+  `HC_KEV_ANGSTROM_UNCERTAINTY` = 0; `XRAY_LINES` named emission line
+  wavelengths (Cu, Mo, Ag, Co Kα/Kα1/Kα2);
+  `wavelength_to_energy()`, `energy_to_wavelength()`,
+  `wavelength_to_wavenumber()`, `wavenumber_to_wavelength()`;
+  `energy` and `wavenumber` lazy properties on `AdHocDiffractometer` (#21)
+- Neutron source support: `source_type` property (`"xray"` default,
+  `"neutron"` for fixed-wavelength reactor neutrons);
+  `neutron_wavelength_to_energy()`, `neutron_energy_to_wavelength()`;
+  `NEUTRON_MEV_ANGSTROM2` = 81.804 210 235 2 meV·Å² (CODATA 2022),
+  `NEUTRON_MEV_ANGSTROM2_UNCERTAINTY`; `energy_units` property (`"keV"` or
+  `"meV"`); `SOURCE_TYPES`; spallation/TOF out of scope (#8)
+- Sphinx documentation framework: `docs/source/` with `conf.py`,
+  `index.rst`, AutoAPI, myst-parser, pydata-sphinx-theme; GitHub Actions
+  workflow `docs.yml` publishes to GitHub Pages on push to `main` or tag
+  (#57)
+
+### Changed
+
+- `wh()` and `pa()` refactored from property to method with `print=True`
+  keyword argument; `status.py` removed from the package API and moved to
+  `references/` (#51)
+- `spec.py` removed from the package API and moved to `references/` (#76)
+- `summary()` on `AdHocDiffractometer` now reports energy (keV or meV) and
+  its units alongside wavelength (#21, #8)
+- Test files restructured to enforce one-to-one `test_<module>.py` naming;
+  serialisation tests redistributed from `test_export.py` into their
+  natural per-module homes and rewritten as parametrized functions (#88)
 
 ## Release v0.2
 
