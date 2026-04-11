@@ -10,7 +10,7 @@ Covers:
   - energy_to_wavelength: round-trip, zero/negative raises
   - wavelength_to_wavenumber: known value, round-trip, zero/negative raises
   - wavenumber_to_wavelength: round-trip, zero/negative raises
-  - AdHocDiffractometer.energy_kev property: get, set, None
+  - AdHocDiffractometer.energy property: get, set, None
   - AdHocDiffractometer.wavenumber property: get, set, None
   - summary() includes energy when wavelength is set
   - Public API exports
@@ -138,7 +138,7 @@ def test_wavelength_to_energy_round_trip():
 
 
 @pytest.mark.parametrize(
-    "energy_kev, context",
+    "energy, context",
     [
         pytest.param(8.048, does_not_raise(), id="Cu-Ka-energy"),
         pytest.param(
@@ -153,9 +153,9 @@ def test_wavelength_to_energy_round_trip():
         ),
     ],
 )
-def test_energy_to_wavelength(energy_kev, context):
+def test_energy_to_wavelength(energy, context):
     with context:
-        result = energy_to_wavelength(energy_kev)
+        result = energy_to_wavelength(energy)
         assert result > 0.0
 
 
@@ -230,43 +230,43 @@ def test_wavenumber_to_wavelength(k, context):
 
 
 # ---------------------------------------------------------------------------
-# AdHocDiffractometer.energy_kev property
+# AdHocDiffractometer.energy property
 # ---------------------------------------------------------------------------
 
 
 class TestEnergyKevProperty:
     def test_none_when_wavelength_not_set(self):
-        """energy_kev is None when wavelength is not set."""
+        """energy is None when wavelength is not set."""
         g = fourcv()
-        assert g.energy_kev is None
+        assert g.energy is None
 
     def test_value_matches_conversion(self):
-        """energy_kev = wavelength_to_energy(wavelength)."""
+        """energy = wavelength_to_energy(wavelength)."""
         g = fourcv()
         g.wavelength = 1.5406
-        assert g.energy_kev == pytest.approx(wavelength_to_energy(1.5406), rel=1e-10)
+        assert g.energy == pytest.approx(wavelength_to_energy(1.5406), rel=1e-10)
 
     def test_set_updates_wavelength(self):
-        """Setting energy_kev updates wavelength via λ = hc/E."""
+        """Setting energy updates wavelength via λ = hc/E."""
         g = fourcv()
-        g.energy_kev = 8.048
+        g.energy = 8.048
         assert g.wavelength == pytest.approx(energy_to_wavelength(8.048), rel=1e-10)
 
     def test_set_none_clears_wavelength(self):
-        """Setting energy_kev = None clears wavelength."""
+        """Setting energy = None clears wavelength."""
         g = fourcv()
         g.wavelength = 1.5406
-        g.energy_kev = None
+        g.energy = None
         assert g.wavelength is None
-        assert g.energy_kev is None
+        assert g.energy is None
 
     def test_round_trip_via_wavelength(self):
-        """wavelength → energy_kev → wavelength recovers the original."""
+        """wavelength → energy → wavelength recovers the original."""
         g = fourcv()
         g.wavelength = 1.5406
-        e = g.energy_kev
+        e = g.energy
         g2 = fourcv()
-        g2.energy_kev = e
+        g2.energy = e
         assert g2.wavelength == pytest.approx(1.5406, rel=1e-6)
 
 

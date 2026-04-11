@@ -315,14 +315,30 @@ class AdHocDiffractometer:
         self._wavelength = value
 
     @property
-    def energy_kev(self) -> float | None:
+    def energy_units(self) -> str:
         """
-        Photon energy in keV, derived from wavelength.
+        Units of the :attr:`energy` property for this geometry.
 
-        E (keV) = hc / λ = 12.39842 / λ (Å)
+        Returns ``"keV"`` for X-ray geometries (the default).  Will return
+        ``"meV"`` for neutron geometries once ``source_type`` is set
+        (see issue #8).
 
-        Returns ``None`` when ``wavelength`` is not set.  Setting
-        ``energy_kev`` updates ``wavelength`` accordingly.
+        Returns
+        -------
+        str
+        """
+        return "keV"
+
+    @property
+    def energy(self) -> float | None:
+        """
+        Radiation energy in units of :attr:`energy_units`, derived from wavelength.
+
+        For X-ray geometries (default): E (keV) = hc / λ = 12.39842 / λ (Å).
+
+        Returns ``None`` when ``wavelength`` is not set.  Setting ``energy``
+        updates ``wavelength`` accordingly.  The value must be in the units
+        returned by :attr:`energy_units`.
 
         Raises
         ------
@@ -334,9 +350,9 @@ class AdHocDiffractometer:
         >>> import ad_hoc_diffractometer as ahd
         >>> g = ahd.fourcv()
         >>> g.wavelength = 1.5406
-        >>> round(g.energy_kev, 4)
+        >>> round(g.energy, 4)
         8.0479
-        >>> g.energy_kev = 8.048
+        >>> g.energy = 8.048
         >>> round(g.wavelength, 4)
         1.5405
         """
@@ -346,8 +362,8 @@ class AdHocDiffractometer:
 
         return wavelength_to_energy(self._wavelength)
 
-    @energy_kev.setter
-    def energy_kev(self, value: float | None) -> None:
+    @energy.setter
+    def energy(self, value: float | None) -> None:
         if value is None:
             self._wavelength = None
             return
@@ -1680,11 +1696,9 @@ class AdHocDiffractometer:
         from .display import fmt
 
         if self._wavelength is not None:
-            from .radiation import wavelength_to_energy
-
             wl_str = (
                 f"{fmt(self._wavelength)} Å"
-                f"  (E = {fmt(wavelength_to_energy(self._wavelength))} keV)"
+                f"  (E = {fmt(self.energy)} {self.energy_units})"
             )
         else:
             wl_str = "not set"
