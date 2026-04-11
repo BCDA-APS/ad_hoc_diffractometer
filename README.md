@@ -1,5 +1,8 @@
 # *Ad hoc* diffractometer
 
+[![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://prjemian.github.io/ad_hoc_diffractometer/latest/)
+[![License: CC-BY-4.0](https://img.shields.io/badge/License-CC--BY--4.0-brightgreen)](https://creativecommons.org/licenses/by/4.0/)
+
 Multi-circle diffractometer geometry and related calculations.
 
 `import ad_hoc_diffractometer as ahd`
