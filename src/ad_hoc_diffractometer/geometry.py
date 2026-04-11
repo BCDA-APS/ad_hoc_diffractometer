@@ -105,6 +105,12 @@ class AdHocDiffractometer:
         Name of the currently active mode, or ``None`` if no mode is set.
     cut_points : dict[str, float]
         Geometry-level SPEC #G4 cut-points per stage; mirrors SPEC #G4.
+    detector_distance : float or None
+        Sample-to-detector distance in mm, or ``None`` if not set.
+    detector_tilt : float or None
+        Detector tilt angle in degrees, or ``None`` if not set.
+    detector_offset : tuple of float or None
+        In-plane detector offset (dx, dy) in mm, or ``None`` if not set.
     """
 
     DEFAULT_BASIS = {
@@ -133,6 +139,9 @@ class AdHocDiffractometer:
         self.kappa_alpha_deg = kappa_alpha_deg
         self.azimuthal_reference = azimuthal_reference  # validated via property setter
         self._surface_normal: tuple[float, float, float] | None = None
+        self._detector_distance: float | None = None
+        self._detector_tilt: float | None = None
+        self._detector_offset: tuple[float, float] | None = None
 
         # Diffraction modes
         if isinstance(modes, ModeDict):
@@ -959,6 +968,118 @@ class AdHocDiffractometer:
         self._surface_normal = (h, k, l)
 
     # ------------------------------------------------------------------
+    # Detector geometry parameters
+    # ------------------------------------------------------------------
+
+    @property
+    def detector_distance(self) -> float | None:
+        """
+        Sample-to-detector distance in millimetres, or ``None`` if not set.
+
+        Relevant primarily for area detectors, where the distance is needed
+        to convert pixel positions to scattering angles (and thence to Q).
+        Point detectors do not require this parameter.
+
+        Must be strictly positive when set.
+
+        Raises
+        ------
+        ValueError
+            If the supplied value is not positive.
+
+        Examples
+        --------
+        >>> g = psic()
+        >>> g.detector_distance = 500.0   # 500 mm
+        >>> g.detector_distance
+        500.0
+        >>> g.detector_distance = None    # clear
+        """
+        return self._detector_distance
+
+    @detector_distance.setter
+    def detector_distance(self, value: float | None) -> None:
+        if value is None:
+            self._detector_distance = None
+            return
+        value = float(value)
+        if value <= 0.0:
+            raise ValueError(f"detector_distance must be positive (got {value!r} mm).")
+        self._detector_distance = value
+
+    @property
+    def detector_tilt(self) -> float | None:
+        """
+        Detector tilt angle in degrees, or ``None`` if not set.
+
+        A non-zero tilt indicates that the detector plane is not perfectly
+        perpendicular to the diffracted beam at the nominal detector position.
+        The tilt is a rotation of the detector face about an axis parallel
+        to the detector plane (a pitch/roll correction for non-ideal
+        alignment).
+
+        Any real number is accepted (positive or negative; modulo 360° is
+        not applied).
+
+        Examples
+        --------
+        >>> g = psic()
+        >>> g.detector_tilt = 0.3    # 0.3° tilt
+        >>> g.detector_tilt
+        0.3
+        >>> g.detector_tilt = None   # clear
+        """
+        return self._detector_tilt
+
+    @detector_tilt.setter
+    def detector_tilt(self, value: float | None) -> None:
+        if value is None:
+            self._detector_tilt = None
+            return
+        self._detector_tilt = float(value)
+
+    @property
+    def detector_offset(self) -> tuple[float, float] | None:
+        """
+        In-plane detector offset (dx, dy) in millimetres, or ``None`` if not set.
+
+        Describes the displacement of the beam centre from the detector
+        centre in the detector plane.  ``dx`` is the horizontal offset and
+        ``dy`` is the vertical offset, both in millimetres.  A zero offset
+        means the beam strikes the geometric centre of the detector.
+
+        Must be a two-element sequence of real numbers.
+
+        Raises
+        ------
+        ValueError
+            If the supplied value is not a length-2 sequence of numbers.
+
+        Examples
+        --------
+        >>> g = psic()
+        >>> g.detector_offset = (2.5, -1.0)   # 2.5 mm right, 1.0 mm down
+        >>> g.detector_offset
+        (2.5, -1.0)
+        >>> g.detector_offset = None           # clear
+        """
+        return self._detector_offset
+
+    @detector_offset.setter
+    def detector_offset(self, value: tuple[float, float] | None) -> None:
+        if value is None:
+            self._detector_offset = None
+            return
+        try:
+            dx, dy = (float(x) for x in value)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                "detector_offset must be a length-2 sequence of numbers (dx, dy) "
+                f"in mm, or None; got {value!r}."
+            ) from exc
+        self._detector_offset = (dx, dy)
+
+    # ------------------------------------------------------------------
     # Surface geometry: incidence / emergence / Q-decomposition methods
     # ------------------------------------------------------------------
 
@@ -1567,6 +1688,13 @@ class AdHocDiffractometer:
             "surface_normal": (
                 list(self._surface_normal) if self._surface_normal is not None else None
             ),
+            "detector_distance": self._detector_distance,
+            "detector_tilt": self._detector_tilt,
+            "detector_offset": (
+                list(self._detector_offset)
+                if self._detector_offset is not None
+                else None
+            ),
             "basis": {k: [float(x) for x in v] for k, v in self.basis.items()},
             "stages": stages,
             "active_sample": self._active_ref[0],
@@ -1657,6 +1785,15 @@ class AdHocDiffractometer:
         sn = d.get("surface_normal")
         if sn is not None:
             geom.surface_normal = tuple(sn)
+
+        # Restore detector geometry parameters
+        if d.get("detector_distance") is not None:
+            geom.detector_distance = d["detector_distance"]
+        if d.get("detector_tilt") is not None:
+            geom.detector_tilt = d["detector_tilt"]
+        do = d.get("detector_offset")
+        if do is not None:
+            geom.detector_offset = tuple(do)
 
         # Restore samples.
         #
