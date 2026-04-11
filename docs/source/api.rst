@@ -1,7 +1,7 @@
 .. _api:
 
-API Reference
-=============
+API
+===
 
 The complete public API is auto-generated from docstrings by
 `sphinx-autoapi <https://sphinx-autoapi.readthedocs.io/>`_.
