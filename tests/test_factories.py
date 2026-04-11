@@ -872,10 +872,14 @@ class TestEntryPointExtensibility:
             fac._GEOMETRY_REGISTRY.clear()
             fac._GEOMETRY_REGISTRY.update(original_registry)
 
-    # --- Plugin does not override built-in ---------------------------------
+    # --- Duplicate name raises ValueError ----------------------------------
 
-    def test_plugin_cannot_override_builtin(self):
-        """A plugin named 'psic' must not overwrite the built-in psic factory."""
+    def test_plugin_cannot_override_builtin_raises(self):
+        """
+        A plugin whose name collides with a built-in must raise ValueError,
+        not silently win or lose.
+        """
+        import re
         from unittest.mock import MagicMock
         from unittest.mock import patch
 
@@ -884,7 +888,8 @@ class TestEntryPointExtensibility:
 
         impostor_ep = MagicMock()
         impostor_ep.name = "psic"  # same name as built-in
-        impostor_ep.load.return_value = fourcv  # but different callable
+        impostor_ep.value = "some_package.module:my_psic"
+        impostor_ep.load.return_value = fourcv  # different callable
 
         original_ep_loaded = fac._EP_LOADED
         original_registry = dict(fac._GEOMETRY_REGISTRY)
@@ -895,11 +900,53 @@ class TestEntryPointExtensibility:
                 "ad_hoc_diffractometer.factories.entry_points",
                 return_value=[impostor_ep],
             ):
-                geoms = list_geometries()
-            # The built-in psic must win — plugin cannot override it
-            import ad_hoc_diffractometer.factories as fac2
+                with pytest.raises(
+                    ValueError,
+                    match=re.escape("'psic' is already registered"),
+                ):
+                    list_geometries()
+        finally:
+            fac._EP_LOADED = original_ep_loaded
+            fac._GEOMETRY_REGISTRY.clear()
+            fac._GEOMETRY_REGISTRY.update(original_registry)
 
-            assert geoms["psic"] is fac2.psic
+    def test_two_plugins_with_same_name_raises(self):
+        """
+        Two third-party plugins registering the same name must raise ValueError
+        even if neither name collides with a built-in.
+        """
+        import re
+        from unittest.mock import MagicMock
+        from unittest.mock import patch
+
+        import ad_hoc_diffractometer.factories as fac
+        from ad_hoc_diffractometer import fourch
+        from ad_hoc_diffractometer import fourcv
+
+        ep1 = MagicMock()
+        ep1.name = "my_custom_geom"
+        ep1.value = "pkg_a.module:my_custom_geom"
+        ep1.load.return_value = fourcv
+
+        ep2 = MagicMock()
+        ep2.name = "my_custom_geom"  # same name, different package
+        ep2.value = "pkg_b.module:my_custom_geom"
+        ep2.load.return_value = fourch
+
+        original_ep_loaded = fac._EP_LOADED
+        original_registry = dict(fac._GEOMETRY_REGISTRY)
+        fac._EP_LOADED = False
+
+        try:
+            with patch(
+                "ad_hoc_diffractometer.factories.entry_points",
+                return_value=[ep1, ep2],
+            ):
+                with pytest.raises(
+                    ValueError,
+                    match=re.escape("'my_custom_geom' is already registered"),
+                ):
+                    list_geometries()
         finally:
             fac._EP_LOADED = original_ep_loaded
             fac._GEOMETRY_REGISTRY.clear()
