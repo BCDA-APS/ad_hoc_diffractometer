@@ -9,6 +9,24 @@ repos:
       - id: check-merge-conflict
       - id: debug-statements
 
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: insert-license
+        name: insert-license (src)
+        files: ^src/ad_hoc_diffractometer/(?!_version).*\.py$
+        args:
+          - --license-filepath=.copyright.txt
+          - --comment-style=#
+          - --no-extra-eol
+      - id: insert-license
+        name: insert-license (tests)
+        files: ^tests/test_.*\.py$
+        args:
+          - --license-filepath=.copyright.txt
+          - --comment-style=#
+          - --no-extra-eol
+
   - repo: https://github.com/PyCQA/isort
     rev: 5.13.2
     hooks:

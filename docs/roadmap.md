@@ -326,6 +326,15 @@ how stages are declared.
       skip path unchanged
 - [x] Module docstring updated to document the uniqueness requirement
 
+### Copyright notices ([#77](https://github.com/prjemian/ad_hoc_diffractometer/issues/77))
+
+- [x] Two-line copyright header added to every `src/` and `tests/` Python
+      module (excluding `_version.py`): author Pete R. Jemian, year 2026,
+      SPDX-License-Identifier: CC-BY-4.0
+- [x] `insert-license` pre-commit hook (`Lucas-C/pre-commit-hooks`) maintains
+      headers automatically; year range extends on future commits
+- [x] `.copyright.txt` license header template at repository root
+
 ### 2π convention fix — `Lattice.B` and `b_matrix()` ([#78](https://github.com/prjemian/ad_hoc_diffractometer/issues/78))
 
 - [x] `Lattice.B` and `b_matrix()` now include the 2π factor (BL1967 / SPEC
