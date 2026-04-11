@@ -135,6 +135,7 @@ class AdHocDiffractometer:
         self.name = name
         self.description = description
         self.basis = basis if basis is not None else dict(self.DEFAULT_BASIS)
+        self._source_type: str = "xray"  # default; validated via property setter
         self.wavelength = wavelength  # validated via property setter
         self.kappa_alpha_deg = kappa_alpha_deg
         self.azimuthal_reference = azimuthal_reference  # validated via property setter
@@ -315,30 +316,73 @@ class AdHocDiffractometer:
         self._wavelength = value
 
     @property
+    def source_type(self) -> str:
+        """
+        Radiation source type: ``"xray"`` (default) or ``"neutron"``.
+
+        Controls which energy formula is used by :attr:`energy` and
+        :attr:`energy_units`:
+
+        ``"xray"``
+            Photon energy: E (keV) = hc/λ = 12.39842 / λ (Å).
+
+        ``"neutron"``
+            Fixed-wavelength **reactor** neutron kinetic energy via the de
+            Broglie relation: E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å).
+            Spallation (time-of-flight) sources are out of scope.
+
+        Raises
+        ------
+        ValueError
+            If set to a value not in ``("xray", "neutron")``.
+
+        Examples
+        --------
+        >>> import ad_hoc_diffractometer as ahd
+        >>> g = ahd.fourcv()
+        >>> g.source_type
+        'xray'
+        >>> g.source_type = "neutron"
+        >>> g.source_type
+        'neutron'
+        """
+        return self._source_type
+
+    @source_type.setter
+    def source_type(self, value: str) -> None:
+        from .radiation import SOURCE_TYPES
+
+        if value not in SOURCE_TYPES:
+            raise ValueError(
+                f"source_type must be one of {SOURCE_TYPES!r}; got {value!r}."
+            )
+        self._source_type = value
+
+    @property
     def energy_units(self) -> str:
         """
-        Units of the :attr:`energy` property for this geometry.
+        Units of the :attr:`energy` property.
 
-        Returns ``"keV"`` for X-ray geometries (the default).  Will return
-        ``"meV"`` for neutron geometries once ``source_type`` is set
-        (see issue #8).
+        ``"keV"`` for X-ray geometries; ``"meV"`` for neutron geometries.
 
         Returns
         -------
         str
         """
-        return "keV"
+        return "keV" if self._source_type == "xray" else "meV"
 
     @property
     def energy(self) -> float | None:
         """
         Radiation energy in units of :attr:`energy_units`, derived from wavelength.
 
-        For X-ray geometries (default): E (keV) = hc / λ = 12.39842 / λ (Å).
+        - X-ray: E (keV) = hc / λ = 12.39842 / λ (Å)
+        - Neutron (reactor): E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å)
 
         Returns ``None`` when ``wavelength`` is not set.  Setting ``energy``
-        updates ``wavelength`` accordingly.  The value must be in the units
-        returned by :attr:`energy_units`.
+        updates ``wavelength`` using the inverse formula for the current
+        :attr:`source_type`.  The value must be in the units given by
+        :attr:`energy_units`.
 
         Raises
         ------
@@ -350,26 +394,39 @@ class AdHocDiffractometer:
         >>> import ad_hoc_diffractometer as ahd
         >>> g = ahd.fourcv()
         >>> g.wavelength = 1.5406
-        >>> round(g.energy, 4)
+        >>> round(g.energy, 4)    # keV for xray
         8.0479
-        >>> g.energy = 8.048
+        >>> g.source_type = "neutron"
+        >>> round(g.energy, 4)    # meV for neutron
+        34.4634
+        >>> g.energy = 25.0       # sets wavelength via de Broglie
         >>> round(g.wavelength, 4)
-        1.5405
+        1.809
         """
         if self._wavelength is None:
             return None
-        from .radiation import wavelength_to_energy
+        if self._source_type == "xray":
+            from .radiation import wavelength_to_energy
 
-        return wavelength_to_energy(self._wavelength)
+            return wavelength_to_energy(self._wavelength)
+        else:
+            from .radiation import neutron_wavelength_to_energy
+
+            return neutron_wavelength_to_energy(self._wavelength)
 
     @energy.setter
     def energy(self, value: float | None) -> None:
         if value is None:
             self._wavelength = None
             return
-        from .radiation import energy_to_wavelength
+        if self._source_type == "xray":
+            from .radiation import energy_to_wavelength
 
-        self._wavelength = energy_to_wavelength(float(value))
+            self._wavelength = energy_to_wavelength(float(value))
+        else:
+            from .radiation import neutron_energy_to_wavelength
+
+            self._wavelength = neutron_energy_to_wavelength(float(value))
 
     @property
     def wavenumber(self) -> float | None:
