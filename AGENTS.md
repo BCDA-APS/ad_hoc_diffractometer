@@ -204,6 +204,20 @@ python3 -m pre_commit run --all-files
 
 ## Testing instructions
 
+**Test file naming**
+
+- Each test file `tests/test_<module>.py` corresponds to exactly one source
+  module `src/ad_hoc_diffractometer/<module>.py`.  Keep this one-to-one
+  mapping when adding new modules.
+- Do **not** create `test_<feature>.py` files that cover content from an
+  existing module — add the tests to the matching `test_<module>.py`.
+- Exception: purpose-specific files such as `test_regression_issue_N.py`
+  are permitted for cross-module bug reports added later in the project's
+  life, where the fix spans multiple modules and there is no single natural
+  home.  These files should say so in their module docstring.
+
+**Test content**
+
 - Every parametrized test set uses `pytest.param(..., id="descriptive-id")`
 - Every parametrized set includes a `context` parameter that is either
   `does_not_raise()` (from `contextlib.nullcontext`) or
