@@ -35,6 +35,19 @@ dev = [
     "pytest-cov",
     "scipy",
 ]
+doc = [
+    "myst-parser",
+    "nbsphinx",
+    "pydata-sphinx-theme",
+    "sphinx",
+    "sphinx-autoapi",
+    "sphinx-copybutton",
+    "sphinx-design",
+]
+all = [
+    "ad_hoc_diffractometer[dev]",
+    "ad_hoc_diffractometer[doc]",
+]
 
 [tool.coverage.report]
 fail_under = 100
@@ -78,9 +91,10 @@ addopts = "--cov=ad_hoc_diffractometer --cov-report=term-missing"
 [tool.ruff]
 line-length = 88
 exclude = [
-    "references/",   # reference documents, not our source code
-    "docs/",         # documentation
-    "*.ipynb",       # Jupyter notebooks
+    "references/",       # reference documents, not our source code
+    "docs/build/",       # Sphinx build output
+    "docs/source/",      # documentation source (reST / Markdown / notebooks)
+    "*.ipynb",           # Jupyter notebooks
 ]
 
 [tool.ruff.format]

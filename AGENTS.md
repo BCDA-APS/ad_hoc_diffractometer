@@ -39,10 +39,24 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    the issue is closed and the project card moves to "Done" automatically.
 
    Every PR must also have its **milestone** and **project board** set,
-   and its project board status must be set to **"In Progress"**:
+   and its project board status must be set to **"In Progress"**.
+
+   Every PR must also have its **milestone** and **project board** set.
+   Issues and PRs may belong to **more than one project board** — add the
+   card to every board that tracks the work.
+
+   | Domain | Milestone | Project ID |
+   |---|---|---|
+   | Diffraction / calculation | `Priority 1`, `2`, or `3 — ...` | `PVT_kwHOACLKMM4BULjA` (P3), `PVT_kwHOACLKMM4BULi_` (P2), `PVT_kwHOACLKMM4BULi8` (P1) |
+   | Documentation (Sphinx, content) | `Documentation` | `PVT_kwHOACLKMM4BUWg2` |
+
+   Status field IDs are the same across all project boards:
+   - Field ID: `PVTSSF_lAHOACLKMM4BULjAzhBVdT0` (P3), `PVTSSF_lAHOACLKMM4BUWg2zhBfRCE` (Documentation)
+   - In Progress option ID: `47fc9ee4` (same on every board)
+
    ```bash
    # Set milestone when creating the PR
-   gh pr create --milestone "Priority N — ..." ...
+   gh pr create --milestone "Priority N — ..." ...   # or --milestone "Documentation"
 
    # Add the PR to the project board immediately after creation
    PR_NODE=$(gh api repos/OWNER/REPO/pulls/N --jq '.node_id')
@@ -99,7 +113,7 @@ provides:
 
 The package is intended to grow toward a full diffraction calculation
 engine (UB matrix, angle calculations, operating modes).  See
-`docs/roadmap.md` for the planned feature list.
+`docs/source/roadmap.md` for the planned feature list.
 
 ---
 
@@ -109,11 +123,21 @@ engine (UB matrix, angle calculations, operating modes).  See
 diffractometer/                  # project root (git repo)
 ├── AGENTS.md                    # this file
 ├── pyproject.toml               # package metadata, ruff, isort, pytest config
-├── docs/                        # problem statements, solutions, roadmap
-│   ├── roadmap.md               # planned features — read before adding features
-│   ├── problem1.md / problem2.md / problem3.md
-│   ├── problem1_solution.tex / .pdf
-│   └── direct-lattice.md
+├── docs/
+│   ├── Makefile / make.bat      # sphinx build helpers
+│   └── source/                  # Sphinx documentation source
+│       ├── conf.py              # Sphinx configuration
+│       ├── index.rst            # root toctree
+│       ├── roadmap.md           # planned features — read before adding features
+│       ├── install.md           # installation instructions
+│       ├── api.rst              # AutoAPI stub
+│       ├── changes.md           # includes CHANGES.md
+│       ├── direct-lattice.md    # background material
+│       ├── problem1.md / problem2.md / problem3.md
+│       ├── problem1_solution.tex / .pdf
+│       ├── fourcv_alignment_howto.ipynb
+│       └── _static/
+│           └── switcher.json    # version switcher stub
 ├── references/                  # journal articles and reference documents
 │   ├── 1967 Busing and Levy a05492.pdf   # foundational four-circle paper
 │   ├── 1999-JAppl-Cryst-32-614-623-H-You-psic-4S+2D/  # You (1999) psic
@@ -287,7 +311,7 @@ The B matrix follows the I16 convention: `(b1, b2, b3) = 2π * B.T`.
 
 ---
 
-## What is NOT yet implemented (see docs/roadmap.md)
+## What is NOT yet implemented (see docs/source/roadmap.md)
 
 - Wavelength / energy (Priority 1.1)
 - Motor limits per stage (Priority 1.2)

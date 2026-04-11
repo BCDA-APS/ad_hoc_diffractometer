@@ -579,12 +579,13 @@ Current coverage: 93% (119 uncovered lines).  ``pytest-cov`` is installed.
 
 ### 3.8e Sphinx documentation ([#57](https://github.com/prjemian/ad_hoc_diffractometer/issues/57))
 
-- [ ] Allow either reST or Markdown source
-- [ ] Refactor existing content in ``docs/``
-- [ ] Render Jupyter notebooks
-- [ ] Sections: main page, User Guide (diataxis.fr), API (AutoAPI),
-      Install, Changes (render ``CHANGES.md``)
-- [ ] GitHub Actions workflow to build and publish docs
+- [x] Allow either reST or Markdown source
+- [x] Refactor existing content into ``docs/source/``
+- [ ] Render Jupyter notebooks (Phase 2 — requires pandoc in CI)
+- [x] Sections: main page (``index.rst``), API (AutoAPI via ``sphinx-autoapi``),
+      Install (``install.md``), Changes (``changes.md`` includes ``CHANGES.md``)
+- [ ] User Guide per diataxis.fr (Phase 2)
+- [x] GitHub Actions workflow to build and publish docs (``docs.yml``)
 
 ### 3.9 Neutron radiation source support ([#8](https://github.com/prjemian/ad_hoc_diffractometer/issues/8))
 
