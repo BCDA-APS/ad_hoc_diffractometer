@@ -16,8 +16,11 @@ Covers:
   - wh(print=False): str output, content, graceful fallbacks, stdout control
   - pa(print=False): str output, content, graceful fallbacks, stdout control
   - _spec_motor_name static helper: SPEC column-name mapping
+  - AdHocDiffractometer.to_dict(): _meta, stages, samples, JSON-serialisable
+  - AdHocDiffractometer.from_dict(): full round-trip, edge cases
 """
 
+import json
 import math as _math
 import re
 from contextlib import nullcontext as does_not_raise
@@ -32,6 +35,7 @@ from ad_hoc_diffractometer import XHAT
 from ad_hoc_diffractometer import YHAT
 from ad_hoc_diffractometer import ZHAT
 from ad_hoc_diffractometer import AdHocDiffractometer
+from ad_hoc_diffractometer import Lattice
 from ad_hoc_diffractometer import Stage
 
 _VALID_STAGES = [Stage("a", XHAT, parent=None, role="sample")]
@@ -1707,3 +1711,292 @@ def test_identity_inclination_round_trip():
     assert d["inclination_matrix"] == [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     g2 = AdHocDiffractometer.from_dict(d)
     np.testing.assert_array_equal(g2.inclination_matrix, np.eye(3))
+
+
+# ---------------------------------------------------------------------------
+# AdHocDiffractometer.to_dict() / from_dict()
+# ---------------------------------------------------------------------------
+
+
+def _sapphire_fourcv():
+    """fourcv with sapphire lattice, two reflections, UB set."""
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_from_two_reflections_bl1967
+
+    g = fourcv()
+    g.wavelength = 1.549802558
+    g.azimuthal_reference = (0, 0, 1)
+    g.add_sample("sapphire", Lattice(a=4.785, c=12.991, gamma=120))
+    g.sample = "sapphire"
+    g.add_reflection(
+        "or1",
+        hkl=(0, 0, 6),
+        angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "ttheta": 41.94188},
+    )
+    g.add_reflection(
+        "or2",
+        hkl=(1, 0, 0),
+        angles={"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0},
+    )
+    g.sample.reflections.setor1("or1")
+    g.sample.reflections.setor2("or2")
+    ub_from_two_reflections_bl1967(g.sample)
+    g.set_angle("omega", 20.97)
+    g.set_angle("chi", 90.0)
+    return g
+
+
+def test_geometry_to_dict_structure():
+    """to_dict() returns a JSON-serialisable dict with all top-level keys."""
+    d = _sapphire_fourcv().to_dict()
+    assert isinstance(d, dict)
+    assert json.dumps(d)  # must not raise
+    assert isinstance(d["stages"], list)
+    assert isinstance(d["samples"], dict)
+    assert isinstance(d["basis"], dict)
+
+
+@pytest.mark.parametrize(
+    "meta_key, context",
+    [
+        pytest.param("software", does_not_raise(), id="software"),
+        pytest.param("version", does_not_raise(), id="version"),
+        pytest.param("created", does_not_raise(), id="created"),
+    ],
+)
+def test_geometry_to_dict_meta(meta_key, context):
+    """to_dict()['_meta'] contains expected keys with non-empty string values."""
+    with context:
+        v = _sapphire_fourcv().to_dict()["_meta"][meta_key]
+        assert isinstance(v, str) and len(v) > 0
+
+
+@pytest.mark.parametrize(
+    "key, expected, context",
+    [
+        pytest.param("name", "fourcv", does_not_raise(), id="name"),
+        pytest.param("wavelength", 1.549802558, does_not_raise(), id="wavelength"),
+        pytest.param("active_sample", "sapphire", does_not_raise(), id="active-sample"),
+    ],
+)
+def test_geometry_to_dict_top_level(key, expected, context):
+    """to_dict() stores correct top-level scalar values."""
+    with context:
+        assert _sapphire_fourcv().to_dict()[key] == pytest.approx(expected)
+
+
+def test_geometry_to_dict_azimuthal_reference():
+    """to_dict() stores the azimuthal reference vector."""
+    d = _sapphire_fourcv().to_dict()
+    assert d["azimuthal_reference"] == pytest.approx([0.0, 0.0, 1.0])
+
+
+def test_geometry_to_dict_stages():
+    """to_dict() includes all stage names with required keys."""
+    d = _sapphire_fourcv().to_dict()
+    assert {s["name"] for s in d["stages"]} == {"omega", "chi", "phi", "ttheta"}
+    for sd in d["stages"]:
+        assert {"name", "axis", "role", "parent", "angle", "limits"} <= set(sd.keys())
+
+
+def test_geometry_to_dict_stage_angle_preserved():
+    """The omega angle set before to_dict() is present in the serialised stages."""
+    d = _sapphire_fourcv().to_dict()
+    stages = {s["name"]: s for s in d["stages"]}
+    assert stages["omega"]["angle"] == pytest.approx(20.97)
+
+
+@pytest.mark.parametrize(
+    "attr, accessor, context",
+    [
+        pytest.param(
+            "name", lambda o, r: r.name == o.name, does_not_raise(), id="name"
+        ),
+        pytest.param(
+            "wavelength",
+            lambda o, r: r.wavelength == pytest.approx(o.wavelength),
+            does_not_raise(),
+            id="wavelength",
+        ),
+        pytest.param(
+            "azimuthal_reference",
+            lambda o, r: r.azimuthal_reference == pytest.approx(o.azimuthal_reference),
+            does_not_raise(),
+            id="azimuthal-ref",
+        ),
+        pytest.param(
+            "active_sample",
+            lambda o, r: r._active_ref[0] == o._active_ref[0],
+            does_not_raise(),
+            id="active-sample",
+        ),
+        pytest.param(
+            "sample_names",
+            lambda o, r: set(r.samples._data.keys()) == set(o.samples._data.keys()),
+            does_not_raise(),
+            id="sample-names",
+        ),
+        pytest.param(
+            "lattice_a",
+            lambda o, r: r.sample.lattice.a == pytest.approx(o.sample.lattice.a),
+            does_not_raise(),
+            id="lattice-a",
+        ),
+        pytest.param(
+            "lattice_c",
+            lambda o, r: r.sample.lattice.c == pytest.approx(o.sample.lattice.c),
+            does_not_raise(),
+            id="lattice-c",
+        ),
+        pytest.param(
+            "or1",
+            lambda o, r: r.sample.reflections._or1_name == "or1",
+            does_not_raise(),
+            id="or1",
+        ),
+        pytest.param(
+            "or2",
+            lambda o, r: r.sample.reflections._or2_name == "or2",
+            does_not_raise(),
+            id="or2",
+        ),
+    ],
+)
+def test_geometry_from_dict_roundtrip(attr, accessor, context):
+    """from_dict(to_dict()) recovers each geometry attribute."""
+    with context:
+        original = _sapphire_fourcv()
+        restored = AdHocDiffractometer.from_dict(original.to_dict())
+        assert accessor(original, restored)
+
+
+def test_geometry_from_dict_UB_preserved():
+    """from_dict(to_dict()) preserves the UB matrix to float64 precision."""
+    original = _sapphire_fourcv()
+    restored = AdHocDiffractometer.from_dict(original.to_dict())
+    np.testing.assert_allclose(restored.sample.UB, original.sample.UB, atol=1e-12)
+
+
+def test_geometry_from_dict_U_preserved():
+    """from_dict(to_dict()) preserves the U matrix."""
+    original = _sapphire_fourcv()
+    restored = AdHocDiffractometer.from_dict(original.to_dict())
+    np.testing.assert_allclose(restored.sample.U, original.sample.U, atol=1e-12)
+
+
+def test_geometry_json_roundtrip():
+    """Full JSON serialize → deserialize → from_dict reproduces the geometry."""
+    original = _sapphire_fourcv()
+    d = json.loads(json.dumps(original.to_dict()))
+    g2 = AdHocDiffractometer.from_dict(d)
+    with does_not_raise():
+        assert g2.name == original.name
+        assert g2.wavelength == pytest.approx(original.wavelength)
+        assert g2.sample.lattice.a == pytest.approx(original.sample.lattice.a)
+
+
+@pytest.mark.parametrize(
+    "desc, build_fn, check, context",
+    [
+        pytest.param(
+            "psic-roundtrip",
+            lambda: __import__("ad_hoc_diffractometer", fromlist=["psic"]).psic(),
+            lambda o, r: (
+                r.name == "psic" and set(r._stages.keys()) == set(o._stages.keys())
+            ),
+            does_not_raise(),
+            id="psic",
+        ),
+        pytest.param(
+            "no-azimuthal-ref",
+            lambda: _no_azref_fourcv(),
+            lambda o, r: r.azimuthal_reference is None,
+            does_not_raise(),
+            id="no-azimuthal-ref",
+        ),
+        pytest.param(
+            "kappa-alpha-deg",
+            lambda: _kappa_fourcv(),
+            lambda o, r: r.kappa_alpha_deg == pytest.approx(50.0),
+            does_not_raise(),
+            id="kappa-alpha-deg",
+        ),
+    ],
+)
+def test_geometry_from_dict_edge_cases(desc, build_fn, check, context):
+    """from_dict(to_dict()) handles edge-case geometries correctly."""
+    with context:
+        original = build_fn()
+        restored = AdHocDiffractometer.from_dict(original.to_dict())
+        assert check(original, restored)
+
+
+def _no_azref_fourcv():
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    return g
+
+
+def _kappa_fourcv():
+    from ad_hoc_diffractometer import kappa4cv
+
+    return kappa4cv(alpha_deg=50.0)
+
+
+@pytest.mark.parametrize(
+    "desc, context",
+    [
+        pytest.param(
+            "only-saved-samples-restored", does_not_raise(), id="saved-samples"
+        ),
+        pytest.param(
+            "active-sample-pointer-correct", does_not_raise(), id="active-pointer"
+        ),
+        pytest.param(
+            "default-test-sample-not-reintroduced",
+            does_not_raise(),
+            id="no-test-sample",
+        ),
+    ],
+)
+def test_geometry_from_dict_sample_integrity(desc, context):
+    """from_dict() restores exactly the saved samples with correct active pointer."""
+    from ad_hoc_diffractometer import fourcv
+
+    with context:
+        g = fourcv()
+        g.wavelength = 1.5406
+        g.add_sample("mycrystal", Lattice(a=5.0))
+        g.sample = "mycrystal"
+        g.remove_sample("test")
+
+        d = g.to_dict()
+        g2 = AdHocDiffractometer.from_dict(d)
+
+        if desc == "only-saved-samples-restored":
+            assert set(g2.samples._data.keys()) == set(d["samples"].keys())
+        elif desc == "active-sample-pointer-correct":
+            assert g2._active_ref[0] == "mycrystal"
+            assert g2.sample.name == "mycrystal"
+        elif desc == "default-test-sample-not-reintroduced":
+            assert "test" not in g2.samples._data
+
+
+def test_geometry_to_dict_version_unknown_on_metadata_error():
+    """to_dict() writes version='unknown' when importlib.metadata.version raises."""
+    import importlib.metadata
+    from unittest.mock import MagicMock
+
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    original_fn = importlib.metadata.version
+    importlib.metadata.version = MagicMock(side_effect=Exception("no pkg"))
+    try:
+        d = g.to_dict()
+        assert d["_meta"]["version"] == "unknown"
+    finally:
+        importlib.metadata.version = original_fn
