@@ -1338,3 +1338,207 @@ def test_wh_logs_debug_when_psi_unavailable(caplog):
         g.wh(print=False)
 
     assert any("psi" in r.message.lower() for r in caplog.records)
+
+
+# ---------------------------------------------------------------------------
+# Detector geometry parameters (#10)
+# ---------------------------------------------------------------------------
+
+
+def test_detector_distance_default_none():
+    """detector_distance is None by default."""
+    from ad_hoc_diffractometer import psic
+
+    assert psic().detector_distance is None
+
+
+def test_detector_tilt_default_none():
+    """detector_tilt is None by default."""
+    from ad_hoc_diffractometer import psic
+
+    assert psic().detector_tilt is None
+
+
+def test_detector_offset_default_none():
+    """detector_offset is None by default."""
+    from ad_hoc_diffractometer import psic
+
+    assert psic().detector_offset is None
+
+
+def test_detector_distance_set_and_clear():
+    """detector_distance accepts a positive float and can be cleared to None."""
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.detector_distance = 500.0
+    assert g.detector_distance == 500.0
+    g.detector_distance = None
+    assert g.detector_distance is None
+
+
+def test_detector_distance_coerces_to_float():
+    """detector_distance coerces integer input to float."""
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.detector_distance = 300
+    assert isinstance(g.detector_distance, float)
+    assert g.detector_distance == 300.0
+
+
+def test_detector_distance_zero_raises():
+    """detector_distance = 0 raises ValueError."""
+    import re
+
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    with pytest.raises(ValueError, match=re.escape("must be positive")):
+        g.detector_distance = 0.0
+
+
+def test_detector_distance_negative_raises():
+    """detector_distance < 0 raises ValueError."""
+    import re
+
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    with pytest.raises(ValueError, match=re.escape("must be positive")):
+        g.detector_distance = -100.0
+
+
+def test_detector_tilt_set_and_clear():
+    """detector_tilt accepts any real number and can be cleared to None."""
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.detector_tilt = 0.3
+    assert g.detector_tilt == pytest.approx(0.3)
+    g.detector_tilt = -1.5
+    assert g.detector_tilt == pytest.approx(-1.5)
+    g.detector_tilt = None
+    assert g.detector_tilt is None
+
+
+def test_detector_tilt_coerces_to_float():
+    """detector_tilt coerces integer input to float."""
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.detector_tilt = 1
+    assert isinstance(g.detector_tilt, float)
+
+
+def test_detector_offset_set_and_clear():
+    """detector_offset accepts a 2-tuple and can be cleared to None."""
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.detector_offset = (2.5, -1.0)
+    assert g.detector_offset == (2.5, -1.0)
+    g.detector_offset = None
+    assert g.detector_offset is None
+
+
+def test_detector_offset_coerces_to_float():
+    """detector_offset values are coerced to float."""
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.detector_offset = (1, 2)
+    assert g.detector_offset == (1.0, 2.0)
+    assert isinstance(g.detector_offset[0], float)
+
+
+def test_detector_offset_invalid_length_raises():
+    """detector_offset with wrong length raises ValueError."""
+    import re
+
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    with pytest.raises(ValueError, match=re.escape("length-2 sequence")):
+        g.detector_offset = (1.0, 2.0, 3.0)
+
+
+def test_detector_offset_invalid_type_raises():
+    """detector_offset with non-numeric values raises ValueError."""
+    import re
+
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    with pytest.raises(ValueError, match=re.escape("length-2 sequence")):
+        g.detector_offset = "bad"
+
+
+# Serialisation round-trips
+
+
+def test_detector_distance_round_trip():
+    """detector_distance survives to_dict / from_dict."""
+    import json
+
+    from ad_hoc_diffractometer import AdHocDiffractometer
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.detector_distance = 750.0
+    d = g.to_dict()
+    assert d["detector_distance"] == 750.0
+    assert json.dumps(d)
+    g2 = AdHocDiffractometer.from_dict(d)
+    assert g2.detector_distance == 750.0
+
+
+def test_detector_tilt_round_trip():
+    """detector_tilt survives to_dict / from_dict."""
+    import json
+
+    from ad_hoc_diffractometer import AdHocDiffractometer
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.detector_tilt = -0.7
+    d = g.to_dict()
+    assert d["detector_tilt"] == pytest.approx(-0.7)
+    assert json.dumps(d)
+    g2 = AdHocDiffractometer.from_dict(d)
+    assert g2.detector_tilt == pytest.approx(-0.7)
+
+
+def test_detector_offset_round_trip():
+    """detector_offset survives to_dict / from_dict."""
+    import json
+
+    from ad_hoc_diffractometer import AdHocDiffractometer
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    g.detector_offset = (3.0, -2.5)
+    d = g.to_dict()
+    assert d["detector_offset"] == [3.0, -2.5]
+    assert json.dumps(d)
+    g2 = AdHocDiffractometer.from_dict(d)
+    assert g2.detector_offset == (3.0, -2.5)
+
+
+def test_detector_none_round_trip():
+    """None detector params are stored and restored as None."""
+    import json
+
+    from ad_hoc_diffractometer import AdHocDiffractometer
+    from ad_hoc_diffractometer import psic
+
+    g = psic()
+    d = g.to_dict()
+    assert d["detector_distance"] is None
+    assert d["detector_tilt"] is None
+    assert d["detector_offset"] is None
+    assert json.dumps(d)
+    g2 = AdHocDiffractometer.from_dict(d)
+    assert g2.detector_distance is None
+    assert g2.detector_tilt is None
+    assert g2.detector_offset is None
