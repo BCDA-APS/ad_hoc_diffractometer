@@ -174,9 +174,16 @@ def angles_to_phi_vector(geometry, **motor_angles: float) -> np.ndarray:
     y_norm = np.linalg.norm(y_hat)
     y_hat = y_hat / y_norm
 
-    # Scattering vector in lab frame: Q_lab = (2π/λ) * (D @ ŷ - ŷ)
+    # Apply diffractometer inclination: when the instrument is mounted at a
+    # non-zero angle relative to the beam, the effective beam direction in the
+    # diffractometer frame is R_inc.T @ ŷ.  For a zero inclination (R_inc = I)
+    # this reduces to the standard y_hat.
+    R_inc = geometry.inclination_matrix
+    y_eff = R_inc.T @ y_hat
+
+    # Scattering vector in lab frame: Q_lab = (2π/λ) * (D @ ŷ_eff - ŷ_eff)
     two_pi_over_lambda = 2.0 * np.pi / geometry.wavelength
-    Q_lab = two_pi_over_lambda * (D @ y_hat - y_hat)
+    Q_lab = two_pi_over_lambda * (D @ y_eff - y_eff)
 
     # Rotate into phi frame: Q_phi = Z^T @ Q_lab  (Z is orthogonal)
     Q_phi = Z.T @ Q_lab
