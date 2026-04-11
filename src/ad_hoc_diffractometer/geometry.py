@@ -130,6 +130,7 @@ class AdHocDiffractometer:
         self.wavelength = wavelength  # validated via property setter
         self.kappa_alpha_deg = kappa_alpha_deg
         self.azimuthal_reference = azimuthal_reference  # validated via property setter
+        self._surface_normal: tuple[float, float, float] | None = None
 
         # Diffraction modes
         if isinstance(modes, ModeDict):
@@ -901,6 +902,197 @@ class AdHocDiffractometer:
         sin_psi = float(np.dot(Q_hat, np.cross(y_perp_hat, n_perp_hat)))
         return math.degrees(math.atan2(sin_psi, cos_psi))
 
+    # ------------------------------------------------------------------
+    # Surface geometry: surface_normal property
+    # ------------------------------------------------------------------
+
+    @property
+    def surface_normal(self) -> tuple[float, float, float] | None:
+        """
+        Surface normal direction as Miller indices (h, k, l), or ``None``.
+
+        The surface normal defines the direction perpendicular to the sample
+        surface in reciprocal space.  It is used by the surface geometry
+        calculations (:meth:`alpha_i`, :meth:`alpha_f`, :meth:`q_components`,
+        :meth:`is_specular`, :meth:`is_evanescent`).
+
+        When ``None``, the surface calculations fall back to
+        :attr:`azimuthal_reference` if that is set.
+
+        Setting this to ``None`` clears the surface normal.
+        Setting to a non-zero (h, k, l) 3-tuple stores it.
+
+        Raises
+        ------
+        ValueError
+            If the supplied value is not a length-3 sequence of numbers,
+            or is the zero vector (0, 0, 0).
+
+        Examples
+        --------
+        >>> g = psic()
+        >>> g.surface_normal = (0, 0, 1)   # c-axis surface normal
+        >>> g.surface_normal
+        (0.0, 0.0, 1.0)
+        >>> g.surface_normal = None        # clear
+        """
+        return self._surface_normal
+
+    @surface_normal.setter
+    def surface_normal(self, value: tuple[float, float, float] | None) -> None:
+        if value is None:
+            self._surface_normal = None
+            return
+        try:
+            h, k, l = (float(x) for x in value)  # noqa: E741
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                "surface_normal must be a length-3 sequence of numbers "
+                f"or None; got {value!r}."
+            ) from exc
+        if h == 0.0 and k == 0.0 and l == 0.0:
+            raise ValueError(
+                "surface_normal must be a non-zero vector; (0, 0, 0) is not allowed."
+            )
+        self._surface_normal = (h, k, l)
+
+    # ------------------------------------------------------------------
+    # Surface geometry: incidence / emergence / Q-decomposition methods
+    # ------------------------------------------------------------------
+
+    def alpha_i(self, angles: dict[str, float] | None = None) -> float:
+        """
+        Angle of incidence αᵢ (degrees).
+
+        αᵢ is the angle between the incoming beam and the sample surface.
+        Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
+        (or ``azimuthal_reference``) to be set.
+
+        Parameters
+        ----------
+        angles : dict[str, float] or None
+            Motor angles.  If ``None``, current stage angles are used.
+
+        Returns
+        -------
+        float
+            αᵢ in degrees, in [0°, 90°].
+
+        See Also
+        --------
+        alpha_f : Angle of emergence.
+
+        Examples
+        --------
+        >>> g = zaxis()
+        >>> g.wavelength = 1.5406
+        >>> g.surface_normal = (0, 0, 1)
+        >>> ub_identity(g.sample)
+        >>> g.alpha_i({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})
+        5.0
+        """
+        from .surface import alpha_i as _alpha_i
+
+        return _alpha_i(self, angles)
+
+    def alpha_f(self, angles: dict[str, float] | None = None) -> float:
+        """
+        Angle of emergence αf (degrees).
+
+        αf is the angle between the diffracted beam and the sample surface.
+        Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
+        (or ``azimuthal_reference``) to be set.
+
+        Parameters
+        ----------
+        angles : dict[str, float] or None
+            Motor angles.  If ``None``, current stage angles are used.
+
+        Returns
+        -------
+        float
+            αf in degrees, in [0°, 90°].
+
+        See Also
+        --------
+        alpha_i : Angle of incidence.
+        """
+        from .surface import alpha_f as _alpha_f
+
+        return _alpha_f(self, angles)
+
+    def q_components(self, angles: dict[str, float] | None = None) -> dict[str, float]:
+        """
+        Decompose Q into components parallel and perpendicular to the surface.
+
+        Parameters
+        ----------
+        angles : dict[str, float] or None
+            Motor angles.  If ``None``, current stage angles are used.
+
+        Returns
+        -------
+        dict with keys ``"Q_perp"``, ``"Q_par"``, ``"Q_perp_signed"``,
+        ``"Q_total"`` — all in Å⁻¹.
+
+        See Also
+        --------
+        alpha_i, alpha_f : Incidence and emergence angles.
+        """
+        from .surface import q_components as _q_components
+
+        return _q_components(self, angles)
+
+    def is_specular(
+        self,
+        angles: dict[str, float] | None = None,
+        atol: float = 0.01,
+    ) -> bool:
+        """
+        Return True when αᵢ ≈ αf within ``atol`` degrees.
+
+        Parameters
+        ----------
+        angles : dict[str, float] or None
+        atol : float
+            Tolerance in degrees (default 0.01°).
+
+        Returns
+        -------
+        bool
+        """
+        from .surface import is_specular as _is_specular
+
+        return _is_specular(self, angles, atol)
+
+    def is_evanescent(
+        self,
+        angles: dict[str, float] | None = None,
+        critical_angle_deg: float | None = None,
+    ) -> bool:
+        """
+        Return True when αᵢ < ``critical_angle_deg`` (evanescent regime).
+
+        Parameters
+        ----------
+        angles : dict[str, float] or None
+        critical_angle_deg : float
+            Critical angle for total external reflection in degrees.
+            Must be supplied (material-dependent; not stored on geometry).
+
+        Returns
+        -------
+        bool
+
+        Raises
+        ------
+        ValueError
+            If ``critical_angle_deg`` is None.
+        """
+        from .surface import is_evanescent as _is_evanescent
+
+        return _is_evanescent(self, angles, critical_angle_deg)
+
     def wh(self, print: bool = True) -> str:
         """
         Terse one-screen status string (the SPEC ``wh`` command).
@@ -1370,6 +1562,9 @@ class AdHocDiffractometer:
                 if self._azimuthal_reference is not None
                 else None
             ),
+            "surface_normal": (
+                list(self._surface_normal) if self._surface_normal is not None else None
+            ),
             "basis": {k: [float(x) for x in v] for k, v in self.basis.items()},
             "stages": stages,
             "active_sample": self._active_ref[0],
@@ -1455,6 +1650,11 @@ class AdHocDiffractometer:
             default_mode=d.get("mode_name"),
             cut_points=d.get("cut_points"),
         )
+
+        # Restore surface_normal
+        sn = d.get("surface_normal")
+        if sn is not None:
+            geom.surface_normal = tuple(sn)
 
         # Restore samples.
         #
