@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
+# SPDX-License-Identifier: CC-BY-4.0
 """
 Unit tests for the Lattice class in lattice.py.
 

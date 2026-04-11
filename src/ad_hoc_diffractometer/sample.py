@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
+# SPDX-License-Identifier: CC-BY-4.0
 """
 sample.py — Sample class and SampleDict for crystallographic sample management.
 
