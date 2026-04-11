@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=f455db4b"></script>
+    <script src="../../_static/documentation_options.js?v=21209b6d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -498,57 +498,74 @@
 <span></span><span class="c1"># Copyright (c) 2026 Pete R. Jemian &lt;prjemian+ad_hoc_diffractometer@gmail.com&gt;</span>
 <span class="c1"># SPDX-License-Identifier: CC-BY-4.0</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">radiation.py — Wavelength, energy, and wave-number conversions for X-rays.</span>
+<span class="sd">radiation.py — Wavelength, energy, and wave-number conversions.</span>
 
-<span class="sd">Provides named constants for common laboratory X-ray emission lines and</span>
-<span class="sd">standalone conversion functions between wavelength, photon energy (keV),</span>
-<span class="sd">and wave number k (Å⁻¹).</span>
+<span class="sd">Provides named constants for common laboratory X-ray emission lines,</span>
+<span class="sd">standalone conversion functions for both X-rays and fixed-wavelength</span>
+<span class="sd">neutrons (reactor sources), and the ``SOURCE_TYPES`` sentinel used by</span>
+<span class="sd">:class:`AdHocDiffractometer` to select the correct energy formula.</span>
+
+<span class="sd">**Source type scope**</span>
+
+<span class="sd">This module supports two source types:</span>
+
+<span class="sd">``&quot;xray&quot;`` (default)</span>
+<span class="sd">    Photon energy: E (keV) = hc/λ = 12.39842 / λ (Å).</span>
+
+<span class="sd">``&quot;neutron&quot;``</span>
+<span class="sd">    Fixed-wavelength **reactor** neutrons only.  Energy via the de Broglie</span>
+<span class="sd">    relation: E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å).</span>
+<span class="sd">    Spallation/time-of-flight sources sweep the full spectrum with each</span>
+<span class="sd">    pulse and require a fundamentally different instrument description;</span>
+<span class="sd">    they are out of scope for this project.</span>
 
 <span class="sd">Constants</span>
 <span class="sd">---------</span>
+<span class="sd">HC_KEV_ANGSTROM : float</span>
+<span class="sd">    hc = 12.398 419 843 320 026 keV·Å.  Exact (NIST CODATA 2022).</span>
+
+<span class="sd">HC_KEV_ANGSTROM_UNCERTAINTY : float</span>
+<span class="sd">    0.0 — exact constant.</span>
+
+<span class="sd">NEUTRON_MEV_ANGSTROM2 : float</span>
+<span class="sd">    h²/(2 m_n) = 81.804 210 235 2 meV·Å² (NIST CODATA 2022).</span>
+
+<span class="sd">NEUTRON_MEV_ANGSTROM2_UNCERTAINTY : float</span>
+<span class="sd">    0.0000000415 meV·Å² — propagated from CODATA 2022 m_n uncertainty.</span>
+
+<span class="sd">SOURCE_TYPES : tuple[str, ...]</span>
+<span class="sd">    Valid source-type strings: ``(&quot;xray&quot;, &quot;neutron&quot;)``.</span>
+
 <span class="sd">XRAY_LINES : dict[str, float]</span>
-<span class="sd">    Named X-ray emission line wavelengths in Å.  Weighted means (Kα) or</span>
-<span class="sd">    exact values (Kα1) as noted.</span>
+<span class="sd">    Named X-ray emission line wavelengths in Å.</span>
 
-<span class="sd">    ``&quot;Cu_Ka&quot;``   Cu Kα  ≈ 1.5406 Å  (weighted mean of Kα1=1.54056 Å, Kα2=1.54439 Å)</span>
-<span class="sd">    ``&quot;Cu_Ka1&quot;``  Cu Kα1 = 1.54056 Å</span>
-<span class="sd">    ``&quot;Cu_Ka2&quot;``  Cu Kα2 = 1.54439 Å</span>
-<span class="sd">    ``&quot;Mo_Ka&quot;``   Mo Kα  ≈ 0.7107 Å  (weighted mean)</span>
-<span class="sd">    ``&quot;Mo_Ka1&quot;``  Mo Kα1 = 0.70930 Å</span>
-<span class="sd">    ``&quot;Ag_Ka&quot;``   Ag Kα  ≈ 0.5594 Å  (weighted mean)</span>
-<span class="sd">    ``&quot;Ag_Ka1&quot;``  Ag Kα1 = 0.55941 Å</span>
-<span class="sd">    ``&quot;Co_Ka&quot;``   Co Kα  ≈ 1.7902 Å  (weighted mean)</span>
-<span class="sd">    ``&quot;Co_Ka1&quot;``  Co Kα1 = 1.78897 Å</span>
-
-<span class="sd">Functions</span>
-<span class="sd">---------</span>
+<span class="sd">X-ray functions</span>
+<span class="sd">---------------</span>
 <span class="sd">wavelength_to_energy(wavelength) -&gt; float</span>
-<span class="sd">    Wavelength (Å) → photon energy E (keV): E = hc/λ = 12.39842 / λ.</span>
+<span class="sd">    λ (Å) → E (keV) = hc/λ.</span>
 
 <span class="sd">energy_to_wavelength(energy_kev) -&gt; float</span>
-<span class="sd">    Photon energy (keV) → wavelength (Å): λ = hc/E = 12.39842 / E.</span>
+<span class="sd">    E (keV) → λ (Å) = hc/E.</span>
 
 <span class="sd">wavelength_to_wavenumber(wavelength) -&gt; float</span>
-<span class="sd">    Wavelength (Å) → wave number k (Å⁻¹): k = 2π / λ.</span>
+<span class="sd">    λ (Å) → k (Å⁻¹) = 2π/λ.</span>
 
 <span class="sd">wavenumber_to_wavelength(wavenumber) -&gt; float</span>
-<span class="sd">    Wave number k (Å⁻¹) → wavelength (Å): λ = 2π / k.</span>
+<span class="sd">    k (Å⁻¹) → λ (Å) = 2π/k.</span>
 
-<span class="sd">Notes</span>
-<span class="sd">-----</span>
-<span class="sd">The conversion constant hc = 12.39842 keV·Å is the standard value used</span>
-<span class="sd">in X-ray crystallography (NIST CODATA 2018).</span>
+<span class="sd">Neutron functions</span>
+<span class="sd">-----------------</span>
+<span class="sd">neutron_wavelength_to_energy(wavelength) -&gt; float</span>
+<span class="sd">    λ (Å) → E (meV) = 81.8042 / λ².</span>
 
-<span class="sd">These conversions apply to **X-rays only**.  For neutrons, the de Broglie</span>
-<span class="sd">relation gives E (meV) = 81.8042 / λ² (Å) — see the `radiation_neutron`</span>
-<span class="sd">module (issue #8).</span>
+<span class="sd">neutron_energy_to_wavelength(energy_mev) -&gt; float</span>
+<span class="sd">    E (meV) → λ (Å) = sqrt(81.8042 / E).</span>
 
 <span class="sd">References</span>
 <span class="sd">----------</span>
-<span class="sd">NIST, &quot;X-Ray Transition Energies Database&quot;,</span>
-<span class="sd">https://physics.nist.gov/PhysRefData/XrayTrans/Html/search.html</span>
-
 <span class="sd">NIST CODATA 2018 — hc = 12398.42 eV·Å = 12.39842 keV·Å</span>
+<span class="sd">NIST neutron scattering — h²/(2 m_n) = 81.8042 meV·Å²</span>
+<span class="sd">de Broglie relation — λ = h/p, E = p²/(2 m_n)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
@@ -559,8 +576,43 @@
 <span class="c1"># Physical constant</span>
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
-<span class="c1">#: hc in keV·Å (NIST CODATA 2018).</span>
-<span class="n">HC_KEV_ANGSTROM</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">12.39842</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Physical constants — NIST CODATA 2022 adjustment</span>
+<span class="c1"># https://physics.nist.gov/cuu/Constants/Table/allascii.txt</span>
+<span class="c1">#</span>
+<span class="c1"># HC_KEV_ANGSTROM: hc in keV·Å.</span>
+<span class="c1">#   Derived from h (exact), c (exact), e (exact) per SI 2019 redefinition.</span>
+<span class="c1">#   hc = 6.62607015e-34 J·Hz⁻¹ × 299792458 m·s⁻¹ / 1.602176634e-19 J·eV⁻¹</span>
+<span class="c1">#      = 1.239841984332003e-6 eV·m  (exact, listed in CODATA table)</span>
+<span class="c1">#      = 12.398419843320026 keV·Å  (exact — no uncertainty)</span>
+<span class="c1">#</span>
+<span class="c1"># NEUTRON_MEV_ANGSTROM2: h²/(2 m_n) in meV·Å².</span>
+<span class="c1">#   h (exact); m_n = 1.674 927 500 56 e-27 kg ± 0.000 000 000 85 e-27 kg</span>
+<span class="c1">#   CODATA 2022 relative uncertainty of m_n: 5.075e-10</span>
+<span class="c1">#   NEUTRON_MEV_ANGSTROM2_UNCERTAINTY = 0.0000000415 meV·Å²</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="c1">#: hc = 12.398 419 843 320 026 keV·Å.</span>
+<span class="c1">#: Exact (h, c, and e are all defined SI constants since 2019).</span>
+<span class="c1">#: Source: NIST CODATA 2022.</span>
+<span class="n">HC_KEV_ANGSTROM</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">12.398419843320026</span>
+
+<span class="c1">#: Uncertainty of :data:`HC_KEV_ANGSTROM` in keV·Å.</span>
+<span class="c1">#: Zero — this constant is exact.</span>
+<span class="n">HC_KEV_ANGSTROM_UNCERTAINTY</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="c1">#: h²/(2 m_n) = 81.804 210 235 2 meV·Å².</span>
+<span class="c1">#: Used for reactor-neutron kinetic energy via the de Broglie relation.</span>
+<span class="c1">#: Source: NIST CODATA 2022; m_n = 1.674 927 500 56(85) × 10⁻²⁷ kg.</span>
+<span class="n">NEUTRON_MEV_ANGSTROM2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">81.8042102352</span>
+
+<span class="c1">#: Uncertainty of :data:`NEUTRON_MEV_ANGSTROM2` in meV·Å².</span>
+<span class="c1">#: Propagated from the CODATA 2022 uncertainty in the neutron mass m_n.</span>
+<span class="n">NEUTRON_MEV_ANGSTROM2_UNCERTAINTY</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0000000415</span>
+
+<span class="c1">#: Valid source-type strings for :attr:`AdHocDiffractometer.source_type`.</span>
+<span class="c1">#: ``&quot;xray&quot;`` uses hc/λ (keV); ``&quot;neutron&quot;`` uses de Broglie h²/(2 m_n λ²) (meV).</span>
+<span class="n">SOURCE_TYPES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;xray&quot;</span><span class="p">,</span> <span class="s2">&quot;neutron&quot;</span><span class="p">)</span>
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
 <span class="c1"># Named X-ray emission lines (wavelengths in Å)</span>
@@ -732,6 +784,95 @@
             <span class="sa">f</span><span class="s2">&quot;wavenumber_to_wavelength(): wavenumber must be &gt; 0 Å⁻¹; got </span><span class="si">{</span><span class="n">wavenumber</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavenumber</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Neutron conversion functions  (de Broglie, reactor / fixed-wavelength only)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="neutron_wavelength_to_energy">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.neutron_wavelength_to_energy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">neutron_wavelength_to_energy</span><span class="p">(</span><span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert wavelength to neutron kinetic energy (de Broglie relation).</span>
+
+<span class="sd">    E (meV) = h² / (2 m_n λ²) = 81.8042 / λ² (Å)</span>
+
+<span class="sd">    Applies to **fixed-wavelength reactor neutrons** only.  Spallation</span>
+<span class="sd">    (time-of-flight) sources are out of scope for this project.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wavelength : float</span>
+<span class="sd">        Neutron wavelength in Å.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Neutron kinetic energy in meV.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``wavelength`` ≤ 0.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    wavelength_to_energy : X-ray photon energy in keV.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.neutron_wavelength_to_energy(1.8), 4)</span>
+<span class="sd">    25.2482</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;neutron_wavelength_to_energy(): wavelength must be &gt; 0 Å; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">NEUTRON_MEV_ANGSTROM2</span> <span class="o">/</span> <span class="p">(</span><span class="n">wavelength</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="neutron_energy_to_wavelength">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.neutron_energy_to_wavelength">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">neutron_energy_to_wavelength</span><span class="p">(</span><span class="n">energy_mev</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert neutron kinetic energy to wavelength (de Broglie relation).</span>
+
+<span class="sd">    λ (Å) = sqrt(h² / (2 m_n E)) = sqrt(81.8042 / E (meV))</span>
+
+<span class="sd">    Applies to **fixed-wavelength reactor neutrons** only.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    energy_mev : float</span>
+<span class="sd">        Neutron kinetic energy in meV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Neutron wavelength in Å.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``energy_mev`` ≤ 0.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.neutron_energy_to_wavelength(25.0), 4)</span>
+<span class="sd">    1.809</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">energy_mev</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;neutron_energy_to_wavelength(): energy must be &gt; 0 meV; got </span><span class="si">{</span><span class="n">energy_mev</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">NEUTRON_MEV_ANGSTROM2</span> <span class="o">/</span> <span class="n">energy_mev</span><span class="p">)</span></div>
 
 </pre></div>
 

@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=f455db4b"></script>
+    <script src="../../_static/documentation_options.js?v=21209b6d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -634,6 +634,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="n">basis</span> <span class="k">if</span> <span class="n">basis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_BASIS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;xray&quot;</span>  <span class="c1"># default; validated via property setter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">wavelength</span>  <span class="c1"># validated via property setter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa_alpha_deg</span> <span class="o">=</span> <span class="n">kappa_alpha_deg</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="o">=</span> <span class="n">azimuthal_reference</span>  <span class="c1"># validated via property setter</span>
@@ -814,30 +815,73 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">source_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Radiation source type: ``&quot;xray&quot;`` (default) or ``&quot;neutron&quot;``.</span>
+
+<span class="sd">        Controls which energy formula is used by :attr:`energy` and</span>
+<span class="sd">        :attr:`energy_units`:</span>
+
+<span class="sd">        ``&quot;xray&quot;``</span>
+<span class="sd">            Photon energy: E (keV) = hc/λ = 12.39842 / λ (Å).</span>
+
+<span class="sd">        ``&quot;neutron&quot;``</span>
+<span class="sd">            Fixed-wavelength **reactor** neutron kinetic energy via the de</span>
+<span class="sd">            Broglie relation: E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å).</span>
+<span class="sd">            Spallation (time-of-flight) sources are out of scope.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If set to a value not in ``(&quot;xray&quot;, &quot;neutron&quot;)``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">        &gt;&gt;&gt; g = ahd.fourcv()</span>
+<span class="sd">        &gt;&gt;&gt; g.source_type</span>
+<span class="sd">        &#39;xray&#39;</span>
+<span class="sd">        &gt;&gt;&gt; g.source_type = &quot;neutron&quot;</span>
+<span class="sd">        &gt;&gt;&gt; g.source_type</span>
+<span class="sd">        &#39;neutron&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span>
+
+    <span class="nd">@source_type</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">source_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.radiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">SOURCE_TYPES</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SOURCE_TYPES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;source_type must be one of </span><span class="si">{</span><span class="n">SOURCE_TYPES</span><span class="si">!r}</span><span class="s2">; got </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">energy_units</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Units of the :attr:`energy` property for this geometry.</span>
+<span class="sd">        Units of the :attr:`energy` property.</span>
 
-<span class="sd">        Returns ``&quot;keV&quot;`` for X-ray geometries (the default).  Will return</span>
-<span class="sd">        ``&quot;meV&quot;`` for neutron geometries once ``source_type`` is set</span>
-<span class="sd">        (see issue #8).</span>
+<span class="sd">        ``&quot;keV&quot;`` for X-ray geometries; ``&quot;meV&quot;`` for neutron geometries.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;keV&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;keV&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span> <span class="o">==</span> <span class="s2">&quot;xray&quot;</span> <span class="k">else</span> <span class="s2">&quot;meV&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Radiation energy in units of :attr:`energy_units`, derived from wavelength.</span>
 
-<span class="sd">        For X-ray geometries (default): E (keV) = hc / λ = 12.39842 / λ (Å).</span>
+<span class="sd">        - X-ray: E (keV) = hc / λ = 12.39842 / λ (Å)</span>
+<span class="sd">        - Neutron (reactor): E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å)</span>
 
 <span class="sd">        Returns ``None`` when ``wavelength`` is not set.  Setting ``energy``</span>
-<span class="sd">        updates ``wavelength`` accordingly.  The value must be in the units</span>
-<span class="sd">        returned by :attr:`energy_units`.</span>
+<span class="sd">        updates ``wavelength`` using the inverse formula for the current</span>
+<span class="sd">        :attr:`source_type`.  The value must be in the units given by</span>
+<span class="sd">        :attr:`energy_units`.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -849,26 +893,39 @@
 <span class="sd">        &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
 <span class="sd">        &gt;&gt;&gt; g = ahd.fourcv()</span>
 <span class="sd">        &gt;&gt;&gt; g.wavelength = 1.5406</span>
-<span class="sd">        &gt;&gt;&gt; round(g.energy, 4)</span>
+<span class="sd">        &gt;&gt;&gt; round(g.energy, 4)    # keV for xray</span>
 <span class="sd">        8.0479</span>
-<span class="sd">        &gt;&gt;&gt; g.energy = 8.048</span>
+<span class="sd">        &gt;&gt;&gt; g.source_type = &quot;neutron&quot;</span>
+<span class="sd">        &gt;&gt;&gt; round(g.energy, 4)    # meV for neutron</span>
+<span class="sd">        34.4634</span>
+<span class="sd">        &gt;&gt;&gt; g.energy = 25.0       # sets wavelength via de Broglie</span>
 <span class="sd">        &gt;&gt;&gt; round(g.wavelength, 4)</span>
-<span class="sd">        1.5405</span>
+<span class="sd">        1.809</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.radiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">wavelength_to_energy</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span> <span class="o">==</span> <span class="s2">&quot;xray&quot;</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.radiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">wavelength_to_energy</span>
 
-        <span class="k">return</span> <span class="n">wavelength_to_energy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">wavelength_to_energy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.radiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">neutron_wavelength_to_energy</span>
+
+            <span class="k">return</span> <span class="n">neutron_wavelength_to_energy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">)</span>
 
     <span class="nd">@energy</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.radiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">energy_to_wavelength</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span> <span class="o">==</span> <span class="s2">&quot;xray&quot;</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.radiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">energy_to_wavelength</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="o">=</span> <span class="n">energy_to_wavelength</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="o">=</span> <span class="n">energy_to_wavelength</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.radiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">neutron_energy_to_wavelength</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="o">=</span> <span class="n">neutron_energy_to_wavelength</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wavenumber</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>

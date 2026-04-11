@@ -45,7 +45,11 @@ Attributes
    ad_hoc_diffractometer.CRYSTAL_SYSTEMS
    ad_hoc_diffractometer.GEOMETRY_ENTRY_POINT_GROUP
    ad_hoc_diffractometer.HC_KEV_ANGSTROM
+   ad_hoc_diffractometer.HC_KEV_ANGSTROM_UNCERTAINTY
    ad_hoc_diffractometer.KAPPA_ALPHA_DEFAULT
+   ad_hoc_diffractometer.NEUTRON_MEV_ANGSTROM2
+   ad_hoc_diffractometer.NEUTRON_MEV_ANGSTROM2_UNCERTAINTY
+   ad_hoc_diffractometer.SOURCE_TYPES
    ad_hoc_diffractometer.XHAT
    ad_hoc_diffractometer.XRAY_LINES
    ad_hoc_diffractometer.YHAT
@@ -109,6 +113,8 @@ Functions
    ad_hoc_diffractometer.lattice_vectors
    ad_hoc_diffractometer.list_geometries
    ad_hoc_diffractometer.make_geometry
+   ad_hoc_diffractometer.neutron_energy_to_wavelength
+   ad_hoc_diffractometer.neutron_wavelength_to_energy
    ad_hoc_diffractometer.parse_axis
    ad_hoc_diffractometer.precision_atol
    ad_hoc_diffractometer.psi_trajectory
@@ -501,11 +507,13 @@ Package Contents
 
       Radiation energy in units of :attr:`energy_units`, derived from wavelength.
 
-      For X-ray geometries (default): E (keV) = hc / λ = 12.39842 / λ (Å).
+      - X-ray: E (keV) = hc / λ = 12.39842 / λ (Å)
+      - Neutron (reactor): E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å)
 
       Returns ``None`` when ``wavelength`` is not set.  Setting ``energy``
-      updates ``wavelength`` accordingly.  The value must be in the units
-      returned by :attr:`energy_units`.
+      updates ``wavelength`` using the inverse formula for the current
+      :attr:`source_type`.  The value must be in the units given by
+      :attr:`energy_units`.
 
       :raises ValueError: If set to a non-positive value.
 
@@ -514,22 +522,23 @@ Package Contents
       >>> import ad_hoc_diffractometer as ahd
       >>> g = ahd.fourcv()
       >>> g.wavelength = 1.5406
-      >>> round(g.energy, 4)
+      >>> round(g.energy, 4)    # keV for xray
       8.0479
-      >>> g.energy = 8.048
+      >>> g.source_type = "neutron"
+      >>> round(g.energy, 4)    # meV for neutron
+      34.4634
+      >>> g.energy = 25.0       # sets wavelength via de Broglie
       >>> round(g.wavelength, 4)
-      1.5405
+      1.809
 
 
    .. py:property:: energy_units
       :type: str
 
 
-      Units of the :attr:`energy` property for this geometry.
+      Units of the :attr:`energy` property.
 
-      Returns ``"keV"`` for X-ray geometries (the default).  Will return
-      ``"meV"`` for neutron geometries once ``source_type`` is set
-      (see issue #8).
+      ``"keV"`` for X-ray geometries; ``"meV"`` for neutron geometries.
 
       :rtype: str
 
@@ -993,6 +1002,38 @@ Package Contents
 
 
 
+   .. py:property:: source_type
+      :type: str
+
+
+      ``"xray"`` (default) or ``"neutron"``.
+
+      Controls which energy formula is used by :attr:`energy` and
+      :attr:`energy_units`:
+
+      ``"xray"``
+          Photon energy: E (keV) = hc/λ = 12.39842 / λ (Å).
+
+      ``"neutron"``
+          Fixed-wavelength **reactor** neutron kinetic energy via the de
+          Broglie relation: E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å).
+          Spallation (time-of-flight) sources are out of scope.
+
+      :raises ValueError: If set to a value not in ``("xray", "neutron")``.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.source_type
+      'xray'
+      >>> g.source_type = "neutron"
+      >>> g.source_type
+      'neutron'
+
+      :type: Radiation source type
+
+
    .. py:method:: stage(name: str) -> ad_hoc_diffractometer.stage.Stage
 
       Return the Stage with the given name.
@@ -1353,7 +1394,12 @@ Package Contents
 
 .. py:data:: HC_KEV_ANGSTROM
    :type:  float
-   :value: 12.39842
+   :value: 12.398419843320026
+
+
+.. py:data:: HC_KEV_ANGSTROM_UNCERTAINTY
+   :type:  float
+   :value: 0.0
 
 
 .. py:data:: KAPPA_ALPHA_DEFAULT
@@ -1623,6 +1669,16 @@ Package Contents
 
    :returns: Non-negative score; lower is preferred.
    :rtype: float
+
+
+.. py:data:: NEUTRON_MEV_ANGSTROM2
+   :type:  float
+   :value: 81.8042102352
+
+
+.. py:data:: NEUTRON_MEV_ANGSTROM2_UNCERTAINTY
+   :type:  float
+   :value: 4.15e-08
 
 
 .. py:function:: Q_mag_to_two_theta(Q_mag: float, wavelength: float) -> float
@@ -1920,6 +1976,11 @@ Package Contents
 
 
    .. py:method:: values()
+
+
+.. py:data:: SOURCE_TYPES
+   :type:  tuple[str, Ellipsis]
+   :value: ('xray', 'neutron')
 
 
 .. py:class:: Sample(name: str, lattice: ad_hoc_diffractometer.lattice.Lattice, reflections: ad_hoc_diffractometer.reflection.ReflectionList, U: numpy.ndarray | None = None, UB: numpy.ndarray | None = None, parent=None)
@@ -3023,6 +3084,58 @@ Package Contents
    AdHocDiffractometer(name='kappa4cv', ...)
    >>> make_geometry("kappa6c", alpha_deg=55)
    AdHocDiffractometer(name='kappa6c', ...)
+
+
+.. py:function:: neutron_energy_to_wavelength(energy_mev: float) -> float
+
+   Convert neutron kinetic energy to wavelength (de Broglie relation).
+
+   λ (Å) = sqrt(h² / (2 m_n E)) = sqrt(81.8042 / E (meV))
+
+   Applies to **fixed-wavelength reactor neutrons** only.
+
+   :param energy_mev: Neutron kinetic energy in meV.
+   :type energy_mev: float
+
+   :returns: Neutron wavelength in Å.
+   :rtype: float
+
+   :raises ValueError: If ``energy_mev`` ≤ 0.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.neutron_energy_to_wavelength(25.0), 4)
+   1.809
+
+
+.. py:function:: neutron_wavelength_to_energy(wavelength: float) -> float
+
+   Convert wavelength to neutron kinetic energy (de Broglie relation).
+
+   E (meV) = h² / (2 m_n λ²) = 81.8042 / λ² (Å)
+
+   Applies to **fixed-wavelength reactor neutrons** only.  Spallation
+   (time-of-flight) sources are out of scope for this project.
+
+   :param wavelength: Neutron wavelength in Å.
+   :type wavelength: float
+
+   :returns: Neutron kinetic energy in meV.
+   :rtype: float
+
+   :raises ValueError: If ``wavelength`` ≤ 0.
+
+   .. seealso::
+
+      :py:obj:`wavelength_to_energy`
+          X-ray photon energy in keV.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.neutron_wavelength_to_energy(1.8), 4)
+   25.2482
 
 
 .. py:function:: parse_axis(label: str, basis: dict | None = None) -> numpy.ndarray

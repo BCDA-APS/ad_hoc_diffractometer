@@ -395,11 +395,13 @@ Module Contents
 
       Radiation energy in units of :attr:`energy_units`, derived from wavelength.
 
-      For X-ray geometries (default): E (keV) = hc / λ = 12.39842 / λ (Å).
+      - X-ray: E (keV) = hc / λ = 12.39842 / λ (Å)
+      - Neutron (reactor): E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å)
 
       Returns ``None`` when ``wavelength`` is not set.  Setting ``energy``
-      updates ``wavelength`` accordingly.  The value must be in the units
-      returned by :attr:`energy_units`.
+      updates ``wavelength`` using the inverse formula for the current
+      :attr:`source_type`.  The value must be in the units given by
+      :attr:`energy_units`.
 
       :raises ValueError: If set to a non-positive value.
 
@@ -408,22 +410,23 @@ Module Contents
       >>> import ad_hoc_diffractometer as ahd
       >>> g = ahd.fourcv()
       >>> g.wavelength = 1.5406
-      >>> round(g.energy, 4)
+      >>> round(g.energy, 4)    # keV for xray
       8.0479
-      >>> g.energy = 8.048
+      >>> g.source_type = "neutron"
+      >>> round(g.energy, 4)    # meV for neutron
+      34.4634
+      >>> g.energy = 25.0       # sets wavelength via de Broglie
       >>> round(g.wavelength, 4)
-      1.5405
+      1.809
 
 
    .. py:property:: energy_units
       :type: str
 
 
-      Units of the :attr:`energy` property for this geometry.
+      Units of the :attr:`energy` property.
 
-      Returns ``"keV"`` for X-ray geometries (the default).  Will return
-      ``"meV"`` for neutron geometries once ``source_type`` is set
-      (see issue #8).
+      ``"keV"`` for X-ray geometries; ``"meV"`` for neutron geometries.
 
       :rtype: str
 
@@ -885,6 +888,38 @@ Module Contents
       >>> g.set_inclination(axis=[0, 0, 1], angle_deg=2.0)
       >>> g.set_inclination(axis=[1, 0, 0], angle_deg=0.0)  # reset
 
+
+
+   .. py:property:: source_type
+      :type: str
+
+
+      ``"xray"`` (default) or ``"neutron"``.
+
+      Controls which energy formula is used by :attr:`energy` and
+      :attr:`energy_units`:
+
+      ``"xray"``
+          Photon energy: E (keV) = hc/λ = 12.39842 / λ (Å).
+
+      ``"neutron"``
+          Fixed-wavelength **reactor** neutron kinetic energy via the de
+          Broglie relation: E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å).
+          Spallation (time-of-flight) sources are out of scope.
+
+      :raises ValueError: If set to a value not in ``("xray", "neutron")``.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.source_type
+      'xray'
+      >>> g.source_type = "neutron"
+      >>> g.source_type
+      'neutron'
+
+      :type: Radiation source type
 
 
    .. py:method:: stage(name: str) -> ad_hoc_diffractometer.stage.Stage

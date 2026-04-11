@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=f455db4b"></script>
+    <script src="../../../_static/documentation_options.js?v=21209b6d"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -543,55 +543,83 @@
                   
   <section id="module-ad_hoc_diffractometer.radiation">
 <span id="ad-hoc-diffractometer-radiation"></span><h1>ad_hoc_diffractometer.radiation<a class="headerlink" href="#module-ad_hoc_diffractometer.radiation" title="Link to this heading">#</a></h1>
-<p>radiation.py — Wavelength, energy, and wave-number conversions for X-rays.</p>
-<p>Provides named constants for common laboratory X-ray emission lines and
-standalone conversion functions between wavelength, photon energy (keV),
-and wave number k (Å⁻¹).</p>
+<p>radiation.py — Wavelength, energy, and wave-number conversions.</p>
+<p>Provides named constants for common laboratory X-ray emission lines,
+standalone conversion functions for both X-rays and fixed-wavelength
+neutrons (reactor sources), and the <code class="docutils literal notranslate"><span class="pre">SOURCE_TYPES</span></code> sentinel used by
+<code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> to select the correct energy formula.</p>
+<p><strong>Source type scope</strong></p>
+<p>This module supports two source types:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;xray&quot;</span></code> (default)</dt><dd><p>Photon energy: E (keV) = hc/λ = 12.39842 / λ (Å).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;neutron&quot;</span></code></dt><dd><p>Fixed-wavelength <strong>reactor</strong> neutrons only.  Energy via the de Broglie
+relation: E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å).
+Spallation/time-of-flight sources sweep the full spectrum with each
+pulse and require a fundamentally different instrument description;
+they are out of scope for this project.</p>
+</dd>
+</dl>
 <section id="constants">
 <h2>Constants<a class="headerlink" href="#constants" title="Link to this heading">#</a></h2>
-<dl>
-<dt>XRAY_LINES<span class="classifier">dict[str, float]</span></dt><dd><p>Named X-ray emission line wavelengths in Å.  Weighted means (Kα) or
-exact values (Kα1) as noted.</p>
-<p><code class="docutils literal notranslate"><span class="pre">&quot;Cu_Ka&quot;</span></code>   Cu Kα  ≈ 1.5406 Å  (weighted mean of Kα1=1.54056 Å, Kα2=1.54439 Å)
-<code class="docutils literal notranslate"><span class="pre">&quot;Cu_Ka1&quot;</span></code>  Cu Kα1 = 1.54056 Å
-<code class="docutils literal notranslate"><span class="pre">&quot;Cu_Ka2&quot;</span></code>  Cu Kα2 = 1.54439 Å
-<code class="docutils literal notranslate"><span class="pre">&quot;Mo_Ka&quot;</span></code>   Mo Kα  ≈ 0.7107 Å  (weighted mean)
-<code class="docutils literal notranslate"><span class="pre">&quot;Mo_Ka1&quot;</span></code>  Mo Kα1 = 0.70930 Å
-<code class="docutils literal notranslate"><span class="pre">&quot;Ag_Ka&quot;</span></code>   Ag Kα  ≈ 0.5594 Å  (weighted mean)
-<code class="docutils literal notranslate"><span class="pre">&quot;Ag_Ka1&quot;</span></code>  Ag Kα1 = 0.55941 Å
-<code class="docutils literal notranslate"><span class="pre">&quot;Co_Ka&quot;</span></code>   Co Kα  ≈ 1.7902 Å  (weighted mean)
-<code class="docutils literal notranslate"><span class="pre">&quot;Co_Ka1&quot;</span></code>  Co Kα1 = 1.78897 Å</p>
+<dl class="simple">
+<dt>HC_KEV_ANGSTROM<span class="classifier">float</span></dt><dd><p>hc = 12.398 419 843 320 026 keV·Å.  Exact (NIST CODATA 2022).</p>
+</dd>
+<dt>HC_KEV_ANGSTROM_UNCERTAINTY<span class="classifier">float</span></dt><dd><p>0.0 — exact constant.</p>
+</dd>
+<dt>NEUTRON_MEV_ANGSTROM2<span class="classifier">float</span></dt><dd><p>h²/(2 m_n) = 81.804 210 235 2 meV·Å² (NIST CODATA 2022).</p>
+</dd>
+<dt>NEUTRON_MEV_ANGSTROM2_UNCERTAINTY<span class="classifier">float</span></dt><dd><p>0.0000000415 meV·Å² — propagated from CODATA 2022 m_n uncertainty.</p>
+</dd>
+<dt>SOURCE_TYPES<span class="classifier">tuple[str, …]</span></dt><dd><p>Valid source-type strings: <code class="docutils literal notranslate"><span class="pre">(&quot;xray&quot;,</span> <span class="pre">&quot;neutron&quot;)</span></code>.</p>
+</dd>
+<dt>XRAY_LINES<span class="classifier">dict[str, float]</span></dt><dd><p>Named X-ray emission line wavelengths in Å.</p>
 </dd>
 </dl>
 </section>
-<section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<section id="x-ray-functions">
+<h2>X-ray functions<a class="headerlink" href="#x-ray-functions" title="Link to this heading">#</a></h2>
 <dl class="simple">
-<dt>wavelength_to_energy(wavelength) -&gt; float</dt><dd><p>Wavelength (Å) → photon energy E (keV): E = hc/λ = 12.39842 / λ.</p>
+<dt>wavelength_to_energy(wavelength) -&gt; float</dt><dd><p>λ (Å) → E (keV) = hc/λ.</p>
 </dd>
-<dt>energy_to_wavelength(energy_kev) -&gt; float</dt><dd><p>Photon energy (keV) → wavelength (Å): λ = hc/E = 12.39842 / E.</p>
+<dt>energy_to_wavelength(energy_kev) -&gt; float</dt><dd><p>E (keV) → λ (Å) = hc/E.</p>
 </dd>
-<dt>wavelength_to_wavenumber(wavelength) -&gt; float</dt><dd><p>Wavelength (Å) → wave number k (Å⁻¹): k = 2π / λ.</p>
+<dt>wavelength_to_wavenumber(wavelength) -&gt; float</dt><dd><p>λ (Å) → k (Å⁻¹) = 2π/λ.</p>
 </dd>
-<dt>wavenumber_to_wavelength(wavenumber) -&gt; float</dt><dd><p>Wave number k (Å⁻¹) → wavelength (Å): λ = 2π / k.</p>
+<dt>wavenumber_to_wavelength(wavenumber) -&gt; float</dt><dd><p>k (Å⁻¹) → λ (Å) = 2π/k.</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>The conversion constant hc = 12.39842 keV·Å is the standard value used
-in X-ray crystallography (NIST CODATA 2018).</p>
-<p>These conversions apply to <strong>X-rays only</strong>.  For neutrons, the de Broglie
-relation gives E (meV) = 81.8042 / λ² (Å) — see the <cite>radiation_neutron</cite>
-module (issue #8).</p>
+</section>
+<section id="neutron-functions">
+<h2>Neutron functions<a class="headerlink" href="#neutron-functions" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>neutron_wavelength_to_energy(wavelength) -&gt; float</dt><dd><p>λ (Å) → E (meV) = 81.8042 / λ².</p>
+</dd>
+<dt>neutron_energy_to_wavelength(energy_mev) -&gt; float</dt><dd><p>E (meV) → λ (Å) = sqrt(81.8042 / E).</p>
+</dd>
+</dl>
 <p class="rubric">References</p>
-<p>NIST, “X-Ray Transition Energies Database”,
-<a class="reference external" href="https://physics.nist.gov/PhysRefData/XrayTrans/Html/search.html">https://physics.nist.gov/PhysRefData/XrayTrans/Html/search.html</a></p>
-<p>NIST CODATA 2018 — hc = 12398.42 eV·Å = 12.39842 keV·Å</p>
+<p>NIST CODATA 2018 — hc = 12398.42 eV·Å = 12.39842 keV·Å
+NIST neutron scattering — h²/(2 m_n) = 81.8042 meV·Å²
+de Broglie relation — λ = h/p, E = p²/(2 m_n)</p>
 </section>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM" title="ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM_UNCERTAINTY" title="ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM_UNCERTAINTY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM_UNCERTAINTY</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2" title="ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NEUTRON_MEV_ANGSTROM2</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2_UNCERTAINTY" title="ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2_UNCERTAINTY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NEUTRON_MEV_ANGSTROM2_UNCERTAINTY</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.SOURCE_TYPES" title="ad_hoc_diffractometer.radiation.SOURCE_TYPES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SOURCE_TYPES</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.XRAY_LINES" title="ad_hoc_diffractometer.radiation.XRAY_LINES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XRAY_LINES</span></code></a></p></td>
@@ -601,12 +629,18 @@ module (issue #8).</p>
 </table>
 </div>
 </section>
-<section id="id1">
-<h2>Functions<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.energy_to_wavelength" title="ad_hoc_diffractometer.radiation.energy_to_wavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">energy_to_wavelength</span></code></a>(→ float)</p></td>
 <td><p>Convert photon energy to wavelength for X-rays.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.neutron_energy_to_wavelength" title="ad_hoc_diffractometer.radiation.neutron_energy_to_wavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neutron_energy_to_wavelength</span></code></a>(→ float)</p></td>
+<td><p>Convert neutron kinetic energy to wavelength (de Broglie relation).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.neutron_wavelength_to_energy" title="ad_hoc_diffractometer.radiation.neutron_wavelength_to_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neutron_wavelength_to_energy</span></code></a>(→ float)</p></td>
+<td><p>Convert wavelength to neutron kinetic energy (de Broglie relation).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.wavelength_to_energy" title="ad_hoc_diffractometer.radiation.wavelength_to_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wavelength_to_energy</span></code></a>(→ float)</p></td>
 <td><p>Convert wavelength to photon energy for X-rays.</p></td>
@@ -625,7 +659,27 @@ module (issue #8).</p>
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
 <dl class="py data">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">HC_KEV_ANGSTROM</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12.39842</span></span><a class="headerlink" href="#ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">HC_KEV_ANGSTROM</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12.398419843320026</span></span><a class="headerlink" href="#ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM_UNCERTAINTY">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">HC_KEV_ANGSTROM_UNCERTAINTY</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></span><a class="headerlink" href="#ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM_UNCERTAINTY" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">NEUTRON_MEV_ANGSTROM2</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">81.8042102352</span></span><a class="headerlink" href="#ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2_UNCERTAINTY">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">NEUTRON_MEV_ANGSTROM2_UNCERTAINTY</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4.15e-08</span></span><a class="headerlink" href="#ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2_UNCERTAINTY" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.SOURCE_TYPES">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">SOURCE_TYPES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ellipsis</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('xray',</span> <span class="pre">'neutron')</span></span><a class="headerlink" href="#ad_hoc_diffractometer.radiation.SOURCE_TYPES" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -656,6 +710,70 @@ module (issue #8).</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">energy_to_wavelength</span><span class="p">(</span><span class="mf">8.047</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
 <span class="go">1.5408</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.neutron_energy_to_wavelength">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">neutron_energy_to_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_mev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/radiation.html#neutron_energy_to_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.radiation.neutron_energy_to_wavelength" title="Link to this definition">#</a></dt>
+<dd><p>Convert neutron kinetic energy to wavelength (de Broglie relation).</p>
+<p>λ (Å) = sqrt(h² / (2 m_n E)) = sqrt(81.8042 / E (meV))</p>
+<p>Applies to <strong>fixed-wavelength reactor neutrons</strong> only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>energy_mev</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Neutron kinetic energy in meV.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Neutron wavelength in Å.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">energy_mev</span></code> ≤ 0.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">neutron_energy_to_wavelength</span><span class="p">(</span><span class="mf">25.0</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">1.809</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.neutron_wavelength_to_energy">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">neutron_wavelength_to_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/radiation.html#neutron_wavelength_to_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.radiation.neutron_wavelength_to_energy" title="Link to this definition">#</a></dt>
+<dd><p>Convert wavelength to neutron kinetic energy (de Broglie relation).</p>
+<p>E (meV) = h² / (2 m_n λ²) = 81.8042 / λ² (Å)</p>
+<p>Applies to <strong>fixed-wavelength reactor neutrons</strong> only.  Spallation
+(time-of-flight) sources are out of scope for this project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wavelength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Neutron wavelength in Å.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Neutron kinetic energy in meV.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> ≤ 0.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.radiation.wavelength_to_energy" title="ad_hoc_diffractometer.radiation.wavelength_to_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wavelength_to_energy</span></code></a></dt><dd><p>X-ray photon energy in keV.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">neutron_wavelength_to_energy</span><span class="p">(</span><span class="mf">1.8</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">25.2482</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -792,13 +910,20 @@ module (issue #8).</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constants">Constants</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#x-ray-functions">X-ray functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#neutron-functions">Neutron functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM"><code class="docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM_UNCERTAINTY"><code class="docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM_UNCERTAINTY</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2"><code class="docutils literal notranslate"><span class="pre">NEUTRON_MEV_ANGSTROM2</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2_UNCERTAINTY"><code class="docutils literal notranslate"><span class="pre">NEUTRON_MEV_ANGSTROM2_UNCERTAINTY</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.SOURCE_TYPES"><code class="docutils literal notranslate"><span class="pre">SOURCE_TYPES</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.XRAY_LINES"><code class="docutils literal notranslate"><span class="pre">XRAY_LINES</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.energy_to_wavelength"><code class="docutils literal notranslate"><span class="pre">energy_to_wavelength()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.neutron_energy_to_wavelength"><code class="docutils literal notranslate"><span class="pre">neutron_energy_to_wavelength()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.neutron_wavelength_to_energy"><code class="docutils literal notranslate"><span class="pre">neutron_wavelength_to_energy()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.wavelength_to_energy"><code class="docutils literal notranslate"><span class="pre">wavelength_to_energy()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.wavelength_to_wavenumber"><code class="docutils literal notranslate"><span class="pre">wavelength_to_wavenumber()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.wavenumber_to_wavelength"><code class="docutils literal notranslate"><span class="pre">wavenumber_to_wavelength()</span></code></a></li>
