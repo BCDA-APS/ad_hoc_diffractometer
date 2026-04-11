@@ -40,8 +40,6 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
 
    Every PR must also have its **milestone** and **project board** set,
    and its project board status must be set to **"In Progress"**.
-
-   Every PR must also have its **milestone** and **project board** set.
    Issues and PRs may belong to **more than one project board** — add the
    card to every board that tracks the work.
 
@@ -77,6 +75,12 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    ```
 
 3. **Never close issues manually** — let the merge automation do it.
+
+   **When creating a new project board**, set the default view layout to
+   **Board** (Kanban) so cards are visible by status column.  After creation,
+   navigate to the project, open the view settings, and select *Board* as the
+   layout type.  This cannot currently be set via the `gh` CLI; it must be
+   done in the GitHub web UI immediately after the project is created.
 
 4. **All code changes must be made on a feature branch**, never directly on
    `main` — the only exception is truly trivial changes (e.g. a one-word
@@ -156,8 +160,9 @@ diffractometer/                  # project root (git repo)
 │       ├── lattice.py           # Lattice class, b_matrix(), standalone fns
 │       └── display.py           # get/set_precision(), fmt()
 └── tests/
-    ├── test_diffractometer.py   # tests for all non-lattice modules
-    └── test_lattice.py          # tests for Lattice class
+    ├── test_<module>.py         # one file per source module (see testing instructions)
+    ├── test_regression_issue_N.py  # cross-module regression tests (named by issue)
+    └── helpers.py / conftest.py # shared test infrastructure
 ```
 
 ---
