@@ -114,7 +114,7 @@ html_theme_options = {
     "show_version_warning_banner": True,
 }
 
-html_title = f"{project} {release}"
+html_title = f"{project} {version}"
 
 # -- Copy-button (sphinx-copybutton) -----------------------------------------
 
