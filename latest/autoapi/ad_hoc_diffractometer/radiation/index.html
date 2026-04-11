@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>ad_hoc_diffractometer.constants &#8212; ad_hoc_diffractometer 0.3</title>
+    <title>ad_hoc_diffractometer.radiation &#8212; ad_hoc_diffractometer 0.3</title>
   
   
   
@@ -48,7 +48,7 @@
     <script src="../../../_static/copybutton.js?v=fd10adb8"></script>
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/ad_hoc_diffractometer/constants/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/ad_hoc_diffractometer/radiation/index';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
@@ -59,8 +59,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="ad_hoc_diffractometer.display" href="../display/index.html" />
-    <link rel="prev" title="ad_hoc_diffractometer.axes" href="../axes/index.html" />
+    <link rel="next" title="ad_hoc_diffractometer.refinement" href="../refinement/index.html" />
+    <link rel="prev" title="ad_hoc_diffractometer.orientation" href="../orientation/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.3" />
@@ -459,7 +459,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">ad_hoc_diffractometer</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../axes/index.html">ad_hoc_diffractometer.axes</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">ad_hoc_diffractometer.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constants/index.html">ad_hoc_diffractometer.constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../display/index.html">ad_hoc_diffractometer.display</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../engines/index.html">ad_hoc_diffractometer.engines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../factories/index.html">ad_hoc_diffractometer.factories</a></li>
@@ -468,7 +468,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../lattice/index.html">ad_hoc_diffractometer.lattice</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mode/index.html">ad_hoc_diffractometer.mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../orientation/index.html">ad_hoc_diffractometer.orientation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radiation/index.html">ad_hoc_diffractometer.radiation</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">ad_hoc_diffractometer.radiation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../refinement/index.html">ad_hoc_diffractometer.refinement</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reflection/index.html">ad_hoc_diffractometer.reflection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../rotation/index.html">ad_hoc_diffractometer.rotation</a></li>
@@ -524,7 +524,7 @@
     
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">ad_hoc_diffractometer</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer.constants</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer.radiation</span></li>
   </ul>
 </nav>
 </div>
@@ -541,35 +541,81 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-ad_hoc_diffractometer.constants">
-<span id="ad-hoc-diffractometer-constants"></span><h1>ad_hoc_diffractometer.constants<a class="headerlink" href="#module-ad_hoc_diffractometer.constants" title="Link to this heading">#</a></h1>
-<p>constants.py — shared Cartesian basis vectors.</p>
-<p>These are the internal numpy representations used throughout the package.
-The caller-facing notation (+x, -z, etc.) is handled in axes.py.</p>
-<dl class="simple">
-<dt>Convention follows You (1999):</dt><dd><p>XHAT = vertical (out of floor)
-YHAT = longitudinal (along beam / toward equipment)
-ZHAT = lateral (to our left)</p>
+  <section id="module-ad_hoc_diffractometer.radiation">
+<span id="ad-hoc-diffractometer-radiation"></span><h1>ad_hoc_diffractometer.radiation<a class="headerlink" href="#module-ad_hoc_diffractometer.radiation" title="Link to this heading">#</a></h1>
+<p>radiation.py — Wavelength, energy, and wave-number conversions for X-rays.</p>
+<p>Provides named constants for common laboratory X-ray emission lines and
+standalone conversion functions between wavelength, photon energy (keV),
+and wave number k (Å⁻¹).</p>
+<section id="constants">
+<h2>Constants<a class="headerlink" href="#constants" title="Link to this heading">#</a></h2>
+<dl>
+<dt>XRAY_LINES<span class="classifier">dict[str, float]</span></dt><dd><p>Named X-ray emission line wavelengths in Å.  Weighted means (Kα) or
+exact values (Kα1) as noted.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;Cu_Ka&quot;</span></code>   Cu Kα  ≈ 1.5406 Å  (weighted mean of Kα1=1.54056 Å, Kα2=1.54439 Å)
+<code class="docutils literal notranslate"><span class="pre">&quot;Cu_Ka1&quot;</span></code>  Cu Kα1 = 1.54056 Å
+<code class="docutils literal notranslate"><span class="pre">&quot;Cu_Ka2&quot;</span></code>  Cu Kα2 = 1.54439 Å
+<code class="docutils literal notranslate"><span class="pre">&quot;Mo_Ka&quot;</span></code>   Mo Kα  ≈ 0.7107 Å  (weighted mean)
+<code class="docutils literal notranslate"><span class="pre">&quot;Mo_Ka1&quot;</span></code>  Mo Kα1 = 0.70930 Å
+<code class="docutils literal notranslate"><span class="pre">&quot;Ag_Ka&quot;</span></code>   Ag Kα  ≈ 0.5594 Å  (weighted mean)
+<code class="docutils literal notranslate"><span class="pre">&quot;Ag_Ka1&quot;</span></code>  Ag Kα1 = 0.55941 Å
+<code class="docutils literal notranslate"><span class="pre">&quot;Co_Ka&quot;</span></code>   Co Kα  ≈ 1.7902 Å  (weighted mean)
+<code class="docutils literal notranslate"><span class="pre">&quot;Co_Ka1&quot;</span></code>  Co Kα1 = 1.78897 Å</p>
 </dd>
 </dl>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>wavelength_to_energy(wavelength) -&gt; float</dt><dd><p>Wavelength (Å) → photon energy E (keV): E = hc/λ = 12.39842 / λ.</p>
+</dd>
+<dt>energy_to_wavelength(energy_kev) -&gt; float</dt><dd><p>Photon energy (keV) → wavelength (Å): λ = hc/E = 12.39842 / E.</p>
+</dd>
+<dt>wavelength_to_wavenumber(wavelength) -&gt; float</dt><dd><p>Wavelength (Å) → wave number k (Å⁻¹): k = 2π / λ.</p>
+</dd>
+<dt>wavenumber_to_wavelength(wavenumber) -&gt; float</dt><dd><p>Wave number k (Å⁻¹) → wavelength (Å): λ = 2π / k.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The conversion constant hc = 12.39842 keV·Å is the standard value used
+in X-ray crystallography (NIST CODATA 2018).</p>
+<p>These conversions apply to <strong>X-rays only</strong>.  For neutrons, the de Broglie
+relation gives E (meV) = 81.8042 / λ² (Å) — see the <cite>radiation_neutron</cite>
+module (issue #8).</p>
+<p class="rubric">References</p>
+<p>NIST, “X-Ray Transition Energies Database”,
+<a class="reference external" href="https://physics.nist.gov/PhysRefData/XrayTrans/Html/search.html">https://physics.nist.gov/PhysRefData/XrayTrans/Html/search.html</a></p>
+<p>NIST CODATA 2018 — hc = 12398.42 eV·Å = 12.39842 keV·Å</p>
+</section>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.constants.XHAT" title="ad_hoc_diffractometer.constants.XHAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XHAT</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM" title="ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.constants.YHAT" title="ad_hoc_diffractometer.constants.YHAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">YHAT</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.XRAY_LINES" title="ad_hoc_diffractometer.radiation.XRAY_LINES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XRAY_LINES</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.constants.ZHAT" title="ad_hoc_diffractometer.constants.ZHAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ZHAT</span></code></a></p></td>
-<td><p></p></td>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id1">
+<h2>Functions<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.energy_to_wavelength" title="ad_hoc_diffractometer.radiation.energy_to_wavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">energy_to_wavelength</span></code></a>(→ float)</p></td>
+<td><p>Convert photon energy to wavelength for X-rays.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#id0" title="ad_hoc_diffractometer.constants.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.wavelength_to_energy" title="ad_hoc_diffractometer.radiation.wavelength_to_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wavelength_to_energy</span></code></a>(→ float)</p></td>
+<td><p>Convert wavelength to photon energy for X-rays.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="ad_hoc_diffractometer.constants.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.wavelength_to_wavenumber" title="ad_hoc_diffractometer.radiation.wavelength_to_wavenumber"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wavelength_to_wavenumber</span></code></a>(→ float)</p></td>
+<td><p>Convert wavelength to wave number k.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.radiation.wavenumber_to_wavelength" title="ad_hoc_diffractometer.radiation.wavenumber_to_wavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wavenumber_to_wavelength</span></code></a>(→ float)</p></td>
+<td><p>Convert wave number k to wavelength.</p></td>
 </tr>
 </tbody>
 </table>
@@ -578,29 +624,122 @@ ZHAT = lateral (to our left)</p>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
 <dl class="py data">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.constants.XHAT">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.constants.</span></span><span class="sig-name descname"><span class="pre">XHAT</span></span><a class="headerlink" href="#ad_hoc_diffractometer.constants.XHAT" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">HC_KEV_ANGSTROM</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12.39842</span></span><a class="headerlink" href="#ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.constants.YHAT">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.constants.</span></span><span class="sig-name descname"><span class="pre">YHAT</span></span><a class="headerlink" href="#ad_hoc_diffractometer.constants.YHAT" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.XRAY_LINES">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">XRAY_LINES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ad_hoc_diffractometer.radiation.XRAY_LINES" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.constants.ZHAT">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.constants.</span></span><span class="sig-name descname"><span class="pre">ZHAT</span></span><a class="headerlink" href="#ad_hoc_diffractometer.constants.ZHAT" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.energy_to_wavelength">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">energy_to_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_kev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/radiation.html#energy_to_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.radiation.energy_to_wavelength" title="Link to this definition">#</a></dt>
+<dd><p>Convert photon energy to wavelength for X-rays.</p>
+<p>λ (Å) = hc / E = 12.39842 / E (keV)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>energy_kev</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Photon energy in keV.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Wavelength in Å.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">energy_kev</span></code> ≤ 0.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">energy_to_wavelength</span><span class="p">(</span><span class="mf">8.047</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">1.5408</span>
+</pre></div>
+</div>
+</dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.constants.logger">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.constants.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#ad_hoc_diffractometer.constants.logger" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.wavelength_to_energy">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">wavelength_to_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/radiation.html#wavelength_to_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.radiation.wavelength_to_energy" title="Link to this definition">#</a></dt>
+<dd><p>Convert wavelength to photon energy for X-rays.</p>
+<p>E (keV) = hc / λ = 12.39842 / λ (Å)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wavelength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Wavelength in Å.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Photon energy in keV.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> ≤ 0.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">wavelength_to_energy</span><span class="p">(</span><span class="mf">1.5406</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">8.0478</span>
+</pre></div>
+</div>
+</dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.constants.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.wavelength_to_wavenumber">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">wavelength_to_wavenumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/radiation.html#wavelength_to_wavenumber"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.radiation.wavelength_to_wavenumber" title="Link to this definition">#</a></dt>
+<dd><p>Convert wavelength to wave number k.</p>
+<p>k (Å⁻¹) = 2π / λ (Å)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wavelength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Wavelength in Å.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Wave number k in Å⁻¹.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> ≤ 0.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">wavelength_to_wavenumber</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">6.283185</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.radiation.wavenumber_to_wavelength">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.radiation.</span></span><span class="sig-name descname"><span class="pre">wavenumber_to_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavenumber</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/radiation.html#wavenumber_to_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.radiation.wavenumber_to_wavelength" title="Link to this definition">#</a></dt>
+<dd><p>Convert wave number k to wavelength.</p>
+<p>λ (Å) = 2π / k (Å⁻¹)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wavenumber</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Wave number k in Å⁻¹.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Wavelength in Å.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">wavenumber</span></code> ≤ 0.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">wavenumber_to_wavelength</span><span class="p">(</span><span class="mf">6.283185</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </section>
 </section>
@@ -616,20 +755,20 @@ ZHAT = lateral (to our left)</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../axes/index.html"
+       href="../orientation/index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">ad_hoc_diffractometer.axes</p>
+        <p class="prev-next-title">ad_hoc_diffractometer.orientation</p>
       </div>
     </a>
     <a class="right-next"
-       href="../display/index.html"
+       href="../refinement/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">ad_hoc_diffractometer.display</p>
+        <p class="prev-next-title">ad_hoc_diffractometer.refinement</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -652,13 +791,17 @@ ZHAT = lateral (to our left)</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constants">Constants</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.constants.XHAT"><code class="docutils literal notranslate"><span class="pre">XHAT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.constants.YHAT"><code class="docutils literal notranslate"><span class="pre">YHAT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.constants.ZHAT"><code class="docutils literal notranslate"><span class="pre">ZHAT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.constants.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM"><code class="docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.XRAY_LINES"><code class="docutils literal notranslate"><span class="pre">XRAY_LINES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.energy_to_wavelength"><code class="docutils literal notranslate"><span class="pre">energy_to_wavelength()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.wavelength_to_energy"><code class="docutils literal notranslate"><span class="pre">wavelength_to_energy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.wavelength_to_wavenumber"><code class="docutils literal notranslate"><span class="pre">wavelength_to_wavenumber()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.radiation.wavenumber_to_wavelength"><code class="docutils literal notranslate"><span class="pre">wavenumber_to_wavelength()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -667,7 +810,7 @@ ZHAT = lateral (to our left)</p>
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../../../_sources/autoapi/ad_hoc_diffractometer/constants/index.rst.txt">
+    <a href="../../../_sources/autoapi/ad_hoc_diffractometer/radiation/index.rst.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

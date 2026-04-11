@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ad_hoc_diffractometer.rotation &#8212; ad_hoc_diffractometer 0.3</title>
+    <title>ad_hoc_diffractometer.radiation &#8212; ad_hoc_diffractometer 0.3</title>
   
   
   
@@ -47,7 +47,7 @@
     <script src="../../_static/copybutton.js?v=fd10adb8"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/rotation';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/radiation';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
@@ -477,7 +477,7 @@
     
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer.rotation</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer.radiation</span></li>
   </ul>
 </nav>
 </div>
@@ -494,79 +494,244 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for ad_hoc_diffractometer.rotation</h1><div class="highlight"><pre>
+  <h1>Source code for ad_hoc_diffractometer.radiation</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (c) 2026 Pete R. Jemian &lt;prjemian+ad_hoc_diffractometer@gmail.com&gt;</span>
 <span class="c1"># SPDX-License-Identifier: CC-BY-4.0</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">rotation.py — rotation matrix calculation.</span>
+<span class="sd">radiation.py — Wavelength, energy, and wave-number conversions for X-rays.</span>
 
-<span class="sd">Provides the Rodrigues rotation formula for computing 3x3 rotation matrices</span>
-<span class="sd">from a unit axis vector and an angle.</span>
+<span class="sd">Provides named constants for common laboratory X-ray emission lines and</span>
+<span class="sd">standalone conversion functions between wavelength, photon energy (keV),</span>
+<span class="sd">and wave number k (Å⁻¹).</span>
+
+<span class="sd">Constants</span>
+<span class="sd">---------</span>
+<span class="sd">XRAY_LINES : dict[str, float]</span>
+<span class="sd">    Named X-ray emission line wavelengths in Å.  Weighted means (Kα) or</span>
+<span class="sd">    exact values (Kα1) as noted.</span>
+
+<span class="sd">    ``&quot;Cu_Ka&quot;``   Cu Kα  ≈ 1.5406 Å  (weighted mean of Kα1=1.54056 Å, Kα2=1.54439 Å)</span>
+<span class="sd">    ``&quot;Cu_Ka1&quot;``  Cu Kα1 = 1.54056 Å</span>
+<span class="sd">    ``&quot;Cu_Ka2&quot;``  Cu Kα2 = 1.54439 Å</span>
+<span class="sd">    ``&quot;Mo_Ka&quot;``   Mo Kα  ≈ 0.7107 Å  (weighted mean)</span>
+<span class="sd">    ``&quot;Mo_Ka1&quot;``  Mo Kα1 = 0.70930 Å</span>
+<span class="sd">    ``&quot;Ag_Ka&quot;``   Ag Kα  ≈ 0.5594 Å  (weighted mean)</span>
+<span class="sd">    ``&quot;Ag_Ka1&quot;``  Ag Kα1 = 0.55941 Å</span>
+<span class="sd">    ``&quot;Co_Ka&quot;``   Co Kα  ≈ 1.7902 Å  (weighted mean)</span>
+<span class="sd">    ``&quot;Co_Ka1&quot;``  Co Kα1 = 1.78897 Å</span>
+
+<span class="sd">Functions</span>
+<span class="sd">---------</span>
+<span class="sd">wavelength_to_energy(wavelength) -&gt; float</span>
+<span class="sd">    Wavelength (Å) → photon energy E (keV): E = hc/λ = 12.39842 / λ.</span>
+
+<span class="sd">energy_to_wavelength(energy_kev) -&gt; float</span>
+<span class="sd">    Photon energy (keV) → wavelength (Å): λ = hc/E = 12.39842 / E.</span>
+
+<span class="sd">wavelength_to_wavenumber(wavelength) -&gt; float</span>
+<span class="sd">    Wavelength (Å) → wave number k (Å⁻¹): k = 2π / λ.</span>
+
+<span class="sd">wavenumber_to_wavelength(wavenumber) -&gt; float</span>
+<span class="sd">    Wave number k (Å⁻¹) → wavelength (Å): λ = 2π / k.</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+<span class="sd">The conversion constant hc = 12.39842 keV·Å is the standard value used</span>
+<span class="sd">in X-ray crystallography (NIST CODATA 2018).</span>
+
+<span class="sd">These conversions apply to **X-rays only**.  For neutrons, the de Broglie</span>
+<span class="sd">relation gives E (meV) = 81.8042 / λ² (Å) — see the `radiation_neutron`</span>
+<span class="sd">module (issue #8).</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">NIST, &quot;X-Ray Transition Energies Database&quot;,</span>
+<span class="sd">https://physics.nist.gov/PhysRefData/XrayTrans/Html/search.html</span>
+
+<span class="sd">NIST CODATA 2018 — hc = 12398.42 eV·Å = 12.39842 keV·Å</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Physical constant</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="c1">#: hc in keV·Å (NIST CODATA 2018).</span>
+<span class="n">HC_KEV_ANGSTROM</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">12.39842</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Named X-ray emission lines (wavelengths in Å)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="c1">#: Common laboratory X-ray emission line wavelengths in Å.</span>
+<span class="c1">#:</span>
+<span class="c1">#: Weighted means (Kα) use the standard 2:1 weighting of Kα1 and Kα2.</span>
+<span class="c1">#: Values from NIST X-Ray Transition Energies Database.</span>
+<span class="n">XRAY_LINES</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Cu_Ka&quot;</span><span class="p">:</span> <span class="mf">1.54060</span><span class="p">,</span>  <span class="c1"># Cu Kα  weighted mean (2·Kα1 + Kα2) / 3</span>
+    <span class="s2">&quot;Cu_Ka1&quot;</span><span class="p">:</span> <span class="mf">1.54056</span><span class="p">,</span>  <span class="c1"># Cu Kα1</span>
+    <span class="s2">&quot;Cu_Ka2&quot;</span><span class="p">:</span> <span class="mf">1.54439</span><span class="p">,</span>  <span class="c1"># Cu Kα2</span>
+    <span class="s2">&quot;Mo_Ka&quot;</span><span class="p">:</span> <span class="mf">0.71073</span><span class="p">,</span>  <span class="c1"># Mo Kα  weighted mean</span>
+    <span class="s2">&quot;Mo_Ka1&quot;</span><span class="p">:</span> <span class="mf">0.70930</span><span class="p">,</span>  <span class="c1"># Mo Kα1</span>
+    <span class="s2">&quot;Ag_Ka&quot;</span><span class="p">:</span> <span class="mf">0.56087</span><span class="p">,</span>  <span class="c1"># Ag Kα  weighted mean</span>
+    <span class="s2">&quot;Ag_Ka1&quot;</span><span class="p">:</span> <span class="mf">0.55941</span><span class="p">,</span>  <span class="c1"># Ag Kα1</span>
+    <span class="s2">&quot;Co_Ka&quot;</span><span class="p">:</span> <span class="mf">1.79021</span><span class="p">,</span>  <span class="c1"># Co Kα  weighted mean</span>
+    <span class="s2">&quot;Co_Ka1&quot;</span><span class="p">:</span> <span class="mf">1.78897</span><span class="p">,</span>  <span class="c1"># Co Kα1</span>
+<span class="p">}</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Conversion functions</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="rotation_matrix">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/rotation/index.html#ad_hoc_diffractometer.rotation_matrix">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">rotation_matrix</span><span class="p">(</span><span class="n">axis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">angle_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="wavelength_to_energy">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.wavelength_to_energy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wavelength_to_energy</span><span class="p">(</span><span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute a right-handed rotation matrix about a unit axis vector.</span>
+<span class="sd">    Convert wavelength to photon energy for X-rays.</span>
 
-<span class="sd">    Uses the Rodrigues formula:</span>
-
-<span class="sd">        R = I cos(theta) + (1 - cos(theta))(n ⊗ n) + sin(theta)[n]_x</span>
-
-<span class="sd">    where [n]_x is the skew-symmetric cross-product matrix of n.</span>
-
-<span class="sd">    For a left-handed rotation (e.g. eta, phi, delta in You 1999), pass the</span>
-<span class="sd">    negated axis: rotation_matrix(-ZHAT, angle_deg).</span>
-
-<span class="sd">    The sign of the axis vector encodes handedness:</span>
-<span class="sd">        +nHat  =&gt;  right-handed rotation about nHat</span>
-<span class="sd">        -nHat  =&gt;  left-handed rotation about nHat</span>
-<span class="sd">                   (equivalent to right-handed with negated angle)</span>
+<span class="sd">    E (keV) = hc / λ = 12.39842 / λ (Å)</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    axis : numpy.ndarray, shape (3,)</span>
-<span class="sd">        Rotation axis vector.  Need not be normalised; it will be normalised</span>
-<span class="sd">        internally.</span>
-<span class="sd">    angle_deg : float</span>
-<span class="sd">        Rotation angle in degrees (right-handed sense about the given axis).</span>
+<span class="sd">    wavelength : float</span>
+<span class="sd">        Wavelength in Å.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    R : numpy.ndarray, shape (3, 3)</span>
-<span class="sd">        Orthogonal rotation matrix with det(R) = +1.</span>
+<span class="sd">    float</span>
+<span class="sd">        Photon energy in keV.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``wavelength`` ≤ 0.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">    &gt;&gt;&gt; from ad_hoc_diffractometer.constants import XHAT, ZHAT</span>
-<span class="sd">    &gt;&gt;&gt; rotation_matrix(XHAT, 0)          # identity</span>
-<span class="sd">    &gt;&gt;&gt; rotation_matrix(-ZHAT, 30)        # left-handed 30 deg about z</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.wavelength_to_energy(1.5406), 4)</span>
+<span class="sd">    8.0478</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">angle_deg</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
-    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">n</span>
-    <span class="n">skew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-        <span class="p">[</span>
-            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">nz</span><span class="p">,</span> <span class="n">ny</span><span class="p">],</span>
-            <span class="p">[</span><span class="n">nz</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">nx</span><span class="p">],</span>
-            <span class="p">[</span><span class="o">-</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-        <span class="p">]</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">c</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="n">s</span> <span class="o">*</span> <span class="n">skew</span></div>
+    <span class="k">if</span> <span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;wavelength_to_energy(): wavelength must be &gt; 0 Å; got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">HC_KEV_ANGSTROM</span> <span class="o">/</span> <span class="n">wavelength</span></div>
+
+
+
+<div class="viewcode-block" id="energy_to_wavelength">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.energy_to_wavelength">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">energy_to_wavelength</span><span class="p">(</span><span class="n">energy_kev</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert photon energy to wavelength for X-rays.</span>
+
+<span class="sd">    λ (Å) = hc / E = 12.39842 / E (keV)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    energy_kev : float</span>
+<span class="sd">        Photon energy in keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Wavelength in Å.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``energy_kev`` ≤ 0.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.energy_to_wavelength(8.047), 4)</span>
+<span class="sd">    1.5408</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">energy_kev</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;energy_to_wavelength(): energy must be &gt; 0 keV; got </span><span class="si">{</span><span class="n">energy_kev</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">HC_KEV_ANGSTROM</span> <span class="o">/</span> <span class="n">energy_kev</span></div>
+
+
+
+<div class="viewcode-block" id="wavelength_to_wavenumber">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.wavelength_to_wavenumber">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wavelength_to_wavenumber</span><span class="p">(</span><span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert wavelength to wave number k.</span>
+
+<span class="sd">    k (Å⁻¹) = 2π / λ (Å)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wavelength : float</span>
+<span class="sd">        Wavelength in Å.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Wave number k in Å⁻¹.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``wavelength`` ≤ 0.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.wavelength_to_wavenumber(1.0), 6)</span>
+<span class="sd">    6.283185</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;wavelength_to_wavenumber(): wavelength must be &gt; 0 Å; got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavelength</span></div>
+
+
+
+<div class="viewcode-block" id="wavenumber_to_wavelength">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.wavenumber_to_wavelength">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wavenumber_to_wavelength</span><span class="p">(</span><span class="n">wavenumber</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert wave number k to wavelength.</span>
+
+<span class="sd">    λ (Å) = 2π / k (Å⁻¹)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wavenumber : float</span>
+<span class="sd">        Wave number k in Å⁻¹.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Wavelength in Å.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``wavenumber`` ≤ 0.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.wavenumber_to_wavelength(6.283185), 6)</span>
+<span class="sd">    1.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">wavenumber</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;wavenumber_to_wavelength(): wavenumber must be &gt; 0 Å⁻¹; got </span><span class="si">{</span><span class="n">wavenumber</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavenumber</span></div>
 
 </pre></div>
 

@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=f28c58c2"></script>
+    <script src="../../_static/documentation_options.js?v=f455db4b"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -812,6 +812,104 @@
             <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;wavelength must be &gt; 0 Å; got </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">energy_units</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Units of the :attr:`energy` property for this geometry.</span>
+
+<span class="sd">        Returns ``&quot;keV&quot;`` for X-ray geometries (the default).  Will return</span>
+<span class="sd">        ``&quot;meV&quot;`` for neutron geometries once ``source_type`` is set</span>
+<span class="sd">        (see issue #8).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;keV&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Radiation energy in units of :attr:`energy_units`, derived from wavelength.</span>
+
+<span class="sd">        For X-ray geometries (default): E (keV) = hc / λ = 12.39842 / λ (Å).</span>
+
+<span class="sd">        Returns ``None`` when ``wavelength`` is not set.  Setting ``energy``</span>
+<span class="sd">        updates ``wavelength`` accordingly.  The value must be in the units</span>
+<span class="sd">        returned by :attr:`energy_units`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If set to a non-positive value.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">        &gt;&gt;&gt; g = ahd.fourcv()</span>
+<span class="sd">        &gt;&gt;&gt; g.wavelength = 1.5406</span>
+<span class="sd">        &gt;&gt;&gt; round(g.energy, 4)</span>
+<span class="sd">        8.0479</span>
+<span class="sd">        &gt;&gt;&gt; g.energy = 8.048</span>
+<span class="sd">        &gt;&gt;&gt; round(g.wavelength, 4)</span>
+<span class="sd">        1.5405</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.radiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">wavelength_to_energy</span>
+
+        <span class="k">return</span> <span class="n">wavelength_to_energy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">)</span>
+
+    <span class="nd">@energy</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.radiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">energy_to_wavelength</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="o">=</span> <span class="n">energy_to_wavelength</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wavenumber</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wave number k in Å⁻¹, derived from wavelength.</span>
+
+<span class="sd">        k (Å⁻¹) = 2π / λ (Å)</span>
+
+<span class="sd">        Returns ``None`` when ``wavelength`` is not set.  Setting</span>
+<span class="sd">        ``wavenumber`` updates ``wavelength`` accordingly.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If set to a non-positive value.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">        &gt;&gt;&gt; g = ahd.fourcv()</span>
+<span class="sd">        &gt;&gt;&gt; g.wavelength = 1.5406</span>
+<span class="sd">        &gt;&gt;&gt; round(g.wavenumber, 4)</span>
+<span class="sd">        4.0774</span>
+<span class="sd">        &gt;&gt;&gt; g.wavenumber = 4.0</span>
+<span class="sd">        &gt;&gt;&gt; round(g.wavelength, 4)</span>
+<span class="sd">        1.5708</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.radiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">wavelength_to_wavenumber</span>
+
+        <span class="k">return</span> <span class="n">wavelength_to_wavenumber</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">)</span>
+
+    <span class="nd">@wavenumber</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wavenumber</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.radiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">wavenumber_to_wavelength</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="o">=</span> <span class="n">wavenumber_to_wavelength</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Kappa alpha</span>
@@ -2156,7 +2254,10 @@
         <span class="kn">from</span><span class="w"> </span><span class="nn">.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">fmt</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">wl_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">)</span><span class="si">}</span><span class="s2"> Å&quot;</span>
+            <span class="n">wl_str</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">)</span><span class="si">}</span><span class="s2"> Å&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  (E = </span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energy</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">energy_units</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">wl_str</span> <span class="o">=</span> <span class="s2">&quot;not set&quot;</span>
 

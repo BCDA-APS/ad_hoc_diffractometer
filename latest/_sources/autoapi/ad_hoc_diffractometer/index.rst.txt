@@ -25,6 +25,7 @@ Submodules
    /autoapi/ad_hoc_diffractometer/lattice/index
    /autoapi/ad_hoc_diffractometer/mode/index
    /autoapi/ad_hoc_diffractometer/orientation/index
+   /autoapi/ad_hoc_diffractometer/radiation/index
    /autoapi/ad_hoc_diffractometer/refinement/index
    /autoapi/ad_hoc_diffractometer/reflection/index
    /autoapi/ad_hoc_diffractometer/rotation/index
@@ -43,8 +44,10 @@ Attributes
    ad_hoc_diffractometer.BASIS_YOU
    ad_hoc_diffractometer.CRYSTAL_SYSTEMS
    ad_hoc_diffractometer.GEOMETRY_ENTRY_POINT_GROUP
+   ad_hoc_diffractometer.HC_KEV_ANGSTROM
    ad_hoc_diffractometer.KAPPA_ALPHA_DEFAULT
    ad_hoc_diffractometer.XHAT
+   ad_hoc_diffractometer.XRAY_LINES
    ad_hoc_diffractometer.YHAT
    ad_hoc_diffractometer.ZHAT
 
@@ -86,6 +89,7 @@ Functions
    ad_hoc_diffractometer.compute_forward
    ad_hoc_diffractometer.d_to_Q_mag
    ad_hoc_diffractometer.d_to_two_theta
+   ad_hoc_diffractometer.energy_to_wavelength
    ad_hoc_diffractometer.fivec
    ad_hoc_diffractometer.fmt
    ad_hoc_diffractometer.fourch
@@ -124,6 +128,9 @@ Functions
    ad_hoc_diffractometer.ub_from_three_reflections_bl1967
    ad_hoc_diffractometer.ub_from_two_reflections_bl1967
    ad_hoc_diffractometer.ub_identity
+   ad_hoc_diffractometer.wavelength_to_energy
+   ad_hoc_diffractometer.wavelength_to_wavenumber
+   ad_hoc_diffractometer.wavenumber_to_wavelength
    ad_hoc_diffractometer.zaxis
 
 
@@ -486,6 +493,45 @@ Package Contents
       >>> g.detector_tilt
       0.3
       >>> g.detector_tilt = None   # clear
+
+
+   .. py:property:: energy
+      :type: float | None
+
+
+      Radiation energy in units of :attr:`energy_units`, derived from wavelength.
+
+      For X-ray geometries (default): E (keV) = hc / λ = 12.39842 / λ (Å).
+
+      Returns ``None`` when ``wavelength`` is not set.  Setting ``energy``
+      updates ``wavelength`` accordingly.  The value must be in the units
+      returned by :attr:`energy_units`.
+
+      :raises ValueError: If set to a non-positive value.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.wavelength = 1.5406
+      >>> round(g.energy, 4)
+      8.0479
+      >>> g.energy = 8.048
+      >>> round(g.wavelength, 4)
+      1.5405
+
+
+   .. py:property:: energy_units
+      :type: str
+
+
+      Units of the :attr:`energy` property for this geometry.
+
+      Returns ``"keV"`` for X-ray geometries (the default).  Will return
+      ``"meV"`` for neutron geometries once ``source_type`` is set
+      (see issue #8).
+
+      :rtype: str
 
 
    .. py:method:: forward(h: float, k: float, l: float) -> list[dict[str, float]]
@@ -1046,6 +1092,31 @@ Package Contents
       Wavelength in Å, or None if not set.
 
 
+   .. py:property:: wavenumber
+      :type: float | None
+
+
+      Wave number k in Å⁻¹, derived from wavelength.
+
+      k (Å⁻¹) = 2π / λ (Å)
+
+      Returns ``None`` when ``wavelength`` is not set.  Setting
+      ``wavenumber`` updates ``wavelength`` accordingly.
+
+      :raises ValueError: If set to a non-positive value.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.wavelength = 1.5406
+      >>> round(g.wavenumber, 4)
+      4.0774
+      >>> g.wavenumber = 4.0
+      >>> round(g.wavelength, 4)
+      1.5708
+
+
    .. py:method:: wh(print: bool = True) -> str
 
       Terse one-screen status string (the SPEC ``wh`` command).
@@ -1278,6 +1349,11 @@ Package Contents
 
 .. py:data:: GEOMETRY_ENTRY_POINT_GROUP
    :value: 'ad_hoc_diffractometer.geometries'
+
+
+.. py:data:: HC_KEV_ANGSTROM
+   :type:  float
+   :value: 12.39842
 
 
 .. py:data:: KAPPA_ALPHA_DEFAULT
@@ -2061,6 +2137,9 @@ Package Contents
 
 .. py:data:: XHAT
 
+.. py:data:: XRAY_LINES
+   :type:  dict[str, float]
+
 .. py:data:: YHAT
 
 .. py:data:: ZHAT
@@ -2382,6 +2461,27 @@ Package Contents
    >>> import ad_hoc_diffractometer as ahd
    >>> round(ahd.d_to_two_theta(2.0, 1.5406), 4)
    22.6956
+
+
+.. py:function:: energy_to_wavelength(energy_kev: float) -> float
+
+   Convert photon energy to wavelength for X-rays.
+
+   λ (Å) = hc / E = 12.39842 / E (keV)
+
+   :param energy_kev: Photon energy in keV.
+   :type energy_kev: float
+
+   :returns: Wavelength in Å.
+   :rtype: float
+
+   :raises ValueError: If ``energy_kev`` ≤ 0.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.energy_to_wavelength(8.047), 4)
+   1.5408
 
 
 .. py:function:: fivec(basis: dict = _BASIS_YOU) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
@@ -3803,6 +3903,69 @@ Package Contents
 
    :returns: **UB**
    :rtype: numpy.ndarray, shape (3, 3)
+
+
+.. py:function:: wavelength_to_energy(wavelength: float) -> float
+
+   Convert wavelength to photon energy for X-rays.
+
+   E (keV) = hc / λ = 12.39842 / λ (Å)
+
+   :param wavelength: Wavelength in Å.
+   :type wavelength: float
+
+   :returns: Photon energy in keV.
+   :rtype: float
+
+   :raises ValueError: If ``wavelength`` ≤ 0.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.wavelength_to_energy(1.5406), 4)
+   8.0478
+
+
+.. py:function:: wavelength_to_wavenumber(wavelength: float) -> float
+
+   Convert wavelength to wave number k.
+
+   k (Å⁻¹) = 2π / λ (Å)
+
+   :param wavelength: Wavelength in Å.
+   :type wavelength: float
+
+   :returns: Wave number k in Å⁻¹.
+   :rtype: float
+
+   :raises ValueError: If ``wavelength`` ≤ 0.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.wavelength_to_wavenumber(1.0), 6)
+   6.283185
+
+
+.. py:function:: wavenumber_to_wavelength(wavenumber: float) -> float
+
+   Convert wave number k to wavelength.
+
+   λ (Å) = 2π / k (Å⁻¹)
+
+   :param wavenumber: Wave number k in Å⁻¹.
+   :type wavenumber: float
+
+   :returns: Wavelength in Å.
+   :rtype: float
+
+   :raises ValueError: If ``wavenumber`` ≤ 0.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> round(ahd.wavenumber_to_wavelength(6.283185), 6)
+   1.0
 
 
 .. py:function:: zaxis(basis: dict = _BASIS_YOU) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer

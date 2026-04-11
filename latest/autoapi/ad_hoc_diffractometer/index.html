@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=f28c58c2"></script>
+    <script src="../../_static/documentation_options.js?v=f455db4b"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -468,6 +468,7 @@
 <li class="toctree-l2"><a class="reference internal" href="lattice/index.html">ad_hoc_diffractometer.lattice</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mode/index.html">ad_hoc_diffractometer.mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="orientation/index.html">ad_hoc_diffractometer.orientation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radiation/index.html">ad_hoc_diffractometer.radiation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="refinement/index.html">ad_hoc_diffractometer.refinement</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reflection/index.html">ad_hoc_diffractometer.reflection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rotation/index.html">ad_hoc_diffractometer.rotation</a></li>
@@ -554,6 +555,7 @@
 <li class="toctree-l1"><a class="reference internal" href="lattice/index.html">ad_hoc_diffractometer.lattice</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mode/index.html">ad_hoc_diffractometer.mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation/index.html">ad_hoc_diffractometer.orientation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radiation/index.html">ad_hoc_diffractometer.radiation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="refinement/index.html">ad_hoc_diffractometer.refinement</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reflection/index.html">ad_hoc_diffractometer.reflection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rotation/index.html">ad_hoc_diffractometer.rotation</a></li>
@@ -580,10 +582,16 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.GEOMETRY_ENTRY_POINT_GROUP" title="ad_hoc_diffractometer.GEOMETRY_ENTRY_POINT_GROUP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.KAPPA_ALPHA_DEFAULT" title="ad_hoc_diffractometer.KAPPA_ALPHA_DEFAULT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.HC_KEV_ANGSTROM" title="ad_hoc_diffractometer.HC_KEV_ANGSTROM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.XHAT" title="ad_hoc_diffractometer.XHAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XHAT</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.KAPPA_ALPHA_DEFAULT" title="ad_hoc_diffractometer.KAPPA_ALPHA_DEFAULT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.XHAT" title="ad_hoc_diffractometer.XHAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XHAT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.XRAY_LINES" title="ad_hoc_diffractometer.XRAY_LINES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XRAY_LINES</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.YHAT" title="ad_hoc_diffractometer.YHAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">YHAT</span></code></a></p></td>
@@ -683,119 +691,131 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.d_to_two_theta" title="ad_hoc_diffractometer.d_to_two_theta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">d_to_two_theta</span></code></a>(→ float)</p></td>
 <td><p>Convert d-spacing to 2θ using Bragg's law.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.fivec" title="ad_hoc_diffractometer.fivec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fivec</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.energy_to_wavelength" title="ad_hoc_diffractometer.energy_to_wavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">energy_to_wavelength</span></code></a>(→ float)</p></td>
+<td><p>Convert photon energy to wavelength for X-rays.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.fivec" title="ad_hoc_diffractometer.fivec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fivec</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
 <td><p>Five-circle diffractometer (fourcv mounted on a vertical base).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.fmt" title="ad_hoc_diffractometer.fmt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fmt</span></code></a>(→ str)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.fmt" title="ad_hoc_diffractometer.fmt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fmt</span></code></a>(→ str)</p></td>
 <td><p>Format a float for display with the given number of decimal places.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.fourch" title="ad_hoc_diffractometer.fourch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fourch</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.fourch" title="ad_hoc_diffractometer.fourch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fourch</span></code></a>(...)</p></td>
 <td><p>Four-circle Eulerian diffractometer, horizontal scattering plane (laboratory).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.fourcv" title="ad_hoc_diffractometer.fourcv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fourcv</span></code></a>(...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.fourcv" title="ad_hoc_diffractometer.fourcv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fourcv</span></code></a>(...)</p></td>
 <td><p>Four-circle Eulerian diffractometer, vertical scattering plane (synchrotron).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.get_geometry" title="ad_hoc_diffractometer.get_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_geometry</span></code></a>(name)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.get_geometry" title="ad_hoc_diffractometer.get_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_geometry</span></code></a>(name)</p></td>
 <td><p>Return the registered factory function for the named geometry.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.get_precision" title="ad_hoc_diffractometer.get_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_precision</span></code></a>(→ int)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.get_precision" title="ad_hoc_diffractometer.get_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_precision</span></code></a>(→ int)</p></td>
 <td><p>Return the current package-level display precision (decimal places).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.hkl_to_Q" title="ad_hoc_diffractometer.hkl_to_Q"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hkl_to_Q</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.hkl_to_Q" title="ad_hoc_diffractometer.hkl_to_Q"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hkl_to_Q</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Convert Miller indices to the scattering vector Q in Å⁻¹.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.hkl_to_d" title="ad_hoc_diffractometer.hkl_to_d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hkl_to_d</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.hkl_to_d" title="ad_hoc_diffractometer.hkl_to_d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hkl_to_d</span></code></a>(→ float)</p></td>
 <td><p>Convert Miller indices to d-spacing.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.hkl_to_two_theta" title="ad_hoc_diffractometer.hkl_to_two_theta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hkl_to_two_theta</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.hkl_to_two_theta" title="ad_hoc_diffractometer.hkl_to_two_theta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hkl_to_two_theta</span></code></a>(→ float)</p></td>
 <td><p>Convert Miller indices to 2θ using the UB matrix and Bragg's law.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.hkl_trajectory" title="ad_hoc_diffractometer.hkl_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hkl_trajectory</span></code></a>(→ list[dict])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.hkl_trajectory" title="ad_hoc_diffractometer.hkl_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hkl_trajectory</span></code></a>(→ list[dict])</p></td>
 <td><p>Compute motor-angle sequences along a reciprocal-space trajectory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.is_evanescent" title="ad_hoc_diffractometer.is_evanescent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_evanescent</span></code></a>(→ bool)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.is_evanescent" title="ad_hoc_diffractometer.is_evanescent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_evanescent</span></code></a>(→ bool)</p></td>
 <td><p>Return True when αᵢ is below the critical angle (evanescent / surface-sensitive).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.is_specular" title="ad_hoc_diffractometer.is_specular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_specular</span></code></a>(→ bool)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.is_specular" title="ad_hoc_diffractometer.is_specular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_specular</span></code></a>(→ bool)</p></td>
 <td><p>Return True when αᵢ ≈ αf within <code class="docutils literal notranslate"><span class="pre">atol</span></code> degrees.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa4ch" title="ad_hoc_diffractometer.kappa4ch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa4ch</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa4ch" title="ad_hoc_diffractometer.kappa4ch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa4ch</span></code></a>(...)</p></td>
 <td><p>Four-circle kappa diffractometer, horizontal scattering plane (laboratory).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa4cv" title="ad_hoc_diffractometer.kappa4cv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa4cv</span></code></a>(...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa4cv" title="ad_hoc_diffractometer.kappa4cv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa4cv</span></code></a>(...)</p></td>
 <td><p>Four-circle kappa diffractometer, vertical scattering plane (synchrotron).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa6c" title="ad_hoc_diffractometer.kappa6c"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa6c</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa6c" title="ad_hoc_diffractometer.kappa6c"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa6c</span></code></a>(...)</p></td>
 <td><p>Six-circle kappa diffractometer (psic-style outer axes, kappa inner sample).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa_axis" title="ad_hoc_diffractometer.kappa_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa_axis</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa_axis" title="ad_hoc_diffractometer.kappa_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa_axis</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Compute the kappa rotation axis vector for a kappa-geometry diffractometer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice_vectors" title="ad_hoc_diffractometer.lattice_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lattice_vectors</span></code></a>(→ tuple[numpy.ndarray, numpy.ndarray, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice_vectors" title="ad_hoc_diffractometer.lattice_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lattice_vectors</span></code></a>(→ tuple[numpy.ndarray, numpy.ndarray, ...)</p></td>
 <td><p>Compute the three Cartesian direct lattice vectors from crystal lattice</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.list_geometries" title="ad_hoc_diffractometer.list_geometries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_geometries</span></code></a>(→ dict[str, type])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.list_geometries" title="ad_hoc_diffractometer.list_geometries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_geometries</span></code></a>(→ dict[str, type])</p></td>
 <td><p>Return a copy of the geometry registry as {name: factory_callable}.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.make_geometry" title="ad_hoc_diffractometer.make_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_geometry</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.make_geometry" title="ad_hoc_diffractometer.make_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_geometry</span></code></a>(...)</p></td>
 <td><p>Instantiate a geometry by name, passing keyword arguments to its factory.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.parse_axis" title="ad_hoc_diffractometer.parse_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_axis</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.parse_axis" title="ad_hoc_diffractometer.parse_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_axis</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Convert a caller-facing axis label to an internal numpy array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.precision_atol" title="ad_hoc_diffractometer.precision_atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">precision_atol</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.precision_atol" title="ad_hoc_diffractometer.precision_atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">precision_atol</span></code></a>(→ float)</p></td>
 <td><p>Return an absolute tolerance matching the current display precision.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.psi_trajectory" title="ad_hoc_diffractometer.psi_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psi_trajectory</span></code></a>(→ list[dict])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.psi_trajectory" title="ad_hoc_diffractometer.psi_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psi_trajectory</span></code></a>(→ list[dict])</p></td>
 <td><p>Compute motor-angle sequences for ψ rotation about the scattering vector Q.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.psic" title="ad_hoc_diffractometer.psic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psic</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.psic" title="ad_hoc_diffractometer.psic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psic</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
 <td><p>You (1999) '4S+2D' six-circle diffractometer (psic geometry).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.q_components" title="ad_hoc_diffractometer.q_components"><code class="xref py py-obj docutils literal notranslate"><span class="pre">q_components</span></code></a>(→ dict[str, float])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.q_components" title="ad_hoc_diffractometer.q_components"><code class="xref py py-obj docutils literal notranslate"><span class="pre">q_components</span></code></a>(→ dict[str, float])</p></td>
 <td><p>Decompose Q into components perpendicular and parallel to the sample surface.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.reciprocal_vectors" title="ad_hoc_diffractometer.reciprocal_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reciprocal_vectors</span></code></a>(→ tuple[numpy.ndarray, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.reciprocal_vectors" title="ad_hoc_diffractometer.reciprocal_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reciprocal_vectors</span></code></a>(→ tuple[numpy.ndarray, ...)</p></td>
 <td><p>Compute the three reciprocal lattice vectors from Cartesian direct lattice</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.refine_lattice_bl1967" title="ad_hoc_diffractometer.refine_lattice_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">refine_lattice_bl1967</span></code></a>(→ dict)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.refine_lattice_bl1967" title="ad_hoc_diffractometer.refine_lattice_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">refine_lattice_bl1967</span></code></a>(→ dict)</p></td>
 <td><p>Refine lattice parameters and/or orientation from N≥3 reflections.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.refine_lattice_simplex" title="ad_hoc_diffractometer.refine_lattice_simplex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">refine_lattice_simplex</span></code></a>(→ dict)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.refine_lattice_simplex" title="ad_hoc_diffractometer.refine_lattice_simplex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">refine_lattice_simplex</span></code></a>(→ dict)</p></td>
 <td><p>Derivative-free lattice refinement using the Nelder-Mead simplex method.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.rotation_matrix" title="ad_hoc_diffractometer.rotation_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotation_matrix</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.rotation_matrix" title="ad_hoc_diffractometer.rotation_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotation_matrix</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Compute a right-handed rotation matrix about a unit axis vector.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.s2d2" title="ad_hoc_diffractometer.s2d2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s2d2</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.s2d2" title="ad_hoc_diffractometer.s2d2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s2d2</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
 <td><p>S2D2 four-circle diffractometer (general-inclination geometry).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.set_precision" title="ad_hoc_diffractometer.set_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_precision</span></code></a>(→ None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.set_precision" title="ad_hoc_diffractometer.set_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_precision</span></code></a>(→ None)</p></td>
 <td><p>Set the package-level display precision.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.sixc" title="ad_hoc_diffractometer.sixc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sixc</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.sixc" title="ad_hoc_diffractometer.sixc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sixc</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
 <td><p>Lohmeier &amp; Vlieg (1993) six-circle surface diffractometer (sixc geometry).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.trajectory_plan" title="ad_hoc_diffractometer.trajectory_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trajectory_plan</span></code></a>(→ list[dict])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.trajectory_plan" title="ad_hoc_diffractometer.trajectory_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trajectory_plan</span></code></a>(→ list[dict])</p></td>
 <td><p>Plan a motor-angle path between two reciprocal-space points.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.two_theta_to_Q_mag" title="ad_hoc_diffractometer.two_theta_to_Q_mag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_theta_to_Q_mag</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.two_theta_to_Q_mag" title="ad_hoc_diffractometer.two_theta_to_Q_mag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_theta_to_Q_mag</span></code></a>(→ float)</p></td>
 <td><p>Convert 2θ to <a href="#id23"><span class="problematic" id="id24">|Q|</span></a> using the Bragg relation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.two_theta_to_d" title="ad_hoc_diffractometer.two_theta_to_d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_theta_to_d</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.two_theta_to_d" title="ad_hoc_diffractometer.two_theta_to_d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_theta_to_d</span></code></a>(→ float)</p></td>
 <td><p>Convert 2θ to d-spacing using Bragg's law.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.ub_from_one_reflection" title="ad_hoc_diffractometer.ub_from_one_reflection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_one_reflection</span></code></a>([reference_stage])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.ub_from_one_reflection" title="ad_hoc_diffractometer.ub_from_one_reflection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_one_reflection</span></code></a>([reference_stage])</p></td>
 <td><p>Compute a provisional U and UB from one reflection (Rodrigues method).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.ub_from_three_reflections_bl1967" title="ad_hoc_diffractometer.ub_from_three_reflections_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.ub_from_three_reflections_bl1967" title="ad_hoc_diffractometer.ub_from_three_reflections_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Compute UB directly from three reflections (Busing &amp; Levy 1967, eqs. 29-31).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.ub_from_two_reflections_bl1967" title="ad_hoc_diffractometer.ub_from_two_reflections_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.ub_from_two_reflections_bl1967" title="ad_hoc_diffractometer.ub_from_two_reflections_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Compute U and UB from two orienting reflections (Busing &amp; Levy 1967, eqs. 23-27).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.ub_identity" title="ad_hoc_diffractometer.ub_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_identity</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.ub_identity" title="ad_hoc_diffractometer.ub_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_identity</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Set U = I (identity) and UB = B; return UB.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.wavelength_to_energy" title="ad_hoc_diffractometer.wavelength_to_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wavelength_to_energy</span></code></a>(→ float)</p></td>
+<td><p>Convert wavelength to photon energy for X-rays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.wavelength_to_wavenumber" title="ad_hoc_diffractometer.wavelength_to_wavenumber"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wavelength_to_wavenumber</span></code></a>(→ float)</p></td>
+<td><p>Convert wavelength to wave number k.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.wavenumber_to_wavelength" title="ad_hoc_diffractometer.wavenumber_to_wavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wavenumber_to_wavelength</span></code></a>(→ float)</p></td>
+<td><p>Convert wave number k to wavelength.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.zaxis" title="ad_hoc_diffractometer.zaxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zaxis</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
 <td><p>Z-axis four-circle diffractometer (general-inclination geometry).</p></td>
@@ -1244,6 +1264,46 @@ not applied).</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">detector_tilt</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># clear</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.AdHocDiffractometer.energy">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">energy</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.AdHocDiffractometer.energy" title="Link to this definition">#</a></dt>
+<dd><p>Radiation energy in units of <a class="reference internal" href="#ad_hoc_diffractometer.AdHocDiffractometer.energy_units" title="ad_hoc_diffractometer.AdHocDiffractometer.energy_units"><code class="xref py py-attr docutils literal notranslate"><span class="pre">energy_units</span></code></a>, derived from wavelength.</p>
+<p>For X-ray geometries (default): E (keV) = hc / λ = 12.39842 / λ (Å).</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> when <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> is not set.  Setting <code class="docutils literal notranslate"><span class="pre">energy</span></code>
+updates <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> accordingly.  The value must be in the units
+returned by <a class="reference internal" href="#ad_hoc_diffractometer.AdHocDiffractometer.energy_units" title="ad_hoc_diffractometer.AdHocDiffractometer.energy_units"><code class="xref py py-attr docutils literal notranslate"><span class="pre">energy_units</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If set to a non-positive value.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">8.0479</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">energy</span> <span class="o">=</span> <span class="mf">8.048</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">1.5405</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.AdHocDiffractometer.energy_units">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">energy_units</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.AdHocDiffractometer.energy_units" title="Link to this definition">#</a></dt>
+<dd><p>Units of the <a class="reference internal" href="#ad_hoc_diffractometer.AdHocDiffractometer.energy" title="ad_hoc_diffractometer.AdHocDiffractometer.energy"><code class="xref py py-attr docutils literal notranslate"><span class="pre">energy</span></code></a> property for this geometry.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">&quot;keV&quot;</span></code> for X-ray geometries (the default).  Will return
+<code class="docutils literal notranslate"><span class="pre">&quot;meV&quot;</span></code> for neutron geometries once <code class="docutils literal notranslate"><span class="pre">source_type</span></code> is set
+(see issue #8).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1856,6 +1916,31 @@ limits).</p>
 <dd><p>Wavelength in Å, or None if not set.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.AdHocDiffractometer.wavenumber">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">wavenumber</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.AdHocDiffractometer.wavenumber" title="Link to this definition">#</a></dt>
+<dd><p>Wave number k in Å⁻¹, derived from wavelength.</p>
+<p>k (Å⁻¹) = 2π / λ (Å)</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> when <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> is not set.  Setting
+<code class="docutils literal notranslate"><span class="pre">wavenumber</span></code> updates <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If set to a non-positive value.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">wavenumber</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">4.0774</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavenumber</span> <span class="o">=</span> <span class="mf">4.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">1.5708</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.AdHocDiffractometer.wh">
 <span class="sig-name descname"><span class="pre">wh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">print</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/ad_hoc_diffractometer/geometry.html#AdHocDiffractometer.wh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.AdHocDiffractometer.wh" title="Link to this definition">#</a></dt>
@@ -2118,6 +2203,11 @@ diffraction calculations performed in this mode.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.GEOMETRY_ENTRY_POINT_GROUP">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.</span></span><span class="sig-name descname"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ad_hoc_diffractometer.geometries'</span></span><a class="headerlink" href="#ad_hoc_diffractometer.GEOMETRY_ENTRY_POINT_GROUP" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.HC_KEV_ANGSTROM">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.</span></span><span class="sig-name descname"><span class="pre">HC_KEV_ANGSTROM</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12.39842</span></span><a class="headerlink" href="#ad_hoc_diffractometer.HC_KEV_ANGSTROM" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -2990,6 +3080,11 @@ Must satisfy min_angle &lt; max_angle.</p></li>
 <dd></dd></dl>
 
 <dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.XRAY_LINES">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.</span></span><span class="sig-name descname"><span class="pre">XRAY_LINES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ad_hoc_diffractometer.XRAY_LINES" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.YHAT">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.</span></span><span class="sig-name descname"><span class="pre">YHAT</span></span><a class="headerlink" href="#ad_hoc_diffractometer.YHAT" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
@@ -3370,6 +3465,33 @@ unreachable at this wavelength).</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">d_to_two_theta</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.5406</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
 <span class="go">22.6956</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.energy_to_wavelength">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.</span></span><span class="sig-name descname"><span class="pre">energy_to_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_kev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../_modules/ad_hoc_diffractometer/radiation.html#energy_to_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.energy_to_wavelength" title="Link to this definition">#</a></dt>
+<dd><p>Convert photon energy to wavelength for X-rays.</p>
+<p>λ (Å) = hc / E = 12.39842 / E (keV)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>energy_kev</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Photon energy in keV.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Wavelength in Å.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">energy_kev</span></code> ≤ 0.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">energy_to_wavelength</span><span class="p">(</span><span class="mf">8.047</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">1.5408</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -4987,6 +5109,87 @@ is available at all.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.wavelength_to_energy">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.</span></span><span class="sig-name descname"><span class="pre">wavelength_to_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../_modules/ad_hoc_diffractometer/radiation.html#wavelength_to_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.wavelength_to_energy" title="Link to this definition">#</a></dt>
+<dd><p>Convert wavelength to photon energy for X-rays.</p>
+<p>E (keV) = hc / λ = 12.39842 / λ (Å)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wavelength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Wavelength in Å.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Photon energy in keV.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> ≤ 0.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">wavelength_to_energy</span><span class="p">(</span><span class="mf">1.5406</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">8.0478</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.wavelength_to_wavenumber">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.</span></span><span class="sig-name descname"><span class="pre">wavelength_to_wavenumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../_modules/ad_hoc_diffractometer/radiation.html#wavelength_to_wavenumber"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.wavelength_to_wavenumber" title="Link to this definition">#</a></dt>
+<dd><p>Convert wavelength to wave number k.</p>
+<p>k (Å⁻¹) = 2π / λ (Å)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wavelength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Wavelength in Å.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Wave number k in Å⁻¹.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> ≤ 0.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">wavelength_to_wavenumber</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">6.283185</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.wavenumber_to_wavelength">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.</span></span><span class="sig-name descname"><span class="pre">wavenumber_to_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavenumber</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../_modules/ad_hoc_diffractometer/radiation.html#wavenumber_to_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.wavenumber_to_wavelength" title="Link to this definition">#</a></dt>
+<dd><p>Convert wave number k to wavelength.</p>
+<p>λ (Å) = 2π / k (Å⁻¹)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wavenumber</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Wave number k in Å⁻¹.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Wavelength in Å.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">wavenumber</span></code> ≤ 0.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">wavenumber_to_wavelength</span><span class="p">(</span><span class="mf">6.283185</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.zaxis">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.</span></span><span class="sig-name descname"><span class="pre">zaxis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_BASIS_YOU</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">ad_hoc_diffractometer.geometry.AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../_modules/ad_hoc_diffractometer/factories.html#zaxis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.zaxis" title="Link to this definition">#</a></dt>
 <dd><p>Z-axis four-circle diffractometer (general-inclination geometry).</p>
@@ -5099,6 +5302,8 @@ The detector and sample both rotate about the shared alpha (base) axis.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.AdHocDiffractometer.detector_rotation_matrix"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.detector_rotation_matrix()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.detector_stages</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.detector_tilt</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.AdHocDiffractometer.energy"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.energy</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.AdHocDiffractometer.energy_units"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.energy_units</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.AdHocDiffractometer.forward"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.forward()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.AdHocDiffractometer.from_dict"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.from_dict()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.AdHocDiffractometer.inclination_matrix"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.inclination_matrix</span></code></a></li>
@@ -5126,6 +5331,7 @@ The detector and sample both rotate about the shared alpha (base) axis.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.AdHocDiffractometer.surface_normal"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.surface_normal</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.AdHocDiffractometer.to_dict"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.to_dict()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.wavelength</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.AdHocDiffractometer.wavenumber"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.wavenumber</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.AdHocDiffractometer.wh"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.wh()</span></code></a></li>
 </ul>
 </li>
@@ -5152,6 +5358,7 @@ The detector and sample both rotate about the shared alpha (base) axis.</p>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.GEOMETRY_ENTRY_POINT_GROUP"><code class="docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.HC_KEV_ANGSTROM"><code class="docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.KAPPA_ALPHA_DEFAULT"><code class="docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.Lattice"><code class="docutils literal notranslate"><span class="pre">Lattice</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.Lattice.B"><code class="docutils literal notranslate"><span class="pre">Lattice.B</span></code></a></li>
@@ -5240,6 +5447,7 @@ The detector and sample both rotate about the shared alpha (base) axis.</p>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.XHAT"><code class="docutils literal notranslate"><span class="pre">XHAT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.XRAY_LINES"><code class="docutils literal notranslate"><span class="pre">XRAY_LINES</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.YHAT"><code class="docutils literal notranslate"><span class="pre">YHAT</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.ZHAT"><code class="docutils literal notranslate"><span class="pre">ZHAT</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.allclose"><code class="docutils literal notranslate"><span class="pre">allclose()</span></code></a></li>
@@ -5252,6 +5460,7 @@ The detector and sample both rotate about the shared alpha (base) axis.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.compute_forward"><code class="docutils literal notranslate"><span class="pre">compute_forward()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.d_to_Q_mag"><code class="docutils literal notranslate"><span class="pre">d_to_Q_mag()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.d_to_two_theta"><code class="docutils literal notranslate"><span class="pre">d_to_two_theta()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.energy_to_wavelength"><code class="docutils literal notranslate"><span class="pre">energy_to_wavelength()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.fivec"><code class="docutils literal notranslate"><span class="pre">fivec()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.fmt"><code class="docutils literal notranslate"><span class="pre">fmt()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.fourch"><code class="docutils literal notranslate"><span class="pre">fourch()</span></code></a></li>
@@ -5290,6 +5499,9 @@ The detector and sample both rotate about the shared alpha (base) axis.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.ub_from_three_reflections_bl1967"><code class="docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.ub_from_two_reflections_bl1967"><code class="docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.ub_identity"><code class="docutils literal notranslate"><span class="pre">ub_identity()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.wavelength_to_energy"><code class="docutils literal notranslate"><span class="pre">wavelength_to_energy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.wavelength_to_wavenumber"><code class="docutils literal notranslate"><span class="pre">wavelength_to_wavenumber()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.wavenumber_to_wavelength"><code class="docutils literal notranslate"><span class="pre">wavenumber_to_wavelength()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.zaxis"><code class="docutils literal notranslate"><span class="pre">zaxis()</span></code></a></li>
 </ul>
 </li>

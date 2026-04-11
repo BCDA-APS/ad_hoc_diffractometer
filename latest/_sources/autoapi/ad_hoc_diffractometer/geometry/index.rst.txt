@@ -389,6 +389,45 @@ Module Contents
       >>> g.detector_tilt = None   # clear
 
 
+   .. py:property:: energy
+      :type: float | None
+
+
+      Radiation energy in units of :attr:`energy_units`, derived from wavelength.
+
+      For X-ray geometries (default): E (keV) = hc / λ = 12.39842 / λ (Å).
+
+      Returns ``None`` when ``wavelength`` is not set.  Setting ``energy``
+      updates ``wavelength`` accordingly.  The value must be in the units
+      returned by :attr:`energy_units`.
+
+      :raises ValueError: If set to a non-positive value.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.wavelength = 1.5406
+      >>> round(g.energy, 4)
+      8.0479
+      >>> g.energy = 8.048
+      >>> round(g.wavelength, 4)
+      1.5405
+
+
+   .. py:property:: energy_units
+      :type: str
+
+
+      Units of the :attr:`energy` property for this geometry.
+
+      Returns ``"keV"`` for X-ray geometries (the default).  Will return
+      ``"meV"`` for neutron geometries once ``source_type`` is set
+      (see issue #8).
+
+      :rtype: str
+
+
    .. py:method:: forward(h: float, k: float, l: float) -> list[dict[str, float]]
 
       Compute all valid motor-angle solutions for the reflection (h, k, l).
@@ -945,6 +984,31 @@ Module Contents
 
 
       Wavelength in Å, or None if not set.
+
+
+   .. py:property:: wavenumber
+      :type: float | None
+
+
+      Wave number k in Å⁻¹, derived from wavelength.
+
+      k (Å⁻¹) = 2π / λ (Å)
+
+      Returns ``None`` when ``wavelength`` is not set.  Setting
+      ``wavenumber`` updates ``wavelength`` accordingly.
+
+      :raises ValueError: If set to a non-positive value.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.wavelength = 1.5406
+      >>> round(g.wavenumber, 4)
+      4.0774
+      >>> g.wavenumber = 4.0
+      >>> round(g.wavelength, 4)
+      1.5708
 
 
    .. py:method:: wh(print: bool = True) -> str

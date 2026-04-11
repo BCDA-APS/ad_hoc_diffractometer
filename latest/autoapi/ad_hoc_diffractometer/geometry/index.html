@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=f28c58c2"></script>
+    <script src="../../../_static/documentation_options.js?v=f455db4b"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -468,6 +468,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../lattice/index.html">ad_hoc_diffractometer.lattice</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mode/index.html">ad_hoc_diffractometer.mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../orientation/index.html">ad_hoc_diffractometer.orientation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/index.html">ad_hoc_diffractometer.radiation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../refinement/index.html">ad_hoc_diffractometer.refinement</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reflection/index.html">ad_hoc_diffractometer.reflection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../rotation/index.html">ad_hoc_diffractometer.rotation</a></li>
@@ -1007,6 +1008,46 @@ not applied).</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">detector_tilt</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># clear</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">energy</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy" title="Link to this definition">#</a></dt>
+<dd><p>Radiation energy in units of <a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy_units" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy_units"><code class="xref py py-attr docutils literal notranslate"><span class="pre">energy_units</span></code></a>, derived from wavelength.</p>
+<p>For X-ray geometries (default): E (keV) = hc / λ = 12.39842 / λ (Å).</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> when <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> is not set.  Setting <code class="docutils literal notranslate"><span class="pre">energy</span></code>
+updates <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> accordingly.  The value must be in the units
+returned by <a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy_units" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy_units"><code class="xref py py-attr docutils literal notranslate"><span class="pre">energy_units</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If set to a non-positive value.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">8.0479</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">energy</span> <span class="o">=</span> <span class="mf">8.048</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">1.5405</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy_units">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">energy_units</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy_units" title="Link to this definition">#</a></dt>
+<dd><p>Units of the <a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy"><code class="xref py py-attr docutils literal notranslate"><span class="pre">energy</span></code></a> property for this geometry.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">&quot;keV&quot;</span></code> for X-ray geometries (the default).  Will return
+<code class="docutils literal notranslate"><span class="pre">&quot;meV&quot;</span></code> for neutron geometries once <code class="docutils literal notranslate"><span class="pre">source_type</span></code> is set
+(see issue #8).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1619,6 +1660,31 @@ limits).</p>
 <dd><p>Wavelength in Å, or None if not set.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.geometry.AdHocDiffractometer.wavenumber">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">wavenumber</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.wavenumber" title="Link to this definition">#</a></dt>
+<dd><p>Wave number k in Å⁻¹, derived from wavelength.</p>
+<p>k (Å⁻¹) = 2π / λ (Å)</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> when <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> is not set.  Setting
+<code class="docutils literal notranslate"><span class="pre">wavenumber</span></code> updates <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If set to a non-positive value.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">wavenumber</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">4.0774</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavenumber</span> <span class="o">=</span> <span class="mf">4.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">1.5708</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.geometry.AdHocDiffractometer.wh">
 <span class="sig-name descname"><span class="pre">wh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">print</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/geometry.html#AdHocDiffractometer.wh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.wh" title="Link to this definition">#</a></dt>
@@ -1748,6 +1814,8 @@ Dec 2020.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.detector_rotation_matrix"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.detector_rotation_matrix()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.detector_stages</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.detector_tilt</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.energy</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.energy_units"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.energy_units</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.forward()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.from_dict"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.from_dict()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.inclination_matrix"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.inclination_matrix</span></code></a></li>
@@ -1775,6 +1843,7 @@ Dec 2020.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.surface_normal"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.surface_normal</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.to_dict"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.to_dict()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.wavelength</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.wavenumber"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.wavenumber</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.wh"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.wh()</span></code></a></li>
 </ul>
 </li>
