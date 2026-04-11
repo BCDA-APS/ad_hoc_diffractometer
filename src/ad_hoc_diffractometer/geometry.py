@@ -631,6 +631,74 @@ class AdHocDiffractometer:
             wavelength=wl,
         )
 
+    def forward(
+        self,
+        h: float,
+        k: float,
+        l: float,  # noqa: E741
+    ) -> list[dict[str, float]]:
+        """
+        Compute all valid motor-angle solutions for the reflection (h, k, l).
+
+        This is the *forward* diffraction calculation: given a reciprocal-
+        lattice point, compute the motor angles that satisfy the Bragg
+        condition under the active diffraction mode.
+
+        Algorithm (delegated to :mod:`.forward`):
+
+        1. Compute ``Q_phi = UB @ (h, k, l)`` — the target scattering vector
+           in the phi frame.
+        2. Apply Bragg's law to find the detector angle (2θ).
+        3. Apply mode constraints (frozen angles, bisecting condition) to
+           determine the remaining free stage angles.
+        4. Return all valid solutions, filtered by stage limits.
+
+        Parameters
+        ----------
+        h, k, l : float
+            Miller indices of the target reflection.
+
+        Returns
+        -------
+        list of dict[str, float]
+            Each element is a complete set of motor angles (all stage names
+            as keys, values in degrees) that satisfies the Bragg condition
+            under the active mode.  May be empty if no valid solution exists
+            within limits.
+
+        Raises
+        ------
+        ValueError
+            If ``self.wavelength`` is None.
+        ValueError
+            If ``self.sample.UB`` is None.
+        ValueError
+            If (h, k, l) == (0, 0, 0).
+        ValueError
+            If the requested |Q| exceeds the Ewald sphere.
+        NotImplementedError
+            If no active mode is set or the mode type is not supported.
+
+        See Also
+        --------
+        inverse : Convert motor angles to (h, k, l).
+
+        Examples
+        --------
+        >>> import ad_hoc_diffractometer as ahd
+        >>> g = ahd.fourcv()
+        >>> g.wavelength = 1.5406
+        >>> ahd.ub_identity(g.sample)
+        >>> solutions = g.forward(1, 0, 0)
+        >>> len(solutions) > 0
+        True
+        >>> sorted(solutions[0].keys())
+        ['chi', 'omega', 'phi', 'ttheta']
+        """
+        from .forward import compute_forward
+
+        return compute_forward(self, h, k, l)
+
     def inverse(self, angles: dict[str, float]) -> tuple[float, float, float]:
         """
         Convert a set of motor angles to Miller indices (h, k, l).

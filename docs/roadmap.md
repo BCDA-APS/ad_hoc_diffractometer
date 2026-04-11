@@ -291,6 +291,41 @@ how stages are declared.
 - [x] Tests: psi=0 / psi=90 analytically verified; property validation;
       error cases; status command integration
 
+### `forward()`: hkl → angles ([#35](https://github.com/prjemian/ad_hoc_diffractometer/issues/35))
+
+- [x] `AdHocDiffractometer.forward(h, k, l)` — returns all valid motor-angle
+      solutions as a list of dicts, filtered by stage limits
+- [x] `compute_forward(geometry, h, k, l)` — top-level function, exported
+      from `__init__.py`
+- [x] Numeric Gauss-Newton solver (geometry-agnostic, no analytic formulas
+      per geometry needed): works for any basis convention and axis handedness
+- [x] `BisectingMode` dispatch: ttheta from Bragg's law; bisecting stage =
+      ttheta/2; two free stages (chi/phi equivalent) solved numerically;
+      8 analytic seeds + 16-point coarse grid for robustness; deduplication
+- [x] `FixedAngleMode` dispatch: delegates to bisecting solver with the
+      fixed stage added to frozen_angles; 1D solver for the single remaining
+      free stage
+- [x] Cut-point application (mode-level takes priority over geometry-level)
+- [x] Stage-limit filtering (solutions outside limits dropped)
+- [x] `forward.py` module: `compute_forward`, `_solve_bisecting`,
+      `_solve_fixed_angle`, `_solve_one_free_angle`, `_solve_two_angles`,
+      `_apply_cut_points`, `_check_limits`
+- [x] 39 tests in `test_forward.py`; 100% line and branch coverage
+- [x] Depends on: #9 (3.1 modes), #4 (2.0 phi-frame), UB matrix
+
+### Duplicate geometry name in entry-point registry ([#71](https://github.com/prjemian/ad_hoc_diffractometer/issues/71))
+
+- [x] `_load_entry_point_geometries()` raises `ValueError` when an entry-point
+      name collides with an already-registered geometry (built-in or plugin),
+      unless the entry point resolves to the exact same callable (built-in
+      re-declared via pyproject.toml — not a conflict)
+- [x] Error message names the conflicting geometry, its source, and the
+      existing registration
+- [x] Broken entry points still silently skipped with a DEBUG log
+- [x] Tests: collision with built-in, two-plugin collision, broken-plugin
+      skip path unchanged
+- [x] Module docstring updated to document the uniqueness requirement
+
 ### 3.3 Detector geometry parameters ([#10](https://github.com/prjemian/ad_hoc_diffractometer/issues/10))
 
 - [ ] Sample-to-detector distance (mm or m)
