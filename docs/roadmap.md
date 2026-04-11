@@ -418,31 +418,27 @@ Diffractometers are often used to scan motor angles such that the
 scattering vector Q traces a specific path in reciprocal space relative
 to a chosen reference direction.  Two important classes:
 
-- [ ] **Arbitrary hkl vector scans**: given a reciprocal-space direction
-      (h, k, l) and a starting point, compute the sequence of motor
-      angles that keep Q on a specified trajectory — radially (along Q),
-      transversely (perpendicular to Q), or along a crystal axis.
-      Examples: L-scan, H-scan, radial scan, transverse scan.
-      Requires the UB matrix (item 2.2) and a mode selection (item 3.1).
-- [ ] **ψ (psi) scans**: rotation of the sample about the scattering
-      vector Q while keeping the reflection condition satisfied.  The
-      azimuthal angle ψ is the angle of rotation about Q (or d*).
-      For a given hkl, ψ is varied by adjusting ω, χ, φ (or their
-      kappa equivalents) while holding 2θ fixed.  Used to:
-      - measure anisotropic absorption (ψ-scan absorption correction)
-      - study crystal symmetry and orientation
-      - probe the azimuthal dependence of diffracted intensity
-        (resonant scattering, magnetic scattering)
-      ψ = 0 is conventionally defined when the reference vector N
-      (item 3.2) lies in the scattering plane.
-- [ ] **Reciprocal-space trajectory planning**: given start and end
-      points in (h, k, l) or (Qx, Qy, Qz), compute the motor-angle
-      path and flag any portions that exceed motor limits (item 1.2)
-      or enter inaccessible regions.
-- [ ] Reference: Busing & Levy (1967), section on ψ scans;
+- [x] **Arbitrary hkl vector scans**: `hkl_trajectory(geometry, trajectory,
+      n_points)` computes motor-angle sequences along line, radial, or
+      transverse reciprocal-space paths.  The `NEAREST_ANGLES` solution key
+      suppresses branch-flip discontinuities.
+- [x] **ψ (psi) scans**: `psi_trajectory(geometry, h, k, l, psi_values)`
+      computes motor angles for Busing & Levy (1967) operational ψ — the
+      rotation of the sample about Q relative to the base forward() solution.
+      Supports Eulerian (fourcv, fourch, psic) and kappa geometries
+      (kappa4cv, kappa4ch, kappa6c) via analytic Z-matrix decomposition.
+      Note: the BL1967 operational ψ differs from the You (1999) ψ computed
+      by `geometry.psi()` — see `scan.py` module docstring for the distinction.
+- [x] **Reciprocal-space trajectory planning**: `trajectory_plan(geometry,
+      hkl_start, hkl_end, n_points, space="hkl"|"Q")` computes motor-angle
+      paths and flags limit violations and inaccessible regions.  Both
+      hkl-space (uniform in Miller indices) and Q-space (uniform in Å⁻¹)
+      interpolation are supported.
+- [x] Reference: Busing & Levy (1967), section on ψ scans;
       You (1999), azimuthal angle definition;
       ITC Vol. C, Sec. 2.2.6 (ψ scan via ω, χ, φ adjustment).
-- [ ] Depends on: 2.0, 2.2, 3.1, 3.2.
+- [x] Depends on: 2.0, 2.2, 3.1, 3.2.
+- [x] 53 tests in `test_scan.py`.
 
 ### 3.7 Diffractometer inclination with respect to the incident beam ([#15](https://github.com/prjemian/ad_hoc_diffractometer/issues/15))
 

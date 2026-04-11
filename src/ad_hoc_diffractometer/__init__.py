@@ -59,6 +59,10 @@ from .reflection import ReflectionList
 from .rotation import rotation_matrix
 from .sample import Sample
 from .sample import SampleDict
+from .scan import NEAREST_ANGLES
+from .scan import hkl_trajectory
+from .scan import psi_trajectory
+from .scan import trajectory_plan
 from .stage import Stage
 from .surface import alpha_f
 from .surface import alpha_i
@@ -105,6 +109,11 @@ __all__ = [
     "ModeDict",
     # forward calculation
     "compute_forward",
+    # scan / trajectory
+    "NEAREST_ANGLES",
+    "hkl_trajectory",
+    "psi_trajectory",
+    "trajectory_plan",
     # surface geometry
     "alpha_i",
     "alpha_f",
