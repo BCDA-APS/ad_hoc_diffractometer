@@ -52,6 +52,12 @@ from .orientation import ub_from_one_reflection
 from .orientation import ub_from_three_reflections_bl1967
 from .orientation import ub_from_two_reflections_bl1967
 from .orientation import ub_identity
+from .radiation import HC_KEV_ANGSTROM
+from .radiation import XRAY_LINES
+from .radiation import energy_to_wavelength
+from .radiation import wavelength_to_energy
+from .radiation import wavelength_to_wavenumber
+from .radiation import wavenumber_to_wavelength
 from .refinement import refine_lattice_bl1967
 from .refinement import refine_lattice_simplex
 from .reflection import Reflection
@@ -109,6 +115,13 @@ __all__ = [
     "ModeDict",
     # forward calculation
     "compute_forward",
+    # radiation — X-ray wavelength, energy, wave-number
+    "HC_KEV_ANGSTROM",
+    "XRAY_LINES",
+    "wavelength_to_energy",
+    "energy_to_wavelength",
+    "wavelength_to_wavenumber",
+    "wavenumber_to_wavelength",
     # scan / trajectory
     "NEAREST_ANGLES",
     "hkl_trajectory",
