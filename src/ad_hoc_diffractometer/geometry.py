@@ -314,6 +314,104 @@ class AdHocDiffractometer:
                 raise ValueError(f"wavelength must be > 0 Å; got {value}.")
         self._wavelength = value
 
+    @property
+    def energy_units(self) -> str:
+        """
+        Units of the :attr:`energy` property for this geometry.
+
+        Returns ``"keV"`` for X-ray geometries (the default).  Will return
+        ``"meV"`` for neutron geometries once ``source_type`` is set
+        (see issue #8).
+
+        Returns
+        -------
+        str
+        """
+        return "keV"
+
+    @property
+    def energy(self) -> float | None:
+        """
+        Radiation energy in units of :attr:`energy_units`, derived from wavelength.
+
+        For X-ray geometries (default): E (keV) = hc / λ = 12.39842 / λ (Å).
+
+        Returns ``None`` when ``wavelength`` is not set.  Setting ``energy``
+        updates ``wavelength`` accordingly.  The value must be in the units
+        returned by :attr:`energy_units`.
+
+        Raises
+        ------
+        ValueError
+            If set to a non-positive value.
+
+        Examples
+        --------
+        >>> import ad_hoc_diffractometer as ahd
+        >>> g = ahd.fourcv()
+        >>> g.wavelength = 1.5406
+        >>> round(g.energy, 4)
+        8.0479
+        >>> g.energy = 8.048
+        >>> round(g.wavelength, 4)
+        1.5405
+        """
+        if self._wavelength is None:
+            return None
+        from .radiation import wavelength_to_energy
+
+        return wavelength_to_energy(self._wavelength)
+
+    @energy.setter
+    def energy(self, value: float | None) -> None:
+        if value is None:
+            self._wavelength = None
+            return
+        from .radiation import energy_to_wavelength
+
+        self._wavelength = energy_to_wavelength(float(value))
+
+    @property
+    def wavenumber(self) -> float | None:
+        """
+        Wave number k in Å⁻¹, derived from wavelength.
+
+        k (Å⁻¹) = 2π / λ (Å)
+
+        Returns ``None`` when ``wavelength`` is not set.  Setting
+        ``wavenumber`` updates ``wavelength`` accordingly.
+
+        Raises
+        ------
+        ValueError
+            If set to a non-positive value.
+
+        Examples
+        --------
+        >>> import ad_hoc_diffractometer as ahd
+        >>> g = ahd.fourcv()
+        >>> g.wavelength = 1.5406
+        >>> round(g.wavenumber, 4)
+        4.0774
+        >>> g.wavenumber = 4.0
+        >>> round(g.wavelength, 4)
+        1.5708
+        """
+        if self._wavelength is None:
+            return None
+        from .radiation import wavelength_to_wavenumber
+
+        return wavelength_to_wavenumber(self._wavelength)
+
+    @wavenumber.setter
+    def wavenumber(self, value: float | None) -> None:
+        if value is None:
+            self._wavelength = None
+            return
+        from .radiation import wavenumber_to_wavelength
+
+        self._wavelength = wavenumber_to_wavelength(float(value))
+
     # ------------------------------------------------------------------
     # Kappa alpha
     # ------------------------------------------------------------------
@@ -1598,7 +1696,10 @@ class AdHocDiffractometer:
         from .display import fmt
 
         if self._wavelength is not None:
-            wl_str = f"{fmt(self._wavelength)} Å"
+            wl_str = (
+                f"{fmt(self._wavelength)} Å"
+                f"  (E = {fmt(self.energy)} {self.energy_units})"
+            )
         else:
             wl_str = "not set"
 
