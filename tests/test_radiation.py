@@ -25,6 +25,7 @@ import pytest
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer.radiation import HC_KEV_ANGSTROM
+from ad_hoc_diffractometer.radiation import HC_KEV_ANGSTROM_UNCERTAINTY
 from ad_hoc_diffractometer.radiation import XRAY_LINES
 from ad_hoc_diffractometer.radiation import energy_to_wavelength
 from ad_hoc_diffractometer.radiation import wavelength_to_energy
@@ -37,8 +38,13 @@ from ad_hoc_diffractometer.radiation import wavenumber_to_wavelength
 
 
 def test_HC_KEV_ANGSTROM_value():
-    """hc = 12.39842 keV·Å (NIST CODATA 2018)."""
-    assert HC_KEV_ANGSTROM == pytest.approx(12.39842, rel=1e-5)
+    """hc = 12.398 419 843 320 026 keV·Å (exact, NIST CODATA 2022)."""
+    assert HC_KEV_ANGSTROM == pytest.approx(12.398419843320026, rel=1e-15)
+
+
+def test_HC_KEV_ANGSTROM_uncertainty():
+    """HC_KEV_ANGSTROM is exact — uncertainty is zero."""
+    assert HC_KEV_ANGSTROM_UNCERTAINTY == 0.0
 
 
 def test_XRAY_LINES_keys():

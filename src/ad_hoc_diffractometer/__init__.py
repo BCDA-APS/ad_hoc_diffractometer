@@ -63,8 +63,14 @@ from .orientation import ub_from_three_reflections_bl1967
 from .orientation import ub_from_two_reflections_bl1967
 from .orientation import ub_identity
 from .radiation import HC_KEV_ANGSTROM
+from .radiation import HC_KEV_ANGSTROM_UNCERTAINTY
+from .radiation import NEUTRON_MEV_ANGSTROM2
+from .radiation import NEUTRON_MEV_ANGSTROM2_UNCERTAINTY
+from .radiation import SOURCE_TYPES
 from .radiation import XRAY_LINES
 from .radiation import energy_to_wavelength
+from .radiation import neutron_energy_to_wavelength
+from .radiation import neutron_wavelength_to_energy
 from .radiation import wavelength_to_energy
 from .radiation import wavelength_to_wavenumber
 from .radiation import wavenumber_to_wavelength
@@ -136,13 +142,19 @@ __all__ = [
     "Q_mag_to_two_theta",
     # forward calculation
     "compute_forward",
-    # radiation — X-ray wavelength, energy, wave-number
+    # radiation — constants, X-ray and neutron conversions
     "HC_KEV_ANGSTROM",
+    "HC_KEV_ANGSTROM_UNCERTAINTY",
+    "NEUTRON_MEV_ANGSTROM2",
+    "NEUTRON_MEV_ANGSTROM2_UNCERTAINTY",
+    "SOURCE_TYPES",
     "XRAY_LINES",
     "wavelength_to_energy",
     "energy_to_wavelength",
     "wavelength_to_wavenumber",
     "wavenumber_to_wavelength",
+    "neutron_wavelength_to_energy",
+    "neutron_energy_to_wavelength",
     # scan / trajectory
     "NEAREST_ANGLES",
     "hkl_trajectory",
