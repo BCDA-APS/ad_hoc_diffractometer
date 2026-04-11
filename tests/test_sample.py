@@ -10,15 +10,19 @@ Covers:
   - AdHocDiffractometer.samples, .sample, add_sample(), remove_sample()
   - add_reflection() targets the active sample
   - Switching active sample
+  - Sample.to_dict() / from_dict(): lattice, reflections, U, UB, name
 """
 
+import json
 import re
+from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
 
 from ad_hoc_diffractometer import Lattice
 from ad_hoc_diffractometer import Sample
+from ad_hoc_diffractometer.reflection import ReflectionList
 
 _PSIC_ANGLES = {
     "mu": 0.0,
@@ -459,3 +463,74 @@ def test_sampledict_keys_values_items():
     assert "s2" in g.samples.keys()
     assert all(hasattr(v, "lattice") for v in g.samples.values())
     assert any(k == "test" for k, _ in g.samples.items())
+
+
+# ---------------------------------------------------------------------------
+# Sample.to_dict() / from_dict()
+# ---------------------------------------------------------------------------
+
+
+def _make_sample():
+    rl = ReflectionList(
+        geometry_name="fourcv", valid_stages={"omega", "chi", "phi", "ttheta"}
+    )
+    rl.add(
+        "r1",
+        hkl=(0, 0, 6),
+        angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "ttheta": 41.94},
+    )
+    s = Sample(
+        name="sapphire", lattice=Lattice(a=4.785, c=12.991, gamma=120), reflections=rl
+    )
+    s.U = np.eye(3)
+    s.UB = np.eye(3) * 0.5
+    return s
+
+
+def test_sample_to_dict_structure():
+    """to_dict() returns a JSON-serialisable dict with all required keys."""
+    d = _make_sample().to_dict()
+    assert isinstance(d, dict)
+    assert {"name", "lattice", "reflections", "U", "UB"} <= set(d.keys())
+    assert isinstance(d["U"], list)
+    assert json.dumps(d)  # must not raise
+
+
+@pytest.mark.parametrize(
+    "attr, accessor, context",
+    [
+        pytest.param("name", lambda s: s.name, does_not_raise(), id="name"),
+        pytest.param("lattice", lambda s: s.lattice, does_not_raise(), id="lattice"),
+    ],
+)
+def test_sample_from_dict_roundtrip_scalars(attr, accessor, context):
+    """from_dict(to_dict()) recovers name and lattice."""
+    with context:
+        s = _make_sample()
+        s2 = Sample.from_dict(s.to_dict())
+        assert accessor(s2) == pytest.approx(accessor(s))
+
+
+@pytest.mark.parametrize(
+    "matrix_attr, context",
+    [
+        pytest.param("U", does_not_raise(), id="U"),
+        pytest.param("UB", does_not_raise(), id="UB"),
+    ],
+)
+def test_sample_from_dict_roundtrip_matrices(matrix_attr, context):
+    """from_dict(to_dict()) recovers U and UB matrices."""
+    with context:
+        s = _make_sample()
+        s2 = Sample.from_dict(s.to_dict())
+        np.testing.assert_allclose(getattr(s2, matrix_attr), getattr(s, matrix_attr))
+
+
+def test_sample_from_dict_roundtrip_none_matrices():
+    """from_dict(to_dict()) correctly restores None for unset U/UB."""
+    rl = ReflectionList(geometry_name="g", valid_stages=set())
+    s = Sample(name="t", lattice=Lattice(a=1.0), reflections=rl)
+    s2 = Sample.from_dict(s.to_dict())
+    with does_not_raise():
+        assert s2.U is None
+        assert s2.UB is None

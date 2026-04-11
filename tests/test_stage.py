@@ -8,8 +8,10 @@ Covers:
   - Stage.rotation_matrix()
   - Stage.limits (property, validation)
   - Stage.in_limits()
+  - Stage.to_dict() / from_dict(): name, axis, role, parent, angle, limits
 """
 
+import json
 import re
 from contextlib import nullcontext as does_not_raise
 
@@ -22,7 +24,9 @@ from helpers import Rz
 from ad_hoc_diffractometer import XHAT
 from ad_hoc_diffractometer import YHAT
 from ad_hoc_diffractometer import ZHAT
+from ad_hoc_diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer import Stage
+from ad_hoc_diffractometer import fourcv
 
 # ---------------------------------------------------------------------------
 # Stage construction
@@ -198,4 +202,109 @@ def test_stage_repr_with_parent():
     s = Stage("chi", XHAT, role="sample", parent="omega")
     r = repr(s)
     assert "chi" in r
-    assert "omega" in r
+
+
+# ---------------------------------------------------------------------------
+# Stage.to_dict() / from_dict()
+# ---------------------------------------------------------------------------
+
+_OMEGA = Stage(
+    "omega",
+    np.array([0.0, 0.0, -1.0]),
+    role="sample",
+    parent=None,
+    limits=(-180.0, 180.0),
+)
+_OMEGA.angle = 20.97
+_CHI = Stage(
+    "chi",
+    np.array([0.0, 1.0, 0.0]),
+    role="sample",
+    parent="omega",
+    limits=(-90.0, 90.0),
+)
+_CHI.angle = 45.0
+
+
+def test_stage_to_dict_structure():
+    """to_dict() returns a JSON-serialisable dict with all required keys."""
+    d = _OMEGA.to_dict()
+    assert isinstance(d, dict)
+    assert {"name", "axis", "role", "parent", "angle", "limits"} <= set(d.keys())
+    assert json.dumps(d)  # must not raise
+
+
+@pytest.mark.parametrize(
+    "key, expected, context",
+    [
+        pytest.param("name", "omega", does_not_raise(), id="name"),
+        pytest.param("role", "sample", does_not_raise(), id="role"),
+        pytest.param("parent", None, does_not_raise(), id="parent-none"),
+        pytest.param("angle", 20.97, does_not_raise(), id="angle"),
+        pytest.param("limits", [-180.0, 180.0], does_not_raise(), id="limits"),
+        pytest.param("axis", [0.0, 0.0, -1.0], does_not_raise(), id="axis"),
+    ],
+)
+def test_stage_to_dict_values(key, expected, context):
+    """to_dict() stores the correct value for each field."""
+    with context:
+        assert _OMEGA.to_dict()[key] == pytest.approx(expected)
+
+
+def test_stage_to_dict_parent_name():
+    """to_dict() stores the parent name string for a child stage."""
+    assert _CHI.to_dict()["parent"] == "omega"
+
+
+def test_stage_to_dict_axis_is_list():
+    """to_dict() encodes the axis as a plain list of length 3."""
+    axis = _OMEGA.to_dict()["axis"]
+    assert isinstance(axis, list)
+    assert len(axis) == 3
+
+
+@pytest.mark.parametrize(
+    "attr, accessor, context",
+    [
+        pytest.param("name", lambda s: s.name, does_not_raise(), id="name"),
+        pytest.param("role", lambda s: s.role, does_not_raise(), id="role"),
+        pytest.param("angle", lambda s: s.angle, does_not_raise(), id="angle"),
+        pytest.param("limits", lambda s: s.limits, does_not_raise(), id="limits"),
+    ],
+)
+def test_stage_from_dict_roundtrip(attr, accessor, context):
+    """from_dict(to_dict()) recovers each scalar/string attribute."""
+    with context:
+        restored = Stage.from_dict(_OMEGA.to_dict())
+        assert accessor(restored) == pytest.approx(accessor(_OMEGA))
+
+
+def test_stage_from_dict_roundtrip_axis():
+    """from_dict(to_dict()) recovers the axis vector."""
+    np.testing.assert_allclose(Stage.from_dict(_OMEGA.to_dict()).axis, _OMEGA.axis)
+
+
+def test_stage_from_dict_roundtrip_parent():
+    """from_dict(to_dict()) recovers the parent name for a child stage."""
+    assert Stage.from_dict(_CHI.to_dict()).parent == _CHI.parent
+
+
+def test_geometry_to_dict_stage_delegation():
+    """Each stage entry in geometry.to_dict() equals Stage.to_dict()."""
+    g = fourcv()
+    g.set_angle("omega", 20.97)
+    geo_stages = {sd["name"]: sd for sd in g.to_dict()["stages"]}
+    for name, stage_obj in g._stages.items():
+        assert geo_stages[name] == stage_obj.to_dict()
+
+
+def test_geometry_from_dict_stage_delegation():
+    """Stages in AdHocDiffractometer.from_dict() match Stage.from_dict()."""
+    g = fourcv()
+    g.set_angle("chi", 45.0)
+    g2 = AdHocDiffractometer.from_dict(g.to_dict())
+    for name in g._stages:
+        assert g2._stages[name].angle == pytest.approx(g._stages[name].angle)
+        np.testing.assert_allclose(g2._stages[name].axis, g._stages[name].axis)
+        assert g2._stages[name].role == g._stages[name].role
+        assert g2._stages[name].limits == pytest.approx(g._stages[name].limits)
