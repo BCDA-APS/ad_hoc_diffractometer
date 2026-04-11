@@ -8,8 +8,11 @@ Covers:
   - ReflectionList: add, remove, clear, dict-like interface,
     setor1/setor2, orienting_reflections, cross-geometry safety
   - AdHocDiffractometer.add_reflection() convenience wrapper
+  - Reflection.to_dict() / from_dict(): hkl, angles, wavelength, name
+  - ReflectionList.to_dict() / from_dict(): ordering, or1/or2 preserved
 """
 
+import json
 import re
 from contextlib import nullcontext as does_not_raise
 
@@ -616,3 +619,130 @@ def test_reflectionlist_keys_values_items():
     assert "r1" in list(rl.keys())
     assert all(isinstance(v, Reflection) for v in rl.values())
     assert list(rl.items())[0][0] == "r1"
+
+
+# ---------------------------------------------------------------------------
+# Reflection.to_dict() / from_dict()
+# ---------------------------------------------------------------------------
+
+_REFL = Reflection(
+    name="r1",
+    hkl=(0.0, 0.0, 6.0),
+    angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "ttheta": 41.94},
+    wavelength=1.5498,
+    geometry_name="fourcv",
+)
+
+
+def test_reflection_to_dict_structure():
+    """to_dict() returns a JSON-serialisable dict with required keys."""
+    d = _REFL.to_dict()
+    assert isinstance(d, dict)
+    assert {"name", "hkl", "angles", "wavelength"} <= set(d.keys())
+    assert isinstance(d["hkl"], list)
+    assert json.dumps(d)  # must not raise
+
+
+@pytest.mark.parametrize(
+    "key, expected, context",
+    [
+        pytest.param("name", "r1", does_not_raise(), id="name"),
+        pytest.param("wavelength", 1.5498, does_not_raise(), id="wavelength"),
+    ],
+)
+def test_reflection_to_dict_values(key, expected, context):
+    """to_dict() stores the correct scalar value for each field."""
+    with context:
+        assert _REFL.to_dict()[key] == pytest.approx(expected)
+
+
+@pytest.mark.parametrize(
+    "attr, accessor, context",
+    [
+        pytest.param("name", lambda r: r.name, does_not_raise(), id="name"),
+        pytest.param("hkl", lambda r: r.hkl, does_not_raise(), id="hkl"),
+        pytest.param(
+            "wavelength", lambda r: r.wavelength, does_not_raise(), id="wavelength"
+        ),
+        pytest.param("angles", lambda r: r.angles, does_not_raise(), id="angles"),
+    ],
+)
+def test_reflection_from_dict_roundtrip(attr, accessor, context):
+    """from_dict(to_dict()) recovers each attribute."""
+    with context:
+        restored = Reflection.from_dict(_REFL.to_dict())
+        assert accessor(restored) == pytest.approx(accessor(_REFL))
+
+
+# ---------------------------------------------------------------------------
+# ReflectionList.to_dict() / from_dict()
+# ---------------------------------------------------------------------------
+
+
+def _make_rl():
+    rl = ReflectionList(
+        geometry_name="fourcv",
+        valid_stages={"omega", "chi", "phi", "ttheta"},
+    )
+    rl.add(
+        "r1",
+        hkl=(0, 0, 6),
+        angles={"omega": 20.97, "chi": 90.0, "phi": 0.0, "ttheta": 41.94},
+    )
+    rl.add(
+        "r2",
+        hkl=(1, 0, 0),
+        angles={"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0},
+    )
+    rl.setor1("r1")
+    rl.setor2("r2")
+    return rl
+
+
+def test_reflectionlist_to_dict_structure():
+    """to_dict() returns a JSON-serialisable dict with a reflections list."""
+    d = _make_rl().to_dict()
+    assert isinstance(d, dict)
+    assert isinstance(d["reflections"], list)
+    assert json.dumps(d)  # must not raise
+
+
+@pytest.mark.parametrize(
+    "key, expected, context",
+    [
+        pytest.param("or1", "r1", does_not_raise(), id="or1"),
+        pytest.param("or2", "r2", does_not_raise(), id="or2"),
+    ],
+)
+def test_reflectionlist_to_dict_or_refs(key, expected, context):
+    """to_dict() stores or1 and or2 names."""
+    with context:
+        assert _make_rl().to_dict()[key] == expected
+
+
+def test_reflectionlist_to_dict_count():
+    """to_dict() stores the correct number of reflections."""
+    assert len(_make_rl().to_dict()["reflections"]) == 2
+
+
+@pytest.mark.parametrize(
+    "attr, expected, context",
+    [
+        pytest.param("names", {"r1", "r2"}, does_not_raise(), id="names"),
+        pytest.param("or1", "r1", does_not_raise(), id="or1"),
+        pytest.param("or2", "r2", does_not_raise(), id="or2"),
+        pytest.param("r1-hkl", (0.0, 0.0, 6.0), does_not_raise(), id="r1-hkl"),
+    ],
+)
+def test_reflectionlist_from_dict_roundtrip(attr, expected, context):
+    """from_dict(to_dict()) recovers names, or1/or2, and hkl values."""
+    with context:
+        rl2 = ReflectionList.from_dict(_make_rl().to_dict())
+        if attr == "names":
+            assert set(rl2._data.keys()) == expected
+        elif attr == "or1":
+            assert rl2._or1_name == expected
+        elif attr == "or2":
+            assert rl2._or2_name == expected
+        elif attr == "r1-hkl":
+            assert rl2["r1"].hkl == pytest.approx(expected)

@@ -901,3 +901,78 @@ def test_lattice_eq_not_implemented_for_non_lattice():
 
 def test_lattice_eq_different_parameters():
     assert Lattice(a=5.431) != Lattice(a=5.431, c=10.0)  # tetragonal vs cubic
+
+
+# ---------------------------------------------------------------------------
+# Lattice.to_dict() / from_dict()
+# ---------------------------------------------------------------------------
+
+
+import json  # noqa: E402  (needed for json.dumps check)
+
+
+def test_lattice_to_dict_structure():
+    """to_dict() returns a JSON-serialisable dict with exactly the six keys."""
+    d = Lattice(a=5.431).to_dict()
+    assert isinstance(d, dict)
+    assert set(d.keys()) == {"a", "b", "c", "alpha", "beta", "gamma"}
+    assert json.dumps(d)  # must not raise
+
+
+@pytest.mark.parametrize(
+    "lattice, key, expected, context",
+    [
+        pytest.param(Lattice(a=5.431), "a", 5.431, does_not_raise(), id="cubic-a"),
+        pytest.param(
+            Lattice(a=5.431), "b", 5.431, does_not_raise(), id="cubic-b-equals-a"
+        ),
+        pytest.param(
+            Lattice(a=5.431), "alpha", 90.0, does_not_raise(), id="cubic-alpha"
+        ),
+        pytest.param(
+            Lattice(a=4.785, c=12.991, gamma=120),
+            "gamma",
+            120.0,
+            does_not_raise(),
+            id="hex-gamma",
+        ),
+        pytest.param(
+            Lattice(a=4.785, c=12.991, gamma=120),
+            "a",
+            4.785,
+            does_not_raise(),
+            id="hex-a",
+        ),
+        pytest.param(
+            Lattice(a=4.785, c=12.991, gamma=120),
+            "c",
+            12.991,
+            does_not_raise(),
+            id="hex-c",
+        ),
+    ],
+)
+def test_lattice_to_dict_values(lattice, key, expected, context):
+    """to_dict() stores the correct value for each lattice parameter."""
+    with context:
+        assert lattice.to_dict()[key] == pytest.approx(expected)
+
+
+@pytest.mark.parametrize(
+    "lattice, context",
+    [
+        pytest.param(Lattice(a=5.431), does_not_raise(), id="cubic"),
+        pytest.param(
+            Lattice(a=4.785, c=12.991, gamma=120), does_not_raise(), id="hexagonal"
+        ),
+        pytest.param(
+            Lattice(a=5.0, b=6.0, c=7.0, alpha=80.0, beta=90.0, gamma=100.0),
+            does_not_raise(),
+            id="triclinic",
+        ),
+    ],
+)
+def test_lattice_from_dict_roundtrip(lattice, context):
+    """from_dict(to_dict()) reproduces the original Lattice exactly."""
+    with context:
+        assert Lattice.from_dict(lattice.to_dict()) == lattice
