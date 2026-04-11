@@ -359,27 +359,30 @@ Surface diffraction geometries (zaxis, s2d2, sixc, psic in surface mode)
 require calculation and control of additional angles beyond the standard
 hkl mapping:
 
-- [ ] **Angle of incidence (αi)**: angle between the incident beam and
-      the sample surface.  For zaxis this is the alpha motor angle;
-      for s2d2 it is the mu motor angle; for psic it must be computed
-      from the motor angles and a surface normal reference vector.
-- [ ] **Angle of emergence / exit (αf)**: angle between the diffracted
-      beam and the sample surface.  A compound function of the detector
-      motor angles and the surface normal.
-- [ ] **In-plane / out-of-plane decomposition**: decompose Q into
-      components parallel (Q‖) and perpendicular (Q⊥) to the sample
-      surface.  Requires a surface normal reference vector (item 3.2).
-- [ ] **Critical angle and evanescent wave conditions**: for GIXD,
-      the incidence angle relative to the critical angle determines
-      whether the beam is in total external reflection (surface-sensitive)
-      or bulk-penetrating.  May be out of scope for this package but
-      worth noting.
-- [ ] **Specular condition**: αi = αf constraint, useful as an operating
-      mode for reflectometry.
-- [ ] Reference: Lohmeier & Vlieg (1993); You (1999) eqs. 10-11;
-      Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
-- [ ] Raised by users; closely related to item 3.2 (azimuthal reference
-      vector) and item 3.4 (diffractometer inclination).
+- [x] **`surface_normal` property** on `AdHocDiffractometer`: Miller indices
+      (h, k, l) defining the sample surface normal direction; validated
+      non-zero; falls back to `azimuthal_reference` if not set; serialised
+      in `to_dict` / `from_dict`.
+- [x] **Angle of incidence (αi)**: `alpha_i(geometry, angles=None)` in
+      `surface.py`; `geometry.alpha_i(angles)` method.
+      `sin(αi) = |ŷ · n̂_lab|` where n̂_lab = Z @ (UB @ n_hkl) / |...|.
+      Verified: `alpha_i = alpha` for zaxis; `alpha_i = mu` for s2d2 and psic.
+- [x] **Angle of emergence / exit (αf)**: `alpha_f(geometry, angles=None)`;
+      `geometry.alpha_f(angles)`.  `sin(αf) = |k̂f · n̂_lab|`.
+      Verified against LV1993 eq. 16 formula for zaxis/s2d2.
+- [x] **In-plane / out-of-plane decomposition**: `q_components(geometry,
+      angles=None)` returns ``{"Q_perp", "Q_par", "Q_perp_signed",
+      "Q_total"}`` in Å⁻¹.  Q_perp² + Q_par² = Q_total² verified.
+- [x] **Evanescent condition**: `is_evanescent(geometry, angles=None,
+      critical_angle_deg)` returns True when αi < critical_angle_deg.
+      Caller must supply the critical angle (material property).
+- [x] **Specular condition**: `is_specular(geometry, angles=None, atol=0.01)`
+      returns True when |αi − αf| ≤ atol.
+- [x] All five functions exported from `__init__.py`; all five methods on
+      `AdHocDiffractometer`.
+- [x] 58 tests in `test_surface.py`; 1067 tests total; 100% coverage.
+- [x] Reference: Lohmeier & Vlieg (1993) §4.2 eqs. 15-16;
+      You (1999) eqs. 10-11; Vlieg et al. (1987).
 
 ### 3.6 Scans about an arbitrary reciprocal-space vector ([#14](https://github.com/prjemian/ad_hoc_diffractometer/issues/14))
 

@@ -63,6 +63,11 @@ from .spec import g1_to_sample
 from .spec import parse_fourc_g1
 from .spec import sample_to_g1
 from .stage import Stage
+from .surface import alpha_f
+from .surface import alpha_i
+from .surface import is_evanescent
+from .surface import is_specular
+from .surface import q_components
 
 logger = logging.getLogger(__name__)
 
@@ -103,6 +108,12 @@ __all__ = [
     "ModeDict",
     # forward calculation
     "compute_forward",
+    # surface geometry
+    "alpha_i",
+    "alpha_f",
+    "q_components",
+    "is_specular",
+    "is_evanescent",
     # orientation
     "angles_to_phi_vector",
     "ub_identity",
