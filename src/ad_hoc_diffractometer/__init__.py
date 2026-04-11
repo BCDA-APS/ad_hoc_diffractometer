@@ -34,6 +34,7 @@ from .factories import psic
 from .factories import s2d2
 from .factories import sixc
 from .factories import zaxis
+from .forward import compute_forward
 from .geometry import AdHocDiffractometer
 from .lattice import CRYSTAL_SYSTEMS
 from .lattice import Lattice
@@ -100,6 +101,8 @@ __all__ = [
     "FixedAngleMode",
     "BisectingMode",
     "ModeDict",
+    # forward calculation
+    "compute_forward",
     # orientation
     "angles_to_phi_vector",
     "ub_identity",
