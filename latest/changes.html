@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=a82359f7"></script>
+    <script src="_static/documentation_options.js?v=e47dc491"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -514,30 +514,88 @@
                   
   <section id="change-history">
 <h1>Change History<a class="headerlink" href="#change-history" title="Link to this heading">#</a></h1>
-<p>User-facing changes by release.  See <a class="reference internal" href="#docs/roadmap.md"><span class="xref myst">docs/roadmap.md</span></a>
+<p>User-facing changes by release.  See <a class="reference internal" href="roadmap.html"><span class="std std-doc">docs/source/roadmap.md</span></a>
 for planned future work and
 <a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues">GitHub Issues</a>
 for the full issue tracker.</p>
 <section id="unreleased">
 <h2>Unreleased<a class="headerlink" href="#unreleased" title="Link to this heading">#</a></h2>
+</section>
+<section id="release-v0-3-0">
+<h2>Release v0.3.0<a class="headerlink" href="#release-v0-3-0" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-11.</p>
 <section id="fixed">
 <h3>Fixed<a class="headerlink" href="#fixed" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Stage axes corrected for <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">fourch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>; <code class="docutils literal notranslate"><span class="pre">v</span></code>/<code class="docutils literal notranslate"><span class="pre">h</span></code> suffix now consistently describes the scattering plane (#66)</p></li>
+<li><p>Stage axes corrected for <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">fourch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>;
+<code class="docutils literal notranslate"><span class="pre">v</span></code>/<code class="docutils literal notranslate"><span class="pre">h</span></code> suffix now consistently describes the scattering plane (#66)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">two_theta</span></code> stage name renamed to <code class="docutils literal notranslate"><span class="pre">ttheta</span></code> throughout (#66)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Lattice.B</span></code> corrected to include the 2π factor per BL1967/SPEC convention (#78)</p></li>
+<li><p>Duplicate geometry name in entry-point registry now raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> (#71)</p></li>
 </ul>
 </section>
 <section id="added">
 <h3>Added<a class="headerlink" href="#added" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>All factory functions accept <code class="docutils literal notranslate"><span class="pre">basis</span></code> as an optional argument; <code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code> and <code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code> exported publicly; stage axes expressed as <code class="docutils literal notranslate"><span class="pre">VERTICAL</span></code>/<code class="docutils literal notranslate"><span class="pre">LATERAL</span></code>/<code class="docutils literal notranslate"><span class="pre">LONGITUDINAL</span></code> local aliases for readability and extensibility (#67)</p></li>
+<li><p>All factory functions accept <code class="docutils literal notranslate"><span class="pre">basis</span></code> as an optional argument; <code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code>
+and <code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code> exported publicly; stage axes expressed as
+<code class="docutils literal notranslate"><span class="pre">VERTICAL</span></code>/<code class="docutils literal notranslate"><span class="pre">LATERAL</span></code>/<code class="docutils literal notranslate"><span class="pre">LONGITUDINAL</span></code> local aliases (#67)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">logging.getLogger(__name__)</span></code> in all modules; silent by default (#61)</p></li>
 <li><p>100% line and branch coverage enforced via <code class="docutils literal notranslate"><span class="pre">pytest-cov</span></code> (#60)</p></li>
 <li><p>Dynamic versioning via <code class="docutils literal notranslate"><span class="pre">hatch-vcs</span></code>; <code class="docutils literal notranslate"><span class="pre">ahd.__version__</span></code> exposed (#59)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> on all major classes; JSON round-trip (#52)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">g.wh()</span></code> and <code class="docutils literal notranslate"><span class="pre">g.pa()</span></code> status methods with <code class="docutils literal notranslate"><span class="pre">print=True</span></code> default (#51)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code> property and <code class="docutils literal notranslate"><span class="pre">psi()</span></code> method (#11)</p></li>
-<li><p>Entry-point plugin support for geometry factories; <code class="docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code> (#37)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code> property and <code class="docutils literal notranslate"><span class="pre">psi()</span></code> method (You 1999 definition) (#11)</p></li>
+<li><p>Entry-point plugin support for geometry factories;
+<code class="docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code> constant (#37)</p></li>
+<li><p>Diffraction modes / operating constraints: <code class="docutils literal notranslate"><span class="pre">mode_name</span></code>, <code class="docutils literal notranslate"><span class="pre">BisectingMode</span></code>,
+<code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code>, <code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code>; geometry accepts active mode (#9)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forward()</span></code>: hkl → motor angles; numerical multi-solution solver with
+seed-based bisection; returns all valid in-limits solutions (#35)</p></li>
+<li><p>Surface geometry: <code class="docutils literal notranslate"><span class="pre">alpha_i()</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha_f()</span></code>, <code class="docutils literal notranslate"><span class="pre">q_components()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">is_specular()</span></code>, <code class="docutils literal notranslate"><span class="pre">is_evanescent()</span></code> (#13)</p></li>
+<li><p>Detector geometry parameters: <code class="docutils literal notranslate"><span class="pre">detector_distance</span></code>, <code class="docutils literal notranslate"><span class="pre">detector_tilt</span></code>,
+<code class="docutils literal notranslate"><span class="pre">detector_offset</span></code> (#10)</p></li>
+<li><p>Diffractometer inclination: <code class="docutils literal notranslate"><span class="pre">inclination_matrix</span></code> property,
+<code class="docutils literal notranslate"><span class="pre">set_inclination()</span></code> (#15)</p></li>
+<li><p>Reciprocal-space trajectory computation: <code class="docutils literal notranslate"><span class="pre">hkl_trajectory()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">psi_trajectory()</span></code>, <code class="docutils literal notranslate"><span class="pre">trajectory_plan()</span></code>, <code class="docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code> solution-key
+callable; BL1967 operational ψ definition (#14)</p></li>
+<li><p>Alternative calculation engines — coordinate conversion functions:
+<code class="docutils literal notranslate"><span class="pre">hkl_to_Q()</span></code>, <code class="docutils literal notranslate"><span class="pre">Q_to_hkl()</span></code>, <code class="docutils literal notranslate"><span class="pre">Q_to_d()</span></code>, <code class="docutils literal notranslate"><span class="pre">d_to_Q_mag()</span></code>, <code class="docutils literal notranslate"><span class="pre">hkl_to_d()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">d_to_two_theta()</span></code>, <code class="docutils literal notranslate"><span class="pre">two_theta_to_d()</span></code>, <code class="docutils literal notranslate"><span class="pre">hkl_to_two_theta()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">two_theta_to_Q_mag()</span></code>, <code class="docutils literal notranslate"><span class="pre">Q_mag_to_two_theta()</span></code> (#12)</p></li>
+<li><p>X-ray radiation constants and conversions (NIST CODATA 2022):
+<code class="docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM</span></code> = 12.398 419 843 320 026 keV·Å (exact),
+<code class="docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM_UNCERTAINTY</span></code> = 0; <code class="docutils literal notranslate"><span class="pre">XRAY_LINES</span></code> named emission line
+wavelengths (Cu, Mo, Ag, Co Kα/Kα1/Kα2);
+<code class="docutils literal notranslate"><span class="pre">wavelength_to_energy()</span></code>, <code class="docutils literal notranslate"><span class="pre">energy_to_wavelength()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">wavelength_to_wavenumber()</span></code>, <code class="docutils literal notranslate"><span class="pre">wavenumber_to_wavelength()</span></code>;
+<code class="docutils literal notranslate"><span class="pre">energy</span></code> and <code class="docutils literal notranslate"><span class="pre">wavenumber</span></code> lazy properties on <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> (#21)</p></li>
+<li><p>Neutron source support: <code class="docutils literal notranslate"><span class="pre">source_type</span></code> property (<code class="docutils literal notranslate"><span class="pre">&quot;xray&quot;</span></code> default,
+<code class="docutils literal notranslate"><span class="pre">&quot;neutron&quot;</span></code> for fixed-wavelength reactor neutrons);
+<code class="docutils literal notranslate"><span class="pre">neutron_wavelength_to_energy()</span></code>, <code class="docutils literal notranslate"><span class="pre">neutron_energy_to_wavelength()</span></code>;
+<code class="docutils literal notranslate"><span class="pre">NEUTRON_MEV_ANGSTROM2</span></code> = 81.804 210 235 2 meV·Å² (CODATA 2022),
+<code class="docutils literal notranslate"><span class="pre">NEUTRON_MEV_ANGSTROM2_UNCERTAINTY</span></code>; <code class="docutils literal notranslate"><span class="pre">energy_units</span></code> property (<code class="docutils literal notranslate"><span class="pre">&quot;keV&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;meV&quot;</span></code>); <code class="docutils literal notranslate"><span class="pre">SOURCE_TYPES</span></code>; spallation/TOF out of scope (#8)</p></li>
+<li><p>Sphinx documentation framework: <code class="docutils literal notranslate"><span class="pre">docs/source/</span></code> with <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>,
+<code class="docutils literal notranslate"><span class="pre">index.rst</span></code>, AutoAPI, myst-parser, pydata-sphinx-theme; GitHub Actions
+workflow <code class="docutils literal notranslate"><span class="pre">docs.yml</span></code> publishes to GitHub Pages on push to <code class="docutils literal notranslate"><span class="pre">main</span></code> or tag
+(#57)</p></li>
+</ul>
+</section>
+<section id="changed">
+<h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">wh()</span></code> and <code class="docutils literal notranslate"><span class="pre">pa()</span></code> refactored from property to method with <code class="docutils literal notranslate"><span class="pre">print=True</span></code>
+keyword argument; <code class="docutils literal notranslate"><span class="pre">status.py</span></code> removed from the package API and moved to
+<code class="docutils literal notranslate"><span class="pre">references/</span></code> (#51)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spec.py</span></code> removed from the package API and moved to <code class="docutils literal notranslate"><span class="pre">references/</span></code> (#76)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">summary()</span></code> on <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> now reports energy (keV or meV) and
+its units alongside wavelength (#21, #8)</p></li>
+<li><p>Test files restructured to enforce one-to-one <code class="docutils literal notranslate"><span class="pre">test_&lt;module&gt;.py</span></code> naming;
+serialisation tests redistributed from <code class="docutils literal notranslate"><span class="pre">test_export.py</span></code> into their
+natural per-module homes and rewritten as parametrized functions (#88)</p></li>
 </ul>
 </section>
 </section>
@@ -592,8 +650,8 @@ constants (real + reciprocal), λ; modelled on Align4Pete.log output</p></li>
 </li>
 </ul>
 </section>
-<section id="changed">
-<h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
+<section id="id2">
+<h3>Changed<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> now holds a <code class="docutils literal notranslate"><span class="pre">SampleDict</span></code> (<code class="docutils literal notranslate"><span class="pre">.samples</span></code>) and an
 active-sample property (<code class="docutils literal notranslate"><span class="pre">.sample</span></code>), replacing the earlier single-sample
@@ -606,8 +664,8 @@ design</p></li>
 <section id="release-v0-1">
 <h2>Release v0.1<a class="headerlink" href="#release-v0-1" title="Link to this heading">#</a></h2>
 <p>Released 2026-04-09.</p>
-<section id="id2">
-<h3>Added<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h3>Added<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> class: ordered rotary stages, basis validation,
 sample and detector rotation matrices, <code class="docutils literal notranslate"><span class="pre">summary()</span></code>, <code class="docutils literal notranslate"><span class="pre">check_limits()</span></code></p></li>
@@ -626,8 +684,8 @@ lattice vectors, lazy computation, display precision</p></li>
 <li><p>Pre-commit hooks: ruff (lint + format), isort, standard file checks</p></li>
 </ul>
 </section>
-<section id="id3">
-<h3>Changed<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<section id="id4">
+<h3>Changed<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Factory suffix convention: underscore removed from v/h detector suffix
 (<code class="docutils literal notranslate"><span class="pre">fourc_v</span></code> → <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4c_h</span></code> → <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, etc.)</p></li>
@@ -683,19 +741,21 @@ lattice vectors, lazy computation, display precision</p></li>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased">Unreleased</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased">Unreleased</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-3-0">Release v0.3.0</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed">Fixed</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-2">Release v0.2</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Added</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Changed</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1">Release v0.1</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Added</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Changed</a></li>
 </ul>
 </li>
 </ul>
