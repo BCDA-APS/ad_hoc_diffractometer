@@ -19,6 +19,16 @@ from .display import fmt
 from .display import get_precision
 from .display import precision_atol
 from .display import set_precision
+from .engines import Q_mag_to_two_theta
+from .engines import Q_to_d
+from .engines import Q_to_hkl
+from .engines import d_to_Q_mag
+from .engines import d_to_two_theta
+from .engines import hkl_to_d
+from .engines import hkl_to_Q
+from .engines import hkl_to_two_theta
+from .engines import two_theta_to_d
+from .engines import two_theta_to_Q_mag
 from .factories import BASIS_BL
 from .factories import BASIS_YOU
 from .factories import GEOMETRY_ENTRY_POINT_GROUP
@@ -107,6 +117,17 @@ __all__ = [
     "FixedAngleMode",
     "BisectingMode",
     "ModeDict",
+    # alternative calculation engines
+    "hkl_to_Q",
+    "Q_to_hkl",
+    "Q_to_d",
+    "d_to_Q_mag",
+    "hkl_to_d",
+    "d_to_two_theta",
+    "two_theta_to_d",
+    "hkl_to_two_theta",
+    "two_theta_to_Q_mag",
+    "Q_mag_to_two_theta",
     # forward calculation
     "compute_forward",
     # scan / trajectory
