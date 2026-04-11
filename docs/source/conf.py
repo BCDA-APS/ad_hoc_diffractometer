@@ -69,6 +69,10 @@ nb_execution_mode = "off"
 
 # -- AutoAPI -----------------------------------------------------------------
 
+# Keep generated files inside the build tree, not in the source tree.
+# Without this, sphinx-autoapi writes docs/source/autoapi/ which must not
+# be committed to git.
+autoapi_root = "autoapi"
 autoapi_dirs = [str(root_path / "src")]
 autoapi_options = [
     "members",
