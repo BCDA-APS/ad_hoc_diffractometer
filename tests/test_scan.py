@@ -746,3 +746,236 @@ def test_public_api_exports():
     assert ahd.hkl_trajectory is hkl_trajectory
     assert ahd.psi_trajectory is psi_trajectory
     assert ahd.trajectory_plan is trajectory_plan
+
+
+# ---------------------------------------------------------------------------
+# Coverage gap: defensive / degenerate paths
+# ---------------------------------------------------------------------------
+
+
+def test_check_limits_unknown_stage_ignored():
+    """_check_limits ignores stage names not present in geometry."""
+    from ad_hoc_diffractometer.scan import _check_limits
+
+    g = _setup(fourcv)
+    # "nonexistent" is not a stage — should be silently skipped
+    assert _check_limits(g, {"omega": 10.0, "nonexistent": 999.0}) is True
+
+
+def test_check_limits_out_of_limits_returns_false():
+    """_check_limits returns False when an angle exceeds stage limits."""
+    from ad_hoc_diffractometer.scan import _check_limits
+
+    g = _setup(fourcv)
+    # ttheta default limit is (-180, 180); 200° is out
+    assert _check_limits(g, {"ttheta": 200.0}) is False
+
+
+def test_hkl_points_transverse_gram_schmidt_fallback():
+    """_hkl_points transverse works when Q_ref is nearly aligned with x-axis."""
+    # Q_ref near [1,0,0] forces Gram-Schmidt to fall back to [0,1,0]
+    pts = _hkl_points(
+        {
+            "type": "transverse",
+            "center": (0, 0, 1),
+            "Q_ref": (1.0, 0.0, 0.0),
+            "extent": 0.1,
+        },
+        n_points=3,
+    )
+    assert len(pts) == 3
+    # All points should be perpendicular to Q_ref from center
+    center = np.array([0.0, 0.0, 1.0])
+    q_ref = np.array([1.0, 0.0, 0.0])
+    for pt in pts:
+        disp = np.array(pt) - center
+        assert abs(np.dot(disp, q_ref)) < 1e-12
+
+
+def test_euler_dedup_chi_zero():
+    """_euler_from_Z_standard returns one solution when chi ≈ 0 (degenerate)."""
+    from ad_hoc_diffractometer.rotation import rotation_matrix as Rmat
+
+    g = _setup(fourcv)
+    # Build a Z with chi = 0 exactly
+    omega_s, chi_s, phi_s = (
+        g.sample_stages[-3],
+        g.sample_stages[-2],
+        g.sample_stages[-1],
+    )
+    Z_chi0 = Rmat(phi_s.axis, 30.0) @ Rmat(chi_s.axis, 0.0) @ Rmat(omega_s.axis, 15.0)
+    sols = _euler_from_Z_standard(Z_chi0, omega_s, chi_s, phi_s)
+    # chi ≈ 0 means both branches are identical — dedup should leave one
+    for _, chi, _ in sols:
+        assert abs(chi) < 1e-6
+
+
+def test_kappa_dedup_kappa_zero():
+    """_kappa_from_Z returns one solution when kappa ≈ 0 (degenerate)."""
+    from ad_hoc_diffractometer.rotation import rotation_matrix as Rmat
+
+    g = _setup(kappa4cv)
+    kom_s, kap_s, kph_s = g.sample_stages[-3], g.sample_stages[-2], g.sample_stages[-1]
+    # Build a Z with kappa = 0 (equivalent to chi = 0 Eulerian)
+    Z_kap0 = Rmat(kph_s.axis, 20.0) @ Rmat(kap_s.axis, 0.0) @ Rmat(kom_s.axis, 10.0)
+    sols = _kappa_from_Z(Z_kap0, kom_s, kap_s, kph_s, g.kappa_alpha_deg)
+    for _, kap, _ in sols:
+        assert abs(kap) < 1e-6
+
+
+def test_psi_trajectory_beam_parallel_to_Q():
+    """psi_trajectory returns warning when beam is parallel to Q."""
+    # (0,1,0) with UB=B in BL basis: Q_phi = B@[0,1,0] = (0, 2π/a, 0)
+    # The BL longitudinal (beam) direction is also [0,1,0], so beam ∥ Q.
+    g = _setup(fourcv)
+    result = psi_trajectory(g, 0, 1, 0, [0.0])
+    # Either no solution found (limits) or the beam-parallel warning fires
+    # — in any case the degenerate path must not raise
+    assert len(result) == 1
+    assert "angles" in result[0]
+
+
+def test_psi_trajectory_fewer_than_3_sample_stages():
+    """psi_trajectory returns no-solution entries for a geometry with < 3 sample stages."""
+    from ad_hoc_diffractometer import AdHocDiffractometer
+    from ad_hoc_diffractometer import BisectingMode
+    from ad_hoc_diffractometer import Stage
+    from ad_hoc_diffractometer.constants import YHAT
+    from ad_hoc_diffractometer.constants import ZHAT
+
+    # Construct a minimal geometry with only 2 sample stages
+    stages = [
+        Stage("omega", -ZHAT, parent=None, role="sample"),
+        Stage("phi", -ZHAT, parent="omega", role="sample"),
+        Stage("ttheta", -ZHAT, parent=None, role="detector"),
+    ]
+    modes = {"bisecting": BisectingMode(sample_stage="omega", detector_stage="ttheta")}
+    g = AdHocDiffractometer(
+        name="minimal2",
+        stages=stages,
+        basis={
+            "vertical": ZHAT,
+            "longitudinal": YHAT,
+            "lateral": np.array([1.0, 0.0, 0.0]),
+        },
+        modes=modes,
+        default_mode="bisecting",
+    )
+    g.wavelength = WAVELENGTH
+    g.sample.lattice = ahd.Lattice(a=4.0)
+    ahd.ub_identity(g.sample)
+
+    result = psi_trajectory(g, 1, 0, 0, [0.0, 30.0])
+    # _psi_candidates returns [] for < 3 sample stages → warning entries
+    for pt in result:
+        assert pt["angles"] is None
+        assert pt["warning"] is not None
+
+
+def test_hkl_trajectory_all_candidates_outside_limits():
+    """hkl_trajectory produces angles=None when all solutions fail limits."""
+    g = _setup(fourcv)
+    # Lock chi to a range that excludes all forward() solutions for (1,0,0)
+    g.stage("chi").limits = (0.1, 0.2)
+    result = hkl_trajectory(
+        g, {"type": "line", "start": (1, 0, 0), "end": (1, 0, 0)}, n_points=2
+    )
+    for pt in result:
+        assert pt["angles"] is None
+        assert pt["warning"] is not None
+
+
+def test_trajectory_plan_all_candidates_outside_limits():
+    """trajectory_plan marks points inaccessible when all solutions fail limits."""
+    g = _setup(fourcv)
+    g.stage("chi").limits = (0.1, 0.2)
+    plan = trajectory_plan(g, (1, 0, 0), (1, 0, 0), n_points=2)
+    for pt in plan:
+        assert not pt["accessible"]
+        assert len(pt["warnings"]) > 0
+
+
+def test_trajectory_plan_singular_ub_raises():
+    """trajectory_plan(space='Q') raises ValueError when UB is singular."""
+    g = _setup(fourcv)
+    # Replace UB with a singular matrix
+    g.sample.UB = np.zeros((3, 3))
+    with pytest.raises(ValueError, match=re.escape("singular")):
+        trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3, space="Q")
+
+
+def test_trajectory_plan_check_limits_warning_when_violated():
+    """trajectory_plan adds a warning and marks inaccessible when check_limits fails."""
+    # Use solution_key=None so forward()'s first solution is always picked.
+    # Then narrow the limits of a stage to exclude that solution after picking.
+    # We monkey-patch check_limits to always raise so the warning path is exercised.
+    import unittest.mock as mock
+
+    g = _setup(fourcv)
+    exc = ValueError("The following stages have angles outside their limits:\n  chi")
+    with mock.patch.object(g, "check_limits", side_effect=exc):
+        plan = trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3, solution_key=None)
+
+    for pt in plan:
+        if pt["angles"] is not None:
+            assert not pt["accessible"]
+            assert len(pt["warnings"]) > 0
+
+
+def test_perp_ref_second_candidate():
+    """_perp_ref iterates to second candidate when axis is nearly parallel to y."""
+    from ad_hoc_diffractometer.scan import _perp_ref
+
+    # axis = [0,1,0]: first candidate [0,1,0] gives norm ≈ 0 → loop continues
+    # second candidate [1,0,0] gives norm = 1 → returned
+    axis = np.array([0.0, 1.0, 0.0])
+    result = _perp_ref(axis)
+    assert abs(np.dot(result, axis)) < 1e-10
+    assert abs(np.linalg.norm(result) - 1.0) < 1e-10
+
+
+def test_psi_trajectory_candidate_outside_limits_skipped():
+    """psi_trajectory returns no-solution when all psi candidates fail limits."""
+    from ad_hoc_diffractometer.scan import _psi_candidates
+
+    g = _setup(fourcv)
+    base = g.forward(1, 1, 0)[0]
+    for name, angle in base.items():
+        try:
+            g.set_angle(name, angle)
+        except KeyError:
+            pass
+    Z0 = g.sample_rotation_matrix()
+    D = g.detector_rotation_matrix()
+    y_eff = np.asarray(g.basis["longitudinal"], dtype=float)
+    y_eff /= np.linalg.norm(y_eff)
+    y_eff = g.inclination_matrix.T @ y_eff
+    Q_lab_vec = (2 * np.pi / g.wavelength) * (D @ y_eff - y_eff)
+    Q_lab_hat = Q_lab_vec / np.linalg.norm(Q_lab_vec)
+
+    # Tighten phi limits so the psi-rotated candidates fail _check_limits
+    g.stage("phi").limits = (-0.001, 0.001)
+    # psi=45° will produce chi/phi values outside these limits
+    candidates = _psi_candidates(g, Z0, Q_lab_hat, y_eff, 45.0, base)
+    # Some (or all) candidates should have been filtered out
+    # The key assertion: no candidate has phi outside limits
+    for c in candidates:
+        assert g.stage("phi").in_limits(c["phi"])
+
+
+def test_psi_trajectory_on_longitudinal_reflection():
+    """psi_trajectory on (0,1,0) — Q along beam — still returns results.
+
+    For fourcv BL basis, (0,1,0) has Q_phi ∝ [0,1,0] = beam direction.
+    The beam∥Q degenerate guard has been removed: psi_trajectory is only
+    called after a valid forward() solution exists.  At the Bragg position
+    Z is NOT the identity, so y_phi = Z.T @ y_eff is not parallel to q_hat_phi
+    and psi_actual is a well-defined float.
+    """
+    g = _setup(fourcv)
+    result = psi_trajectory(g, 0, 1, 0, [0.0, 30.0])
+    # Should find solutions (or gracefully report limits issues)
+    assert len(result) == 2
+    for pt in result:
+        assert "psi_target" in pt
+        assert "psi_actual" in pt

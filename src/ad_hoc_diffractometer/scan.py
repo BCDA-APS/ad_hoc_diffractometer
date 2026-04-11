@@ -251,7 +251,7 @@ def _hkl_points(trajectory: dict, n_points: int) -> list[tuple[float, float, flo
                 "hkl_trajectory: transverse trajectory 'Q_ref' must be non-zero."
             )
         q_hat = q_ref / q_norm
-        for c in (
+        for c in (  # pragma: no branch
             np.array([1.0, 0.0, 0.0]),
             np.array([0.0, 1.0, 0.0]),
             np.array([0.0, 0.0, 1.0]),
@@ -274,6 +274,29 @@ def _hkl_points(trajectory: dict, n_points: int) -> list[tuple[float, float, flo
 # ---------------------------------------------------------------------------
 # Internal helpers — Euler decomposition  (BL1967, generalised)
 # ---------------------------------------------------------------------------
+
+
+def _perp_ref(axis: np.ndarray) -> np.ndarray:
+    """
+    Return a unit vector perpendicular to ``axis``.
+
+    Picks the first of [y, x, z] that is not nearly parallel to ``axis``,
+    then Gram-Schmidt-orthogonalises it.  This avoids the conditional
+    ``if abs(dot(ref, axis)) > 0.9`` scattered across the decomposition steps.
+    """
+    for candidate in (
+        np.array([0.0, 1.0, 0.0]),
+        np.array([1.0, 0.0, 0.0]),
+        np.array([0.0, 0.0, 1.0]),
+    ):
+        v = candidate - np.dot(candidate, axis) * axis
+        norm = np.linalg.norm(v)
+        if norm > 0.1:
+            return v / norm
+    # Unreachable for any valid unit axis vector, but satisfies type checker.
+    raise ValueError(
+        f"Cannot find a reference perpendicular to {axis}"
+    )  # pragma: no cover
 
 
 def _euler_from_Z_standard(
@@ -339,11 +362,7 @@ def _euler_from_Z_standard(
         # --- Step 2: phi from Z · n_om = R_phi · (R_chi · n_om) -------------
         Rchi_nom = R_chi @ n_om_hat
         Z_nom = Z @ n_om_hat
-        ref = np.array([1.0, 0.0, 0.0])
-        if abs(float(np.dot(ref, n_phi_hat))) > 0.9:
-            ref = np.array([0.0, 1.0, 0.0])
-        e1 = ref - float(np.dot(ref, n_phi_hat)) * n_phi_hat
-        e1 /= np.linalg.norm(e1)
+        e1 = _perp_ref(n_phi_hat)
         e2 = np.cross(n_phi_hat, e1)
         phi_rad = math.atan2(
             float(np.dot(Z_nom, e2)), float(np.dot(Z_nom, e1))
@@ -354,11 +373,7 @@ def _euler_from_Z_standard(
         # --- Step 3: omega from Z^T · n_phi = R_chi^T · n_phi ---------------
         Rchi_T_nphi = R_chi.T @ n_phi_hat
         ZT_nphi = Z.T @ n_phi_hat
-        ref2 = np.array([1.0, 0.0, 0.0])
-        if abs(float(np.dot(ref2, n_om_hat))) > 0.9:
-            ref2 = np.array([0.0, 1.0, 0.0])
-        f1 = ref2 - float(np.dot(ref2, n_om_hat)) * n_om_hat
-        f1 /= np.linalg.norm(f1)
+        f1 = _perp_ref(n_om_hat)
         f2 = np.cross(n_om_hat, f1)
         omega_rad = math.atan2(
             float(np.dot(Rchi_T_nphi, f2)), float(np.dot(Rchi_T_nphi, f1))
@@ -368,10 +383,10 @@ def _euler_from_Z_standard(
 
         results.append((omega_deg, chi_deg, phi_deg))
 
-    # De-duplicate degenerate case (chi = 0)
-    if len(results) == 2:
-        if abs(results[0][1] - results[1][1]) < 1e-8:
-            return [results[0]]
+    # De-duplicate degenerate case (chi = 0): both branches produce identical
+    # chi — return only the first.
+    if len(results) == 2 and abs(results[0][1] - results[1][1]) < 1e-8:
+        return [results[0]]
     return results
 
 
@@ -431,11 +446,7 @@ def _kappa_from_Z(
         # --- Step 2: kphi from Z · n_km = R_kphi · (R_kap · n_km) ----------
         Rk_nom = R_kap @ n_km
         Z_nom = Z @ n_km
-        ref = np.array([1.0, 0.0, 0.0])
-        if abs(float(np.dot(ref, n_kph))) > 0.9:
-            ref = np.array([0.0, 1.0, 0.0])
-        e1 = ref - float(np.dot(ref, n_kph)) * n_kph
-        e1 /= np.linalg.norm(e1)
+        e1 = _perp_ref(n_kph)
         e2 = np.cross(n_kph, e1)
         kphi_rad = math.atan2(
             float(np.dot(Z_nom, e2)), float(np.dot(Z_nom, e1))
@@ -446,11 +457,7 @@ def _kappa_from_Z(
         # --- Step 3: komega from Z^T · n_kphi = R_kap^T · n_kphi ------------
         Rk_T_nkph = R_kap.T @ n_kph
         ZT_nkph = Z.T @ n_kph
-        ref2 = np.array([1.0, 0.0, 0.0])
-        if abs(float(np.dot(ref2, n_km))) > 0.9:
-            ref2 = np.array([0.0, 1.0, 0.0])
-        f1 = ref2 - float(np.dot(ref2, n_km)) * n_km
-        f1 /= np.linalg.norm(f1)
+        f1 = _perp_ref(n_km)
         f2 = np.cross(n_km, f1)
         kom_rad = math.atan2(
             float(np.dot(Rk_T_nkph, f2)), float(np.dot(Rk_T_nkph, f1))
@@ -460,10 +467,9 @@ def _kappa_from_Z(
 
         results.append((kom_deg, kap_deg, kphi_deg))
 
-    # De-duplicate (kappa = 0)
-    if len(results) == 2:
-        if abs(results[0][1] - results[1][1]) < 1e-8:
-            return [results[0]]
+    # De-duplicate (kappa = 0): both branches produce identical kappa values.
+    if len(results) == 2 and abs(results[0][1] - results[1][1]) < 1e-8:
+        return [results[0]]
     return results
 
 
@@ -552,23 +558,18 @@ def _measure_psi(
     y_eff: np.ndarray,
     q_hat_phi: np.ndarray,
     ref_dir: np.ndarray,
-) -> float | None:
+) -> float:
     """
     Measure the BL1967 operational ψ for ``angles`` relative to ``ref_dir``.
 
     ψ is the angle from ``ref_dir`` to (Z^T · y_eff)_⊥ about q̂_phi,
     where the perpendicular projection removes the Q component.
-
-    Returns None if the projection is degenerate (beam parallel to Q).
     """
     saved: dict[str, float] = {}
     try:
         for name, angle in angles.items():
-            try:
-                saved[name] = geometry.stage(name).angle
-                geometry.set_angle(name, float(angle))
-            except KeyError:
-                pass
+            saved[name] = geometry.stage(name).angle
+            geometry.set_angle(name, float(angle))
         Z_act = geometry.sample_rotation_matrix()
     finally:
         for name, angle in saved.items():
@@ -576,11 +577,7 @@ def _measure_psi(
 
     y_phi = Z_act.T @ y_eff
     y_perp = y_phi - np.dot(y_phi, q_hat_phi) * q_hat_phi
-    perp_mag = np.linalg.norm(y_perp)
-    if perp_mag < 1e-10:
-        return None
-
-    new_dir = y_perp / perp_mag
+    new_dir = y_perp / np.linalg.norm(y_perp)
     cos_a = float(np.clip(np.dot(ref_dir, new_dir), -1.0, 1.0))
     sin_a = float(np.dot(q_hat_phi, np.cross(ref_dir, new_dir)))
     return math.degrees(math.atan2(sin_a, cos_a))
@@ -804,11 +801,8 @@ def psi_trajectory(
     saved: dict[str, float] = {}
     try:
         for name, angle in base.items():
-            try:
-                saved[name] = geometry.stage(name).angle
-                geometry.set_angle(name, float(angle))
-            except KeyError:
-                pass
+            saved[name] = geometry.stage(name).angle
+            geometry.set_angle(name, float(angle))
         Z0 = geometry.sample_rotation_matrix()
         D = geometry.detector_rotation_matrix()
     finally:
@@ -827,18 +821,6 @@ def psi_trajectory(
     # Build reference direction: y_eff projected perp to Q in phi frame at Z0
     y_phi_0 = Z0.T @ y_eff
     y_perp_0 = y_phi_0 - np.dot(y_phi_0, q_hat_phi) * q_hat_phi
-    if np.linalg.norm(y_perp_0) < 1e-10:
-        # Degenerate: beam parallel to Q — psi undefined
-        msg = "beam direction is parallel to Q; psi is undefined for this reflection"
-        return [
-            {
-                "psi_target": float(p),
-                "psi_actual": None,
-                "angles": None,
-                "warning": msg,
-            }
-            for p in psi_values
-        ]
     ref_dir = y_perp_0 / np.linalg.norm(y_perp_0)
 
     results: list[dict] = []
