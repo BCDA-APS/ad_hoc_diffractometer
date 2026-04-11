@@ -38,16 +38,28 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    The `closes #N` keyword triggers GitHub automation: when the PR is merged
    the issue is closed and the project card moves to "Done" automatically.
 
-   Every PR must also have its **milestone** and **project board** set:
+   Every PR must also have its **milestone** and **project board** set,
+   and its project board status must be set to **"In Progress"**:
    ```bash
    # Set milestone when creating the PR
    gh pr create --milestone "Priority N — ..." ...
 
    # Add the PR to the project board immediately after creation
-   gh api repos/OWNER/REPO/pulls/N --jq '.node_id' | xargs -I{} \
-     gh api graphql -f query='mutation {
-       addProjectV2ItemById(input: {projectId: "PROJECT_ID", contentId: "{}"})
-       { item { id } } }'
+   PR_NODE=$(gh api repos/OWNER/REPO/pulls/N --jq '.node_id')
+   ITEM_ID=$(gh api graphql -f query="mutation {
+     addProjectV2ItemById(input: {projectId: \"PROJECT_ID\", contentId: \"$PR_NODE\"})
+     { item { id } } }" --jq '.data.addProjectV2ItemById.item.id')
+
+   # Set the PR's project board status to "In Progress"
+   # (STATUS_FIELD_ID and IN_PROGRESS_OPTION_ID are the same values used
+   # for the issue status update in step 1 above)
+   gh api graphql -f query="mutation {
+     updateProjectV2ItemFieldValue(input: {
+       projectId: \"PROJECT_ID\"
+       itemId: \"$ITEM_ID\"
+       fieldId: \"STATUS_FIELD_ID\"
+       value: { singleSelectOptionId: \"IN_PROGRESS_OPTION_ID\" }
+     }) { projectV2Item { id } } }"
    ```
 
 3. **Never close issues manually** — let the merge automation do it.
