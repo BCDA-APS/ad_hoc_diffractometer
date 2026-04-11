@@ -342,9 +342,14 @@ how stages are declared.
 
 ### 3.3 Detector geometry parameters ([#10](https://github.com/prjemian/ad_hoc_diffractometer/issues/10))
 
-- [ ] Sample-to-detector distance (mm or m)
-- [ ] Detector tilt / offset angles (correction for non-ideal alignment)
-- [ ] Relevant primarily when using area detectors rather than point detectors
+- [x] `detector_distance` — sample-to-detector distance in mm; validated > 0;
+      ``None`` by default; settable and clearable after construction
+- [x] `detector_tilt` — detector tilt angle in degrees (pitch/roll correction
+      for non-ideal alignment); any real number; ``None`` by default
+- [x] `detector_offset` — in-plane beam-centre offset (dx, dy) in mm; ``None``
+      by default; validated as a 2-element numeric sequence
+- [x] All three properties serialised in `to_dict` / `from_dict` (JSON-safe)
+- [x] 17 tests; 1029 tests total; 100% coverage
 
 ### 3.4 Alternative calculation engines ([#12](https://github.com/prjemian/ad_hoc_diffractometer/issues/12))
 
