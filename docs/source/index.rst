@@ -4,7 +4,8 @@
 *Ad hoc* diffractometer
 ============================
 
-Multi-circle diffractometer geometry and related calculations.
+| **Version:** |release|
+| Multi-circle diffractometer geometry and related calculations.
 
 .. code-block:: python
 
