@@ -57,11 +57,6 @@ from .reflection import ReflectionList
 from .rotation import rotation_matrix
 from .sample import Sample
 from .sample import SampleDict
-from .spec import FourcG1
-from .spec import emit_fourc_g1
-from .spec import g1_to_sample
-from .spec import parse_fourc_g1
-from .spec import sample_to_g1
 from .stage import Stage
 from .surface import alpha_f
 from .surface import alpha_i
@@ -147,10 +142,4 @@ __all__ = [
     # refinement
     "refine_lattice_bl1967",
     "refine_lattice_simplex",
-    # spec
-    "FourcG1",
-    "parse_fourc_g1",
-    "emit_fourc_g1",
-    "g1_to_sample",
-    "sample_to_g1",
 ]

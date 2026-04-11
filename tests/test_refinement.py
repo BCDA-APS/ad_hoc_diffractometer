@@ -37,8 +37,6 @@ from ad_hoc_diffractometer.refinement import refine_lattice_bl1967
 from ad_hoc_diffractometer.refinement import refine_lattice_simplex
 from ad_hoc_diffractometer.reflection import ReflectionList
 from ad_hoc_diffractometer.sample import Sample
-from ad_hoc_diffractometer.spec import g1_to_sample
-from ad_hoc_diffractometer.spec import parse_fourc_g1
 
 # ---------------------------------------------------------------------------
 # Shared test geometry
@@ -82,26 +80,35 @@ def perturbed_geom(cubic_geom):
     return g
 
 
-# SPEC-based fourcv fixture (sapphire, real measured reflections)
-_G1_LINE_A = (
-    "#G1 4.785 4.785 12.991 90 90 120 "
-    "1.516237713 1.516237713 0.483656786 90 90 60 "
-    "0 0 6  1 0 0  "
-    "41.94188 20.97 90 0  0 0  "
-    "60 30 0 0  0 0  "
-    "1.549802558 1.549802558  0 0"
-)
-
-
 @pytest.fixture
 def sapphire_geom():
     """
-    fourcv geometry with sapphire lattice from Align4Pete SPEC data.
+    fourcv geometry with sapphire lattice from Align4Pete SPEC session data.
     Three reflections: or1=(0,0,6), or2=(1,0,0), r3=(1,0,4).
     Initial UB set by ub_from_two_reflections_bl1967.
+
+    Motor angles from Align4Pete.log / Align4Pete.spec (Walko, APS 7-ID-C,
+    December 2020).  The secondary reflection (1,0,0) at 2theta=60 is a
+    geometric placeholder used to define the phi-rotation plane; it is not
+    at the true Bragg condition for (1,0,0) of sapphire.
     """
     g = fourcv()
-    g1_to_sample(parse_fourc_g1(_G1_LINE_A), g)
+    g.wavelength = 1.549802558
+    g.sample.lattice = Lattice(
+        a=4.785, b=4.785, c=12.991, alpha=90.0, beta=90.0, gamma=120.0
+    )
+    g.add_reflection(
+        "or1",
+        hkl=(0, 0, 6),
+        angles={"ttheta": 41.94188, "omega": 20.97, "chi": 90.0, "phi": 0.0},
+        wavelength=1.549802558,
+    )
+    g.add_reflection(
+        "or2",
+        hkl=(1, 0, 0),
+        angles={"ttheta": 60.0, "omega": 30.0, "chi": 0.0, "phi": 0.0},
+        wavelength=1.549802558,
+    )
     g.add_reflection(
         "r3",
         hkl=(1, 0, 4),
@@ -113,6 +120,8 @@ def sapphire_geom():
         },
         wavelength=1.549802558,
     )
+    g.sample.reflections.setor1("or1")
+    g.sample.reflections.setor2("or2")
     ub_from_two_reflections_bl1967(g.sample)
     return g
 

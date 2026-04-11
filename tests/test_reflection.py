@@ -466,6 +466,20 @@ def test_setor2_unknown_raises(rl):
         rl.setor2("missing")
 
 
+def test_delete_or2_clears_secondary_slot(rl):
+    """Deleting the reflection designated as or2 clears the secondary slot."""
+    rl.add("r1", hkl=(1, 0, 0), angles={})
+    rl.add("r2", hkl=(0, 1, 0), angles={})
+    rl.setor1("r1")
+    rl.setor2("r2")
+    del rl["r2"]
+    assert "r2" not in rl
+    ors = rl.orienting_reflections
+    # or1 remains; or2 slot is now None
+    assert len(ors) == 1
+    assert ors[0].name == "r1"
+
+
 # ---------------------------------------------------------------------------
 # Cross-geometry safety
 # ---------------------------------------------------------------------------

@@ -72,6 +72,7 @@ known_first_party = ["ad_hoc_diffractometer"]
 [tool.pytest.ini_options]
 pythonpath = ["tests"]
 testpaths = ["tests"]
+norecursedirs = ["references", "docs", ".git", ".tox", "dist", "build"]
 addopts = "--cov=ad_hoc_diffractometer --cov-report=term-missing"
 
 [tool.ruff]
