@@ -1,0 +1,1090 @@
+ad_hoc_diffractometer.geometry
+==============================
+
+.. py:module:: ad_hoc_diffractometer.geometry
+
+.. autoapi-nested-parse::
+
+   geometry.py — AdHocDiffractometer class.
+
+   Describes a diffractometer as an ordered collection of rotary stages.
+   The stacking order is encoded via the parent attribute of each Stage.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.geometry.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.geometry.AdHocDiffractometer
+
+
+Module Contents
+---------------
+
+.. py:class:: AdHocDiffractometer(name: str, stages: list[ad_hoc_diffractometer.stage.Stage], basis: dict | None = None, description: str = '', wavelength: float | None = None, kappa_alpha_deg: float | None = None, azimuthal_reference: tuple[float, float, float] | None = None, modes: dict | ad_hoc_diffractometer.mode.ModeDict | None = None, default_mode: str | None = None, cut_points: dict[str, float] | None = None)
+
+   Description of a diffractometer as an ordered collection of rotary stages.
+
+   The geometry is defined by a list of Stage objects.  The stacking order
+   (which stage sits on which) is encoded by the parent attribute of each
+   Stage: a stage with parent=None sits on the fixed lab frame; all other
+   stages sit on the stage named by their parent.
+
+   The class supports arbitrary geometries including:
+     - You (1999) psic  4S+2D  six-circle
+     - Lohmeier & Vlieg (1993) sixc  six-circle
+     - Busing & Levy (1967) fourc  four-circle Eulerian
+     - Kappa four-circle
+
+   The basis vectors for the lab frame are specified at construction time,
+   allowing the same physical geometry to be described in different
+   coordinate conventions.
+
+   :param name: Name of the diffractometer geometry (e.g. 'psic', 'sixc', 'fourc').
+   :type name: str
+   :param stages: All stages in the geometry.  Order within the list does not determine
+                  the stacking; the parent attribute of each Stage does.
+   :type stages: list of Stage
+   :param basis: Mapping from physical direction names to Cartesian basis vectors.
+                 Default is the You (1999) convention:
+                     {'vertical': XHAT, 'longitudinal': YHAT, 'lateral': ZHAT}
+   :type basis: dict, optional
+   :param description: Free-text description of the geometry.
+   :type description: str, optional
+   :param wavelength: X-ray or neutron wavelength in Å.  Must match the units used for
+                      unit cell edge lengths.  Default is None (unset).  Must be > 0
+                      if provided.
+   :type wavelength: float or None, optional
+   :param kappa_alpha_deg: Kappa tilt angle in degrees for kappa geometries (kappa4cv,
+                           kappa4ch, kappa6c).  None for non-kappa geometries.  Set by
+                           the kappa factory functions; not intended to be changed after
+                           construction.
+   :type kappa_alpha_deg: float or None, optional
+   :param azimuthal_reference: Azimuthal reference direction as Miller indices (h, k, l).  Used
+                               by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)
+                               means no reference is set.  Must be a non-zero vector.
+   :type azimuthal_reference: tuple of float or None, optional
+   :param modes: Named diffraction modes available for this geometry.  Keys are
+                 mode names (str); values are :class:`~mode.DiffractionMode`
+                 instances.  ``None`` (default) means no modes are declared.
+   :type modes: dict[str, DiffractionMode] or ModeDict or None, optional
+   :param default_mode: Name of the mode that is active at construction time.  Must be a
+                        key of ``modes`` if both are supplied.  ``None`` (default) means no
+                        active mode is set (``mode_name`` returns ``None``).
+   :type default_mode: str or None, optional
+   :param cut_points: Geometry-level SPEC #G4 cut-points per stage name.  These are the
+                      default cut-points when no mode-level cut-point overrides them.
+                      A cut-point C for stage X means the returned angle lies in
+                      ``[C, C + 360°)``.  ``None`` is equivalent to an empty dict.
+   :type cut_points: dict[str, float] or None, optional
+
+   .. attribute:: sample_stages
+
+      Stages with role='sample', in stacking order (floor first).
+
+      :type: list of Stage
+
+   .. attribute:: detector_stages
+
+      Stages with role='detector', in stacking order (floor first).
+
+      :type: list of Stage
+
+   .. attribute:: wavelength
+
+      Wavelength in Å, or None if not set.
+
+      :type: float or None
+
+   .. attribute:: kappa_alpha_deg
+
+      Kappa tilt angle in degrees, or None for non-kappa geometries.
+
+      :type: float or None
+
+   .. attribute:: azimuthal_reference
+
+      Azimuthal reference vector (h, k, l), or None if not set.
+
+      :type: tuple of float or None
+
+   .. attribute:: modes
+
+      The collection of named modes.  Empty if none were supplied.
+
+      :type: ModeDict
+
+   .. attribute:: mode_name
+
+      Name of the currently active mode, or ``None`` if no mode is set.
+
+      :type: str or None
+
+   .. attribute:: cut_points
+
+      Geometry-level SPEC #G4 cut-points per stage; mirrors SPEC #G4.
+
+      :type: dict[str, float]
+
+   .. attribute:: detector_distance
+
+      Sample-to-detector distance in mm, or ``None`` if not set.
+
+      :type: float or None
+
+   .. attribute:: detector_tilt
+
+      Detector tilt angle in degrees, or ``None`` if not set.
+
+      :type: float or None
+
+   .. attribute:: detector_offset
+
+      In-plane detector offset (dx, dy) in mm, or ``None`` if not set.
+
+      :type: tuple of float or None
+
+
+   .. py:attribute:: DEFAULT_BASIS
+
+
+   .. py:method:: add_reflection(name: str, hkl: tuple[float, float, float], angles: dict[str, float], wavelength: float | None = None) -> ad_hoc_diffractometer.reflection.Reflection
+
+      Add a named orienting reflection to the active sample.
+
+      Delegates to ``self.sample.reflections.add()``.  If ``wavelength``
+      is None the geometry's current wavelength is inherited.
+
+      :param name: Unique label (e.g. ``"r1"``, ``"Si_111"``).
+      :type name: str
+      :param hkl: Miller indices (h, k, l).
+      :type hkl: tuple of float
+      :param angles: Motor angles in degrees keyed by stage name.
+      :type angles: dict[str, float]
+      :param wavelength: Wavelength in Å.  If None, inherits ``self.wavelength``.
+      :type wavelength: float or None
+
+      :rtype: Reflection
+
+
+
+   .. py:method:: add_sample(name: str, lattice=None) -> ad_hoc_diffractometer.sample.Sample
+
+      Add a new sample and return it.
+
+      :param name: Unique label for this sample.
+      :type name: str
+      :param lattice: Crystal lattice.  If None, defaults to cubic a = 1 Å.
+      :type lattice: Lattice or None
+
+      :rtype: Sample
+
+      :raises ValueError: If a sample with that name already exists.
+
+
+
+   .. py:method:: alpha_f(angles: dict[str, float] | None = None) -> float
+
+      Angle of emergence αf (degrees).
+
+      αf is the angle between the diffracted beam and the sample surface.
+      Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
+      (or ``azimuthal_reference``) to be set.
+
+      :param angles: Motor angles.  If ``None``, current stage angles are used.
+      :type angles: dict[str, float] or None
+
+      :returns: αf in degrees, in [0°, 90°].
+      :rtype: float
+
+      .. seealso::
+
+         :py:obj:`alpha_i`
+             Angle of incidence.
+
+
+
+   .. py:method:: alpha_i(angles: dict[str, float] | None = None) -> float
+
+      Angle of incidence αᵢ (degrees).
+
+      αᵢ is the angle between the incoming beam and the sample surface.
+      Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
+      (or ``azimuthal_reference``) to be set.
+
+      :param angles: Motor angles.  If ``None``, current stage angles are used.
+      :type angles: dict[str, float] or None
+
+      :returns: αᵢ in degrees, in [0°, 90°].
+      :rtype: float
+
+      .. seealso::
+
+         :py:obj:`alpha_f`
+             Angle of emergence.
+
+      .. rubric:: Examples
+
+      >>> g = zaxis()
+      >>> g.wavelength = 1.5406
+      >>> g.surface_normal = (0, 0, 1)
+      >>> ub_identity(g.sample)
+      >>> g.alpha_i({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})
+      5.0
+
+
+
+   .. py:property:: azimuthal_reference
+      :type: tuple[float, float, float] | None
+
+
+      Azimuthal reference vector as Miller indices (h, k, l), or ``None``.
+
+      The azimuthal reference defines the direction in reciprocal space
+      used to set the azimuthal angle ψ = 0.  ψ is zero when this vector
+      lies in the scattering plane (the plane containing the incident beam
+      and the scattering vector Q).
+
+      Setting to ``None`` clears the reference (ψ becomes undefined).
+
+      Setting to a tuple ``(h, k, l)`` stores it as a tuple of three
+      floats.  Any three-element sequence is accepted.
+
+      :param value: Miller indices of the azimuthal reference direction, e.g.
+                    ``(0, 0, 1)`` for the surface normal of a (001)-cut crystal.
+      :type value: tuple of float or None
+
+      :raises ValueError: If the value is not ``None`` and cannot be interpreted as a
+          length-3 sequence of numbers, or if the vector is the zero
+          vector.
+
+      .. rubric:: Examples
+
+      >>> g = psic()
+      >>> g.azimuthal_reference = (0, 0, 1)   # c-axis surface normal
+      >>> g.azimuthal_reference
+      (0.0, 0.0, 1.0)
+      >>> g.azimuthal_reference = None          # clear reference
+
+
+   .. py:attribute:: basis
+
+
+   .. py:method:: check_limits(**angles: float) -> None
+
+      Verify that all supplied angles are within their stage limits.
+
+      :param \*\*angles: Keyword arguments mapping stage name to angle in degrees,
+                         e.g. check_limits(mu=10.0, eta=30.0).
+      :type \*\*angles: float
+
+      :raises KeyError: If a supplied stage name does not exist in this geometry.
+      :raises ValueError: If any supplied angle is outside its stage's limits.  The
+          message names every out-of-range stage, its angle, and its
+          limits, so all violations are reported in one call.
+
+
+
+   .. py:attribute:: cut_points
+      :type:  dict[str, float]
+
+
+   .. py:attribute:: description
+      :value: ''
+
+
+
+   .. py:property:: detector_distance
+      :type: float | None
+
+
+      Sample-to-detector distance in millimetres, or ``None`` if not set.
+
+      Relevant primarily for area detectors, where the distance is needed
+      to convert pixel positions to scattering angles (and thence to Q).
+      Point detectors do not require this parameter.
+
+      Must be strictly positive when set.
+
+      :raises ValueError: If the supplied value is not positive.
+
+      .. rubric:: Examples
+
+      >>> g = psic()
+      >>> g.detector_distance = 500.0   # 500 mm
+      >>> g.detector_distance
+      500.0
+      >>> g.detector_distance = None    # clear
+
+
+   .. py:property:: detector_offset
+      :type: tuple[float, float] | None
+
+
+      In-plane detector offset (dx, dy) in millimetres, or ``None`` if not set.
+
+      Describes the displacement of the beam centre from the detector
+      centre in the detector plane.  ``dx`` is the horizontal offset and
+      ``dy`` is the vertical offset, both in millimetres.  A zero offset
+      means the beam strikes the geometric centre of the detector.
+
+      Must be a two-element sequence of real numbers.
+
+      :raises ValueError: If the supplied value is not a length-2 sequence of numbers.
+
+      .. rubric:: Examples
+
+      >>> g = psic()
+      >>> g.detector_offset = (2.5, -1.0)   # 2.5 mm right, 1.0 mm down
+      >>> g.detector_offset
+      (2.5, -1.0)
+      >>> g.detector_offset = None           # clear
+
+
+   .. py:method:: detector_rotation_matrix() -> numpy.ndarray
+
+      Compute the total detector rotation matrix in stacking order.
+
+      :returns: **D**
+      :rtype: numpy.ndarray, shape (3, 3)
+
+
+
+   .. py:attribute:: detector_stages
+      :value: []
+
+
+
+   .. py:property:: detector_tilt
+      :type: float | None
+
+
+      Detector tilt angle in degrees, or ``None`` if not set.
+
+      A non-zero tilt indicates that the detector plane is not perfectly
+      perpendicular to the diffracted beam at the nominal detector position.
+      The tilt is a rotation of the detector face about an axis parallel
+      to the detector plane (a pitch/roll correction for non-ideal
+      alignment).
+
+      Any real number is accepted (positive or negative; modulo 360° is
+      not applied).
+
+      .. rubric:: Examples
+
+      >>> g = psic()
+      >>> g.detector_tilt = 0.3    # 0.3° tilt
+      >>> g.detector_tilt
+      0.3
+      >>> g.detector_tilt = None   # clear
+
+
+   .. py:property:: energy
+      :type: float | None
+
+
+      Radiation energy in units of :attr:`energy_units`, derived from wavelength.
+
+      - X-ray: E (keV) = hc / λ = 12.39842 / λ (Å)
+      - Neutron (reactor): E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å)
+
+      Returns ``None`` when ``wavelength`` is not set.  Setting ``energy``
+      updates ``wavelength`` using the inverse formula for the current
+      :attr:`source_type`.  The value must be in the units given by
+      :attr:`energy_units`.
+
+      :raises ValueError: If set to a non-positive value.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.wavelength = 1.5406
+      >>> round(g.energy, 4)    # keV for xray
+      8.0479
+      >>> g.source_type = "neutron"
+      >>> round(g.energy, 4)    # meV for neutron
+      34.4634
+      >>> g.energy = 25.0       # sets wavelength via de Broglie
+      >>> round(g.wavelength, 4)
+      1.809
+
+
+   .. py:property:: energy_units
+      :type: str
+
+
+      Units of the :attr:`energy` property.
+
+      ``"keV"`` for X-ray geometries; ``"meV"`` for neutron geometries.
+
+      :rtype: str
+
+
+   .. py:method:: forward(h: float, k: float, l: float) -> list[dict[str, float]]
+
+      Compute all valid motor-angle solutions for the reflection (h, k, l).
+
+      This is the *forward* diffraction calculation: given a reciprocal-
+      lattice point, compute the motor angles that satisfy the Bragg
+      condition under the active diffraction mode.
+
+      Algorithm (delegated to :mod:`.forward`):
+
+      1. Compute ``Q_phi = UB @ (h, k, l)`` — the target scattering vector
+         in the phi frame.
+      2. Apply Bragg's law to find the detector angle (2θ).
+      3. Apply mode constraints (frozen angles, bisecting condition) to
+         determine the remaining free stage angles.
+      4. Return all valid solutions, filtered by stage limits.
+
+      :param h: Miller indices of the target reflection.
+      :type h: float
+      :param k: Miller indices of the target reflection.
+      :type k: float
+      :param l: Miller indices of the target reflection.
+      :type l: float
+
+      :returns: Each element is a complete set of motor angles (all stage names
+                as keys, values in degrees) that satisfies the Bragg condition
+                under the active mode.  May be empty if no valid solution exists
+                within limits.
+      :rtype: list of dict[str, float]
+
+      :raises ValueError: If ``self.wavelength`` is None.
+      :raises ValueError: If ``self.sample.UB`` is None.
+      :raises ValueError: If (h, k, l) == (0, 0, 0).
+      :raises ValueError: If the requested |Q| exceeds the Ewald sphere.
+      :raises NotImplementedError: If no active mode is set or the mode type is not supported.
+
+      .. seealso::
+
+         :py:obj:`inverse`
+             Convert motor angles to (h, k, l).
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.wavelength = 1.5406
+      >>> ahd.ub_identity(g.sample)
+      >>> solutions = g.forward(1, 0, 0)
+      >>> len(solutions) > 0
+      True
+      >>> sorted(solutions[0].keys())
+      ['chi', 'omega', 'phi', 'ttheta']
+
+
+
+   .. py:method:: from_dict(d: dict) -> AdHocDiffractometer
+      :classmethod:
+
+
+      Reconstruct an :class:`AdHocDiffractometer` from a dict produced by
+      :meth:`to_dict`.
+
+      :param d: Dict as returned by :meth:`to_dict`.  The ``"_meta"`` key is
+                read but not validated; version mismatches do not raise.
+      :type d: dict
+
+      :returns: A fully-configured geometry with all stages, samples, and
+                settings restored.
+      :rtype: AdHocDiffractometer
+
+      .. rubric:: Notes
+
+      Stages are reconstructed from the stored axis, role, parent, limits,
+      and angle values.  The stage parent graph is rebuilt from the stored
+      ``"parent"`` field (a name string or None).
+
+      Samples are restored via :meth:`Sample.from_dict`.  The active
+      sample is restored by name.
+
+      The factory-function identity (e.g. ``psic``, ``fourcv``) is **not**
+      stored; ``from_dict`` always returns a plain
+      :class:`AdHocDiffractometer` instance.  If you need the factory
+      function, look it up via ``get_geometry(d["name"])``.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.wavelength = 1.5406
+      >>> g2 = ahd.AdHocDiffractometer.from_dict(g.to_dict())
+      >>> g2.name
+      'fourcv'
+      >>> g2.wavelength
+      1.5406
+
+
+
+   .. py:property:: inclination_matrix
+      :type: numpy.ndarray
+
+
+      3×3 rotation matrix describing the diffractometer inclination
+      relative to the incident beam direction.
+
+      When the entire diffractometer is mounted at a non-zero angle with
+      respect to the incident beam (e.g. tilted for grazing-incidence
+      geometry or non-standard instrument mounting), this matrix encodes
+      that orientation.
+
+      The matrix **R** is applied as follows: the effective incident-beam
+      direction in the diffractometer coordinate frame is
+      ``R.T @ ŷ`` rather than ``ŷ``.  A zero inclination (identity matrix)
+      reproduces the standard geometry exactly.
+
+      The matrix must be a proper rotation (orthonormal, det = +1).
+
+      Default: ``numpy.eye(3)`` (no inclination).
+
+      :raises ValueError: If the supplied array is not shape (3, 3), not orthonormal
+          within 1e-8, or has det ≠ +1.
+
+      .. seealso::
+
+         :py:obj:`set_inclination`
+             Set the inclination from an axis and angle.
+
+      .. rubric:: Examples
+
+      >>> import numpy as np
+      >>> g = psic()
+      >>> g.inclination_matrix  # default: identity
+      array([[1., 0., 0.],
+             [0., 1., 0.],
+             [0., 0., 1.]])
+      >>> g.set_inclination(axis=[0, 0, 1], angle_deg=2.0)  # 2° about z
+      >>> np.round(g.inclination_matrix, 4)
+      array([[ 0.9994,  0.0349,  0.    ],
+             [-0.0349,  0.9994,  0.    ],
+             [ 0.    ,  0.    ,  1.    ]])
+
+
+   .. py:method:: inverse(angles: dict[str, float]) -> tuple[float, float, float]
+
+      Convert a set of motor angles to Miller indices (h, k, l).
+
+      This is the *inverse* diffraction calculation: given where the
+      diffractometer motors are pointing, compute the reciprocal-lattice
+      point being measured.
+
+      Algorithm:
+
+      1. Compute ``Q_phi`` from the motor angles via
+         :func:`angles_to_phi_vector`.
+      2. Solve ``UB @ hkl = Q_phi`` for ``hkl``, i.e.
+         ``hkl = UB⁻¹ @ Q_phi``.
+
+      :param angles: Motor angles in degrees, keyed by stage name.  All stages
+                     present in the geometry may be supplied; stages not supplied
+                     keep their current ``angle`` attribute.
+      :type angles: dict[str, float]
+
+      :returns: **hkl** -- Miller indices ``(h, k, l)`` corresponding to the supplied
+                motor angles.
+      :rtype: tuple of float
+
+      :raises KeyError: If a supplied stage name does not exist in the geometry.
+      :raises ValueError: If ``self.wavelength`` is None.
+      :raises ValueError: If the active sample has no UB matrix set
+          (``sample.UB is None``).
+      :raises numpy.linalg.LinAlgError: If the UB matrix is singular and cannot be inverted.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.psic()
+      >>> g.wavelength = 1.5406
+      >>> ahd.ub_identity(g.sample)          # set UB = B (cubic a=1)
+      >>> hkl = g.inverse(
+      ...     {"mu": 0, "eta": 20.97, "chi": 90, "phi": 0,
+      ...      "nu": 0, "delta": 41.94}
+      ... )
+
+
+
+   .. py:method:: is_evanescent(angles: dict[str, float] | None = None, critical_angle_deg: float | None = None) -> bool
+
+      Return True when αᵢ < ``critical_angle_deg`` (evanescent regime).
+
+      :param angles:
+      :type angles: dict[str, float] or None
+      :param critical_angle_deg: Critical angle for total external reflection in degrees.
+                                 Must be supplied (material-dependent; not stored on geometry).
+      :type critical_angle_deg: float
+
+      :rtype: bool
+
+      :raises ValueError: If ``critical_angle_deg`` is None.
+
+
+
+   .. py:method:: is_specular(angles: dict[str, float] | None = None, atol: float = 0.01) -> bool
+
+      Return True when αᵢ ≈ αf within ``atol`` degrees.
+
+      :param angles:
+      :type angles: dict[str, float] or None
+      :param atol: Tolerance in degrees (default 0.01°).
+      :type atol: float
+
+      :rtype: bool
+
+
+
+   .. py:property:: kappa_alpha_deg
+      :type: float | None
+
+
+      Kappa tilt angle in degrees, or None for non-kappa geometries.
+
+      This is the angle between the kappa rotation axis and the vertical
+      axis (toward the lateral axis).  Typical value: 50 deg.
+      Set by kappa factory functions (kappa4cv, kappa4ch, kappa6c).
+
+
+   .. py:property:: mode
+      :type: ad_hoc_diffractometer.mode.DiffractionMode | None
+
+
+      The currently active :class:`~mode.DiffractionMode`, or ``None``.
+
+      Equivalent to ``self.modes[self.mode_name]`` when a mode is
+      active; ``None`` when :attr:`mode_name` is ``None``.
+
+      :rtype: DiffractionMode or None
+
+
+   .. py:property:: mode_name
+      :type: str | None
+
+
+      Name of the currently active diffraction mode, or ``None``.
+
+      Setting this property switches the active mode.  The name must
+      be a key of :attr:`modes`.
+
+      :rtype: str or None
+
+      :raises ValueError: If the supplied name is not in :attr:`modes`.
+
+
+   .. py:property:: modes
+      :type: ad_hoc_diffractometer.mode.ModeDict
+
+
+      The collection of named diffraction modes for this geometry.
+
+      A ``ModeDict`` mapping mode name (str) to
+      :class:`~mode.DiffractionMode` instance.  Empty when no modes
+      have been declared.
+
+      :rtype: ModeDict
+
+
+   .. py:attribute:: name
+
+
+   .. py:method:: pa(print: bool = True) -> str
+
+      Verbose parameter listing (the SPEC ``pa`` command).
+
+      Shows the geometry name, the two designated orienting reflections
+      (if set), lattice constants in real and reciprocal space, the
+      azimuthal reference vector, and the wavelength.
+
+      :param print: If ``True`` (default), the string is printed to stdout before
+                    being returned.  Pass ``print=False`` to suppress output and
+                    capture the string instead (useful in tests and logging).
+      :type print: bool, optional
+
+      :returns: Multi-line parameter string.
+      :rtype: str
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.pa()                          # prints and returns
+      Geometry: fourcv
+      ...
+      >>> out = g.pa(print=False)         # capture without printing
+      >>> "Geometry" in out
+      True
+
+      .. rubric:: References
+
+      Align4Pete.log — ``pa`` command outputs, 7-ID-C fourc session,
+      Dec 2020.
+
+
+
+   .. py:method:: psi(angles: dict[str, float] | None = None) -> float
+
+      Compute the azimuthal angle ψ (psi) for the given motor angles.
+
+      ψ is the rotation of the azimuthal reference vector about the
+      scattering vector Q, measured from the zero-ψ position.  ψ = 0
+      when the reference vector lies in the scattering plane (the plane
+      containing the incident beam direction and Q).
+
+      Algorithm (You 1999, eqs. 10-11):
+
+      1. Compute ``Q_phi`` from the motor angles via
+         :func:`angles_to_phi_vector`.
+      2. Express the reference direction in the phi frame:
+         ``n_phi = UB @ n_hkl``  (maps reciprocal-lattice direction to
+         phi frame in the same units as Q).
+      3. Project both ``n_phi`` and the incident-beam direction
+         ``y_hat`` (the ``'longitudinal'`` basis vector) onto the plane
+         perpendicular to ``Q_phi``.
+      4. ψ = ``atan2(Q_hat · (y_perp × n_perp), y_perp · n_perp)``
+         where all vectors are unit vectors in the perpendicular plane.
+
+      :param angles: Motor angles in degrees, keyed by stage name.  If ``None``
+                     (default), the current stage angles are used.
+      :type angles: dict[str, float] or None
+
+      :returns: **psi** -- Azimuthal angle in degrees, in the range (-180, 180].
+      :rtype: float
+
+      :raises ValueError: If ``self.wavelength`` is None.
+      :raises ValueError: If ``self.sample.UB`` is None.
+      :raises ValueError: If ``self.azimuthal_reference`` is None (no reference set).
+      :raises ValueError: If the reference vector is parallel to Q (ψ is undefined).
+
+      .. rubric:: Notes
+
+      The zero-ψ reference direction is the component of the incident
+      beam (``'longitudinal'`` basis vector) perpendicular to Q.  This
+      matches the SPEC and You (1999) convention: ψ = 0 when the
+      reference vector lies in the scattering plane.
+
+      The incident beam direction is taken from the geometry's basis
+      dict under the key ``'longitudinal'``.  For You (1999) geometries
+      this is YHAT; for Busing & Levy geometries it is also YHAT.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.wavelength = 1.5406
+      >>> g.azimuthal_reference = (0, 0, 1)
+      >>> # ... set UB, move motors ...
+      >>> psi = g.psi()
+
+      .. rubric:: References
+
+      You, J. Appl. Cryst. 32, 614-623 (1999), eqs. 10-11.
+
+
+
+   .. py:method:: q_components(angles: dict[str, float] | None = None) -> dict[str, float]
+
+      Decompose Q into components parallel and perpendicular to the surface.
+
+      :param angles: Motor angles.  If ``None``, current stage angles are used.
+      :type angles: dict[str, float] or None
+
+      :returns: * dict with keys ``"Q_perp"``, ``"Q_par"``, ``"Q_perp_signed"``,
+                * ``"Q_total"`` — all in Å⁻¹.
+
+      .. seealso:: :py:obj:`alpha_i`, :py:obj:`alpha_f`
+
+
+
+   .. py:attribute:: reflections
+      :type:  ad_hoc_diffractometer.reflection.ReflectionList
+
+
+   .. py:method:: remove_sample(name: str) -> None
+
+      Remove a sample from the dict.
+
+      The active sample cannot be removed; select a different sample
+      first.  Clears ``sample.parent`` on the removed sample so that any
+      external reference to it knows it is detached.  Delegates to
+      SampleDict which enforces the active-sample invariant.
+
+      :raises KeyError: If the sample does not exist.
+      :raises ValueError: If the sample is the currently active sample.
+
+
+
+   .. py:property:: sample
+      :type: ad_hoc_diffractometer.sample.Sample
+
+
+      The currently active Sample.
+
+
+   .. py:method:: sample_rotation_matrix() -> numpy.ndarray
+
+      Compute the total sample rotation matrix Z = R_floor * ... * R_top.
+
+      Stages are applied in stacking order: the floor-most stage is applied
+      first (leftmost in the product), the innermost stage last.
+
+      :returns: **Z**
+      :rtype: numpy.ndarray, shape (3, 3)
+
+
+
+   .. py:attribute:: sample_stages
+      :value: []
+
+
+
+   .. py:property:: samples
+      :type: ad_hoc_diffractometer.sample.SampleDict
+
+
+      The guarded SampleDict of all samples.
+
+      Supports read-only iteration (``for name in g.samples``, ``g.samples[name]``).
+      Mutation goes through ``add_sample()`` / ``remove_sample()`` to keep
+      invariants intact.
+
+
+   .. py:method:: set_angle(name: str, angle_deg: float) -> None
+
+      Set the angle of a named stage in degrees.
+
+
+
+   .. py:method:: set_inclination(axis: numpy.ndarray | list[float], angle_deg: float) -> None
+
+      Set the inclination matrix from a rotation axis and angle.
+
+      Convenience wrapper around :attr:`inclination_matrix` that uses the
+      :func:`~.rotation.rotation_matrix` function to build R from an axis
+      vector and an angle in degrees.
+
+      A zero angle resets the inclination to the identity matrix.
+
+      :param axis: Rotation axis (need not be a unit vector; it is normalised
+                   internally).
+      :type axis: array-like, shape (3,)
+      :param angle_deg: Rotation angle in degrees.
+      :type angle_deg: float
+
+      :raises ValueError: If ``axis`` is the zero vector.
+
+      .. rubric:: Examples
+
+      >>> g = psic()
+      >>> g.set_inclination(axis=[0, 0, 1], angle_deg=2.0)
+      >>> g.set_inclination(axis=[1, 0, 0], angle_deg=0.0)  # reset
+
+
+
+   .. py:property:: source_type
+      :type: str
+
+
+      ``"xray"`` (default) or ``"neutron"``.
+
+      Controls which energy formula is used by :attr:`energy` and
+      :attr:`energy_units`:
+
+      ``"xray"``
+          Photon energy: E (keV) = hc/λ = 12.39842 / λ (Å).
+
+      ``"neutron"``
+          Fixed-wavelength **reactor** neutron kinetic energy via the de
+          Broglie relation: E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å).
+          Spallation (time-of-flight) sources are out of scope.
+
+      :raises ValueError: If set to a value not in ``("xray", "neutron")``.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.source_type
+      'xray'
+      >>> g.source_type = "neutron"
+      >>> g.source_type
+      'neutron'
+
+      :type: Radiation source type
+
+
+   .. py:method:: stage(name: str) -> ad_hoc_diffractometer.stage.Stage
+
+      Return the Stage with the given name.
+
+
+
+   .. py:method:: summary() -> None
+
+      Print a human-readable summary of the geometry.
+
+
+
+   .. py:property:: surface_normal
+      :type: tuple[float, float, float] | None
+
+
+      Surface normal direction as Miller indices (h, k, l), or ``None``.
+
+      The surface normal defines the direction perpendicular to the sample
+      surface in reciprocal space.  It is used by the surface geometry
+      calculations (:meth:`alpha_i`, :meth:`alpha_f`, :meth:`q_components`,
+      :meth:`is_specular`, :meth:`is_evanescent`).
+
+      When ``None``, the surface calculations fall back to
+      :attr:`azimuthal_reference` if that is set.
+
+      Setting this to ``None`` clears the surface normal.
+      Setting to a non-zero (h, k, l) 3-tuple stores it.
+
+      :raises ValueError: If the supplied value is not a length-3 sequence of numbers,
+          or is the zero vector (0, 0, 0).
+
+      .. rubric:: Examples
+
+      >>> g = psic()
+      >>> g.surface_normal = (0, 0, 1)   # c-axis surface normal
+      >>> g.surface_normal
+      (0.0, 0.0, 1.0)
+      >>> g.surface_normal = None        # clear
+
+
+   .. py:method:: to_dict() -> dict
+
+      Export the complete diffractometer configuration as a
+      JSON-serialisable ``dict``.
+
+      The returned dict captures all geometry state: stage definitions,
+      current motor angles, all samples (including their lattices,
+      reflections, and U/UB matrices), the active sample name,
+      wavelength, azimuthal reference, and identifying metadata.
+
+      :returns: JSON-serialisable mapping with the following top-level keys:
+
+                ``"_meta"``
+                    Sub-dict with ``"software"`` (``"ad_hoc_diffractometer"``),
+                    ``"version"`` (package version string), and
+                    ``"created"`` (ISO-8601 UTC timestamp).
+                ``"name"``
+                    Geometry name (str).
+                ``"description"``
+                    Free-text description (str).
+                ``"wavelength"``
+                    Wavelength in Å (float or None).
+                ``"kappa_alpha_deg"``
+                    Kappa tilt angle in degrees (float or None).
+                ``"azimuthal_reference"``
+                    Miller indices [h, k, l] (list of 3 float, or None).
+                ``"basis"``
+                    Dict mapping physical direction names to [x, y, z] lists.
+                ``"stages"``
+                    List of stage dicts (name, axis, role, parent, angle,
+                    limits).
+                ``"active_sample"``
+                    Name of the currently active sample (str).
+                ``"samples"``
+                    Dict mapping sample names to sample dicts.
+      :rtype: dict
+
+      .. rubric:: Examples
+
+      >>> import json, ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.wavelength = 1.5406
+      >>> d = g.to_dict()
+      >>> assert json.dumps(d)          # must be JSON-serialisable
+      >>> d["name"]
+      'fourcv'
+      >>> d["wavelength"]
+      1.5406
+
+
+
+   .. py:property:: wavelength
+      :type: float | None
+
+
+      Wavelength in Å, or None if not set.
+
+
+   .. py:property:: wavenumber
+      :type: float | None
+
+
+      Wave number k in Å⁻¹, derived from wavelength.
+
+      k (Å⁻¹) = 2π / λ (Å)
+
+      Returns ``None`` when ``wavelength`` is not set.  Setting
+      ``wavenumber`` updates ``wavelength`` accordingly.
+
+      :raises ValueError: If set to a non-positive value.
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.wavelength = 1.5406
+      >>> round(g.wavenumber, 4)
+      4.0774
+      >>> g.wavenumber = 4.0
+      >>> round(g.wavelength, 4)
+      1.5708
+
+
+   .. py:method:: wh(print: bool = True) -> str
+
+      Terse one-screen status string (the SPEC ``wh`` command).
+
+      Shows the current reciprocal-space position (H K L), azimuthal
+      angle ψ, wavelength, and a motor-angle table with SPEC-style
+      column names.  Graceful fallback text is shown for any field
+      that cannot be computed (e.g. no UB matrix or no wavelength).
+
+      :param print: If ``True`` (default), the string is printed to stdout before
+                    being returned.  Pass ``print=False`` to suppress output and
+                    capture the string instead (useful in tests and logging).
+      :type print: bool, optional
+
+      :returns: Multi-line status string.
+      :rtype: str
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.fourcv()
+      >>> g.wavelength = 1.5406
+      >>> g.wh()                          # prints and returns
+      H K L = not available
+      Psi = not available
+      Lambda = 1.5406
+      <BLANKLINE>
+        TwoTheta     Theta       Chi       Phi
+           0.000     0.000     0.000     0.000
+      >>> out = g.wh(print=False)         # capture without printing
+      >>> "Lambda" in out
+      True
+
+      .. rubric:: References
+
+      Align4Pete.log — ``wh`` command outputs, 7-ID-C fourc session,
+      Dec 2020.
+
+
+
+.. py:data:: logger
+
