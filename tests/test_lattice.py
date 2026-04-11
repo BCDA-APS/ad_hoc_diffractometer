@@ -566,10 +566,14 @@ def test_lattice_reciprocal_orthogonality(kwargs, context):
     ],
 )
 def test_lattice_B_cubic_diagonal(a, context):
+    """For cubic, B is diagonal with 2π/a on the diagonal (BL1967 convention)."""
     with context:
         lat = Lattice(a=a)
         B = lat.B
-        np.testing.assert_allclose(np.diag(B), [1 / a, 1 / a, 1 / a], atol=1e-12)
+        twopi_over_a = 2 * np.pi / a
+        np.testing.assert_allclose(
+            np.diag(B), [twopi_over_a, twopi_over_a, twopi_over_a], atol=1e-12
+        )
         off = B - np.diag(np.diag(B))
         np.testing.assert_allclose(off, np.zeros((3, 3)), atol=1e-12)
 
@@ -588,14 +592,14 @@ def test_lattice_B_cubic_diagonal(a, context):
         ),
     ],
 )
-def test_lattice_B_i16_convention(kwargs, context):
-    """Verify (b1, b2, b3) = 2*pi * B.T (I16 convention)."""
+def test_lattice_B_bl1967_convention(kwargs, context):
+    """Verify (b1, b2, b3) = B.T (BL1967 / SPEC convention, 2π included in B)."""
     with context:
         lat = Lattice(**kwargs)
         b1, b2, b3 = lat.reciprocal_lattice_vectors
         B = lat.B
         rec_matrix = np.column_stack([b1, b2, b3])
-        np.testing.assert_allclose(rec_matrix, 2 * np.pi * B.T, atol=1e-10)
+        np.testing.assert_allclose(rec_matrix, B.T, atol=1e-10)
 
 
 # ---------------------------------------------------------------------------

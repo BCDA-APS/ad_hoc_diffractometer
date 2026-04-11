@@ -801,9 +801,10 @@ def test_two_refl_collinear_phi_frame_raises(psic_geom):
 #   r2: hkl=(0,1,0), eta=30, chi=0,  phi=90 → Q_phi ‖ YHAT = (0,1,0)
 #   r3: hkl=(0,0,1), eta=30, chi=90, phi=30 → Q_phi ‖ ZHAT = (0,0,1)
 #
-# For this geometry λ=2π, a=1 → B=I, so BL1967 must recover U=I exactly.
+# For this geometry λ=2π, a=2π → B=I (BL1967 convention: B includes 2π,
+# so B = (2π/a)*I = I when a=2π).  BL1967 must recover U=I exactly.
 
-_LAT_A1 = Lattice(a=1.0)  # cubic a=1 → B = identity
+_LAT_A1 = Lattice(a=_TWO_PI)  # cubic a=2π → B = identity (BL1967 convention)
 _R3_HKL = (0, 0, 1)
 _R3_ANG = {"mu": 0.0, "eta": 30.0, "chi": 90.0, "phi": 30.0, "nu": 0.0, "delta": 60.0}
 
@@ -811,10 +812,12 @@ _R3_ANG = {"mu": 0.0, "eta": 30.0, "chi": 90.0, "phi": 30.0, "nu": 0.0, "delta":
 @pytest.fixture
 def three_refl_geom():
     """
-    psic geometry with cubic a=1 lattice (B=I) and three orthogonal reflections.
+    psic geometry with cubic a=2π lattice (B=I with BL1967 convention)
+    and three orthogonal reflections.
 
     Motor angles are constructed so that U = I is the exact solution
     (Q_phi_i = B @ h_i = h_i for each reflection).
+    wavelength = 2π so that |Q| = (2π/λ)*2sin(30°) = 1, matching B @ hkl.
     """
     g = psic()
     g.wavelength = _TWO_PI
@@ -871,7 +874,7 @@ def test_three_refl_U_identity_for_aligned_crystal(three_refl_geom):
 
 
 def test_three_refl_UB_equals_B_for_identity_crystal(three_refl_geom):
-    """When U=I and B=I, UB must equal B = I."""
+    """When U=I and B=I (a=2π), UB must equal B = I."""
     UB = ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "r3")
     np.testing.assert_allclose(UB, three_refl_geom.sample.lattice.B, atol=1e-10)
 
@@ -1264,3 +1267,110 @@ def test_ub_from_three_left_handed_H_logs_warning(caplog):
         "left-handed" in r.message.lower() or "det(H)" in r.message
         for r in caplog.records
     )
+
+
+# ---------------------------------------------------------------------------
+# Real-wavelength inverse() round-trip (regression for 2π convention fix)
+# ---------------------------------------------------------------------------
+#
+# These tests verify that geometry.inverse() returns true Miller indices
+# (not hkl × 2π) when the UB matrix is computed from real motor angles
+# at physical wavelengths.  This requires the B matrix to include the 2π
+# factor (BL1967 / SPEC convention) so that UB @ hkl = Q_phi exactly.
+
+
+def test_inverse_real_wavelength_fourcv_sapphire():
+    """
+    inverse() at the measured (006) position of sapphire (fourcv) returns
+    true Miller indices (0, 0, 6), not (0, 0, 37.7).
+
+    Motor angles from Walko APS 7-ID-C session, December 2020.
+    """
+
+    from ad_hoc_diffractometer import Lattice
+    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer import ub_from_two_reflections_bl1967
+
+    g = fourcv()
+    g.wavelength = 1.5498
+    g.sample.lattice = Lattice(
+        a=4.785, b=4.785, c=12.991, alpha=90.0, beta=90.0, gamma=120.0
+    )
+    g.add_reflection(
+        "or1",
+        hkl=(0, 0, 6),
+        angles={"ttheta": 41.9419, "omega": 20.97, "chi": 90.0, "phi": 0.0},
+        wavelength=1.5498,
+    )
+    g.add_reflection(
+        "or2",
+        hkl=(1, 0, 0),
+        angles={"ttheta": 60.0, "omega": 30.0, "chi": 0.0, "phi": 0.0},
+        wavelength=1.5498,
+    )
+    g.sample.reflections.setor1("or1")
+    g.sample.reflections.setor2("or2")
+    ub_from_two_reflections_bl1967(g.sample)
+
+    hkl = g.inverse({"ttheta": 41.9419, "omega": 20.97, "chi": 90.0, "phi": 0.0})
+    np.testing.assert_allclose(hkl, [0.0, 0.0, 6.0], atol=1e-3)
+
+
+def test_inverse_real_wavelength_psic_silicon():
+    """
+    inverse() round-trip for silicon on psic with real wavelength (Cu Kα).
+
+    Two reflections at their true Bragg angles are used to compute UB.
+    inverse() is then verified to return the correct Miller indices.
+
+    Silicon: a = 5.4310 Å, λ = 1.5406 Å (Cu Kα).
+    With the BL1967 B-matrix convention (|B @ hkl| = 2π/d), the round-trip
+    inverse(angles_at_Bragg) must return true Miller indices.
+    """
+    import math
+
+    from ad_hoc_diffractometer import Lattice
+    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer import ub_from_two_reflections_bl1967
+
+    g = psic()
+    g.wavelength = 1.5406  # Cu Kα
+    g.sample.lattice = Lattice(a=5.4310)
+    B = g.sample.lattice.B
+
+    def _tth(hkl):
+        d = 2.0 * math.pi / float(np.linalg.norm(B @ np.array(hkl, dtype=float)))
+        return 2.0 * math.degrees(math.asin(g.wavelength / (2.0 * d)))
+
+    # (006) equivalent: use (0,0,4) — c-axis along phi-axis (chi=90 brings it in)
+    # Use two non-parallel reflections at their true Bragg positions.
+    tth1 = _tth([0, 0, 2])  # c-axis reflection, chi=90 to enter scattering plane
+    tth2 = _tth([2, 0, 0])  # a-axis reflection, chi=90 phi=90
+
+    r1_angles = {
+        "mu": 0.0,
+        "eta": tth1 / 2,
+        "chi": 90.0,
+        "phi": 0.0,
+        "nu": 0.0,
+        "delta": tth1,
+    }
+    r2_angles = {
+        "mu": 0.0,
+        "eta": tth2 / 2,
+        "chi": 90.0,
+        "phi": 90.0,
+        "nu": 0.0,
+        "delta": tth2,
+    }
+
+    g.add_reflection("r1", hkl=(0, 0, 2), angles=r1_angles, wavelength=g.wavelength)
+    g.add_reflection("r2", hkl=(2, 0, 0), angles=r2_angles, wavelength=g.wavelength)
+    g.sample.reflections.setor1("r1")
+    g.sample.reflections.setor2("r2")
+    ub_from_two_reflections_bl1967(g.sample)
+
+    hkl1 = g.inverse(r1_angles)
+    hkl2 = g.inverse(r2_angles)
+    np.testing.assert_allclose(hkl1, [0.0, 0.0, 2.0], atol=1e-6)
+    np.testing.assert_allclose(hkl2, [2.0, 0.0, 0.0], atol=1e-6)
