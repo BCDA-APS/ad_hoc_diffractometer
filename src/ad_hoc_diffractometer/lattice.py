@@ -549,10 +549,21 @@ class Lattice:
     @property
     def B(self) -> np.ndarray:
         """
-        B matrix in Å⁻¹ (no 2π factor).
+        B matrix in Å⁻¹ (with 2π factor, Busing & Levy 1967 / SPEC convention).
 
-        Transforms Miller indices h = (h, k, l) to Cartesian crystal-frame
-        coordinates:  hc = B @ h.  Cached until a parameter changes.
+        Transforms Miller indices **h** = (h, k, l) to the scattering vector
+        in Cartesian crystal-frame coordinates:
+
+            Q_c = B @ h
+
+        ``|B @ h| = 2π / d_hkl``.  The orthogonality condition is
+        ``bᵢ · aⱼ = 2π δᵢⱼ``.
+
+        This follows the Busing & Levy (1967) eq. 3 and SPEC convention.
+        Some other packages (FullProf, CrysFML, hkl with ``tau=1``) use a
+        no-2π variant where ``bᵢ · aⱼ = δᵢⱼ`` and ``|B @ h| = 1/d_hkl``.
+
+        Cached until a lattice parameter changes.
         """
         if self._B is None:
             b1, b2, b3 = self.reciprocal_lattice_vectors
@@ -770,29 +781,34 @@ def b_matrix(
     """
     Compute the B matrix from the reciprocal lattice vectors.
 
-    The B matrix transforms Miller indices h = (h, k, l) to Cartesian
-    coordinates in the crystal frame (Busing & Levy, 1967, eq. 3):
+    The B matrix transforms Miller indices **h** = (h, k, l) to the
+    scattering vector in Cartesian crystal-frame coordinates
+    (Busing & Levy, 1967, eq. 3):
 
-        hc = B . h
+        Q_c = B @ h
 
-    Following the I16 diffractometer convention:
+    The columns of B are the reciprocal lattice vectors **b**₁, **b**₂,
+    **b**₃ (each including the 2π factor), so:
 
-        (b1, b2, b3) = 2*pi * B.T
+        B.T = [b1, b2, b3]    (column-stack of the reciprocal vectors)
 
-    so:
+    The orthogonality condition is ``bᵢ · aⱼ = 2π δᵢⱼ``, and
+    ``|B @ h| = 2π / d_hkl``.
 
-        2*pi * B.T @ h = h[0]*b1 + h[1]*b2 + h[2]*b3
-
-    B is not in general orthonormal (the crystal need not be cubic).
+    This is the Busing & Levy (1967) and SPEC convention.  Some packages
+    (FullProf, CrysFML, parts of CCP4, the hkl library with ``tau=1``)
+    use the alternative no-2π convention ``bᵢ · aⱼ = δᵢⱼ``, which gives
+    a B matrix smaller by a factor of 2π.
 
     Parameters
     ----------
     b1, b2, b3 : numpy.ndarray, shape (3,)
-        Reciprocal lattice vectors in inverse Angstroms (with 2*pi factor).
+        Reciprocal lattice vectors in inverse Angstroms (with 2π factor),
+        as returned by :func:`reciprocal_vectors`.
 
     Returns
     -------
     B : numpy.ndarray, shape (3, 3)
-        B matrix in inverse Angstroms (no 2*pi factor).
+        B matrix in inverse Angstroms (with 2π factor, BL1967 convention).
     """
-    return np.column_stack([b1, b2, b3]).T / (2 * np.pi)
+    return np.column_stack([b1, b2, b3]).T

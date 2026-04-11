@@ -326,6 +326,20 @@ how stages are declared.
       skip path unchanged
 - [x] Module docstring updated to document the uniqueness requirement
 
+### 2π convention fix — `Lattice.B` and `b_matrix()` ([#78](https://github.com/prjemian/ad_hoc_diffractometer/issues/78))
+
+- [x] `Lattice.B` and `b_matrix()` now include the 2π factor (BL1967 / SPEC
+      convention): `|B @ hkl| = 2π/d_hkl`, satisfying `bᵢ · aⱼ = 2π δᵢⱼ`
+- [x] `UB @ hkl = Q_phi` now holds with real wavelengths; `inverse()` and
+      `wh()` return true Miller indices
+- [x] `d-spacing` formula updated: `d = 2π / |B @ hkl|`
+- [x] Docstring on `Lattice.B` and `b_matrix()` notes the alternative no-2π
+      convention used by FullProf, CrysFML, and the hkl library (`tau=1`)
+- [x] Two real-wavelength regression tests added to `test_orientation.py`
+- [x] `fourcv_alignment_howto.ipynb` updated: `bragg_angles()` helper uses
+      `d = 2π / |B @ hkl|`; 2π caveat removed; `wh()` shows `(0, 0, 6)` ✓
+- [x] 1011 tests; 100% coverage
+
 ### 3.3 Detector geometry parameters ([#10](https://github.com/prjemian/ad_hoc_diffractometer/issues/10))
 
 - [ ] Sample-to-detector distance (mm or m)
