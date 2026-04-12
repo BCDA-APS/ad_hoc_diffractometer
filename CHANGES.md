@@ -14,6 +14,11 @@ for the full issue tracker.
   `setor1()` to match the SPEC convention (primary = or0, secondary = or1).
   Update all call sites: `setor1("x")` → `setor0("x")`;
   `setor2("x")` → `setor1("x")`. (#120)
+- `hkl_trajectory()`, `psi_trajectory()`, and `trajectory_plan()` are now
+  **generators** (they `yield` one point dict at a time instead of returning a
+  list).  Callers that iterate with `for pt in result:` are unaffected.
+  Callers that index the result directly (e.g. `result[0]`) must wrap the
+  call: `list(hkl_trajectory(...))`. (#115)
 
 ### Added
 
