@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>fourch — Four-Circle Eulerian (Laboratory) &#8212; ad_hoc_diffractometer 0.4</title>
+    <title>fourch — Eulerian Four-Circle (Laboratory) &#8212; ad_hoc_diffractometer 0.4</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=4ef11813"></script>
+    <script src="../_static/documentation_options.js?v=e67bb708"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -60,8 +60,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="psic — Six-Circle 4S+2D (You 1999)" href="psic.html" />
-    <link rel="prev" title="fourcv — Four-Circle Eulerian (Synchrotron)" href="fourcv.html" />
+    <link rel="next" title="fivec — Eulerian Five-Circle (Vlieg et al. 1987)" href="fivec.html" />
+    <link rel="prev" title="fourcv — Eulerian Four-Circle (Synchrotron)" href="fourcv.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
@@ -472,14 +472,14 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Geometry Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="fourcv.html">fourcv — Four-Circle Eulerian (Synchrotron)</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">fourch — Four-Circle Eulerian (Laboratory)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="psic.html">psic — Six-Circle 4S+2D (You 1999)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sixc.html">sixc — Six-Circle Surface (Lohmeier &amp; Vlieg 1993)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fivec.html">fivec — Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fourcv.html">fourcv — Eulerian Four-Circle (Synchrotron)</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">fourch — Eulerian Four-Circle (Laboratory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fivec.html">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="psic.html">psic — Eulerian Six-Circle, 4S+2D (You 1999)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sixc.html">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kappa4cv.html">kappa4cv — Kappa Four-Circle (Synchrotron)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kappa4ch.html">kappa4ch — Kappa Four-Circle (Laboratory)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kappa6c.html">kappa6c — Six-Circle Kappa (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kappa6c.html">kappa6c — Kappa Six-Circle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zaxis.html">zaxis — Z-Axis Four-Circle (Surface)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
 </ul>
@@ -532,7 +532,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Geometry Reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">fourch — Four-Circle Eulerian (Laboratory)</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">fourch — Eulerian Four-Circle (Laboratory)</span></li>
   </ul>
 </nav>
 </div>
@@ -549,8 +549,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="fourch-four-circle-eulerian-laboratory">
-<span id="geometry-fourch"></span><h1>fourch — Four-Circle Eulerian (Laboratory)<a class="headerlink" href="#fourch-four-circle-eulerian-laboratory" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="fourch-eulerian-four-circle-laboratory">
+<span id="geometry-fourch"></span><h1>fourch — Eulerian Four-Circle (Laboratory)<a class="headerlink" href="#fourch-eulerian-four-circle-laboratory" title="Link to this heading">#</a></h1>
 <p>Busing &amp; Levy (1967) four-circle Eulerian diffractometer, horizontal scattering plane. ω and 2θ rotate about the vertical axis. Standard laboratory convention.</p>
 <p><strong>Walko (2016) designation:</strong> S3D1</p>
 <p><strong>Coordinate basis:</strong> Busing &amp; Levy (<code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code>): lateral=+x, longitudinal=+y, vertical=+z.</p>
@@ -563,6 +563,12 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
+</section>
+<section id="pre-built-geometry-definition">
+<h2>Pre-built geometry definition<a class="headerlink" href="#pre-built-geometry-definition" title="Link to this heading">#</a></h2>
+<p>This geometry is defined by the <code class="xref py py-func docutils literal notranslate"><span class="pre">fourch()</span></code> factory
+function — see the <a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L556">source</a> for the complete stage
+and mode configuration.</p>
 </section>
 <section id="stage-layout">
 <h2>Stage layout<a class="headerlink" href="#stage-layout" title="Link to this heading">#</a></h2>
@@ -609,13 +615,31 @@
 </section>
 <section id="diffraction-modes">
 <h2>Diffraction modes<a class="headerlink" href="#diffraction-modes" title="Link to this heading">#</a></h2>
-<p>Available modes: <code class="docutils literal notranslate"><span class="pre">bisecting</span></code>, <code class="docutils literal notranslate"><span class="pre">fixed_chi</span></code>, <code class="docutils literal notranslate"><span class="pre">fixed_phi</span></code></p>
+<p>Set the active mode with <code class="docutils literal notranslate"><span class="pre">g.mode_name</span> <span class="pre">=</span> <span class="pre">&quot;&lt;mode&gt;&quot;</span></code>. See <a class="reference internal" href="../howto/modes.html"><span class="doc">Switch Diffraction Modes</span></a> for usage details and <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DiffractionMode" title="ad_hoc_diffractometer.mode.DiffractionMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code></a> for the base class.</p>
+<section id="bisecting">
+<h3><code class="docutils literal notranslate"><span class="pre">bisecting</span></code><a class="headerlink" href="#bisecting" title="Link to this heading">#</a></h3>
+<p><strong>Class:</strong> <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectingMode" title="ad_hoc_diffractometer.mode.BisectingMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code></a> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L215">source</a>)</p>
+<p>The bisecting condition: the sample stage angle equals half the detector angle, placing the sample symmetrically between the incident and diffracted beams.</p>
+</section>
+<section id="fixed-chi">
+<h3><code class="docutils literal notranslate"><span class="pre">fixed_chi</span></code><a class="headerlink" href="#fixed-chi" title="Link to this heading">#</a></h3>
+<p><strong>Class:</strong> <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.FixedAngleMode" title="ad_hoc_diffractometer.mode.FixedAngleMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></a> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156">source</a>)</p>
+<p>Holds <code class="docutils literal notranslate"><span class="pre">chi</span></code> fixed at 90.0° during <code class="docutils literal notranslate"><span class="pre">forward()</span></code>. All other free stages are computed by the solver.</p>
+</section>
+<section id="fixed-phi">
+<h3><code class="docutils literal notranslate"><span class="pre">fixed_phi</span></code><a class="headerlink" href="#fixed-phi" title="Link to this heading">#</a></h3>
+<p><strong>Class:</strong> <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.FixedAngleMode" title="ad_hoc_diffractometer.mode.FixedAngleMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></a> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156">source</a>)</p>
+<p>Holds <code class="docutils literal notranslate"><span class="pre">phi</span></code> fixed at 0.0° during <code class="docutils literal notranslate"><span class="pre">forward()</span></code>. All other free stages are computed by the solver.</p>
+</section>
 </section>
 <section id="api-reference">
 <h2>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">fourch()</span></code></p></li>
 <li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DiffractionMode" title="ad_hoc_diffractometer.mode.DiffractionMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectingMode" title="ad_hoc_diffractometer.mode.BisectingMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.FixedAngleMode" title="ad_hoc_diffractometer.mode.FixedAngleMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></a></p></li>
 </ul>
 </section>
 <section id="references">
@@ -643,15 +667,15 @@
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">fourcv — Four-Circle Eulerian (Synchrotron)</p>
+        <p class="prev-next-title">fourcv — Eulerian Four-Circle (Synchrotron)</p>
       </div>
     </a>
     <a class="right-next"
-       href="psic.html"
+       href="fivec.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">psic — Six-Circle 4S+2D (You 1999)</p>
+        <p class="prev-next-title">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -675,8 +699,14 @@
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick start</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-built-geometry-definition">Pre-built geometry definition</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-layout">Stage layout</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-modes">Diffraction modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-modes">Diffraction modes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting"><code class="docutils literal notranslate"><span class="pre">bisecting</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-chi"><code class="docutils literal notranslate"><span class="pre">fixed_chi</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-phi"><code class="docutils literal notranslate"><span class="pre">fixed_phi</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API reference</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>

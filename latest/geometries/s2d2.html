@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=4ef11813"></script>
+    <script src="../_static/documentation_options.js?v=e67bb708"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -472,14 +472,14 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Geometry Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="fourcv.html">fourcv — Four-Circle Eulerian (Synchrotron)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fourch.html">fourch — Four-Circle Eulerian (Laboratory)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="psic.html">psic — Six-Circle 4S+2D (You 1999)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sixc.html">sixc — Six-Circle Surface (Lohmeier &amp; Vlieg 1993)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fivec.html">fivec — Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fourcv.html">fourcv — Eulerian Four-Circle (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fourch.html">fourch — Eulerian Four-Circle (Laboratory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fivec.html">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="psic.html">psic — Eulerian Six-Circle, 4S+2D (You 1999)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sixc.html">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kappa4cv.html">kappa4cv — Kappa Four-Circle (Synchrotron)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kappa4ch.html">kappa4ch — Kappa Four-Circle (Laboratory)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kappa6c.html">kappa6c — Six-Circle Kappa (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kappa6c.html">kappa6c — Kappa Six-Circle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zaxis.html">zaxis — Z-Axis Four-Circle (Surface)</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
 </ul>
@@ -564,6 +564,12 @@
 </pre></div>
 </div>
 </section>
+<section id="pre-built-geometry-definition">
+<h2>Pre-built geometry definition<a class="headerlink" href="#pre-built-geometry-definition" title="Link to this heading">#</a></h2>
+<p>This geometry is defined by the <code class="xref py py-func docutils literal notranslate"><span class="pre">s2d2()</span></code> factory
+function — see the <a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L921">source</a> for the complete stage
+and mode configuration.</p>
+</section>
 <section id="stage-layout">
 <h2>Stage layout<a class="headerlink" href="#stage-layout" title="Link to this heading">#</a></h2>
 <p><strong>Sample stages (base first):</strong></p>
@@ -609,13 +615,17 @@
 </section>
 <section id="diffraction-modes">
 <h2>Diffraction modes<a class="headerlink" href="#diffraction-modes" title="Link to this heading">#</a></h2>
-<p>Available modes: <em>(none defined)</em></p>
+<p><em>(No modes defined for this geometry.  All stages are free during</em>
+<em><code class="docutils literal notranslate"><span class="pre">forward()</span></code> — the solver explores the full solution space.)</em></p>
 </section>
 <section id="api-reference">
 <h2>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">s2d2()</span></code></p></li>
 <li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DiffractionMode" title="ad_hoc_diffractometer.mode.DiffractionMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectingMode" title="ad_hoc_diffractometer.mode.BisectingMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.FixedAngleMode" title="ad_hoc_diffractometer.mode.FixedAngleMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></a></p></li>
 </ul>
 </section>
 <section id="references">
@@ -675,6 +685,7 @@
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick start</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-built-geometry-definition">Pre-built geometry definition</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-layout">Stage layout</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-modes">Diffraction modes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API reference</a></li>

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=4ef11813"></script>
+    <script src="../_static/documentation_options.js?v=e67bb708"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -60,7 +60,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fourcv — Four-Circle Eulerian (Synchrotron)" href="fourcv.html" />
+    <link rel="next" title="fourcv — Eulerian Four-Circle (Synchrotron)" href="fourcv.html" />
     <link rel="prev" title="Align a Four-Circle Diffractometer (fourcv)" href="../howto/fourcv_alignment_howto.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -472,14 +472,14 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Geometry Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="fourcv.html">fourcv — Four-Circle Eulerian (Synchrotron)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fourch.html">fourch — Four-Circle Eulerian (Laboratory)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="psic.html">psic — Six-Circle 4S+2D (You 1999)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sixc.html">sixc — Six-Circle Surface (Lohmeier &amp; Vlieg 1993)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fivec.html">fivec — Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fourcv.html">fourcv — Eulerian Four-Circle (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fourch.html">fourch — Eulerian Four-Circle (Laboratory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fivec.html">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="psic.html">psic — Eulerian Six-Circle, 4S+2D (You 1999)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sixc.html">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kappa4cv.html">kappa4cv — Kappa Four-Circle (Synchrotron)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kappa4ch.html">kappa4ch — Kappa Four-Circle (Laboratory)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kappa6c.html">kappa6c — Six-Circle Kappa (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kappa6c.html">kappa6c — Kappa Six-Circle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zaxis.html">zaxis — Z-Axis Four-Circle (Surface)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
 </ul>
@@ -566,7 +566,7 @@ rotation axis.</p>
 <svg version="4.0.0.63c5cb3" width="3.0em" height="3.0em" class="sd-material-icon sd-material-icon-rotate_right" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M15.55 5.55L11 1v3.07C7.06 4.56 4 7.92 4 12s3.05 7.44 7 7.93v-2.02c-2.84-.48-5-2.94-5-5.91s2.16-5.43 5-5.91V10l4.55-4.45zM19.93 11c-.17-1.39-.72-2.73-1.62-3.89l-1.42 1.42c.54.75.88 1.6 1.02 2.47h2.02zM13 17.9v2.02c1.39-.17 2.74-.71 3.9-1.61l-1.44-1.44c-.75.54-1.59.89-2.46 1.03zm3.89-2.42l1.42 1.41c.9-1.16 1.45-2.5 1.62-3.89h-2.02c-.14.87-.48 1.72-1.02 2.48z"></path></svg> Synchrotron</div>
 <p class="sd-card-text">Vertical scattering plane — ω and 2θ rotate about the lateral axis.</p>
 </div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="fourcv.html"><span class="doc">fourcv — Four-Circle Eulerian (Synchrotron)</span></a></div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="fourcv.html"><span class="doc">fourcv — Eulerian Four-Circle (Synchrotron)</span></a></div>
 </div>
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
@@ -575,17 +575,27 @@ rotation axis.</p>
 <svg version="4.0.0.63c5cb3" width="3.0em" height="3.0em" class="sd-material-icon sd-material-icon-rotate_right" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M15.55 5.55L11 1v3.07C7.06 4.56 4 7.92 4 12s3.05 7.44 7 7.93v-2.02c-2.84-.48-5-2.94-5-5.91s2.16-5.43 5-5.91V10l4.55-4.45zM19.93 11c-.17-1.39-.72-2.73-1.62-3.89l-1.42 1.42c.54.75.88 1.6 1.02 2.47h2.02zM13 17.9v2.02c1.39-.17 2.74-.71 3.9-1.61l-1.44-1.44c-.75.54-1.59.89-2.46 1.03zm3.89-2.42l1.42 1.41c.9-1.16 1.45-2.5 1.62-3.89h-2.02c-.14.87-.48 1.72-1.02 2.48z"></path></svg> Laboratory</div>
 <p class="sd-card-text">Horizontal scattering plane — ω and 2θ rotate about the vertical axis.</p>
 </div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="fourch.html"><span class="doc">fourch — Four-Circle Eulerian (Laboratory)</span></a></div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="fourch.html"><span class="doc">fourch — Eulerian Four-Circle (Laboratory)</span></a></div>
 </div>
 </div>
 </div>
 </section>
-<section id="eulerian-six-circle">
-<h2>Eulerian six-circle<a class="headerlink" href="#eulerian-six-circle" title="Link to this heading">#</a></h2>
-<p>A four-circle Eulerian sample stack with an additional base stage and a
-two-axis detector arm.</p>
+<section id="eulerian-five-and-six-circle">
+<h2>Eulerian five- and six-circle<a class="headerlink" href="#eulerian-five-and-six-circle" title="Link to this heading">#</a></h2>
+<p>A four-circle Eulerian sample stack extended with one or two additional
+base or detector stages.</p>
 <div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
 <div class="sd-row sd-row-cols-3 sd-row-cols-xs-3 sd-row-cols-sm-3 sd-row-cols-md-3 sd-row-cols-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+<svg version="4.0.0.63c5cb3" width="3.0em" height="3.0em" class="sd-material-icon sd-material-icon-rotate_right" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M15.55 5.55L11 1v3.07C7.06 4.56 4 7.92 4 12s3.05 7.44 7 7.93v-2.02c-2.84-.48-5-2.94-5-5.91s2.16-5.43 5-5.91V10l4.55-4.45zM19.93 11c-.17-1.39-.72-2.73-1.62-3.89l-1.42 1.42c.54.75.88 1.6 1.02 2.47h2.02zM13 17.9v2.02c1.39-.17 2.74-.71 3.9-1.61l-1.44-1.44c-.75.54-1.59.89-2.46 1.03zm3.89-2.42l1.42 1.41c.9-1.16 1.45-2.5 1.62-3.89h-2.02c-.14.87-.48 1.72-1.02 2.48z"></path></svg> Five-circle (fivec)</div>
+<p class="sd-card-text">fourcv on a vertical mu base; sample and detector
+coupled through mu. Vlieg et al. (1987).</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="fivec.html"><span class="doc">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</span></a></div>
+</div>
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
 <div class="sd-card-body docutils">
@@ -594,7 +604,7 @@ two-axis detector arm.</p>
 <p class="sd-card-text">Four sample stages (mu, eta, chi, and phi) and two independent detector
 stages (nu, delta). You (1999).</p>
 </div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="psic.html"><span class="doc">psic — Six-Circle 4S+2D (You 1999)</span></a></div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="psic.html"><span class="doc">psic — Eulerian Six-Circle, 4S+2D (You 1999)</span></a></div>
 </div>
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
@@ -604,17 +614,7 @@ stages (nu, delta). You (1999).</p>
 <p class="sd-card-text">Sample and detector share a common alpha base stage.
 Lohmeier &amp; Vlieg (1993).</p>
 </div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="sixc.html"><span class="doc">sixc — Six-Circle Surface (Lohmeier &amp; Vlieg 1993)</span></a></div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
-<div class="sd-card-body docutils">
-<div class="sd-card-title sd-font-weight-bold docutils">
-<svg version="4.0.0.63c5cb3" width="3.0em" height="3.0em" class="sd-material-icon sd-material-icon-rotate_right" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M15.55 5.55L11 1v3.07C7.06 4.56 4 7.92 4 12s3.05 7.44 7 7.93v-2.02c-2.84-.48-5-2.94-5-5.91s2.16-5.43 5-5.91V10l4.55-4.45zM19.93 11c-.17-1.39-.72-2.73-1.62-3.89l-1.42 1.42c.54.75.88 1.6 1.02 2.47h2.02zM13 17.9v2.02c1.39-.17 2.74-.71 3.9-1.61l-1.44-1.44c-.75.54-1.59.89-2.46 1.03zm3.89-2.42l1.42 1.41c.9-1.16 1.45-2.5 1.62-3.89h-2.02c-.14.87-.48 1.72-1.02 2.48z"></path></svg> Five-circle</div>
-<p class="sd-card-text">Four-circle (fourcv) on a vertical mu base; sample and detector
-coupled through mu. Vlieg et al. (1987).</p>
-</div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="fivec.html"><span class="doc">fivec — Five-Circle (Vlieg et al. 1987)</span></a></div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="sixc.html"><span class="doc">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</span></a></div>
 </div>
 </div>
 </div>
@@ -651,7 +651,7 @@ obstructions.</p>
 <svg version="4.0.0.63c5cb3" width="3.0em" height="3.0em" class="sd-material-icon sd-material-icon-rotate_right" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M15.55 5.55L11 1v3.07C7.06 4.56 4 7.92 4 12s3.05 7.44 7 7.93v-2.02c-2.84-.48-5-2.94-5-5.91s2.16-5.43 5-5.91V10l4.55-4.45zM19.93 11c-.17-1.39-.72-2.73-1.62-3.89l-1.42 1.42c.54.75.88 1.6 1.02 2.47h2.02zM13 17.9v2.02c1.39-.17 2.74-.71 3.9-1.61l-1.44-1.44c-.75.54-1.59.89-2.46 1.03zm3.89-2.42l1.42 1.41c.9-1.16 1.45-2.5 1.62-3.89h-2.02c-.14.87-.48 1.72-1.02 2.48z"></path></svg> Six-circle</div>
 <p class="sd-card-text">Psic-style outer axes (mu, nu) with kappa inner sample stages.</p>
 </div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="kappa6c.html"><span class="doc">kappa6c — Six-Circle Kappa (Synchrotron)</span></a></div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="kappa6c.html"><span class="doc">kappa6c — Kappa Six-Circle</span></a></div>
 </div>
 </div>
 </div>
@@ -711,7 +711,7 @@ base stage. Bloch (1985).</p>
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">fourcv — Four-Circle Eulerian (Synchrotron)</p>
+        <p class="prev-next-title">fourcv — Eulerian Four-Circle (Synchrotron)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -735,7 +735,7 @@ base stage. Bloch (1985).</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#eulerian-four-circle">Eulerian four-circle</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#eulerian-six-circle">Eulerian six-circle</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#eulerian-five-and-six-circle">Eulerian five- and six-circle</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kappa">Kappa</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#surface-special">Surface / special</a></li>
 </ul>
