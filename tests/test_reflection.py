@@ -6,7 +6,7 @@ Unit tests for ad_hoc_diffractometer.reflection.
 Covers:
   - Reflection dataclass: construction, normalisation, validation, __eq__, __repr__
   - ReflectionList: add, remove, clear, dict-like interface,
-    setor1/setor2, orienting_reflections, cross-geometry safety
+    setor0/setor1, orienting_reflections, cross-geometry safety
   - AdHocDiffractometer.add_reflection() convenience wrapper
   - Reflection.to_dict() / from_dict(): hkl, angles, wavelength, name
   - ReflectionList.to_dict() / from_dict(): ordering, or1/or2 preserved
@@ -328,7 +328,7 @@ def test_iter_ordering(rl):
 
 def test_delitem_clears_or_designation(rl):
     rl.add("r1", hkl=(1, 0, 0), angles={})
-    rl.setor1("r1")
+    rl.setor0("r1")
     del rl["r1"]
     assert "r1" not in rl
     assert rl.orienting_reflections == []
@@ -360,15 +360,15 @@ def test_remove_then_readd(rl):
 def test_clear(rl):
     rl.add("r1", hkl=(1, 0, 0), angles={})
     rl.add("r2", hkl=(0, 1, 0), angles={})
-    rl.setor1("r1")
-    rl.setor2("r2")
+    rl.setor0("r1")
+    rl.setor1("r2")
     rl.clear()
     assert len(rl) == 0
     assert rl.orienting_reflections == []
 
 
 # ---------------------------------------------------------------------------
-# setor1 / setor2 / orienting_reflections
+# setor0 / setor1 / orienting_reflections
 # ---------------------------------------------------------------------------
 
 
@@ -376,89 +376,94 @@ def test_orienting_reflections_empty_by_default(rl):
     assert rl.orienting_reflections == []
 
 
-def test_setor1_by_name(rl):
+def test_setor0_by_name(rl):
     rl.add("r1", hkl=(1, 0, 0), angles={})
-    rl.setor1("r1")
+    rl.setor0("r1")
     ors = rl.orienting_reflections
     assert len(ors) == 1
     assert ors[0].name == "r1"
 
 
-def test_setor1_by_object(rl):
+def test_setor0_by_object(rl):
     r = rl.add("r1", hkl=(1, 0, 0), angles={})
-    rl.setor1(r)
+    rl.setor0(r)
     assert rl.orienting_reflections[0].name == "r1"
 
 
-def test_setor2_by_name(rl):
+def test_setor1_by_name(rl):
     rl.add("r1", hkl=(1, 0, 0), angles={})
     rl.add("r2", hkl=(0, 1, 0), angles={})
-    rl.setor1("r1")
-    rl.setor2("r2")
+    rl.setor0("r1")
+    rl.setor1("r2")
     ors = rl.orienting_reflections
     assert len(ors) == 2
     assert ors[0].name == "r1"
     assert ors[1].name == "r2"
 
 
-def test_setor2_by_object(rl):
+def test_setor1_by_object(rl):
     rl.add("r1", hkl=(1, 0, 0), angles={})
     r2 = rl.add("r2", hkl=(0, 1, 0), angles={})
-    rl.setor1("r1")
-    rl.setor2(r2)
+    rl.setor0("r1")
+    rl.setor1(r2)
     assert rl.orienting_reflections[1].name == "r2"
 
 
-def test_only_or1_set(rl):
+def test_only_or0_set(rl):
     rl.add("r1", hkl=(1, 0, 0), angles={})
-    rl.setor1("r1")
+    rl.setor0("r1")
     assert len(rl.orienting_reflections) == 1
 
 
-def test_setor1_replaces_previous(rl):
+def test_setor0_replaces_previous(rl):
     rl.add("r1", hkl=(1, 0, 0), angles={})
     rl.add("r2", hkl=(0, 1, 0), angles={})
-    rl.setor1("r1")
-    rl.setor1("r2")
+    rl.setor0("r1")
+    rl.setor0("r2")
     ors = rl.orienting_reflections
     assert len(ors) == 1
     assert ors[0].name == "r2"
     assert "r1" in rl
 
 
-def test_setor2_replaces_previous(rl):
+def test_setor1_replaces_previous(rl):
     rl.add("r1", hkl=(1, 0, 0), angles={})
     rl.add("r2", hkl=(0, 1, 0), angles={})
     rl.add("r3", hkl=(0, 0, 1), angles={})
-    rl.setor1("r1")
-    rl.setor2("r2")
-    rl.setor2("r3")
+    rl.setor0("r1")
+    rl.setor1("r2")
+    rl.setor1("r3")
     ors = rl.orienting_reflections
     assert len(ors) == 2
     assert ors[1].name == "r3"
     assert "r2" in rl
 
 
-def test_setor2_was_or1_clears_or1(rl):
-    """Moving a reflection from or1 to or2 clears the primary slot."""
+def test_setor1_was_or0_clears_or0(rl):
+    """Moving a reflection from or0 to or1 clears the primary slot."""
     rl.add("r1", hkl=(1, 0, 0), angles={})
-    rl.setor1("r1")
-    rl.setor2("r1")  # r1 moves to or2; or1 becomes None
+    rl.setor0("r1")
+    rl.setor1("r1")  # r1 moves to or1 slot; or0 becomes None
     ors = rl.orienting_reflections
     assert len(ors) == 1
     assert ors[0].name == "r1"
 
 
-def test_setor1_was_or2_clears_or2(rl):
-    """Moving a reflection from or2 to or1 clears the secondary slot."""
+def test_setor0_was_or1_clears_or1(rl):
+    """Moving a reflection from or1 to or0 clears the secondary slot."""
     rl.add("r1", hkl=(1, 0, 0), angles={})
     rl.add("r2", hkl=(0, 1, 0), angles={})
-    rl.setor1("r1")
-    rl.setor2("r2")
-    rl.setor1("r2")  # r2 moves from or2 to or1
+    rl.setor0("r1")
+    rl.setor1("r2")
+    rl.setor0("r2")  # r2 moves from or1 to or0
     ors = rl.orienting_reflections
     assert len(ors) == 1
     assert ors[0].name == "r2"
+
+
+def test_setor0_unknown_raises(rl):
+    with pytest.raises(KeyError):
+        rl.setor0("missing")
 
 
 def test_setor1_unknown_raises(rl):
@@ -466,21 +471,16 @@ def test_setor1_unknown_raises(rl):
         rl.setor1("missing")
 
 
-def test_setor2_unknown_raises(rl):
-    with pytest.raises(KeyError):
-        rl.setor2("missing")
-
-
-def test_delete_or2_clears_secondary_slot(rl):
-    """Deleting the reflection designated as or2 clears the secondary slot."""
+def test_delete_or1_clears_secondary_slot(rl):
+    """Deleting the reflection designated as or1 clears the secondary slot."""
     rl.add("r1", hkl=(1, 0, 0), angles={})
     rl.add("r2", hkl=(0, 1, 0), angles={})
-    rl.setor1("r1")
-    rl.setor2("r2")
+    rl.setor0("r1")
+    rl.setor1("r2")
     del rl["r2"]
     assert "r2" not in rl
     ors = rl.orienting_reflections
-    # or1 remains; or2 slot is now None
+    # or0 remains; or1 slot is now None
     assert len(ors) == 1
     assert ors[0].name == "r1"
 
@@ -694,8 +694,8 @@ def _make_rl():
         hkl=(1, 0, 0),
         angles={"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0},
     )
-    rl.setor1("r1")
-    rl.setor2("r2")
+    rl.setor0("r1")
+    rl.setor1("r2")
     return rl
 
 

@@ -63,7 +63,7 @@ def sapphire_geom():
         hkl=(0, 0, 6),
         angles=_PSIC_ANGLES,
     )
-    g.sample.reflections.setor1("r1")
+    g.sample.reflections.setor0("r1")
     return g
 
 
@@ -155,7 +155,7 @@ def test_ub_one_refl_none_no_parent_raises():
     )
     rl.add("r1", hkl=(0, 0, 6), angles={"mu": 0.0})
     sample = Sample(name="test", lattice=Lattice(a=1.0), reflections=rl)
-    rl.setor1("r1")
+    rl.setor0("r1")
     with pytest.raises(ValueError, match=re.escape("no parent geometry")):
         ub_from_one_reflection(sample, "r1", reference_stage=None)
 
@@ -590,8 +590,8 @@ def two_refl_geom():
     g.sample.lattice = _LAT_2PI
     g.add_reflection("r1", hkl=_R1_HKL_2PI, angles=_R1_ANG_2PI)
     g.add_reflection("r2", hkl=_R2_HKL_2PI, angles=_R2_ANG_2PI)
-    g.sample.reflections.setor1("r1")
-    g.sample.reflections.setor2("r2")
+    g.sample.reflections.setor0("r1")
+    g.sample.reflections.setor1("r2")
     return g
 
 
@@ -681,7 +681,7 @@ def test_two_refl_reflection_objects(two_refl_geom):
     assert UB.shape == (3, 3)
 
 
-def test_two_refl_none_uses_setor1_setor2(two_refl_geom):
+def test_two_refl_none_uses_setor0_setor0(two_refl_geom):
     """Passing r1=None, r2=None uses the designated or1 and or2."""
     UB_default = ub_from_two_reflections_bl1967(two_refl_geom.sample)
     two_refl_geom.sample.U = None
@@ -709,30 +709,30 @@ def test_two_refl_no_parent_raises():
     )
     rl.add("r1", hkl=(0, 0, 6), angles={"mu": 0.0})
     rl.add("r2", hkl=(1, 0, 0), angles={"mu": 0.0})
-    rl.setor1("r1")
-    rl.setor2("r2")
+    rl.setor0("r1")
+    rl.setor1("r2")
     sample = Sample(name="orphan", lattice=Lattice(a=1.0), reflections=rl)
     with pytest.raises(ValueError, match=re.escape("sample.parent")):
         ub_from_two_reflections_bl1967(sample)
 
 
-def test_two_refl_r1_none_no_setor1_raises(psic_geom):
+def test_two_refl_r1_none_no_setor0_raises(psic_geom):
     """r1=None raises when no or1 has been designated."""
     psic_geom.wavelength = _TWO_PI
     psic_geom.sample.lattice = _LAT_2PI
     psic_geom.add_reflection("r1", hkl=_R1_HKL_2PI, angles=_R1_ANG_2PI)
-    # deliberately do NOT call setor1
+    # deliberately do NOT call setor0
     with pytest.raises(ValueError, match=re.escape("no primary orienting reflection")):
         ub_from_two_reflections_bl1967(psic_geom.sample, r1=None, r2=None)
 
 
-def test_two_refl_r2_none_no_setor2_raises(psic_geom):
+def test_two_refl_r2_none_no_setor0_raises(psic_geom):
     """r2=None raises when no or2 has been designated."""
     psic_geom.wavelength = _TWO_PI
     psic_geom.sample.lattice = _LAT_2PI
     psic_geom.add_reflection("r1", hkl=_R1_HKL_2PI, angles=_R1_ANG_2PI)
-    psic_geom.sample.reflections.setor1("r1")
-    # deliberately do NOT call setor2
+    psic_geom.sample.reflections.setor0("r1")
+    # deliberately do NOT call setor0
     with pytest.raises(
         ValueError, match=re.escape("no secondary orienting reflection")
     ):
@@ -770,8 +770,8 @@ def test_two_refl_collinear_crystal_frame_raises(psic_geom):
     # (1,0,0) and (2,0,0) are parallel
     psic_geom.add_reflection("r1", hkl=(1, 0, 0), angles=_R1_ANG_2PI)
     psic_geom.add_reflection("r2", hkl=(2, 0, 0), angles=_R2_ANG_2PI)
-    psic_geom.sample.reflections.setor1("r1")
-    psic_geom.sample.reflections.setor2("r2")
+    psic_geom.sample.reflections.setor0("r1")
+    psic_geom.sample.reflections.setor1("r2")
     with pytest.raises(ValueError, match=re.escape("parallel in the crystal frame")):
         ub_from_two_reflections_bl1967(psic_geom.sample)
 
@@ -785,8 +785,8 @@ def test_two_refl_collinear_phi_frame_raises(psic_geom):
     psic_geom.add_reflection(
         "r2", hkl=(0, 1, 0), angles=_R1_ANG_2PI
     )  # same angles as r1
-    psic_geom.sample.reflections.setor1("r1")
-    psic_geom.sample.reflections.setor2("r2")
+    psic_geom.sample.reflections.setor0("r1")
+    psic_geom.sample.reflections.setor1("r2")
     with pytest.raises(ValueError, match=re.escape("parallel in the phi frame")):
         ub_from_two_reflections_bl1967(psic_geom.sample)
 
@@ -1310,8 +1310,8 @@ def test_inverse_real_wavelength_fourcv_sapphire():
         angles={"ttheta": 60.0, "omega": 30.0, "chi": 0.0, "phi": 0.0},
         wavelength=1.5498,
     )
-    g.sample.reflections.setor1("or1")
-    g.sample.reflections.setor2("or2")
+    g.sample.reflections.setor0("or1")
+    g.sample.reflections.setor1("or2")
     ub_from_two_reflections_bl1967(g.sample)
 
     hkl = g.inverse({"ttheta": 41.9419, "omega": 20.97, "chi": 90.0, "phi": 0.0})
@@ -1368,8 +1368,8 @@ def test_inverse_real_wavelength_psic_silicon():
 
     g.add_reflection("r1", hkl=(0, 0, 2), angles=r1_angles, wavelength=g.wavelength)
     g.add_reflection("r2", hkl=(2, 0, 0), angles=r2_angles, wavelength=g.wavelength)
-    g.sample.reflections.setor1("r1")
-    g.sample.reflections.setor2("r2")
+    g.sample.reflections.setor0("r1")
+    g.sample.reflections.setor1("r2")
     ub_from_two_reflections_bl1967(g.sample)
 
     hkl1 = g.inverse(r1_angles)

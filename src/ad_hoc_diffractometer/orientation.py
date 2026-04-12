@@ -278,7 +278,7 @@ def ub_from_one_reflection(
     >>> g.add_reflection("r1", hkl=(0, 0, 6),
     ...                  angles={"mu": 0, "eta": 20.97, "chi": 90,
     ...                          "phi": 0, "nu": 0, "delta": 41.94})
-    >>> g.sample.reflections.setor1("r1")
+    >>> g.sample.reflections.setor0("r1")
     >>> UB = ub_from_one_reflection(
     ...     g.sample, "r1",
     ...     reference_hkl=(0, 0, 1),
@@ -477,7 +477,7 @@ def ub_from_two_reflections_bl1967(
         If ``r1`` or ``r2`` is a string not found in ``sample.reflections``.
     ValueError
         If ``r1`` or ``r2`` is ``None`` and the required orienting reflection
-        has not been designated (``setor1``/``setor2`` not called).
+        has not been designated (``setor0``/``setor1`` not called).
     ValueError
         If ``sample.parent`` is ``None`` (needed to call
         ``angles_to_phi_vector``).
@@ -516,8 +516,8 @@ def ub_from_two_reflections_bl1967(
     >>> g.add_reflection("r2", hkl=(1, 0, 4),
     ...     angles={"mu": 0, "eta": 23.72, "chi": 57.04, "phi": 0,
     ...             "nu": 0, "delta": 48.13})
-    >>> g.sample.reflections.setor1("r1")
-    >>> g.sample.reflections.setor2("r2")
+    >>> g.sample.reflections.setor0("r1")
+    >>> g.sample.reflections.setor1("r2")
     >>> UB = ahd.ub_from_two_reflections_bl1967(g.sample)
     """
     from .reflection import Reflection
@@ -537,7 +537,7 @@ def ub_from_two_reflections_bl1967(
         if len(ors) < 1 or ors[0] is None:
             raise ValueError(
                 "r1 is None and no primary orienting reflection (or1) has been "
-                "designated.  Call sample.reflections.setor1() first, or pass "
+                "designated.  Call sample.reflections.setor0() first, or pass "
                 "r1 explicitly."
             )
         r1 = ors[0]
@@ -555,7 +555,7 @@ def ub_from_two_reflections_bl1967(
         if len(ors) < 2:
             raise ValueError(
                 "r2 is None and no secondary orienting reflection (or2) has been "
-                "designated.  Call sample.reflections.setor2() first, or pass "
+                "designated.  Call sample.reflections.setor1() first, or pass "
                 "r2 explicitly."
             )
         r2 = ors[1]

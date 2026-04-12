@@ -19,8 +19,8 @@ Typical usage::
                  angles={"mu": 0, "eta": 20, ...},
                  valid_stages=set(g._stages))
     r2 = rl.add("r2", hkl=(0, 1, 0), ...)
-    rl.setor1("r1")
-    rl.setor2("r2")
+    rl.setor0("r1")
+    rl.setor1("r2")
     rl.orienting_reflections   # -> [r1, r2]
     rl["r1"]                   # -> r1
     del rl["r1"]
@@ -207,7 +207,7 @@ class ReflectionList:
     ...                     valid_stages={"mu", "eta", "chi", "phi",
     ...                                   "nu", "delta"})
     >>> r = rl.add("r1", hkl=(1, 0, 0), angles={"mu": 0, "eta": 20})
-    >>> rl.setor1("r1")
+    >>> rl.setor0("r1")
     >>> rl.orienting_reflections
     [Reflection(name='r1', ...)]
     """
@@ -337,9 +337,9 @@ class ReflectionList:
             raise KeyError(f"No reflection named {name!r}. Add it first.")
         return name
 
-    def setor1(self, reflection: str | Reflection) -> None:
+    def setor0(self, reflection: str | Reflection) -> None:
         """
-        Designate a reflection as primary (or1).
+        Designate a reflection as primary (or1 slot, SPEC ``setor0``).
 
         If it was previously the secondary (or2), that designation is cleared.
         The previous or1 remains in the list without any designation.
@@ -349,9 +349,9 @@ class ReflectionList:
             self._or2_name = None
         self._or1_name = name
 
-    def setor2(self, reflection: str | Reflection) -> None:
+    def setor1(self, reflection: str | Reflection) -> None:
         """
-        Designate a reflection as secondary (or2).
+        Designate a reflection as secondary (or2 slot, SPEC ``setor1``).
 
         If it was previously the primary (or1), that designation is cleared.
         The previous or2 remains in the list without any designation.

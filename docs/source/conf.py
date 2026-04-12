@@ -59,7 +59,7 @@ exclude_patterns = [
     "roadmap.md",
 ]
 
-myst_enable_extensions = ["colon_fence"]
+myst_enable_extensions = ["colon_fence", "dollarmath"]
 
 source_suffix = {
     ".rst": "restructuredtext",
