@@ -14,39 +14,68 @@ directions** that can be identified directly in the laboratory:
 
 | Physical direction | Lab meaning |
 |---|---|
-| **vertical** | out of the floor (normal to the optical table) |
-| **longitudinal** | along the beam, toward the equipment |
-| **lateral** | to our left when facing the equipment |
+| **vertical** | opposite to gravitational acceleration |
+| **longitudinal** | a chosen direction in the plane perpendicular to vertical, conventionally aligned with the nominal incident beam; a property of the instrument installation |
+| **lateral** | orthogonal to both; positive sense completes a right-handed system (vertical × longitudinal) |
 
-The package uses a right-handed Cartesian frame internally.  Different
-authors assigned different Cartesian letters (x, y, z) to these physical
-directions — historically a source of confusion.  The package supports both
-major conventions via the `basis` argument to each factory.
+The package uses a right-handed Cartesian frame internally.  Different authors
+assigned different Cartesian letters (x, y, z) to these physical directions —
+historically a source of confusion when diffractometer geometries are compared.
+The package supports both major conventions via the `basis` argument to each
+factory.
 
 ::::{tab-set}
 
-:::{tab-item} You (1999) — package default
-Used by: `psic`, `sixc`, `kappa6c`, `zaxis`, `s2d2`, `fivec`
-
+:::{tab-item} You1999 (default)
 | Physical direction | Cartesian | Constant |
 |---|---|---|
 | vertical | +x | `XHAT` |
 | longitudinal | +y | `YHAT` |
 | lateral | +z | `ZHAT` |
 
+Used by: `psic`, `sixc`, `kappa6c`, `zaxis`, `s2d2`, `fivec`
+
 Pass `basis=BASIS_YOU` (the default for these geometries).
 :::
 
-:::{tab-item} Busing & Levy (1967)
-Used by: `fourcv`, `fourch`, `kappa4cv`, `kappa4ch`
-
+:::{tab-item} BL1967
 | Physical direction | Cartesian | Constant |
 |---|---|---|
-| lateral | +x | `XHAT` |
-| longitudinal | +y | `YHAT` |
 | vertical | +z | `ZHAT` |
+| longitudinal | +y | `YHAT` |
+| lateral | +x | `XHAT` |
+
+Convention of Busing & Levy.
+
+Used by: `fourcv`, `fourch`, `kappa4cv`, `kappa4ch`
+
+Also used by:
+- [SPEC](https://certif.com)
 
 Pass `basis=BASIS_BL` (the default for these geometries).
+:::
+
+:::{tab-item} NeXus
+| Physical direction | Cartesian | Constant |
+|---|---|---|
+| vertical | +y | `YHAT` |
+| longitudinal | +z | `ZHAT` |
+| lateral | +x | `XHAT` |
+
+Used by: [NeXus](https://manual.nexusformat.org/design.html#the-nexus-coordinate-system)
+
+Also used by:
+- [hklpy2](https://blueskyproject.io/hklpy2/)
+:::
+
+:::{tab-item} Hkl
+| Physical direction | Cartesian | Constant |
+|---|---|---|
+| vertical | +z | `ZHAT` |
+| longitudinal | +x | `XHAT` |
+| lateral | +y | `YHAT` |
+
+Used by: [Hkl](https://people.debian.org/~picca/hkl/hkl.html#org4569ec8)
 :::
 
 ::::
