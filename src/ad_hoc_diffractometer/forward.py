@@ -235,8 +235,14 @@ def _solve_bisecting(
     }
 
     # Apply frozen angles from the mode.
-    for name, val in mode.frozen_angles.items():
-        angles[name] = val
+    # For each frozen stage, use the stage's *current* angle rather than
+    # the value stored in the mode — the caller presets the stage angle
+    # before calling forward(), giving full control over the fixed value.
+    for name in mode.frozen_angles:
+        if name in geometry._stages:  # noqa: SLF001
+            angles[name] = geometry._stages[name].angle  # noqa: SLF001
+        else:  # pragma: no cover  — frozen stage not in geometry (should not occur)
+            angles[name] = mode.frozen_angles[name]
 
     # Set the detector stage (first/outermost detector stage = ttheta/delta).
     detector_name = mode.detector_stage
@@ -561,8 +567,18 @@ def _solve_fixed_angle(
         )
 
     # Build an effective BisectingMode that includes the fixed stage as frozen.
-    effective_frozen = dict(bisecting_mode.frozen_angles)
-    effective_frozen.update(mode.frozen_angles)
+    # Use each stage's current angle — the caller presets it before forward().
+    effective_frozen = {}
+    for name in bisecting_mode.frozen_angles:
+        if name in geometry._stages:  # noqa: SLF001
+            effective_frozen[name] = geometry._stages[name].angle  # noqa: SLF001
+        else:  # pragma: no cover
+            effective_frozen[name] = bisecting_mode.frozen_angles[name]
+    for name in mode.frozen_angles:
+        if name in geometry._stages:  # noqa: SLF001
+            effective_frozen[name] = geometry._stages[name].angle  # noqa: SLF001
+        else:  # pragma: no cover
+            effective_frozen[name] = mode.frozen_angles[name]
 
     effective_mode = BisectingMode(
         sample_stage=bisecting_mode.sample_stage,

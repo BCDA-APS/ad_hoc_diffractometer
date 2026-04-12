@@ -41,26 +41,27 @@ and mode configuration.
 
 ## Diffraction modes
 
-Set the active mode with `g.mode_name = "<mode>"`. See {doc}`../howto/modes` for usage details and {class}`~ad_hoc_diffractometer.mode.DiffractionMode` for the base class.
+Set the active mode with `g.mode_name = "<mode>"`. Preset any fixed-stage angles with `g.set_angle(name, value)` before calling `forward()`. See {doc}`../howto/modes` for usage details and {class}`~ad_hoc_diffractometer.mode.DiffractionMode` for the base class.
 
 ### `bisecting`
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.BisectingMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L215))
+**Class:** {class}`~ad_hoc_diffractometer.mode.BisectingMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L227))
 
-The bisecting condition: the sample stage angle equals half the detector angle, placing the sample symmetrically between the incident and diffracted beams.
-Additional frozen stages: `mu` = 0.0°, `nu` = 0.0°.
+`komega` is constrained to `delta` / 2, placing the sample symmetrically between the incident and diffracted beams (the bisecting condition).
+
+Additional stages frozen at their current angles: `mu` = current angle, `nu` = current angle.
 
 ### `fixed_kphi`
 
 **Class:** {class}`~ad_hoc_diffractometer.mode.FixedAngleMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156))
 
-Holds `kphi` fixed at 0.0° during `forward()`. All other free stages are computed by the solver.
+Holds `kphi` fixed at its **current angle** during `forward()`. Preset the angle with `g.set_angle("kphi", value)` before calling `forward()`.
 
 ### `fixed_mu`
 
 **Class:** {class}`~ad_hoc_diffractometer.mode.FixedAngleMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156))
 
-Holds `mu` fixed at 0.0° during `forward()`. All other free stages are computed by the solver.
+Holds `mu` fixed at its **current angle** during `forward()`. Preset the angle with `g.set_angle("mu", value)` before calling `forward()`.
 
 
 ## API reference
