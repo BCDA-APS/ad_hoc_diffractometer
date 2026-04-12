@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=0a917028"></script>
+    <script src="_static/documentation_options.js?v=9a56916e"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -522,6 +522,13 @@ for planned future work and
 for the full issue tracker.</p>
 <section id="unreleased">
 <h2>Unreleased<a class="headerlink" href="#unreleased" title="Link to this heading">#</a></h2>
+</section>
+<section id="release-v0-4-0">
+<h2>Release v0.4.0<a class="headerlink" href="#release-v0-4-0" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-13.</p>
+<p>Major documentation release plus several API improvements.  Introduces a
+complete User Guide (Concepts, How-to Guides, Geometry Reference, Glossary,
+References), AutoAPI fixes, and a set of API quality improvements.</p>
 <section id="breaking-changes">
 <h3>Breaking changes<a class="headerlink" href="#breaking-changes" title="Link to this heading">#</a></h3>
 <ul class="simple">
@@ -534,14 +541,66 @@ Update all call sites: <code class="docutils literal notranslate"><span class="p
 list).  Callers that iterate with <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">pt</span> <span class="pre">in</span> <span class="pre">result:</span></code> are unaffected.
 Callers that index the result directly (e.g. <code class="docutils literal notranslate"><span class="pre">result[0]</span></code>) must wrap the
 call: <code class="docutils literal notranslate"><span class="pre">list(hkl_trajectory(...))</span></code>. (#115)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">engines.py</span></code> renamed to <code class="docutils literal notranslate"><span class="pre">conversions.py</span></code>; all imports from
+<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.engines</span></code> must be updated to
+<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.conversions</span></code>. (#108)</p></li>
 </ul>
 </section>
 <section id="added">
 <h3>Added<a class="headerlink" href="#added" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ahd.wh(geometry)</span></code> and <code class="docutils literal notranslate"><span class="pre">ahd.pa(geometry)</span></code> top-level convenience functions
-(SPEC-familiar status commands), in addition to the existing
-<code class="docutils literal notranslate"><span class="pre">geometry.wh()</span></code> / <code class="docutils literal notranslate"><span class="pre">geometry.pa()</span></code> methods. (#131)</p></li>
+<li><p><strong>User Guide</strong>: Concepts overview, How-to Guides (wavelength, lattice,
+orient, forward/inverse, modes, trajectory, lattice refinement,
+serialization, crystal alignment), Geometry Reference (one page per
+pre-built geometry), Glossary, and References page. (#93, #94, #95)</p></li>
+<li><p><strong>API Reference</strong>: module dependency graph (graphviz), per-layer card
+grid, AutoAPI module-prefix hidden via CSS. (#92, #102)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ahd.wh(geometry)</span></code> and <code class="docutils literal notranslate"><span class="pre">ahd.pa(geometry)</span></code> top-level convenience
+functions (SPEC-familiar status commands). (#131)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.stages_by_role(role)</span></code> — query stages with any
+arbitrary role string (enables analysers, polarisers, slits, etc.). (#129)</p></li>
+<li><p>How-to guide: save/restore diffractometer configuration to JSON or YAML
+via <code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code>. (#132)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sphinx-tabs</span></code> extension; coordinate-convention tabs in <code class="docutils literal notranslate"><span class="pre">concepts.md</span></code>
+showing You (1999), BL (1967), NeXus, and Hkl conventions side by side
+with the project default (You 1999) as the first tab. (#93)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dollarmath</span></code> MyST extension — inline <code class="docutils literal notranslate"><span class="pre">$...$</span></code> math now renders in <code class="docutils literal notranslate"><span class="pre">.md</span></code>
+files. (#120)</p></li>
+</ul>
+</section>
+<section id="changed">
+<h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Stage.role</span></code> is now documented as an <strong>open string</strong> — any value is
+accepted, not just <code class="docutils literal notranslate"><span class="pre">&quot;sample&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;detector&quot;</span></code>. (#129)</p></li>
+<li><p>Physical direction definitions (vertical, longitudinal, lateral)
+throughout the docs and docstrings now use unambiguous, observer-free
+language: vertical = opposite to gravity; longitudinal = chosen direction
+in the plane perpendicular to vertical; lateral = completes the
+right-handed system. (#128)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">engines.py</span></code> renamed to <code class="docutils literal notranslate"><span class="pre">conversions.py</span></code> (see Breaking changes). (#108)</p></li>
+<li><p>Coordinate convention section in <code class="docutils literal notranslate"><span class="pre">concepts.md</span></code> reframed: observable
+physical directions first; Cartesian assignment shown in tabs. (#124, #125)</p></li>
+<li><p>AutoAPI: <code class="docutils literal notranslate"><span class="pre">sig-prename</span></code> (module-path prefix) hidden via <code class="docutils literal notranslate"><span class="pre">custom.css</span></code>
+so class/function signatures show short names only. (#102)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">myst_enable_extensions</span></code> now includes <code class="docutils literal notranslate"><span class="pre">dollarmath</span></code> for inline math
+in Markdown files. (#120)</p></li>
+<li><p>Notebooks rendered by <code class="docutils literal notranslate"><span class="pre">myst-nb</span></code> (no pandoc required). (#95)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fourcv_alignment_howto.ipynb</span></code> moved from <code class="docutils literal notranslate"><span class="pre">docs/source/</span></code> to
+<code class="docutils literal notranslate"><span class="pre">docs/source/howto/</span></code>. (#94)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">roadmap.md</span></code> moved from <code class="docutils literal notranslate"><span class="pre">docs/source/</span></code> to repo root (development-facing
+document). (#93)</p></li>
+</ul>
+</section>
+<section id="fixed">
+<h3>Fixed<a class="headerlink" href="#fixed" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>All 89 Sphinx AutoAPI warnings eliminated (duplicate descriptions,
+reST markup, ambiguous cross-references, module-prefix in signatures).
+(#92, #102)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">switcher.json</span></code> automation: <code class="docutils literal notranslate"><span class="pre">latest</span></code> is always first; versions sorted
+newest-first. (#98)</p></li>
+<li><p>Inline <code class="docutils literal notranslate"><span class="pre">$...$</span></code> math in <code class="docutils literal notranslate"><span class="pre">concepts.md</span></code> now renders correctly online. (#120)</p></li>
 </ul>
 </section>
 </section>
@@ -561,8 +620,8 @@ PyPI on every version tag, using OIDC Trusted Publishing (no API token
 required) (#97)</p></li>
 </ul>
 </section>
-<section id="changed">
-<h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
+<section id="id2">
+<h3>Changed<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">docs.yml</span></code>: on every tag push, automatically update
 <code class="docutils literal notranslate"><span class="pre">latest/_static/switcher.json</span></code> on the <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> branch — new stable
@@ -575,8 +634,8 @@ pre-release directories are pruned from <code class="docutils literal notranslat
 <section id="release-v0-3-0">
 <h2>Release v0.3.0<a class="headerlink" href="#release-v0-3-0" title="Link to this heading">#</a></h2>
 <p>Released 2026-04-11.</p>
-<section id="fixed">
-<h3>Fixed<a class="headerlink" href="#fixed" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h3>Fixed<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Stage axes corrected for <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">fourch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>;
 <code class="docutils literal notranslate"><span class="pre">v</span></code>/<code class="docutils literal notranslate"><span class="pre">h</span></code> suffix now consistently describes the scattering plane (#66)</p></li>
@@ -585,8 +644,8 @@ pre-release directories are pruned from <code class="docutils literal notranslat
 <li><p>Duplicate geometry name in entry-point registry now raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> (#71)</p></li>
 </ul>
 </section>
-<section id="id2">
-<h3>Added<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="id4">
+<h3>Added<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>All factory functions accept <code class="docutils literal notranslate"><span class="pre">basis</span></code> as an optional argument; <code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code>
 and <code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code> exported publicly; stage axes expressed as
@@ -635,8 +694,8 @@ workflow <code class="docutils literal notranslate"><span class="pre">docs.yml</
 (#57)</p></li>
 </ul>
 </section>
-<section id="id3">
-<h3>Changed<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<section id="id5">
+<h3>Changed<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">wh()</span></code> and <code class="docutils literal notranslate"><span class="pre">pa()</span></code> refactored from property to method with <code class="docutils literal notranslate"><span class="pre">print=True</span></code>
 keyword argument; <code class="docutils literal notranslate"><span class="pre">status.py</span></code> removed from the package API and moved to
@@ -653,8 +712,8 @@ natural per-module homes and rewritten as parametrized functions (#88)</p></li>
 <section id="release-v0-2">
 <h2>Release v0.2<a class="headerlink" href="#release-v0-2" title="Link to this heading">#</a></h2>
 <p>Released 2026-04-10.</p>
-<section id="id4">
-<h3>Added<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<section id="id6">
+<h3>Added<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Reflection</span></code> / <code class="docutils literal notranslate"><span class="pre">ReflectionList</span></code> classes: named reflections with hkl,
 motor angles, and wavelength; <code class="docutils literal notranslate"><span class="pre">setor1()</span></code> / <code class="docutils literal notranslate"><span class="pre">setor2()</span></code> designation;
@@ -701,8 +760,8 @@ constants (real + reciprocal), λ; modelled on Align4Pete.log output</p></li>
 </li>
 </ul>
 </section>
-<section id="id5">
-<h3>Changed<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<section id="id7">
+<h3>Changed<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> now holds a <code class="docutils literal notranslate"><span class="pre">SampleDict</span></code> (<code class="docutils literal notranslate"><span class="pre">.samples</span></code>) and an
 active-sample property (<code class="docutils literal notranslate"><span class="pre">.sample</span></code>), replacing the earlier single-sample
@@ -715,8 +774,8 @@ design</p></li>
 <section id="release-v0-1">
 <h2>Release v0.1<a class="headerlink" href="#release-v0-1" title="Link to this heading">#</a></h2>
 <p>Released 2026-04-09.</p>
-<section id="id6">
-<h3>Added<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<section id="id8">
+<h3>Added<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> class: ordered rotary stages, basis validation,
 sample and detector rotation matrices, <code class="docutils literal notranslate"><span class="pre">summary()</span></code>, <code class="docutils literal notranslate"><span class="pre">check_limits()</span></code></p></li>
@@ -735,8 +794,8 @@ lattice vectors, lazy computation, display precision</p></li>
 <li><p>Pre-commit hooks: ruff (lint + format), isort, standard file checks</p></li>
 </ul>
 </section>
-<section id="id7">
-<h3>Changed<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<section id="id9">
+<h3>Changed<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Factory suffix convention: underscore removed from v/h detector suffix
 (<code class="docutils literal notranslate"><span class="pre">fourc_v</span></code> → <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4c_h</span></code> → <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, etc.)</p></li>
@@ -792,30 +851,33 @@ lattice vectors, lazy computation, display precision</p></li>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased">Unreleased</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased">Unreleased</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-4-0">Release v0.4.0</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#breaking-changes">Breaking changes</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed">Fixed</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-3-1">Release v0.3.1</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Added</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Changed</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-3-0">Release v0.3.0</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed">Fixed</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Added</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Changed</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-2">Release v0.2</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Fixed</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Added</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Changed</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1">Release v0.1</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-2">Release v0.2</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Added</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Changed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1">Release v0.1</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Changed</a></li>
 </ul>
 </li>
 </ul>
