@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=70a6b5be"></script>
+    <script src="_static/documentation_options.js?v=c0ed9712"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -461,8 +461,8 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/index.html">ad_hoc_diffractometer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/axes/index.html">axes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/constants/index.html">constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/conversions/index.html">conversions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/display/index.html">display</a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/engines/index.html">engines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html">factories</a></li>
 <li class="toctree-l2"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/forward/index.html">forward</a></li>
 <li class="toctree-l2"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html">geometry</a></li>
@@ -601,7 +601,7 @@ The package is <strong>pure Python</strong> with a single runtime dependency:
 surface diffraction, and lattice refinement.</p>
 <p class="sd-card-text"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/orientation/index.html#module-ad_hoc_diffractometer.orientation" title="ad_hoc_diffractometer.orientation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">orientation</span></code></a> ·
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/forward/index.html#module-ad_hoc_diffractometer.forward" title="ad_hoc_diffractometer.forward"><code class="xref py py-mod docutils literal notranslate"><span class="pre">forward</span></code></a> ·
-<a class="reference internal" href="autoapi/ad_hoc_diffractometer/engines/index.html#module-ad_hoc_diffractometer.engines" title="ad_hoc_diffractometer.engines"><code class="xref py py-mod docutils literal notranslate"><span class="pre">engines</span></code></a> ·
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/conversions/index.html#module-ad_hoc_diffractometer.conversions" title="ad_hoc_diffractometer.conversions"><code class="xref py py-mod docutils literal notranslate"><span class="pre">conversions</span></code></a> ·
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/surface/index.html#module-ad_hoc_diffractometer.surface" title="ad_hoc_diffractometer.surface"><code class="xref py py-mod docutils literal notranslate"><span class="pre">surface</span></code></a> ·
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/scan/index.html#module-ad_hoc_diffractometer.scan" title="ad_hoc_diffractometer.scan"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scan</span></code></a> ·
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/refinement/index.html#module-ad_hoc_diffractometer.refinement" title="ad_hoc_diffractometer.refinement"><code class="xref py py-mod docutils literal notranslate"><span class="pre">refinement</span></code></a></p>
@@ -626,7 +626,7 @@ auto-generated from source docstrings.</p>
 Arrows point from a module to the modules it imports.
 Modules are grouped by layer.</p>
 <figure class="align-center" id="id1">
-<div class="graphviz"><img src="_images/graphviz-625156810f84b406d4ddb13eed50e672fff67465.png" alt="digraph deps {
+<div class="graphviz"><img src="_images/graphviz-79ec4f228f2c2832629005bce0d8738ae58bb3ee.png" alt="digraph deps {
     graph [rankdir=TB, fontname=&quot;sans-serif&quot;, fontsize=11,
            bgcolor=&quot;transparent&quot;, splines=ortho, nodesep=0.4, ranksep=0.6]
     node  [shape=box, style=&quot;rounded,filled&quot;, fontname=&quot;sans-serif&quot;,
@@ -680,7 +680,7 @@ Modules are grouped by layer.</p>
         fontname=&quot;sans-serif&quot; fontsize=11
         orientation [label=&quot;orientation&quot; fillcolor=&quot;#ffd0b0&quot;]
         forward     [label=&quot;forward&quot;     fillcolor=&quot;#ffd0b0&quot;]
-        engines     [label=&quot;engines&quot;     fillcolor=&quot;#ffd0b0&quot;]
+        conversions [label=&quot;conversions&quot; fillcolor=&quot;#ffd0b0&quot;]
         surface     [label=&quot;surface&quot;     fillcolor=&quot;#ffd0b0&quot;]
         scan        [label=&quot;scan&quot;        fillcolor=&quot;#ffd0b0&quot;]
         refinement  [label=&quot;refinement&quot;  fillcolor=&quot;#ffd0b0&quot;]
@@ -724,7 +724,7 @@ Modules are grouped by layer.</p>
     forward     -&gt; geometry  [style=dashed]
     forward     -&gt; mode
     forward     -&gt; orientation
-    engines     -&gt; sample
+     conversions -&gt; sample
     surface     -&gt; geometry  [style=dashed]
     scan        -&gt; geometry  [style=dashed]
     scan        -&gt; rotation

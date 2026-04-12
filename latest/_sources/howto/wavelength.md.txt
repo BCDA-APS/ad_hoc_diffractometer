@@ -79,4 +79,4 @@ print(ahd.XRAY_LINES["Mo Ka1"])   # 0.7093 Å
 - {func}`~ad_hoc_diffractometer.d_to_Q_mag`
 - {func}`~ad_hoc_diffractometer.Q_to_d`
 - {mod}`~ad_hoc_diffractometer.radiation`
-- {mod}`~ad_hoc_diffractometer.engines`
+- {mod}`~ad_hoc_diffractometer.conversions`
