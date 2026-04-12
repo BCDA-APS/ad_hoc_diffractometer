@@ -18,10 +18,11 @@ directions** that can be identified directly in the laboratory:
 | **longitudinal** | a chosen direction in the plane perpendicular to vertical, conventionally aligned with the nominal incident beam; a property of the instrument installation |
 | **lateral** | orthogonal to both; positive sense completes a right-handed system (vertical × longitudinal) |
 
-The package uses a right-handed Cartesian frame internally.  Different
-authors assigned different Cartesian letters (x, y, z) to these physical
-directions — historically a source of confusion.  The package supports both
-major conventions via the `basis` argument to each factory.
+The package uses a right-handed Cartesian frame internally.  Different authors
+assigned different Cartesian letters (x, y, z) to these physical directions —
+historically a source of confusion when diffractometer geometries are compared.
+The package supports both major conventions via the `basis` argument to each
+factory.
 
 ::::{tab-set}
 
@@ -30,9 +31,9 @@ Used by: `psic`, `sixc`, `kappa6c`, `zaxis`, `s2d2`, `fivec`
 
 | Physical direction | Cartesian | Constant |
 |---|---|---|
-| lateral | +z | `ZHAT` |
-| longitudinal | +y | `YHAT` |
 | vertical | +x | `XHAT` |
+| longitudinal | +y | `YHAT` |
+| lateral | +z | `ZHAT` |
 
 Pass `basis=BASIS_YOU` (the default for these geometries).
 :::
@@ -44,14 +45,12 @@ Convention of Busing & Levy.
 
 Also used by:
 - [SPEC](https://certif.com)
-- [NeXus](https://manual.nexusformat.org/design.html#the-nexus-coordinate-system)
-- [hklpy2](https://blueskyproject.io/hklpy2/)
 
 | Physical direction | Cartesian | Constant |
 |---|---|---|
-| lateral | +x | `XHAT` |
-| longitudinal | +y | `YHAT` |
 | vertical | +z | `ZHAT` |
+| longitudinal | +y | `YHAT` |
+| lateral | +x | `XHAT` |
 
 Pass `basis=BASIS_BL` (the default for these geometries).
 :::
@@ -64,9 +63,9 @@ Also used by:
 
 | Physical direction | Cartesian | Constant |
 |---|---|---|
-| lateral | +x | `XHAT` |
-| longitudinal | +z | `ZHAT` |
 | vertical | +y | `YHAT` |
+| longitudinal | +z | `ZHAT` |
+| lateral | +x | `XHAT` |
 :::
 
 :::{tab-item} Hkl
@@ -74,9 +73,9 @@ Used by: [Hkl](https://people.debian.org/~picca/hkl/hkl.html#org4569ec8)
 
 | Physical direction | Cartesian | Constant |
 |---|---|---|
-| lateral | +y | `YHAT` |
-| longitudinal | +x | `XHAT` |
 | vertical | +z | `ZHAT` |
+| longitudinal | +x | `XHAT` |
+| lateral | +y | `YHAT` |
 :::
 
 ::::
