@@ -7,6 +7,30 @@ for the full issue tracker.
 
 ## Unreleased
 
+## Release v0.3.1
+
+Released 2026-04-12.
+
+Maintenance release: no user-facing API changes.  Exercises the new
+versioned-docs and PyPI publishing automation introduced since v0.3.0.
+
+### Added
+
+- `docs_backfill.yml`: manual-trigger GitHub Actions workflow to build and
+  publish documentation for any older tagged release and update
+  `switcher.json` accordingly (#91)
+- `pypi.yml`: GitHub Actions workflow to build and publish the package to
+  PyPI on every version tag, using OIDC Trusted Publishing (no API token
+  required) (#97)
+
+### Changed
+
+- `docs.yml`: on every tag push, automatically update
+  `latest/_static/switcher.json` on the `gh-pages` branch — new stable
+  releases are marked `preferred` and supersede pre-release entries; stale
+  pre-release directories are pruned from `gh-pages` (#91)
+- README now shows documentation and license badges (#84)
+
 ## Release v0.3.0
 
 Released 2026-04-11.
