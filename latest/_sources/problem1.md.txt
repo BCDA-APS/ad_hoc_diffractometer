@@ -25,13 +25,24 @@ at their zero-degree positions.
 
 ## Reference frame
 
-The reference frame is defined relative to the floor:
+The reference frame is defined by three mutually perpendicular directions.
+The positive sense of each is chosen to form a right-handed system:
 
-- **vertical**: positive direction is normal to the floor, pointing upward.
-- **longitudinal**: positive direction is along the line of sight toward the
-  equipment, normal to the vertical.
-- **lateral**: positive direction is normal to both vertical and longitudinal,
-  pointing to our left when facing the equipment.
+- **vertical**: opposite to the direction of gravitational acceleration
+  (i.e., upward).
+- **longitudinal**: a chosen direction in the plane perpendicular to
+  vertical, conventionally aligned with the nominal incident beam direction
+  projected onto that plane, positive toward the equipment.  This is a
+  property of the instrument installation, not of the beam itself.
+- **lateral**: orthogonal to both vertical and longitudinal, with positive
+  sense chosen so that the three directions form a right-handed system
+  (vertical × longitudinal).
+
+These directions are properties of the physical setup — they do not depend
+on how basis vectors are assigned to Cartesian axes.  The mapping of
+vertical, longitudinal, and lateral to x, y, z (or any other symbol) is a
+separate choice made by the caller and encoded in a basis dict.  Two common
+choices are shown in {doc}`problem2`.
 
 ## Equipment description
 

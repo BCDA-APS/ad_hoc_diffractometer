@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=787089a5"></script>
+    <script src="_static/documentation_options.js?v=abb75b46"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -536,14 +536,24 @@ at their zero-degree positions.</p>
 </section>
 <section id="reference-frame">
 <h2>Reference frame<a class="headerlink" href="#reference-frame" title="Link to this heading">#</a></h2>
-<p>The reference frame is defined relative to the floor:</p>
+<p>The reference frame is defined by three mutually perpendicular directions.
+The positive sense of each is chosen to form a right-handed system:</p>
 <ul class="simple">
-<li><p><strong>vertical</strong>: positive direction is normal to the floor, pointing upward.</p></li>
-<li><p><strong>longitudinal</strong>: positive direction is along the line of sight toward the
-equipment, normal to the vertical.</p></li>
-<li><p><strong>lateral</strong>: positive direction is normal to both vertical and longitudinal,
-pointing to our left when facing the equipment.</p></li>
+<li><p><strong>vertical</strong>: opposite to the direction of gravitational acceleration
+(i.e., upward).</p></li>
+<li><p><strong>longitudinal</strong>: a chosen direction in the plane perpendicular to
+vertical, conventionally aligned with the nominal incident beam direction
+projected onto that plane, positive toward the equipment.  This is a
+property of the instrument installation, not of the beam itself.</p></li>
+<li><p><strong>lateral</strong>: orthogonal to both vertical and longitudinal, with positive
+sense chosen so that the three directions form a right-handed system
+(vertical × longitudinal).</p></li>
 </ul>
+<p>These directions are properties of the physical setup — they do not depend
+on how basis vectors are assigned to Cartesian axes.  The mapping of
+vertical, longitudinal, and lateral to x, y, z (or any other symbol) is a
+separate choice made by the caller and encoded in a basis dict.  Two common
+choices are shown in <a class="reference internal" href="problem2.html"><span class="doc">You (1999) Geometry — Coordinate Convention and UB Matrix</span></a>.</p>
 </section>
 <section id="equipment-description">
 <h2>Equipment description<a class="headerlink" href="#equipment-description" title="Link to this heading">#</a></h2>
