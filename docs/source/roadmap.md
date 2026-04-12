@@ -586,6 +586,8 @@ Current coverage: 93% (119 uncovered lines).  ``pytest-cov`` is installed.
       Install (``install.md``), Changes (``changes.md`` includes ``CHANGES.md``)
 - [ ] User Guide per diataxis.fr (Phase 2)
 - [x] GitHub Actions workflow to build and publish docs (``docs.yml``)
+- [x] Versioned docs with ``switcher.json`` automation on tag push ([#91](https://github.com/prjemian/ad_hoc_diffractometer/issues/91))
+- [x] ``docs_backfill.yml`` workflow to publish docs for older tagged releases ([#91](https://github.com/prjemian/ad_hoc_diffractometer/issues/91))
 
 ### 3.9 Neutron radiation source support ([#8](https://github.com/prjemian/ad_hoc_diffractometer/issues/8))
 
