@@ -1340,7 +1340,7 @@ def test_pa_reflection_wavelength_none_falls_back_to_geometry_wavelength():
         wavelength=None,
     )
     g.sample.reflections._data["r1"] = r
-    g.sample.reflections.setor1("r1")
+    g.sample.reflections.setor0("r1")
     assert "1.5406" in g.pa(print=False)
 
 
@@ -1796,8 +1796,8 @@ def _sapphire_fourcv():
         hkl=(1, 0, 0),
         angles={"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0},
     )
-    g.sample.reflections.setor1("or1")
-    g.sample.reflections.setor2("or2")
+    g.sample.reflections.setor0("or1")
+    g.sample.reflections.setor1("or2")
     ub_from_two_reflections_bl1967(g.sample)
     g.set_angle("omega", 20.97)
     g.set_angle("chi", 90.0)
