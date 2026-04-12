@@ -1,11 +1,58 @@
 # Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
 # SPDX-License-Identifier: CC-BY-4.0
 """
-factories.py — predefined diffractometer geometry factory functions.
+factories.py — pre-built diffractometer geometry functions.
 
-Each factory is decorated with @register_geometry, which registers it in
-_GEOMETRY_REGISTRY under its function name.  Use list_geometries() to
-retrieve all registered factories as a {name: callable} dict.
+This module provides **pre-built geometries**: factory functions that
+construct fully configured :class:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
+instances for the most common multi-circle diffractometer designs used in
+synchrotron and laboratory X-ray / neutron crystallography.  They also
+serve as worked examples for defining custom geometries.
+
+Pre-built geometries
+--------------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 15 20 50
+
+   * - Name
+     - Type
+     - Description
+   * - :func:`fourcv`
+     - Eulerian 4-circle
+     - Vertical scattering plane (synchrotron). See :doc:`/geometries/fourcv`.
+   * - :func:`fourch`
+     - Eulerian 4-circle
+     - Horizontal scattering plane (laboratory). See :doc:`/geometries/fourch`.
+   * - :func:`psic`
+     - Eulerian 6-circle
+     - You (1999) 4S+2D. See :doc:`/geometries/psic`.
+   * - :func:`sixc`
+     - Eulerian 6-circle
+     - Lohmeier & Vlieg (1993) surface geometry. See :doc:`/geometries/sixc`.
+   * - :func:`fivec`
+     - Eulerian 5-circle
+     - Vlieg et al. (1987), fourcv on a mu base. See :doc:`/geometries/fivec`.
+   * - :func:`kappa4cv`
+     - Kappa 4-circle
+     - Vertical scattering plane (synchrotron). See :doc:`/geometries/kappa4cv`.
+   * - :func:`kappa4ch`
+     - Kappa 4-circle
+     - Horizontal scattering plane (laboratory). See :doc:`/geometries/kappa4ch`.
+   * - :func:`kappa6c`
+     - Kappa 6-circle
+     - Psic-style outer axes. See :doc:`/geometries/kappa6c`.
+   * - :func:`zaxis`
+     - Surface / special
+     - Bloch (1985) Z-axis geometry. See :doc:`/geometries/zaxis`.
+   * - :func:`s2d2`
+     - Surface / special
+     - Evans-Lutterodt & Tang (1995). See :doc:`/geometries/s2d2`.
+
+Each factory is decorated with ``@register_geometry``, which registers it
+in the geometry registry.  Use :func:`list_geometries` to retrieve all
+registered geometries as a ``{name: callable}`` dict.
 
 Extension via entry points
 --------------------------
@@ -22,19 +69,14 @@ Entry-point geometries are discovered and loaded automatically when
 ``list_geometries()`` or ``get_geometry()`` is first called; they do NOT
 need to call ``@register_geometry`` themselves.
 
-The built-in geometries (psic, fourcv, fourch, sixc, kappa4cv, kappa4ch,
-kappa6c, zaxis, s2d2, fivec) are also declared as entry points in the
-package's own ``pyproject.toml`` under the same group, so they are
-discoverable by any code that inspects installed entry points.
-
 **Geometry names must be globally unique.**  If an entry-point name
 duplicates an already-registered name (whether a built-in or a
 previously loaded plugin), a ``ValueError`` is raised at discovery time.
 This prevents silent shadowing: an external package cannot overwrite
 ``fourcv``, ``psic``, or any other registered geometry.
 
-Writing a plugin factory
-------------------------
+Writing a custom geometry
+-------------------------
 Each factory accepts an optional ``basis`` keyword argument (defaulting to
 the canonical convention for that geometry).  Inside the factory, resolve
 physical-direction aliases locally::
@@ -63,20 +105,18 @@ The two public basis dicts ``BASIS_YOU`` and ``BASIS_BL`` are exported from
 convention geometries.
 
 Naming convention:
-    Eulerian geometries:     fourcv, fourch, sixc, psic
-    Kappa geometries:        kappa4cv, kappa4ch, kappa6c
-    Inclined geometries:     zaxis, s2d2, fivec
 
-Scattering-plane suffix convention (v / h):
-    v  ->  vertical   scattering plane  (synchrotron) — ttheta rotates about the lateral axis
-    h  ->  horizontal scattering plane  (laboratory)  — ttheta rotates about the vertical axis
+- Eulerian geometries: ``fourcv``, ``fourch``, ``sixc``, ``psic``
+- Kappa geometries: ``kappa4cv``, ``kappa4ch``, ``kappa6c``
+- Surface / special geometries: ``zaxis``, ``s2d2``, ``fivec``
 
-    Walko (2016): "at synchrotron sources the scattering plane is usually
-    vertical, to take advantage of the (typically) s-polarization of the
-    radiation and the higher degree of collimation in the vertical plane."
+Scattering-plane suffix convention (``v`` / ``h``):
 
-    Where no suffix is given, the geometry has no single-axis 2theta detector
-    (inclined geometries) or the detector convention is unambiguous (psic, sixc).
+- ``v`` — vertical scattering plane (synchrotron): ttheta rotates about the lateral axis
+- ``h`` — horizontal scattering plane (laboratory): ttheta rotates about the vertical axis
+
+Where no suffix is given, the detector convention is unambiguous (psic, sixc)
+or the geometry uses a non-standard detector arrangement (zaxis, s2d2, fivec).
 
     fourch  (horizontal scattering plane) matches Busing & Levy (1967) Fig. 1b.
     fourcv  (vertical   scattering plane) is the synchrotron convention.
