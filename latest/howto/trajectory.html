@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=61a64674"></script>
+    <script src="../_static/documentation_options.js?v=0a917028"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -553,6 +553,9 @@
 <span id="howto-trajectory"></span><h1>Plan a Trajectory<a class="headerlink" href="#plan-a-trajectory" title="Link to this heading">#</a></h1>
 <p>This guide shows how to compute motor-angle sequences along paths through
 reciprocal space and for ψ scans.</p>
+<p>All three trajectory functions are <strong>generators</strong> — they yield one point dict
+at a time and compute each point lazily.  Use a <code class="docutils literal notranslate"><span class="pre">for</span></code> loop to process points
+one by one, or <code class="docutils literal notranslate"><span class="pre">list(func(...))</span></code> to collect all points at once.</p>
 <section id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
 <ul class="simple">

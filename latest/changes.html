@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=61a64674"></script>
+    <script src="_static/documentation_options.js?v=0a917028"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -529,6 +529,11 @@ for the full issue tracker.</p>
 <code class="docutils literal notranslate"><span class="pre">setor1()</span></code> to match the SPEC convention (primary = or0, secondary = or1).
 Update all call sites: <code class="docutils literal notranslate"><span class="pre">setor1(&quot;x&quot;)</span></code> → <code class="docutils literal notranslate"><span class="pre">setor0(&quot;x&quot;)</span></code>;
 <code class="docutils literal notranslate"><span class="pre">setor2(&quot;x&quot;)</span></code> → <code class="docutils literal notranslate"><span class="pre">setor1(&quot;x&quot;)</span></code>. (#120)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hkl_trajectory()</span></code>, <code class="docutils literal notranslate"><span class="pre">psi_trajectory()</span></code>, and <code class="docutils literal notranslate"><span class="pre">trajectory_plan()</span></code> are now
+<strong>generators</strong> (they <code class="docutils literal notranslate"><span class="pre">yield</span></code> one point dict at a time instead of returning a
+list).  Callers that iterate with <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">pt</span> <span class="pre">in</span> <span class="pre">result:</span></code> are unaffected.
+Callers that index the result directly (e.g. <code class="docutils literal notranslate"><span class="pre">result[0]</span></code>) must wrap the
+call: <code class="docutils literal notranslate"><span class="pre">list(hkl_trajectory(...))</span></code>. (#115)</p></li>
 </ul>
 </section>
 <section id="added">

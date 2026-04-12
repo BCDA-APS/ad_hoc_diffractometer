@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=61a64674"></script>
+    <script src="../../_static/documentation_options.js?v=0a917028"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -504,15 +504,15 @@
 <span class="sd">Functions</span>
 <span class="sd">---------</span>
 <span class="sd">:func:`hkl_trajectory` ``(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``</span>
-<span class="sd">    Compute motor-angle sequences along a specified reciprocal-space path.</span>
+<span class="sd">    **Generator.** Yield motor-angle dicts along a reciprocal-space path.</span>
+<span class="sd">    Use ``list(hkl_trajectory(...))`` to collect all points at once.</span>
 
 <span class="sd">:func:`psi_trajectory` ``(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``</span>
-<span class="sd">    Compute motor-angle sequences for ψ (psi) rotation about the scattering</span>
-<span class="sd">    vector Q while keeping the Bragg condition satisfied.</span>
+<span class="sd">    **Generator.** Yield motor-angle dicts for ψ (psi) rotation about Q.</span>
 
 <span class="sd">:func:`trajectory_plan` ``(geometry, hkl_start, hkl_end, n_points, space=&quot;hkl&quot;, solution_key=NEAREST_ANGLES)``</span>
-<span class="sd">    Plan a motor-angle path between two reciprocal-space points, flagging</span>
-<span class="sd">    limit violations and inaccessible regions.</span>
+<span class="sd">    **Generator.** Yield motor-angle dicts between two reciprocal-space points,</span>
+<span class="sd">    flagging limit violations and inaccessible regions.</span>
 
 <span class="sd">:data:`NEAREST_ANGLES`</span>
 <span class="sd">    Built-in solution-key callable: selects the candidate solution whose</span>
@@ -616,6 +616,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -1096,14 +1097,18 @@
     <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">solution_key</span><span class="o">=</span><span class="n">NEAREST_ANGLES</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute motor-angle sequences along a reciprocal-space trajectory.</span>
+<span class="sd">    Yield motor-angle dicts along a reciprocal-space trajectory.</span>
 
 <span class="sd">    For each of the ``n_points`` equally-spaced hkl positions along the</span>
 <span class="sd">    trajectory, calls ``geometry.forward()`` to find all valid motor-angle</span>
 <span class="sd">    solutions, then uses ``solution_key`` to select one.  Points with no</span>
-<span class="sd">    valid solution are included with ``angles=None``.</span>
+<span class="sd">    valid solution are yielded with ``angles=None``.</span>
+
+<span class="sd">    This function is a **generator**: it yields one dict per trajectory point</span>
+<span class="sd">    and computes each point on demand.  To get all points at once use</span>
+<span class="sd">    ``list(hkl_trajectory(...))``.</span>
 
 <span class="sd">    The ``NEAREST_ANGLES`` solution key (the default) prevents branch-flip</span>
 <span class="sd">    discontinuities: at each point it selects the candidate whose motor</span>
@@ -1123,9 +1128,9 @@
 <span class="sd">        Default: ``NEAREST_ANGLES``.  Pass ``None`` to use ``forward()``&#39;s</span>
 <span class="sd">        raw ordering.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    list of dict</span>
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict</span>
 <span class="sd">        One entry per trajectory point with keys:</span>
 
 <span class="sd">        ``&quot;hkl&quot;`` : tuple of float</span>
@@ -1153,16 +1158,14 @@
 <span class="sd">    &gt;&gt;&gt; g.sample.lattice = ahd.Lattice(a=4.0)</span>
 <span class="sd">    &gt;&gt;&gt; ahd.ub_identity(g.sample)</span>
 <span class="sd">    &gt;&gt;&gt; g.mode_name = &quot;bisecting&quot;</span>
-<span class="sd">    &gt;&gt;&gt; result = ahd.hkl_trajectory(</span>
+<span class="sd">    &gt;&gt;&gt; for pt in ahd.hkl_trajectory(</span>
 <span class="sd">    ...     g,</span>
 <span class="sd">    ...     {&quot;type&quot;: &quot;line&quot;, &quot;start&quot;: (1, 0, 0), &quot;end&quot;: (3, 0, 0)},</span>
 <span class="sd">    ...     n_points=5,</span>
-<span class="sd">    ... )</span>
-<span class="sd">    &gt;&gt;&gt; for pt in result:</span>
+<span class="sd">    ... ):</span>
 <span class="sd">    ...     print(pt[&quot;hkl&quot;], pt[&quot;angles&quot;])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">points</span> <span class="o">=</span> <span class="n">_hkl_points</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
-    <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">previous</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">for</span> <span class="n">hkl</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
@@ -1170,24 +1173,20 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">solutions</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">NotImplementedError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span> <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)})</span>
+            <span class="k">yield</span> <span class="p">{</span><span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span> <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)}</span>
             <span class="k">continue</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">solutions</span><span class="p">:</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
-                    <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="s2">&quot;no valid motor solution (all candidates outside limits)&quot;</span><span class="p">,</span>
-                <span class="p">}</span>
-            <span class="p">)</span>
+            <span class="k">yield</span> <span class="p">{</span>
+                <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
+                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="s2">&quot;no valid motor solution (all candidates outside limits)&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
             <span class="k">continue</span>
 
         <span class="n">chosen</span> <span class="o">=</span> <span class="n">_pick_solution</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">previous</span><span class="p">,</span> <span class="n">solution_key</span><span class="p">)</span>
-        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span> <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="n">chosen</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
-        <span class="n">previous</span> <span class="o">=</span> <span class="n">chosen</span>
-
-    <span class="k">return</span> <span class="n">results</span></div>
+        <span class="k">yield</span> <span class="p">{</span><span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span> <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="n">chosen</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="n">chosen</span></div>
 
 
 
@@ -1201,9 +1200,9 @@
     <span class="n">psi_values</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">solution_key</span><span class="o">=</span><span class="n">NEAREST_ANGLES</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute motor-angle sequences for ψ rotation about the scattering vector Q.</span>
+<span class="sd">    Yield motor-angle dicts for ψ rotation about the scattering vector Q.</span>
 
 <span class="sd">    For the fixed reflection (h, k, l) and each target ψ in ``psi_values``,</span>
 <span class="sd">    finds motor angles that simultaneously satisfy the Bragg condition and</span>
@@ -1234,9 +1233,9 @@
 <span class="sd">        Scoring function ``(candidate, previous) -&gt; float``; lower wins.</span>
 <span class="sd">        Default: ``NEAREST_ANGLES``.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    list of dict</span>
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict</span>
 <span class="sd">        One entry per ψ value with keys:</span>
 
 <span class="sd">        ``&quot;psi_target&quot;`` : float</span>
@@ -1275,8 +1274,7 @@
 <span class="sd">    &gt;&gt;&gt; g.sample.lattice = ahd.Lattice(a=4.0)</span>
 <span class="sd">    &gt;&gt;&gt; ahd.ub_identity(g.sample)</span>
 <span class="sd">    &gt;&gt;&gt; g.mode_name = &quot;bisecting&quot;</span>
-<span class="sd">    &gt;&gt;&gt; result = ahd.psi_trajectory(g, 1, 1, 0, range(-90, 91, 30))</span>
-<span class="sd">    &gt;&gt;&gt; for pt in result:</span>
+<span class="sd">    &gt;&gt;&gt; for pt in ahd.psi_trajectory(g, 1, 1, 0, range(-90, 91, 30)):</span>
 <span class="sd">    ...     print(pt[&quot;psi_target&quot;], pt[&quot;psi_actual&quot;])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1289,15 +1287,14 @@
             <span class="s2">&quot;no valid Bragg solution for this reflection &quot;</span>
             <span class="s2">&quot;(all candidates outside limits)&quot;</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="p">{</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">psi_values</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">{</span>
                 <span class="s2">&quot;psi_target&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
                 <span class="s2">&quot;psi_actual&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="n">no_bragg_msg</span><span class="p">,</span>
             <span class="p">}</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">psi_values</span>
-        <span class="p">]</span>
+        <span class="k">return</span>
 
     <span class="c1"># Pick the base solution (used to compute Z0 and as the psi=0 reference)</span>
     <span class="n">base</span> <span class="o">=</span> <span class="n">base_solutions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1328,7 +1325,6 @@
     <span class="n">y_perp_0</span> <span class="o">=</span> <span class="n">y_phi_0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y_phi_0</span><span class="p">,</span> <span class="n">q_hat_phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">q_hat_phi</span>
     <span class="n">ref_dir</span> <span class="o">=</span> <span class="n">y_perp_0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y_perp_0</span><span class="p">)</span>
 
-    <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">previous</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">for</span> <span class="n">psi_target</span> <span class="ow">in</span> <span class="n">psi_values</span><span class="p">:</span>
@@ -1337,17 +1333,15 @@
         <span class="n">candidates</span> <span class="o">=</span> <span class="n">_psi_candidates</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Z0</span><span class="p">,</span> <span class="n">Q_lab_hat</span><span class="p">,</span> <span class="n">y_eff</span><span class="p">,</span> <span class="n">psi_target</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates</span><span class="p">:</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;psi_target&quot;</span><span class="p">:</span> <span class="n">psi_target</span><span class="p">,</span>
-                    <span class="s2">&quot;psi_actual&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;no motor solution achieves psi = </span><span class="si">{</span><span class="n">psi_target</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">° &quot;</span>
-                        <span class="s2">&quot;within stage limits&quot;</span>
-                    <span class="p">),</span>
-                <span class="p">}</span>
-            <span class="p">)</span>
+            <span class="k">yield</span> <span class="p">{</span>
+                <span class="s2">&quot;psi_target&quot;</span><span class="p">:</span> <span class="n">psi_target</span><span class="p">,</span>
+                <span class="s2">&quot;psi_actual&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;no motor solution achieves psi = </span><span class="si">{</span><span class="n">psi_target</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">° &quot;</span>
+                    <span class="s2">&quot;within stage limits&quot;</span>
+                <span class="p">),</span>
+            <span class="p">}</span>
             <span class="k">continue</span>
 
         <span class="n">chosen</span> <span class="o">=</span> <span class="n">_pick_solution</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">previous</span><span class="p">,</span> <span class="n">solution_key</span><span class="p">)</span>
@@ -1355,17 +1349,13 @@
             <span class="n">geometry</span><span class="p">,</span> <span class="n">chosen</span><span class="p">,</span> <span class="n">Q_lab_hat</span><span class="p">,</span> <span class="n">y_eff</span><span class="p">,</span> <span class="n">q_hat_phi</span><span class="p">,</span> <span class="n">ref_dir</span>
         <span class="p">)</span>
 
-        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;psi_target&quot;</span><span class="p">:</span> <span class="n">psi_target</span><span class="p">,</span>
-                <span class="s2">&quot;psi_actual&quot;</span><span class="p">:</span> <span class="n">psi_actual</span><span class="p">,</span>
-                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="n">chosen</span><span class="p">,</span>
-                <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-        <span class="n">previous</span> <span class="o">=</span> <span class="n">chosen</span>
-
-    <span class="k">return</span> <span class="n">results</span></div>
+        <span class="k">yield</span> <span class="p">{</span>
+            <span class="s2">&quot;psi_target&quot;</span><span class="p">:</span> <span class="n">psi_target</span><span class="p">,</span>
+            <span class="s2">&quot;psi_actual&quot;</span><span class="p">:</span> <span class="n">psi_actual</span><span class="p">,</span>
+            <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="n">chosen</span><span class="p">,</span>
+            <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="n">chosen</span></div>
 
 
 
@@ -1379,9 +1369,9 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">space</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hkl&quot;</span><span class="p">,</span>
     <span class="n">solution_key</span><span class="o">=</span><span class="n">NEAREST_ANGLES</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plan a motor-angle path between two reciprocal-space points.</span>
+<span class="sd">    Yield motor-angle dicts for a planned path between two reciprocal-space points.</span>
 
 <span class="sd">    Interpolates between ``hkl_start`` and ``hkl_end`` in ``n_points``</span>
 <span class="sd">    equally-spaced steps, calls ``geometry.forward()`` at each point, and</span>
@@ -1414,9 +1404,9 @@
 <span class="sd">        Scoring function ``(candidate, previous) -&gt; float``; lower wins.</span>
 <span class="sd">        Default: ``NEAREST_ANGLES``.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    list of dict</span>
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict</span>
 <span class="sd">        One entry per trajectory point with keys:</span>
 
 <span class="sd">        ``&quot;hkl&quot;`` : tuple of float</span>
@@ -1449,7 +1439,7 @@
 <span class="sd">    &gt;&gt;&gt; g.sample.lattice = ahd.Lattice(a=4.0)</span>
 <span class="sd">    &gt;&gt;&gt; ahd.ub_identity(g.sample)</span>
 <span class="sd">    &gt;&gt;&gt; g.mode_name = &quot;bisecting&quot;</span>
-<span class="sd">    &gt;&gt;&gt; plan = ahd.trajectory_plan(g, (1, 0, 0), (3, 0, 0), n_points=11)</span>
+<span class="sd">    &gt;&gt;&gt; plan = list(ahd.trajectory_plan(g, (1, 0, 0), (3, 0, 0), n_points=11))</span>
 <span class="sd">    &gt;&gt;&gt; accessible = [pt for pt in plan if pt[&quot;accessible&quot;]]</span>
 <span class="sd">    &gt;&gt;&gt; print(f&quot;{len(accessible)}/{len(plan)} points accessible&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1489,7 +1479,6 @@
         <span class="n">hkl_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">hkl_start_arr</span><span class="p">)</span>
         <span class="n">hkl_points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">hkl_end_arr</span><span class="p">)</span>
 
-    <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">previous</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">for</span> <span class="n">hkl</span> <span class="ow">in</span> <span class="n">hkl_points</span><span class="p">:</span>
@@ -1499,27 +1488,21 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">solutions</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">NotImplementedError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
-                    <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;accessible&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                    <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)],</span>
-                <span class="p">}</span>
-            <span class="p">)</span>
+            <span class="k">yield</span> <span class="p">{</span>
+                <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
+                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;accessible&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)],</span>
+            <span class="p">}</span>
             <span class="k">continue</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">solutions</span><span class="p">:</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
-                    <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;accessible&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                    <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="p">[</span>
-                        <span class="s2">&quot;no valid motor solution (all candidates outside limits)&quot;</span>
-                    <span class="p">],</span>
-                <span class="p">}</span>
-            <span class="p">)</span>
+            <span class="k">yield</span> <span class="p">{</span>
+                <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
+                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;accessible&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;no valid motor solution (all candidates outside limits)&quot;</span><span class="p">],</span>
+            <span class="p">}</span>
             <span class="k">continue</span>
 
         <span class="n">chosen</span> <span class="o">=</span> <span class="n">_pick_solution</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">previous</span><span class="p">,</span> <span class="n">solution_key</span><span class="p">)</span>
@@ -1529,18 +1512,14 @@
         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="n">warnings_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
 
-        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
-                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="n">chosen</span><span class="p">,</span>
-                <span class="s2">&quot;accessible&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">warnings_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
-                <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="n">warnings_list</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
+        <span class="k">yield</span> <span class="p">{</span>
+            <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
+            <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="n">chosen</span><span class="p">,</span>
+            <span class="s2">&quot;accessible&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">warnings_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="n">warnings_list</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">warnings_list</span><span class="p">:</span>
-            <span class="n">previous</span> <span class="o">=</span> <span class="n">chosen</span>
-
-    <span class="k">return</span> <span class="n">results</span></div>
+            <span class="n">previous</span> <span class="o">=</span> <span class="n">chosen</span></div>
 
 </pre></div>
 

@@ -10,15 +10,15 @@ scan
    Functions
    ---------
    :func:`hkl_trajectory` ``(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``
-       Compute motor-angle sequences along a specified reciprocal-space path.
+       **Generator.** Yield motor-angle dicts along a reciprocal-space path.
+       Use ``list(hkl_trajectory(...))`` to collect all points at once.
 
    :func:`psi_trajectory` ``(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``
-       Compute motor-angle sequences for ψ (psi) rotation about the scattering
-       vector Q while keeping the Bragg condition satisfied.
+       **Generator.** Yield motor-angle dicts for ψ (psi) rotation about Q.
 
    :func:`trajectory_plan` ``(geometry, hkl_start, hkl_end, n_points, space="hkl", solution_key=NEAREST_ANGLES)``
-       Plan a motor-angle path between two reciprocal-space points, flagging
-       limit violations and inaccessible regions.
+       **Generator.** Yield motor-angle dicts between two reciprocal-space points,
+       flagging limit violations and inaccessible regions.
 
    :data:`NEAREST_ANGLES`
        Built-in solution-key callable: selects the candidate solution whose
@@ -157,19 +157,23 @@ Module Contents
    :rtype: float
 
 
-.. py:function:: hkl_trajectory(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, trajectory: dict, n_points: int, *, solution_key=NEAREST_ANGLES) -> list[dict]
+.. py:function:: hkl_trajectory(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, trajectory: dict, n_points: int, *, solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
 
    .. container:: import-path
 
       Import: ``ad_hoc_diffractometer.scan.hkl_trajectory``
 
 
-   Compute motor-angle sequences along a reciprocal-space trajectory.
+   Yield motor-angle dicts along a reciprocal-space trajectory.
 
    For each of the ``n_points`` equally-spaced hkl positions along the
    trajectory, calls ``geometry.forward()`` to find all valid motor-angle
    solutions, then uses ``solution_key`` to select one.  Points with no
-   valid solution are included with ``angles=None``.
+   valid solution are yielded with ``angles=None``.
+
+   This function is a **generator**: it yields one dict per trajectory point
+   and computes each point on demand.  To get all points at once use
+   ``list(hkl_trajectory(...))``.
 
    The ``NEAREST_ANGLES`` solution key (the default) prevents branch-flip
    discontinuities: at each point it selects the candidate whose motor
@@ -187,15 +191,14 @@ Module Contents
                         raw ordering.
    :type solution_key: callable or None, optional
 
-   :returns: One entry per trajectory point with keys:
+   :Yields: *dict* -- One entry per trajectory point with keys:
 
-             ``"hkl"`` : tuple of float
-                 The requested Miller indices (h, k, l).
-             ``"angles"`` : dict[str, float] or None
-                 Motor angles in degrees, or ``None`` if no valid solution.
-             ``"warning"`` : str or None
-                 Descriptive warning when ``angles`` is ``None``, else ``None``.
-   :rtype: list of dict
+            ``"hkl"`` : tuple of float
+                The requested Miller indices (h, k, l).
+            ``"angles"`` : dict[str, float] or None
+                Motor angles in degrees, or ``None`` if no valid solution.
+            ``"warning"`` : str or None
+                Descriptive warning when ``angles`` is ``None``, else ``None``.
 
    :raises ValueError: If ``n_points < 2``, trajectory type is unknown, or a required
        trajectory key is missing.
@@ -210,23 +213,22 @@ Module Contents
    >>> g.sample.lattice = ahd.Lattice(a=4.0)
    >>> ahd.ub_identity(g.sample)
    >>> g.mode_name = "bisecting"
-   >>> result = ahd.hkl_trajectory(
+   >>> for pt in ahd.hkl_trajectory(
    ...     g,
    ...     {"type": "line", "start": (1, 0, 0), "end": (3, 0, 0)},
    ...     n_points=5,
-   ... )
-   >>> for pt in result:
+   ... ):
    ...     print(pt["hkl"], pt["angles"])
 
 
-.. py:function:: psi_trajectory(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, h: float, k: float, l: float, psi_values, *, solution_key=NEAREST_ANGLES) -> list[dict]
+.. py:function:: psi_trajectory(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, h: float, k: float, l: float, psi_values, *, solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
 
    .. container:: import-path
 
       Import: ``ad_hoc_diffractometer.scan.psi_trajectory``
 
 
-   Compute motor-angle sequences for ψ rotation about the scattering vector Q.
+   Yield motor-angle dicts for ψ rotation about the scattering vector Q.
 
    For the fixed reflection (h, k, l) and each target ψ in ``psi_values``,
    finds motor angles that simultaneously satisfy the Bragg condition and
@@ -259,17 +261,16 @@ Module Contents
                         Default: ``NEAREST_ANGLES``.
    :type solution_key: callable or None, optional
 
-   :returns: One entry per ψ value with keys:
+   :Yields: *dict* -- One entry per ψ value with keys:
 
-             ``"psi_target"`` : float
-                 The requested ψ (degrees).
-             ``"psi_actual"`` : float or None
-                 Achieved ψ verified by internal measurement, or ``None``.
-             ``"angles"`` : dict[str, float] or None
-                 Motor angles in degrees, or ``None``.
-             ``"warning"`` : str or None
-                 Descriptive warning when ``angles`` is ``None``, else ``None``.
-   :rtype: list of dict
+            ``"psi_target"`` : float
+                The requested ψ (degrees).
+            ``"psi_actual"`` : float or None
+                Achieved ψ verified by internal measurement, or ``None``.
+            ``"angles"`` : dict[str, float] or None
+                Motor angles in degrees, or ``None``.
+            ``"warning"`` : str or None
+                Descriptive warning when ``angles`` is ``None``, else ``None``.
 
    :raises ValueError: If ``geometry.wavelength`` is None or ``geometry.sample.UB`` is None.
    :raises ValueError: If ``(h, k, l) == (0, 0, 0)``.
@@ -293,19 +294,18 @@ Module Contents
    >>> g.sample.lattice = ahd.Lattice(a=4.0)
    >>> ahd.ub_identity(g.sample)
    >>> g.mode_name = "bisecting"
-   >>> result = ahd.psi_trajectory(g, 1, 1, 0, range(-90, 91, 30))
-   >>> for pt in result:
+   >>> for pt in ahd.psi_trajectory(g, 1, 1, 0, range(-90, 91, 30)):
    ...     print(pt["psi_target"], pt["psi_actual"])
 
 
-.. py:function:: trajectory_plan(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, hkl_start: tuple[float, float, float], hkl_end: tuple[float, float, float], n_points: int, *, space: str = 'hkl', solution_key=NEAREST_ANGLES) -> list[dict]
+.. py:function:: trajectory_plan(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, hkl_start: tuple[float, float, float], hkl_end: tuple[float, float, float], n_points: int, *, space: str = 'hkl', solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
 
    .. container:: import-path
 
       Import: ``ad_hoc_diffractometer.scan.trajectory_plan``
 
 
-   Plan a motor-angle path between two reciprocal-space points.
+   Yield motor-angle dicts for a planned path between two reciprocal-space points.
 
    Interpolates between ``hkl_start`` and ``hkl_end`` in ``n_points``
    equally-spaced steps, calls ``geometry.forward()`` at each point, and
@@ -337,17 +337,16 @@ Module Contents
                         Default: ``NEAREST_ANGLES``.
    :type solution_key: callable or None, optional
 
-   :returns: One entry per trajectory point with keys:
+   :Yields: *dict* -- One entry per trajectory point with keys:
 
-             ``"hkl"`` : tuple of float
-                 The (h, k, l) point.
-             ``"angles"`` : dict[str, float] or None
-                 Motor angles, or ``None`` if inaccessible.
-             ``"accessible"`` : bool
-                 ``True`` if a valid in-limits solution was found.
-             ``"warnings"`` : list of str
-                 Empty when accessible; otherwise one or more warning strings.
-   :rtype: list of dict
+            ``"hkl"`` : tuple of float
+                The (h, k, l) point.
+            ``"angles"`` : dict[str, float] or None
+                Motor angles, or ``None`` if inaccessible.
+            ``"accessible"`` : bool
+                ``True`` if a valid in-limits solution was found.
+            ``"warnings"`` : list of str
+                Empty when accessible; otherwise one or more warning strings.
 
    :raises ValueError: If ``n_points < 2``.
    :raises ValueError: If ``space`` is not ``"hkl"`` or ``"Q"``.
@@ -363,7 +362,7 @@ Module Contents
    >>> g.sample.lattice = ahd.Lattice(a=4.0)
    >>> ahd.ub_identity(g.sample)
    >>> g.mode_name = "bisecting"
-   >>> plan = ahd.trajectory_plan(g, (1, 0, 0), (3, 0, 0), n_points=11)
+   >>> plan = list(ahd.trajectory_plan(g, (1, 0, 0), (3, 0, 0), n_points=11))
    >>> accessible = [pt for pt in plan if pt["accessible"]]
    >>> print(f"{len(accessible)}/{len(plan)} points accessible")
 
