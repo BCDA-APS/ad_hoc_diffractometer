@@ -28,7 +28,8 @@ HC_KEV_ANGSTROM : float
     hc = 12.398 419 843 320 026 keV·Å.  Exact (NIST CODATA 2022).
 
 HC_KEV_ANGSTROM_UNCERTAINTY : float
-    0.0 — exact constant.
+    0.0 — exactly zero.  The 2019 SI redefinition fixed both *h* and *c*
+    exactly, so *hc* has no uncertainty by definition.
 
 NEUTRON_MEV_ANGSTROM2 : float
     h²/(2 m_n) = 81.804 210 235 2 meV·Å² (NIST CODATA 2022).
@@ -101,7 +102,11 @@ import math
 HC_KEV_ANGSTROM: float = 12.398419843320026
 
 #: Uncertainty of :data:`HC_KEV_ANGSTROM` in keV·Å.
-#: Zero — this constant is exact.
+#: Exactly **0.0** — not a placeholder.  The 2019 redefinition of the SI
+#: fixed the numerical values of Planck's constant *h* and the speed of light
+#: *c* exactly; their product *hc* therefore has zero uncertainty by
+#: definition.  Reference: BIPM SI Brochure, 9th edition (2019);
+#: NIST CODATA 2022.
 HC_KEV_ANGSTROM_UNCERTAINTY: float = 0.0
 
 #: h²/(2 m_n) = 81.804 210 235 2 meV·Å².
