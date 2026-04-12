@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=c0ed9712"></script>
+    <script src="_static/documentation_options.js?v=ba94e17a"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -469,6 +469,7 @@
 <li class="toctree-l2"><a class="reference internal" href="howto/modes.html">Switch Diffraction Modes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/trajectory.html">Plan a Trajectory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/refine_lattice.html">Refine the Lattice Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serialize.html">Save and Restore a Diffractometer Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/fourcv_alignment_howto.html">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</a></li>
 </ul>
 </details></li>
@@ -809,6 +810,16 @@ See <code class="xref py py-func docutils literal notranslate"><span class="pre"
 </ul>
 <p>See <a class="reference internal" href="howto/trajectory.html"><span class="doc">Plan a Trajectory</span></a>.</p>
 </section>
+<hr class="docutils" />
+<section id="serialization">
+<h2>Serialization<a class="headerlink" href="#serialization" title="Link to this heading">#</a></h2>
+<p>The complete diffractometer state — geometry, wavelength, lattice, reflections,
+UB matrix, and all parameters — can be saved and restored via
+<code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> on <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a>.
+The dict contains only JSON-compatible types; save to JSON (stdlib) or YAML
+(<code class="docutils literal notranslate"><span class="pre">pyyaml</span></code>) without loss.</p>
+<p>See <a class="reference internal" href="howto/serialize.html"><span class="doc">Save and Restore a Diffractometer Configuration</span></a>.</p>
+</section>
 </section>
 
 
@@ -866,6 +877,7 @@ See <code class="xref py py-func docutils literal notranslate"><span class="pre"
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-modes">Diffraction modes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#forward-and-inverse-computations">Forward and inverse computations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-angle">The ψ angle</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serialization">Serialization</a></li>
 </ul>
   </nav></div>
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Orient a Crystal &#8212; ad_hoc_diffractometer 0.3</title>
+    <title>Save and Restore a Diffractometer Configuration &#8212; ad_hoc_diffractometer 0.3</title>
   
   
   
@@ -49,7 +49,7 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=fd10adb8"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'howto/orient';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'howto/serialize';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
@@ -60,8 +60,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Forward and Inverse Computations" href="forward.html" />
-    <link rel="prev" title="Define the Sample Lattice" href="lattice.html" />
+    <link rel="next" title="Align a Four-Circle Diffractometer (fourcv)" href="fourcv_alignment_howto.html" />
+    <link rel="prev" title="Refine the Lattice Constants" href="refine_lattice.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.3" />
@@ -462,12 +462,12 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">How-to Guides</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="wavelength.html">Set Wavelength / Energy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lattice.html">Define the Sample Lattice</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Orient a Crystal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orient.html">Orient a Crystal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="forward.html">Forward and Inverse Computations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modes.html">Switch Diffraction Modes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trajectory.html">Plan a Trajectory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="refine_lattice.html">Refine the Lattice Constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="serialize.html">Save and Restore a Diffractometer Configuration</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Save and Restore a Diffractometer Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fourcv_alignment_howto.html">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</a></li>
 </ul>
 </details></li>
@@ -532,7 +532,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How-to Guides</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Orient a Crystal</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Save and Restore a Diffractometer Configuration</span></li>
   </ul>
 </nav>
 </div>
@@ -549,125 +549,157 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="orient-a-crystal">
-<span id="howto-orient"></span><h1>Orient a Crystal<a class="headerlink" href="#orient-a-crystal" title="Link to this heading">#</a></h1>
-<p>This guide shows how to compute the U and UB matrices from orienting
-reflections.  See <a class="reference internal" href="../concepts.html"><span class="std std-doc">Concepts</span></a> for background on what
-B, U, and UB mean.</p>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
-<p>Crystal orientation requires:</p>
-<ol class="arabic simple">
-<li><p>A geometry with a wavelength set</p></li>
-<li><p>A sample with a lattice defined</p></li>
-<li><p>One, two, or three measured reflections with known (hkl) and motor angles</p></li>
-</ol>
+  <section class="tex2jax_ignore mathjax_ignore" id="save-and-restore-a-diffractometer-configuration">
+<span id="howto-serialize"></span><h1>Save and Restore a Diffractometer Configuration<a class="headerlink" href="#save-and-restore-a-diffractometer-configuration" title="Link to this heading">#</a></h1>
+<p>This guide shows how to save the complete state of a diffractometer to a
+file and restore it later.  The state includes the geometry, wavelength,
+sample lattice, orienting reflections, UB matrix, and all other parameters.</p>
+<section id="what-is-serialized">
+<h2>What is serialized<a class="headerlink" href="#what-is-serialized" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> captures the full diffractometer state:</p>
+<ul class="simple">
+<li><p>Geometry name, description, and basis</p></li>
+<li><p>Wavelength, source type</p></li>
+<li><p>All motor stage names and angles</p></li>
+<li><p>Active diffraction mode and cut points</p></li>
+<li><p>All samples: lattice parameters, reflections (with angles and wavelength),
+orienting reflection designations (or0/or1), and UB matrix</p></li>
+<li><p>Azimuthal reference, surface normal, inclination matrix</p></li>
+<li><p>Detector geometry parameters (distance, tilt, offset)</p></li>
+</ul>
+<p>The resulting dict contains only JSON-compatible types (str, float, int,
+list, dict, None) — it can be round-tripped through JSON or YAML without
+loss.</p>
 </section>
-<section id="set-up-the-geometry-and-sample">
-<h2>Set up the geometry and sample<a class="headerlink" href="#set-up-the-geometry-and-sample" title="Link to this heading">#</a></h2>
+<section id="basic-round-trip">
+<h2>Basic round-trip<a class="headerlink" href="#basic-round-trip" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
 
+<span class="c1"># Set up a geometry</span>
 <span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
-<span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>   <span class="c1"># Å  (Cu Kα)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.431</span><span class="p">)</span>  <span class="c1"># cubic silicon</span>
-</pre></div>
-</div>
-</section>
-<section id="add-orienting-reflections">
-<h2>Add orienting reflections<a class="headerlink" href="#add-orienting-reflections" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add the primary reflection at its measured motor angles</span>
-<span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-                  <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">69.13</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">34.56</span><span class="p">,</span>
-                          <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
+<span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>                       <span class="c1"># Å  (Cu Kα)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.431</span><span class="p">)</span>     <span class="c1"># cubic silicon</span>
+<span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
 
-<span class="c1"># Add a second reflection 90° away in phi</span>
-<span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or2&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-                  <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">47.30</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">23.65</span><span class="p">,</span>
-                          <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">35.26</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">})</span>
-
-<span class="c1"># Designate which reflections to use</span>
-<span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;or2&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="compute-ub-from-two-reflections-busing-levy-1967">
-<h2>Compute UB from two reflections (Busing &amp; Levy 1967)<a class="headerlink" href="#compute-ub-from-two-reflections-busing-levy-1967" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">UB</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">ub_from_two_reflections_bl1967</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UB =</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">UB</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This is the standard method for most beamline work.</p>
-</section>
-<section id="compute-ub-from-one-reflection">
-<h2>Compute UB from one reflection<a class="headerlink" href="#compute-ub-from-one-reflection" title="Link to this heading">#</a></h2>
-<p>When only one reflection is available, a provisional UB can be computed
-by specifying a reference crystal direction and a reference stage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">UB</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">ub_from_one_reflection</span><span class="p">(</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
-    <span class="n">reflection</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or1&quot;</span><span class="p">],</span>
-    <span class="n">reference_hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>   <span class="c1"># crystal direction to align</span>
-    <span class="n">reference_stage</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>      <span class="c1"># stage axis to align it along</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+    <span class="s2">&quot;r1&quot;</span><span class="p">,</span>
+    <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">34.56</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">69.13</span><span class="p">},</span>
 <span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="compute-ub-from-three-reflections-direct-method">
-<h2>Compute UB from three reflections (direct method)<a class="headerlink" href="#compute-ub-from-three-reflections-direct-method" title="Link to this heading">#</a></h2>
-<p>For unknown lattices, UB can be determined directly from three reflections
-without prior knowledge of the unit cell:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or3&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-                  <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">56.12</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">28.06</span><span class="p">,</span>
-                          <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">58.0</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">45.0</span><span class="p">})</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;r1&quot;</span><span class="p">)</span>
 
-<span class="n">UB</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">ub_from_three_reflections_bl1967</span><span class="p">(</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or1&quot;</span><span class="p">],</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or2&quot;</span><span class="p">],</span> <span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or3&quot;</span><span class="p">]</span>
-<span class="p">)</span>
+<span class="c1"># Serialize to a dict</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+<span class="c1"># Restore from the dict</span>
+<span class="n">g2</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">AdHocDiffractometer</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g2</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>          <span class="c1"># fourcv</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g2</span><span class="o">.</span><span class="n">wavelength</span><span class="p">)</span>    <span class="c1"># 1.5406</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g2</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>  <span class="c1"># 5.431</span>
 </pre></div>
 </div>
 </section>
-<section id="use-an-identity-u-matrix">
-<h2>Use an identity U matrix<a class="headerlink" href="#use-an-identity-u-matrix" title="Link to this heading">#</a></h2>
-<p>For a perfectly aligned crystal (crystal axes parallel to diffractometer
-axes), use the identity orientation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
+<section id="save-to-a-json-file">
+<h2>Save to a JSON file<a class="headerlink" href="#save-to-a-json-file" title="Link to this heading">#</a></h2>
+<p>JSON is the simplest option — it requires only the Python standard library:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1"># Save</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;diffractometer.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Restore</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;diffractometer.json&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">g2</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">AdHocDiffractometer</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
 </pre></div>
 </div>
 </section>
-<section id="verify-the-orientation-direction-check">
-<h2>Verify the orientation — direction check<a class="headerlink" href="#verify-the-orientation-direction-check" title="Link to this heading">#</a></h2>
-<p>Check that <code class="docutils literal notranslate"><span class="pre">UB</span> <span class="pre">&#64;</span> <span class="pre">h</span></code> points in the same direction as the observed Q:</p>
+<section id="save-to-a-yaml-file">
+<h2>Save to a YAML file<a class="headerlink" href="#save-to-a-yaml-file" title="Link to this heading">#</a></h2>
+<p>YAML produces a more human-readable file.  It requires <code class="docutils literal notranslate"><span class="pre">pyyaml</span></code>
+(not installed automatically — run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pyyaml</span></code>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Install pyyaml: pip install pyyaml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Save</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;diffractometer.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Restore</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;diffractometer.yaml&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">g2</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">AdHocDiffractometer</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="verify-a-round-trip">
+<h2>Verify a round-trip<a class="headerlink" href="#verify-a-round-trip" title="Link to this heading">#</a></h2>
+<p>Check that the restored geometry matches the original:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">direction_check</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-    <span class="n">q_phi</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">angles_to_phi_vector</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span>
-    <span class="n">ub_h</span>  <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">r</span><span class="o">.</span><span class="n">hkl</span>
-    <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q_phi</span><span class="p">,</span> <span class="n">ub_h</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">ub_h</span><span class="p">))</span>
-    <span class="n">angle_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cos_theta</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">angle_deg</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">° discrepancy&quot;</span><span class="p">)</span>
-
-<span class="n">direction_check</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s2">&quot;or1&quot;</span><span class="p">)</span>
-<span class="n">direction_check</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s2">&quot;or2&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">g2</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">g</span><span class="o">.</span><span class="n">name</span>
+<span class="k">assert</span> <span class="n">g2</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">==</span> <span class="n">g</span><span class="o">.</span><span class="n">wavelength</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">g2</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">g2</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">g2</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Round-trip verified.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">0.0°</span></code> means perfect agreement.</p>
 </section>
-<section id="full-worked-example">
-<h2>Full worked example<a class="headerlink" href="#full-worked-example" title="Link to this heading">#</a></h2>
-<p>See the <a class="reference internal" href="fourcv_alignment_howto.html"><span class="doc">Align a Four-Circle Diffractometer (fourcv)</span></a> notebook for a complete
-step-by-step crystal alignment on a real instrument.</p>
+<section id="serialize-individual-objects">
+<h2>Serialize individual objects<a class="headerlink" href="#serialize-individual-objects" title="Link to this heading">#</a></h2>
+<p>All major classes support <code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> independently:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lattice</span><span class="p">,</span> <span class="n">Sample</span>
+
+<span class="c1"># Lattice</span>
+<span class="n">lat_dict</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="n">lat2</span> <span class="o">=</span> <span class="n">Lattice</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">lat_dict</span><span class="p">)</span>
+
+<span class="c1"># Sample (including reflections and UB)</span>
+<span class="n">sample_dict</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="c1"># sample2 = Sample.from_dict(sample_dict, parent=g)  # requires parent geometry</span>
+</pre></div>
+</div>
+</section>
+<section id="typical-workflow">
+<h2>Typical workflow<a class="headerlink" href="#typical-workflow" title="Link to this heading">#</a></h2>
+<p>A common pattern is to save the configuration after alignment and restore
+it at the start of the next session:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+
+<span class="n">SESSION_FILE</span> <span class="o">=</span> <span class="s2">&quot;session_config.json&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">save_session</span><span class="p">(</span><span class="n">geometry</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">SESSION_FILE</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session saved to </span><span class="si">{</span><span class="n">SESSION_FILE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">restore_session</span><span class="p">():</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">SESSION_FILE</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ahd</span><span class="o">.</span><span class="n">AdHocDiffractometer</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+
+<span class="c1"># End of session: save</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="c1"># ... do alignment ...</span>
+<span class="n">save_session</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+<span class="c1"># Start of next session: restore</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">restore_session</span><span class="p">()</span>
+<span class="n">ahd</span><span class="o">.</span><span class="n">pa</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>   <span class="c1"># verify the restored configuration</span>
+</pre></div>
+</div>
 </section>
 <section id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_one_reflection()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_identity()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">angles_to_phi_vector()</span></code></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList" title="ad_hoc_diffractometer.reflection.ReflectionList"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReflectionList</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.to_dict" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.to_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_dict()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.from_dict" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.from_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_dict()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/lattice/index.html#ad_hoc_diffractometer.lattice.Lattice" title="ad_hoc_diffractometer.lattice.Lattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lattice</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.Sample" title="ad_hoc_diffractometer.sample.Sample"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sample</span></code></a></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">pa()</span></code></p></li>
+<li><p><a class="reference internal" href="orient.html"><span class="doc">Orient a Crystal</span></a></p></li>
 </ul>
 </section>
 </section>
@@ -683,20 +715,20 @@ step-by-step crystal alignment on a real instrument.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="lattice.html"
+       href="refine_lattice.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Define the Sample Lattice</p>
+        <p class="prev-next-title">Refine the Lattice Constants</p>
       </div>
     </a>
     <a class="right-next"
-       href="forward.html"
+       href="fourcv_alignment_howto.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Forward and Inverse Computations</p>
+        <p class="prev-next-title">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -719,15 +751,13 @@ step-by-step crystal alignment on a real instrument.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-geometry-and-sample">Set up the geometry and sample</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#add-orienting-reflections">Add orienting reflections</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-ub-from-two-reflections-busing-levy-1967">Compute UB from two reflections (Busing &amp; Levy 1967)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-ub-from-one-reflection">Compute UB from one reflection</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-ub-from-three-reflections-direct-method">Compute UB from three reflections (direct method)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-an-identity-u-matrix">Use an identity U matrix</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verify-the-orientation-direction-check">Verify the orientation — direction check</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-worked-example">Full worked example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-serialized">What is serialized</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-round-trip">Basic round-trip</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#save-to-a-json-file">Save to a JSON file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#save-to-a-yaml-file">Save to a YAML file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verify-a-round-trip">Verify a round-trip</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serialize-individual-objects">Serialize individual objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-workflow">Typical workflow</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
 </ul>
   </nav></div>
@@ -735,7 +765,7 @@ step-by-step crystal alignment on a real instrument.</p>
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../_sources/howto/orient.md.txt">
+    <a href="../_sources/howto/serialize.md.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>
