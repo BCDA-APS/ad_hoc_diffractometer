@@ -6,15 +6,24 @@
 
 **Version:** |release|
 
-``ad_hoc_diffractometer`` is a **pure-Python** diffractometer simulation
-package for X-ray and neutron crystallography, built around a key design
-principle: **any multi-circle diffractometer geometry can be fully described
-by the caller** — no geometry is hard-coded, and new geometries require no
-changes to the package itself.
+``ad_hoc_diffractometer`` is a **pure-Python** package for operating
+multi-circle diffractometers in reciprocal space for X-ray and neutron
+crystallography.  It is built around a key design principle: **any
+multi-circle diffractometer geometry can be fully described by the caller**
+— no geometry is hard-coded, and new geometries require no changes to the
+package itself.
 
 Its only runtime dependency beyond the Python Standard Library is
 `NumPy <https://numpy.org>`_ — no scipy, sympy, or other scientific
-libraries are required.  It provides:
+libraries are required.
+
+.. note::
+
+   The package assumes **monochromatic radiation** throughout.  All
+   diffraction calculations (Bragg angles, Q-vector magnitudes,
+   forward/inverse problems) are performed at a fixed wavelength.
+
+It provides:
 
 - A class-based description of diffractometer stages (rotary axes) and
   their stacking order
@@ -25,7 +34,10 @@ libraries are required.  It provides:
 - U and UB matrix computation from orienting reflections
 - Forward diffraction calculations (hkl → motor angles), with
   diffraction modes controlling which stages are free, fixed, or coupled
-- Reciprocal-space trajectory planning
+- Wavelength, energy, d-spacing, and Q-vector conversions for X-ray
+  and neutron sources
+- Reciprocal-space operations: Q-vector magnitude, d-spacing, two-theta,
+  and trajectory planning along arbitrary paths in reciprocal space
 
 .. toctree::
    :hidden:
@@ -37,6 +49,7 @@ libraries are required.  It provides:
    direct-lattice
    problem1
    problem2
+   fourcv_alignment_howto
 
 .. icons: https://fonts.google.com/icons
 
@@ -86,7 +99,7 @@ libraries are required.  It provides:
 Background
 ----------
 
-.. grid:: 3
+.. grid:: 2
 
    .. grid-item-card:: :material-outlined:`functions;3em` Direct Lattice
       :link: direct-lattice
@@ -106,6 +119,13 @@ Background
 
       Coordinate conventions and B/U/UB matrix derivation following
       You (1999) and Busing & Levy (1967).
+
+   .. grid-item-card:: :material-outlined:`align_horizontal_center;3em` Alignment How-to
+      :link: fourcv_alignment_howto
+      :link-type: doc
+
+      Step-by-step crystal alignment on a four-circle diffractometer,
+      with a real sapphire example from APS 7-ID-C.
 
 About
 -----
