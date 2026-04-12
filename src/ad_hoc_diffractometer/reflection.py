@@ -201,11 +201,6 @@ class ReflectionList:
     valid_stages : set of str
         Stage names of the owning geometry.  Used to validate angle keys.
 
-    Attributes
-    ----------
-    geometry_name : str
-    valid_stages : set of str
-
     Examples
     --------
     >>> rl = ReflectionList(geometry_name="psic",

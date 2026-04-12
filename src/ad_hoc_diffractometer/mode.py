@@ -79,12 +79,6 @@ class DiffractionMode(ABC):
         ``None`` is equivalent to an empty dict (no cut-points set, i.e.
         the default branch [-180, 180) is used).
 
-    Attributes
-    ----------
-    frozen_angles : dict[str, float]
-        Stages held fixed in this mode; mirrors SPEC #G0.
-    cut_points : dict[str, float]
-        Branch selection cut-points per stage; mirrors SPEC #G4.
     """
 
     def __init__(
@@ -102,6 +96,7 @@ class DiffractionMode(ABC):
         Return the list of stage names that are constrained (not free) in this mode.
 
         Constrained stages include both:
+
         - frozen stages (held at a fixed angle)
         - stages whose angle is determined by a relationship to another stage
           (e.g. bisecting: omega = ttheta/2)

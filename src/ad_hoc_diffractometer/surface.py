@@ -291,7 +291,7 @@ def q_components(
     geometry: AdHocDiffractometer,
     angles: dict[str, float] | None = None,
 ) -> dict[str, float]:
-    """
+    r"""
     Decompose Q into components perpendicular and parallel to the sample surface.
 
     ``Q_perp`` is the component of Q along the surface normal (out-of-plane).
@@ -325,7 +325,7 @@ def q_components(
             Signed out-of-plane component (Å⁻¹); positive when Q points
             along the outward surface normal.
         ``"Q_total"`` : float
-            Total |Q| (Å⁻¹).
+            Total \|Q\| (Å⁻¹).
 
     Raises
     ------

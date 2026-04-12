@@ -1,11 +1,11 @@
 # Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
 # SPDX-License-Identifier: CC-BY-4.0
-"""
+r"""
 orientation.py — U and UB matrix computation from orienting reflections.
 
 Functions
 ---------
-angles_to_phi_vector(geometry, **motor_angles)
+angles_to_phi_vector(geometry, \*\*motor_angles)
     Convert a set of motor angles to the scattering vector expressed in the
     phi-axis (innermost sample-stage) frame.  This is the foundational
     computation needed for U and UB matrix determination.

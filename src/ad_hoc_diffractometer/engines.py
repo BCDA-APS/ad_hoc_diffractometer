@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
 # SPDX-License-Identifier: CC-BY-4.0
-"""
+r"""
 engines.py — Alternative calculation engines.
 
 Provides standalone conversion functions between the four representations
@@ -22,13 +22,13 @@ Q_to_hkl(sample, Qx, Qy, Qz) -> tuple[float, float, float]
     Q-vector → Miller indices via hkl = UB⁻¹ @ Q.
 
 Q_to_d(Qx, Qy, Qz) -> float
-    Q-vector magnitude → d-spacing: d = 2π / |Q|.
+    Q-vector magnitude → d-spacing: d = 2π / \|Q\|.
 
 d_to_Q_mag(d) -> float
-    d-spacing → |Q|: |Q| = 2π / d.
+    d-spacing → \|Q\|: \|Q\| = 2π / d.
 
 hkl_to_d(sample, h, k, l) -> float
-    Miller indices → d-spacing via |Q| = |UB @ hkl|, d = 2π / |Q|.
+    Miller indices → d-spacing via \|Q\| = \|UB @ hkl\|, d = 2π / \|Q\|.
 
 d_to_two_theta(d, wavelength) -> float
     d-spacing → 2θ (degrees) via Bragg's law: λ = 2d sin(θ).
@@ -40,10 +40,10 @@ hkl_to_two_theta(sample, h, k, l, wavelength) -> float
     Miller indices → 2θ (degrees).
 
 two_theta_to_Q_mag(two_theta_deg, wavelength) -> float
-    2θ (degrees) → |Q| (Å⁻¹): |Q| = 4π sin(θ) / λ.
+    2θ (degrees) → \|Q\| (Å⁻¹): \|Q\| = 4π sin(θ) / λ.
 
 Q_mag_to_two_theta(Q_mag, wavelength) -> float
-    |Q| (Å⁻¹) → 2θ (degrees).
+    \|Q\| (Å⁻¹) → 2θ (degrees).
 
 References
 ----------
@@ -173,10 +173,10 @@ def Q_to_hkl(
 
 
 def Q_to_d(Qx: float, Qy: float, Qz: float) -> float:
-    """
+    r"""
     Convert a Q-vector to the d-spacing.
 
-    d = 2π / |**Q**|
+    d = 2π / \|**Q**\|
 
     Parameters
     ----------
@@ -191,7 +191,7 @@ def Q_to_d(Qx: float, Qy: float, Qz: float) -> float:
     Raises
     ------
     ValueError
-        If |Q| = 0.
+        If \|Q\| = 0.
 
     Examples
     --------
@@ -206,10 +206,10 @@ def Q_to_d(Qx: float, Qy: float, Qz: float) -> float:
 
 
 def d_to_Q_mag(d: float) -> float:
-    """
+    r"""
     Convert a d-spacing to the magnitude of the scattering vector.
 
-    |**Q**| = 2π / d
+    \|**Q**\| = 2π / d
 
     Parameters
     ----------
@@ -219,7 +219,7 @@ def d_to_Q_mag(d: float) -> float:
     Returns
     -------
     float
-        |Q| in Å⁻¹.
+        \|Q\| in Å⁻¹.
 
     Raises
     ------
@@ -243,10 +243,10 @@ def hkl_to_d(
     k: float,
     l: float,  # noqa: E741
 ) -> float:
-    """
+    r"""
     Convert Miller indices to d-spacing.
 
-    d = 2π / |UB · **hkl**|
+    d = 2π / \|UB · **hkl**\|
 
     Parameters
     ----------
@@ -424,10 +424,10 @@ def hkl_to_two_theta(
 
 
 def two_theta_to_Q_mag(two_theta_deg: float, wavelength: float) -> float:
-    """
-    Convert 2θ to |Q| using the Bragg relation.
+    r"""
+    Convert 2θ to \|Q\| using the Bragg relation.
 
-    |**Q**| = 4π sin(θ) / λ
+    \|**Q**\| = 4π sin(θ) / λ
 
     Parameters
     ----------
@@ -439,7 +439,7 @@ def two_theta_to_Q_mag(two_theta_deg: float, wavelength: float) -> float:
     Returns
     -------
     float
-        |Q| in Å⁻¹.
+        \|Q\| in Å⁻¹.
 
     Raises
     ------
@@ -464,10 +464,10 @@ def two_theta_to_Q_mag(two_theta_deg: float, wavelength: float) -> float:
 
 
 def Q_mag_to_two_theta(Q_mag: float, wavelength: float) -> float:
-    """
-    Convert |Q| to 2θ.
+    r"""
+    Convert \|Q\| to 2θ.
 
-    2θ = 2 arcsin(|Q| λ / (4π))
+    2θ = 2 arcsin(\|Q\| λ / (4π))
 
     Parameters
     ----------
@@ -485,7 +485,7 @@ def Q_mag_to_two_theta(Q_mag: float, wavelength: float) -> float:
     ------
     ValueError
         If ``Q_mag`` < 0, ``wavelength`` ≤ 0, or the reflection is
-        unreachable (|Q| λ / (4π) > 1).
+        unreachable (\|Q\| λ / (4π) > 1).
 
     Examples
     --------

@@ -5,19 +5,18 @@ scan.py — Reciprocal-space trajectory computation.
 
 Functions
 ---------
-hkl_trajectory(geometry, trajectory, n_points, *, solution_key=NEAREST_ANGLES)
+``hkl_trajectory(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``
     Compute motor-angle sequences along a specified reciprocal-space path.
 
-psi_trajectory(geometry, h, k, l, psi_values, *, solution_key=NEAREST_ANGLES)
+``psi_trajectory(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``
     Compute motor-angle sequences for ψ (psi) rotation about the scattering
     vector Q while keeping the Bragg condition satisfied.
 
-trajectory_plan(geometry, hkl_start, hkl_end, n_points, *, space="hkl",
-                solution_key=NEAREST_ANGLES)
+``trajectory_plan(geometry, hkl_start, hkl_end, n_points, space="hkl", solution_key=NEAREST_ANGLES)``
     Plan a motor-angle path between two reciprocal-space points, flagging
     limit violations and inaccessible regions.
 
-NEAREST_ANGLES
+``NEAREST_ANGLES``
     Built-in solution-key callable: selects the candidate solution whose
     motor angles are closest (in least-squares sense) to the previous point.
     Suppresses branch-flip discontinuities across a trajectory.
@@ -42,14 +41,14 @@ preferring the candidate closest in motor space to the previous point.
 ~~~~~~~~~~~~~~~~
 Two distinct definitions of ψ exist in the literature.
 
-**geometry.psi()** implements You (1999) eqs. 10-11: ψ is the azimuthal
+``geometry.psi()`` implements You (1999) eqs. 10-11: ψ is the azimuthal
 angle of the reference vector **n** about **Q** measured from the projection
 of the fixed lab beam direction y_hat onto the phi-frame Q-perp plane.  For
 a given (hkl, UB, n_hkl) this value is *constant* across all motor-angle
 solutions that satisfy the Bragg condition — it is a crystal-orientation
 diagnostic, not a motor-angle observable.
 
-**psi_trajectory()** implements the Busing & Levy (1967) *operational* ψ:
+``psi_trajectory()`` implements the Busing & Levy (1967) *operational* ψ:
 the angle through which the sample has been rotated about the scattering
 vector Q relative to a chosen reference orientation.  This is the quantity
 physically varied during a ψ scan on a real diffractometer.
@@ -64,12 +63,12 @@ Algorithm (Busing & Levy 1967, Section "Angle settings"):
 4. Remove the contribution of any fixed outer stages and decompose the
    inner-three-stage part of Z(ψ) into motor angles analytically:
 
-   * **Eulerian** (fourcv, fourch, psic-style, fivec-style): the formula
+   * **Eulerian** (fourcv, fourch, psic-style, fivec-style):
      n_phi · Z · n_om = cos(χ) isolates χ; then ω and φ follow from
      projections of Z · n_om and Z^T · n_phi onto the plane perpendicular
      to their shared rotation axis.  Two χ branches are returned.
 
-   * **Kappa** (kappa4cv, kappa4ch, kappa6c): the formula
+   * **Kappa** (kappa4cv, kappa4ch, kappa6c):
      n_kphi · Z · n_komega = cos(κ)·cos²(α) + sin²(α) isolates κ (where
      α = kappa_alpha_deg); komega and kphi follow by the same projection
      method.  Two κ branches (positive and negative) are returned.
@@ -872,7 +871,7 @@ def trajectory_plan(
     space: str = "hkl",
     solution_key=NEAREST_ANGLES,
 ) -> list[dict]:
-    """
+    r"""
     Plan a motor-angle path between two reciprocal-space points.
 
     Interpolates between ``hkl_start`` and ``hkl_end`` in ``n_points``
@@ -894,7 +893,7 @@ def trajectory_plan(
         ``"hkl"`` (default)
             Linearly interpolate Miller indices.  Natural for L-scans,
             H-scans, and crystal-axis-aligned trajectories.  Equal steps in
-            hkl are *not* equal steps in |Q| for non-cubic lattices.
+            hkl are *not* equal steps in \|Q\| for non-cubic lattices.
 
         ``"Q"``
             Linearly interpolate in reciprocal Cartesian coordinates
