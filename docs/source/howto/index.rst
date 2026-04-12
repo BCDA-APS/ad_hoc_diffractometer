@@ -17,6 +17,7 @@ installed the package and are familiar with the
    modes
    trajectory
    refine_lattice
+   serialize
    fourcv_alignment_howto
 
 .. icons: https://fonts.google.com/icons
@@ -72,6 +73,13 @@ installed the package and are familiar with the
       Refine unit-cell parameters from measured Bragg peak positions using
       Busing & Levy (1967) least-squares or the Nelder-Mead simplex method,
       with and without crystal-system constraints.
+
+   .. grid-item-card:: :material-outlined:`save;3em` Save and Restore Configuration
+      :link: serialize
+      :link-type: doc
+
+      Save the complete diffractometer state to JSON or YAML and restore
+      it in a later session.
 
    .. grid-item-card:: :material-outlined:`align_horizontal_center;3em` Align a Crystal
       :link: fourcv_alignment_howto

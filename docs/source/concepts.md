@@ -179,3 +179,15 @@ Two definitions of ψ appear in the literature:
   See {func}`~ad_hoc_diffractometer.psi_trajectory`.
 
 See {doc}`howto/trajectory`.
+
+---
+
+## Serialization
+
+The complete diffractometer state — geometry, wavelength, lattice, reflections,
+UB matrix, and all parameters — can be saved and restored via
+`to_dict()` / `from_dict()` on {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`.
+The dict contains only JSON-compatible types; save to JSON (stdlib) or YAML
+(`pyyaml`) without loss.
+
+See {doc}`howto/serialize`.
