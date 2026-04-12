@@ -6,15 +6,15 @@ scan.py — Reciprocal-space trajectory computation.
 Functions
 ---------
 :func:`hkl_trajectory` ``(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``
-    Compute motor-angle sequences along a specified reciprocal-space path.
+    **Generator.** Yield motor-angle dicts along a reciprocal-space path.
+    Use ``list(hkl_trajectory(...))`` to collect all points at once.
 
 :func:`psi_trajectory` ``(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``
-    Compute motor-angle sequences for ψ (psi) rotation about the scattering
-    vector Q while keeping the Bragg condition satisfied.
+    **Generator.** Yield motor-angle dicts for ψ (psi) rotation about Q.
 
 :func:`trajectory_plan` ``(geometry, hkl_start, hkl_end, n_points, space="hkl", solution_key=NEAREST_ANGLES)``
-    Plan a motor-angle path between two reciprocal-space points, flagging
-    limit violations and inaccessible regions.
+    **Generator.** Yield motor-angle dicts between two reciprocal-space points,
+    flagging limit violations and inaccessible regions.
 
 :data:`NEAREST_ANGLES`
     Built-in solution-key callable: selects the candidate solution whose
@@ -118,6 +118,7 @@ from __future__ import annotations
 
 import logging
 import math
+from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -593,14 +594,18 @@ def hkl_trajectory(
     n_points: int,
     *,
     solution_key=NEAREST_ANGLES,
-) -> list[dict]:
+) -> Iterator[dict]:
     """
-    Compute motor-angle sequences along a reciprocal-space trajectory.
+    Yield motor-angle dicts along a reciprocal-space trajectory.
 
     For each of the ``n_points`` equally-spaced hkl positions along the
     trajectory, calls ``geometry.forward()`` to find all valid motor-angle
     solutions, then uses ``solution_key`` to select one.  Points with no
-    valid solution are included with ``angles=None``.
+    valid solution are yielded with ``angles=None``.
+
+    This function is a **generator**: it yields one dict per trajectory point
+    and computes each point on demand.  To get all points at once use
+    ``list(hkl_trajectory(...))``.
 
     The ``NEAREST_ANGLES`` solution key (the default) prevents branch-flip
     discontinuities: at each point it selects the candidate whose motor
@@ -620,9 +625,9 @@ def hkl_trajectory(
         Default: ``NEAREST_ANGLES``.  Pass ``None`` to use ``forward()``'s
         raw ordering.
 
-    Returns
-    -------
-    list of dict
+    Yields
+    ------
+    dict
         One entry per trajectory point with keys:
 
         ``"hkl"`` : tuple of float
@@ -650,16 +655,14 @@ def hkl_trajectory(
     >>> g.sample.lattice = ahd.Lattice(a=4.0)
     >>> ahd.ub_identity(g.sample)
     >>> g.mode_name = "bisecting"
-    >>> result = ahd.hkl_trajectory(
+    >>> for pt in ahd.hkl_trajectory(
     ...     g,
     ...     {"type": "line", "start": (1, 0, 0), "end": (3, 0, 0)},
     ...     n_points=5,
-    ... )
-    >>> for pt in result:
+    ... ):
     ...     print(pt["hkl"], pt["angles"])
     """
     points = _hkl_points(trajectory, n_points)
-    results: list[dict] = []
     previous: dict[str, float] | None = None
 
     for hkl in points:
@@ -667,24 +670,20 @@ def hkl_trajectory(
         try:
             solutions = geometry.forward(h, k, l)
         except (ValueError, NotImplementedError) as exc:
-            results.append({"hkl": hkl, "angles": None, "warning": str(exc)})
+            yield {"hkl": hkl, "angles": None, "warning": str(exc)}
             continue
 
         if not solutions:
-            results.append(
-                {
-                    "hkl": hkl,
-                    "angles": None,
-                    "warning": "no valid motor solution (all candidates outside limits)",
-                }
-            )
+            yield {
+                "hkl": hkl,
+                "angles": None,
+                "warning": "no valid motor solution (all candidates outside limits)",
+            }
             continue
 
         chosen = _pick_solution(solutions, previous, solution_key)
-        results.append({"hkl": hkl, "angles": chosen, "warning": None})
+        yield {"hkl": hkl, "angles": chosen, "warning": None}
         previous = chosen
-
-    return results
 
 
 def psi_trajectory(
@@ -695,9 +694,9 @@ def psi_trajectory(
     psi_values,
     *,
     solution_key=NEAREST_ANGLES,
-) -> list[dict]:
+) -> Iterator[dict]:
     """
-    Compute motor-angle sequences for ψ rotation about the scattering vector Q.
+    Yield motor-angle dicts for ψ rotation about the scattering vector Q.
 
     For the fixed reflection (h, k, l) and each target ψ in ``psi_values``,
     finds motor angles that simultaneously satisfy the Bragg condition and
@@ -728,9 +727,9 @@ def psi_trajectory(
         Scoring function ``(candidate, previous) -> float``; lower wins.
         Default: ``NEAREST_ANGLES``.
 
-    Returns
-    -------
-    list of dict
+    Yields
+    ------
+    dict
         One entry per ψ value with keys:
 
         ``"psi_target"`` : float
@@ -769,8 +768,7 @@ def psi_trajectory(
     >>> g.sample.lattice = ahd.Lattice(a=4.0)
     >>> ahd.ub_identity(g.sample)
     >>> g.mode_name = "bisecting"
-    >>> result = ahd.psi_trajectory(g, 1, 1, 0, range(-90, 91, 30))
-    >>> for pt in result:
+    >>> for pt in ahd.psi_trajectory(g, 1, 1, 0, range(-90, 91, 30)):
     ...     print(pt["psi_target"], pt["psi_actual"])
     """
 
@@ -783,15 +781,14 @@ def psi_trajectory(
             "no valid Bragg solution for this reflection "
             "(all candidates outside limits)"
         )
-        return [
-            {
+        for p in psi_values:
+            yield {
                 "psi_target": float(p),
                 "psi_actual": None,
                 "angles": None,
                 "warning": no_bragg_msg,
             }
-            for p in psi_values
-        ]
+        return
 
     # Pick the base solution (used to compute Z0 and as the psi=0 reference)
     base = base_solutions[0]
@@ -822,7 +819,6 @@ def psi_trajectory(
     y_perp_0 = y_phi_0 - np.dot(y_phi_0, q_hat_phi) * q_hat_phi
     ref_dir = y_perp_0 / np.linalg.norm(y_perp_0)
 
-    results: list[dict] = []
     previous: dict[str, float] | None = None
 
     for psi_target in psi_values:
@@ -831,17 +827,15 @@ def psi_trajectory(
         candidates = _psi_candidates(geometry, Z0, Q_lab_hat, y_eff, psi_target, base)
 
         if not candidates:
-            results.append(
-                {
-                    "psi_target": psi_target,
-                    "psi_actual": None,
-                    "angles": None,
-                    "warning": (
-                        f"no motor solution achieves psi = {psi_target:.4g}° "
-                        "within stage limits"
-                    ),
-                }
-            )
+            yield {
+                "psi_target": psi_target,
+                "psi_actual": None,
+                "angles": None,
+                "warning": (
+                    f"no motor solution achieves psi = {psi_target:.4g}° "
+                    "within stage limits"
+                ),
+            }
             continue
 
         chosen = _pick_solution(candidates, previous, solution_key)
@@ -849,17 +843,13 @@ def psi_trajectory(
             geometry, chosen, Q_lab_hat, y_eff, q_hat_phi, ref_dir
         )
 
-        results.append(
-            {
-                "psi_target": psi_target,
-                "psi_actual": psi_actual,
-                "angles": chosen,
-                "warning": None,
-            }
-        )
+        yield {
+            "psi_target": psi_target,
+            "psi_actual": psi_actual,
+            "angles": chosen,
+            "warning": None,
+        }
         previous = chosen
-
-    return results
 
 
 def trajectory_plan(
@@ -870,9 +860,9 @@ def trajectory_plan(
     *,
     space: str = "hkl",
     solution_key=NEAREST_ANGLES,
-) -> list[dict]:
+) -> Iterator[dict]:
     r"""
-    Plan a motor-angle path between two reciprocal-space points.
+    Yield motor-angle dicts for a planned path between two reciprocal-space points.
 
     Interpolates between ``hkl_start`` and ``hkl_end`` in ``n_points``
     equally-spaced steps, calls ``geometry.forward()`` at each point, and
@@ -905,9 +895,9 @@ def trajectory_plan(
         Scoring function ``(candidate, previous) -> float``; lower wins.
         Default: ``NEAREST_ANGLES``.
 
-    Returns
-    -------
-    list of dict
+    Yields
+    ------
+    dict
         One entry per trajectory point with keys:
 
         ``"hkl"`` : tuple of float
@@ -940,7 +930,7 @@ def trajectory_plan(
     >>> g.sample.lattice = ahd.Lattice(a=4.0)
     >>> ahd.ub_identity(g.sample)
     >>> g.mode_name = "bisecting"
-    >>> plan = ahd.trajectory_plan(g, (1, 0, 0), (3, 0, 0), n_points=11)
+    >>> plan = list(ahd.trajectory_plan(g, (1, 0, 0), (3, 0, 0), n_points=11))
     >>> accessible = [pt for pt in plan if pt["accessible"]]
     >>> print(f"{len(accessible)}/{len(plan)} points accessible")
     """
@@ -980,7 +970,6 @@ def trajectory_plan(
         hkl_points[0] = tuple(float(v) for v in hkl_start_arr)
         hkl_points[-1] = tuple(float(v) for v in hkl_end_arr)
 
-    results: list[dict] = []
     previous: dict[str, float] | None = None
 
     for hkl in hkl_points:
@@ -990,27 +979,21 @@ def trajectory_plan(
         try:
             solutions = geometry.forward(h, k, l)
         except (ValueError, NotImplementedError) as exc:
-            results.append(
-                {
-                    "hkl": hkl,
-                    "angles": None,
-                    "accessible": False,
-                    "warnings": [str(exc)],
-                }
-            )
+            yield {
+                "hkl": hkl,
+                "angles": None,
+                "accessible": False,
+                "warnings": [str(exc)],
+            }
             continue
 
         if not solutions:
-            results.append(
-                {
-                    "hkl": hkl,
-                    "angles": None,
-                    "accessible": False,
-                    "warnings": [
-                        "no valid motor solution (all candidates outside limits)"
-                    ],
-                }
-            )
+            yield {
+                "hkl": hkl,
+                "angles": None,
+                "accessible": False,
+                "warnings": ["no valid motor solution (all candidates outside limits)"],
+            }
             continue
 
         chosen = _pick_solution(solutions, previous, solution_key)
@@ -1020,15 +1003,11 @@ def trajectory_plan(
         except ValueError as exc:
             warnings_list.append(str(exc))
 
-        results.append(
-            {
-                "hkl": hkl,
-                "angles": chosen,
-                "accessible": len(warnings_list) == 0,
-                "warnings": warnings_list,
-            }
-        )
+        yield {
+            "hkl": hkl,
+            "angles": chosen,
+            "accessible": len(warnings_list) == 0,
+            "warnings": warnings_list,
+        }
         if not warnings_list:
             previous = chosen
-
-    return results

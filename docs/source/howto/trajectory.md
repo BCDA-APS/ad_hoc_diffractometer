@@ -4,6 +4,10 @@
 This guide shows how to compute motor-angle sequences along paths through
 reciprocal space and for ψ scans.
 
+All three trajectory functions are **generators** — they yield one point dict
+at a time and compute each point lazily.  Use a `for` loop to process points
+one by one, or `list(func(...))` to collect all points at once.
+
 ## Prerequisites
 
 - A geometry with wavelength and UB matrix set (see {doc}`orient`)

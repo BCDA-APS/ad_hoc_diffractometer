@@ -354,10 +354,12 @@ class TestHklTrajectory:
     def test_line_round_trip(self):
         """Every accessible point satisfies inverse(angles) ≈ hkl."""
         g = _setup(fourcv)
-        result = hkl_trajectory(
-            g,
-            {"type": "line", "start": (1, 0, 0), "end": (2, 0, 0)},
-            n_points=5,
+        result = list(
+            hkl_trajectory(
+                g,
+                {"type": "line", "start": (1, 0, 0), "end": (2, 0, 0)},
+                n_points=5,
+            )
         )
         assert len(result) == 5
         for pt in result:
@@ -368,15 +370,17 @@ class TestHklTrajectory:
     def test_radial_trajectory_endpoints(self):
         """Radial trajectory: endpoints match expected hkl."""
         g = _setup(fourcv)
-        result = hkl_trajectory(
-            g,
-            {
-                "type": "radial",
-                "center": (1, 0, 0),
-                "direction": (1, 0, 0),
-                "extent": 0.5,
-            },
-            n_points=3,
+        result = list(
+            hkl_trajectory(
+                g,
+                {
+                    "type": "radial",
+                    "center": (1, 0, 0),
+                    "direction": (1, 0, 0),
+                    "extent": 0.5,
+                },
+                n_points=3,
+            )
         )
         assert len(result) == 3
         assert np.allclose(result[0]["hkl"], (0.5, 0.0, 0.0), atol=1e-12)
@@ -385,15 +389,17 @@ class TestHklTrajectory:
     def test_transverse_perpendicular(self):
         """Transverse points lie perpendicular to Q_ref from center."""
         g = _setup(fourcv)
-        result = hkl_trajectory(
-            g,
-            {
-                "type": "transverse",
-                "center": (1, 0, 0),
-                "Q_ref": (1, 0, 0),
-                "extent": 0.1,
-            },
-            n_points=5,
+        result = list(
+            hkl_trajectory(
+                g,
+                {
+                    "type": "transverse",
+                    "center": (1, 0, 0),
+                    "Q_ref": (1, 0, 0),
+                    "extent": 0.1,
+                },
+                n_points=5,
+            )
         )
         center = np.array([1.0, 0.0, 0.0])
         q_ref = np.array([1.0, 0.0, 0.0])
@@ -404,10 +410,12 @@ class TestHklTrajectory:
     def test_inaccessible_gives_none_and_warning(self):
         """When Q exceeds Ewald sphere, angles=None and warning is non-empty."""
         g = _setup(fourcv, a=0.1)  # tiny lattice → very large |Q|
-        result = hkl_trajectory(
-            g,
-            {"type": "line", "start": (1, 0, 0), "end": (2, 0, 0)},
-            n_points=3,
+        result = list(
+            hkl_trajectory(
+                g,
+                {"type": "line", "start": (1, 0, 0), "end": (2, 0, 0)},
+                n_points=3,
+            )
         )
         inaccessible = [pt for pt in result if pt["angles"] is None]
         assert len(inaccessible) > 0
@@ -417,11 +425,13 @@ class TestHklTrajectory:
     def test_nearest_angles_prevents_branch_flip(self):
         """chi values stay on the same branch (no sign flip) with NEAREST_ANGLES."""
         g = _setup(fourcv)
-        result = hkl_trajectory(
-            g,
-            {"type": "line", "start": (0.5, 0, 0), "end": (1.5, 0, 0)},
-            n_points=7,
-            solution_key=NEAREST_ANGLES,
+        result = list(
+            hkl_trajectory(
+                g,
+                {"type": "line", "start": (0.5, 0, 0), "end": (1.5, 0, 0)},
+                n_points=7,
+                solution_key=NEAREST_ANGLES,
+            )
         )
         chi_values = [pt["angles"]["chi"] for pt in result if pt["angles"] is not None]
         assert len(chi_values) >= 2
@@ -433,11 +443,13 @@ class TestHklTrajectory:
         g = _setup(fourcv)
         # Always pick the solution with the largest (most positive) chi
         max_chi_key = lambda c, p: -c.get("chi", 0.0)  # noqa: E731
-        result = hkl_trajectory(
-            g,
-            {"type": "line", "start": (1, 0, 0), "end": (1, 0, 0)},
-            n_points=2,
-            solution_key=max_chi_key,
+        result = list(
+            hkl_trajectory(
+                g,
+                {"type": "line", "start": (1, 0, 0), "end": (1, 0, 0)},
+                n_points=2,
+                solution_key=max_chi_key,
+            )
         )
         for pt in result:
             if pt["angles"] is not None:
@@ -446,11 +458,13 @@ class TestHklTrajectory:
     def test_none_solution_key_returns_result(self):
         """solution_key=None runs and returns angles dicts."""
         g = _setup(fourcv)
-        result = hkl_trajectory(
-            g,
-            {"type": "line", "start": (1, 0, 0), "end": (1, 0, 0)},
-            n_points=2,
-            solution_key=None,
+        result = list(
+            hkl_trajectory(
+                g,
+                {"type": "line", "start": (1, 0, 0), "end": (1, 0, 0)},
+                n_points=2,
+                solution_key=None,
+            )
         )
         assert all("angles" in pt for pt in result)
 
@@ -476,7 +490,7 @@ class TestHklTrajectory:
     def test_hkl_trajectory_raises(self, trajectory, n_points, context):
         g = _setup(fourcv)
         with context:
-            hkl_trajectory(g, trajectory, n_points)
+            list(hkl_trajectory(g, trajectory, n_points))
 
     def test_no_wavelength_gives_warnings(self):
         """When wavelength is not set all points have warnings and angles=None."""
@@ -484,8 +498,10 @@ class TestHklTrajectory:
         g.sample.lattice = Lattice(a=4.0)
         ub_identity(g.sample)
         g.mode_name = "bisecting"
-        result = hkl_trajectory(
-            g, {"type": "line", "start": (1, 0, 0), "end": (2, 0, 0)}, n_points=3
+        result = list(
+            hkl_trajectory(
+                g, {"type": "line", "start": (1, 0, 0), "end": (2, 0, 0)}, n_points=3
+            )
         )
         assert all(pt["angles"] is None for pt in result)
         assert all(pt["warning"] is not None for pt in result)
@@ -515,7 +531,7 @@ class TestPsiTrajectory:
         """Assert psi_actual ≈ psi_target (mod 360) for all accessible points."""
         if targets is None:
             targets = self.PSI_TARGETS
-        result = psi_trajectory(geometry, *hkl, targets)
+        result = list(psi_trajectory(geometry, *hkl, targets))
         assert len(result) == len(targets)
         accessible = [pt for pt in result if pt["angles"] is not None]
         assert len(accessible) >= len(targets) // 2, (
@@ -548,14 +564,16 @@ class TestPsiTrajectory:
     def test_psi_zero_at_base(self):
         """psi_actual = 0 when psi_target = 0 (base forward() solution)."""
         g = _setup(fourcv)
-        result = psi_trajectory(g, *HKL_TEST, [0.0])
+        result = list(psi_trajectory(g, *HKL_TEST, [0.0]))
         assert result[0]["psi_actual"] == pytest.approx(0.0, abs=1e-6)
 
     def test_psi_smooth_motion_nearest_angles(self):
         """phi values vary smoothly across a dense ψ sweep (no large jumps)."""
         g = _setup(fourcv)
         targets = list(range(-60, 61, 10))
-        result = psi_trajectory(g, *HKL_TEST, targets, solution_key=NEAREST_ANGLES)
+        result = list(
+            psi_trajectory(g, *HKL_TEST, targets, solution_key=NEAREST_ANGLES)
+        )
         phi_values = [pt["angles"]["phi"] for pt in result if pt["angles"] is not None]
         assert len(phi_values) >= 2
         for i in range(1, len(phi_values)):
@@ -569,7 +587,7 @@ class TestPsiTrajectory:
         """When reflection is inaccessible all psi points have warning."""
         g = _setup(fourcv)
         g.stage("ttheta").limits = (0.0, 1.0)  # block the detector
-        result = psi_trajectory(g, *HKL_TEST, [0.0, 30.0])
+        result = list(psi_trajectory(g, *HKL_TEST, [0.0, 30.0]))
         for pt in result:
             assert pt["angles"] is None
             assert pt["warning"] is not None
@@ -581,7 +599,7 @@ class TestPsiTrajectory:
         ub_identity(g.sample)
         g.mode_name = "bisecting"
         with pytest.raises(ValueError, match=re.escape("wavelength")):
-            psi_trajectory(g, *HKL_TEST, [0.0])
+            list(psi_trajectory(g, *HKL_TEST, [0.0]))
 
     def test_psi_no_ub_raises(self):
         """Raises ValueError when UB is not set."""
@@ -589,18 +607,18 @@ class TestPsiTrajectory:
         g.wavelength = WAVELENGTH
         g.mode_name = "bisecting"
         with pytest.raises(ValueError, match=re.escape("UB")):
-            psi_trajectory(g, *HKL_TEST, [0.0])
+            list(psi_trajectory(g, *HKL_TEST, [0.0]))
 
     def test_psi_zero_hkl_raises(self):
         """Raises ValueError for hkl = (0,0,0)."""
         g = _setup(fourcv)
         with pytest.raises(ValueError, match=re.escape("(0, 0, 0)")):
-            psi_trajectory(g, 0, 0, 0, [0.0])
+            list(psi_trajectory(g, 0, 0, 0, [0.0]))
 
     def test_psi_result_keys(self):
         """Every result entry has exactly the expected keys."""
         g = _setup(fourcv)
-        result = psi_trajectory(g, *HKL_TEST, [0.0])
+        result = list(psi_trajectory(g, *HKL_TEST, [0.0]))
         assert set(result[0].keys()) == {
             "psi_target",
             "psi_actual",
@@ -611,7 +629,7 @@ class TestPsiTrajectory:
     def test_psi_none_solution_key(self):
         """solution_key=None runs without error."""
         g = _setup(fourcv)
-        result = psi_trajectory(g, *HKL_TEST, [0.0], solution_key=None)
+        result = list(psi_trajectory(g, *HKL_TEST, [0.0], solution_key=None))
         assert len(result) == 1
 
 
@@ -624,7 +642,7 @@ class TestTrajectoryPlan:
     def test_hkl_space_endpoints(self):
         """Start and end hkl are exactly the requested values."""
         g = _setup(fourcv)
-        plan = trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=5)
+        plan = list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=5))
         assert len(plan) == 5
         assert np.allclose(plan[0]["hkl"], (1, 0, 0), atol=1e-12)
         assert np.allclose(plan[-1]["hkl"], (2, 0, 0), atol=1e-12)
@@ -632,7 +650,7 @@ class TestTrajectoryPlan:
     def test_hkl_space_round_trip(self):
         """All accessible points satisfy inverse(angles) ≈ hkl."""
         g = _setup(fourcv)
-        plan = trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=5)
+        plan = list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=5))
         for pt in plan:
             if pt["accessible"]:
                 assert _round_trip_ok(g, pt["angles"], pt["hkl"])
@@ -641,7 +659,7 @@ class TestTrajectoryPlan:
     def test_q_space_endpoints_exact(self):
         """space='Q': endpoints are exact despite Q interpolation."""
         g = _setup(fourcv)
-        plan = trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=5, space="Q")
+        plan = list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=5, space="Q"))
         assert np.allclose(plan[0]["hkl"], (1, 0, 0), atol=1e-12)
         assert np.allclose(plan[-1]["hkl"], (2, 0, 0), atol=1e-12)
 
@@ -653,7 +671,7 @@ class TestTrajectoryPlan:
         ub_identity(g.sample)
 
         n = 5
-        plan_q = trajectory_plan(g, (1, 0, 0), (0, 0, 2), n_points=n, space="Q")
+        plan_q = list(trajectory_plan(g, (1, 0, 0), (0, 0, 2), n_points=n, space="Q"))
 
         # Compute Q vectors at each trajectory point
         Q_vecs = [g.sample.UB @ np.array(pt["hkl"]) for pt in plan_q]
@@ -664,7 +682,9 @@ class TestTrajectoryPlan:
         assert np.std(dQ_mags) < 1e-10, f"Q step sizes not equal: {dQ_mags}"
 
         # Verify both plans share the same exact endpoints regardless of space.
-        plan_hkl = trajectory_plan(g, (1, 0, 0), (0, 0, 2), n_points=n, space="hkl")
+        plan_hkl = list(
+            trajectory_plan(g, (1, 0, 0), (0, 0, 2), n_points=n, space="hkl")
+        )
         assert np.allclose(plan_q[0]["hkl"], (1, 0, 0), atol=1e-12)
         assert np.allclose(plan_q[-1]["hkl"], (0, 0, 2), atol=1e-12)
         assert np.allclose(plan_hkl[0]["hkl"], (1, 0, 0), atol=1e-12)
@@ -673,7 +693,7 @@ class TestTrajectoryPlan:
     def test_inaccessible_points_flagged(self):
         """Points with no valid solution are accessible=False."""
         g = _setup(fourcv, a=0.1)
-        plan = trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3)
+        plan = list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3))
         inaccessible = [pt for pt in plan if not pt["accessible"]]
         assert len(inaccessible) > 0
         for pt in inaccessible:
@@ -683,7 +703,7 @@ class TestTrajectoryPlan:
     def test_nearest_angles_no_branch_flip(self):
         """chi values stay on the same branch across the plan."""
         g = _setup(fourcv)
-        plan = trajectory_plan(g, (0.5, 0, 0), (1.5, 0, 0), n_points=9)
+        plan = list(trajectory_plan(g, (0.5, 0, 0), (1.5, 0, 0), n_points=9))
         chi_values = [pt["angles"]["chi"] for pt in plan if pt["accessible"]]
         assert len(chi_values) >= 2
         signs = {1 if v >= 0 else -1 for v in chi_values}
@@ -692,36 +712,36 @@ class TestTrajectoryPlan:
     def test_n_points_too_small_raises(self):
         g = _setup(fourcv)
         with pytest.raises(ValueError, match=re.escape("n_points must be at least 2")):
-            trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=1)
+            list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=1))
 
     def test_invalid_space_raises(self):
         g = _setup(fourcv)
         with pytest.raises(ValueError, match=re.escape("space must be 'hkl' or 'Q'")):
-            trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3, space="crystal")
+            list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3, space="crystal"))
 
     def test_q_space_no_ub_raises(self):
         g = fourcv()
         g.wavelength = WAVELENGTH
         g.mode_name = "bisecting"
         with pytest.raises(ValueError, match=re.escape("UB")):
-            trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3, space="Q")
+            list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3, space="Q"))
 
     def test_result_keys(self):
         g = _setup(fourcv)
-        plan = trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3)
+        plan = list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3))
         for pt in plan:
             assert set(pt.keys()) == {"hkl", "angles", "accessible", "warnings"}
 
     def test_n_points_respected(self):
         g = _setup(fourcv)
         for n in [2, 5, 11]:
-            plan = trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=n)
+            plan = list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=n))
             assert len(plan) == n
 
     def test_psic_accessible(self):
         """psic geometry: most points on a simple trajectory should be accessible."""
         g = _setup(psic)
-        plan = trajectory_plan(g, (0, 0, 1), (0, 0, 2), n_points=5)
+        plan = list(trajectory_plan(g, (0, 0, 1), (0, 0, 2), n_points=5))
         assert sum(pt["accessible"] for pt in plan) >= 3
 
     def test_no_wavelength_gives_inaccessible(self):
@@ -730,7 +750,7 @@ class TestTrajectoryPlan:
         g.sample.lattice = Lattice(a=4.0)
         ub_identity(g.sample)
         g.mode_name = "bisecting"
-        plan = trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3)
+        plan = list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3))
         assert all(not pt["accessible"] for pt in plan)
         assert all(len(pt["warnings"]) > 0 for pt in plan)
 
@@ -828,7 +848,7 @@ def test_psi_trajectory_beam_parallel_to_Q():
     # (0,1,0) with UB=B in BL basis: Q_phi = B@[0,1,0] = (0, 2π/a, 0)
     # The BL longitudinal (beam) direction is also [0,1,0], so beam ∥ Q.
     g = _setup(fourcv)
-    result = psi_trajectory(g, 0, 1, 0, [0.0])
+    result = list(psi_trajectory(g, 0, 1, 0, [0.0]))
     # Either no solution found (limits) or the beam-parallel warning fires
     # — in any case the degenerate path must not raise
     assert len(result) == 1
@@ -865,7 +885,7 @@ def test_psi_trajectory_fewer_than_3_sample_stages():
     g.sample.lattice = ahd.Lattice(a=4.0)
     ahd.ub_identity(g.sample)
 
-    result = psi_trajectory(g, 1, 0, 0, [0.0, 30.0])
+    result = list(psi_trajectory(g, 1, 0, 0, [0.0, 30.0]))
     # _psi_candidates returns [] for < 3 sample stages → warning entries
     for pt in result:
         assert pt["angles"] is None
@@ -877,8 +897,10 @@ def test_hkl_trajectory_all_candidates_outside_limits():
     g = _setup(fourcv)
     # Lock chi to a range that excludes all forward() solutions for (1,0,0)
     g.stage("chi").limits = (0.1, 0.2)
-    result = hkl_trajectory(
-        g, {"type": "line", "start": (1, 0, 0), "end": (1, 0, 0)}, n_points=2
+    result = list(
+        hkl_trajectory(
+            g, {"type": "line", "start": (1, 0, 0), "end": (1, 0, 0)}, n_points=2
+        )
     )
     for pt in result:
         assert pt["angles"] is None
@@ -889,7 +911,7 @@ def test_trajectory_plan_all_candidates_outside_limits():
     """trajectory_plan marks points inaccessible when all solutions fail limits."""
     g = _setup(fourcv)
     g.stage("chi").limits = (0.1, 0.2)
-    plan = trajectory_plan(g, (1, 0, 0), (1, 0, 0), n_points=2)
+    plan = list(trajectory_plan(g, (1, 0, 0), (1, 0, 0), n_points=2))
     for pt in plan:
         assert not pt["accessible"]
         assert len(pt["warnings"]) > 0
@@ -901,7 +923,7 @@ def test_trajectory_plan_singular_ub_raises():
     # Replace UB with a singular matrix
     g.sample.UB = np.zeros((3, 3))
     with pytest.raises(ValueError, match=re.escape("singular")):
-        trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3, space="Q")
+        list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3, space="Q"))
 
 
 def test_trajectory_plan_check_limits_warning_when_violated():
@@ -914,7 +936,9 @@ def test_trajectory_plan_check_limits_warning_when_violated():
     g = _setup(fourcv)
     exc = ValueError("The following stages have angles outside their limits:\n  chi")
     with mock.patch.object(g, "check_limits", side_effect=exc):
-        plan = trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3, solution_key=None)
+        plan = list(
+            trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=3, solution_key=None)
+        )
 
     for pt in plan:
         if pt["angles"] is not None:
@@ -973,7 +997,7 @@ def test_psi_trajectory_on_longitudinal_reflection():
     and psi_actual is a well-defined float.
     """
     g = _setup(fourcv)
-    result = psi_trajectory(g, 0, 1, 0, [0.0, 30.0])
+    result = list(psi_trajectory(g, 0, 1, 0, [0.0, 30.0]))
     # Should find solutions (or gracefully report limits issues)
     assert len(result) == 2
     for pt in result:
