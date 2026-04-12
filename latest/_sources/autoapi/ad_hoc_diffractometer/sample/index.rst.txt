@@ -1,9 +1,11 @@
-ad_hoc_diffractometer.sample
-============================
+sample
+======
 
 .. py:module:: ad_hoc_diffractometer.sample
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.sample``
 
    sample.py — Sample class and SampleDict for crystallographic sample management.
 
@@ -34,15 +36,6 @@ ad_hoc_diffractometer.sample
        g.add_reflection("r1", hkl=(1,1,1), angles={...})  # -> silicon's reflections
 
 
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.sample.logger
-
-
 Classes
 -------
 
@@ -55,7 +48,12 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: Sample(name: str, lattice: ad_hoc_diffractometer.lattice.Lattice, reflections: ad_hoc_diffractometer.reflection.ReflectionList, U: numpy.ndarray | None = None, UB: numpy.ndarray | None = None, parent=None)
+.. py:class:: Sample(name: str, lattice: ~ad_hoc_diffractometer.lattice.Lattice, reflections: ~ad_hoc_diffractometer.reflection.ReflectionList, U: ~numpy.ndarray | None = None, UB: ~numpy.ndarray | None = None, parent=None)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.sample.Sample``
+
 
    One crystal sample mounted on a diffractometer.
 
@@ -131,6 +129,11 @@ Module Contents
 
 .. py:class:: SampleDict(active_ref: list[str])
 
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.sample.SampleDict``
+
+
    Guarded ordered dict of Sample objects.
 
    Enforces two invariants:
@@ -160,6 +163,4 @@ Module Contents
 
    .. py:method:: values()
 
-
-.. py:data:: logger
 

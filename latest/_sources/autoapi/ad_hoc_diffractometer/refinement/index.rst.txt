@@ -1,9 +1,11 @@
-ad_hoc_diffractometer.refinement
-================================
+refinement
+==========
 
 .. py:module:: ad_hoc_diffractometer.refinement
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.refinement``
 
    refinement.py — Lattice and orientation refinement from multiple reflections.
 
@@ -47,15 +49,6 @@ ad_hoc_diffractometer.refinement
    Nelder & Mead, The Computer Journal 7(4), 308-313 (1965).
 
 
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.refinement.logger
-
-
 Functions
 ---------
 
@@ -68,9 +61,12 @@ Functions
 Module Contents
 ---------------
 
-.. py:data:: logger
-
 .. py:function:: refine_lattice_bl1967(sample, reflections, refine_cell: bool = True, refine_orientation: bool = True, refine_all: bool = False, max_iter: int = 100, tol: float | None = None) -> dict
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement.refine_lattice_bl1967``
+
 
    Refine lattice parameters and/or orientation from N≥3 reflections.
 
@@ -174,6 +170,11 @@ Module Contents
 
 
 .. py:function:: refine_lattice_simplex(sample, reflections, refine_cell: bool = True, refine_orientation: bool = False, refine_all: bool = False, max_iter: int = 1000, tol: float | None = None) -> dict
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement.refine_lattice_simplex``
+
 
    Derivative-free lattice refinement using the Nelder-Mead simplex method.
 

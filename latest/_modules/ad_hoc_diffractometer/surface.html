@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=a348d446"></script>
+    <script src="../../_static/documentation_options.js?v=932a208e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,13 +199,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -371,13 +364,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -694,7 +680,7 @@
 
 
 <div class="viewcode-block" id="alpha_i">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.alpha_i">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.surface.alpha_i">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">alpha_i</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -749,7 +735,7 @@
 
 
 <div class="viewcode-block" id="alpha_f">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.alpha_f">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.surface.alpha_f">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">alpha_f</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -791,12 +777,12 @@
 
 
 <div class="viewcode-block" id="q_components">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.q_components">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.surface.q_components">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">q_components</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decompose Q into components perpendicular and parallel to the sample surface.</span>
 
 <span class="sd">    ``Q_perp`` is the component of Q along the surface normal (out-of-plane).</span>
@@ -830,7 +816,7 @@
 <span class="sd">            Signed out-of-plane component (Å⁻¹); positive when Q points</span>
 <span class="sd">            along the outward surface normal.</span>
 <span class="sd">        ``&quot;Q_total&quot;`` : float</span>
-<span class="sd">            Total |Q| (Å⁻¹).</span>
+<span class="sd">            Total \|Q\| (Å⁻¹).</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -859,7 +845,7 @@
 
 
 <div class="viewcode-block" id="is_specular">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.is_specular">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.surface.is_specular">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_specular</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -895,7 +881,7 @@
 
 
 <div class="viewcode-block" id="is_evanescent">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.is_evanescent">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.surface.is_evanescent">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_evanescent</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

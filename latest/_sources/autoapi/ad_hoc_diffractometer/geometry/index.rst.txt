@@ -1,23 +1,16 @@
-ad_hoc_diffractometer.geometry
-==============================
+geometry
+========
 
 .. py:module:: ad_hoc_diffractometer.geometry
 
 .. autoapi-nested-parse::
 
+   Import: ``ad_hoc_diffractometer.geometry``
+
    geometry.py — AdHocDiffractometer class.
 
    Describes a diffractometer as an ordered collection of rotary stages.
    The stacking order is encoded via the parent attribute of each Stage.
-
-
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.geometry.logger
 
 
 Classes
@@ -31,7 +24,12 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: AdHocDiffractometer(name: str, stages: list[ad_hoc_diffractometer.stage.Stage], basis: dict | None = None, description: str = '', wavelength: float | None = None, kappa_alpha_deg: float | None = None, azimuthal_reference: tuple[float, float, float] | None = None, modes: dict | ad_hoc_diffractometer.mode.ModeDict | None = None, default_mode: str | None = None, cut_points: dict[str, float] | None = None)
+.. py:class:: AdHocDiffractometer(name: str, stages: list[~ad_hoc_diffractometer.stage.Stage], basis: dict | None = None, description: str = '', wavelength: float | None = None, kappa_alpha_deg: float | None = None, azimuthal_reference: tuple[float, float, float] | None = None, modes: dict | ~ad_hoc_diffractometer.mode.ModeDict | None = None, default_mode: str | None = None, cut_points: dict[str, float] | None = None)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry.AdHocDiffractometer``
+
 
    Description of a diffractometer as an ordered collection of rotary stages.
 
@@ -56,8 +54,8 @@ Module Contents
                   the stacking; the parent attribute of each Stage does.
    :type stages: list of Stage
    :param basis: Mapping from physical direction names to Cartesian basis vectors.
-                 Default is the You (1999) convention:
-                     {'vertical': XHAT, 'longitudinal': YHAT, 'lateral': ZHAT}
+                 Default is the You (1999) convention
+                 ``{'vertical': XHAT, 'longitudinal': YHAT, 'lateral': ZHAT}``.
    :type basis: dict, optional
    :param description: Free-text description of the geometry.
    :type description: str, optional
@@ -88,77 +86,11 @@ Module Contents
                       ``[C, C + 360°)``.  ``None`` is equivalent to an empty dict.
    :type cut_points: dict[str, float] or None, optional
 
-   .. attribute:: sample_stages
-
-      Stages with role='sample', in stacking order (floor first).
-
-      :type: list of Stage
-
-   .. attribute:: detector_stages
-
-      Stages with role='detector', in stacking order (floor first).
-
-      :type: list of Stage
-
-   .. attribute:: wavelength
-
-      Wavelength in Å, or None if not set.
-
-      :type: float or None
-
-   .. attribute:: kappa_alpha_deg
-
-      Kappa tilt angle in degrees, or None for non-kappa geometries.
-
-      :type: float or None
-
-   .. attribute:: azimuthal_reference
-
-      Azimuthal reference vector (h, k, l), or None if not set.
-
-      :type: tuple of float or None
-
-   .. attribute:: modes
-
-      The collection of named modes.  Empty if none were supplied.
-
-      :type: ModeDict
-
-   .. attribute:: mode_name
-
-      Name of the currently active mode, or ``None`` if no mode is set.
-
-      :type: str or None
-
-   .. attribute:: cut_points
-
-      Geometry-level SPEC #G4 cut-points per stage; mirrors SPEC #G4.
-
-      :type: dict[str, float]
-
-   .. attribute:: detector_distance
-
-      Sample-to-detector distance in mm, or ``None`` if not set.
-
-      :type: float or None
-
-   .. attribute:: detector_tilt
-
-      Detector tilt angle in degrees, or ``None`` if not set.
-
-      :type: float or None
-
-   .. attribute:: detector_offset
-
-      In-plane detector offset (dx, dy) in mm, or ``None`` if not set.
-
-      :type: tuple of float or None
-
 
    .. py:attribute:: DEFAULT_BASIS
 
 
-   .. py:method:: add_reflection(name: str, hkl: tuple[float, float, float], angles: dict[str, float], wavelength: float | None = None) -> ad_hoc_diffractometer.reflection.Reflection
+   .. py:method:: add_reflection(name: str, hkl: tuple[float, float, float], angles: dict[str, float], wavelength: float | None = None) -> ~ad_hoc_diffractometer.reflection.Reflection
 
       Add a named orienting reflection to the active sample.
 
@@ -178,7 +110,7 @@ Module Contents
 
 
 
-   .. py:method:: add_sample(name: str, lattice=None) -> ad_hoc_diffractometer.sample.Sample
+   .. py:method:: add_sample(name: str, lattice=None) -> ~ad_hoc_diffractometer.sample.Sample
 
       Add a new sample and return it.
 
@@ -351,7 +283,7 @@ Module Contents
       >>> g.detector_offset = None           # clear
 
 
-   .. py:method:: detector_rotation_matrix() -> numpy.ndarray
+   .. py:method:: detector_rotation_matrix() -> ~numpy.ndarray
 
       Compute the total detector rotation matrix in stacking order.
 
@@ -464,7 +396,7 @@ Module Contents
       :raises ValueError: If ``self.wavelength`` is None.
       :raises ValueError: If ``self.sample.UB`` is None.
       :raises ValueError: If (h, k, l) == (0, 0, 0).
-      :raises ValueError: If the requested |Q| exceeds the Ewald sphere.
+      :raises ValueError: If the requested \|Q\| exceeds the Ewald sphere.
       :raises NotImplementedError: If no active mode is set or the mode type is not supported.
 
       .. seealso::
@@ -529,7 +461,7 @@ Module Contents
 
 
    .. py:property:: inclination_matrix
-      :type: numpy.ndarray
+      :type: ~numpy.ndarray
 
 
       3×3 rotation matrix describing the diffractometer inclination
@@ -656,7 +588,7 @@ Module Contents
 
 
    .. py:property:: mode
-      :type: ad_hoc_diffractometer.mode.DiffractionMode | None
+      :type: ~ad_hoc_diffractometer.mode.DiffractionMode | None
 
 
       The currently active :class:`~mode.DiffractionMode`, or ``None``.
@@ -682,7 +614,7 @@ Module Contents
 
 
    .. py:property:: modes
-      :type: ad_hoc_diffractometer.mode.ModeDict
+      :type: ~ad_hoc_diffractometer.mode.ModeDict
 
 
       The collection of named diffraction modes for this geometry.
@@ -806,7 +738,7 @@ Module Contents
 
 
    .. py:attribute:: reflections
-      :type:  ad_hoc_diffractometer.reflection.ReflectionList
+      :type:  ~ad_hoc_diffractometer.reflection.ReflectionList
 
 
    .. py:method:: remove_sample(name: str) -> None
@@ -824,13 +756,13 @@ Module Contents
 
 
    .. py:property:: sample
-      :type: ad_hoc_diffractometer.sample.Sample
+      :type: ~ad_hoc_diffractometer.sample.Sample
 
 
       The currently active Sample.
 
 
-   .. py:method:: sample_rotation_matrix() -> numpy.ndarray
+   .. py:method:: sample_rotation_matrix() -> ~numpy.ndarray
 
       Compute the total sample rotation matrix Z = R_floor * ... * R_top.
 
@@ -848,7 +780,7 @@ Module Contents
 
 
    .. py:property:: samples
-      :type: ad_hoc_diffractometer.sample.SampleDict
+      :type: ~ad_hoc_diffractometer.sample.SampleDict
 
 
       The guarded SampleDict of all samples.
@@ -864,7 +796,7 @@ Module Contents
 
 
 
-   .. py:method:: set_inclination(axis: numpy.ndarray | list[float], angle_deg: float) -> None
+   .. py:method:: set_inclination(axis: ~numpy.ndarray | list[float], angle_deg: float) -> None
 
       Set the inclination matrix from a rotation axis and angle.
 
@@ -922,7 +854,7 @@ Module Contents
       :type: Radiation source type
 
 
-   .. py:method:: stage(name: str) -> ad_hoc_diffractometer.stage.Stage
+   .. py:method:: stage(name: str) -> ~ad_hoc_diffractometer.stage.Stage
 
       Return the Stage with the given name.
 
@@ -1085,6 +1017,4 @@ Module Contents
       Dec 2020.
 
 
-
-.. py:data:: logger
 

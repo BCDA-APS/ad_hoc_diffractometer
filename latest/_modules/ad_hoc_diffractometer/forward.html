@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=a348d446"></script>
+    <script src="../../_static/documentation_options.js?v=932a208e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,13 +199,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -374,13 +367,6 @@
   </a>
 </li>
 
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../autoapi/index.html">
-    API Reference
-  </a>
-</li>
-
   </ul>
 </nav></div>
           
@@ -497,7 +483,7 @@
   <h1>Source code for ad_hoc_diffractometer.forward</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (c) 2026 Pete R. Jemian &lt;prjemian+ad_hoc_diffractometer@gmail.com&gt;</span>
 <span class="c1"># SPDX-License-Identifier: CC-BY-4.0</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">forward.py — Forward diffraction calculation: (h, k, l) → motor angles.</span>
 
 <span class="sd">The forward calculation is the inverse of ``inverse()``: given a reciprocal-</span>
@@ -519,9 +505,9 @@
 
 <span class="sd">    Algorithm:</span>
 <span class="sd">        1. Q_phi = UB @ (h, k, l)             — target in phi frame</span>
-<span class="sd">        2. |Q| → ttheta via Bragg&#39;s law</span>
+<span class="sd">        2. \|Q\| → ttheta via Bragg&#39;s law</span>
 <span class="sd">        3. frozen stages set from mode.frozen_angles</span>
-<span class="sd">        4. detector_stage = ttheta (computed from |Q|)</span>
+<span class="sd">        4. detector_stage = ttheta (computed from \|Q\|)</span>
 <span class="sd">        5. sample_stage   = ttheta / 2 (bisecting)</span>
 <span class="sd">        6. Remaining free sample stages (chi, phi or kchi, kphi) solved</span>
 <span class="sd">           from the direction of Q_phi, choosing among the standard</span>
@@ -544,7 +530,7 @@
 <span class="sd">ValueError</span>
 <span class="sd">    If (h, k, l) = (0, 0, 0).</span>
 <span class="sd">ValueError</span>
-<span class="sd">    If the requested |Q| exceeds the Ewald sphere (wavelength too long).</span>
+<span class="sd">    If the requested \|Q\| exceeds the Ewald sphere (wavelength too long).</span>
 
 <span class="sd">References</span>
 <span class="sd">----------</span>
@@ -571,14 +557,14 @@
 
 
 <div class="viewcode-block" id="compute_forward">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.forward.compute_forward">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/forward/index.html#ad_hoc_diffractometer.forward.compute_forward">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_forward</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">l</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="c1"># noqa: E741</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute all valid motor-angle solutions for the reciprocal-lattice point</span>
 <span class="sd">    (h, k, l) in the geometry&#39;s active diffraction mode.</span>
 
@@ -608,7 +594,7 @@
 <span class="sd">        If (h, k, l) == (0, 0, 0).</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If the scattering vector magnitude exceeds the Ewald sphere</span>
-<span class="sd">        (|Q| &gt; 4π/λ, i.e. Bragg condition cannot be satisfied).</span>
+<span class="sd">        (\|Q\| &gt; 4π/λ, i.e. Bragg condition cannot be satisfied).</span>
 <span class="sd">    NotImplementedError</span>
 <span class="sd">        If no active mode is set or the active mode type is not supported</span>
 <span class="sd">        for this geometry.</span>

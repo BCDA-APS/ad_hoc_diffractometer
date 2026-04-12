@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=a348d446"></script>
+    <script src="../../_static/documentation_options.js?v=932a208e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,13 +199,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -374,13 +367,6 @@
   </a>
 </li>
 
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../autoapi/index.html">
-    API Reference
-  </a>
-</li>
-
   </ul>
 </nav></div>
           
@@ -526,7 +512,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AdHocDiffractometer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Description of a diffractometer as an ordered collection of rotary stages.</span>
@@ -555,8 +541,8 @@
 <span class="sd">        the stacking; the parent attribute of each Stage does.</span>
 <span class="sd">    basis : dict, optional</span>
 <span class="sd">        Mapping from physical direction names to Cartesian basis vectors.</span>
-<span class="sd">        Default is the You (1999) convention:</span>
-<span class="sd">            {&#39;vertical&#39;: XHAT, &#39;longitudinal&#39;: YHAT, &#39;lateral&#39;: ZHAT}</span>
+<span class="sd">        Default is the You (1999) convention</span>
+<span class="sd">        ``{&#39;vertical&#39;: XHAT, &#39;longitudinal&#39;: YHAT, &#39;lateral&#39;: ZHAT}``.</span>
 <span class="sd">    description : str, optional</span>
 <span class="sd">        Free-text description of the geometry.</span>
 <span class="sd">    wavelength : float or None, optional</span>
@@ -586,30 +572,6 @@
 <span class="sd">        A cut-point C for stage X means the returned angle lies in</span>
 <span class="sd">        ``[C, C + 360°)``.  ``None`` is equivalent to an empty dict.</span>
 
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    sample_stages : list of Stage</span>
-<span class="sd">        Stages with role=&#39;sample&#39;, in stacking order (floor first).</span>
-<span class="sd">    detector_stages : list of Stage</span>
-<span class="sd">        Stages with role=&#39;detector&#39;, in stacking order (floor first).</span>
-<span class="sd">    wavelength : float or None</span>
-<span class="sd">        Wavelength in Å, or None if not set.</span>
-<span class="sd">    kappa_alpha_deg : float or None</span>
-<span class="sd">        Kappa tilt angle in degrees, or None for non-kappa geometries.</span>
-<span class="sd">    azimuthal_reference : tuple of float or None</span>
-<span class="sd">        Azimuthal reference vector (h, k, l), or None if not set.</span>
-<span class="sd">    modes : ModeDict</span>
-<span class="sd">        The collection of named modes.  Empty if none were supplied.</span>
-<span class="sd">    mode_name : str or None</span>
-<span class="sd">        Name of the currently active mode, or ``None`` if no mode is set.</span>
-<span class="sd">    cut_points : dict[str, float]</span>
-<span class="sd">        Geometry-level SPEC #G4 cut-points per stage; mirrors SPEC #G4.</span>
-<span class="sd">    detector_distance : float or None</span>
-<span class="sd">        Sample-to-detector distance in mm, or ``None`` if not set.</span>
-<span class="sd">    detector_tilt : float or None</span>
-<span class="sd">        Detector tilt angle in degrees, or ``None`` if not set.</span>
-<span class="sd">    detector_offset : tuple of float or None</span>
-<span class="sd">        In-plane detector offset (dx, dy) in mm, or ``None`` if not set.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">DEFAULT_BASIS</span> <span class="o">=</span> <span class="p">{</span>
@@ -1114,21 +1076,21 @@
     <span class="c1"># ------------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="AdHocDiffractometer.stage">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.stage">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.stage">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stage</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the Stage with the given name.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.set_angle">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_angle">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_angle">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">angle_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the angle of a named stage in degrees.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="n">angle_deg</span></div>
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.check_limits">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.check_limits">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.check_limits">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">angles</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Verify that all supplied angles are within their stage limits.</span>
@@ -1207,7 +1169,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_ref</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
 
 <div class="viewcode-block" id="AdHocDiffractometer.add_sample">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.add_sample">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.add_sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_sample</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1251,7 +1213,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.remove_sample">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.remove_sample">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.remove_sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove a sample from the dict.</span>
@@ -1278,7 +1240,7 @@
     <span class="c1"># ------------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="AdHocDiffractometer.add_reflection">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.add_reflection">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.add_reflection">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_reflection</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1317,14 +1279,14 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.forward">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">l</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="c1"># noqa: E741</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute all valid motor-angle solutions for the reflection (h, k, l).</span>
 
 <span class="sd">        This is the *forward* diffraction calculation: given a reciprocal-</span>
@@ -1362,7 +1324,7 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If (h, k, l) == (0, 0, 0).</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If the requested |Q| exceeds the Ewald sphere.</span>
+<span class="sd">            If the requested \|Q\| exceeds the Ewald sphere.</span>
 <span class="sd">        NotImplementedError</span>
 <span class="sd">            If no active mode is set or the mode type is not supported.</span>
 
@@ -1388,7 +1350,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.inverse">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert a set of motor angles to Miller indices (h, k, l).</span>
@@ -1456,7 +1418,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.psi">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the azimuthal angle ψ (psi) for the given motor angles.</span>
@@ -1766,7 +1728,7 @@
     <span class="c1"># ------------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="AdHocDiffractometer.alpha_i">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.alpha_i">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.alpha_i">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">alpha_i</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Angle of incidence αᵢ (degrees).</span>
@@ -1804,7 +1766,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.alpha_f">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.alpha_f">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.alpha_f">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">alpha_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Angle of emergence αf (degrees).</span>
@@ -1833,7 +1795,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.q_components">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.q_components">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.q_components">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">q_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Decompose Q into components parallel and perpendicular to the surface.</span>
@@ -1858,7 +1820,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.is_specular">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.is_specular">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.is_specular">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_specular</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1883,7 +1845,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.is_evanescent">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.is_evanescent">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.is_evanescent">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_evanescent</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1986,7 +1948,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_inclination_matrix</span> <span class="o">=</span> <span class="n">arr</span>
 
 <div class="viewcode-block" id="AdHocDiffractometer.set_inclination">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_inclination">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_inclination">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_inclination</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">axis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
@@ -2031,7 +1993,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.wh">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.wh">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.wh">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">wh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">print</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Terse one-screen status string (the SPEC ``wh`` command).</span>
@@ -2112,7 +2074,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.pa">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.pa">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.pa">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pa</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">print</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Verbose parameter listing (the SPEC ``pa`` command).</span>
@@ -2269,7 +2231,7 @@
         <span class="k">return</span> <span class="n">_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AdHocDiffractometer.sample_rotation_matrix">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.sample_rotation_matrix">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.sample_rotation_matrix">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample_rotation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the total sample rotation matrix Z = R_floor * ... * R_top.</span>
@@ -2288,7 +2250,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.detector_rotation_matrix">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.detector_rotation_matrix">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.detector_rotation_matrix">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">detector_rotation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the total detector rotation matrix in stacking order.</span>
@@ -2304,7 +2266,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.summary">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.summary">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.summary">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Print a human-readable summary of the geometry.&quot;&quot;&quot;</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">axis_label</span>
@@ -2431,7 +2393,7 @@
         <span class="k">return</span> <span class="n">obj</span>  <span class="c1"># pragma: no cover</span>
 
 <div class="viewcode-block" id="AdHocDiffractometer.to_dict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.to_dict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Export the complete diffractometer configuration as a</span>
@@ -2541,7 +2503,7 @@
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.from_dict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.from_dict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AdHocDiffractometer&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

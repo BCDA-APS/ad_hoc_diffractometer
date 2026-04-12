@@ -1,9 +1,11 @@
-ad_hoc_diffractometer.lattice
-=============================
+lattice
+=======
 
 .. py:module:: ad_hoc_diffractometer.lattice
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.lattice``
 
    lattice.py — crystallographic lattice calculations.
 
@@ -20,14 +22,12 @@ ad_hoc_diffractometer.lattice
      Lecture-2-Reciprocal-lattice-notes
 
 
-
 Attributes
 ----------
 
 .. autoapisummary::
 
    ad_hoc_diffractometer.lattice.CRYSTAL_SYSTEMS
-   ad_hoc_diffractometer.lattice.logger
 
 
 Classes
@@ -56,6 +56,11 @@ Module Contents
 
 
 .. py:class:: Lattice(a: float = 1.0, b: float = _UNSET, c: float = _UNSET, alpha: float = _UNSET, beta: float = _UNSET, gamma: float = _UNSET, precision: int | None = None)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice.Lattice``
+
 
    A crystal lattice described by up to six parameters (a, b, c, α, β, γ).
 
@@ -129,13 +134,13 @@ Module Contents
 
 
    .. py:property:: B
-      :type: numpy.ndarray
+      :type: ~numpy.ndarray
 
 
       B matrix in Å⁻¹ (with 2π factor, Busing & Levy 1967 / SPEC convention).
 
-      Transforms Miller indices **h** = (h, k, l) to the scattering vector
-      in Cartesian crystal-frame coordinates:
+      Transforms Miller indices ``h`` = (h, k, l) to the scattering vector
+      in Cartesian crystal-frame coordinates::
 
           Q_c = B @ h
 
@@ -185,7 +190,7 @@ Module Contents
 
 
    .. py:property:: cartesian_lattice_vectors
-      :type: tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+      :type: tuple[~numpy.ndarray, ~numpy.ndarray, ~numpy.ndarray]
 
 
       Direct lattice vectors (a1, a2, a3) in Angstroms.
@@ -228,7 +233,7 @@ Module Contents
 
 
    .. py:property:: reciprocal_lattice_vectors
-      :type: tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+      :type: tuple[~numpy.ndarray, ~numpy.ndarray, ~numpy.ndarray]
 
 
       Reciprocal lattice vectors (b1, b2, b3) in Å⁻¹ (with 2π factor).
@@ -261,18 +266,23 @@ Module Contents
 
 
 
-.. py:function:: b_matrix(b1: numpy.ndarray, b2: numpy.ndarray, b3: numpy.ndarray) -> numpy.ndarray
+.. py:function:: b_matrix(b1: ~numpy.ndarray, b2: ~numpy.ndarray, b3: ~numpy.ndarray) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice.b_matrix``
+
 
    Compute the B matrix from the reciprocal lattice vectors.
 
-   The B matrix transforms Miller indices **h** = (h, k, l) to the
+   The B matrix transforms Miller indices ``h`` = (h, k, l) to the
    scattering vector in Cartesian crystal-frame coordinates
-   (Busing & Levy, 1967, eq. 3):
+   (Busing & Levy, 1967, eq. 3)::
 
        Q_c = B @ h
 
-   The columns of B are the reciprocal lattice vectors **b**₁, **b**₂,
-   **b**₃ (each including the 2π factor), so:
+   The columns of B are the reciprocal lattice vectors b₁, b₂, b₃
+   (each including the 2π factor), so::
 
        B.T = [b1, b2, b3]    (column-stack of the reciprocal vectors)
 
@@ -298,7 +308,12 @@ Module Contents
    :rtype: numpy.ndarray, shape (3, 3)
 
 
-.. py:function:: lattice_vectors(a: float, b: float, c: float, alpha: float, beta: float, gamma: float) -> tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+.. py:function:: lattice_vectors(a: float, b: float, c: float, alpha: float, beta: float, gamma: float) -> tuple[~numpy.ndarray, ~numpy.ndarray, ~numpy.ndarray]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice.lattice_vectors``
+
 
    Compute the three Cartesian direct lattice vectors from crystal lattice
    parameters.
@@ -332,9 +347,12 @@ Module Contents
    :rtype: numpy.ndarray, shape (3,)
 
 
-.. py:data:: logger
+.. py:function:: reciprocal_vectors(a1: ~numpy.ndarray, a2: ~numpy.ndarray, a3: ~numpy.ndarray) -> tuple[~numpy.ndarray, ~numpy.ndarray, ~numpy.ndarray]
 
-.. py:function:: reciprocal_vectors(a1: numpy.ndarray, a2: numpy.ndarray, a3: numpy.ndarray) -> tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice.reciprocal_vectors``
+
 
    Compute the three reciprocal lattice vectors from Cartesian direct lattice
    vectors.

@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=a348d446"></script>
+    <script src="../../_static/documentation_options.js?v=932a208e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,13 +199,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -374,13 +367,6 @@
   </a>
 </li>
 
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../autoapi/index.html">
-    API Reference
-  </a>
-</li>
-
   </ul>
 </nav></div>
           
@@ -502,19 +488,18 @@
 
 <span class="sd">Functions</span>
 <span class="sd">---------</span>
-<span class="sd">hkl_trajectory(geometry, trajectory, n_points, *, solution_key=NEAREST_ANGLES)</span>
+<span class="sd">``hkl_trajectory(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``</span>
 <span class="sd">    Compute motor-angle sequences along a specified reciprocal-space path.</span>
 
-<span class="sd">psi_trajectory(geometry, h, k, l, psi_values, *, solution_key=NEAREST_ANGLES)</span>
+<span class="sd">``psi_trajectory(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``</span>
 <span class="sd">    Compute motor-angle sequences for ψ (psi) rotation about the scattering</span>
 <span class="sd">    vector Q while keeping the Bragg condition satisfied.</span>
 
-<span class="sd">trajectory_plan(geometry, hkl_start, hkl_end, n_points, *, space=&quot;hkl&quot;,</span>
-<span class="sd">                solution_key=NEAREST_ANGLES)</span>
+<span class="sd">``trajectory_plan(geometry, hkl_start, hkl_end, n_points, space=&quot;hkl&quot;, solution_key=NEAREST_ANGLES)``</span>
 <span class="sd">    Plan a motor-angle path between two reciprocal-space points, flagging</span>
 <span class="sd">    limit violations and inaccessible regions.</span>
 
-<span class="sd">NEAREST_ANGLES</span>
+<span class="sd">``NEAREST_ANGLES``</span>
 <span class="sd">    Built-in solution-key callable: selects the candidate solution whose</span>
 <span class="sd">    motor angles are closest (in least-squares sense) to the previous point.</span>
 <span class="sd">    Suppresses branch-flip discontinuities across a trajectory.</span>
@@ -539,14 +524,14 @@
 <span class="sd">~~~~~~~~~~~~~~~~</span>
 <span class="sd">Two distinct definitions of ψ exist in the literature.</span>
 
-<span class="sd">**geometry.psi()** implements You (1999) eqs. 10-11: ψ is the azimuthal</span>
+<span class="sd">``geometry.psi()`` implements You (1999) eqs. 10-11: ψ is the azimuthal</span>
 <span class="sd">angle of the reference vector **n** about **Q** measured from the projection</span>
 <span class="sd">of the fixed lab beam direction y_hat onto the phi-frame Q-perp plane.  For</span>
 <span class="sd">a given (hkl, UB, n_hkl) this value is *constant* across all motor-angle</span>
 <span class="sd">solutions that satisfy the Bragg condition — it is a crystal-orientation</span>
 <span class="sd">diagnostic, not a motor-angle observable.</span>
 
-<span class="sd">**psi_trajectory()** implements the Busing &amp; Levy (1967) *operational* ψ:</span>
+<span class="sd">``psi_trajectory()`` implements the Busing &amp; Levy (1967) *operational* ψ:</span>
 <span class="sd">the angle through which the sample has been rotated about the scattering</span>
 <span class="sd">vector Q relative to a chosen reference orientation.  This is the quantity</span>
 <span class="sd">physically varied during a ψ scan on a real diffractometer.</span>
@@ -561,12 +546,12 @@
 <span class="sd">4. Remove the contribution of any fixed outer stages and decompose the</span>
 <span class="sd">   inner-three-stage part of Z(ψ) into motor angles analytically:</span>
 
-<span class="sd">   * **Eulerian** (fourcv, fourch, psic-style, fivec-style): the formula</span>
+<span class="sd">   * **Eulerian** (fourcv, fourch, psic-style, fivec-style):</span>
 <span class="sd">     n_phi · Z · n_om = cos(χ) isolates χ; then ω and φ follow from</span>
 <span class="sd">     projections of Z · n_om and Z^T · n_phi onto the plane perpendicular</span>
 <span class="sd">     to their shared rotation axis.  Two χ branches are returned.</span>
 
-<span class="sd">   * **Kappa** (kappa4cv, kappa4ch, kappa6c): the formula</span>
+<span class="sd">   * **Kappa** (kappa4cv, kappa4ch, kappa6c):</span>
 <span class="sd">     n_kphi · Z · n_komega = cos(κ)·cos²(α) + sin²(α) isolates κ (where</span>
 <span class="sd">     α = kappa_alpha_deg); komega and kphi follow by the same projection</span>
 <span class="sd">     method.  Two κ branches (positive and negative) are returned.</span>
@@ -631,7 +616,7 @@
 
 
 <div class="viewcode-block" id="NEAREST_ANGLES">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.NEAREST_ANGLES">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.NEAREST_ANGLES">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">NEAREST_ANGLES</span><span class="p">(</span>
     <span class="n">candidate</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
     <span class="n">previous</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
@@ -1089,7 +1074,7 @@
 
 
 <div class="viewcode-block" id="hkl_trajectory">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.hkl_trajectory">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.hkl_trajectory">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">hkl_trajectory</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">trajectory</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
@@ -1192,7 +1177,7 @@
 
 
 <div class="viewcode-block" id="psi_trajectory">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.psi_trajectory">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.psi_trajectory">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">psi_trajectory</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -1370,7 +1355,7 @@
 
 
 <div class="viewcode-block" id="trajectory_plan">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.trajectory_plan">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.trajectory_plan">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">trajectory_plan</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">hkl_start</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
@@ -1380,7 +1365,7 @@
     <span class="n">space</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hkl&quot;</span><span class="p">,</span>
     <span class="n">solution_key</span><span class="o">=</span><span class="n">NEAREST_ANGLES</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plan a motor-angle path between two reciprocal-space points.</span>
 
 <span class="sd">    Interpolates between ``hkl_start`` and ``hkl_end`` in ``n_points``</span>
@@ -1402,7 +1387,7 @@
 <span class="sd">        ``&quot;hkl&quot;`` (default)</span>
 <span class="sd">            Linearly interpolate Miller indices.  Natural for L-scans,</span>
 <span class="sd">            H-scans, and crystal-axis-aligned trajectories.  Equal steps in</span>
-<span class="sd">            hkl are *not* equal steps in |Q| for non-cubic lattices.</span>
+<span class="sd">            hkl are *not* equal steps in \|Q\| for non-cubic lattices.</span>
 
 <span class="sd">        ``&quot;Q&quot;``</span>
 <span class="sd">            Linearly interpolate in reciprocal Cartesian coordinates</span>

@@ -1,9 +1,11 @@
-ad_hoc_diffractometer.engines
-=============================
+engines
+=======
 
 .. py:module:: ad_hoc_diffractometer.engines
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.engines``
 
    engines.py — Alternative calculation engines.
 
@@ -26,13 +28,13 @@ ad_hoc_diffractometer.engines
        Q-vector → Miller indices via hkl = UB⁻¹ @ Q.
 
    Q_to_d(Qx, Qy, Qz) -> float
-       Q-vector magnitude → d-spacing: d = 2π / |Q|.
+       Q-vector magnitude → d-spacing: d = 2π / \|Q\|.
 
    d_to_Q_mag(d) -> float
-       d-spacing → |Q|: |Q| = 2π / d.
+       d-spacing → \|Q\|: \|Q\| = 2π / d.
 
    hkl_to_d(sample, h, k, l) -> float
-       Miller indices → d-spacing via |Q| = |UB @ hkl|, d = 2π / |Q|.
+       Miller indices → d-spacing via \|Q\| = \|UB @ hkl\|, d = 2π / \|Q\|.
 
    d_to_two_theta(d, wavelength) -> float
        d-spacing → 2θ (degrees) via Bragg's law: λ = 2d sin(θ).
@@ -44,16 +46,15 @@ ad_hoc_diffractometer.engines
        Miller indices → 2θ (degrees).
 
    two_theta_to_Q_mag(two_theta_deg, wavelength) -> float
-       2θ (degrees) → |Q| (Å⁻¹): |Q| = 4π sin(θ) / λ.
+       2θ (degrees) → \|Q\| (Å⁻¹): \|Q\| = 4π sin(θ) / λ.
 
    Q_mag_to_two_theta(Q_mag, wavelength) -> float
-       |Q| (Å⁻¹) → 2θ (degrees).
+       \|Q\| (Å⁻¹) → 2θ (degrees).
 
    .. rubric:: References
 
    Busing & Levy, Acta Cryst. 22, 457-464 (1967) — B matrix, Q = UB @ hkl.
    You, J. Appl. Cryst. 32, 614-623 (1999) — Bragg condition, 2θ definition.
-
 
 
 Functions
@@ -78,9 +79,14 @@ Module Contents
 
 .. py:function:: Q_mag_to_two_theta(Q_mag: float, wavelength: float) -> float
 
-   Convert |Q| to 2θ.
+   .. container:: import-path
 
-   2θ = 2 arcsin(|Q| λ / (4π))
+      Import: ``ad_hoc_diffractometer.engines.Q_mag_to_two_theta``
+
+
+   Convert \|Q\| to 2θ.
+
+   2θ = 2 arcsin(\|Q\| λ / (4π))
 
    :param Q_mag: Magnitude of the scattering vector in Å⁻¹.
    :type Q_mag: float
@@ -91,7 +97,7 @@ Module Contents
    :rtype: float
 
    :raises ValueError: If ``Q_mag`` < 0, ``wavelength`` ≤ 0, or the reflection is
-       unreachable (|Q| λ / (4π) > 1).
+       unreachable (\|Q\| λ / (4π) > 1).
 
    .. rubric:: Examples
 
@@ -102,9 +108,14 @@ Module Contents
 
 .. py:function:: Q_to_d(Qx: float, Qy: float, Qz: float) -> float
 
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.engines.Q_to_d``
+
+
    Convert a Q-vector to the d-spacing.
 
-   d = 2π / |**Q**|
+   d = 2π / \|**Q**\|
 
    :param Qx: Scattering vector components in Å⁻¹.
    :type Qx: float
@@ -116,7 +127,7 @@ Module Contents
    :returns: d-spacing in Å.
    :rtype: float
 
-   :raises ValueError: If |Q| = 0.
+   :raises ValueError: If \|Q\| = 0.
 
    .. rubric:: Examples
 
@@ -125,7 +136,12 @@ Module Contents
    6.283185
 
 
-.. py:function:: Q_to_hkl(sample: ad_hoc_diffractometer.sample.Sample, Qx: float, Qy: float, Qz: float) -> tuple[float, float, float]
+.. py:function:: Q_to_hkl(sample: ~ad_hoc_diffractometer.sample.Sample, Qx: float, Qy: float, Qz: float) -> tuple[float, float, float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.engines.Q_to_hkl``
+
 
    Convert a Q-vector (Å⁻¹) to Miller indices.
 
@@ -159,14 +175,19 @@ Module Contents
 
 .. py:function:: d_to_Q_mag(d: float) -> float
 
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.engines.d_to_Q_mag``
+
+
    Convert a d-spacing to the magnitude of the scattering vector.
 
-   |**Q**| = 2π / d
+   \|**Q**\| = 2π / d
 
    :param d: d-spacing in Å.
    :type d: float
 
-   :returns: |Q| in Å⁻¹.
+   :returns: \|Q\| in Å⁻¹.
    :rtype: float
 
    :raises ValueError: If ``d`` ≤ 0.
@@ -179,6 +200,11 @@ Module Contents
 
 
 .. py:function:: d_to_two_theta(d: float, wavelength: float) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.engines.d_to_two_theta``
+
 
    Convert d-spacing to 2θ using Bragg's law.
 
@@ -202,7 +228,12 @@ Module Contents
    22.6956
 
 
-.. py:function:: hkl_to_Q(sample: ad_hoc_diffractometer.sample.Sample, h: float, k: float, l: float) -> numpy.ndarray
+.. py:function:: hkl_to_Q(sample: ~ad_hoc_diffractometer.sample.Sample, h: float, k: float, l: float) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.engines.hkl_to_Q``
+
 
    Convert Miller indices to the scattering vector Q in Å⁻¹.
 
@@ -233,11 +264,16 @@ Module Contents
    1.6...
 
 
-.. py:function:: hkl_to_d(sample: ad_hoc_diffractometer.sample.Sample, h: float, k: float, l: float) -> float
+.. py:function:: hkl_to_d(sample: ~ad_hoc_diffractometer.sample.Sample, h: float, k: float, l: float) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.engines.hkl_to_d``
+
 
    Convert Miller indices to d-spacing.
 
-   d = 2π / |UB · **hkl**|
+   d = 2π / \|UB · **hkl**\|
 
    :param sample: Sample with a UB matrix set.
    :type sample: Sample
@@ -263,7 +299,12 @@ Module Contents
    3.905
 
 
-.. py:function:: hkl_to_two_theta(sample: ad_hoc_diffractometer.sample.Sample, h: float, k: float, l: float, wavelength: float) -> float
+.. py:function:: hkl_to_two_theta(sample: ~ad_hoc_diffractometer.sample.Sample, h: float, k: float, l: float, wavelength: float) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.engines.hkl_to_two_theta``
+
 
    Convert Miller indices to 2θ using the UB matrix and Bragg's law.
 
@@ -296,16 +337,21 @@ Module Contents
 
 .. py:function:: two_theta_to_Q_mag(two_theta_deg: float, wavelength: float) -> float
 
-   Convert 2θ to |Q| using the Bragg relation.
+   .. container:: import-path
 
-   |**Q**| = 4π sin(θ) / λ
+      Import: ``ad_hoc_diffractometer.engines.two_theta_to_Q_mag``
+
+
+   Convert 2θ to \|Q\| using the Bragg relation.
+
+   \|**Q**\| = 4π sin(θ) / λ
 
    :param two_theta_deg: Diffraction angle 2θ in degrees.
    :type two_theta_deg: float
    :param wavelength: Wavelength in Å.
    :type wavelength: float
 
-   :returns: |Q| in Å⁻¹.
+   :returns: \|Q\| in Å⁻¹.
    :rtype: float
 
    :raises ValueError: If ``two_theta_deg`` is not in (0°, 180°) or ``wavelength`` ≤ 0.
@@ -318,6 +364,11 @@ Module Contents
 
 
 .. py:function:: two_theta_to_d(two_theta_deg: float, wavelength: float) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.engines.two_theta_to_d``
+
 
    Convert 2θ to d-spacing using Bragg's law.
 

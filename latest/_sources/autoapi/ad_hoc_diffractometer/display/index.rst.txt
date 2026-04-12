@@ -1,9 +1,11 @@
-ad_hoc_diffractometer.display
-=============================
+display
+=======
 
 .. py:module:: ad_hoc_diffractometer.display
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.display``
 
    display.py — display precision settings and numeric comparison helper.
 
@@ -33,15 +35,6 @@ ad_hoc_diffractometer.display
    explicit tolerance can be supplied to override this default.
 
 
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.display.logger
-
-
 Functions
 ---------
 
@@ -58,6 +51,11 @@ Module Contents
 ---------------
 
 .. py:function:: allclose(a, b, atol: float | None = None, digits: int | None = None) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.display.allclose``
+
 
    Tolerance-aware comparison for scalars or array-like sequences.
 
@@ -90,6 +88,11 @@ Module Contents
 
 .. py:function:: fmt(value: float, digits: int | None = None) -> str
 
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.display.fmt``
+
+
    Format a float for display with the given number of decimal places.
 
    :param value: The value to format.
@@ -104,12 +107,20 @@ Module Contents
 
 .. py:function:: get_precision() -> int
 
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.display.get_precision``
+
+
    Return the current package-level display precision (decimal places).
 
 
-.. py:data:: logger
-
 .. py:function:: precision_atol(digits: int | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.display.precision_atol``
+
 
    Return an absolute tolerance matching the current display precision.
 
@@ -124,6 +135,11 @@ Module Contents
 
 
 .. py:function:: set_precision(digits: int) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.display.set_precision``
+
 
    Set the package-level display precision.
 

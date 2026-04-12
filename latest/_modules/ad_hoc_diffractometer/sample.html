@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=a348d446"></script>
+    <script src="../../_static/documentation_options.js?v=932a208e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,13 +199,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -374,13 +367,6 @@
   </a>
 </li>
 
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../autoapi/index.html">
-    API Reference
-  </a>
-</li>
-
   </ul>
 </nav></div>
           
@@ -544,7 +530,7 @@
 
 
 <div class="viewcode-block" id="SampleDict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.SampleDict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.SampleDict">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SampleDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Guarded ordered dict of Sample objects.</span>
@@ -626,7 +612,7 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SampleDict(</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
 
 <div class="viewcode-block" id="SampleDict.clear">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.SampleDict.clear">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.SampleDict.clear">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;SampleDict.clear() is not permitted; the dict must always &quot;</span>
@@ -635,7 +621,7 @@
 
 
 <div class="viewcode-block" id="SampleDict.pop">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.SampleDict.pop">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.SampleDict.pop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sample</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
@@ -646,19 +632,19 @@
 
 
 <div class="viewcode-block" id="SampleDict.keys">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.SampleDict.keys">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.SampleDict.keys">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="SampleDict.values">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.SampleDict.values">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.SampleDict.values">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="SampleDict.items">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.SampleDict.items">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.SampleDict.items">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div>
 </div>
@@ -666,7 +652,7 @@
 
 
 <div class="viewcode-block" id="Sample">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.Sample">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.Sample">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Sample</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    One crystal sample mounted on a diffractometer.</span>
@@ -743,7 +729,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="Sample.to_dict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.Sample.to_dict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.Sample.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a JSON-serialisable ``dict`` representing this sample.</span>
@@ -765,7 +751,7 @@
 
 
 <div class="viewcode-block" id="Sample.from_dict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.Sample.from_dict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.Sample.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sample</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

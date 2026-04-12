@@ -1,27 +1,28 @@
-ad_hoc_diffractometer.scan
-==========================
+scan
+====
 
 .. py:module:: ad_hoc_diffractometer.scan
 
 .. autoapi-nested-parse::
 
+   Import: ``ad_hoc_diffractometer.scan``
+
    scan.py — Reciprocal-space trajectory computation.
 
    Functions
    ---------
-   hkl_trajectory(geometry, trajectory, n_points, *, solution_key=NEAREST_ANGLES)
+   ``hkl_trajectory(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``
        Compute motor-angle sequences along a specified reciprocal-space path.
 
-   psi_trajectory(geometry, h, k, l, psi_values, *, solution_key=NEAREST_ANGLES)
+   ``psi_trajectory(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``
        Compute motor-angle sequences for ψ (psi) rotation about the scattering
        vector Q while keeping the Bragg condition satisfied.
 
-   trajectory_plan(geometry, hkl_start, hkl_end, n_points, *, space="hkl",
-                   solution_key=NEAREST_ANGLES)
+   ``trajectory_plan(geometry, hkl_start, hkl_end, n_points, space="hkl", solution_key=NEAREST_ANGLES)``
        Plan a motor-angle path between two reciprocal-space points, flagging
        limit violations and inaccessible regions.
 
-   NEAREST_ANGLES
+   ``NEAREST_ANGLES``
        Built-in solution-key callable: selects the candidate solution whose
        motor angles are closest (in least-squares sense) to the previous point.
        Suppresses branch-flip discontinuities across a trajectory.
@@ -46,14 +47,14 @@ ad_hoc_diffractometer.scan
    ~~~~~~~~~~~~~~~~
    Two distinct definitions of ψ exist in the literature.
 
-   **geometry.psi()** implements You (1999) eqs. 10-11: ψ is the azimuthal
+   ``geometry.psi()`` implements You (1999) eqs. 10-11: ψ is the azimuthal
    angle of the reference vector **n** about **Q** measured from the projection
    of the fixed lab beam direction y_hat onto the phi-frame Q-perp plane.  For
    a given (hkl, UB, n_hkl) this value is *constant* across all motor-angle
    solutions that satisfy the Bragg condition — it is a crystal-orientation
    diagnostic, not a motor-angle observable.
 
-   **psi_trajectory()** implements the Busing & Levy (1967) *operational* ψ:
+   ``psi_trajectory()`` implements the Busing & Levy (1967) *operational* ψ:
    the angle through which the sample has been rotated about the scattering
    vector Q relative to a chosen reference orientation.  This is the quantity
    physically varied during a ψ scan on a real diffractometer.
@@ -68,12 +69,12 @@ ad_hoc_diffractometer.scan
    4. Remove the contribution of any fixed outer stages and decompose the
       inner-three-stage part of Z(ψ) into motor angles analytically:
 
-      * **Eulerian** (fourcv, fourch, psic-style, fivec-style): the formula
+      * **Eulerian** (fourcv, fourch, psic-style, fivec-style):
         n_phi · Z · n_om = cos(χ) isolates χ; then ω and φ follow from
         projections of Z · n_om and Z^T · n_phi onto the plane perpendicular
         to their shared rotation axis.  Two χ branches are returned.
 
-      * **Kappa** (kappa4cv, kappa4ch, kappa6c): the formula
+      * **Kappa** (kappa4cv, kappa4ch, kappa6c):
         n_kphi · Z · n_komega = cos(κ)·cos²(α) + sin²(α) isolates κ (where
         α = kappa_alpha_deg); komega and kphi follow by the same projection
         method.  Two κ branches (positive and negative) are returned.
@@ -119,15 +120,6 @@ ad_hoc_diffractometer.scan
        Kappa conversion formulae.
 
 
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.scan.logger
-
-
 Functions
 ---------
 
@@ -143,6 +135,11 @@ Module Contents
 ---------------
 
 .. py:function:: NEAREST_ANGLES(candidate: dict[str, float], previous: dict[str, float] | None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan.NEAREST_ANGLES``
+
 
    Score a candidate motor-angle solution by its distance from the previous point.
 
@@ -162,7 +159,12 @@ Module Contents
    :rtype: float
 
 
-.. py:function:: hkl_trajectory(geometry: ad_hoc_diffractometer.geometry.AdHocDiffractometer, trajectory: dict, n_points: int, *, solution_key=NEAREST_ANGLES) -> list[dict]
+.. py:function:: hkl_trajectory(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, trajectory: dict, n_points: int, *, solution_key=NEAREST_ANGLES) -> list[dict]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan.hkl_trajectory``
+
 
    Compute motor-angle sequences along a reciprocal-space trajectory.
 
@@ -219,9 +221,12 @@ Module Contents
    ...     print(pt["hkl"], pt["angles"])
 
 
-.. py:data:: logger
+.. py:function:: psi_trajectory(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, h: float, k: float, l: float, psi_values, *, solution_key=NEAREST_ANGLES) -> list[dict]
 
-.. py:function:: psi_trajectory(geometry: ad_hoc_diffractometer.geometry.AdHocDiffractometer, h: float, k: float, l: float, psi_values, *, solution_key=NEAREST_ANGLES) -> list[dict]
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan.psi_trajectory``
+
 
    Compute motor-angle sequences for ψ rotation about the scattering vector Q.
 
@@ -295,7 +300,12 @@ Module Contents
    ...     print(pt["psi_target"], pt["psi_actual"])
 
 
-.. py:function:: trajectory_plan(geometry: ad_hoc_diffractometer.geometry.AdHocDiffractometer, hkl_start: tuple[float, float, float], hkl_end: tuple[float, float, float], n_points: int, *, space: str = 'hkl', solution_key=NEAREST_ANGLES) -> list[dict]
+.. py:function:: trajectory_plan(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, hkl_start: tuple[float, float, float], hkl_end: tuple[float, float, float], n_points: int, *, space: str = 'hkl', solution_key=NEAREST_ANGLES) -> list[dict]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan.trajectory_plan``
+
 
    Plan a motor-angle path between two reciprocal-space points.
 
@@ -317,7 +327,7 @@ Module Contents
                  ``"hkl"`` (default)
                      Linearly interpolate Miller indices.  Natural for L-scans,
                      H-scans, and crystal-axis-aligned trajectories.  Equal steps in
-                     hkl are *not* equal steps in |Q| for non-cubic lattices.
+                     hkl are *not* equal steps in \|Q\| for non-cubic lattices.
 
                  ``"Q"``
                      Linearly interpolate in reciprocal Cartesian coordinates

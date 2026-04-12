@@ -1,9 +1,11 @@
-ad_hoc_diffractometer.mode
-==========================
+mode
+====
 
 .. py:module:: ad_hoc_diffractometer.mode
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.mode``
 
    mode.py — Diffraction mode / operating constraints.
 
@@ -47,15 +49,6 @@ ad_hoc_diffractometer.mode
    SPEC #G0, #G4 lines — references/2020-12-13-fourcc-alignment-7-id-c/spec_G_lines.md
 
 
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.mode.logger
-
-
 Classes
 -------
 
@@ -71,6 +64,11 @@ Module Contents
 ---------------
 
 .. py:class:: BisectingMode(sample_stage: str, detector_stage: str, frozen_angles: dict[str, float] | None = None, cut_points: dict[str, float] | None = None)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.BisectingMode``
+
 
    Bases: :py:obj:`DiffractionMode`
 
@@ -139,6 +137,11 @@ Module Contents
 
 .. py:class:: DiffractionMode(frozen_angles: dict[str, float] | None = None, cut_points: dict[str, float] | None = None)
 
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.DiffractionMode``
+
+
    Bases: :py:obj:`abc.ABC`
 
 
@@ -160,18 +163,6 @@ Module Contents
                       ``None`` is equivalent to an empty dict (no cut-points set, i.e.
                       the default branch [-180, 180) is used).
    :type cut_points: dict[str, float] or None
-
-   .. attribute:: frozen_angles
-
-      Stages held fixed in this mode; mirrors SPEC #G0.
-
-      :type: dict[str, float]
-
-   .. attribute:: cut_points
-
-      Branch selection cut-points per stage; mirrors SPEC #G4.
-
-      :type: dict[str, float]
 
 
    .. py:method:: apply_cut_point(stage_name: str, angle_deg: float) -> float
@@ -202,6 +193,7 @@ Module Contents
       Return the list of stage names that are constrained (not free) in this mode.
 
       Constrained stages include both:
+
       - frozen stages (held at a fixed angle)
       - stages whose angle is determined by a relationship to another stage
         (e.g. bisecting: omega = ttheta/2)
@@ -218,6 +210,11 @@ Module Contents
 
 
 .. py:class:: FixedAngleMode(stage: str, value: float, cut_points: dict[str, float] | None = None)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.FixedAngleMode``
+
 
    Bases: :py:obj:`DiffractionMode`
 
@@ -253,6 +250,11 @@ Module Contents
 
 
 .. py:class:: ModeDict(modes: dict[str, DiffractionMode] | None = None)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.ModeDict``
+
 
    An ordered, guarded dict of named diffraction modes.
 
@@ -290,6 +292,4 @@ Module Contents
       Return mode objects.
 
 
-
-.. py:data:: logger
 

@@ -1,24 +1,16 @@
-ad_hoc_diffractometer.rotation
-==============================
+rotation
+========
 
 .. py:module:: ad_hoc_diffractometer.rotation
 
 .. autoapi-nested-parse::
 
+   Import: ``ad_hoc_diffractometer.rotation``
+
    rotation.py — rotation matrix calculation.
 
    Provides the Rodrigues rotation formula for computing 3x3 rotation matrices
    from a unit axis vector and an angle.
-
-
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.rotation.logger
-   ad_hoc_diffractometer.rotation.logger
 
 
 Functions
@@ -32,11 +24,12 @@ Functions
 Module Contents
 ---------------
 
-.. py:data:: logger
+.. py:function:: rotation_matrix(axis: ~numpy.ndarray, angle_deg: float) -> ~numpy.ndarray
 
-.. py:data:: logger
+   .. container:: import-path
 
-.. py:function:: rotation_matrix(axis: numpy.ndarray, angle_deg: float) -> numpy.ndarray
+      Import: ``ad_hoc_diffractometer.rotation.rotation_matrix``
+
 
    Compute a right-handed rotation matrix about a unit axis vector.
 

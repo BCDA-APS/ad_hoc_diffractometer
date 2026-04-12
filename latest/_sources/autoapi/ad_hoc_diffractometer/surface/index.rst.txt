@@ -1,9 +1,11 @@
-ad_hoc_diffractometer.surface
-=============================
+surface
+=======
 
 .. py:module:: ad_hoc_diffractometer.surface
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.surface``
 
    surface.py — Surface geometry calculations.
 
@@ -74,15 +76,6 @@ ad_hoc_diffractometer.surface
    Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987)
 
 
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.surface.logger
-
-
 Functions
 ---------
 
@@ -98,7 +91,12 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: alpha_f(geometry: ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+.. py:function:: alpha_f(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.surface.alpha_f``
+
 
    Compute the angle of emergence αf (degrees).
 
@@ -122,7 +120,12 @@ Module Contents
    Lohmeier & Vlieg (1993), §4.2, eq. 16.
 
 
-.. py:function:: alpha_i(geometry: ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+.. py:function:: alpha_i(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.surface.alpha_i``
+
 
    Compute the angle of incidence αᵢ (degrees).
 
@@ -158,7 +161,12 @@ Module Contents
    Lohmeier & Vlieg (1993), §4.2, eq. 15.
 
 
-.. py:function:: is_evanescent(geometry: ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None, critical_angle_deg: float | None = None) -> bool
+.. py:function:: is_evanescent(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None, critical_angle_deg: float | None = None) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.surface.is_evanescent``
+
 
    Return True when αᵢ is below the critical angle (evanescent / surface-sensitive).
 
@@ -186,7 +194,12 @@ Module Contents
    True   # if αᵢ < 0.2°
 
 
-.. py:function:: is_specular(geometry: ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None, atol: float = 0.01) -> bool
+.. py:function:: is_specular(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None, atol: float = 0.01) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.surface.is_specular``
+
 
    Return True when αᵢ ≈ αf within ``atol`` degrees.
 
@@ -205,9 +218,12 @@ Module Contents
    :raises ValueError: If any required attribute is not set.
 
 
-.. py:data:: logger
+.. py:function:: q_components(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> dict[str, float]
 
-.. py:function:: q_components(geometry: ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> dict[str, float]
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.surface.q_components``
+
 
    Decompose Q into components perpendicular and parallel to the sample surface.
 
@@ -239,7 +255,7 @@ Module Contents
                  Signed out-of-plane component (Å⁻¹); positive when Q points
                  along the outward surface normal.
              ``"Q_total"`` : float
-                 Total |Q| (Å⁻¹).
+                 Total \|Q\| (Å⁻¹).
    :rtype: dict with keys
 
    :raises ValueError: If any required attribute is not set.

@@ -1,9 +1,11 @@
-ad_hoc_diffractometer.factories
-===============================
+factories
+=========
 
 .. py:module:: ad_hoc_diffractometer.factories
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.factories``
 
    factories.py — predefined diffractometer geometry factory functions.
 
@@ -109,7 +111,6 @@ ad_hoc_diffractometer.factories
        D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)                 kappa, zaxis, s2d2, fivec
 
 
-
 Attributes
 ----------
 
@@ -119,7 +120,6 @@ Attributes
    ad_hoc_diffractometer.factories.BASIS_YOU
    ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP
    ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT
-   ad_hoc_diffractometer.factories.logger
 
 
 Functions
@@ -158,7 +158,12 @@ Module Contents
    :value: 50.0
 
 
-.. py:function:: fivec(basis: dict = _BASIS_YOU) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
+.. py:function:: fivec(basis: dict = _BASIS_YOU) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.fivec``
+
 
    Five-circle diffractometer (fourcv mounted on a vertical base).
 
@@ -170,18 +175,25 @@ Module Contents
    through mu.  This provides an additional degree of freedom for accessing
    wider regions of reciprocal space, particularly at synchrotron sources.
 
-   Stack (floor first):
+   Stack (floor first)::
+
        mu (shared base): vertical,     right-handed
          --> omega (sample): lateral,      left-handed
                --> chi:      longitudinal, right-handed
                      --> phi: lateral,     left-handed
          --> ttheta (detector): lateral,   left-handed
 
-   References: E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
-               D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+   References:
+   E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
+   D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
 
 
-.. py:function:: fourch(basis: dict = _BASIS_BL) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
+.. py:function:: fourch(basis: dict = _BASIS_BL) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.fourch``
+
 
    Four-circle Eulerian diffractometer, horizontal scattering plane (laboratory).
 
@@ -207,7 +219,12 @@ Module Contents
               D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
 
 
-.. py:function:: fourcv(basis: dict = _BASIS_BL) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
+.. py:function:: fourcv(basis: dict = _BASIS_BL) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.fourcv``
+
 
    Four-circle Eulerian diffractometer, vertical scattering plane (synchrotron).
 
@@ -236,6 +253,11 @@ Module Contents
 
 .. py:function:: get_geometry(name: str)
 
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.get_geometry``
+
+
    Return the registered factory function for the named geometry.
 
    This is the primitive lookup — it returns the callable factory, not an
@@ -262,7 +284,12 @@ Module Contents
    AdHocDiffractometer(name='kappa4cv', ...)
 
 
-.. py:function:: kappa4ch(alpha_deg: float = KAPPA_ALPHA_DEFAULT, basis: dict = _BASIS_BL) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
+.. py:function:: kappa4ch(alpha_deg: float = KAPPA_ALPHA_DEFAULT, basis: dict = _BASIS_BL) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.kappa4ch``
+
 
    Four-circle kappa diffractometer, horizontal scattering plane (laboratory).
 
@@ -290,7 +317,12 @@ Module Contents
    :type References: D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
 
 
-.. py:function:: kappa4cv(alpha_deg: float = KAPPA_ALPHA_DEFAULT, basis: dict = _BASIS_BL) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
+.. py:function:: kappa4cv(alpha_deg: float = KAPPA_ALPHA_DEFAULT, basis: dict = _BASIS_BL) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.kappa4cv``
+
 
    Four-circle kappa diffractometer, vertical scattering plane (synchrotron).
 
@@ -322,7 +354,12 @@ Module Contents
    :type References: D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
 
 
-.. py:function:: kappa6c(alpha_deg: float = KAPPA_ALPHA_DEFAULT, basis: dict = _BASIS_YOU) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
+.. py:function:: kappa6c(alpha_deg: float = KAPPA_ALPHA_DEFAULT, basis: dict = _BASIS_YOU) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.kappa6c``
+
 
    Six-circle kappa diffractometer (psic-style outer axes, kappa inner sample).
 
@@ -356,6 +393,11 @@ Module Contents
 
 .. py:function:: list_geometries() -> dict[str, type]
 
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.list_geometries``
+
+
    Return a copy of the geometry registry as {name: factory_callable}.
 
    Includes all built-in geometries (registered via ``@register_geometry``
@@ -379,9 +421,12 @@ Module Contents
    AdHocDiffractometer(name='psic', ...)
 
 
-.. py:data:: logger
+.. py:function:: make_geometry(name: str, **kwargs) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
 
-.. py:function:: make_geometry(name: str, **kwargs) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.make_geometry``
+
 
    Instantiate a geometry by name, passing keyword arguments to its factory.
 
@@ -410,7 +455,12 @@ Module Contents
    AdHocDiffractometer(name='kappa6c', ...)
 
 
-.. py:function:: psic(basis: dict = _BASIS_YOU) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
+.. py:function:: psic(basis: dict = _BASIS_YOU) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.psic``
+
 
    You (1999) '4S+2D' six-circle diffractometer (psic geometry).
 
@@ -436,6 +486,11 @@ Module Contents
 
 .. py:function:: register_geometry(func)
 
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.register_geometry``
+
+
    Decorator that registers a geometry factory in _GEOMETRY_REGISTRY.
 
    The function is stored under its own ``__name__``, so the registry
@@ -450,12 +505,19 @@ Module Contents
 
    .. rubric:: Example
 
-   @register_geometry
-   def psic() -> AdHocDiffractometer:
-       ...
+   ::
+
+       @register_geometry
+       def psic() -> AdHocDiffractometer:
+           ...
 
 
-.. py:function:: s2d2(basis: dict = _BASIS_YOU) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
+.. py:function:: s2d2(basis: dict = _BASIS_YOU) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.s2d2``
+
 
    S2D2 four-circle diffractometer (general-inclination geometry).
 
@@ -466,25 +528,33 @@ Module Contents
    (nu, delta), all mechanically decoupled.  The angle of incidence is the
    mu angle; the surface normal is parallel to Z.
 
-   Sample stack (floor first):
+   Sample stack (floor first)::
+
        mu    : vertical,     right-handed
          --> Z : longitudinal, right-handed
 
-   Detector stack (floor first):
+   Detector stack (floor first)::
+
        nu    : vertical,     right-handed
          --> delta : lateral, left-handed
 
    mu and nu share the same vertical axis; mechanically independent.
 
-   The total scattering angle is (Walko 2016, eq. 18):
+   The total scattering angle is (Walko 2016, eq. 18)::
+
        ttheta = arccos(cos(nu) * cos(delta))
 
-   References: K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst.
-                   28, 318-326 (1995).
-               D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.
+   References:
+   K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995).
+   D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.
 
 
-.. py:function:: sixc(basis: dict = _BASIS_YOU) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
+.. py:function:: sixc(basis: dict = _BASIS_YOU) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.sixc``
+
 
    Lohmeier & Vlieg (1993) six-circle surface diffractometer (sixc geometry).
 
@@ -496,11 +566,12 @@ Module Contents
    making this a coupled geometry.  Useful for surface diffraction.
 
    From Fig. 1 and §2.1 of Lohmeier & Vlieg (1993):
-       alpha and gamma rotate about the vertical axis (x in LV convention).
-       omega, phi, and delta all rotate about the lateral axis (z in LV).
-       chi rotates about the longitudinal axis (y in LV).
+   alpha and gamma rotate about the vertical axis (x in LV convention).
+   omega, phi, and delta all rotate about the lateral axis (z in LV).
+   chi rotates about the longitudinal axis (y in LV).
 
-   Stack (floor first):
+   Stack (floor first)::
+
        alpha (shared base): vertical,     right-handed  [rotary table]
          --> omega (sample):  lateral,      left-handed
                --> chi:       longitudinal, right-handed
@@ -511,7 +582,12 @@ Module Contents
    Reference: M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993).
 
 
-.. py:function:: zaxis(basis: dict = _BASIS_YOU) -> ad_hoc_diffractometer.geometry.AdHocDiffractometer
+.. py:function:: zaxis(basis: dict = _BASIS_YOU) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories.zaxis``
+
 
    Z-axis four-circle diffractometer (general-inclination geometry).
 
@@ -522,17 +598,20 @@ Module Contents
    parallel to the Z-axis, so the angle of incidence equals the alpha angle.
    The detector and sample both rotate about the shared alpha (base) axis.
 
-   Stack (floor first):
+   Stack (floor first)::
+
        alpha (shared base): vertical,     right-handed
          --> Z     (sample)  : longitudinal, right-handed
          --> delta (detector): lateral,      left-handed
                --> gamma :     vertical,     right-handed
 
    The total scattering angle is a compound of gamma, delta, and alpha
-   (Walko 2016, eq. 17):
+   (Walko 2016, eq. 17)::
+
        ttheta = arccos(cos(gamma)*cos(delta)*cos(alpha) + sin(alpha)*sin(gamma))
 
-   References: J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).
-               D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.
+   References:
+   J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).
+   D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.
 
 

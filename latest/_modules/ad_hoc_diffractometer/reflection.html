@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=a348d446"></script>
+    <script src="../../_static/documentation_options.js?v=932a208e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,13 +199,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -374,13 +367,6 @@
   </a>
 </li>
 
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../autoapi/index.html">
-    API Reference
-  </a>
-</li>
-
   </ul>
 </nav></div>
           
@@ -534,7 +520,7 @@
 
 
 <div class="viewcode-block" id="Reflection">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.Reflection">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.Reflection">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Reflection</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -641,7 +627,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="Reflection.to_dict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.Reflection.to_dict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.Reflection.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a JSON-serialisable ``dict`` representing this reflection.</span>
@@ -663,7 +649,7 @@
 
 
 <div class="viewcode-block" id="Reflection.from_dict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.Reflection.from_dict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.Reflection.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Reflection</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -693,7 +679,7 @@
 
 
 <div class="viewcode-block" id="ReflectionList">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.ReflectionList">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ReflectionList</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ordered, named collection of Reflection objects with or1/or2 management.</span>
@@ -708,11 +694,6 @@
 <span class="sd">        reflection added through this list.</span>
 <span class="sd">    valid_stages : set of str</span>
 <span class="sd">        Stage names of the owning geometry.  Used to validate angle keys.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    geometry_name : str</span>
-<span class="sd">    valid_stages : set of str</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -762,19 +743,19 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="ReflectionList.keys">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.ReflectionList.keys">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.keys">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ReflectionList.values">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.ReflectionList.values">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.values">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ReflectionList.items">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.ReflectionList.items">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.items">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div>
 
@@ -784,7 +765,7 @@
     <span class="c1"># ------------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="ReflectionList.add">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.ReflectionList.add">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.add">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -835,7 +816,7 @@
 
 
 <div class="viewcode-block" id="ReflectionList.remove">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.ReflectionList.remove">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.remove">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove the named reflection and clear any or1/or2 designation it held.</span>
@@ -849,7 +830,7 @@
 
 
 <div class="viewcode-block" id="ReflectionList.clear">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.ReflectionList.clear">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.clear">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all reflections and clear or1/or2 designations.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -869,7 +850,7 @@
         <span class="k">return</span> <span class="n">name</span>
 
 <div class="viewcode-block" id="ReflectionList.setor1">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.ReflectionList.setor1">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.setor1">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">setor1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reflection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Reflection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Designate a reflection as primary (or1).</span>
@@ -884,7 +865,7 @@
 
 
 <div class="viewcode-block" id="ReflectionList.setor2">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.ReflectionList.setor2">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.setor2">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">setor2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reflection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Reflection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Designate a reflection as secondary (or2).</span>
@@ -915,7 +896,7 @@
         <span class="k">return</span> <span class="n">result</span>
 
 <div class="viewcode-block" id="ReflectionList.to_dict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.ReflectionList.to_dict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a JSON-serialisable ``dict`` representing this reflection list.</span>
@@ -936,7 +917,7 @@
 
 
 <div class="viewcode-block" id="ReflectionList.from_dict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.ReflectionList.from_dict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReflectionList</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

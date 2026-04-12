@@ -1,9 +1,11 @@
-ad_hoc_diffractometer.forward
-=============================
+forward
+=======
 
 .. py:module:: ad_hoc_diffractometer.forward
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.forward``
 
    forward.py — Forward diffraction calculation: (h, k, l) → motor angles.
 
@@ -26,9 +28,9 @@ ad_hoc_diffractometer.forward
 
        Algorithm:
            1. Q_phi = UB @ (h, k, l)             — target in phi frame
-           2. |Q| → ttheta via Bragg's law
+           2. \|Q\| → ttheta via Bragg's law
            3. frozen stages set from mode.frozen_angles
-           4. detector_stage = ttheta (computed from |Q|)
+           4. detector_stage = ttheta (computed from \|Q\|)
            5. sample_stage   = ttheta / 2 (bisecting)
            6. Remaining free sample stages (chi, phi or kchi, kphi) solved
               from the direction of Q_phi, choosing among the standard
@@ -45,21 +47,12 @@ ad_hoc_diffractometer.forward
    :raises NotImplementedError: If the active mode is None or is not a supported type for this geometry.
    :raises ValueError: If wavelength or UB matrix is not set.
    :raises ValueError: If (h, k, l) = (0, 0, 0).
-   :raises ValueError: If the requested |Q| exceeds the Ewald sphere (wavelength too long).
+   :raises ValueError: If the requested \|Q\| exceeds the Ewald sphere (wavelength too long).
 
    .. rubric:: References
 
    Busing & Levy, Acta Cryst. 22, 457-464 (1967) — angle-setting equations
    You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry
-
-
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.forward.logger
 
 
 Functions
@@ -73,7 +66,12 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: compute_forward(geometry: ad_hoc_diffractometer.geometry.AdHocDiffractometer, h: float, k: float, l: float) -> list[dict[str, float]]
+.. py:function:: compute_forward(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, h: float, k: float, l: float) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward.compute_forward``
+
 
    Compute all valid motor-angle solutions for the reciprocal-lattice point
    (h, k, l) in the geometry's active diffraction mode.
@@ -98,10 +96,8 @@ Module Contents
    :raises ValueError: If ``geometry.sample.UB`` is None.
    :raises ValueError: If (h, k, l) == (0, 0, 0).
    :raises ValueError: If the scattering vector magnitude exceeds the Ewald sphere
-       (|Q| > 4π/λ, i.e. Bragg condition cannot be satisfied).
+       (\|Q\| > 4π/λ, i.e. Bragg condition cannot be satisfied).
    :raises NotImplementedError: If no active mode is set or the active mode type is not supported
        for this geometry.
 
-
-.. py:data:: logger
 

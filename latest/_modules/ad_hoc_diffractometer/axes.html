@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=a348d446"></script>
+    <script src="../../_static/documentation_options.js?v=932a208e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,13 +199,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -371,13 +364,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -556,7 +542,7 @@
 
 
 <div class="viewcode-block" id="parse_axis">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.axes.parse_axis">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/axes/index.html#ad_hoc_diffractometer.axes.parse_axis">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">parse_axis</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a caller-facing axis label to an internal numpy array.</span>
@@ -637,7 +623,7 @@
 
 
 <div class="viewcode-block" id="axis_label">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.axes.axis_label">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/axes/index.html#ad_hoc_diffractometer.axes.axis_label">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">axis_label</span><span class="p">(</span><span class="n">vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert an internal axis numpy array to its caller-facing string label.</span>
@@ -671,7 +657,7 @@
 
 
 <div class="viewcode-block" id="axis_from_physical">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.axes.axis_from_physical">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/axes/index.html#ad_hoc_diffractometer.axes.axis_from_physical">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">axis_from_physical</span><span class="p">(</span><span class="n">direction</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sign</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convenience wrapper: resolve a physical direction and sign to an axis vector.</span>
@@ -700,7 +686,7 @@
 
 
 <div class="viewcode-block" id="kappa_axis">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.axes.kappa_axis">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/axes/index.html#ad_hoc_diffractometer.axes.kappa_axis">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">kappa_axis</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the kappa rotation axis vector for a kappa-geometry diffractometer.</span>
@@ -729,9 +715,8 @@
 <span class="sd">        the lateral axis in the vertical-lateral plane.  Must be in (0, 90).</span>
 <span class="sd">    basis : dict or None</span>
 <span class="sd">        Mapping from physical direction names to numpy arrays.  If None,</span>
-<span class="sd">        the default You (1999) basis is used:</span>
-<span class="sd">            vertical  -&gt; XHAT</span>
-<span class="sd">            lateral   -&gt; ZHAT</span>
+<span class="sd">        the default You (1999) basis is used</span>
+<span class="sd">        (vertical -&gt; XHAT, lateral -&gt; ZHAT).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>

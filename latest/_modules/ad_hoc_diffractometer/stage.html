@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=a348d446"></script>
+    <script src="../../_static/documentation_options.js?v=932a208e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,13 +199,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -374,13 +367,6 @@
   </a>
 </li>
 
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../autoapi/index.html">
-    API Reference
-  </a>
-</li>
-
   </ul>
 </nav></div>
           
@@ -515,7 +501,7 @@
 
 
 <div class="viewcode-block" id="Stage">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.Stage">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.stage.Stage">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Stage</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    One rotary stage of a diffractometer.</span>
@@ -588,7 +574,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_limits</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Stage.in_limits">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.Stage.in_limits">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.stage.Stage.in_limits">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">in_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return True if angle_deg is within [min_angle, max_angle] (inclusive).</span>
@@ -607,7 +593,7 @@
 
 
 <div class="viewcode-block" id="Stage.rotation_matrix">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.Stage.rotation_matrix">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.stage.Stage.rotation_matrix">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rotation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the 3x3 rotation matrix for the current angle setting.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span></div>
@@ -621,7 +607,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="Stage.to_dict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.Stage.to_dict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.stage.Stage.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a JSON-serialisable ``dict`` representing this stage.</span>
@@ -644,7 +630,7 @@
 
 
 <div class="viewcode-block" id="Stage.from_dict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.Stage.from_dict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.stage.Stage.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Stage&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

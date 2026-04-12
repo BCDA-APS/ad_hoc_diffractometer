@@ -1,9 +1,11 @@
-ad_hoc_diffractometer.reflection
-================================
+reflection
+==========
 
 .. py:module:: ad_hoc_diffractometer.reflection
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.reflection``
 
    reflection.py — Reflection and ReflectionList for orienting reflections.
 
@@ -31,15 +33,6 @@ ad_hoc_diffractometer.reflection
        rl.clear()
 
 
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.reflection.logger
-
-
 Classes
 -------
 
@@ -53,6 +46,11 @@ Module Contents
 ---------------
 
 .. py:class:: Reflection
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reflection.Reflection``
+
 
    One observed reflection used for diffractometer orientation.
 
@@ -132,6 +130,11 @@ Module Contents
 
 .. py:class:: ReflectionList(geometry_name: str, valid_stages: set[str])
 
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reflection.ReflectionList``
+
+
    Ordered, named collection of Reflection objects with or1/or2 management.
 
    Held as ``AdHocDiffractometer.reflections``.  All mutation methods
@@ -142,18 +145,6 @@ Module Contents
    :type geometry_name: str
    :param valid_stages: Stage names of the owning geometry.  Used to validate angle keys.
    :type valid_stages: set of str
-
-   .. attribute:: geometry_name
-
-
-
-      :type: str
-
-   .. attribute:: valid_stages
-
-
-
-      :type: set of str
 
    .. rubric:: Examples
 
@@ -267,6 +258,4 @@ Module Contents
 
    .. py:method:: values()
 
-
-.. py:data:: logger
 

@@ -1,15 +1,17 @@
-ad_hoc_diffractometer.orientation
-=================================
+orientation
+===========
 
 .. py:module:: ad_hoc_diffractometer.orientation
 
 .. autoapi-nested-parse::
 
+   Import: ``ad_hoc_diffractometer.orientation``
+
    orientation.py — U and UB matrix computation from orienting reflections.
 
    Functions
    ---------
-   angles_to_phi_vector(geometry, **motor_angles)
+   angles_to_phi_vector(geometry, \*\*motor_angles)
        Convert a set of motor angles to the scattering vector expressed in the
        phi-axis (innermost sample-stage) frame.  This is the foundational
        computation needed for U and UB matrix determination.
@@ -43,15 +45,6 @@ ad_hoc_diffractometer.orientation
    You, J. Appl. Cryst. 32, 614-623 (1999)
 
 
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.orientation.logger
-
-
 Functions
 ---------
 
@@ -67,7 +60,12 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: angles_to_phi_vector(geometry, **motor_angles: float) -> numpy.ndarray
+.. py:function:: angles_to_phi_vector(geometry, **motor_angles: float) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation.angles_to_phi_vector``
+
 
    Convert a set of motor angles to the scattering vector in the phi frame.
 
@@ -140,9 +138,12 @@ Module Contents
    You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry conventions
 
 
-.. py:data:: logger
+.. py:function:: ub_from_one_reflection(sample, reflection, reference_hkl: tuple[float, float, float] = (0.0, 0.0, 1.0), reference_stage=None) -> ~numpy.ndarray
 
-.. py:function:: ub_from_one_reflection(sample, reflection, reference_hkl: tuple[float, float, float] = (0.0, 0.0, 1.0), reference_stage=None) -> numpy.ndarray
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation.ub_from_one_reflection``
+
 
    Compute a provisional U and UB from one reflection (Rodrigues method).
 
@@ -223,7 +224,12 @@ Module Contents
    ... )
 
 
-.. py:function:: ub_from_three_reflections_bl1967(sample, r1, r2, r3) -> numpy.ndarray
+.. py:function:: ub_from_three_reflections_bl1967(sample, r1, r2, r3) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967``
+
 
    Compute UB directly from three reflections (Busing & Levy 1967, eqs. 29-31).
 
@@ -309,7 +315,12 @@ Module Contents
    Busing & Levy, Acta Cryst. 22, 457-464 (1967), eqs. 28-31.
 
 
-.. py:function:: ub_from_two_reflections_bl1967(sample, r1=None, r2=None) -> numpy.ndarray
+.. py:function:: ub_from_two_reflections_bl1967(sample, r1=None, r2=None) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967``
+
 
    Compute U and UB from two orienting reflections (Busing & Levy 1967, eqs. 23-27).
 
@@ -387,7 +398,12 @@ Module Contents
    >>> UB = ahd.ub_from_two_reflections_bl1967(g.sample)
 
 
-.. py:function:: ub_identity(sample) -> numpy.ndarray
+.. py:function:: ub_identity(sample) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation.ub_identity``
+
 
    Set U = I (identity) and UB = B; return UB.
 

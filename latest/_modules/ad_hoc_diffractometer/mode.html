@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=a348d446"></script>
+    <script src="../../_static/documentation_options.js?v=932a208e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,13 +199,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -371,13 +364,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -554,7 +540,7 @@
 
 
 <div class="viewcode-block" id="DiffractionMode">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.DiffractionMode">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DiffractionMode">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DiffractionMode</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract base class for diffraction modes.</span>
@@ -578,12 +564,6 @@
 <span class="sd">        ``None`` is equivalent to an empty dict (no cut-points set, i.e.</span>
 <span class="sd">        the default branch [-180, 180) is used).</span>
 
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    frozen_angles : dict[str, float]</span>
-<span class="sd">        Stages held fixed in this mode; mirrors SPEC #G0.</span>
-<span class="sd">    cut_points : dict[str, float]</span>
-<span class="sd">        Branch selection cut-points per stage; mirrors SPEC #G4.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -601,6 +581,7 @@
 <span class="sd">        Return the list of stage names that are constrained (not free) in this mode.</span>
 
 <span class="sd">        Constrained stages include both:</span>
+
 <span class="sd">        - frozen stages (held at a fixed angle)</span>
 <span class="sd">        - stages whose angle is determined by a relationship to another stage</span>
 <span class="sd">          (e.g. bisecting: omega = ttheta/2)</span>
@@ -611,7 +592,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DiffractionMode.apply_cut_point">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.DiffractionMode.apply_cut_point">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DiffractionMode.apply_cut_point">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">apply_cut_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">angle_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Apply the cut-point for *stage_name* to *angle_deg*.</span>
@@ -663,7 +644,7 @@
 
 
 <div class="viewcode-block" id="FixedAngleMode">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.FixedAngleMode">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.FixedAngleMode">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FixedAngleMode</span><span class="p">(</span><span class="n">DiffractionMode</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mode that constrains one stage to a fixed angle.</span>
@@ -725,7 +706,7 @@
 
 
 <div class="viewcode-block" id="BisectingMode">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.BisectingMode">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectingMode">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BisectingMode</span><span class="p">(</span><span class="n">DiffractionMode</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Bisecting geometry: the sample rotation is set to half the detector angle.</span>
@@ -824,7 +805,7 @@
 
 
 <div class="viewcode-block" id="ModeDict">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.ModeDict">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ModeDict">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ModeDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An ordered, guarded dict of named diffraction modes.</span>
@@ -889,21 +870,21 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_data</span>
 
 <div class="viewcode-block" id="ModeDict.keys">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.ModeDict.keys">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ModeDict.keys">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return mode names.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ModeDict.values">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.ModeDict.values">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ModeDict.values">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return mode objects.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ModeDict.items">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.ModeDict.items">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ModeDict.items">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return (name, mode) pairs.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div>

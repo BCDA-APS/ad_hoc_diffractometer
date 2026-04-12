@@ -1,24 +1,17 @@
-ad_hoc_diffractometer.stage
-===========================
+stage
+=====
 
 .. py:module:: ad_hoc_diffractometer.stage
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.stage``
 
    stage.py — rotary stage description.
 
    A Stage represents one rotary axis of a diffractometer.  Its rotation axis
    is stored internally as a signed numpy array (the internal representation).
    The caller-facing +x/-z string notation is handled in axes.py.
-
-
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.stage.logger
 
 
 Classes
@@ -32,7 +25,12 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: Stage(name: str, axis: numpy.ndarray, parent: str | None = None, role: str = 'sample', angle: float = 0.0, limits: tuple[float, float] = (-180.0, 180.0))
+.. py:class:: Stage(name: str, axis: ~numpy.ndarray, parent: str | None = None, role: str = 'sample', angle: float = 0.0, limits: tuple[float, float] = (-180.0, 180.0))
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.stage.Stage``
+
 
    One rotary stage of a diffractometer.
 
@@ -122,7 +120,7 @@ Module Contents
 
 
 
-   .. py:method:: rotation_matrix() -> numpy.ndarray
+   .. py:method:: rotation_matrix() -> ~numpy.ndarray
 
       Return the 3x3 rotation matrix for the current angle setting.
 
@@ -138,6 +136,4 @@ Module Contents
       :rtype: dict
 
 
-
-.. py:data:: logger
 

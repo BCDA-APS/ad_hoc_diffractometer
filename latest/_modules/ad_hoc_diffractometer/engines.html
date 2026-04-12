@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=a348d446"></script>
+    <script src="../../_static/documentation_options.js?v=932a208e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,13 +199,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -374,13 +367,6 @@
   </a>
 </li>
 
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../autoapi/index.html">
-    API Reference
-  </a>
-</li>
-
   </ul>
 </nav></div>
           
@@ -497,7 +483,7 @@
   <h1>Source code for ad_hoc_diffractometer.engines</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (c) 2026 Pete R. Jemian &lt;prjemian+ad_hoc_diffractometer@gmail.com&gt;</span>
 <span class="c1"># SPDX-License-Identifier: CC-BY-4.0</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">engines.py — Alternative calculation engines.</span>
 
 <span class="sd">Provides standalone conversion functions between the four representations</span>
@@ -519,13 +505,13 @@
 <span class="sd">    Q-vector → Miller indices via hkl = UB⁻¹ @ Q.</span>
 
 <span class="sd">Q_to_d(Qx, Qy, Qz) -&gt; float</span>
-<span class="sd">    Q-vector magnitude → d-spacing: d = 2π / |Q|.</span>
+<span class="sd">    Q-vector magnitude → d-spacing: d = 2π / \|Q\|.</span>
 
 <span class="sd">d_to_Q_mag(d) -&gt; float</span>
-<span class="sd">    d-spacing → |Q|: |Q| = 2π / d.</span>
+<span class="sd">    d-spacing → \|Q\|: \|Q\| = 2π / d.</span>
 
 <span class="sd">hkl_to_d(sample, h, k, l) -&gt; float</span>
-<span class="sd">    Miller indices → d-spacing via |Q| = |UB @ hkl|, d = 2π / |Q|.</span>
+<span class="sd">    Miller indices → d-spacing via \|Q\| = \|UB @ hkl\|, d = 2π / \|Q\|.</span>
 
 <span class="sd">d_to_two_theta(d, wavelength) -&gt; float</span>
 <span class="sd">    d-spacing → 2θ (degrees) via Bragg&#39;s law: λ = 2d sin(θ).</span>
@@ -537,10 +523,10 @@
 <span class="sd">    Miller indices → 2θ (degrees).</span>
 
 <span class="sd">two_theta_to_Q_mag(two_theta_deg, wavelength) -&gt; float</span>
-<span class="sd">    2θ (degrees) → |Q| (Å⁻¹): |Q| = 4π sin(θ) / λ.</span>
+<span class="sd">    2θ (degrees) → \|Q\| (Å⁻¹): \|Q\| = 4π sin(θ) / λ.</span>
 
 <span class="sd">Q_mag_to_two_theta(Q_mag, wavelength) -&gt; float</span>
-<span class="sd">    |Q| (Å⁻¹) → 2θ (degrees).</span>
+<span class="sd">    \|Q\| (Å⁻¹) → 2θ (degrees).</span>
 
 <span class="sd">References</span>
 <span class="sd">----------</span>
@@ -567,7 +553,7 @@
 
 
 <div class="viewcode-block" id="hkl_to_Q">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.engines.hkl_to_Q">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/engines/index.html#ad_hoc_diffractometer.engines.hkl_to_Q">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">hkl_to_Q</span><span class="p">(</span>
     <span class="n">sample</span><span class="p">:</span> <span class="n">Sample</span><span class="p">,</span>
     <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -616,7 +602,7 @@
 
 
 <div class="viewcode-block" id="Q_to_hkl">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.engines.Q_to_hkl">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/engines/index.html#ad_hoc_diffractometer.engines.Q_to_hkl">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Q_to_hkl</span><span class="p">(</span>
     <span class="n">sample</span><span class="p">:</span> <span class="n">Sample</span><span class="p">,</span>
     <span class="n">Qx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -676,12 +662,12 @@
 
 
 <div class="viewcode-block" id="Q_to_d">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.engines.Q_to_d">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/engines/index.html#ad_hoc_diffractometer.engines.Q_to_d">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Q_to_d</span><span class="p">(</span><span class="n">Qx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Qy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Qz</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a Q-vector to the d-spacing.</span>
 
-<span class="sd">    d = 2π / |**Q**|</span>
+<span class="sd">    d = 2π / \|**Q**\|</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -696,7 +682,7 @@
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
-<span class="sd">        If |Q| = 0.</span>
+<span class="sd">        If \|Q\| = 0.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -712,12 +698,12 @@
 
 
 <div class="viewcode-block" id="d_to_Q_mag">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.engines.d_to_Q_mag">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/engines/index.html#ad_hoc_diffractometer.engines.d_to_Q_mag">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">d_to_Q_mag</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a d-spacing to the magnitude of the scattering vector.</span>
 
-<span class="sd">    |**Q**| = 2π / d</span>
+<span class="sd">    \|**Q**\| = 2π / d</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -727,7 +713,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
-<span class="sd">        |Q| in Å⁻¹.</span>
+<span class="sd">        \|Q\| in Å⁻¹.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -747,17 +733,17 @@
 
 
 <div class="viewcode-block" id="hkl_to_d">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.engines.hkl_to_d">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/engines/index.html#ad_hoc_diffractometer.engines.hkl_to_d">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">hkl_to_d</span><span class="p">(</span>
     <span class="n">sample</span><span class="p">:</span> <span class="n">Sample</span><span class="p">,</span>
     <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">l</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="c1"># noqa: E741</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert Miller indices to d-spacing.</span>
 
-<span class="sd">    d = 2π / |UB · **hkl**|</span>
+<span class="sd">    d = 2π / \|UB · **hkl**\|</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -802,7 +788,7 @@
 
 
 <div class="viewcode-block" id="d_to_two_theta">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.engines.d_to_two_theta">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/engines/index.html#ad_hoc_diffractometer.engines.d_to_two_theta">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">d_to_two_theta</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert d-spacing to 2θ using Bragg&#39;s law.</span>
@@ -850,7 +836,7 @@
 
 
 <div class="viewcode-block" id="two_theta_to_d">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.engines.two_theta_to_d">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/engines/index.html#ad_hoc_diffractometer.engines.two_theta_to_d">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">two_theta_to_d</span><span class="p">(</span><span class="n">two_theta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert 2θ to d-spacing using Bragg&#39;s law.</span>
@@ -894,7 +880,7 @@
 
 
 <div class="viewcode-block" id="hkl_to_two_theta">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.engines.hkl_to_two_theta">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/engines/index.html#ad_hoc_diffractometer.engines.hkl_to_two_theta">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">hkl_to_two_theta</span><span class="p">(</span>
     <span class="n">sample</span><span class="p">:</span> <span class="n">Sample</span><span class="p">,</span>
     <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -945,12 +931,12 @@
 
 
 <div class="viewcode-block" id="two_theta_to_Q_mag">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.engines.two_theta_to_Q_mag">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/engines/index.html#ad_hoc_diffractometer.engines.two_theta_to_Q_mag">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">two_theta_to_Q_mag</span><span class="p">(</span><span class="n">two_theta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert 2θ to |Q| using the Bragg relation.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert 2θ to \|Q\| using the Bragg relation.</span>
 
-<span class="sd">    |**Q**| = 4π sin(θ) / λ</span>
+<span class="sd">    \|**Q**\| = 4π sin(θ) / λ</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -962,7 +948,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
-<span class="sd">        |Q| in Å⁻¹.</span>
+<span class="sd">        \|Q\| in Å⁻¹.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -988,12 +974,12 @@
 
 
 <div class="viewcode-block" id="Q_mag_to_two_theta">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.engines.Q_mag_to_two_theta">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/engines/index.html#ad_hoc_diffractometer.engines.Q_mag_to_two_theta">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Q_mag_to_two_theta</span><span class="p">(</span><span class="n">Q_mag</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert |Q| to 2θ.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert \|Q\| to 2θ.</span>
 
-<span class="sd">    2θ = 2 arcsin(|Q| λ / (4π))</span>
+<span class="sd">    2θ = 2 arcsin(\|Q\| λ / (4π))</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1011,7 +997,7 @@
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If ``Q_mag`` &lt; 0, ``wavelength`` ≤ 0, or the reflection is</span>
-<span class="sd">        unreachable (|Q| λ / (4π) &gt; 1).</span>
+<span class="sd">        unreachable (\|Q\| λ / (4π) &gt; 1).</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>

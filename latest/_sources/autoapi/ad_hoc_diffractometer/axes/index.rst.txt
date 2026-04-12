@@ -1,9 +1,11 @@
-ad_hoc_diffractometer.axes
-==========================
+axes
+====
 
 .. py:module:: ad_hoc_diffractometer.axes
 
 .. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.axes``
 
    axes.py — caller-facing axis notation and physical direction mapping.
 
@@ -34,15 +36,6 @@ ad_hoc_diffractometer.axes
        Confirms kappa axis tilted 50° from the omega (vertical) axis.
 
 
-
-Attributes
-----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.axes.logger
-
-
 Functions
 ---------
 
@@ -57,7 +50,12 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: axis_from_physical(direction: str, sign: str, basis: dict) -> numpy.ndarray
+.. py:function:: axis_from_physical(direction: str, sign: str, basis: dict) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.axes.axis_from_physical``
+
 
    Convenience wrapper: resolve a physical direction and sign to an axis vector.
 
@@ -78,7 +76,12 @@ Module Contents
    array([ 0.,  0., -1.])
 
 
-.. py:function:: axis_label(vector: numpy.ndarray) -> str
+.. py:function:: axis_label(vector: ~numpy.ndarray) -> str
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.axes.axis_label``
+
 
    Convert an internal axis numpy array to its caller-facing string label.
 
@@ -100,7 +103,12 @@ Module Contents
    '-z'
 
 
-.. py:function:: kappa_axis(alpha_deg: float, basis: dict | None = None) -> numpy.ndarray
+.. py:function:: kappa_axis(alpha_deg: float, basis: dict | None = None) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.axes.kappa_axis``
+
 
    Compute the kappa rotation axis vector for a kappa-geometry diffractometer.
 
@@ -125,9 +133,8 @@ Module Contents
                      the lateral axis in the vertical-lateral plane.  Must be in (0, 90).
    :type alpha_deg: float
    :param basis: Mapping from physical direction names to numpy arrays.  If None,
-                 the default You (1999) basis is used:
-                     vertical  -> XHAT
-                     lateral   -> ZHAT
+                 the default You (1999) basis is used
+                 (vertical -> XHAT, lateral -> ZHAT).
    :type basis: dict or None
 
    :returns: **axis** -- Unit vector of the kappa rotation axis in the lab frame.
@@ -142,9 +149,12 @@ Module Contents
    >>> kappa_axis(50.0, basis=my_basis)    # custom basis
 
 
-.. py:data:: logger
+.. py:function:: parse_axis(label: str, basis: dict | None = None) -> ~numpy.ndarray
 
-.. py:function:: parse_axis(label: str, basis: dict | None = None) -> numpy.ndarray
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.axes.parse_axis``
+
 
    Convert a caller-facing axis label to an internal numpy array.
 

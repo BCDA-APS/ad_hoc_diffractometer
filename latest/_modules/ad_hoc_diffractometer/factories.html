@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=a348d446"></script>
+    <script src="../../_static/documentation_options.js?v=932a208e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,13 +199,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -371,13 +364,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../roadmap.html">
     ad_hoc_diffractometer — Development Roadmap
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../autoapi/index.html">
-    API Reference
   </a>
 </li>
 
@@ -656,9 +642,11 @@
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
-<span class="sd">    @register_geometry</span>
-<span class="sd">    def psic() -&gt; AdHocDiffractometer:</span>
-<span class="sd">        ...</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        @register_geometry</span>
+<span class="sd">        def psic() -&gt; AdHocDiffractometer:</span>
+<span class="sd">            ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_GEOMETRY_REGISTRY</span><span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
     <span class="k">return</span> <span class="n">func</span></div>
@@ -738,7 +726,7 @@
 
 
 <div class="viewcode-block" id="list_geometries">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.list_geometries">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.list_geometries">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_geometries</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a copy of the geometry registry as {name: factory_callable}.</span>
@@ -771,7 +759,7 @@
 
 
 <div class="viewcode-block" id="get_geometry">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.get_geometry">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.get_geometry">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the registered factory function for the named geometry.</span>
@@ -818,7 +806,7 @@
 
 
 <div class="viewcode-block" id="make_geometry">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.make_geometry">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.make_geometry">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instantiate a geometry by name, passing keyword arguments to its factory.</span>
@@ -888,7 +876,7 @@
 
 
 <div class="viewcode-block" id="psic">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.psic">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.psic">[docs]</a>
 <span class="nd">@register_geometry</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">psic</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_YOU</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -954,7 +942,7 @@
 
 
 <div class="viewcode-block" id="fourcv">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.fourcv">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.fourcv">[docs]</a>
 <span class="nd">@register_geometry</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">fourcv</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_BL</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1011,7 +999,7 @@
 
 
 <div class="viewcode-block" id="fourch">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.fourch">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.fourch">[docs]</a>
 <span class="nd">@register_geometry</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">fourch</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_BL</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1067,7 +1055,7 @@
 
 
 <div class="viewcode-block" id="sixc">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.sixc">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.sixc">[docs]</a>
 <span class="nd">@register_geometry</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">sixc</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_YOU</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1081,11 +1069,12 @@
 <span class="sd">    making this a coupled geometry.  Useful for surface diffraction.</span>
 
 <span class="sd">    From Fig. 1 and §2.1 of Lohmeier &amp; Vlieg (1993):</span>
-<span class="sd">        alpha and gamma rotate about the vertical axis (x in LV convention).</span>
-<span class="sd">        omega, phi, and delta all rotate about the lateral axis (z in LV).</span>
-<span class="sd">        chi rotates about the longitudinal axis (y in LV).</span>
+<span class="sd">    alpha and gamma rotate about the vertical axis (x in LV convention).</span>
+<span class="sd">    omega, phi, and delta all rotate about the lateral axis (z in LV).</span>
+<span class="sd">    chi rotates about the longitudinal axis (y in LV).</span>
 
-<span class="sd">    Stack (floor first):</span>
+<span class="sd">    Stack (floor first)::</span>
+
 <span class="sd">        alpha (shared base): vertical,     right-handed  [rotary table]</span>
 <span class="sd">          --&gt; omega (sample):  lateral,      left-handed</span>
 <span class="sd">                --&gt; chi:       longitudinal, right-handed</span>
@@ -1128,7 +1117,7 @@
 
 
 <div class="viewcode-block" id="kappa4cv">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.kappa4cv">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.kappa4cv">[docs]</a>
 <span class="nd">@register_geometry</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">kappa4cv</span><span class="p">(</span>
     <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_ALPHA_DEFAULT</span><span class="p">,</span>
@@ -1196,7 +1185,7 @@
 
 
 <div class="viewcode-block" id="kappa4ch">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.kappa4ch">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.kappa4ch">[docs]</a>
 <span class="nd">@register_geometry</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">kappa4ch</span><span class="p">(</span>
     <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_ALPHA_DEFAULT</span><span class="p">,</span>
@@ -1260,7 +1249,7 @@
 
 
 <div class="viewcode-block" id="kappa6c">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.kappa6c">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.kappa6c">[docs]</a>
 <span class="nd">@register_geometry</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">kappa6c</span><span class="p">(</span>
     <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_ALPHA_DEFAULT</span><span class="p">,</span>
@@ -1341,7 +1330,7 @@
 
 
 <div class="viewcode-block" id="zaxis">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.zaxis">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.zaxis">[docs]</a>
 <span class="nd">@register_geometry</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">zaxis</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_YOU</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1354,18 +1343,21 @@
 <span class="sd">    parallel to the Z-axis, so the angle of incidence equals the alpha angle.</span>
 <span class="sd">    The detector and sample both rotate about the shared alpha (base) axis.</span>
 
-<span class="sd">    Stack (floor first):</span>
+<span class="sd">    Stack (floor first)::</span>
+
 <span class="sd">        alpha (shared base): vertical,     right-handed</span>
 <span class="sd">          --&gt; Z     (sample)  : longitudinal, right-handed</span>
 <span class="sd">          --&gt; delta (detector): lateral,      left-handed</span>
 <span class="sd">                --&gt; gamma :     vertical,     right-handed</span>
 
 <span class="sd">    The total scattering angle is a compound of gamma, delta, and alpha</span>
-<span class="sd">    (Walko 2016, eq. 17):</span>
+<span class="sd">    (Walko 2016, eq. 17)::</span>
+
 <span class="sd">        ttheta = arccos(cos(gamma)*cos(delta)*cos(alpha) + sin(alpha)*sin(gamma))</span>
 
-<span class="sd">    References: J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).</span>
-<span class="sd">                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.</span>
+<span class="sd">    References:</span>
+<span class="sd">    J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).</span>
+<span class="sd">    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
     <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
@@ -1390,7 +1382,7 @@
 
 
 <div class="viewcode-block" id="s2d2">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.s2d2">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.s2d2">[docs]</a>
 <span class="nd">@register_geometry</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">s2d2</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_YOU</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1403,22 +1395,25 @@
 <span class="sd">    (nu, delta), all mechanically decoupled.  The angle of incidence is the</span>
 <span class="sd">    mu angle; the surface normal is parallel to Z.</span>
 
-<span class="sd">    Sample stack (floor first):</span>
+<span class="sd">    Sample stack (floor first)::</span>
+
 <span class="sd">        mu    : vertical,     right-handed</span>
 <span class="sd">          --&gt; Z : longitudinal, right-handed</span>
 
-<span class="sd">    Detector stack (floor first):</span>
+<span class="sd">    Detector stack (floor first)::</span>
+
 <span class="sd">        nu    : vertical,     right-handed</span>
 <span class="sd">          --&gt; delta : lateral, left-handed</span>
 
 <span class="sd">    mu and nu share the same vertical axis; mechanically independent.</span>
 
-<span class="sd">    The total scattering angle is (Walko 2016, eq. 18):</span>
+<span class="sd">    The total scattering angle is (Walko 2016, eq. 18)::</span>
+
 <span class="sd">        ttheta = arccos(cos(nu) * cos(delta))</span>
 
-<span class="sd">    References: K.W. Evans-Lutterodt &amp; M.-T. Tang, J. Appl. Cryst.</span>
-<span class="sd">                    28, 318-326 (1995).</span>
-<span class="sd">                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.</span>
+<span class="sd">    References:</span>
+<span class="sd">    K.W. Evans-Lutterodt &amp; M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995).</span>
+<span class="sd">    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
     <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
@@ -1443,7 +1438,7 @@
 
 
 <div class="viewcode-block" id="fivec">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/index.html#ad_hoc_diffractometer.factories.fivec">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.fivec">[docs]</a>
 <span class="nd">@register_geometry</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">fivec</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_YOU</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1457,15 +1452,17 @@
 <span class="sd">    through mu.  This provides an additional degree of freedom for accessing</span>
 <span class="sd">    wider regions of reciprocal space, particularly at synchrotron sources.</span>
 
-<span class="sd">    Stack (floor first):</span>
+<span class="sd">    Stack (floor first)::</span>
+
 <span class="sd">        mu (shared base): vertical,     right-handed</span>
 <span class="sd">          --&gt; omega (sample): lateral,      left-handed</span>
 <span class="sd">                --&gt; chi:      longitudinal, right-handed</span>
 <span class="sd">                      --&gt; phi: lateral,     left-handed</span>
 <span class="sd">          --&gt; ttheta (detector): lateral,   left-handed</span>
 
-<span class="sd">    References: E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).</span>
-<span class="sd">                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</span>
+<span class="sd">    References:</span>
+<span class="sd">    E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).</span>
+<span class="sd">    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
     <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
