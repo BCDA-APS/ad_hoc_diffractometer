@@ -25,15 +25,15 @@ Pre-built geometries
    * - :func:`fourch`
      - Eulerian 4-circle
      - Horizontal scattering plane (laboratory). See :doc:`/geometries/fourch`.
+   * - :func:`fivec`
+     - Eulerian 5-circle
+     - Vlieg et al. (1987), fourcv on a mu base. See :doc:`/geometries/fivec`.
    * - :func:`psic`
      - Eulerian 6-circle
      - You (1999) 4S+2D. See :doc:`/geometries/psic`.
    * - :func:`sixc`
      - Eulerian 6-circle
      - Lohmeier & Vlieg (1993) surface geometry. See :doc:`/geometries/sixc`.
-   * - :func:`fivec`
-     - Eulerian 5-circle
-     - Vlieg et al. (1987), fourcv on a mu base. See :doc:`/geometries/fivec`.
    * - :func:`kappa4cv`
      - Kappa 4-circle
      - Vertical scattering plane (synchrotron). See :doc:`/geometries/kappa4cv`.
@@ -106,9 +106,9 @@ convention geometries.
 
 Naming convention:
 
-- Eulerian geometries: ``fourcv``, ``fourch``, ``sixc``, ``psic``
+- Eulerian geometries: ``fourcv``, ``fourch``, ``fivec``, ``psic``, ``sixc``
 - Kappa geometries: ``kappa4cv``, ``kappa4ch``, ``kappa6c``
-- Surface / special geometries: ``zaxis``, ``s2d2``, ``fivec``
+- Surface / special geometries: ``zaxis``, ``s2d2``
 
 Scattering-plane suffix convention (``v`` / ``h``):
 
