@@ -40,12 +40,14 @@ extensions = [
     "autoapi.extension",
     "myst_parser",
     "nbsphinx",
+    "sphinx.ext.graphviz",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
     "sphinx_design",
+    "sphinx_tabs.tabs",
 ]
 
 exclude_patterns = [
@@ -53,9 +55,11 @@ exclude_patterns = [
     "_build",
     "Thumbs.db",
     ".DS_Store",
-    # Notebooks require pandoc to convert; excluded until CI installs pandoc
-    # and notebook content is reviewed for Phase 2.
+    # Notebooks excluded until CI pandoc integration and content review (#95).
     "*.ipynb",
+    # roadmap.md lives in the repo root (not docs/source); guard against
+    # accidental inclusion if the file is ever copied back here.
+    "roadmap.md",
 ]
 
 myst_enable_extensions = ["colon_fence"]
