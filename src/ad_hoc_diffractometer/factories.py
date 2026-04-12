@@ -399,9 +399,9 @@ def make_geometry(name: str, **kwargs) -> AdHocDiffractometer:
 #: Basis vector dictionary for the You (1999) coordinate convention.
 #: Maps physical direction names to Cartesian unit vectors:
 #:
-#: - ``"vertical"`` → ``XHAT`` (+x, out of the floor)
+#: - ``"vertical"`` → ``XHAT`` (+x, opposite to gravitational acceleration)
 #: - ``"longitudinal"`` → ``YHAT`` (+y, along the beam)
-#: - ``"lateral"`` → ``ZHAT`` (+z, to our left facing the equipment)
+#: - ``"lateral"`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)
 #:
 #: This is the default basis used by :func:`psic`, :func:`sixc`,
 #: :func:`kappa6c`, :func:`zaxis`, :func:`s2d2`, and :func:`fivec`.
@@ -418,7 +418,7 @@ _BASIS_YOU = BASIS_YOU
 #:
 #: - ``"lateral"`` → +x
 #: - ``"longitudinal"`` → +y (along the beam)
-#: - ``"vertical"`` → +z (out of the floor)
+#: - ``"vertical"`` → +z (opposite to gravitational acceleration)
 #:
 #: Used by :func:`fourcv`, :func:`fourch`, :func:`kappa4cv`, and :func:`kappa4ch`.
 BASIS_BL = {
