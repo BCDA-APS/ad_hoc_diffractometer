@@ -51,14 +51,14 @@ two-axis detector arm.
 
 .. grid:: 3
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` 4S+2D
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` 4S+2D (psic)
       :link: psic
       :link-type: doc
 
-      Four sample stages (mu, eta, chi, phi) and two independent detector
+      Four sample stages (mu, eta, chi, and phi) and two independent detector
       stages (nu, delta). You (1999).
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` Shared base
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Shared base (sixc)
       :link: sixc
       :link-type: doc
 

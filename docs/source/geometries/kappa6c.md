@@ -1,7 +1,7 @@
 (geometry-kappa6c)=
 # kappa6c — Six-Circle Kappa (Synchrotron)
 
-Six-circle kappa diffractometer with psic-style outer axes (mu, nu). The inner sample axes (komega, kappa, kphi) replace the Eulerian chi circle. Lateral detector, vertical scattering plane.
+Six-circle kappa diffractometer with psic-style outer axes (mu, nu). The inner sample axes (komega, kappa, and kphi) replace the Eulerian chi circle. Lateral detector, vertical scattering plane.
 
 **Coordinate basis:** You (1999) (``BASIS_YOU``): vertical=+x, longitudinal=+y, lateral=+z.
 

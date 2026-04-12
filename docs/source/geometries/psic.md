@@ -1,7 +1,7 @@
 (geometry-psic)=
 # psic — Six-Circle 4S+2D (You 1999)
 
-You (1999) 4S+2D six-circle diffractometer. Four sample stages (mu, eta, chi, phi) and two detector stages (nu, delta). Lateral detector, vertical scattering plane. Standard synchrotron six-circle.
+You (1999) 4S+2D six-circle diffractometer. Four sample stages (mu, eta, chi, and phi) and two detector stages (nu, delta). Lateral detector, vertical scattering plane. Standard synchrotron six-circle.
 
 **Coordinate basis:** You (1999) (``BASIS_YOU``): vertical=+x, longitudinal=+y, lateral=+z.
 
