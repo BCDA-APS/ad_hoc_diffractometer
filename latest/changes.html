@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=d904eaf6"></script>
+    <script src="_static/documentation_options.js?v=e674a730"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -521,6 +521,33 @@ for the full issue tracker.</p>
 <section id="unreleased">
 <h2>Unreleased<a class="headerlink" href="#unreleased" title="Link to this heading">#</a></h2>
 </section>
+<section id="release-v0-3-1">
+<h2>Release v0.3.1<a class="headerlink" href="#release-v0-3-1" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-12.</p>
+<p>Maintenance release: no user-facing API changes.  Exercises the new
+versioned-docs and PyPI publishing automation introduced since v0.3.0.</p>
+<section id="added">
+<h3>Added<a class="headerlink" href="#added" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">docs_backfill.yml</span></code>: manual-trigger GitHub Actions workflow to build and
+publish documentation for any older tagged release and update
+<code class="docutils literal notranslate"><span class="pre">switcher.json</span></code> accordingly (#91)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pypi.yml</span></code>: GitHub Actions workflow to build and publish the package to
+PyPI on every version tag, using OIDC Trusted Publishing (no API token
+required) (#97)</p></li>
+</ul>
+</section>
+<section id="changed">
+<h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">docs.yml</span></code>: on every tag push, automatically update
+<code class="docutils literal notranslate"><span class="pre">latest/_static/switcher.json</span></code> on the <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> branch — new stable
+releases are marked <code class="docutils literal notranslate"><span class="pre">preferred</span></code> and supersede pre-release entries; stale
+pre-release directories are pruned from <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> (#91)</p></li>
+<li><p>README now shows documentation and license badges (#84)</p></li>
+</ul>
+</section>
+</section>
 <section id="release-v0-3-0">
 <h2>Release v0.3.0<a class="headerlink" href="#release-v0-3-0" title="Link to this heading">#</a></h2>
 <p>Released 2026-04-11.</p>
@@ -534,8 +561,8 @@ for the full issue tracker.</p>
 <li><p>Duplicate geometry name in entry-point registry now raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> (#71)</p></li>
 </ul>
 </section>
-<section id="added">
-<h3>Added<a class="headerlink" href="#added" title="Link to this heading">#</a></h3>
+<section id="id1">
+<h3>Added<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>All factory functions accept <code class="docutils literal notranslate"><span class="pre">basis</span></code> as an optional argument; <code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code>
 and <code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code> exported publicly; stage axes expressed as
@@ -584,8 +611,8 @@ workflow <code class="docutils literal notranslate"><span class="pre">docs.yml</
 (#57)</p></li>
 </ul>
 </section>
-<section id="changed">
-<h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
+<section id="id2">
+<h3>Changed<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">wh()</span></code> and <code class="docutils literal notranslate"><span class="pre">pa()</span></code> refactored from property to method with <code class="docutils literal notranslate"><span class="pre">print=True</span></code>
 keyword argument; <code class="docutils literal notranslate"><span class="pre">status.py</span></code> removed from the package API and moved to
@@ -602,8 +629,8 @@ natural per-module homes and rewritten as parametrized functions (#88)</p></li>
 <section id="release-v0-2">
 <h2>Release v0.2<a class="headerlink" href="#release-v0-2" title="Link to this heading">#</a></h2>
 <p>Released 2026-04-10.</p>
-<section id="id1">
-<h3>Added<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h3>Added<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Reflection</span></code> / <code class="docutils literal notranslate"><span class="pre">ReflectionList</span></code> classes: named reflections with hkl,
 motor angles, and wavelength; <code class="docutils literal notranslate"><span class="pre">setor1()</span></code> / <code class="docutils literal notranslate"><span class="pre">setor2()</span></code> designation;
@@ -650,8 +677,8 @@ constants (real + reciprocal), λ; modelled on Align4Pete.log output</p></li>
 </li>
 </ul>
 </section>
-<section id="id2">
-<h3>Changed<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="id4">
+<h3>Changed<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> now holds a <code class="docutils literal notranslate"><span class="pre">SampleDict</span></code> (<code class="docutils literal notranslate"><span class="pre">.samples</span></code>) and an
 active-sample property (<code class="docutils literal notranslate"><span class="pre">.sample</span></code>), replacing the earlier single-sample
@@ -664,8 +691,8 @@ design</p></li>
 <section id="release-v0-1">
 <h2>Release v0.1<a class="headerlink" href="#release-v0-1" title="Link to this heading">#</a></h2>
 <p>Released 2026-04-09.</p>
-<section id="id3">
-<h3>Added<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<section id="id5">
+<h3>Added<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> class: ordered rotary stages, basis validation,
 sample and detector rotation matrices, <code class="docutils literal notranslate"><span class="pre">summary()</span></code>, <code class="docutils literal notranslate"><span class="pre">check_limits()</span></code></p></li>
@@ -684,8 +711,8 @@ lattice vectors, lazy computation, display precision</p></li>
 <li><p>Pre-commit hooks: ruff (lint + format), isort, standard file checks</p></li>
 </ul>
 </section>
-<section id="id4">
-<h3>Changed<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<section id="id6">
+<h3>Changed<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Factory suffix convention: underscore removed from v/h detector suffix
 (<code class="docutils literal notranslate"><span class="pre">fourc_v</span></code> → <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4c_h</span></code> → <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, etc.)</p></li>
@@ -742,20 +769,25 @@ lattice vectors, lazy computation, display precision</p></li>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased">Unreleased</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-3-0">Release v0.3.0</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed">Fixed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-3-1">Release v0.3.1</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added">Added</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-2">Release v0.2</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-3-0">Release v0.3.0</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed">Fixed</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Added</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Changed</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1">Release v0.1</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-2">Release v0.2</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Added</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Changed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1">Release v0.1</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Changed</a></li>
 </ul>
 </li>
 </ul>
