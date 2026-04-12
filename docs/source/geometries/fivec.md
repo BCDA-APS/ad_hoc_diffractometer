@@ -1,11 +1,11 @@
 (geometry-fivec)=
 # fivec — Five-Circle (Vlieg et al. 1987)
 
-Five-circle diffractometer: a standard fourcv (Eulerian four-circle) mounted on a vertical mu base stage. Sample and detector are coupled through mu, providing access to wider regions of reciprocal space.
+Five-circle diffractometer: a standard fourcv (Eulerian four-circle) mounted on a vertical mu base stage. Sample and detector are coupled through mu.
 
 **Walko (2016) designation:** (S3D1)1
 
-**Coordinate basis:** You (1999) (``BASIS_YOU``): vertical=+x, longitudinal=+y, lateral=+z.
+**Coordinate basis:** You (1999) (`BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
 
 ## Quick start
 
@@ -19,40 +19,20 @@ print(g.summary())
 
 ## Stage layout
 
-**Sample stages** (floor first):
+**Sample stages (base first):**
 
-.. list-table::
-   :header-rows: 1
-   :widths: 15 40 20
+| Stage | Axis | Handedness |
+|---|---|---|
+| ``mu`` | +vertical (+x) | right-handed, shared base |
+| ``omega`` | −lateral (−z) | left-handed |
+| ``chi`` | +longitudinal (+y) | right-handed |
+| ``phi`` | −lateral (−z) | left-handed |
 
-   * - Stage
-     - Axis
-     - Handedness
-   * - ``mu``
-     - +vertical (+x)
-     - right-handed, shared base
-   * - ``omega``
-     - −lateral (−z)
-     - left-handed
-   * - ``chi``
-     - +longitudinal (+y)
-     - right-handed
-   * - ``phi``
-     - −lateral (−z)
-     - left-handed
+**Detector stages (base first):**
 
-**Detector stages** (floor first):
-
-.. list-table::
-   :header-rows: 1
-   :widths: 15 40 20
-
-   * - Stage
-     - Axis
-     - Handedness
-   * - ``ttheta``
-     - −lateral (−z)
-     - left-handed
+| Stage | Axis | Handedness |
+|---|---|---|
+| ``ttheta`` | −lateral (−z) | left-handed |
 
 **Shared stage:** mu (base stage shared between sample and detector stacks)
 
@@ -67,6 +47,5 @@ Available modes: *(none defined)*
 
 ## References
 
-- Vlieg et al., *J. Appl. Cryst.* **20**, 330–337 (1987). DOI: `10.1107/S0021889887087266 <https://doi.org/10.1107/S0021889887087266>`_
-- Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016).
+- Vlieg et al., *J. Appl. Cryst.* **20**, 330–337 (1987). DOI: [10.1107/S0021889887087266](https://doi.org/10.1107/S0021889887087266)
 - Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016).

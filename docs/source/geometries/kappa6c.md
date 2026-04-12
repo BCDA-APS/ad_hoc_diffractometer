@@ -3,7 +3,7 @@
 
 Six-circle kappa diffractometer with psic-style outer axes (mu, nu). The inner sample axes (komega, kappa, and kphi) replace the Eulerian chi circle. Lateral detector, vertical scattering plane.
 
-**Coordinate basis:** You (1999) (``BASIS_YOU``): vertical=+x, longitudinal=+y, lateral=+z.
+**Coordinate basis:** You (1999) (`BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
 
 ## Quick start
 
@@ -17,47 +17,25 @@ print(g.summary())
 
 ## Stage layout
 
-**Sample stages** (floor first):
+**Sample stages (base first):**
 
-.. list-table::
-   :header-rows: 1
-   :widths: 15 40 20
+| Stage | Axis | Handedness |
+|---|---|---|
+| ``mu`` | +vertical (+x) | right-handed |
+| ``komega`` | −lateral (−z) | left-handed |
+| ``kappa`` | tilted axis, α=50° | right-handed |
+| ``kphi`` | −lateral (−z) | left-handed |
 
-   * - Stage
-     - Axis
-     - Handedness
-   * - ``mu``
-     - +vertical (+x)
-     - right-handed
-   * - ``komega``
-     - −lateral (−z)
-     - left-handed
-   * - ``kappa``
-     - tilted axis, α=50°
-     - right-handed
-   * - ``kphi``
-     - −lateral (−z)
-     - left-handed
+**Detector stages (base first):**
 
-**Detector stages** (floor first):
-
-.. list-table::
-   :header-rows: 1
-   :widths: 15 40 20
-
-   * - Stage
-     - Axis
-     - Handedness
-   * - ``nu``
-     - +vertical (+x)
-     - right-handed
-   * - ``delta``
-     - −lateral (−z)
-     - left-handed
+| Stage | Axis | Handedness |
+|---|---|---|
+| ``nu`` | +vertical (+x) | right-handed |
+| ``delta`` | −lateral (−z) | left-handed |
 
 ## Diffraction modes
 
-Available modes: ``bisecting``, ``fixed_kphi``, ``fixed_mu``
+Available modes: `bisecting`, `fixed_kphi`, `fixed_mu`
 
 ## API reference
 
@@ -66,5 +44,5 @@ Available modes: ``bisecting``, ``fixed_kphi``, ``fixed_mu``
 
 ## References
 
-- ITC Vol. C §2.2.6 (2006). DOI: `10.1107/97809553602060000577 <https://doi.org/10.1107/97809553602060000577>`_
+- ITC Vol. C §2.2.6 (2006). DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577)
 - Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016).
