@@ -62,8 +62,8 @@ User Guide
       :link: geometries/index
       :link-type: doc
 
-      fourcv · fourch · psic · sixc · kappa4cv ·
-      kappa4ch · kappa6c · zaxis · s2d2 · fivec
+      Eulerian (4, 5, and 6 circle) · Kappa (4 and 6 circle) ·
+      Surface and special-purpose
 
    .. grid-item-card:: :material-regular:`menu_book;3em` API Reference
       :link: api
