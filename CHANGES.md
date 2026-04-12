@@ -8,6 +8,48 @@ for the full issue tracker.
 
 ## Unreleased
 
+## Release v0.4.1
+
+Released 2026-04-13.
+
+Patch release: bug fix to `FixedAngleMode` and geometry documentation improvements.
+
+### Breaking changes
+
+- `FixedAngleMode` now holds the stage at its **current angle** (read from
+  the geometry at solve time) rather than the value stored at construction.
+  Preset the stage angle with `g.set_angle(name, value)` before calling
+  `forward()`.  The `value` argument to `FixedAngleMode(...)` is now an
+  initial default only.  This also applies to the `frozen_angles` dict on
+  `BisectingMode` (e.g. `mu`/`nu` in psic and kappa6c).
+
+### Fixed
+
+- Geometry reference pages: reST `.. list-table::` directives inside MyST
+  `.md` files rendered as raw source text in the browser — replaced with
+  MyST-native pipe tables. (#139)
+- `FixedAngleMode`: stored angle value was used by the solver instead of
+  the stage's current angle, making it impossible to change the fixed value
+  without replacing the mode object. (#142)
+
+### Changed
+
+- Geometry reference pages enriched: each mode now shows specific motor
+  names, class AutoAPI links, GitHub source links, and plain-language
+  constraint descriptions. (#140)
+- Pre-built geometries table in `factories.py` module docstring sorted to
+  match the geometry reference page order
+  (fourcv → fourch → fivec → psic → sixc → kappas → surface). (#141)
+- Geometry page titles use a consistent pattern:
+  Eulerian Four-Circle, Eulerian Five-Circle, Eulerian Six-Circle,
+  Kappa Four-Circle, Kappa Six-Circle, Z-Axis, S2D2. (#140)
+- Geometry reference toctree reordered: fivec placed between four-circle
+  and six-circle Eulerianss. (#140)
+- `howto/modes.md` and `howto/forward.md` updated to show `g.set_angle()`
+  pattern for fixed-angle modes. (#142)
+- v1.0 criteria added to `roadmap.md`: #122 (diffraction modes) required;
+  #114 (sphere of confusion) deferred. (#139)
+
 ## Release v0.4.0
 
 Released 2026-04-13.
