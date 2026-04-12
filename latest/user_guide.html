@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=676dea20"></script>
+    <script src="_static/documentation_options.js?v=0e22d37d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -59,7 +59,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="next" title="Concepts" href="concepts.html" />
     <link rel="prev" title="Installation" href="install.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -195,13 +195,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="problem2.html">
     You (1999) Geometry — Coordinate Convention and UB Matrix
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="fourcv_alignment_howto.html">
-    How to Align a Four-Circle Diffractometer (fourcv)
   </a>
 </li>
 
@@ -365,13 +358,6 @@
   </a>
 </li>
 
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="fourcv_alignment_howto.html">
-    How to Align a Four-Circle Diffractometer (fourcv)
-  </a>
-</li>
-
   </ul>
 </nav></div>
           
@@ -442,7 +428,34 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"></div>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="howto/index.html">How-to Guides</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/wavelength.html">Set Wavelength / Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/lattice.html">Define the Sample Lattice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/orient.html">Orient a Crystal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/forward.html">Forward and Inverse Computations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/modes.html">Switch Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/trajectory.html">Plan a Trajectory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/refine_lattice.html">Refine the Lattice Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/fourcv_alignment_howto.html">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="geometries/index.html">Geometry Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="geometries/fourcv.html">fourcv — Four-Circle Eulerian (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/fourch.html">fourch — Four-Circle Eulerian (Laboratory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/psic.html">psic — Six-Circle 4S+2D (You 1999)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/sixc.html">sixc — Six-Circle Surface (Lohmeier &amp; Vlieg 1993)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/fivec.html">fivec — Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/kappa4cv.html">kappa4cv — Kappa Four-Circle (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/kappa4ch.html">kappa4ch — Kappa Four-Circle (Laboratory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/kappa6c.html">kappa6c — Six-Circle Kappa (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/zaxis.html">zaxis — Z-Axis Four-Circle (Surface)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
 </nav></div>
     </div>
   
@@ -502,14 +515,6 @@
 <span id="id1"></span><h1>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This section is under active development (#94, #95).</p>
-</div>
 <div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
 <div class="sd-row sd-row-cols-2 sd-row-cols-xs-2 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 docutils">
 <div class="sd-col sd-d-flex-row docutils">
@@ -519,31 +524,29 @@
 <svg version="4.0.0.63c5cb3" width="3.0em" height="3.0em" class="sd-material-icon sd-material-icon-architecture" viewBox="0 0 24 24" aria-hidden="true"><g><rect fill="none" height="24" width="24"></rect></g><g><g><path d="M6.36,18.78L6.61,21l1.62-1.54l2.77-7.6c-0.68-0.17-1.28-0.51-1.77-0.98L6.36,18.78z"></path><path d="M14.77,10.88c-0.49,0.47-1.1,0.81-1.77,0.98l2.77,7.6L17.39,21l0.26-2.22L14.77,10.88z"></path><path d="M15,8c0-1.3-0.84-2.4-2-2.82V3h-2v2.18C9.84,5.6,9,6.7,9,8c0,1.66,1.34,3,3,3S15,9.66,15,8z M12,9c-0.55,0-1-0.45-1-1 c0-0.55,0.45-1,1-1s1,0.45,1,1C13,8.55,12.55,9,12,9z"></path></g></g></svg> Concepts</div>
 <p class="sd-card-text">Coordinate conventions, axis sign convention, B/U/UB matrices,
 diffraction modes, and the ψ angle.</p>
-<p class="sd-card-text"><em>(Coming soon)</em></p>
 </div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="#"><span class="doc">User Guide</span></a></div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="concepts.html"><span class="doc">Concepts</span></a></div>
 </div>
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
 <div class="sd-card-body docutils">
 <div class="sd-card-title sd-font-weight-bold docutils">
 <svg version="4.0.0.63c5cb3" width="3.0em" height="3.0em" class="sd-material-icon sd-material-icon-directions_run" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"></path></svg> How-to Guides</div>
-<p class="sd-card-text">Step-by-step guides for common tasks: setting the wavelength,
-orienting a crystal, running a trajectory, switching modes.</p>
-<p class="sd-card-text"><em>(Coming soon)</em></p>
+<p class="sd-card-text">Step-by-step guides: set wavelength, define a lattice, orient a
+crystal, solve the forward problem, switch modes, plan trajectories,
+and align a crystal end-to-end.</p>
 </div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="#"><span class="doc">User Guide</span></a></div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="howto/index.html"><span class="doc">How-to Guides</span></a></div>
 </div>
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
 <div class="sd-card-body docutils">
 <div class="sd-card-title sd-font-weight-bold docutils">
 <svg version="4.0.0.63c5cb3" width="3.0em" height="3.0em" class="sd-material-icon sd-material-icon-format_list_bulleted" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"></path></svg> Geometry Reference</div>
-<p class="sd-card-text">One page per geometry factory: psic, fourcv, fourch, sixc,
-kappa4cv, kappa4ch, kappa6c, zaxis, s2d2, fivec.</p>
-<p class="sd-card-text"><em>(Coming soon)</em></p>
+<p class="sd-card-text">Eulerian (4, 5, and 6 circle) · Kappa (4 and 6 circle) ·
+Surface and special-purpose</p>
 </div>
-<a class="sd-stretched-link sd-hide-link-text reference internal" href="#"><span class="doc">User Guide</span></a></div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="geometries/index.html"><span class="doc">Geometry Reference</span></a></div>
 </div>
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
@@ -579,11 +582,11 @@ function, and constant.</p>
       </div>
     </a>
     <a class="right-next"
-       href="api.html"
+       href="concepts.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">API Reference</p>
+        <p class="prev-next-title">Concepts</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

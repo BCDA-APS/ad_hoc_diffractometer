@@ -49,7 +49,6 @@ It provides:
    direct-lattice
    problem1
    problem2
-   fourcv_alignment_howto
 
 .. icons: https://fonts.google.com/icons
 
@@ -99,7 +98,7 @@ It provides:
 Background
 ----------
 
-.. grid:: 2
+.. grid:: 3
 
    .. grid-item-card:: :material-outlined:`functions;3em` Direct Lattice
       :link: direct-lattice
@@ -119,13 +118,6 @@ Background
 
       Coordinate conventions and B/U/UB matrix derivation following
       You (1999) and Busing & Levy (1967).
-
-   .. grid-item-card:: :material-outlined:`align_horizontal_center;3em` Alignment How-to
-      :link: fourcv_alignment_howto
-      :link-type: doc
-
-      Step-by-step crystal alignment on a four-circle diffractometer,
-      with a real sapphire example from APS 7-ID-C.
 
 About
 -----
