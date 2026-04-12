@@ -1269,6 +1269,40 @@ def test_geometry_stacking_order_with_scrambled_input():
     assert [s.name for s in g.sample_stages] == ["phi", "chi", "omega"]
 
 
+def test_stages_by_role_custom():
+    """stages_by_role() returns stages with any arbitrary role string."""
+    import numpy as np
+
+    from ad_hoc_diffractometer import Stage
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    analyser = Stage("analyser", np.array([1.0, 0.0, 0.0]), role="analyser")
+    g._stages["analyser"] = analyser
+
+    result = g.stages_by_role("analyser")
+    assert len(result) == 1
+    assert result[0].name == "analyser"
+
+
+def test_stages_by_role_unknown_returns_empty():
+    """stages_by_role() returns [] for a role that no stage has."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    assert g.stages_by_role("polariser") == []
+
+
+def test_stages_by_role_sample_matches_sample_stages():
+    """stages_by_role('sample') returns the same list as sample_stages."""
+    from ad_hoc_diffractometer import fourcv
+
+    g = fourcv()
+    assert [s.name for s in g.stages_by_role("sample")] == [
+        s.name for s in g.sample_stages
+    ]
+
+
 def test_geometry_cycle_in_parent_chain_raises():
     """Stage parent chain with a cycle raises ValueError."""
     from ad_hoc_diffractometer import AdHocDiffractometer

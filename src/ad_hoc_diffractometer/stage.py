@@ -45,7 +45,14 @@ class Stage:
         Name of the stage on which this stage is mounted, or None if it
         sits directly on the lab frame (floor).
     role : str, optional
-        'sample' or 'detector', for bookkeeping.  Default is 'sample'.
+        An arbitrary string label for bookkeeping.  The two conventional
+        values are ``"sample"`` and ``"detector"``; any other string is
+        accepted and can be used to model additional components such as
+        analysers, polarisers, slits, or azimuthal spinners.
+        Geometry methods ``sample_stages`` and ``detector_stages`` filter
+        by these conventional values; use
+        :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.stages_by_role`
+        to query stages with any other role.  Default is ``"sample"``.
     angle : float, optional
         Current angle setting in degrees.  Default is 0.0.
     limits : tuple of (float, float), optional

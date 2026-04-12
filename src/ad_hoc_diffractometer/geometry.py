@@ -274,6 +274,42 @@ class AdHocDiffractometer:
 
         return ordered
 
+    def stages_by_role(self, role: str) -> list[Stage]:
+        """
+        Return all stages with the given role, in stacking order (base first).
+
+        The two conventional roles are ``"sample"`` and ``"detector"``,
+        which are also available as the :attr:`sample_stages` and
+        :attr:`detector_stages` attributes.  This method accepts any
+        arbitrary role string, making it useful for non-standard components
+        such as analysers, polarisers, slits, or azimuthal spinners.
+
+        Parameters
+        ----------
+        role : str
+            The role string to filter on (case-sensitive).
+
+        Returns
+        -------
+        list of Stage
+            Stages with the requested role, in stacking order (base-most
+            first).  An empty list if no stages have the requested role.
+
+        Examples
+        --------
+        >>> import ad_hoc_diffractometer as ahd
+        >>> import numpy as np
+        >>> from ad_hoc_diffractometer import Stage
+        >>> g = ahd.fourcv()
+        >>> analyser = Stage("analyser", np.array([1., 0., 0.]), role="analyser")
+        >>> g._stages["analyser"] = analyser
+        >>> [s.name for s in g.stages_by_role("analyser")]
+        ['analyser']
+        >>> g.stages_by_role("unknown")
+        []
+        """
+        return self._ordered_stages(role)
+
     # ------------------------------------------------------------------
     # Wavelength
     # ------------------------------------------------------------------
