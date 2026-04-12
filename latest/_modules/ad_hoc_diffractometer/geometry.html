@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=ba94e17a"></script>
+    <script src="../../_static/documentation_options.js?v=61a64674"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -773,6 +773,45 @@
                     <span class="k">break</span>
 
         <span class="k">return</span> <span class="n">ordered</span>
+
+<div class="viewcode-block" id="AdHocDiffractometer.stages_by_role">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.stages_by_role">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stages_by_role</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Stage</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all stages with the given role, in stacking order (base first).</span>
+
+<span class="sd">        The two conventional roles are ``&quot;sample&quot;`` and ``&quot;detector&quot;``,</span>
+<span class="sd">        which are also available as the :attr:`sample_stages` and</span>
+<span class="sd">        :attr:`detector_stages` attributes.  This method accepts any</span>
+<span class="sd">        arbitrary role string, making it useful for non-standard components</span>
+<span class="sd">        such as analysers, polarisers, slits, or azimuthal spinners.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        role : str</span>
+<span class="sd">            The role string to filter on (case-sensitive).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of Stage</span>
+<span class="sd">            Stages with the requested role, in stacking order (base-most</span>
+<span class="sd">            first).  An empty list if no stages have the requested role.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; from ad_hoc_diffractometer import Stage</span>
+<span class="sd">        &gt;&gt;&gt; g = ahd.fourcv()</span>
+<span class="sd">        &gt;&gt;&gt; analyser = Stage(&quot;analyser&quot;, np.array([1., 0., 0.]), role=&quot;analyser&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; g._stages[&quot;analyser&quot;] = analyser</span>
+<span class="sd">        &gt;&gt;&gt; [s.name for s in g.stages_by_role(&quot;analyser&quot;)]</span>
+<span class="sd">        [&#39;analyser&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; g.stages_by_role(&quot;unknown&quot;)</span>
+<span class="sd">        []</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ordered_stages</span><span class="p">(</span><span class="n">role</span><span class="p">)</span></div>
+
 
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Wavelength</span>

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=ba94e17a"></script>
+    <script src="../../../_static/documentation_options.js?v=61a64674"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -597,7 +597,14 @@ it sits on the floor / fixed lab frame.</p></li>
 Construct from caller-facing notation using axes.parse_axis().</p></li>
 <li><p><strong>parent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>None</em>) – Name of the stage on which this stage is mounted, or None if it
 sits directly on the lab frame (floor).</p></li>
-<li><p><strong>role</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – ‘sample’ or ‘detector’, for bookkeeping.  Default is ‘sample’.</p></li>
+<li><p><strong>role</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – An arbitrary string label for bookkeeping.  The two conventional
+values are <code class="docutils literal notranslate"><span class="pre">&quot;sample&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;detector&quot;</span></code>; any other string is
+accepted and can be used to model additional components such as
+analysers, polarisers, slits, or azimuthal spinners.
+Geometry methods <code class="docutils literal notranslate"><span class="pre">sample_stages</span></code> and <code class="docutils literal notranslate"><span class="pre">detector_stages</span></code> filter
+by these conventional values; use
+<a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.stages_by_role" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.stages_by_role"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stages_by_role()</span></code></a>
+to query stages with any other role.  Default is <code class="docutils literal notranslate"><span class="pre">&quot;sample&quot;</span></code>.</p></li>
 <li><p><strong>angle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Current angle setting in degrees.  Default is 0.0.</p></li>
 <li><p><strong>limits</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>)</em><em>, </em><em>optional</em>) – (min_angle, max_angle) in degrees.  Default is (-180.0, 180.0).
 Must satisfy min_angle &lt; max_angle.</p></li>

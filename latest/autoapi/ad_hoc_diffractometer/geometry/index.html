@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=ba94e17a"></script>
+    <script src="../../../_static/documentation_options.js?v=61a64674"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1488,6 +1488,42 @@ Spallation (time-of-flight) sources are out of scope.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.geometry.AdHocDiffractometer.stages_by_role">
+<span class="sig-name descname"><span class="pre">stages_by_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><span class="pre">Stage</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/geometry.html#AdHocDiffractometer.stages_by_role"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.stages_by_role" title="Link to this definition">#</a></dt>
+<dd><p>Return all stages with the given role, in stacking order (base first).</p>
+<p>The two conventional roles are <code class="docutils literal notranslate"><span class="pre">&quot;sample&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;detector&quot;</span></code>,
+which are also available as the <a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.sample_stages" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.sample_stages"><code class="xref py py-attr docutils literal notranslate"><span class="pre">sample_stages</span></code></a> and
+<a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.detector_stages" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.detector_stages"><code class="xref py py-attr docutils literal notranslate"><span class="pre">detector_stages</span></code></a> attributes.  This method accepts any
+arbitrary role string, making it useful for non-standard components
+such as analysers, polarisers, slits, or azimuthal spinners.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>role</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The role string to filter on (case-sensitive).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stages with the requested role, in stacking order (base-most
+first).  An empty list if no stages have the requested role.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage">Stage</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stage</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">analyser</span> <span class="o">=</span> <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;analyser&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;analyser&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="s2">&quot;analyser&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">analyser</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">stages_by_role</span><span class="p">(</span><span class="s2">&quot;analyser&quot;</span><span class="p">)]</span>
+<span class="go">[&#39;analyser&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">stages_by_role</span><span class="p">(</span><span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.geometry.AdHocDiffractometer.summary">
 <span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/geometry.html#AdHocDiffractometer.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.summary" title="Link to this definition">#</a></dt>
 <dd><p>Print a human-readable summary of the geometry.</p>
@@ -1842,6 +1878,7 @@ capture the string instead.</p></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_inclination"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.set_inclination()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.source_type"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.source_type</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.stage"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.stage()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.stages_by_role"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.stages_by_role()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.summary"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.summary()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.surface_normal"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.surface_normal</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.to_dict"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.to_dict()</span></code></a></li>

@@ -53,7 +53,14 @@ Module Contents
    :param parent: Name of the stage on which this stage is mounted, or None if it
                   sits directly on the lab frame (floor).
    :type parent: str or None
-   :param role: 'sample' or 'detector', for bookkeeping.  Default is 'sample'.
+   :param role: An arbitrary string label for bookkeeping.  The two conventional
+                values are ``"sample"`` and ``"detector"``; any other string is
+                accepted and can be used to model additional components such as
+                analysers, polarisers, slits, or azimuthal spinners.
+                Geometry methods ``sample_stages`` and ``detector_stages`` filter
+                by these conventional values; use
+                :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.stages_by_role`
+                to query stages with any other role.  Default is ``"sample"``.
    :type role: str, optional
    :param angle: Current angle setting in degrees.  Default is 0.0.
    :type angle: float, optional

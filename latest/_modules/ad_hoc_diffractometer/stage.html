@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=ba94e17a"></script>
+    <script src="../../_static/documentation_options.js?v=61a64674"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -545,7 +545,14 @@
 <span class="sd">        Name of the stage on which this stage is mounted, or None if it</span>
 <span class="sd">        sits directly on the lab frame (floor).</span>
 <span class="sd">    role : str, optional</span>
-<span class="sd">        &#39;sample&#39; or &#39;detector&#39;, for bookkeeping.  Default is &#39;sample&#39;.</span>
+<span class="sd">        An arbitrary string label for bookkeeping.  The two conventional</span>
+<span class="sd">        values are ``&quot;sample&quot;`` and ``&quot;detector&quot;``; any other string is</span>
+<span class="sd">        accepted and can be used to model additional components such as</span>
+<span class="sd">        analysers, polarisers, slits, or azimuthal spinners.</span>
+<span class="sd">        Geometry methods ``sample_stages`` and ``detector_stages`` filter</span>
+<span class="sd">        by these conventional values; use</span>
+<span class="sd">        :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.stages_by_role`</span>
+<span class="sd">        to query stages with any other role.  Default is ``&quot;sample&quot;``.</span>
 <span class="sd">    angle : float, optional</span>
 <span class="sd">        Current angle setting in degrees.  Default is 0.0.</span>
 <span class="sd">    limits : tuple of (float, float), optional</span>
