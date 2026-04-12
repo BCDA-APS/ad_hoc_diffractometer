@@ -302,20 +302,50 @@ def test_kappa4cv_bisecting_round_trip():
 
 
 def test_fourcv_fixed_chi_round_trip():
-    """fixed_chi round-trip for a reflection reachable with chi=90 in fourcv."""
+    """fixed_chi round-trip: caller presets chi=90°, mode respects current angle."""
     g = _setup_cubic(fourcv, a=4.0)
+    g.set_angle("chi", 90.0)  # caller presets chi before activating the mode
     g.mode_name = "fixed_chi"
     assert _round_trip_ok(g, 1, 0, 0)
 
 
+def test_psic_fixed_chi_uses_current_angle_with_bisecting_frozen():
+    """fixed_chi on psic exercises the bisecting.frozen_angles (mu, nu) path."""
+    from ad_hoc_diffractometer import psic
+
+    g = _setup_cubic(psic, a=4.0)
+    g.set_angle("mu", 0.0)
+    g.set_angle("nu", 0.0)
+    g.set_angle("chi", 90.0)
+    g.mode_name = "fixed_chi"
+    solutions = g.forward(1, 0, 0)
+    for sol in solutions:
+        assert sol["chi"] == pytest.approx(90.0, abs=1e-6)
+        assert sol["mu"] == pytest.approx(0.0, abs=1e-6)
+        assert sol["nu"] == pytest.approx(0.0, abs=1e-6)
+
+
 def test_fourcv_fixed_chi_value_respected():
-    """chi must be 90° (default fixed_chi value) in all solutions."""
+    """chi must equal the caller-preset value in all solutions."""
     g = _setup_cubic(fourcv, a=4.0)
+    g.set_angle("chi", 90.0)  # caller presets chi; mode will freeze it here
     g.mode_name = "fixed_chi"
     solutions = g.forward(1, 0, 0)
     assert len(solutions) > 0
     for sol in solutions:
         assert sol["chi"] == pytest.approx(90.0, abs=1e-8)
+
+
+def test_fourcv_fixed_chi_caller_controls_value():
+    """Caller can freeze chi at any angle by presetting it before forward()."""
+    g = _setup_cubic(fourcv, a=4.0)
+    g.set_angle("chi", 45.0)  # freeze at 45° instead of the mode default 90°
+    g.mode_name = "fixed_chi"
+    solutions = g.forward(1, 0, 0)
+    # solutions may be empty if chi=45 has no valid solution, but if present
+    # all must have chi=45
+    for sol in solutions:
+        assert sol["chi"] == pytest.approx(45.0, abs=1e-8)
 
 
 # ---------------------------------------------------------------------------
