@@ -1,4 +1,5 @@
-(geometries)=
+.. _geometries:
+
 Geometry Reference
 ==================
 
