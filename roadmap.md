@@ -14,6 +14,23 @@ as they are completed.
 
 ---
 
+## v1.0 criteria
+
+The following must be resolved before a v1.0 tag is applied:
+
+- [~] **#122** — Review and expand diffraction modes for psic, sixc, fivec,
+  and kappa6c (horizontal scattering plane variants, fixed_nu, grazing
+  incidence, azimuthal ψ scan mode).
+  [Issue #122](https://github.com/prjemian/ad_hoc_diffractometer/issues/122)
+
+The following are **not** required for v1.0:
+
+- **#114** — Sphere of confusion (SoC): more involved; deferred to a later
+  release.
+  [Issue #114](https://github.com/prjemian/ad_hoc_diffractometer/issues/114)
+
+---
+
 ## Already implemented
 
 - [x] Rotation axis description: signed basis vector notation (+x, -z, etc.)
