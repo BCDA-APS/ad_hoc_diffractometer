@@ -115,8 +115,9 @@ be implemented first.
 - [x] `ReflectionList` class: ordered dict of named reflections with
       dict-like interface (`__getitem__`, `__delitem__`, `__contains__`,
       `__len__`, `__iter__`), `add()`, `remove()`, `clear()`
-- [x] `ReflectionList.setor1()` / `setor2()`: designate primary/secondary
-      orienting reflections; moving a reflection between slots clears the old
+- [x] `ReflectionList.setor0()` / `setor1()`: designate primary/secondary
+      orienting reflections (SPEC convention); moving a reflection between
+      slots clears the old designation ([#120](https://github.com/prjemian/ad_hoc_diffractometer/issues/120))
 - [x] `ReflectionList.orienting_reflections` property: `[]`, `[or1]`, or
       `[or1, or2]`
 - [x] Angle keys validated against the geometry's stage names at `add()` time
@@ -501,12 +502,12 @@ diagnostics, and programmatic reconstruction.
 Useful for reporting and cross-checking but not load-bearing for diffraction
 angle calculations.  Depends on #1 (wavelength on `AdHocDiffractometer`).
 
-- [ ] Compute photon energy E (keV) lazily: E = 12.39842 / λ (Å)
-- [ ] Compute wave number k (Å⁻¹) lazily: k = 2π / λ
-- [ ] `summary()` optionally reports E alongside λ
-- [ ] Named constants for common laboratory lines:
+- [x] Compute photon energy E (keV) lazily: E = 12.39842 / λ (Å)
+- [x] Compute wave number k (Å⁻¹) lazily: k = 2π / λ
+- [x] `summary()` optionally reports E alongside λ
+- [x] Named constants for common laboratory lines:
       Cu Kα ≈ 1.5406 Å, Mo Kα ≈ 0.7107 Å, Ag Kα ≈ 0.5594 Å, Co Kα ≈ 1.7902 Å
-- [ ] Tests covering conversions, lazy recomputation, and named constant values
+- [x] Tests covering conversions, lazy recomputation, and named constant values
 - [ ] Related to: #8 (neutron source — independent, different formula)
 
 ### 3.8b Dynamic versioning with hatch-vcs ([#59](https://github.com/prjemian/ad_hoc_diffractometer/issues/59))
@@ -571,20 +572,20 @@ Current coverage: 93% (119 uncovered lines).  ``pytest-cov`` is installed.
 
 ### 3.8g Refactor factory functions to accept basis as argument ([#67](https://github.com/prjemian/ad_hoc_diffractometer/issues/67))
 
-- [ ] Pass basis dict as optional argument to each factory; resolve
+- [x] Pass basis dict as optional argument to each factory; resolve
       ``_LATERAL``/``_VERTICAL``/``_LONGITUDINAL`` locally
-- [ ] Unify ``_BASIS_BL`` and ``_BASIS_YOU`` stage axis expressions into a
+- [x] Unify ``_BASIS_BL`` and ``_BASIS_YOU`` stage axis expressions into a
       single physical-direction notation
-- [ ] Backward-compatible (basis defaults to current value per factory)
+- [x] Backward-compatible (basis defaults to current value per factory)
 
 ### 3.8e Sphinx documentation ([#57](https://github.com/prjemian/ad_hoc_diffractometer/issues/57))
 
 - [x] Allow either reST or Markdown source
 - [x] Refactor existing content into ``docs/source/``
-- [ ] Render Jupyter notebooks (Phase 2 — requires pandoc in CI)
+- [x] Render Jupyter notebooks (myst-nb; no pandoc required)
 - [x] Sections: main page (``index.rst``), API (AutoAPI via ``sphinx-autoapi``),
       Install (``install.md``), Changes (``changes.md`` includes ``CHANGES.md``)
-- [ ] User Guide per diataxis.fr (Phase 2)
+- [x] User Guide per diataxis.fr: Concepts, How-to Guides, Geometry Reference, Glossary, References
 - [x] GitHub Actions workflow to build and publish docs (``docs.yml``)
 - [x] Versioned docs with ``switcher.json`` automation on tag push ([#91](https://github.com/prjemian/ad_hoc_diffractometer/issues/91))
 - [x] ``docs_backfill.yml`` workflow to publish docs for older tagged releases ([#91](https://github.com/prjemian/ad_hoc_diffractometer/issues/91))
@@ -594,12 +595,11 @@ Current coverage: 93% (119 uncovered lines).  ``pytest-cov`` is installed.
 Moved from Priority 1.  Wavelength storage (#1) is the only prerequisite;
 this issue is independent of the X-ray energy conversion issue (#21).
 
-- [ ] Add a `source_type` parameter (or separate subclasses) to distinguish
-      `"xray"` and `"neutron"` radiation
-- [ ] For neutrons: compute E (meV) lazily via de Broglie: E = 81.8042 / λ²
-- [ ] `summary()` reports the correct energy units for each source type
-- [ ] Validate that energy/wavelength conversions are not mixed across source types
-- [ ] Tests covering both source types, unit correctness, and invalid cross-type usage
+- [x] Add a `source_type` parameter to distinguish `"xray"` and `"neutron"` radiation
+- [x] For neutrons: compute E (meV) lazily via de Broglie: E = 81.8042 / λ²
+- [x] `summary()` reports the correct energy units for each source type
+- [x] Validate that energy/wavelength conversions are not mixed across source types
+- [x] Tests covering both source types, unit correctness, and invalid cross-type usage
 - [ ] Related to: #21 (X-ray energy conversion — independent, different formula)
 
 ---
