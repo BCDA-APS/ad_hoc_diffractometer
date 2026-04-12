@@ -1,68 +1,77 @@
 # *Ad hoc* diffractometer
 
+[![PyPI](https://img.shields.io/pypi/v/ad_hoc_diffractometer)](https://pypi.org/project/ad_hoc_diffractometer/)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://prjemian.github.io/ad_hoc_diffractometer/latest/)
 [![License: CC-BY-4.0](https://img.shields.io/badge/License-CC--BY--4.0-brightgreen)](https://creativecommons.org/licenses/by/4.0/)
 
-Multi-circle diffractometer geometry and related calculations.
+`ad_hoc_diffractometer` is a **pure-Python** diffractometer simulation
+package for X-ray and neutron crystallography, built around a key design
+principle: **any multi-circle diffractometer geometry can be fully described
+by the caller** — no geometry is hard-coded, and new geometries require no
+changes to the package itself.
 
-`import ad_hoc_diffractometer as ahd`
+Its only runtime dependency beyond the Python Standard Library is
+[NumPy](https://numpy.org) — no scipy, sympy, or other scientific
+libraries are required.
 
-## References
+## Features
 
-Papers describing various diffractometer geometries.
+- A class-based description of diffractometer stages (rotary axes) and
+  their stacking order
+- Predefined factory functions for standard synchrotron and laboratory
+  diffractometer geometries (psic, fourcv, fourch, sixc, kappa families,
+  zaxis, s2d2, fivec)
+- Crystallographic lattice calculations (B matrix, reciprocal lattice)
+- U and UB matrix computation from orienting reflections
+- Forward diffraction calculations (hkl → motor angles), with
+  diffraction modes controlling which stages are free, fixed, or coupled
+- Reciprocal-space trajectory planning
 
-- 1967 (fourc), Acta  Cryst., 22, 457-464, W.R. Busing and H.A. Levy.
-- 1985 (zaxis), J. Appl. Cryst. 18, 33-36, J.M. Bloch.
-- 1987 (fivec), J. Appl. Cryst. 20, 330-337, E. Vlieg et al.
-- 1993 (sixc), J. Appl. Cryst., 26, 706, M. Lohmeier and E. Vlieg.
-- 1995 (s2d2), J. Appl. Cryst. 28, 318-326, K.W. Evans-Lutterodt & M.-T. Tang.
-- 1999 (psic), J. Appl. Cryst. 32, 614-623, H. You.
-- 2006 (kappa), International Tables for Crystallography, Vol. C, Section 2.2.6. DOI:
-    10.1107/97809553602060000577.
-- 2016 (review), "Multicircle Diffractometry Methods," pp. 1-10, D.A. Walko,
-  in "Reference Module in Materials Science and Materials Engineering,"
-  Oxford: Elsevier,  Saleem Hashmi (editor-in-chief), ISBN: 978-0-12-803581-8.
+## Quick start
 
-Also note:
+```python
+import ad_hoc_diffractometer as ahd
 
-- https://en.wikipedia.org/wiki/Orientation_(geometry)
-- https://www.cuemath.com/algebra/rotation-matrix/
-- https://en.wikipedia.org/wiki/Rotation_matrix
-- https://en.wikipedia.org/wiki/Quaternion
-- https://quaternion.readthedocs.io/en/latest/ (Python)
-- https://sot.github.io/Quaternion/ (Python)
+# Create a six-circle psic geometry and set the wavelength
+g = ahd.psic()
+g.wavelength = 1.0  # Å
 
-## INSTALL
+# Define the sample lattice (cubic silicon)
+g.sample.lattice = ahd.Lattice(a=5.431)
 
-### conda/pip
+# Show a summary of the geometry
+print(g.summary())
+```
+
+## Install
 
 ```bash
-conda create -y -n ad_hoc_diffractometer python
-conda activate ad_hoc_diffractometer
+pip install ad_hoc_diffractometer
+```
+
+For development:
+
+```bash
+git clone https://github.com/prjemian/ad_hoc_diffractometer
+cd ad_hoc_diffractometer
 pip install -e .[dev]
 ```
 
-### uv
+See the [documentation](https://prjemian.github.io/ad_hoc_diffractometer/latest/)
+for full installation options (conda, uv, hatch) and usage guides.
 
-[uv](https://docs.astral.sh/uv/) creates and manages virtual environments automatically:
+## References
 
-```bash
-uv sync --extra dev
-```
+Papers describing the diffractometer geometries provided:
 
-Run commands inside the managed environment with `uv run`, e.g.:
-
-```bash
-uv run pytest
-```
-
-### hatch
-
-[hatch](https://hatch.pypa.io/) uses the `default` environment defined in
-`pyproject.toml`, which already includes the `dev` dependencies:
-
-```bash
-pip install hatch          # install hatch once, globally
-hatch env create           # create the default environment
-hatch run pytest           # run commands inside the environment
-```
+- Busing & Levy (1967) — fourc. *Acta Cryst.* 22, 457–464.
+- Bloch (1985) — zaxis. *J. Appl. Cryst.* 18, 33–36.
+- Vlieg et al. (1987) — fivec. *J. Appl. Cryst.* 20, 330–337.
+- Lohmeier & Vlieg (1993) — sixc. *J. Appl. Cryst.* 26, 706–716.
+- Evans-Lutterodt & Tang (1995) — s2d2. *J. Appl. Cryst.* 28, 318–326.
+- You (1999) — psic. *J. Appl. Cryst.* 32, 614–623.
+  DOI: [10.1107/S0021889899001223](https://doi.org/10.1107/S0021889899001223)
+- ITC Vol. C §2.2.6 (2006) — kappa.
+  DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577)
+- Walko (2016) — geometry survey. *Reference Module in Materials Science
+  and Materials Engineering*, Elsevier.

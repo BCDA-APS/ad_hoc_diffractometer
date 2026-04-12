@@ -193,6 +193,15 @@ python3 -m pre_commit run --all-files
 
 ---
 
+## Implementation philosophy
+
+`ad_hoc_diffractometer` is a **pure-Python** package.  The only runtime
+dependency beyond the Python Standard Library is **NumPy**.  There is no
+dependency on scipy, sympy, or any other scientific library.  Keep it that
+way: every new algorithm must be implementable with NumPy alone.
+
+---
+
 ## Code style guidelines
 
 - **Import alias**: `import ad_hoc_diffractometer as ahd`

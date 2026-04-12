@@ -1,6 +1,7 @@
 # Change History
 
-User-facing changes by release.  See [docs/source/roadmap.md](docs/source/roadmap.md)
+User-facing changes by release.  See the
+[development roadmap](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/roadmap.md)
 for planned future work and
 [GitHub Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues)
 for the full issue tracker.
