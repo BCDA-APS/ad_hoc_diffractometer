@@ -46,6 +46,8 @@ It provides:
    user_guide
    api
    changes
+   references
+   glossary
    direct-lattice
    problem1
    problem2
@@ -78,6 +80,13 @@ It provides:
       :link-type: doc
 
       What changed in each release.
+
+   .. grid-item-card:: :material-outlined:`library_books;3em` References
+      :link: references
+      :link-type: doc
+
+      All literature citations — geometry papers, physical constants,
+      and numerical methods.
 
 **Quick start**
 
