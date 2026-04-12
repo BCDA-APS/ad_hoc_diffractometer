@@ -38,8 +38,7 @@ switcher_version_match = os.environ.get("DOC_VERSION", release)
 
 extensions = [
     "autoapi.extension",
-    "myst_parser",
-    "nbsphinx",
+    "myst_nb",
     "sphinx.ext.graphviz",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
@@ -55,8 +54,6 @@ exclude_patterns = [
     "_build",
     "Thumbs.db",
     ".DS_Store",
-    # Notebooks excluded until CI pandoc integration and content review (#95).
-    "*.ipynb",
     # roadmap.md lives in the repo root (not docs/source); guard against
     # accidental inclusion if the file is ever copied back here.
     "roadmap.md",
@@ -64,13 +61,20 @@ exclude_patterns = [
 
 myst_enable_extensions = ["colon_fence"]
 
-source_suffix = [".rst", ".md"]
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".md": "restructuredtext",
+    ".ipynb": "myst-nb",
+}
 
 templates_path = ["_templates"]
 
-# Do not execute notebooks during doc build — notebooks may require
-# hardware or data not available in CI.
-nb_execution_mode = "off"
+# -- Notebook execution (myst-nb) --------------------------------------------
+
+# Execute notebooks during the doc build.  All notebooks in docs/source/
+# use only ad_hoc_diffractometer + NumPy + matplotlib — no hardware required.
+nb_execution_mode = "auto"  # execute only notebooks without stored outputs
+nb_execution_timeout = 120  # seconds per cell
 
 # -- AutoAPI -----------------------------------------------------------------
 
