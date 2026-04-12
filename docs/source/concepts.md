@@ -27,55 +27,55 @@ factory.
 ::::{tab-set}
 
 :::{tab-item} You1999 (default)
-Used by: `psic`, `sixc`, `kappa6c`, `zaxis`, `s2d2`, `fivec`
-
 | Physical direction | Cartesian | Constant |
 |---|---|---|
 | vertical | +x | `XHAT` |
 | longitudinal | +y | `YHAT` |
 | lateral | +z | `ZHAT` |
 
+Used by: `psic`, `sixc`, `kappa6c`, `zaxis`, `s2d2`, `fivec`
+
 Pass `basis=BASIS_YOU` (the default for these geometries).
 :::
 
 :::{tab-item} BL1967
-Used by: `fourcv`, `fourch`, `kappa4cv`, `kappa4ch`
-
-Convention of Busing & Levy.
-
-Also used by:
-- [SPEC](https://certif.com)
-
 | Physical direction | Cartesian | Constant |
 |---|---|---|
 | vertical | +z | `ZHAT` |
 | longitudinal | +y | `YHAT` |
 | lateral | +x | `XHAT` |
 
+Convention of Busing & Levy.
+
+Used by: `fourcv`, `fourch`, `kappa4cv`, `kappa4ch`
+
+Also used by:
+- [SPEC](https://certif.com)
+
 Pass `basis=BASIS_BL` (the default for these geometries).
 :::
 
 :::{tab-item} NeXus
-Used by: [NeXus](https://manual.nexusformat.org/design.html#the-nexus-coordinate-system)
-
-Also used by:
-- [hklpy2](https://blueskyproject.io/hklpy2/)
-
 | Physical direction | Cartesian | Constant |
 |---|---|---|
 | vertical | +y | `YHAT` |
 | longitudinal | +z | `ZHAT` |
 | lateral | +x | `XHAT` |
+
+Used by: [NeXus](https://manual.nexusformat.org/design.html#the-nexus-coordinate-system)
+
+Also used by:
+- [hklpy2](https://blueskyproject.io/hklpy2/)
 :::
 
 :::{tab-item} Hkl
-Used by: [Hkl](https://people.debian.org/~picca/hkl/hkl.html#org4569ec8)
-
 | Physical direction | Cartesian | Constant |
 |---|---|---|
 | vertical | +z | `ZHAT` |
 | longitudinal | +x | `XHAT` |
 | lateral | +y | `YHAT` |
+
+Used by: [Hkl](https://people.debian.org/~picca/hkl/hkl.html#org4569ec8)
 :::
 
 ::::
