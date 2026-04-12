@@ -14,9 +14,9 @@ directions** that can be identified directly in the laboratory:
 
 | Physical direction | Lab meaning |
 |---|---|
-| **vertical** | out of the floor (normal to the optical table) |
-| **longitudinal** | along the beam, toward the equipment |
-| **lateral** | to our left when facing the equipment |
+| **vertical** | opposite to gravitational acceleration |
+| **longitudinal** | a chosen direction in the plane perpendicular to vertical, conventionally aligned with the nominal incident beam; a property of the instrument installation |
+| **lateral** | orthogonal to both; positive sense completes a right-handed system (vertical × longitudinal) |
 
 The package uses a right-handed Cartesian frame internally.  Different
 authors assigned different Cartesian letters (x, y, z) to these physical
@@ -25,20 +25,27 @@ major conventions via the `basis` argument to each factory.
 
 ::::{tab-set}
 
-:::{tab-item} You (1999) — package default
+:::{tab-item} You1999 (default)
 Used by: `psic`, `sixc`, `kappa6c`, `zaxis`, `s2d2`, `fivec`
 
 | Physical direction | Cartesian | Constant |
 |---|---|---|
-| vertical | +x | `XHAT` |
-| longitudinal | +y | `YHAT` |
 | lateral | +z | `ZHAT` |
+| longitudinal | +y | `YHAT` |
+| vertical | +x | `XHAT` |
 
 Pass `basis=BASIS_YOU` (the default for these geometries).
 :::
 
-:::{tab-item} Busing & Levy (1967)
+:::{tab-item} BL1967
 Used by: `fourcv`, `fourch`, `kappa4cv`, `kappa4ch`
+
+Convention of Busing & Levy.
+
+Also used by:
+- [SPEC](https://certif.com)
+- [NeXus](https://manual.nexusformat.org/design.html#the-nexus-coordinate-system)
+- [hklpy2](https://blueskyproject.io/hklpy2/)
 
 | Physical direction | Cartesian | Constant |
 |---|---|---|
@@ -47,6 +54,29 @@ Used by: `fourcv`, `fourch`, `kappa4cv`, `kappa4ch`
 | vertical | +z | `ZHAT` |
 
 Pass `basis=BASIS_BL` (the default for these geometries).
+:::
+
+:::{tab-item} NeXus
+Used by: [NeXus](https://manual.nexusformat.org/design.html#the-nexus-coordinate-system)
+
+Also used by:
+- [hklpy2](https://blueskyproject.io/hklpy2/)
+
+| Physical direction | Cartesian | Constant |
+|---|---|---|
+| lateral | +x | `XHAT` |
+| longitudinal | +z | `ZHAT` |
+| vertical | +y | `YHAT` |
+:::
+
+:::{tab-item} Hkl
+Used by: [Hkl](https://people.debian.org/~picca/hkl/hkl.html#org4569ec8)
+
+| Physical direction | Cartesian | Constant |
+|---|---|---|
+| lateral | +y | `YHAT` |
+| longitudinal | +x | `XHAT` |
+| vertical | +z | `ZHAT` |
 :::
 
 ::::
