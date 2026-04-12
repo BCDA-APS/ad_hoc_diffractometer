@@ -7,8 +7,6 @@ radiation
 
    Import: ``ad_hoc_diffractometer.radiation``
 
-   radiation.py — Wavelength, energy, and wave-number conversions.
-
    Provides named constants for common laboratory X-ray emission lines,
    standalone conversion functions for both X-rays and fixed-wavelength
    neutrons (reactor sources), and the ``SOURCE_TYPES`` sentinel used by
@@ -34,7 +32,8 @@ radiation
        hc = 12.398 419 843 320 026 keV·Å.  Exact (NIST CODATA 2022).
 
    HC_KEV_ANGSTROM_UNCERTAINTY : float
-       0.0 — exact constant.
+       0.0 — exactly zero.  The 2019 SI redefinition fixed both *h* and *c*
+       exactly, so *hc* has no uncertainty by definition.
 
    NEUTRON_MEV_ANGSTROM2 : float
        h²/(2 m_n) = 81.804 210 235 2 meV·Å² (NIST CODATA 2022).

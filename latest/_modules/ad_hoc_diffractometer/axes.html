@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=8aebd300"></script>
+    <script src="../../_static/documentation_options.js?v=d0f98965"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -475,16 +475,20 @@
 
 <span class="sd">Provides a human-readable string notation for signed rotation axes:</span>
 
-<span class="sd">    &quot;+x&quot;  -&gt;  +XHAT  (right-handed rotation about the x-axis)</span>
-<span class="sd">    &quot;-x&quot;  -&gt;  -XHAT  (left-handed rotation about the x-axis)</span>
-<span class="sd">    &quot;+y&quot;  -&gt;  +YHAT</span>
-<span class="sd">    &quot;-y&quot;  -&gt;  -YHAT</span>
-<span class="sd">    &quot;+z&quot;  -&gt;  +ZHAT</span>
-<span class="sd">    &quot;-z&quot;  -&gt;  -ZHAT</span>
+<span class="sd">- ``&quot;+x&quot;`` → +XHAT (right-handed rotation about the x-axis)</span>
+<span class="sd">- ``&quot;-x&quot;`` → −XHAT (left-handed rotation about the x-axis)</span>
+<span class="sd">- ``&quot;+y&quot;`` → +YHAT, ``&quot;-y&quot;`` → −YHAT</span>
+<span class="sd">- ``&quot;+z&quot;`` → +ZHAT, ``&quot;-z&quot;`` → −ZHAT</span>
 
-<span class="sd">Physical direction names (&quot;vertical&quot;, &quot;longitudinal&quot;, &quot;lateral&quot;) are also</span>
-<span class="sd">accepted and resolved against a caller-supplied basis dict that maps each</span>
-<span class="sd">name to one of the three signed axis vectors.</span>
+<span class="sd">The standard Cartesian basis vectors are:</span>
+
+<span class="sd">- :data:`~ad_hoc_diffractometer.constants.XHAT` (+x)</span>
+<span class="sd">- :data:`~ad_hoc_diffractometer.constants.YHAT` (+y)</span>
+<span class="sd">- :data:`~ad_hoc_diffractometer.constants.ZHAT` (+z)</span>
+
+<span class="sd">Physical direction names (``&quot;vertical&quot;``, ``&quot;longitudinal&quot;``, ``&quot;lateral&quot;``)</span>
+<span class="sd">are also accepted and resolved against a caller-supplied basis dict that maps</span>
+<span class="sd">each name to one of the three signed axis vectors.</span>
 
 <span class="sd">For diffractometer geometries with tilted axes (e.g. kappa), kappa_axis()</span>
 <span class="sd">computes the axis vector from the kappa angle alpha and the basis dict.</span>

@@ -7,22 +7,20 @@ scan
 
    Import: ``ad_hoc_diffractometer.scan``
 
-   scan.py — Reciprocal-space trajectory computation.
-
    Functions
    ---------
-   ``hkl_trajectory(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``
+   :func:`hkl_trajectory` ``(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``
        Compute motor-angle sequences along a specified reciprocal-space path.
 
-   ``psi_trajectory(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``
+   :func:`psi_trajectory` ``(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``
        Compute motor-angle sequences for ψ (psi) rotation about the scattering
        vector Q while keeping the Bragg condition satisfied.
 
-   ``trajectory_plan(geometry, hkl_start, hkl_end, n_points, space="hkl", solution_key=NEAREST_ANGLES)``
+   :func:`trajectory_plan` ``(geometry, hkl_start, hkl_end, n_points, space="hkl", solution_key=NEAREST_ANGLES)``
        Plan a motor-angle path between two reciprocal-space points, flagging
        limit violations and inaccessible regions.
 
-   ``NEAREST_ANGLES``
+   :data:`NEAREST_ANGLES`
        Built-in solution-key callable: selects the candidate solution whose
        motor angles are closest (in least-squares sense) to the previous point.
        Suppresses branch-flip discontinuities across a trajectory.
@@ -33,9 +31,9 @@ scan
    communicate with hardware.  A future execution layer (not yet planned)
    will consume these outputs to drive real diffractometers.
 
-   The ordering instability of ``geometry.forward()``
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   ``forward()`` returns multiple solutions in seed-discovery order, which is
+   The ordering instability of :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward` returns multiple solutions in seed-discovery order, which is
    not reproducible and can switch between the positive-chi and negative-chi
    branches at adjacent trajectory points.  All three trajectory functions
    accept a ``solution_key`` parameter — a callable that scores each candidate

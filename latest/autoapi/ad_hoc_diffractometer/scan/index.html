@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=8aebd300"></script>
+    <script src="../../../_static/documentation_options.js?v=d0f98965"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -517,19 +517,18 @@
   <section id="module-ad_hoc_diffractometer.scan">
 <span id="scan"></span><h1>scan<a class="headerlink" href="#module-ad_hoc_diffractometer.scan" title="Link to this heading">#</a></h1>
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan</span></code></p>
-<p>scan.py — Reciprocal-space trajectory computation.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
 <dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">hkl_trajectory(geometry,</span> <span class="pre">trajectory,</span> <span class="pre">n_points,</span> <span class="pre">solution_key=NEAREST_ANGLES)</span></code></dt><dd><p>Compute motor-angle sequences along a specified reciprocal-space path.</p>
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.scan.hkl_trajectory" title="ad_hoc_diffractometer.scan.hkl_trajectory"><code class="xref py py-func docutils literal notranslate"><span class="pre">hkl_trajectory()</span></code></a> <code class="docutils literal notranslate"><span class="pre">(geometry,</span> <span class="pre">trajectory,</span> <span class="pre">n_points,</span> <span class="pre">solution_key=NEAREST_ANGLES)</span></code></dt><dd><p>Compute motor-angle sequences along a specified reciprocal-space path.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">psi_trajectory(geometry,</span> <span class="pre">h,</span> <span class="pre">k,</span> <span class="pre">l,</span> <span class="pre">psi_values,</span> <span class="pre">solution_key=NEAREST_ANGLES)</span></code></dt><dd><p>Compute motor-angle sequences for ψ (psi) rotation about the scattering
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.scan.psi_trajectory" title="ad_hoc_diffractometer.scan.psi_trajectory"><code class="xref py py-func docutils literal notranslate"><span class="pre">psi_trajectory()</span></code></a> <code class="docutils literal notranslate"><span class="pre">(geometry,</span> <span class="pre">h,</span> <span class="pre">k,</span> <span class="pre">l,</span> <span class="pre">psi_values,</span> <span class="pre">solution_key=NEAREST_ANGLES)</span></code></dt><dd><p>Compute motor-angle sequences for ψ (psi) rotation about the scattering
 vector Q while keeping the Bragg condition satisfied.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">trajectory_plan(geometry,</span> <span class="pre">hkl_start,</span> <span class="pre">hkl_end,</span> <span class="pre">n_points,</span> <span class="pre">space=&quot;hkl&quot;,</span> <span class="pre">solution_key=NEAREST_ANGLES)</span></code></dt><dd><p>Plan a motor-angle path between two reciprocal-space points, flagging
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.scan.trajectory_plan" title="ad_hoc_diffractometer.scan.trajectory_plan"><code class="xref py py-func docutils literal notranslate"><span class="pre">trajectory_plan()</span></code></a> <code class="docutils literal notranslate"><span class="pre">(geometry,</span> <span class="pre">hkl_start,</span> <span class="pre">hkl_end,</span> <span class="pre">n_points,</span> <span class="pre">space=&quot;hkl&quot;,</span> <span class="pre">solution_key=NEAREST_ANGLES)</span></code></dt><dd><p>Plan a motor-angle path between two reciprocal-space points, flagging
 limit violations and inaccessible regions.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code></dt><dd><p>Built-in solution-key callable: selects the candidate solution whose
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.scan.NEAREST_ANGLES" title="ad_hoc_diffractometer.scan.NEAREST_ANGLES"><code class="xref py py-data docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code></a></dt><dd><p>Built-in solution-key callable: selects the candidate solution whose
 motor angles are closest (in least-squares sense) to the previous point.
 Suppresses branch-flip discontinuities across a trajectory.</p>
 </dd>
@@ -538,9 +537,9 @@ Suppresses branch-flip discontinuities across a trajectory.</p>
 <p>These functions <em>compute</em> trajectories; they do not move motors or
 communicate with hardware.  A future execution layer (not yet planned)
 will consume these outputs to drive real diffractometers.</p>
-<section id="the-ordering-instability-of-geometry-forward">
-<h3>The ordering instability of <code class="docutils literal notranslate"><span class="pre">geometry.forward()</span></code><a class="headerlink" href="#the-ordering-instability-of-geometry-forward" title="Link to this heading">#</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">forward()</span></code> returns multiple solutions in seed-discovery order, which is
+<section id="the-ordering-instability-of-forward">
+<h3>The ordering instability of <a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a><a class="headerlink" href="#the-ordering-instability-of-forward" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a> returns multiple solutions in seed-discovery order, which is
 not reproducible and can switch between the positive-chi and negative-chi
 branches at adjacent trajectory points.  All three trajectory functions
 accept a <code class="docutils literal notranslate"><span class="pre">solution_key</span></code> parameter — a callable that scores each candidate
@@ -972,7 +971,7 @@ Default: <code class="docutils literal notranslate"><span class="pre">NEAREST_AN
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-ordering-instability-of-geometry-forward">The ordering instability of <code class="docutils literal notranslate"><span class="pre">geometry.forward()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-ordering-instability-of-forward">The ordering instability of <code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scan-algorithm">ψ-scan algorithm</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trajectory-dict-specification-for-hkl-trajectory">Trajectory dict specification for hkl_trajectory</a></li>
 </ul>

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=8aebd300"></script>
+    <script src="../../../_static/documentation_options.js?v=d0f98965"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -517,19 +517,22 @@
   <section id="module-ad_hoc_diffractometer.axes">
 <span id="axes"></span><h1>axes<a class="headerlink" href="#module-ad_hoc_diffractometer.axes" title="Link to this heading">#</a></h1>
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.axes</span></code></p>
-<p>axes.py — caller-facing axis notation and physical direction mapping.</p>
 <p>Provides a human-readable string notation for signed rotation axes:</p>
-<blockquote>
-<div><p>“+x”  -&gt;  +XHAT  (right-handed rotation about the x-axis)
-“-x”  -&gt;  -XHAT  (left-handed rotation about the x-axis)
-“+y”  -&gt;  +YHAT
-“-y”  -&gt;  -YHAT
-“+z”  -&gt;  +ZHAT
-“-z”  -&gt;  -ZHAT</p>
-</div></blockquote>
-<p>Physical direction names (“vertical”, “longitudinal”, “lateral”) are also
-accepted and resolved against a caller-supplied basis dict that maps each
-name to one of the three signed axis vectors.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;+x&quot;</span></code> → +XHAT (right-handed rotation about the x-axis)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;-x&quot;</span></code> → −XHAT (left-handed rotation about the x-axis)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;+y&quot;</span></code> → +YHAT, <code class="docutils literal notranslate"><span class="pre">&quot;-y&quot;</span></code> → −YHAT</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;+z&quot;</span></code> → +ZHAT, <code class="docutils literal notranslate"><span class="pre">&quot;-z&quot;</span></code> → −ZHAT</p></li>
+</ul>
+<p>The standard Cartesian basis vectors are:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../constants/index.html#ad_hoc_diffractometer.constants.XHAT" title="ad_hoc_diffractometer.constants.XHAT"><code class="xref py py-data docutils literal notranslate"><span class="pre">XHAT</span></code></a> (+x)</p></li>
+<li><p><a class="reference internal" href="../constants/index.html#ad_hoc_diffractometer.constants.YHAT" title="ad_hoc_diffractometer.constants.YHAT"><code class="xref py py-data docutils literal notranslate"><span class="pre">YHAT</span></code></a> (+y)</p></li>
+<li><p><a class="reference internal" href="../constants/index.html#ad_hoc_diffractometer.constants.ZHAT" title="ad_hoc_diffractometer.constants.ZHAT"><code class="xref py py-data docutils literal notranslate"><span class="pre">ZHAT</span></code></a> (+z)</p></li>
+</ul>
+<p>Physical direction names (<code class="docutils literal notranslate"><span class="pre">&quot;vertical&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;longitudinal&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;lateral&quot;</span></code>)
+are also accepted and resolved against a caller-supplied basis dict that maps
+each name to one of the three signed axis vectors.</p>
 <p>For diffractometer geometries with tilted axes (e.g. kappa), kappa_axis()
 computes the axis vector from the kappa angle alpha and the basis dict.</p>
 <p>Internal stage attributes always store the axis as a numpy array.

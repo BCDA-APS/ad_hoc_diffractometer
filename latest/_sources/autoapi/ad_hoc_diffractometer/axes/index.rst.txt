@@ -7,20 +7,22 @@ axes
 
    Import: ``ad_hoc_diffractometer.axes``
 
-   axes.py — caller-facing axis notation and physical direction mapping.
-
    Provides a human-readable string notation for signed rotation axes:
 
-       "+x"  ->  +XHAT  (right-handed rotation about the x-axis)
-       "-x"  ->  -XHAT  (left-handed rotation about the x-axis)
-       "+y"  ->  +YHAT
-       "-y"  ->  -YHAT
-       "+z"  ->  +ZHAT
-       "-z"  ->  -ZHAT
+   - ``"+x"`` → +XHAT (right-handed rotation about the x-axis)
+   - ``"-x"`` → −XHAT (left-handed rotation about the x-axis)
+   - ``"+y"`` → +YHAT, ``"-y"`` → −YHAT
+   - ``"+z"`` → +ZHAT, ``"-z"`` → −ZHAT
 
-   Physical direction names ("vertical", "longitudinal", "lateral") are also
-   accepted and resolved against a caller-supplied basis dict that maps each
-   name to one of the three signed axis vectors.
+   The standard Cartesian basis vectors are:
+
+   - :data:`~ad_hoc_diffractometer.constants.XHAT` (+x)
+   - :data:`~ad_hoc_diffractometer.constants.YHAT` (+y)
+   - :data:`~ad_hoc_diffractometer.constants.ZHAT` (+z)
+
+   Physical direction names (``"vertical"``, ``"longitudinal"``, ``"lateral"``)
+   are also accepted and resolved against a caller-supplied basis dict that maps
+   each name to one of the three signed axis vectors.
 
    For diffractometer geometries with tilted axes (e.g. kappa), kappa_axis()
    computes the axis vector from the kappa angle alpha and the basis dict.

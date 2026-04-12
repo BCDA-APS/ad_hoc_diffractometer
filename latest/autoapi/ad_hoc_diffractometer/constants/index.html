@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=8aebd300"></script>
+    <script src="../../../_static/documentation_options.js?v=d0f98965"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -517,15 +517,14 @@
   <section id="module-ad_hoc_diffractometer.constants">
 <span id="constants"></span><h1>constants<a class="headerlink" href="#module-ad_hoc_diffractometer.constants" title="Link to this heading">#</a></h1>
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.constants</span></code></p>
-<p>constants.py — shared Cartesian basis vectors.</p>
 <p>These are the internal numpy representations used throughout the package.
 The caller-facing notation (+x, -z, etc.) is handled in axes.py.</p>
-<dl class="simple">
-<dt>Convention follows You (1999):</dt><dd><p>XHAT = vertical (out of floor)
-YHAT = longitudinal (along beam / toward equipment)
-ZHAT = lateral (to our left)</p>
-</dd>
-</dl>
+<p>Default coordinate convention (You 1999):</p>
+<ul class="simple">
+<li><p>XHAT (+x) — vertical (out of the floor)</p></li>
+<li><p>YHAT (+y) — longitudinal (along the beam, toward equipment)</p></li>
+<li><p>ZHAT (+z) — lateral (to our left when facing equipment)</p></li>
+</ul>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">

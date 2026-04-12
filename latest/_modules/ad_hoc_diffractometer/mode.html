@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=8aebd300"></script>
+    <script src="../../_static/documentation_options.js?v=d0f98965"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -479,19 +479,19 @@
 
 <span class="sd">Classes</span>
 <span class="sd">-------</span>
-<span class="sd">DiffractionMode</span>
+<span class="sd">:class:`DiffractionMode`</span>
 <span class="sd">    Abstract base class for all modes.  Declares which stages are</span>
 <span class="sd">    constrained (frozen) and which remain free, plus optional cut-points</span>
 <span class="sd">    for branch selection.</span>
 
-<span class="sd">FixedAngleMode</span>
+<span class="sd">:class:`FixedAngleMode`</span>
 <span class="sd">    Constrains one named stage to a fixed angle value.</span>
 
-<span class="sd">BisectingMode</span>
+<span class="sd">:class:`BisectingMode`</span>
 <span class="sd">    Bisecting geometry: omega = ttheta/2 (half the detector angle).</span>
 <span class="sd">    For psic-family geometries this means eta = delta/2.</span>
 
-<span class="sd">ModeDict</span>
+<span class="sd">:class:`ModeDict`</span>
 <span class="sd">    An ordered, guarded dict of named modes.  Validates that all entries</span>
 <span class="sd">    are DiffractionMode instances; prevents inserting non-Mode values.</span>
 
@@ -510,7 +510,6 @@
 <span class="sd">Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967).</span>
 <span class="sd">You, J. Appl. Cryst. 32, 614-623 (1999).</span>
 <span class="sd">Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), section 3.3.</span>
-<span class="sd">SPEC #G0, #G4 lines — references/2020-12-13-fourcc-alignment-7-id-c/spec_G_lines.md</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>

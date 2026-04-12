@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=8aebd300"></script>
+    <script src="../../../_static/documentation_options.js?v=d0f98965"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -517,7 +517,6 @@
   <section id="module-ad_hoc_diffractometer.radiation">
 <span id="radiation"></span><h1>radiation<a class="headerlink" href="#module-ad_hoc_diffractometer.radiation" title="Link to this heading">#</a></h1>
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.radiation</span></code></p>
-<p>radiation.py — Wavelength, energy, and wave-number conversions.</p>
 <p>Provides named constants for common laboratory X-ray emission lines,
 standalone conversion functions for both X-rays and fixed-wavelength
 neutrons (reactor sources), and the <code class="docutils literal notranslate"><span class="pre">SOURCE_TYPES</span></code> sentinel used by
@@ -539,7 +538,8 @@ they are out of scope for this project.</p>
 <dl class="simple">
 <dt>HC_KEV_ANGSTROM<span class="classifier">float</span></dt><dd><p>hc = 12.398 419 843 320 026 keV·Å.  Exact (NIST CODATA 2022).</p>
 </dd>
-<dt>HC_KEV_ANGSTROM_UNCERTAINTY<span class="classifier">float</span></dt><dd><p>0.0 — exact constant.</p>
+<dt>HC_KEV_ANGSTROM_UNCERTAINTY<span class="classifier">float</span></dt><dd><p>0.0 — exactly zero.  The 2019 SI redefinition fixed both <em>h</em> and <em>c</em>
+exactly, so <em>hc</em> has no uncertainty by definition.</p>
 </dd>
 <dt>NEUTRON_MEV_ANGSTROM2<span class="classifier">float</span></dt><dd><p>h²/(2 m_n) = 81.804 210 235 2 meV·Å² (NIST CODATA 2022).</p>
 </dd>

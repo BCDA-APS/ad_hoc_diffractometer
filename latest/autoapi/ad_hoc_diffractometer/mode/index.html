@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=8aebd300"></script>
+    <script src="../../../_static/documentation_options.js?v=d0f98965"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -517,23 +517,22 @@
   <section id="module-ad_hoc_diffractometer.mode">
 <span id="mode"></span><h1>mode<a class="headerlink" href="#module-ad_hoc_diffractometer.mode" title="Link to this heading">#</a></h1>
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.mode</span></code></p>
-<p>mode.py — Diffraction mode / operating constraints.</p>
 <p>A diffraction mode specifies which degrees of freedom are constrained
 during a diffraction calculation and which are free.  Modes are a
 first-class concern of the geometry description.</p>
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
 <dl class="simple">
-<dt>DiffractionMode</dt><dd><p>Abstract base class for all modes.  Declares which stages are
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.mode.DiffractionMode" title="ad_hoc_diffractometer.mode.DiffractionMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code></a></dt><dd><p>Abstract base class for all modes.  Declares which stages are
 constrained (frozen) and which remain free, plus optional cut-points
 for branch selection.</p>
 </dd>
-<dt>FixedAngleMode</dt><dd><p>Constrains one named stage to a fixed angle value.</p>
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.mode.FixedAngleMode" title="ad_hoc_diffractometer.mode.FixedAngleMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></a></dt><dd><p>Constrains one named stage to a fixed angle value.</p>
 </dd>
-<dt>BisectingMode</dt><dd><p>Bisecting geometry: omega = ttheta/2 (half the detector angle).
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.mode.BisectingMode" title="ad_hoc_diffractometer.mode.BisectingMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code></a></dt><dd><p>Bisecting geometry: omega = ttheta/2 (half the detector angle).
 For psic-family geometries this means eta = delta/2.</p>
 </dd>
-<dt>ModeDict</dt><dd><p>An ordered, guarded dict of named modes.  Validates that all entries
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.mode.ModeDict" title="ad_hoc_diffractometer.mode.ModeDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModeDict</span></code></a></dt><dd><p>An ordered, guarded dict of named modes.  Validates that all entries
 are DiffractionMode instances; prevents inserting non-Mode values.</p>
 </dd>
 </dl>
@@ -547,8 +546,7 @@ stage fixed, that stage’s frozen angle is recorded on the mode object as
 <p class="rubric">References</p>
 <p>Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967).
 You, J. Appl. Cryst. 32, 614-623 (1999).
-Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), section 3.3.
-SPEC #G0, #G4 lines — references/2020-12-13-fourcc-alignment-7-id-c/spec_G_lines.md</p>
+Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), section 3.3.</p>
 </section>
 <section id="id1">
 <h2>Classes<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>

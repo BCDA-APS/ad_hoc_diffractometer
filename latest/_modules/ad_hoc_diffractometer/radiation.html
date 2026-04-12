@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=8aebd300"></script>
+    <script src="../../_static/documentation_options.js?v=d0f98965"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -498,7 +498,8 @@
 <span class="sd">    hc = 12.398 419 843 320 026 keV·Å.  Exact (NIST CODATA 2022).</span>
 
 <span class="sd">HC_KEV_ANGSTROM_UNCERTAINTY : float</span>
-<span class="sd">    0.0 — exact constant.</span>
+<span class="sd">    0.0 — exactly zero.  The 2019 SI redefinition fixed both *h* and *c*</span>
+<span class="sd">    exactly, so *hc* has no uncertainty by definition.</span>
 
 <span class="sd">NEUTRON_MEV_ANGSTROM2 : float</span>
 <span class="sd">    h²/(2 m_n) = 81.804 210 235 2 meV·Å² (NIST CODATA 2022).</span>
@@ -571,7 +572,11 @@
 <span class="n">HC_KEV_ANGSTROM</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">12.398419843320026</span>
 
 <span class="c1">#: Uncertainty of :data:`HC_KEV_ANGSTROM` in keV·Å.</span>
-<span class="c1">#: Zero — this constant is exact.</span>
+<span class="c1">#: Exactly **0.0** — not a placeholder.  The 2019 redefinition of the SI</span>
+<span class="c1">#: fixed the numerical values of Planck&#39;s constant *h* and the speed of light</span>
+<span class="c1">#: *c* exactly; their product *hc* therefore has zero uncertainty by</span>
+<span class="c1">#: definition.  Reference: BIPM SI Brochure, 9th edition (2019);</span>
+<span class="c1">#: NIST CODATA 2022.</span>
 <span class="n">HC_KEV_ANGSTROM_UNCERTAINTY</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
 
 <span class="c1">#: h²/(2 m_n) = 81.804 210 235 2 meV·Å².</span>

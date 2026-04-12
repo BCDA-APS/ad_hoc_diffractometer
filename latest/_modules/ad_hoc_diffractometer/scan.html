@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=8aebd300"></script>
+    <script src="../../_static/documentation_options.js?v=d0f98965"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -475,18 +475,18 @@
 
 <span class="sd">Functions</span>
 <span class="sd">---------</span>
-<span class="sd">``hkl_trajectory(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``</span>
+<span class="sd">:func:`hkl_trajectory` ``(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``</span>
 <span class="sd">    Compute motor-angle sequences along a specified reciprocal-space path.</span>
 
-<span class="sd">``psi_trajectory(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``</span>
+<span class="sd">:func:`psi_trajectory` ``(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``</span>
 <span class="sd">    Compute motor-angle sequences for ψ (psi) rotation about the scattering</span>
 <span class="sd">    vector Q while keeping the Bragg condition satisfied.</span>
 
-<span class="sd">``trajectory_plan(geometry, hkl_start, hkl_end, n_points, space=&quot;hkl&quot;, solution_key=NEAREST_ANGLES)``</span>
+<span class="sd">:func:`trajectory_plan` ``(geometry, hkl_start, hkl_end, n_points, space=&quot;hkl&quot;, solution_key=NEAREST_ANGLES)``</span>
 <span class="sd">    Plan a motor-angle path between two reciprocal-space points, flagging</span>
 <span class="sd">    limit violations and inaccessible regions.</span>
 
-<span class="sd">``NEAREST_ANGLES``</span>
+<span class="sd">:data:`NEAREST_ANGLES`</span>
 <span class="sd">    Built-in solution-key callable: selects the candidate solution whose</span>
 <span class="sd">    motor angles are closest (in least-squares sense) to the previous point.</span>
 <span class="sd">    Suppresses branch-flip discontinuities across a trajectory.</span>
@@ -497,9 +497,9 @@
 <span class="sd">communicate with hardware.  A future execution layer (not yet planned)</span>
 <span class="sd">will consume these outputs to drive real diffractometers.</span>
 
-<span class="sd">The ordering instability of ``geometry.forward()``</span>
-<span class="sd">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
-<span class="sd">``forward()`` returns multiple solutions in seed-discovery order, which is</span>
+<span class="sd">The ordering instability of :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`</span>
+<span class="sd">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span class="sd">:meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward` returns multiple solutions in seed-discovery order, which is</span>
 <span class="sd">not reproducible and can switch between the positive-chi and negative-chi</span>
 <span class="sd">branches at adjacent trajectory points.  All three trajectory functions</span>
 <span class="sd">accept a ``solution_key`` parameter — a callable that scores each candidate</span>

@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=8aebd300"></script>
+    <script src="../../_static/documentation_options.js?v=d0f98965"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -751,10 +751,31 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A crystal lattice described by up to six parameters (a, b, c, α, β, γ).</span>
 
-<span class="sd">    The crystal system is deduced automatically from the parameters supplied.</span>
-<span class="sd">    Missing parameters are filled in according to the symmetry constraints of</span>
-<span class="sd">    the deduced system.  The default (no arguments) is a cubic lattice with</span>
-<span class="sd">    a = 1 Å.</span>
+<span class="sd">    The crystal system is deduced automatically from the **minimum set** of</span>
+<span class="sd">    parameters supplied.  Missing parameters are filled in according to the</span>
+<span class="sd">    symmetry constraints of the deduced system.  The default (no arguments)</span>
+<span class="sd">    is a cubic lattice with a = 1 Å.</span>
+
+<span class="sd">    .. list-table:: Minimum parameters by crystal system</span>
+<span class="sd">       :header-rows: 1</span>
+<span class="sd">       :widths: 20 50</span>
+
+<span class="sd">       * - System</span>
+<span class="sd">         - Minimum parameters required</span>
+<span class="sd">       * - Cubic</span>
+<span class="sd">         - ``a``</span>
+<span class="sd">       * - Tetragonal</span>
+<span class="sd">         - ``a``, ``c``</span>
+<span class="sd">       * - Hexagonal</span>
+<span class="sd">         - ``a``, ``c``, ``gamma=120`` *(must be explicit)*</span>
+<span class="sd">       * - Trigonal</span>
+<span class="sd">         - ``a``, ``alpha`` *(alpha ≠ 90)*</span>
+<span class="sd">       * - Orthorhombic</span>
+<span class="sd">         - ``a``, ``b``, ``c``</span>
+<span class="sd">       * - Monoclinic</span>
+<span class="sd">         - ``a``, ``b``, ``c``, ``beta``</span>
+<span class="sd">       * - Triclinic</span>
+<span class="sd">         - ``a``, ``b``, ``c``, ``alpha``, ``beta``, ``gamma``</span>
 
 <span class="sd">    All parameters are validated on construction and on every change:</span>
 <span class="sd">      - Lengths (a, b, c) must be strictly positive.</span>
