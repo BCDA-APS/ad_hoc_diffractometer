@@ -5,6 +5,7 @@
 
 import os
 import pathlib
+import re
 import sys
 import tomllib
 from importlib.metadata import version as _version
@@ -79,12 +80,64 @@ autoapi_options = [
     "undoc-members",
     "show-inheritance",
     "show-module-summary",
-    "imported-members",
+    # "imported-members" is intentionally omitted: including it causes
+    # "more than one target" cross-reference warnings for every symbol
+    # re-exported via __init__.py.
 ]
 autoapi_member_order = "alphabetical"
 autoapi_python_class_content = "both"
 autoapi_template_dir = "_templates/autoapi"
+autoapi_add_toctree_entry = False  # toctree entry added manually in api.rst
 suppress_warnings = ["autoapi.python_import_resolution"]
+
+
+def autoapi_skip_member(app, what, name, obj, skip, options):
+    """Skip logger instances and private _version from the autoapi output."""
+    if what == "data" and name.endswith(".logger"):
+        return True
+    if "_version" in name:
+        return True
+    return skip
+
+
+def _shorten_type_str(s: str) -> str:
+    """Replace dotted.module.ClassName with ClassName in type annotation strings.
+
+    Used in literal code spans where Sphinx's domain resolver does not run.
+    Bare names (``str``, ``int``, ``None``) are left unchanged.
+    """
+    return re.sub(
+        r"(?<![.\w])([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)+)",
+        lambda m: m.group(0).split(".")[-1],
+        s,
+    )
+
+
+def _tilde_type_str(s: str) -> str:
+    """Prepend ~ to dotted.module.ClassName in type annotation strings.
+
+    Used inside ``.. py:*::`` directives so Sphinx resolves the full cross-
+    reference but displays only the short name (the ``~`` prefix convention).
+    Bare names (``str``, ``int``, ``None``) are left unchanged.
+    """
+    return re.sub(
+        r"(?<![.\w~])([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)+)",
+        lambda m: "~" + m.group(0),
+        s,
+    )
+
+
+def _prepare_jinja_env(jinja_env) -> None:
+    """Register custom Jinja2 filters for autoapi templates."""
+    jinja_env.filters["shorten_type"] = _shorten_type_str
+    jinja_env.filters["tilde_type"] = _tilde_type_str
+
+
+def setup(app):
+    """Connect autoapi events and register Jinja2 filters."""
+    app.connect("autoapi-skip-member", autoapi_skip_member)
+    app.config.autoapi_prepare_jinja_env = _prepare_jinja_env
+
 
 # -- Intersphinx -------------------------------------------------------------
 
