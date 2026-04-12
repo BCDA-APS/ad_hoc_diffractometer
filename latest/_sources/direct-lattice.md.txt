@@ -1,92 +1,69 @@
-# Direct lattice in crystallography
+# Direct Lattice in Crystallography
 
-## Vector math order of operations
+This page summarises the vector mathematics underlying the direct lattice
+representation used throughout `ad_hoc_diffractometer`.  See the
+{mod}`~ad_hoc_diffractometer.lattice` module for the implementation.
 
-> Given the vector math expression: A dot B cross C, what is the order of operations?
+## Lattice vectors
 
-In the vector math expression **A · (B × C)**, the **cross product has
-higher precedence than the dot product**, so the order of operations is:
+The unit cell of a crystal is described by three edge vectors
+**A**, **B**, **C** expressed in a Cartesian frame.  With **A** along the
+$x$-axis and **B** in the $xy$-plane, the standard crystallographic choice is:
 
-1. **First: Calculate B × C** (the cross product)
-2. **Second: Calculate A · (result)** (the dot product)
+| Vector | Cartesian components |
+|--------|----------------------|
+| **A** | $(a,\ 0,\ 0)$ |
+| **B** | $(b\cos\gamma,\ b\sin\gamma,\ 0)$ |
+| **C** | $(c\cos\beta,\ c\,\tfrac{\cos\alpha - \cos\beta\cos\gamma}{\sin\gamma},\ c\,v)$ |
 
-This is the standard convention in vector mathematics. The cross product
-is always evaluated before the dot product unless parentheses explicitly
-indicate otherwise.
+where
 
-### Why this order matters
+$$v = \frac{\sqrt{1 - \cos^2\!\alpha - \cos^2\!\beta - \cos^2\!\gamma
+      + 2\cos\alpha\cos\beta\cos\gamma}}{\sin\gamma}$$
 
-This particular combination—**A · (B × C)**—is called the **scalar
-triple product** (or mixed product). It has a special geometric meaning:
-it gives the signed volume of the parallelepiped formed by the three
-vectors A, B, and C.
+and $a, b, c$ are the unit-cell edge lengths; $\alpha, \beta, \gamma$ are
+the inter-edge angles ($\alpha$ between **B** and **C**, $\beta$ between
+**A** and **C**, $\gamma$ between **A** and **B**).
 
-If you wanted to reverse the order, you'd need to write it explicitly as
-**(A · B) × C**, which would give you a vector result instead of a
-scalar, and it would have a completely different meaning.
+## Unit cell volume
 
-------------------------
+The unit cell volume is the scalar triple product of the three lattice vectors:
 
-I need to clarify the representation you're asking about, because there
-are different conventions for encoding crystal lattice parameters into
-vectors.
+$$V = \mathbf{A} \cdot (\mathbf{B} \times \mathbf{C})$$
 
-The most common approach in crystallography is to represent the lattice
-parameters using **lattice vectors** (the edge vectors of the unit
-cell). In this case:
+The cross product is evaluated first (standard vector-mathematics precedence),
+giving a vector perpendicular to **B** and **C**; the dot product with **A**
+then yields the signed volume of the parallelepiped spanned by the three
+vectors.  With the lattice vectors defined above, this reduces to:
 
-| Vector | Represents | Formula |
-|--------|-----------|---------|
-| **A** | Lattice vector a | **(a, 0, 0)** |
-| **B** | Lattice vector b | **(b·cos(γ), b·sin(γ), 0)** |
-| **C** | Lattice vector c | **(c·cos(β), c·sin(α)·sin(β), c·cos(α))** |
+$$V = a\,b\,c\,v\,\sin\gamma$$
 
-where:
+## Reciprocal lattice
 
-- **a, b, c** are the lattice parameters (edge lengths)
-- **α, β, γ** are the angles between the edges (α between b and c, β
-  between a and c, γ between a and b)
+The reciprocal lattice vectors $\mathbf{b}_1, \mathbf{b}_2, \mathbf{b}_3$
+satisfy the orthogonality condition
 
-### Why this representation?
+$$\mathbf{b}_i \cdot \mathbf{a}_j = 2\pi\,\delta_{ij}$$
 
-With vectors defined this way, **A · (B × C)** gives you the **unit cell
-volume**—a fundamental property in crystallography. This is exactly why
-the scalar triple product is so important in crystallography
-calculations.
+where $\mathbf{a}_1 = \mathbf{A}$, $\mathbf{a}_2 = \mathbf{B}$,
+$\mathbf{a}_3 = \mathbf{C}$.  Each reciprocal vector includes the $2\pi$
+factor (the convention used in `ad_hoc_diffractometer` and by Busing & Levy 1967).
 
-## Standard form of lattice
+## The B matrix
 
-Perfect. Here are the **lattice vectors** in standard crystallographic form:
+The **B matrix** encodes the reciprocal lattice vectors as its columns:
 
-| Vector | Formula |
-|--------|---------|
-| **A** | **(a, 0, 0)** |
-| **B** | **(b·cos(γ), b·sin(γ), 0)** |
-| **C** | **(c·cos(β), c·sin(α)·sin(β), c·cos(α))** |
+$$\mathbf{B}^T = [\mathbf{b}_1\ \mathbf{b}_2\ \mathbf{b}_3]$$
 
-### Breaking down each vector
+It maps Miller indices $\mathbf{h} = (h, k, l)^T$ to the scattering vector
+in Cartesian crystal-frame coordinates (Busing & Levy 1967, eq. 3):
 
-**Vector A** is the simplest—it lies along the x-axis:
+$$\mathbf{Q}_c = \mathbf{B}\,\mathbf{h}$$
 
-- Component 1: **a**
-- Component 2: **0**
-- Component 3: **0**
+The magnitude $|\mathbf{Q}_c| = |\mathbf{B}\,\mathbf{h}| = 2\pi / d_{hkl}$,
+where $d_{hkl}$ is the interplanar spacing.
 
-**Vector B** lies in the xy-plane, making angle **γ** (gamma) with vector A:
+## Reference
 
-- Component 1: **b·cos(γ)**
-- Component 2: **b·sin(γ)**
-- Component 3: **0**
-
-**Vector C** points into 3D space, with **β** (beta) defining its angle
-from the x-axis and **α** (alpha) defining the tilt:
-
-- Component 1: **c·cos(β)**
-- Component 2: **c·sin(α)·sin(β)**
-- Component 3: **c·cos(α)**
-
-### Key point
-
-When you compute **A · (B × C)** using these vectors, you get the **unit
-cell volume** of the crystal lattice. This is the fundamental reason
-this scalar triple product is so important in crystallography.
+- W.R. Busing & H.A. Levy, *Acta Cryst.* **22**, 457–464 (1967).
+  DOI: [10.1107/S0365110X67000970](https://doi.org/10.1107/S0365110X67000970)

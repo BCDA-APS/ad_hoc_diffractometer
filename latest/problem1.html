@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Our equipment &#8212; ad_hoc_diffractometer 0.3</title>
+    <title>Case Study: Describing a Diffractometer &#8212; ad_hoc_diffractometer 0.3</title>
   
   
   
@@ -32,6 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -41,13 +42,12 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=1cca753b"></script>
+    <script src="_static/documentation_options.js?v=676dea20"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=fd10adb8"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'problem1';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
@@ -59,8 +59,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Diffractometer with Specified Reference Frame" href="problem2.html" />
-    <link rel="prev" title="Direct lattice in crystallography" href="direct-lattice.html" />
+    <link rel="next" title="You (1999) Geometry — Coordinate Convention and UB Matrix" href="problem2.html" />
+    <link rel="prev" title="Direct Lattice in Crystallography" href="direct-lattice.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.3" />
@@ -173,7 +173,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="direct-lattice.html">
-    Direct lattice in crystallography
+    Direct Lattice in Crystallography
   </a>
 </li>
 
@@ -187,14 +187,21 @@
                     
 <li class=" current active">
   <a class="nav-link dropdown-item nav-internal" href="#">
-    Our equipment
+    Case Study: Describing a Diffractometer
   </a>
 </li>
 
 
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="problem2.html">
-    Diffractometer with Specified Reference Frame
+    You (1999) Geometry — Coordinate Convention and UB Matrix
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="fourcv_alignment_howto.html">
+    How to Align a Four-Circle Diffractometer (fourcv)
   </a>
 </li>
 
@@ -340,21 +347,28 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="direct-lattice.html">
-    Direct lattice in crystallography
+    Direct Lattice in Crystallography
   </a>
 </li>
 
 
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
-    Our equipment
+    Case Study: Describing a Diffractometer
   </a>
 </li>
 
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="problem2.html">
-    Diffractometer with Specified Reference Frame
+    You (1999) Geometry — Coordinate Convention and UB Matrix
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="fourcv_alignment_howto.html">
+    How to Align a Four-Circle Diffractometer (fourcv)
   </a>
 </li>
 
@@ -467,7 +481,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Our equipment</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Case Study: Describing a Diffractometer</span></li>
   </ul>
 </nav>
 </div>
@@ -484,105 +498,98 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="our-equipment">
-<h1>Our equipment<a class="headerlink" href="#our-equipment" title="Link to this heading">#</a></h1>
-<p>We have a piece of equipment we’ll use to examine an object.  The equipment will rotate the object in a 3-D space.  The equipment will also position a detector for our observations.</p>
+  <section id="case-study-describing-a-diffractometer">
+<h1>Case Study: Describing a Diffractometer<a class="headerlink" href="#case-study-describing-a-diffractometer" title="Link to this heading">#</a></h1>
+<p>This case study presents the diffractometer geometry problem that started the
+<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code> project.  The equipment described here is a six-circle
+diffractometer matching the You (1999) psic geometry; the analysis leads
+directly to the <a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html#module-ad_hoc_diffractometer.factories" title="ad_hoc_diffractometer.factories"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factories</span></code></a> factory functions and
+the <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a> class.</p>
+<p>For a full analysis of how this geometry maps to the You (1999) convention,
+see <a class="reference internal" href="problem2.html"><span class="std std-doc">You (1999) Geometry</span></a>.</p>
+<hr class="docutils" />
+<section id="the-equipment">
+<h2>The equipment<a class="headerlink" href="#the-equipment" title="Link to this heading">#</a></h2>
+<p>We have a piece of mechanical equipment consisting of rotary stages only
+(no translational stages).  The rotational axes of all stages ideally
+coincide at a single point of intersection — the sample position.  In
+practice, engineering tolerances cause this point to expand into a small
+3-D volume known as the <em>sphere of confusion</em>.</p>
+<p>The equipment rotates the sample in three-dimensional space and positions a
+detector to observe the scattered radiation.  All stage angles are described
+at their zero-degree positions.</p>
+</section>
 <section id="reference-frame">
 <h2>Reference frame<a class="headerlink" href="#reference-frame" title="Link to this heading">#</a></h2>
-<p>We’ll describe our reference frame for now with reference only to the floor.</p>
+<p>The reference frame is defined relative to the floor:</p>
 <ul class="simple">
-<li><p>vertical: The positive vertical direction is normal to the plane of the floor
-and points out of the floor.</p></li>
-<li><p>longitudinal: The positive longitudinal direction is along our line of sight
-towards the equipment and normal to the vertical direction.</p></li>
-<li><p>lateral: The lateral direction is normal to both the vertical and
-longitudinal directions, which positive direction is to our left.</p></li>
+<li><p><strong>vertical</strong>: positive direction is normal to the floor, pointing upward.</p></li>
+<li><p><strong>longitudinal</strong>: positive direction is along the line of sight toward the
+equipment, normal to the vertical.</p></li>
+<li><p><strong>lateral</strong>: positive direction is normal to both vertical and longitudinal,
+pointing to our left when facing the equipment.</p></li>
 </ul>
-<p>We can see the equipment by looking in the positive longitudinal direction,
-normal to the lateral-vertical plane.</p>
 </section>
 <section id="equipment-description">
-<h2>Equipment Description<a class="headerlink" href="#equipment-description" title="Link to this heading">#</a></h2>
-<p>There is a piece of mechanical equipment consisting of various rotary stages.
-No translational stages are involved. The rotational axes of all stages coincide
-ideally at a single point of intersection in a cartesian space. The object to be
-examined is mounted at this point of intersection.</p>
-<p>In practice, due to engineering precision, this point of intersection devolves
-into a 3-D volume termed a “sphere of confusion”.</p>
-<p>The axes and sign for each of the rotary stages will be described when all
-stages are at their 0 degree positions.</p>
-<p>In its default orientation, with each axis at its 0 degree position, the
-equipment can be subdivided into two independent stacks of stages.</p>
-<p>The stack 1 sits on the floor and has two rotary stages.</p>
+<h2>Equipment description<a class="headerlink" href="#equipment-description" title="Link to this heading">#</a></h2>
+<p>The equipment consists of two independent stage stacks that share a common
+axis at their base.</p>
+<p><strong>Stack 1 — detector stack</strong> (2 stages)</p>
 <ul class="simple">
-<li><p>Stack 1</p>
+<li><p>Stage 1 (base)</p>
 <ul>
-<li><p>sits on the floor</p></li>
-<li><p>stage 1</p>
-<ul>
-<li><p>axis of rotation in the vertical direction</p></li>
-<li><p>sign of motion consistent with coordinate system</p></li>
+<li><p>Axis of rotation: vertical</p></li>
+<li><p>Sign of rotation: right-handed (consistent with coordinate system)</p></li>
 </ul>
 </li>
-<li><p>stage 2</p>
+<li><p>Stage 2 (sits on stage 1)</p>
 <ul>
-<li><p>sits on stage 1</p></li>
-<li><p>axis of rotation in the lateral direction</p></li>
-<li><p>positive rotation (from the 0 degree position): positive longitudinal
-towards positive vertical</p></li>
-<li><p>our detector is mounted on a long arm radial from this stage looking at the point of intersection
--Stack 2</p></li>
+<li><p>Axis of rotation: lateral</p></li>
+<li><p>Positive rotation: from longitudinal toward vertical</p></li>
+<li><p>The detector is mounted on a long radial arm pointing at the sample</p></li>
 </ul>
 </li>
-<li><p>sits on the floor</p></li>
-<li><p>stage 1</p>
+</ul>
+<p><strong>Stack 2 — sample stack</strong> (4 stages)</p>
+<ul class="simple">
+<li><p>Stage 1 (base)</p>
 <ul>
-<li><p>axis of rotation in the vertical direction</p></li>
-<li><p>axis is colinear with stack 1 stage 1</p></li>
-<li><p>same sign of motion</p></li>
+<li><p>Axis of rotation: vertical, colinear with stack 1 stage 1</p></li>
+<li><p>Sign of rotation: same as stack 1 stage 1</p></li>
 </ul>
 </li>
-<li><p>stage 2</p>
+<li><p>Stage 2 (sits on stage 1)</p>
 <ul>
-<li><p>sits on stage 1</p></li>
-<li><p>axis of rotation in the lateral direction</p></li>
-<li><p>same sign of motion as stack 1 stage 2</p></li>
+<li><p>Axis of rotation: lateral</p></li>
+<li><p>Sign of rotation: same as stack 1 stage 2</p></li>
 </ul>
 </li>
-<li><p>stage 3</p>
+<li><p>Stage 3 (sits on stage 2)</p>
 <ul>
-<li><p>sits on stage 2</p></li>
-<li><p>axis of rotation in the longitudinal direction</p></li>
-<li><p>sign of motion consistent with coordinate system</p></li>
+<li><p>Axis of rotation: longitudinal</p></li>
+<li><p>Sign of rotation: right-handed (consistent with coordinate system)</p></li>
 </ul>
 </li>
-<li><p>stage 4</p>
+<li><p>Stage 4 (sits on stage 3)</p>
 <ul>
-<li><p>sits on stage 3</p></li>
-<li><p>axis of rotation in the vertical direction</p></li>
-<li><p>sign of motion consistent with coordinate system</p></li>
-</ul>
-</li>
+<li><p>Axis of rotation: vertical</p></li>
+<li><p>Sign of rotation: right-handed (consistent with coordinate system)</p></li>
 </ul>
 </li>
 </ul>
 </section>
-<section id="problem-1">
-<h2>Problem 1<a class="headerlink" href="#problem-1" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>Assign basis vectors (xHat, yHat, zHat) to each of the axes in our reference frame.</p></li>
-<li><p>Describe the orientation of each stack and stage in terms of these basis
-vectors, including the sign of rotation.</p></li>
-<li><p>Describe the steps to compute orientation matrix, U.</p></li>
-</ul>
-</section>
-<section id="problem-2">
-<h2>Problem 2<a class="headerlink" href="#problem-2" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>Is it possible to make different assignments of the basis vectors?</p></li>
-<li><p>What are the stage orientation vectors?</p></li>
-<li><p>How is the U matrix different?</p></li>
-</ul>
+<section id="questions">
+<h2>Questions<a class="headerlink" href="#questions" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Assign basis vectors (xHat, yHat, zHat) to each axis of the reference
+frame.  Describe the orientation of each stack and stage in terms of these
+basis vectors, including the sign of rotation.  Describe the steps to
+compute the orientation matrix U.</p></li>
+<li><p>Is it possible to make different assignments of the basis vectors?  What
+are the resulting stage orientation vectors?  How does the U matrix differ?</p></li>
+</ol>
+<p>The answers to both questions are worked out in <a class="reference internal" href="problem2.html"><span class="std std-doc">You (1999) Geometry</span></a>,
+which shows how this equipment maps exactly to the six-circle psic geometry.</p>
 </section>
 </section>
 
@@ -602,7 +609,7 @@ vectors, including the sign of rotation.</p></li>
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Direct lattice in crystallography</p>
+        <p class="prev-next-title">Direct Lattice in Crystallography</p>
       </div>
     </a>
     <a class="right-next"
@@ -610,7 +617,7 @@ vectors, including the sign of rotation.</p></li>
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Diffractometer with Specified Reference Frame</p>
+        <p class="prev-next-title">You (1999) Geometry — Coordinate Convention and UB Matrix</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -633,10 +640,10 @@ vectors, including the sign of rotation.</p></li>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-equipment">The equipment</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-frame">Reference frame</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equipment-description">Equipment Description</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-1">Problem 1</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-2">Problem 2</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equipment-description">Equipment description</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#questions">Questions</a></li>
 </ul>
   </nav></div>
 
