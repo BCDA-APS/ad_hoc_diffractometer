@@ -12,9 +12,9 @@ Geometries are grouped below by their chi-circle mechanism.
 
    fourcv
    fourch
+   fivec
    psic
    sixc
-   fivec
    kappa4cv
    kappa4ch
    kappa6c
@@ -43,13 +43,20 @@ rotation axis.
 
       Horizontal scattering plane — ω and 2θ rotate about the vertical axis.
 
-Eulerian six-circle
--------------------
+Eulerian five- and six-circle
+-----------------------------
 
-A four-circle Eulerian sample stack with an additional base stage and a
-two-axis detector arm.
+A four-circle Eulerian sample stack extended with one or two additional
+base or detector stages.
 
 .. grid:: 3
+
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Five-circle (fivec)
+      :link: fivec
+      :link-type: doc
+
+      fourcv on a vertical mu base; sample and detector
+      coupled through mu. Vlieg et al. (1987).
 
    .. grid-item-card:: :material-outlined:`rotate_right;3em` 4S+2D (psic)
       :link: psic
@@ -64,13 +71,6 @@ two-axis detector arm.
 
       Sample and detector share a common alpha base stage.
       Lohmeier & Vlieg (1993).
-
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` Five-circle
-      :link: fivec
-      :link-type: doc
-
-      Four-circle (fourcv) on a vertical mu base; sample and detector
-      coupled through mu. Vlieg et al. (1987).
 
 Kappa
 -----
