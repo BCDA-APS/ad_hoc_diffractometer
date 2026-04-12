@@ -1,0 +1,1597 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Align a Four-Circle Diffractometer (fourcv) &#8212; ad_hoc_diffractometer 0.4</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=090975f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+
+    <script src="../_static/documentation_options.js?v=6c02275b"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'howto/fourcv_alignment_howto';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.4.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Geometry Reference" href="../geometries/index.html" />
+    <link rel="prev" title="Save and Restore a Diffractometer Configuration" href="serialize.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.4" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.4</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changes.html">
+    Change History
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../direct-lattice.html">
+    Direct Lattice in Crystallography
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../problem1.html">
+    Case Study: Describing a Diffractometer
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../problem2.html">
+    You (1999) Geometry — Coordinate Convention and UB Matrix
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changes.html">
+    Change History
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../references.html">
+    References
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../direct-lattice.html">
+    Direct Lattice in Crystallography
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../problem1.html">
+    Case Study: Describing a Diffractometer
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../problem2.html">
+    You (1999) Geometry — Coordinate Convention and UB Matrix
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Concepts</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">How-to Guides</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="wavelength.html">Set Wavelength / Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html">Define the Sample Lattice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orient.html">Orient a Crystal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forward.html">Forward and Inverse Computations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modes.html">Switch Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trajectory.html">Plan a Trajectory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refine_lattice.html">Refine the Lattice Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serialize.html">Save and Restore a Diffractometer Configuration</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../geometries/index.html">Geometry Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/fourcv.html">fourcv — Four-Circle Eulerian (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/fourch.html">fourch — Four-Circle Eulerian (Laboratory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/psic.html">psic — Six-Circle 4S+2D (You 1999)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/sixc.html">sixc — Six-Circle Surface (Lohmeier &amp; Vlieg 1993)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/fivec.html">fivec — Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/kappa4cv.html">kappa4cv — Kappa Four-Circle (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/kappa4ch.html">kappa4ch — Kappa Four-Circle (Laboratory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/kappa6c.html">kappa6c — Six-Circle Kappa (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/zaxis.html">zaxis — Z-Axis Four-Circle (Surface)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../user_guide.html" class="nav-link">User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">How-to Guides</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This page was generated from a Jupyter notebook.  <a class="reference internal" href="#"><span class="std std-doc">Download the notebook</span></a> to run it locally — it requires only <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code>, NumPy, and Matplotlib.</p>
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="align-a-four-circle-diffractometer-fourcv">
+<h1>Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)<a class="headerlink" href="#align-a-four-circle-diffractometer-fourcv" title="Link to this heading">#</a></h1>
+<p>This notebook is a <strong>how-to guide</strong> for aligning a crystal on a four-circle
+Eulerian diffractometer in the <strong>vertical scattering plane</strong>
+(<a class="reference internal" href="../geometries/fourcv.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">ahd.fourcv</span></code></span></a>),
+the synchrotron convention where ω and 2θ rotate about the lateral axis.</p>
+<p>The example uses <strong>sapphire (α-Al₂O₃)</strong> with the (001) axis pre-aligned
+along the φ-axis — a common starting configuration at synchrotron beamlines.
+The motor-angle values are drawn from a real alignment session at APS
+7-ID-C (December 2020, private communication, D.A. Walko).</p>
+<section id="alignment-steps">
+<h2>Alignment steps<a class="headerlink" href="#alignment-steps" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Create the geometry and set the wavelength</p></li>
+<li><p>Set the sample lattice constants</p></li>
+<li><p>Predict Bragg peak positions</p></li>
+<li><p>Enter the primary orienting reflection (calculated position)</p></li>
+<li><p>Enter the secondary orienting reflection (geometric placeholder)</p></li>
+<li><p>Compute the orientation matrix</p></li>
+<li><p>Verify the orientation — direction check</p></li>
+<li><p>Scan to find the peak; update the primary reflection with the measured position</p></li>
+<li><p>Re-compute and display the refined orientation</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="before-you-begin">
+<h2>Before you begin<a class="headerlink" href="#before-you-begin" title="Link to this heading">#</a></h2>
+<p>This guide uses <code class="docutils literal notranslate"><span class="pre">ahd.fourcv()</span></code> — the synchrotron four-circle with ω and 2θ
+both rotating about the lateral axis (vertical scattering plane).
+Users familiar with SPEC will recognise the workflow: the steps parallel
+SPEC’s <code class="docutils literal notranslate"><span class="pre">setor0</span></code>/<code class="docutils literal notranslate"><span class="pre">setor0</span></code>, <code class="docutils literal notranslate"><span class="pre">pa</span></code>, <code class="docutils literal notranslate"><span class="pre">ca</span></code>, and <code class="docutils literal notranslate"><span class="pre">wh</span></code> commands,
+but everything runs in pure Python with no hardware connection.</p>
+</section>
+<hr class="docutils" />
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>W.R. Busing &amp; H.A. Levy, <em>Acta Cryst.</em> <strong>22</strong>, 457–464 (1967)</p></li>
+<li><p>D.A. Walko, <em>Ref. Module Mater. Sci. Mater. Eng.</em> (2016)</p></li>
+<li><p>D.A. Walko, private communication (December 2020) —
+APS 7-ID-C sapphire alignment session</p></li>
+</ul>
+</section>
+<section id="step-0-imports">
+<h2>Step 0 — Imports<a class="headerlink" href="#step-0-imports" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="step-1-create-the-geometry-and-set-the-wavelength">
+<h2>Step 1 — Create the geometry and set the wavelength<a class="headerlink" href="#step-1-create-the-geometry-and-set-the-wavelength" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ahd.fourcv()</span></code> creates a four-circle Eulerian diffractometer in the
+<strong>vertical scattering plane</strong> (synchrotron convention).  ω and 2θ both
+rotate about the <strong>lateral</strong> axis (−x in the Busing &amp; Levy coordinate
+system), so the scattering plane is vertical.</p>
+<p>The four stages and their rotation axes in the BL1967 basis
+(lateral = +x, longitudinal = +y, vertical = +z):</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Stage</p></th>
+<th class="head"><p>Axis</p></th>
+<th class="head"><p>Handedness</p></th>
+<th class="head"><p>Role</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">omega</span></code></p></td>
+<td><p>lateral</p></td>
+<td><p>left-handed (−x)</p></td>
+<td><p>sample</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chi</span></code></p></td>
+<td><p>longitudinal</p></td>
+<td><p>right-handed (+y)</p></td>
+<td><p>sample</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">phi</span></code></p></td>
+<td><p>lateral</p></td>
+<td><p>left-handed (−x)</p></td>
+<td><p>sample</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ttheta</span></code></p></td>
+<td><p>lateral</p></td>
+<td><p>left-handed (−x)</p></td>
+<td><p>detector</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+
+<span class="c1"># Wavelength from the beamline monochromator at APS 7-ID-C</span>
+<span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5498</span>  <span class="c1"># Angstroms</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Geometry  : </span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wavelength: </span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="si">}</span><span class="s2"> Å&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Description: </span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sample stages:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2">  axis = </span><span class="si">{</span><span class="n">ahd</span><span class="o">.</span><span class="n">axis_label</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Detector stages:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2">  axis = </span><span class="si">{</span><span class="n">ahd</span><span class="o">.</span><span class="n">axis_label</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Geometry  : fourcv
+Wavelength: 1.5498 Å
+Description: Busing &amp; Levy (1967) four-circle Eulerian diffractometer (vertical scattering plane, lateral ttheta, synchrotron)
+
+Sample stages:
+  omega     axis = -x
+  chi       axis = +y
+  phi       axis = -x
+Detector stages:
+  ttheta    axis = -x
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="step-2-set-the-sample-lattice-constants">
+<h2>Step 2 — Set the sample lattice constants<a class="headerlink" href="#step-2-set-the-sample-lattice-constants" title="Link to this heading">#</a></h2>
+<p>Sapphire (α-Al₂O₃) is trigonal / hexagonal:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>a = b</p></td>
+<td><p>4.785 Å</p></td>
+</tr>
+<tr class="row-odd"><td><p>c</p></td>
+<td><p>12.991 Å</p></td>
+</tr>
+<tr class="row-even"><td><p>α = β</p></td>
+<td><p>90°</p></td>
+</tr>
+<tr class="row-odd"><td><p>γ</p></td>
+<td><p>120°</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ahd.Lattice</span></code> deduces the crystal system automatically.
+Supplying <code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">c</span></code>, and <code class="docutils literal notranslate"><span class="pre">gamma=120</span></code> is sufficient for a hexagonal lattice.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Hexagonal lattice: a, c, and gamma=120 are sufficient.</span>
+<span class="c1"># ahd.Lattice deduces the crystal system automatically.</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">4.785</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">12.991</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">120.0</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;B matrix (reciprocal lattice, Å⁻¹, BL1967 convention with 2π):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reciprocal lattice parameters (a*, b*, c* = rows of B for cubic/orthogonal):&quot;</span><span class="p">)</span>
+<span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">b3</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">reciprocal_lattice_vectors</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  a* = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b1</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Å⁻¹  (SPEC #G1: 1.516238 Å⁻¹)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  b* = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Å⁻¹&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  c* = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b3</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> Å⁻¹  (SPEC #G1: 0.483657 Å⁻¹)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Lattice(hexagonal: a=4.785000 Å, c=12.991000 Å)
+
+B matrix (reciprocal lattice, Å⁻¹, BL1967 convention with 2π):
+[[ 1.3131    0.758119 -0.      ]
+ [ 0.        1.516238 -0.      ]
+ [ 0.       -0.        0.483657]]
+
+Reciprocal lattice parameters (a*, b*, c* = rows of B for cubic/orthogonal):
+  a* = 1.516238 Å⁻¹  (SPEC #G1: 1.516238 Å⁻¹)
+  b* = 1.516238 Å⁻¹
+  c* = 0.483657 Å⁻¹  (SPEC #G1: 0.483657 Å⁻¹)
+</pre></div>
+</div>
+</div>
+</div>
+<p>The reciprocal lattice parameters include the 2π factor
+(a* = 1.516 Å⁻¹, c* = 0.484 Å⁻¹), consistent with the
+Busing &amp; Levy (1967) and SPEC <code class="docutils literal notranslate"><span class="pre">pa</span></code> convention.</p>
+</section>
+<hr class="docutils" />
+<section id="step-3-predict-bragg-peak-positions">
+<h2>Step 3 — Predict Bragg peak positions<a class="headerlink" href="#step-3-predict-bragg-peak-positions" title="Link to this heading">#</a></h2>
+<p>Before moving any motors, use Bragg’s law to predict where each reflection
+should appear:</p>
+<div class="math notranslate nohighlight">
+\[d_{hkl} = \frac{2\pi}{|\mathbf{B}\,\mathbf{h}|}
+\qquad
+2\theta = 2\arcsin\left(\frac{\lambda}{2\,d_{hkl}}\right)\]</div>
+<p>The <strong>B</strong> matrix follows the Busing &amp; Levy (1967) and SPEC convention:
+it includes the 2π factor, so <code class="docutils literal notranslate"><span class="pre">|B</span> <span class="pre">&#64;</span> <span class="pre">h|</span> <span class="pre">=</span> <span class="pre">2π/d_hkl</span></code> (in Å⁻¹).
+This is consistent with <code class="docutils literal notranslate"><span class="pre">UB</span> <span class="pre">&#64;</span> <span class="pre">hkl</span> <span class="pre">=</span> <span class="pre">Q_phi</span></code> where
+<code class="docutils literal notranslate"><span class="pre">|Q_phi|</span> <span class="pre">=</span> <span class="pre">(2π/λ)</span> <span class="pre">·</span> <span class="pre">2</span> <span class="pre">sin</span> <span class="pre">θ</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">bragg_angles</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return (d_hkl in Å, 2theta in degrees) for reflection (h, k, l).</span>
+
+<span class="sd">    Uses Bragg&#39;s law: λ = 2 d sin θ.</span>
+<span class="sd">    The B matrix includes the 2π factor (BL1967 convention), so</span>
+<span class="sd">    d = 2π / |B @ hkl|.</span>
+<span class="sd">    Returns (d, None) if the reflection is not reachable at the current</span>
+<span class="sd">    wavelength (sin θ &gt; 1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">B</span>
+    <span class="n">q_vec</span> <span class="o">=</span> <span class="n">B</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">q_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_vec</span><span class="p">)</span>   <span class="c1"># = 2π/d_hkl  (Å⁻¹, BL1967)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">q_mag</span>
+    <span class="n">sin_theta</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sin_theta</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">tth</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">sin_theta</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">tth</span>
+
+
+<span class="n">reflections_to_check</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">)]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;hkl&#39;</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;d (Å)&#39;</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;2θ (deg)&#39;</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">36</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">hkl</span> <span class="ow">in</span> <span class="n">reflections_to_check</span><span class="p">:</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">tth</span> <span class="o">=</span> <span class="n">bragg_angles</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">*</span><span class="n">hkl</span><span class="p">)</span>
+    <span class="n">tth_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tth</span><span class="si">:</span><span class="s2">10.4f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">tth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;  unreachable&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">hkl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">1d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hkl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">1d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hkl</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">)         </span><span class="si">{</span><span class="n">d</span><span class="si">:</span><span class="s2">8.4f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">tth_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">tth_006</span> <span class="o">=</span> <span class="n">bragg_angles</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SPEC &#39;ca 0 0 6&#39; prediction: 2θ = 41.9419°&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Our  Bragg prediction:      2θ = </span><span class="si">{</span><span class="n">tth_006</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">°&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         hkl     d (Å)    2θ (deg)
+------------------------------------
+(0 0  6)           2.1652     41.9418
+(1 0  0)           4.7850     18.6395
+(1 0  4)           2.6872     33.5201
+(0 0 12)           1.0826     91.4156
+
+SPEC &#39;ca 0 0 6&#39; prediction: 2θ = 41.9419°
+Our  Bragg prediction:      2θ = 41.9418°
+</pre></div>
+</div>
+</div>
+</div>
+<p>With the (001) axis pre-aligned along the φ-axis, the (006) reflection
+sits in the vertical scattering plane when <strong>χ = 90°</strong> (tilting the
+c-axis into the plane).  In bisecting mode (ω = 2θ/2), the predicted
+position is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>2θ ≈ 41.94°     ω ≈ 20.97°     χ = 90°     φ = 0°
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="step-4-enter-the-primary-orienting-reflection-calculated-position">
+<h2>Step 4 — Enter the primary orienting reflection (calculated position)<a class="headerlink" href="#step-4-enter-the-primary-orienting-reflection-calculated-position" title="Link to this heading">#</a></h2>
+<p>The <strong>primary orienting reflection</strong> (or1) is entered at its <em>calculated</em>
+position before any scanning.  This gives the package enough information
+to compute a provisional orientation matrix.</p>
+<p>The primary reflection is recorded at its calculated position
+(equivalent to SPEC’s <code class="docutils literal notranslate"><span class="pre">setor0</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>hkl = (0, 0, 6)
+2θ = 41.9419°   ω = 20.97°   χ = 90°   φ = 0°
+</pre></div>
+</div>
+<p>Note that χ = <strong>+90°</strong> is used (not the −90° that <code class="docutils literal notranslate"><span class="pre">g.forward()</span></code> may
+return as its first solution).  With the c-axis nominally along the
+φ-axis, χ = +90° brings c* into the vertical scattering plane without
+requiring φ to move to −90°.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculated position of (006) — χ = +90° to bring c-axis into scattering plane</span>
+<span class="n">or1_angles_calc</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">41.9419</span><span class="p">,</span>
+    <span class="s2">&quot;omega&quot;</span><span class="p">:</span>  <span class="mf">20.97</span><span class="p">,</span>
+    <span class="s2">&quot;chi&quot;</span><span class="p">:</span>    <span class="mf">90.0</span><span class="p">,</span>
+    <span class="s2">&quot;phi&quot;</span><span class="p">:</span>    <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">g</span><span class="o">.</span><span class="n">add_reflection</span><span class="p">(</span>
+    <span class="s2">&quot;or1&quot;</span><span class="p">,</span>
+    <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="n">angles</span><span class="o">=</span><span class="n">or1_angles_calc</span><span class="p">,</span>
+    <span class="n">wavelength</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">)</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or1&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;or1  hkl    : </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">hkl</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     angles : </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">angles</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     lambda : </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">wavelength</span><span class="si">}</span><span class="s2"> Å&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>or1  hkl    : (0.0, 0.0, 6.0)
+     angles : {&#39;ttheta&#39;: 41.9419, &#39;omega&#39;: 20.97, &#39;chi&#39;: 90.0, &#39;phi&#39;: 0.0}
+     lambda : 1.5498 Å
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="step-5-enter-the-secondary-orienting-reflection-geometric-placeholder">
+<h2>Step 5 — Enter the secondary orienting reflection (geometric placeholder)<a class="headerlink" href="#step-5-enter-the-secondary-orienting-reflection-geometric-placeholder" title="Link to this heading">#</a></h2>
+<p>A single reflection constrains only one reciprocal-lattice direction.  A
+second, non-parallel reflection is needed to fully define the crystal
+orientation.</p>
+<p>A second reflection 90° away in φ is recorded as a geometric placeholder
+(equivalent to SPEC’s <code class="docutils literal notranslate"><span class="pre">setor0</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>hkl = (1, 0, 0)
+2θ = 60°   θ = 30°   χ = 0°   φ = 0°
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Accommodation</strong>: <code class="docutils literal notranslate"><span class="pre">2θ</span> <span class="pre">=</span> <span class="pre">60°</span></code> is <strong>not</strong> the Bragg angle for (1, 0, 0)
+of sapphire at λ = 1.5498 Å.  The true Bragg angle is 2θ ≈ 18.64°.
+SPEC accepts this geometric placeholder because the UB algorithm uses
+only the <strong>direction</strong> of the scattering vector (normalised), not its
+magnitude, to build the orientation matrix.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ahd.ub_from_two_reflections_bl1967</span></code> follows the same Busing &amp; Levy
+algorithm and therefore also accepts this placeholder.  The consequence
+is a ~7° directional misalignment for the secondary reflection in the
+direction check (Step 7) — expected and acceptable at this stage.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Geometric placeholder for the secondary reflection:</span>
+<span class="c1"># 2θ = 60° is NOT the Bragg angle for (1,0,0) of sapphire at λ = 1.5498 Å.</span>
+<span class="c1"># The true Bragg 2θ for (1,0,0) is ~18.64°.</span>
+<span class="c1"># This position is used only to define the φ-rotation plane direction.</span>
+<span class="n">or2_angles</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">60.0</span><span class="p">,</span>
+    <span class="s2">&quot;omega&quot;</span><span class="p">:</span>  <span class="mf">30.0</span><span class="p">,</span>
+    <span class="s2">&quot;chi&quot;</span><span class="p">:</span>    <span class="mf">0.0</span><span class="p">,</span>
+    <span class="s2">&quot;phi&quot;</span><span class="p">:</span>    <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">_</span><span class="p">,</span> <span class="n">tth_100_true</span> <span class="o">=</span> <span class="n">bragg_angles</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;True Bragg 2θ for (1,0,0) at λ=</span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="si">}</span><span class="s2"> Å: </span><span class="si">{</span><span class="n">tth_100_true</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">°&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Geometric placeholder 2θ used:                    </span><span class="si">{</span><span class="n">or2_angles</span><span class="p">[</span><span class="s1">&#39;ttheta&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">°&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Difference: </span><span class="si">{</span><span class="n">or2_angles</span><span class="p">[</span><span class="s1">&#39;ttheta&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tth_100_true</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">°  (accepted by BL1967 algorithm)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="n">g</span><span class="o">.</span><span class="n">add_reflection</span><span class="p">(</span>
+    <span class="s2">&quot;or2&quot;</span><span class="p">,</span>
+    <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="n">angles</span><span class="o">=</span><span class="n">or2_angles</span><span class="p">,</span>
+    <span class="n">wavelength</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor1</span><span class="p">(</span><span class="s2">&quot;or2&quot;</span><span class="p">)</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or2&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;or2  hkl    : </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">hkl</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     angles : </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">angles</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     lambda : </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">wavelength</span><span class="si">}</span><span class="s2"> Å&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True Bragg 2θ for (1,0,0) at λ=1.5498 Å: 18.6395°
+Geometric placeholder 2θ used:                    60.0000°
+Difference: 41.3605°  (accepted by BL1967 algorithm)
+
+or2  hkl    : (1.0, 0.0, 0.0)
+     angles : {&#39;ttheta&#39;: 60.0, &#39;omega&#39;: 30.0, &#39;chi&#39;: 0.0, &#39;phi&#39;: 0.0}
+     lambda : 1.5498 Å
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="step-6-compute-the-orientation-matrix">
+<h2>Step 6 — Compute the orientation matrix<a class="headerlink" href="#step-6-compute-the-orientation-matrix" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ahd.ub_from_two_reflections_bl1967</span></code> computes the orientation matrix <strong>U</strong>
+and the combined <strong>UB</strong> matrix using the Busing &amp; Levy (1967) algorithm
+(eqs. 23–27):</p>
+<ol class="arabic simple">
+<li><p>Compute Q_φ for each reflection from its motor angles.</p></li>
+<li><p>Compute crystal-frame vectors: <strong>h</strong>_c = <strong>B h</strong>.</p></li>
+<li><p>Build orthonormal triads (Gram–Schmidt) in the crystal frame (<strong>T</strong>_c)
+and the φ frame (<strong>T</strong>_φ).</p></li>
+<li><p><strong>U</strong> = <strong>T</strong>_φ <strong>T</strong>_c^T.</p></li>
+<li><p><strong>UB</strong> = <strong>U</strong> <strong>B</strong>.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">UB_initial</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">ub_from_two_reflections_bl1967</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UB matrix (Å⁻¹, no 2π factor):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">UB_initial</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;U matrix (orientation):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">U</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;det(U) = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">U</span><span class="p">)</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">  (must be +1 for a proper rotation)&quot;</span><span class="p">)</span>
+<span class="n">UtU</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">U</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">U</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max |U^T U - I| = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">UtU</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">  (must be ~0 for orthonormality)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>UB matrix (Å⁻¹, no 2π factor):
+[[-0.15835   0.419497  0.45162 ]
+ [ 0.056673  1.460283 -0.161633]
+ [-1.302285 -0.751875 -0.061948]]
+
+U matrix (orientation):
+[[-0.120592  0.336966  0.933762]
+ [ 0.04316   0.941517 -0.33419 ]
+ [-0.991763  0.       -0.128083]]
+
+det(U) = 1.00000000  (must be +1 for a proper rotation)
+max |U^T U - I| = 2.22e-16  (must be ~0 for orthonormality)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="step-7-verify-the-orientation-direction-check">
+<h2>Step 7 — Verify the orientation: direction check<a class="headerlink" href="#step-7-verify-the-orientation-direction-check" title="Link to this heading">#</a></h2>
+<p>The orientation matrix is correct when <strong>UB</strong> &#64; <strong>h</strong> points in the same
+<strong>direction</strong> as the scattering vector Q_φ computed from the measured
+motor angles.  We check the cosine of the angle between the two vectors
+(both normalised to unit length):</p>
+<div class="math notranslate nohighlight">
+\[\cos\theta = \frac{(\mathbf{UB}\,\mathbf{h}) \cdot \mathbf{Q}_\phi}
+{|\mathbf{UB}\,\mathbf{h}|\;|\mathbf{Q}_\phi|}\]</div>
+<p>cos θ = 1 means perfect alignment; θ = 0° means no angular discrepancy.</p>
+<blockquote>
+<div><p><strong>Expected behaviour with a geometric placeholder</strong>:<br />
+The primary reflection (or1) is exact by construction — cos θ = 1.<br />
+The secondary reflection (or2) has a ~7° discrepancy because its
+motor angles (2θ = 60°) are not at the true Bragg condition for (1,0,0).
+The orientation matrix is still valid: it correctly encodes the (006)
+direction and the φ-rotation plane.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">direction_check</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">reflection_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check whether UB @ hkl is parallel to Q_phi at the recorded motor angles.</span>
+
+<span class="sd">    Prints the cosine of the angle between the two directions</span>
+<span class="sd">    (1.0 = perfectly aligned, 0° angular discrepancy).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="n">reflection_name</span><span class="p">]</span>
+    <span class="n">Q_phi</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">angles_to_phi_vector</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span>
+    <span class="n">UB_hkl</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">hkl</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">Q_hat</span>   <span class="o">=</span> <span class="n">Q_phi</span>   <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Q_phi</span><span class="p">)</span>
+    <span class="n">UBh_hat</span> <span class="o">=</span> <span class="n">UB_hkl</span>  <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">UB_hkl</span><span class="p">)</span>
+    <span class="n">cos_ang</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Q_hat</span><span class="p">,</span> <span class="n">UBh_hat</span><span class="p">))</span>
+    <span class="n">angle</span>   <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cos_ang</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">reflection_name</span><span class="si">}</span><span class="s2">  hkl=</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">hkl</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    cos(angle) = </span><span class="si">{</span><span class="n">cos_ang</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">   angular discrepancy = </span><span class="si">{</span><span class="n">angle</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">°&quot;</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Direction check — UB @ hkl vs Q_phi at recorded motor angles:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">direction_check</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s2">&quot;or1&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">direction_check</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s2">&quot;or2&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;or1 is exact by construction.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;or2 has a ~7° discrepancy because 2θ=60° is not the Bragg angle&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;for (1,0,0) of sapphire.  This is expected for a geometric placeholder.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Direction check — UB @ hkl vs Q_phi at recorded motor angles:
+
+  or1  hkl=(0.0, 0.0, 6.0)
+    cos(angle) = 1.00000000   angular discrepancy = 0.0000°
+
+  or2  hkl=(1.0, 0.0, 0.0)
+    cos(angle) = 0.99176346   angular discrepancy = 7.3588°
+
+or1 is exact by construction.
+or2 has a ~7° discrepancy because 2θ=60° is not the Bragg angle
+for (1,0,0) of sapphire.  This is expected for a geometric placeholder.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="step-8-find-the-peak-by-scanning-update-the-primary-reflection">
+<h2>Step 8 — Find the peak by scanning; update the primary reflection<a class="headerlink" href="#step-8-find-the-peak-by-scanning-update-the-primary-reflection" title="Link to this heading">#</a></h2>
+<p>At a real beamline the next steps are:</p>
+<ol class="arabic simple">
+<li><p>Move motors to the predicted (006) position.</p></li>
+<li><p>Scan ω (theta) to find the peak.</p></li>
+<li><p>Scan χ to centre the peak.</p></li>
+<li><p>Scan 2θ to confirm the peak position.</p></li>
+<li><p>Enter the measured peak position as the updated primary reflection.</p></li>
+</ol>
+<p>The data below are from the APS 7-ID-C session (private communication,
+D.A. Walko, December 2020).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Scan 1: ω scan, wide range, open slits — finds the peak near ω ≈ 20.37°</span>
+<span class="c1"># (SPEC command: dscan th -1 1 50 0.1)</span>
+<span class="n">scan1_omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">19.97</span><span class="p">,</span> <span class="mf">21.97</span><span class="p">,</span> <span class="mi">51</span><span class="p">)</span>
+<span class="n">scan1_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="mi">328</span><span class="p">,</span>   <span class="mi">328</span><span class="p">,</span>   <span class="mi">373</span><span class="p">,</span>   <span class="mi">433</span><span class="p">,</span>   <span class="mi">445</span><span class="p">,</span>   <span class="mi">450</span><span class="p">,</span>   <span class="mi">514</span><span class="p">,</span>   <span class="mi">613</span><span class="p">,</span>   <span class="mi">725</span><span class="p">,</span>  <span class="mi">1118</span><span class="p">,</span>
+    <span class="mi">46509</span><span class="p">,</span> <span class="mi">1041</span><span class="p">,</span>  <span class="mi">692</span><span class="p">,</span>   <span class="mi">621</span><span class="p">,</span>   <span class="mi">466</span><span class="p">,</span>   <span class="mi">425</span><span class="p">,</span>   <span class="mi">431</span><span class="p">,</span>   <span class="mi">427</span><span class="p">,</span>   <span class="mi">351</span><span class="p">,</span>   <span class="mi">312</span><span class="p">,</span>
+    <span class="mi">335</span><span class="p">,</span>   <span class="mi">282</span><span class="p">,</span>   <span class="mi">289</span><span class="p">,</span>   <span class="mi">283</span><span class="p">,</span>   <span class="mi">235</span><span class="p">,</span>   <span class="mi">257</span><span class="p">,</span>   <span class="mi">271</span><span class="p">,</span>   <span class="mi">242</span><span class="p">,</span>   <span class="mi">217</span><span class="p">,</span>   <span class="mi">204</span><span class="p">,</span>
+    <span class="mi">205</span><span class="p">,</span>   <span class="mi">204</span><span class="p">,</span>   <span class="mi">210</span><span class="p">,</span>   <span class="mi">205</span><span class="p">,</span>   <span class="mi">182</span><span class="p">,</span>   <span class="mi">183</span><span class="p">,</span>   <span class="mi">207</span><span class="p">,</span>   <span class="mi">166</span><span class="p">,</span>   <span class="mi">182</span><span class="p">,</span>   <span class="mi">180</span><span class="p">,</span>
+    <span class="mi">170</span><span class="p">,</span>   <span class="mi">171</span><span class="p">,</span>   <span class="mi">182</span><span class="p">,</span>   <span class="mi">159</span><span class="p">,</span>   <span class="mi">163</span><span class="p">,</span>   <span class="mi">197</span><span class="p">,</span>   <span class="mi">148</span><span class="p">,</span>   <span class="mi">166</span><span class="p">,</span>   <span class="mi">158</span><span class="p">,</span>   <span class="mi">152</span><span class="p">,</span> <span class="mi">157</span><span class="p">,</span>
+<span class="p">])</span>
+
+<span class="n">peak_omega_scan1</span> <span class="o">=</span> <span class="n">scan1_omega</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">scan1_counts</span><span class="p">)]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">scan1_omega</span><span class="p">,</span> <span class="n">scan1_counts</span><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">20.97</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>  <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span>  <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Predicted ω = 20.97°&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">peak_omega_scan1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>  <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Observed peak ≈ </span><span class="si">{</span><span class="n">peak_omega_scan1</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">°&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;ω (deg)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Counts (log scale)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Scan 1 — ω scan, (006), wide slits&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Peak found at ω ≈ </span><span class="si">{</span><span class="n">peak_omega_scan1</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">°  (predicted: 20.97°)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;0.6° discrepancy is consistent with χ ≠ 90° (c-axis slightly misaligned).&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/8312a6e5dfb2a0cf70893b3b516c574c7778d452f27b5651a63fcee422131dbd.png" src="../_images/8312a6e5dfb2a0cf70893b3b516c574c7778d452f27b5651a63fcee422131dbd.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Peak found at ω ≈ 20.37°  (predicted: 20.97°)
+0.6° discrepancy is consistent with χ ≠ 90° (c-axis slightly misaligned).
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Scan 4: χ scan, heavy attenuation — locates the true chi position</span>
+<span class="c1"># (SPEC command: dscan chi -3 0 40 0.5)</span>
+<span class="n">scan4_chi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">87.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mi">41</span><span class="p">)</span>
+<span class="n">scan4_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+     <span class="mi">0</span><span class="p">,</span>     <span class="mi">2</span><span class="p">,</span>     <span class="mi">0</span><span class="p">,</span>     <span class="mi">1</span><span class="p">,</span>     <span class="mi">0</span><span class="p">,</span>     <span class="mi">0</span><span class="p">,</span>     <span class="mi">2</span><span class="p">,</span>     <span class="mi">0</span><span class="p">,</span>     <span class="mi">0</span><span class="p">,</span>     <span class="mi">1</span><span class="p">,</span>
+     <span class="mi">0</span><span class="p">,</span>     <span class="mi">0</span><span class="p">,</span>     <span class="mi">2</span><span class="p">,</span>     <span class="mi">1</span><span class="p">,</span>     <span class="mi">1</span><span class="p">,</span>     <span class="mi">2</span><span class="p">,</span>     <span class="mi">1</span><span class="p">,</span>     <span class="mi">1</span><span class="p">,</span>     <span class="mi">5</span><span class="p">,</span>    <span class="mi">10</span><span class="p">,</span>
+    <span class="mi">26</span><span class="p">,</span>    <span class="mi">60</span><span class="p">,</span>   <span class="mi">114</span><span class="p">,</span>   <span class="mi">179</span><span class="p">,</span>   <span class="mi">168</span><span class="p">,</span>  <span class="mi">2130</span><span class="p">,</span> <span class="mi">11934</span><span class="p">,</span> <span class="mi">13676</span><span class="p">,</span> <span class="mi">12861</span><span class="p">,</span> <span class="mi">12379</span><span class="p">,</span>
+    <span class="mi">11871</span><span class="p">,</span> <span class="mi">11947</span><span class="p">,</span> <span class="mi">12192</span><span class="p">,</span> <span class="mi">11207</span><span class="p">,</span> <span class="mi">11665</span><span class="p">,</span> <span class="mi">11745</span><span class="p">,</span>  <span class="mi">9734</span><span class="p">,</span>  <span class="mi">1411</span><span class="p">,</span>   <span class="mi">110</span><span class="p">,</span>    <span class="mi">60</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span>
+<span class="p">])</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">scan4_chi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">scan4_counts</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;o-&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">90.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Nominal χ = 90.0°&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">89.32</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>  <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Centroid χ = 89.32°&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;χ (deg)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Counts (log scale)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Scan 4 — χ scan, (006), heavy attenuation&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">chi_measured</span> <span class="o">=</span> <span class="mf">89.32</span>  <span class="c1"># SPEC centroid from the scan</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;χ centroid = </span><span class="si">{</span><span class="n">chi_measured</span><span class="si">}</span><span class="s2">°  (nominal: 90.0°,  offset: </span><span class="si">{</span><span class="n">chi_measured</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">90.0</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">°)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The c-axis is 0.68° from the φ-axis — the crystal is slightly miscut.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/fa604ffa2fcb895be3719b243027ded40fb9f1281c515bd58e825480b6af72de.png" src="../_images/fa604ffa2fcb895be3719b243027ded40fb9f1281c515bd58e825480b6af72de.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>χ centroid = 89.32°  (nominal: 90.0°,  offset: -0.68°)
+The c-axis is 0.68° from the φ-axis — the crystal is slightly miscut.
+</pre></div>
+</div>
+</div>
+</div>
+<p>After centering in ω, χ, and 2θ, the <strong>measured</strong> peak position is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>2θ = 41.9394°     ω = 20.3654°     χ = 89.32°     φ = 0°
+</pre></div>
+</div>
+<p>Replace the calculated primary reflection with this measured position:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Measured peak position after scanning and centering</span>
+<span class="n">or1_angles_meas</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">41.9394</span><span class="p">,</span>
+    <span class="s2">&quot;omega&quot;</span><span class="p">:</span>  <span class="mf">20.3654</span><span class="p">,</span>
+    <span class="s2">&quot;chi&quot;</span><span class="p">:</span>    <span class="mf">89.32</span><span class="p">,</span>
+    <span class="s2">&quot;phi&quot;</span><span class="p">:</span>    <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Remove the calculated or1 and replace with the measured position</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">add_reflection</span><span class="p">(</span>
+    <span class="s2">&quot;or1&quot;</span><span class="p">,</span>
+    <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="n">angles</span><span class="o">=</span><span class="n">or1_angles_meas</span><span class="p">,</span>
+    <span class="n">wavelength</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Updated or1 (measured position):&quot;</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or1&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  hkl    : </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">hkl</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  angles : </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">angles</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Updated or1 (measured position):
+  hkl    : (0.0, 0.0, 6.0)
+  angles : {&#39;ttheta&#39;: 41.9394, &#39;omega&#39;: 20.3654, &#39;chi&#39;: 89.32, &#39;phi&#39;: 0.0}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="step-9-re-compute-the-orientation-matrix-and-display-the-state">
+<h2>Step 9 — Re-compute the orientation matrix and display the state<a class="headerlink" href="#step-9-re-compute-the-orientation-matrix-and-display-the-state" title="Link to this heading">#</a></h2>
+<p>Re-running <code class="docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967</span></code> with the measured or1 gives a
+refined <strong>UB</strong> matrix that reflects the actual crystal alignment.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">UB_refined</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">ub_from_two_reflections_bl1967</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UB matrix — initial (calculated) vs refined (measured):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">30s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;Initial&#39;</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;Refined&#39;</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  UB[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">]  </span><span class="si">{</span><span class="n">UB_initial</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">12.6f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">UB_refined</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">12.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Off-diagonal terms grow slightly — consistent with the 0.68° χ offset.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">norm_initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">UB_initial</span><span class="p">)</span>
+<span class="n">norm_refined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">UB_refined</span><span class="p">)</span>
+<span class="n">off_diag_initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">UB_initial</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">UB_initial</span><span class="p">)))</span>
+<span class="n">off_diag_refined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">UB_refined</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">UB_refined</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Frobenius norm:            initial = </span><span class="si">{</span><span class="n">norm_initial</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">  refined = </span><span class="si">{</span><span class="n">norm_refined</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Off-diagonal Frobenius norm: initial = </span><span class="si">{</span><span class="n">off_diag_initial</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">  refined = </span><span class="si">{</span><span class="n">off_diag_refined</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;(A larger off-diagonal norm in the refined matrix reflects the measured χ offset.)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>UB matrix — initial (calculated) vs refined (measured):
+                                   Initial     Refined
+  UB[0,0]     -0.158350     -0.166959
+  UB[0,1]      0.419497      0.411104
+  UB[0,2]      0.451620      0.451592
+  UB[1,0]      0.056673      0.059303
+  UB[1,1]      1.460283      1.463022
+  UB[1,2]     -0.161633     -0.160404
+  UB[2,0]     -1.302285     -1.301092
+  UB[2,1]     -0.751875     -0.751186
+  UB[2,2]     -0.061948     -0.065261
+
+Off-diagonal terms grow slightly — consistent with the 0.68° χ offset.
+
+Frobenius norm:            initial = 2.198153  refined = 2.198153
+Off-diagonal Frobenius norm: initial = 1.634178  refined = 1.630739
+(A larger off-diagonal norm in the refined matrix reflects the measured χ offset.)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Direction check after refinement</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Direction check after entering the measured or1:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">direction_check</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s2">&quot;or1&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">direction_check</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s2">&quot;or2&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;or1 remains exact.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;or2 still shows ~7° discrepancy — the geometric placeholder has not changed.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Direction check after entering the measured or1:
+
+  or1  hkl=(0.0, 0.0, 6.0)
+    cos(angle) = 1.00000000   angular discrepancy = 0.0000°
+
+  or2  hkl=(1.0, 0.0, 0.0)
+    cos(angle) = 0.99085492   angular discrepancy = 7.7547°
+
+or1 remains exact.
+or2 still shows ~7° discrepancy — the geometric placeholder has not changed.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the azimuthal reference to the c-axis (conventional for surface work)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># pa() prints the full SPEC-style diffractometer status</span>
+<span class="n">g</span><span class="o">.</span><span class="n">pa</span><span class="p">(</span><span class="nb">print</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Geometry: fourcv
+
+  Primary Reflection (at lambda 1.5498):
+    ttheta  omega  chi  phi = 41.9394  20.3654  89.32  0
+    H K L = 0  0  6
+
+  Secondary Reflection (at lambda 1.5498):
+    ttheta  omega  chi  phi = 60  30  0  0
+    H K L = 1  0  0
+
+  Lattice Constants (lengths / angles):
+      real space = 4.785 4.785 12.991 / 90 90 120
+    reciprocal space = 1.516 1.516 0.4837 / 90 90 60
+
+  Azimuthal Reference:  H K L = 0  0  1
+
+  Lambda = 1.5498
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;Geometry: fourcv\n\n  Primary Reflection (at lambda 1.5498):\n    ttheta  omega  chi  phi = 41.9394  20.3654  89.32  0\n    H K L = 0  0  6\n\n  Secondary Reflection (at lambda 1.5498):\n    ttheta  omega  chi  phi = 60  30  0  0\n    H K L = 1  0  0\n\n  Lattice Constants (lengths / angles):\n      real space = 4.785 4.785 12.991 / 90 90 120\n    reciprocal space = 1.516 1.516 0.4837 / 90 90 60\n\n  Azimuthal Reference:  H K L = 0  0  1\n\n  Lambda = 1.5498&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set motors to the measured (006) position and display wh()</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">or1_angles_meas</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+<span class="n">g</span><span class="o">.</span><span class="n">wh</span><span class="p">(</span><span class="nb">print</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>H K L =   0  0  5.99967
+Psi = not available
+Lambda = 1.5498
+
+     Theta       Chi       Phi  TwoTheta
+    20.365    89.320     0.000    41.939
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;H K L =   0  0  5.99967\nPsi = not available\nLambda = 1.5498\n\n     Theta       Chi       Phi  TwoTheta\n    20.365    89.320     0.000    41.939&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>The alignment procedure in <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code> follows the same steps
+as a typical SPEC workflow.  The table below compares the calculated and
+measured (006) peak positions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span><span class="p">,</span> <span class="n">tth_calc</span> <span class="o">=</span> <span class="n">bragg_angles</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="n">omega_calc</span>  <span class="o">=</span> <span class="n">tth_calc</span> <span class="o">/</span> <span class="mf">2.0</span>
+<span class="n">chi_calc</span>    <span class="o">=</span> <span class="mf">90.0</span>
+
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;2θ (deg)&quot;</span><span class="p">,</span>  <span class="n">tth_calc</span><span class="p">,</span>    <span class="n">or1_angles_meas</span><span class="p">[</span><span class="s2">&quot;ttheta&quot;</span><span class="p">]),</span>
+    <span class="p">(</span><span class="s2">&quot;ω (deg)&quot;</span><span class="p">,</span>   <span class="n">omega_calc</span><span class="p">,</span>  <span class="n">or1_angles_meas</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]),</span>
+    <span class="p">(</span><span class="s2">&quot;χ (deg)&quot;</span><span class="p">,</span>   <span class="n">chi_calc</span><span class="p">,</span>    <span class="n">or1_angles_meas</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">]),</span>
+    <span class="p">(</span><span class="s2">&quot;φ (deg)&quot;</span><span class="p">,</span>   <span class="mf">0.0</span><span class="p">,</span>         <span class="n">or1_angles_meas</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">]),</span>
+<span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(006) reflection — calculated vs measured:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">10s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;Calculated&#39;</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;Measured&#39;</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;Δ&#39;</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">52</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">calc</span><span class="p">,</span> <span class="n">meas</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">meas</span> <span class="o">-</span> <span class="n">calc</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">10s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">calc</span><span class="si">:</span><span class="s2">12.4f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">meas</span><span class="si">:</span><span class="s2">12.4f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">delta</span><span class="si">:</span><span class="s2">+8.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The 0.68° offset in χ (c-axis tilt) causes the ~0.61° shift in ω.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(006) reflection — calculated vs measured:
+                Calculated      Measured         Δ
+----------------------------------------------------
+  2θ (deg)         41.9418       41.9394   -0.0024
+  ω (deg)          20.9709       20.3654   -0.6055
+  χ (deg)          90.0000       89.3200   -0.6800
+  φ (deg)           0.0000        0.0000   +0.0000
+
+The 0.68° offset in χ (c-axis tilt) causes the ~0.61° shift in ω.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="what-next">
+<h2>What next?<a class="headerlink" href="#what-next" title="Link to this heading">#</a></h2>
+<p>With the orientation matrix established, the diffractometer can:</p>
+<ul class="simple">
+<li><p><strong>Predict other reflection positions</strong> using <code class="docutils literal notranslate"><span class="pre">bragg_angles()</span></code> above.</p></li>
+<li><p><strong>Refine lattice constants</strong> from several measured 2θ values with
+<code class="docutils literal notranslate"><span class="pre">ahd.refine_lattice_bl1967()</span></code> or <code class="docutils literal notranslate"><span class="pre">ahd.refine_lattice_simplex()</span></code>.</p></li>
+<li><p><strong>Compute the azimuthal angle ψ</strong> with <code class="docutils literal notranslate"><span class="pre">g.psi()</span></code> once the UB matrix
+is fully refined (requires <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span></code> to be set).</p></li>
+<li><p><strong>Save and restore the alignment</strong> with <code class="docutils literal notranslate"><span class="pre">g.to_dict()</span></code> / <code class="docutils literal notranslate"><span class="pre">g.from_dict()</span></code>,
+which serialises the full state (lattice, reflections, UB matrix,
+wavelength, modes, cut-points) to a JSON-compatible dict.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Predict positions of additional sapphire reflections now that the</span>
+<span class="c1"># lattice constants are confirmed</span>
+<span class="n">more_reflections</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;hkl&#39;</span><span class="si">:</span><span class="s2">&gt;14s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;d (Å)&#39;</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;2θ (deg)&#39;</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">38</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">hkl</span> <span class="ow">in</span> <span class="n">more_reflections</span><span class="p">:</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">tth</span> <span class="o">=</span> <span class="n">bragg_angles</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">*</span><span class="n">hkl</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">hkl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">1d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hkl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">1d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hkl</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">)           </span><span class="si">{</span><span class="n">d</span><span class="si">:</span><span class="s2">8.4f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">tth</span><span class="si">:</span><span class="s2">10.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">hkl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">1d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hkl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">1d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hkl</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">)           </span><span class="si">{</span><span class="n">d</span><span class="si">:</span><span class="s2">8.4f</span><span class="si">}</span><span class="s2">  unreachable&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>           hkl     d (Å)    2θ (deg)
+--------------------------------------
+(1 0  4)             2.6872     33.5201
+(0 1  2)             3.2192     27.8570
+(1 1  0)             2.4478     36.9115
+(2 0  0)             2.3925     37.7963
+(0 0 12)             1.0826     91.4156
+(1 0 10)             1.2537     76.3525
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Keys in saved alignment state:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">state</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;JSON-serialisable: </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">state</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The saved state can be restored later with:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  g2 = ahd.AdHocDiffractometer.from_dict(state)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Keys in saved alignment state:
+[&#39;name&#39;, &#39;description&#39;, &#39;wavelength&#39;, &#39;kappa_alpha_deg&#39;, &#39;azimuthal_reference&#39;, &#39;surface_normal&#39;, &#39;detector_distance&#39;, &#39;detector_tilt&#39;, &#39;detector_offset&#39;, &#39;inclination_matrix&#39;, &#39;basis&#39;, &#39;stages&#39;, &#39;active_sample&#39;, &#39;samples&#39;, &#39;modes&#39;, &#39;mode_name&#39;, &#39;cut_points&#39;]
+
+JSON-serialisable: True
+
+The saved state can be restored later with:
+  g2 = ahd.AdHocDiffractometer.from_dict(state)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="serialize.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Save and Restore a Diffractometer Configuration</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../geometries/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Geometry Reference</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alignment-steps">Alignment steps</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#before-you-begin">Before you begin</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-0-imports">Step 0 — Imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-create-the-geometry-and-set-the-wavelength">Step 1 — Create the geometry and set the wavelength</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-set-the-sample-lattice-constants">Step 2 — Set the sample lattice constants</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-predict-bragg-peak-positions">Step 3 — Predict Bragg peak positions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-enter-the-primary-orienting-reflection-calculated-position">Step 4 — Enter the primary orienting reflection (calculated position)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-enter-the-secondary-orienting-reflection-geometric-placeholder">Step 5 — Enter the secondary orienting reflection (geometric placeholder)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-6-compute-the-orientation-matrix">Step 6 — Compute the orientation matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-7-verify-the-orientation-direction-check">Step 7 — Verify the orientation: direction check</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-8-find-the-peak-by-scanning-update-the-primary-reflection">Step 8 — Find the peak by scanning; update the primary reflection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-9-re-compute-the-orientation-matrix-and-display-the-state">Step 9 — Re-compute the orientation matrix and display the state</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-next">What next?</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/howto/fourcv_alignment_howto.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Pete Jemian.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

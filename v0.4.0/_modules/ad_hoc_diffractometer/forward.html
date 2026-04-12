@@ -1,0 +1,1192 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ad_hoc_diffractometer.forward &#8212; ad_hoc_diffractometer 0.4</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=090975f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+
+    <script src="../../_static/documentation_options.js?v=6c02275b"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/forward';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.4.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.4" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.4</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../direct-lattice.html">
+    Direct Lattice in Crystallography
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../problem1.html">
+    Case Study: Describing a Diffractometer
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../problem2.html">
+    You (1999) Geometry — Coordinate Convention and UB Matrix
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../direct-lattice.html">
+    Direct Lattice in Crystallography
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../problem1.html">
+    Case Study: Describing a Diffractometer
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../problem2.html">
+    You (1999) Geometry — Coordinate Convention and UB Matrix
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer.forward</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ad_hoc_diffractometer.forward</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2026 Pete R. Jemian &lt;prjemian+ad_hoc_diffractometer@gmail.com&gt;</span>
+<span class="c1"># SPDX-License-Identifier: CC-BY-4.0</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">forward.py — Forward diffraction calculation: (h, k, l) → motor angles.</span>
+
+<span class="sd">The forward calculation is the inverse of ``inverse()``: given a reciprocal-</span>
+<span class="sd">lattice point (h, k, l) and a diffraction mode, compute all valid sets of</span>
+<span class="sd">motor angles that satisfy the Bragg condition.</span>
+
+<span class="sd">Entry point</span>
+<span class="sd">-----------</span>
+<span class="sd">``AdHocDiffractometer.forward(h, k, l)`` calls ``compute_forward(geometry,</span>
+<span class="sd">h, k, l)`` which dispatches to the appropriate solver based on the active</span>
+<span class="sd">mode type.</span>
+
+<span class="sd">Supported modes</span>
+<span class="sd">---------------</span>
+<span class="sd">BisectingMode (four-sample-stage geometries with one detector arm)</span>
+<span class="sd">    Classic Eulerian four-circle bisecting solution (Busing &amp; Levy 1967,</span>
+<span class="sd">    section &quot;Angle settings&quot;).  Valid for psic (eta/delta bisecting),</span>
+<span class="sd">    fourcv, fourch (omega/ttheta bisecting), and analogous geometries.</span>
+
+<span class="sd">    Algorithm:</span>
+<span class="sd">        1. Q_phi = UB @ (h, k, l)             — target in phi frame</span>
+<span class="sd">        2. \|Q\| → ttheta via Bragg&#39;s law</span>
+<span class="sd">        3. frozen stages set from mode.frozen_angles</span>
+<span class="sd">        4. detector_stage = ttheta (computed from \|Q\|)</span>
+<span class="sd">        5. sample_stage   = ttheta / 2 (bisecting)</span>
+<span class="sd">        6. Remaining free sample stages (chi, phi or kchi, kphi) solved</span>
+<span class="sd">           from the direction of Q_phi, choosing among the standard</span>
+<span class="sd">           solution branches (two solutions: chi in [0°,180°] and</span>
+<span class="sd">           chi in [-180°, 0°]).</span>
+
+<span class="sd">FixedAngleMode</span>
+<span class="sd">    The named stage is frozen at the stored value.  The remaining</span>
+<span class="sd">    geometry-specific solver is then called with the reduced set of</span>
+<span class="sd">    free stages.  Currently only supported when the fixed stage is</span>
+<span class="sd">    one of the &quot;outer&quot; sample stages (not the detector or the bisected</span>
+<span class="sd">    stage).</span>
+
+<span class="sd">Raises</span>
+<span class="sd">------</span>
+<span class="sd">NotImplementedError</span>
+<span class="sd">    If the active mode is None or is not a supported type for this geometry.</span>
+<span class="sd">ValueError</span>
+<span class="sd">    If wavelength or UB matrix is not set.</span>
+<span class="sd">ValueError</span>
+<span class="sd">    If (h, k, l) = (0, 0, 0).</span>
+<span class="sd">ValueError</span>
+<span class="sd">    If the requested \|Q\| exceeds the Ewald sphere (wavelength too long).</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967) — angle-setting equations</span>
+<span class="sd">You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdHocDiffractometer</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Public entry point</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="compute_forward">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/forward/index.html#ad_hoc_diffractometer.forward.compute_forward">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_forward</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">l</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="c1"># noqa: E741</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute all valid motor-angle solutions for the reciprocal-lattice point</span>
+<span class="sd">    (h, k, l) in the geometry&#39;s active diffraction mode.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        The diffractometer.  Must have ``wavelength`` and ``sample.UB`` set,</span>
+<span class="sd">        and an active ``mode_name``.</span>
+<span class="sd">    h, k, l : float</span>
+<span class="sd">        Miller indices of the target reflection.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">        Each element is a complete set of motor angles (all stage names as</span>
+<span class="sd">        keys, values in degrees) that satisfies the Bragg condition under</span>
+<span class="sd">        the active mode constraints.  May contain zero, one, or multiple</span>
+<span class="sd">        solutions depending on the geometry and mode.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``geometry.wavelength`` is None.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``geometry.sample.UB`` is None.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If (h, k, l) == (0, 0, 0).</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the scattering vector magnitude exceeds the Ewald sphere</span>
+<span class="sd">        (\|Q\| &gt; 4π/λ, i.e. Bragg condition cannot be satisfied).</span>
+<span class="sd">    NotImplementedError</span>
+<span class="sd">        If no active mode is set or the active mode type is not supported</span>
+<span class="sd">        for this geometry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectingMode</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedAngleMode</span>
+
+    <span class="c1"># --- Precondition checks ------------------------------------------------</span>
+
+    <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">wavelength</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;geometry.wavelength must be set before calling forward(). &quot;</span>
+            <span class="s2">&quot;Set it with e.g. geometry.wavelength = 1.5406.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span>
+    <span class="k">if</span> <span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Sample </span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> has no UB matrix. &quot;</span>
+            <span class="s2">&quot;Set one with ub_identity(), ub_from_one_reflection(), or &quot;</span>
+            <span class="s2">&quot;assign sample.UB directly.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">hkl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">l</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">hkl</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;forward(): (h, k, l) = (0, 0, 0) is not a valid reflection.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">mode_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> has no active diffraction mode. &quot;</span>
+            <span class="s2">&quot;Set geometry.mode_name to one of: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># --- Compute target scattering vector in phi frame ----------------------</span>
+
+    <span class="n">Q_phi</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">hkl</span>  <span class="c1"># shape (3,)</span>
+    <span class="n">Q_mag</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Q_phi</span><span class="p">))</span>
+
+    <span class="c1"># Bragg&#39;s law: |Q| = 4π sin(θ) / λ  →  sin(θ) = |Q|λ / (4π)</span>
+    <span class="n">wavelength</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">wavelength</span>
+    <span class="n">sin_theta</span> <span class="o">=</span> <span class="n">Q_mag</span> <span class="o">*</span> <span class="n">wavelength</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sin_theta</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;forward(): |Q| = </span><span class="si">{</span><span class="n">Q_mag</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2"> Å⁻¹ exceeds the Ewald sphere &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(max = </span><span class="si">{</span><span class="mf">4.0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">wavelength</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2"> Å⁻¹) at &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;λ = </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2"> Å.  The reflection cannot be reached.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">ttheta_rad</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">sin_theta</span><span class="p">)</span>
+    <span class="n">ttheta_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">ttheta_rad</span><span class="p">)</span>
+
+    <span class="c1"># --- Dispatch to mode-specific solver ------------------------------------</span>
+
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">mode</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">BisectingMode</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_solve_bisecting</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">FixedAngleMode</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_solve_fixed_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;forward(): mode </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">) is not supported for geometry &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">.  Supported mode types: &quot;</span>
+        <span class="s2">&quot;BisectingMode, FixedAngleMode.&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Mode-specific solvers</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_bisecting</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ttheta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bisecting-mode forward solver.</span>
+
+<span class="sd">    Implements the Busing &amp; Levy (1967) angle-setting algorithm for an</span>
+<span class="sd">    Eulerian geometry in the bisecting condition.</span>
+
+<span class="sd">    The detector stage is set to ``ttheta_deg``.</span>
+<span class="sd">    The sample_stage (omega/eta) is set to ``ttheta_deg / 2``.</span>
+<span class="sd">    The remaining two sample stages (chi, phi) are computed from the</span>
+<span class="sd">    direction of Q_phi.</span>
+
+<span class="sd">    Two solutions are returned corresponding to:</span>
+<span class="sd">        - &quot;positive chi&quot; branch: chi ∈ [0°, 180°]</span>
+<span class="sd">        - &quot;negative chi&quot; branch: chi ∈ (-180°, 0°)</span>
+
+<span class="sd">    Both solutions are validated against stage limits; those that fail are</span>
+<span class="sd">    dropped.  Cut-points from the mode are applied to each angle.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">    Q_phi : numpy.ndarray, shape (3,)</span>
+<span class="sd">        Target scattering vector in the phi frame (Å⁻¹).</span>
+<span class="sd">    ttheta_deg : float</span>
+<span class="sd">        Detector angle (2θ) in degrees.</span>
+<span class="sd">    mode : BisectingMode</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">        Valid solutions (may be empty if all are out of limits).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Identify the three free sample stages (beyond the bisected one).</span>
+    <span class="c1"># For standard four-circle: [omega/eta, chi, phi].</span>
+    <span class="c1"># For psic with frozen mu/nu:  [eta, chi, phi].</span>
+    <span class="n">sample_stages</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span>
+
+    <span class="c1"># Build the baseline angle dict: all stages at their current angles.</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Apply frozen angles from the mode.</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="c1"># Set the detector stage (first/outermost detector stage = ttheta/delta).</span>
+    <span class="n">detector_name</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_stage</span>
+    <span class="n">angles</span><span class="p">[</span><span class="n">detector_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttheta_deg</span>
+    <span class="c1"># Any additional detector stages (e.g. nu in psic) keep frozen or current.</span>
+
+    <span class="c1"># The bisecting sample stage = ttheta / 2.</span>
+    <span class="n">sample_bisect_name</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">sample_stage</span>
+    <span class="n">angles</span><span class="p">[</span><span class="n">sample_bisect_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttheta_deg</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="c1"># The remaining two free sample stages are the ones not frozen and not bisected.</span>
+    <span class="n">constrained</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">constrained_stages</span><span class="p">)</span>
+    <span class="n">constrained</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">detector_name</span><span class="p">)</span>
+    <span class="n">free_sample</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample_stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constrained</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_sample</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># All sample stages constrained — return the fixed solution if valid.</span>
+        <span class="n">_apply_cut_points</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">angles</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_sample</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># One free sample stage (e.g. phi in fixed_chi mode).</span>
+        <span class="c1"># Solve 1D: find the single angle that satisfies Q_phi.</span>
+        <span class="k">return</span> <span class="n">_solve_one_free_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">free_sample</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+    <span class="c1"># The two remaining free stages are chi_stage and phi_stage.</span>
+    <span class="c1"># By convention (BL1967, You1999) the stacking order is:</span>
+    <span class="c1">#   [outermost ... chi_stage, phi_stage] (phi closest to sample)</span>
+    <span class="c1"># The last two free stages in stacking order play the chi/phi roles.</span>
+    <span class="n">chi_stage</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">phi_stage</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># With all constrained angles fixed, we need to find (chi, phi) such that</span>
+    <span class="c1"># angles_to_phi_vector(geometry, **all_angles) == Q_phi.</span>
+    <span class="c1">#</span>
+    <span class="c1"># This is a 2D root-finding problem.  We use a numerical solver rather</span>
+    <span class="c1"># than an analytic formula so that the result is correct for any basis</span>
+    <span class="c1"># convention and stage axis handedness.</span>
+    <span class="c1">#</span>
+    <span class="c1"># Two solution branches are seeded from the analytic decomposition of</span>
+    <span class="c1"># Q_phi relative to the chi rotation axis, giving starting guesses that</span>
+    <span class="c1"># are typically within a few degrees of the solution.</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.orientation</span><span class="w"> </span><span class="kn">import</span> <span class="n">angles_to_phi_vector</span> <span class="k">as</span> <span class="n">_a2phi</span>
+
+    <span class="n">Q_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Q_phi</span><span class="p">))</span>
+    <span class="n">q_hat</span> <span class="o">=</span> <span class="n">Q_phi</span> <span class="o">/</span> <span class="n">Q_norm</span>
+
+    <span class="c1"># Normalised chi axis vector</span>
+    <span class="n">chi_ax</span> <span class="o">=</span> <span class="n">chi_stage</span><span class="o">.</span><span class="n">axis</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">chi_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
+
+    <span class="c1"># Component of q_hat along the chi axis direction</span>
+    <span class="n">q_along_chi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q_hat</span><span class="p">,</span> <span class="n">chi_ax</span><span class="p">))</span>
+    <span class="n">q_along_chi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">q_along_chi</span><span class="p">))</span>
+
+    <span class="c1"># Analytic seed: chi_abs is the angle between Q_phi and the chi-perp plane</span>
+    <span class="n">chi_abs_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">q_along_chi</span><span class="p">)))</span>
+
+    <span class="c1"># In-plane direction for phi seeding</span>
+    <span class="n">q_in_plane</span> <span class="o">=</span> <span class="n">q_hat</span> <span class="o">-</span> <span class="n">q_along_chi</span> <span class="o">*</span> <span class="n">chi_ax</span>
+    <span class="n">q_in_plane_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_in_plane</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">q_in_plane_norm</span> <span class="o">&gt;</span> <span class="mf">1e-8</span><span class="p">:</span>
+        <span class="n">phi_seed_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span>
+            <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">q_in_plane</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">q_in_plane</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">phi_seed_deg</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Seed (chi, phi) pairs.  Use a combination of analytically motivated</span>
+    <span class="c1"># seeds and a coarse grid to ensure both solution branches are found even</span>
+    <span class="c1"># in degenerate cases (Q along chi axis, or chi ≈ 0 / 90 / 180°).</span>
+    <span class="n">analytic_seeds</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">chi_seed</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="n">chi_abs_deg</span><span class="p">,</span>
+        <span class="o">-</span><span class="n">chi_abs_deg</span><span class="p">,</span>
+        <span class="mf">180.0</span> <span class="o">-</span> <span class="n">chi_abs_deg</span><span class="p">,</span>
+        <span class="o">-</span><span class="p">(</span><span class="mf">180.0</span> <span class="o">-</span> <span class="n">chi_abs_deg</span><span class="p">),</span>
+    <span class="p">]:</span>
+        <span class="k">for</span> <span class="n">phi_seed</span> <span class="ow">in</span> <span class="p">[</span><span class="n">phi_seed_deg</span><span class="p">,</span> <span class="n">phi_seed_deg</span> <span class="o">+</span> <span class="mf">180.0</span><span class="p">]:</span>
+            <span class="n">analytic_seeds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">chi_seed</span><span class="p">,</span> <span class="n">phi_seed</span><span class="p">))</span>
+
+    <span class="c1"># Coarse 90°-grid seeds to catch solutions far from the analytic guess</span>
+    <span class="n">grid_seeds</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">chi_s</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">chi_s</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">phi_s</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="n">seed_pairs</span> <span class="o">=</span> <span class="n">analytic_seeds</span> <span class="o">+</span> <span class="n">grid_seeds</span>
+
+    <span class="n">solutions</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">chi_start</span><span class="p">,</span> <span class="n">phi_start</span> <span class="ow">in</span> <span class="n">seed_pairs</span><span class="p">:</span>
+        <span class="n">sol_angles</span> <span class="o">=</span> <span class="n">_solve_two_angles</span><span class="p">(</span>
+            <span class="n">geometry</span><span class="o">=</span><span class="n">geometry</span><span class="p">,</span>
+            <span class="n">fixed_angles</span><span class="o">=</span><span class="n">angles</span><span class="p">,</span>
+            <span class="n">free_stage_1</span><span class="o">=</span><span class="n">chi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">free_stage_2</span><span class="o">=</span><span class="n">phi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">start_1</span><span class="o">=</span><span class="n">chi_start</span><span class="p">,</span>
+            <span class="n">start_2</span><span class="o">=</span><span class="n">phi_start</span><span class="p">,</span>
+            <span class="n">Q_phi_target</span><span class="o">=</span><span class="n">Q_phi</span><span class="p">,</span>
+            <span class="n">a2phi_fn</span><span class="o">=</span><span class="n">_a2phi</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">sol_angles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
+            <span class="k">continue</span>  <span class="c1"># pragma: no cover</span>
+
+        <span class="n">sol</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+        <span class="n">sol</span><span class="p">[</span><span class="n">chi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sol</span><span class="p">[</span><span class="n">phi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">_apply_cut_points</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+
+        <span class="c1"># De-duplicate: skip if this solution is the same as an existing one</span>
+        <span class="n">duplicate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">existing</span> <span class="ow">in</span> <span class="n">solutions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">existing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-4</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sol</span><span class="p">):</span>
+                <span class="n">duplicate</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">duplicate</span> <span class="ow">and</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
+            <span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">solutions</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_one_free_angle</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">,</span>
+    <span class="n">fixed_angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">free_stage</span><span class="p">,</span>
+    <span class="n">Q_phi_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Numerically solve for one free stage angle such that</span>
+<span class="sd">    ``angles_to_phi_vector(geometry, **all_angles) == Q_phi_target``.</span>
+
+<span class="sd">    Used when only one sample stage is free (e.g. phi in fixed_chi mode).</span>
+<span class="sd">    Seeds from 4 quadrants and deduplicates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">    fixed_angles : dict</span>
+<span class="sd">        Baseline angles (including all constrained stages).</span>
+<span class="sd">    free_stage : Stage</span>
+<span class="sd">        The single free stage.</span>
+<span class="sd">    Q_phi_target : numpy.ndarray, shape (3,)</span>
+<span class="sd">    mode : DiffractionMode</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.orientation</span><span class="w"> </span><span class="kn">import</span> <span class="n">angles_to_phi_vector</span> <span class="k">as</span> <span class="n">_a2phi</span>
+
+    <span class="n">solutions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">]:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_solve_two_angles</span><span class="p">(</span>
+            <span class="n">geometry</span><span class="o">=</span><span class="n">geometry</span><span class="p">,</span>
+            <span class="n">fixed_angles</span><span class="o">=</span><span class="n">fixed_angles</span><span class="p">,</span>
+            <span class="n">free_stage_1</span><span class="o">=</span><span class="n">free_stage</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">free_stage_2</span><span class="o">=</span><span class="n">free_stage</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>  <span class="c1"># dummy — same stage</span>
+            <span class="n">start_1</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+            <span class="n">start_2</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+            <span class="n">Q_phi_target</span><span class="o">=</span><span class="n">Q_phi_target</span><span class="p">,</span>
+            <span class="n">a2phi_fn</span><span class="o">=</span><span class="n">_a2phi</span><span class="p">,</span>
+            <span class="n">_one_dimensional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
+            <span class="k">continue</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fixed_angles</span><span class="p">)</span>
+        <span class="n">sol</span><span class="p">[</span><span class="n">free_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">_apply_cut_points</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+        <span class="n">duplicate</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="n">existing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">free_stage</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">sol</span><span class="p">[</span><span class="n">free_stage</span><span class="o">.</span><span class="n">name</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-4</span>
+            <span class="k">for</span> <span class="n">existing</span> <span class="ow">in</span> <span class="n">solutions</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">duplicate</span> <span class="ow">and</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
+            <span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">solutions</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_two_angles</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">,</span>
+    <span class="n">fixed_angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">free_stage_1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">free_stage_2</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">start_1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">start_2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">Q_phi_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">a2phi_fn</span><span class="p">,</span>
+    <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">,</span>
+    <span class="n">_one_dimensional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Numerically solve for one or two free stage angles such that</span>
+<span class="sd">    ``angles_to_phi_vector(geometry, **all_angles) == Q_phi_target``.</span>
+
+<span class="sd">    Uses Gauss-Newton iteration on the 3-component residual.  For the</span>
+<span class="sd">    2D case (default) the system is 3×2 (overdetermined but consistent).</span>
+<span class="sd">    For the 1D case (``_one_dimensional=True``), only ``free_stage_1`` is</span>
+<span class="sd">    varied; ``free_stage_2`` is ignored.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">    fixed_angles : dict</span>
+<span class="sd">        All stage angles including the constrained ones.  This dict is</span>
+<span class="sd">        used as the base; free stages are overwritten.</span>
+<span class="sd">    free_stage_1, free_stage_2 : str</span>
+<span class="sd">        Names of the free stages.  When ``_one_dimensional=True``,</span>
+<span class="sd">        only ``free_stage_1`` is varied.</span>
+<span class="sd">    start_1, start_2 : float</span>
+<span class="sd">        Starting guess in degrees.</span>
+<span class="sd">    Q_phi_target : numpy.ndarray, shape (3,)</span>
+<span class="sd">    a2phi_fn : callable</span>
+<span class="sd">        ``angles_to_phi_vector`` function.</span>
+<span class="sd">    max_iter, tol : int, float</span>
+<span class="sd">        Convergence parameters.</span>
+<span class="sd">    _one_dimensional : bool</span>
+<span class="sd">        If True, solve for only ``free_stage_1`` (1D problem).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (angle_1, angle_2) : tuple of float, or None if no convergence.</span>
+<span class="sd">        When ``_one_dimensional=True``, ``angle_2`` equals ``start_2``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_free</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">_one_dimensional</span> <span class="k">else</span> <span class="mi">2</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">start_1</span><span class="p">,</span> <span class="n">start_2</span><span class="p">][:</span><span class="n">n_free</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">residual</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">trial</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fixed_angles</span><span class="p">)</span>
+        <span class="n">trial</span><span class="p">[</span><span class="n">free_stage_1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_one_dimensional</span><span class="p">:</span>
+            <span class="n">trial</span><span class="p">[</span><span class="n">free_stage_2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">a2phi_fn</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">trial</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Q</span> <span class="o">-</span> <span class="n">Q_phi_target</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">jacobian_fd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finite-difference Jacobian (3 × n_free).&quot;&quot;&quot;</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_free</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_free</span><span class="p">):</span>
+            <span class="n">xp</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">xp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+            <span class="n">J</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">residual</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span> <span class="o">-</span> <span class="n">r0</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>
+        <span class="k">return</span> <span class="n">J</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">residual</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
+            <span class="n">a1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">a2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">_one_dimensional</span> <span class="k">else</span> <span class="n">start_2</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">)</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian_fd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dx</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="mf">30.0</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">dx</span> <span class="o">*</span> <span class="p">(</span><span class="mf">30.0</span> <span class="o">/</span> <span class="n">step</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">dx</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">residual</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">_one_dimensional</span> <span class="k">else</span> <span class="n">start_2</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+    <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># pragma: no cover</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_fixed_angle</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ttheta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FixedAngleMode forward solver.</span>
+
+<span class="sd">    Freezes the named stage at its fixed value, then delegates to the</span>
+<span class="sd">    bisecting solver treating the remaining stages as free — provided the</span>
+<span class="sd">    geometry has a bisecting-capable structure (detector + 3 sample stages</span>
+<span class="sd">    where one is the equivalent of omega/eta).</span>
+
+<span class="sd">    This covers the common case of fixed_chi (chi frozen at e.g. 90°,</span>
+<span class="sd">    omega/ttheta bisecting, phi free) or fixed_mu (mu=0, rest as psic</span>
+<span class="sd">    bisecting).</span>
+
+<span class="sd">    For each frozen-stage value, the remaining angles are solved via the</span>
+<span class="sd">    bisecting equations restricted to the appropriate stages.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">    Q_phi : numpy.ndarray, shape (3,)</span>
+<span class="sd">    ttheta_deg : float</span>
+<span class="sd">    mode : FixedAngleMode</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectingMode</span>
+
+    <span class="c1"># Find the geometry&#39;s default bisecting mode to re-use its stage names.</span>
+    <span class="n">bisecting_mode</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">BisectingMode</span><span class="p">):</span>
+            <span class="n">bisecting_mode</span> <span class="o">=</span> <span class="n">m</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">bisecting_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;forward(): FixedAngleMode solver for geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> &quot;</span>
+            <span class="s2">&quot;requires a BisectingMode to be defined in the geometry&#39;s modes &quot;</span>
+            <span class="s2">&quot;to identify the bisecting and detector stage names.  &quot;</span>
+            <span class="s2">&quot;No BisectingMode found.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Build an effective BisectingMode that includes the fixed stage as frozen.</span>
+    <span class="n">effective_frozen</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">bisecting_mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">)</span>
+    <span class="n">effective_frozen</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">)</span>
+
+    <span class="n">effective_mode</span> <span class="o">=</span> <span class="n">BisectingMode</span><span class="p">(</span>
+        <span class="n">sample_stage</span><span class="o">=</span><span class="n">bisecting_mode</span><span class="o">.</span><span class="n">sample_stage</span><span class="p">,</span>
+        <span class="n">detector_stage</span><span class="o">=</span><span class="n">bisecting_mode</span><span class="o">.</span><span class="n">detector_stage</span><span class="p">,</span>
+        <span class="n">frozen_angles</span><span class="o">=</span><span class="n">effective_frozen</span><span class="p">,</span>
+        <span class="n">cut_points</span><span class="o">=</span><span class="n">mode</span><span class="o">.</span><span class="n">cut_points</span> <span class="ow">or</span> <span class="n">bisecting_mode</span><span class="o">.</span><span class="n">cut_points</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_solve_bisecting</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">effective_mode</span><span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Helpers</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_cut_points</span><span class="p">(</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">mode</span><span class="p">,</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply cut-points (in-place) to all angles in the solution dict.</span>
+
+<span class="sd">    Mode-level cut-points take priority over geometry-level cut-points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">stage_name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">angles</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">stage_name</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">cut_points</span><span class="p">:</span>
+            <span class="n">angles</span><span class="p">[</span><span class="n">stage_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">apply_cut_point</span><span class="p">(</span><span class="n">stage_name</span><span class="p">,</span> <span class="n">angles</span><span class="p">[</span><span class="n">stage_name</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">stage_name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">cut_points</span><span class="p">:</span>
+            <span class="n">cut</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">cut_points</span><span class="p">[</span><span class="n">stage_name</span><span class="p">]</span>
+            <span class="n">remainder</span> <span class="o">=</span> <span class="p">(</span><span class="n">angles</span><span class="p">[</span><span class="n">stage_name</span><span class="p">]</span> <span class="o">-</span> <span class="n">cut</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span>
+            <span class="n">angles</span><span class="p">[</span><span class="n">stage_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">cut</span> <span class="o">+</span> <span class="n">remainder</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_limits</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return True if all angles are within the stage limits of their stage.</span>
+
+<span class="sd">    Stages not present in the angles dict are not checked.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">angles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">stage</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">stage</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">in_limits</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Pete Jemian.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

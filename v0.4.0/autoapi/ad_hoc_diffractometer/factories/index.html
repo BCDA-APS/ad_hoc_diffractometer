@@ -1,0 +1,1368 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>factories &#8212; ad_hoc_diffractometer 0.4</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=090975f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+
+    <script src="../../../_static/documentation_options.js?v=6c02275b"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/ad_hoc_diffractometer/factories/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.4.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="forward" href="../forward/index.html" />
+    <link rel="prev" title="display" href="../display/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.4" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.4</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changes.html">
+    Change History
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../direct-lattice.html">
+    Direct Lattice in Crystallography
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../problem1.html">
+    Case Study: Describing a Diffractometer
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../problem2.html">
+    You (1999) Geometry — Coordinate Convention and UB Matrix
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changes.html">
+    Change History
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../references.html">
+    References
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../direct-lattice.html">
+    Direct Lattice in Crystallography
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../problem1.html">
+    Case Study: Describing a Diffractometer
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../problem2.html">
+    You (1999) Geometry — Coordinate Convention and UB Matrix
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">ad_hoc_diffractometer</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../axes/index.html">axes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constants/index.html">constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../conversions/index.html">conversions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../display/index.html">display</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">factories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../forward/index.html">forward</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometry/index.html">geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lattice/index.html">lattice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mode/index.html">mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orientation/index.html">orientation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/index.html">radiation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../refinement/index.html">refinement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reflection/index.html">reflection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rotation/index.html">rotation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sample/index.html">sample</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scan/index.html">scan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stage/index.html">stage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/index.html">surface</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../api.html" class="nav-link">API Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">ad_hoc_diffractometer</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">factories</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ad_hoc_diffractometer.factories">
+<span id="factories"></span><h1>factories<a class="headerlink" href="#module-ad_hoc_diffractometer.factories" title="Link to this heading">#</a></h1>
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories</span></code></p>
+<p>This module provides <strong>pre-built geometries</strong>: factory functions that
+construct fully configured <a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a>
+instances for the most common multi-circle diffractometer designs used in
+synchrotron and laboratory X-ray / neutron crystallography.  They also
+serve as worked examples for defining custom geometries.</p>
+<section id="pre-built-geometries">
+<h2>Pre-built geometries<a class="headerlink" href="#pre-built-geometries" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 17.6%" />
+<col style="width: 23.5%" />
+<col style="width: 58.8%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.fourcv" title="ad_hoc_diffractometer.factories.fourcv"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourcv()</span></code></a></p></td>
+<td><p>Eulerian 4-circle</p></td>
+<td><p>Vertical scattering plane (synchrotron). See <a class="reference internal" href="../../../geometries/fourcv.html"><span class="doc">fourcv — Four-Circle Eulerian (Synchrotron)</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.fourch" title="ad_hoc_diffractometer.factories.fourch"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourch()</span></code></a></p></td>
+<td><p>Eulerian 4-circle</p></td>
+<td><p>Horizontal scattering plane (laboratory). See <a class="reference internal" href="../../../geometries/fourch.html"><span class="doc">fourch — Four-Circle Eulerian (Laboratory)</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.psic" title="ad_hoc_diffractometer.factories.psic"><code class="xref py py-func docutils literal notranslate"><span class="pre">psic()</span></code></a></p></td>
+<td><p>Eulerian 6-circle</p></td>
+<td><p>You (1999) 4S+2D. See <a class="reference internal" href="../../../geometries/psic.html"><span class="doc">psic — Six-Circle 4S+2D (You 1999)</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.sixc" title="ad_hoc_diffractometer.factories.sixc"><code class="xref py py-func docutils literal notranslate"><span class="pre">sixc()</span></code></a></p></td>
+<td><p>Eulerian 6-circle</p></td>
+<td><p>Lohmeier &amp; Vlieg (1993) surface geometry. See <a class="reference internal" href="../../../geometries/sixc.html"><span class="doc">sixc — Six-Circle Surface (Lohmeier &amp; Vlieg 1993)</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.fivec" title="ad_hoc_diffractometer.factories.fivec"><code class="xref py py-func docutils literal notranslate"><span class="pre">fivec()</span></code></a></p></td>
+<td><p>Eulerian 5-circle</p></td>
+<td><p>Vlieg et al. (1987), fourcv on a mu base. See <a class="reference internal" href="../../../geometries/fivec.html"><span class="doc">fivec — Five-Circle (Vlieg et al. 1987)</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.kappa4cv" title="ad_hoc_diffractometer.factories.kappa4cv"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4cv()</span></code></a></p></td>
+<td><p>Kappa 4-circle</p></td>
+<td><p>Vertical scattering plane (synchrotron). See <a class="reference internal" href="../../../geometries/kappa4cv.html"><span class="doc">kappa4cv — Kappa Four-Circle (Synchrotron)</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.kappa4ch" title="ad_hoc_diffractometer.factories.kappa4ch"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4ch()</span></code></a></p></td>
+<td><p>Kappa 4-circle</p></td>
+<td><p>Horizontal scattering plane (laboratory). See <a class="reference internal" href="../../../geometries/kappa4ch.html"><span class="doc">kappa4ch — Kappa Four-Circle (Laboratory)</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.kappa6c" title="ad_hoc_diffractometer.factories.kappa6c"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa6c()</span></code></a></p></td>
+<td><p>Kappa 6-circle</p></td>
+<td><p>Psic-style outer axes. See <a class="reference internal" href="../../../geometries/kappa6c.html"><span class="doc">kappa6c — Six-Circle Kappa (Synchrotron)</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.zaxis" title="ad_hoc_diffractometer.factories.zaxis"><code class="xref py py-func docutils literal notranslate"><span class="pre">zaxis()</span></code></a></p></td>
+<td><p>Surface / special</p></td>
+<td><p>Bloch (1985) Z-axis geometry. See <a class="reference internal" href="../../../geometries/zaxis.html"><span class="doc">zaxis — Z-Axis Four-Circle (Surface)</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.s2d2" title="ad_hoc_diffractometer.factories.s2d2"><code class="xref py py-func docutils literal notranslate"><span class="pre">s2d2()</span></code></a></p></td>
+<td><p>Surface / special</p></td>
+<td><p>Evans-Lutterodt &amp; Tang (1995). See <a class="reference internal" href="../../../geometries/s2d2.html"><span class="doc">s2d2 — S2D2 General-Inclination Four-Circle</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Each factory is decorated with <code class="docutils literal notranslate"><span class="pre">&#64;register_geometry</span></code>, which registers it
+in the geometry registry.  Use <a class="reference internal" href="#ad_hoc_diffractometer.factories.list_geometries" title="ad_hoc_diffractometer.factories.list_geometries"><code class="xref py py-func docutils literal notranslate"><span class="pre">list_geometries()</span></code></a> to retrieve all
+registered geometries as a <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">callable}</span></code> dict.</p>
+</section>
+<section id="extension-via-entry-points">
+<h2>Extension via entry points<a class="headerlink" href="#extension-via-entry-points" title="Link to this heading">#</a></h2>
+<p>Third-party packages can contribute additional geometry factories by
+declaring an entry point in the <code class="docutils literal notranslate"><span class="pre">&quot;ad_hoc_diffractometer.geometries&quot;</span></code>
+group in their <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">project</span><span class="o">.</span><span class="n">entry</span><span class="o">-</span><span class="n">points</span><span class="o">.</span><span class="s2">&quot;ad_hoc_diffractometer.geometries&quot;</span><span class="p">]</span>
+<span class="n">my_geom</span> <span class="o">=</span> <span class="s2">&quot;my_package.module:my_factory_function&quot;</span>
+</pre></div>
+</div>
+<p>The factory function must accept no required arguments (it may accept
+keyword arguments) and return an <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> instance.
+Entry-point geometries are discovered and loaded automatically when
+<code class="docutils literal notranslate"><span class="pre">list_geometries()</span></code> or <code class="docutils literal notranslate"><span class="pre">get_geometry()</span></code> is first called; they do NOT
+need to call <code class="docutils literal notranslate"><span class="pre">&#64;register_geometry</span></code> themselves.</p>
+<p><strong>Geometry names must be globally unique.</strong>  If an entry-point name
+duplicates an already-registered name (whether a built-in or a
+previously loaded plugin), a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> is raised at discovery time.
+This prevents silent shadowing: an external package cannot overwrite
+<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">psic</span></code>, or any other registered geometry.</p>
+</section>
+<section id="writing-a-custom-geometry">
+<h2>Writing a custom geometry<a class="headerlink" href="#writing-a-custom-geometry" title="Link to this heading">#</a></h2>
+<p>Each factory accepts an optional <code class="docutils literal notranslate"><span class="pre">basis</span></code> keyword argument (defaulting to
+the canonical convention for that geometry).  Inside the factory, resolve
+physical-direction aliases locally:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AdHocDiffractometer</span><span class="p">,</span> <span class="n">Stage</span><span class="p">,</span> <span class="n">register_geometry</span><span class="p">,</span> <span class="n">BASIS_YOU</span>
+<span class="p">)</span>
+
+<span class="nd">@register_geometry</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_geometry</span><span class="p">(</span><span class="n">basis</span><span class="o">=</span><span class="n">BASIS_YOU</span><span class="p">):</span>
+    <span class="n">VERTICAL</span>     <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
+    <span class="n">LATERAL</span>      <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
+    <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
+    <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>      <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>   <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span>   <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>   <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>     <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_geometry&quot;</span><span class="p">,</span> <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>The two public basis dicts <code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code> and <code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code> are exported from
+<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code>.  Pass <code class="docutils literal notranslate"><span class="pre">basis=BASIS_BL</span></code> for Busing &amp; Levy
+convention geometries.</p>
+<p>Naming convention:</p>
+<ul class="simple">
+<li><p>Eulerian geometries: <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">fourch</span></code>, <code class="docutils literal notranslate"><span class="pre">sixc</span></code>, <code class="docutils literal notranslate"><span class="pre">psic</span></code></p></li>
+<li><p>Kappa geometries: <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code></p></li>
+<li><p>Surface / special geometries: <code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">s2d2</span></code>, <code class="docutils literal notranslate"><span class="pre">fivec</span></code></p></li>
+</ul>
+<p>Scattering-plane suffix convention (<code class="docutils literal notranslate"><span class="pre">v</span></code> / <code class="docutils literal notranslate"><span class="pre">h</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">v</span></code> — vertical scattering plane (synchrotron): ttheta rotates about the lateral axis</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">h</span></code> — horizontal scattering plane (laboratory): ttheta rotates about the vertical axis</p></li>
+</ul>
+<p>Where no suffix is given, the detector convention is unambiguous (psic, sixc)
+or the geometry uses a non-standard detector arrangement (zaxis, s2d2, fivec).</p>
+<blockquote>
+<div><p>fourch  (horizontal scattering plane) matches Busing &amp; Levy (1967) Fig. 1b.
+fourcv  (vertical   scattering plane) is the synchrotron convention.
+kappa4ch and kappa4cv follow the same convention as fourch and fourcv.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Kappa angle (alpha) convention (Walko 2016; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):</dt><dd><p>The kappa axis lies in the vertical-lateral plane, tilted alpha degrees
+from the vertical axis toward the lateral axis.  Typical value: 50 deg.</p>
+</dd>
+<dt>Walko (2016) designations:</dt><dd><p>S3D1      fourcv, fourch, kappa4cv, kappa4ch
+S4D2      psic, kappa6c
+(S3D2)1   sixc   (sample and detector share base stage)
+(S3D1)1   fivec  (fourcv mounted on vertical base)
+(S1D2)1   zaxis  (sample and detector share alpha base stage)
+S2D2      s2d2   (fully decoupled sample/detector pairs)</p>
+</dd>
+<dt>References (chronological):</dt><dd><p>W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967)               fourcv / fourch
+J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985)                          zaxis
+E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987)                   fivec
+M. Lohmeier &amp; E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993)            sixc
+K.W. Evans-Lutterodt &amp; M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) s2d2
+H. You, J. Appl. Cryst. 32, 614-623 (1999) DOI:10.1107/S0021889899001223   psic
+ITC Vol. C, Sec. 2.2.6 (2006) DOI:10.1107/97809553602060000577         kappa
+D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)                 kappa, zaxis, s2d2, fivec</p>
+</dd>
+</dl>
+</section>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP" title="ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT" title="ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.fivec" title="ad_hoc_diffractometer.factories.fivec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fivec</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
+<td><p>Five-circle diffractometer (fourcv mounted on a vertical base).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.fourch" title="ad_hoc_diffractometer.factories.fourch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fourch</span></code></a>(...)</p></td>
+<td><p>Four-circle Eulerian diffractometer, horizontal scattering plane (laboratory).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.fourcv" title="ad_hoc_diffractometer.factories.fourcv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fourcv</span></code></a>(...)</p></td>
+<td><p>Four-circle Eulerian diffractometer, vertical scattering plane (synchrotron).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.get_geometry" title="ad_hoc_diffractometer.factories.get_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_geometry</span></code></a>(name)</p></td>
+<td><p>Return the registered factory function for the named geometry.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.kappa4ch" title="ad_hoc_diffractometer.factories.kappa4ch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa4ch</span></code></a>(...)</p></td>
+<td><p>Four-circle kappa diffractometer, horizontal scattering plane (laboratory).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.kappa4cv" title="ad_hoc_diffractometer.factories.kappa4cv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa4cv</span></code></a>(...)</p></td>
+<td><p>Four-circle kappa diffractometer, vertical scattering plane (synchrotron).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.kappa6c" title="ad_hoc_diffractometer.factories.kappa6c"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa6c</span></code></a>(...)</p></td>
+<td><p>Six-circle kappa diffractometer (psic-style outer axes, kappa inner sample).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.list_geometries" title="ad_hoc_diffractometer.factories.list_geometries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_geometries</span></code></a>(→ dict[str, type])</p></td>
+<td><p>Return a copy of the geometry registry as {name: factory_callable}.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.make_geometry" title="ad_hoc_diffractometer.factories.make_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_geometry</span></code></a>(...)</p></td>
+<td><p>Instantiate a geometry by name, passing keyword arguments to its factory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.psic" title="ad_hoc_diffractometer.factories.psic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psic</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
+<td><p>You (1999) '4S+2D' six-circle diffractometer (psic geometry).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.register_geometry" title="ad_hoc_diffractometer.factories.register_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_geometry</span></code></a>(func)</p></td>
+<td><p>Decorator that registers a geometry factory in _GEOMETRY_REGISTRY.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.s2d2" title="ad_hoc_diffractometer.factories.s2d2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s2d2</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
+<td><p>S2D2 four-circle diffractometer (general-inclination geometry).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.sixc" title="ad_hoc_diffractometer.factories.sixc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sixc</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
+<td><p>Lohmeier &amp; Vlieg (1993) six-circle surface diffractometer (sixc geometry).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.zaxis" title="ad_hoc_diffractometer.factories.zaxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zaxis</span></code></a>(→ ad_hoc_diffractometer.geometry.AdHocDiffractometer)</p></td>
+<td><p>Z-axis four-circle diffractometer (general-inclination geometry).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.BASIS_BL">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">BASIS_BL</span></span><a class="headerlink" href="#ad_hoc_diffractometer.factories.BASIS_BL" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.BASIS_YOU">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">BASIS_YOU</span></span><a class="headerlink" href="#ad_hoc_diffractometer.factories.BASIS_YOU" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ad_hoc_diffractometer.geometries'</span></span><a class="headerlink" href="#ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">KAPPA_ALPHA_DEFAULT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">50.0</span></span><a class="headerlink" href="#ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.fivec">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">fivec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_BASIS_YOU</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#fivec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.fivec" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.fivec</span></code></p>
+</div>
+<p>Five-circle diffractometer (fourcv mounted on a vertical base).</p>
+<p>Walko (2016) designation: (S3D1)1.
+Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</p>
+<p>A standard Eulerian four-circle (fourcv) is mounted on a fifth vertical
+rotation stage (mu) as a base.  The sample and detector motions are coupled
+through mu.  This provides an additional degree of freedom for accessing
+wider regions of reciprocal space, particularly at synchrotron sources.</p>
+<p>Stack (floor first):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mu</span> <span class="p">(</span><span class="n">shared</span> <span class="n">base</span><span class="p">):</span> <span class="n">vertical</span><span class="p">,</span>     <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">omega</span> <span class="p">(</span><span class="n">sample</span><span class="p">):</span> <span class="n">lateral</span><span class="p">,</span>      <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+        <span class="o">--&gt;</span> <span class="n">chi</span><span class="p">:</span>      <span class="n">longitudinal</span><span class="p">,</span> <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
+              <span class="o">--&gt;</span> <span class="n">phi</span><span class="p">:</span> <span class="n">lateral</span><span class="p">,</span>     <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">ttheta</span> <span class="p">(</span><span class="n">detector</span><span class="p">):</span> <span class="n">lateral</span><span class="p">,</span>   <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+</pre></div>
+</div>
+<p>References:
+E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
+D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.fourch">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">fourch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_BASIS_BL</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#fourch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.fourch" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.fourch</span></code></p>
+</div>
+<p>Four-circle Eulerian diffractometer, horizontal scattering plane (laboratory).</p>
+<p>Walko (2016) designation: S3D1.</p>
+<p>Laboratory / default configuration: omega and ttheta both rotate about
+the vertical axis, so the scattering plane is horizontal.  This is the
+geometry described in Busing &amp; Levy (1967), Fig. 1b.</p>
+<p>Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</p>
+<dl class="simple">
+<dt>Sample stack (floor first):</dt><dd><p>omega  : vertical, left-handed
+chi    : lateral,  right-handed
+phi    : vertical, left-handed</p>
+</dd>
+<dt>Detector (floor, mechanically independent):</dt><dd><p>ttheta : vertical, left-handed</p>
+</dd>
+</dl>
+<p>omega and ttheta share the same vertical axis; mechanically independent.</p>
+<dl class="simple">
+<dt>Reference: W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).</dt><dd><p>D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.fourcv">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">fourcv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_BASIS_BL</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#fourcv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.fourcv" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.fourcv</span></code></p>
+</div>
+<p>Four-circle Eulerian diffractometer, vertical scattering plane (synchrotron).</p>
+<p>Walko (2016) designation: S3D1.</p>
+<p>Synchrotron configuration: omega and ttheta both rotate about the
+lateral axis, so the scattering plane is vertical.  This exploits the
+s-polarisation and tighter vertical collimation of synchrotron radiation
+(Walko 2016).</p>
+<p>Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</p>
+<dl class="simple">
+<dt>Sample stack (floor first):</dt><dd><p>omega  : lateral,      left-handed
+chi    : longitudinal, right-handed
+phi    : lateral,      left-handed</p>
+</dd>
+<dt>Detector (floor, mechanically independent of sample stack):</dt><dd><p>ttheta : lateral,      left-handed</p>
+</dd>
+</dl>
+<p>omega and ttheta share the same lateral axis; mechanically independent.</p>
+<dl class="simple">
+<dt>References: W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).</dt><dd><p>D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.get_geometry">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">get_geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#get_geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.get_geometry" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.get_geometry</span></code></p>
+</div>
+<p>Return the registered factory function for the named geometry.</p>
+<p>This is the primitive lookup — it returns the callable factory, not an
+instance.  Use make_geometry() if you want an AdHocDiffractometer
+instance directly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the geometry, as registered by &#64;register_geometry
+(e.g. ‘psic’, ‘fourcv’, ‘kappa4cv’).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The factory function for the named geometry.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no geometry with that name is registered, with a message listing
+the available names.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_geometry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">factory</span> <span class="o">=</span> <span class="n">get_geometry</span><span class="p">(</span><span class="s2">&quot;psic&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">factory</span><span class="p">()</span>
+<span class="go">AdHocDiffractometer(name=&#39;psic&#39;, ...)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_geometry</span><span class="p">(</span><span class="s2">&quot;kappa4cv&quot;</span><span class="p">)(</span><span class="n">alpha_deg</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="go">AdHocDiffractometer(name=&#39;kappa4cv&#39;, ...)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.kappa4ch">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">kappa4ch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">KAPPA_ALPHA_DEFAULT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_BASIS_BL</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#kappa4ch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.kappa4ch" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.kappa4ch</span></code></p>
+</div>
+<p>Four-circle kappa diffractometer, horizontal scattering plane (laboratory).</p>
+<p>Walko (2016) designation: S3D1.</p>
+<p>Identical to kappa4cv() but komega and ttheta rotate about the vertical
+axis, giving a horizontal scattering plane (laboratory convention).</p>
+<p>Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</p>
+<dl class="simple">
+<dt>Sample stack (floor first):</dt><dd><p>komega : vertical, left-handed
+kappa  : tilted,   kappa_axis(alpha), right-handed
+kphi   : vertical, left-handed</p>
+</dd>
+<dt>Detector (floor, mechanically independent):</dt><dd><p>ttheta : vertical, left-handed</p>
+</dd>
+</dl>
+<p>komega and ttheta share the same vertical axis; mechanically independent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</p></li>
+<li><p><strong>References</strong> (<em>D.A. Walko</em><em>, </em><em>Ref. Module Mater. Sci. Mater. Eng.</em><em> (</em><em>2016</em><em>)</em><em>.</em>) – W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+ITC Vol. C, Sec. 2.2.6 (2006).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.kappa4cv">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">kappa4cv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">KAPPA_ALPHA_DEFAULT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_BASIS_BL</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#kappa4cv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.kappa4cv" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.kappa4cv</span></code></p>
+</div>
+<p>Four-circle kappa diffractometer, vertical scattering plane (synchrotron).</p>
+<p>Walko (2016) designation: S3D1.</p>
+<p>The chi circle of a standard Eulerian fourcv is replaced by a kappa arm.
+The kappa axis lies in the vertical-lateral plane, tilted alpha degrees
+from the vertical toward the lateral axis.</p>
+<p>komega and ttheta both rotate about the lateral axis; the scattering
+plane is vertical (synchrotron convention).</p>
+<p>Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</p>
+<dl class="simple">
+<dt>Sample stack (floor first):</dt><dd><p>komega : lateral, left-handed
+kappa  : tilted,  kappa_axis(alpha), right-handed
+kphi   : lateral, left-handed</p>
+</dd>
+<dt>Detector (floor, mechanically independent):</dt><dd><p>ttheta : lateral, left-handed</p>
+</dd>
+</dl>
+<p>komega and ttheta share the same lateral axis; mechanically independent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</p></li>
+<li><p><strong>References</strong> (<em>D.A. Walko</em><em>, </em><em>Ref. Module Mater. Sci. Mater. Eng.</em><em> (</em><em>2016</em><em>)</em><em>.</em>) – W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+ITC Vol. C, Sec. 2.2.6 (2006).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.kappa6c">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">kappa6c</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">KAPPA_ALPHA_DEFAULT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_BASIS_YOU</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#kappa6c"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.kappa6c" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.kappa6c</span></code></p>
+</div>
+<p>Six-circle kappa diffractometer (psic-style outer axes, kappa inner sample).</p>
+<p>Walko (2016) designation: S4D2.</p>
+<p>Extends the kappa4cv geometry with two additional axes (mu, nu) in
+the style of the psic geometry (You 1999), giving full orientation freedom.
+This is the synchrotron configuration with a lateral detector.</p>
+<p>Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</p>
+<dl class="simple">
+<dt>Sample stack (floor first):</dt><dd><p>mu     : vertical,     right-handed   [outermost]
+komega : lateral,      left-handed
+kappa  : tilted,       kappa_axis(alpha), right-handed
+kphi   : lateral,      left-handed</p>
+</dd>
+<dt>Detector stack (floor first):</dt><dd><p>nu     : vertical,     right-handed
+delta  : lateral,      left-handed</p>
+</dd>
+</dl>
+<p>mu and nu share the same vertical axis; mechanically independent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</p></li>
+<li><p><strong>References</strong> (<em>D.A. Walko</em><em>, </em><em>Ref. Module Mater. Sci. Mater. Eng.</em><em> (</em><em>2016</em><em>)</em><em>.</em>) – H. You, J. Appl. Cryst. 32, 614-623 (1999).
+ITC Vol. C, Sec. 2.2.6 (2006).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.list_geometries">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">list_geometries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#list_geometries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.list_geometries" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.list_geometries</span></code></p>
+</div>
+<p>Return a copy of the geometry registry as {name: factory_callable}.</p>
+<p>Includes all built-in geometries (registered via <code class="docutils literal notranslate"><span class="pre">&#64;register_geometry</span></code>
+at import time) plus any third-party geometry plugins installed as
+entry points in the <code class="docutils literal notranslate"><span class="pre">&quot;ad_hoc_diffractometer.geometries&quot;</span></code> group.</p>
+<p>Entry-point discovery runs automatically the first time this function
+is called; subsequent calls use the already-populated registry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Keys are factory names (e.g. <code class="docutils literal notranslate"><span class="pre">'psic'</span></code>, <code class="docutils literal notranslate"><span class="pre">'fourcv'</span></code>).
+Values are the callable factory functions.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_geometries</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">list_geometries</span><span class="p">())</span>
+<span class="go">[&#39;fivec&#39;, &#39;fourch&#39;, &#39;fourcv&#39;, &#39;kappa4ch&#39;, &#39;kappa4cv&#39;, &#39;kappa6c&#39;,</span>
+<span class="go"> &#39;psic&#39;, &#39;s2d2&#39;, &#39;sixc&#39;, &#39;zaxis&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">list_geometries</span><span class="p">()[</span><span class="s1">&#39;psic&#39;</span><span class="p">]()</span>   <span class="c1"># instantiate by name</span>
+<span class="go">AdHocDiffractometer(name=&#39;psic&#39;, ...)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.make_geometry">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">make_geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#make_geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.make_geometry" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.make_geometry</span></code></p>
+</div>
+<p>Instantiate a geometry by name, passing keyword arguments to its factory.</p>
+<p>Looks up the factory for the named geometry via get_geometry() and calls
+it with the supplied kwargs.  This is the most convenient entry point for
+config-driven or programmatic geometry selection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the geometry (e.g. ‘psic’, ‘fourcv’, ‘kappa4cv’).</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments forwarded to the factory function.  Most factories
+take no arguments; kappa factories accept alpha_deg.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A fully configured diffractometer geometry instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer">AdHocDiffractometer</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no geometry with that name is registered.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_geometry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;psic&quot;</span><span class="p">)</span>
+<span class="go">AdHocDiffractometer(name=&#39;psic&#39;, ...)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;kappa4cv&quot;</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="go">AdHocDiffractometer(name=&#39;kappa4cv&#39;, ...)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;kappa6c&quot;</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="o">=</span><span class="mi">55</span><span class="p">)</span>
+<span class="go">AdHocDiffractometer(name=&#39;kappa6c&#39;, ...)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.psic">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">psic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_BASIS_YOU</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#psic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.psic" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.psic</span></code></p>
+</div>
+<p>You (1999) ‘4S+2D’ six-circle diffractometer (psic geometry).</p>
+<p>Walko (2016) designation: S4D2.
+Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.
+Detector axis: lateral.  Vertical scattering plane.</p>
+<dl class="simple">
+<dt>Sample stack (floor first):</dt><dd><p>mu  : vertical,     right-handed
+eta : lateral,      left-handed
+chi : longitudinal, right-handed
+phi : lateral,      left-handed</p>
+</dd>
+<dt>Detector stack (floor first):</dt><dd><p>nu    : vertical, right-handed
+delta : lateral,  left-handed</p>
+</dd>
+</dl>
+<p>mu and nu share the same vertical rotation axis; mechanically independent.</p>
+<dl class="simple">
+<dt>Reference: H. You, J. Appl. Cryst. 32, 614-623 (1999).</dt><dd><p>DOI: 10.1107/S0021889899001223</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.register_geometry">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">register_geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#register_geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.register_geometry" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.register_geometry</span></code></p>
+</div>
+<p>Decorator that registers a geometry factory in _GEOMETRY_REGISTRY.</p>
+<p>The function is stored under its own <code class="docutils literal notranslate"><span class="pre">__name__</span></code>, so the registry
+key is always identical to the callable’s name.  The function is
+returned unchanged; this decorator has no runtime effect on the
+factory itself.</p>
+<p>Third-party packages do <strong>not</strong> need to use this decorator — they
+can instead declare an entry point in the
+<code class="docutils literal notranslate"><span class="pre">&quot;ad_hoc_diffractometer.geometries&quot;</span></code> group in their
+<code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> and the factory will be discovered automatically.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@register_geometry</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">psic</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.s2d2">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">s2d2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_BASIS_YOU</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#s2d2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.s2d2" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.s2d2</span></code></p>
+</div>
+<p>S2D2 four-circle diffractometer (general-inclination geometry).</p>
+<p>Walko (2016) designation: S2D2.
+Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</p>
+<p>Two independent sample axes (mu, Z) and two independent detector axes
+(nu, delta), all mechanically decoupled.  The angle of incidence is the
+mu angle; the surface normal is parallel to Z.</p>
+<p>Sample stack (floor first):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mu</span>    <span class="p">:</span> <span class="n">vertical</span><span class="p">,</span>     <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">Z</span> <span class="p">:</span> <span class="n">longitudinal</span><span class="p">,</span> <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
+</pre></div>
+</div>
+<p>Detector stack (floor first):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nu</span>    <span class="p">:</span> <span class="n">vertical</span><span class="p">,</span>     <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">delta</span> <span class="p">:</span> <span class="n">lateral</span><span class="p">,</span> <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+</pre></div>
+</div>
+<p>mu and nu share the same vertical axis; mechanically independent.</p>
+<p>The total scattering angle is (Walko 2016, eq. 18):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ttheta</span> <span class="o">=</span> <span class="n">arccos</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>References:
+K.W. Evans-Lutterodt &amp; M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995).
+D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.sixc">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">sixc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_BASIS_YOU</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#sixc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.sixc" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.sixc</span></code></p>
+</div>
+<p>Lohmeier &amp; Vlieg (1993) six-circle surface diffractometer (sixc geometry).</p>
+<p>Also known as the IUCr six-circle diffractometer.
+Walko (2016) designation: (S3D2)1.
+Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</p>
+<p>Sample and detector stacks share the alpha (rotary table) base stage,
+making this a coupled geometry.  Useful for surface diffraction.</p>
+<p>From Fig. 1 and §2.1 of Lohmeier &amp; Vlieg (1993):
+alpha and gamma rotate about the vertical axis (x in LV convention).
+omega, phi, and delta all rotate about the lateral axis (z in LV).
+chi rotates about the longitudinal axis (y in LV).</p>
+<p>Stack (floor first):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span> <span class="p">(</span><span class="n">shared</span> <span class="n">base</span><span class="p">):</span> <span class="n">vertical</span><span class="p">,</span>     <span class="n">right</span><span class="o">-</span><span class="n">handed</span>  <span class="p">[</span><span class="n">rotary</span> <span class="n">table</span><span class="p">]</span>
+  <span class="o">--&gt;</span> <span class="n">omega</span> <span class="p">(</span><span class="n">sample</span><span class="p">):</span>  <span class="n">lateral</span><span class="p">,</span>      <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+        <span class="o">--&gt;</span> <span class="n">chi</span><span class="p">:</span>       <span class="n">longitudinal</span><span class="p">,</span> <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
+              <span class="o">--&gt;</span> <span class="n">phi</span><span class="p">:</span> <span class="n">lateral</span><span class="p">,</span>      <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">delta</span> <span class="p">(</span><span class="n">detector</span><span class="p">):</span> <span class="n">lateral</span><span class="p">,</span>     <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+        <span class="o">--&gt;</span> <span class="n">gamma</span><span class="p">:</span>      <span class="n">vertical</span><span class="p">,</span>    <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
+</pre></div>
+</div>
+<p>Reference: M. Lohmeier &amp; E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.zaxis">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">zaxis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_BASIS_YOU</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#zaxis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories.zaxis" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories.zaxis</span></code></p>
+</div>
+<p>Z-axis four-circle diffractometer (general-inclination geometry).</p>
+<p>Walko (2016) designation: (S1D2)1.
+Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</p>
+<p>Designed for surface diffraction.  The sample surface normal is aligned
+parallel to the Z-axis, so the angle of incidence equals the alpha angle.
+The detector and sample both rotate about the shared alpha (base) axis.</p>
+<p>Stack (floor first):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span> <span class="p">(</span><span class="n">shared</span> <span class="n">base</span><span class="p">):</span> <span class="n">vertical</span><span class="p">,</span>     <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">Z</span>     <span class="p">(</span><span class="n">sample</span><span class="p">)</span>  <span class="p">:</span> <span class="n">longitudinal</span><span class="p">,</span> <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">delta</span> <span class="p">(</span><span class="n">detector</span><span class="p">):</span> <span class="n">lateral</span><span class="p">,</span>      <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+        <span class="o">--&gt;</span> <span class="n">gamma</span> <span class="p">:</span>     <span class="n">vertical</span><span class="p">,</span>     <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
+</pre></div>
+</div>
+<p>The total scattering angle is a compound of gamma, delta, and alpha
+(Walko 2016, eq. 17):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ttheta</span> <span class="o">=</span> <span class="n">arccos</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">gamma</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>References:
+J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).
+D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../display/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">display</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../forward/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">forward</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-built-geometries">Pre-built geometries</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extension-via-entry-points">Extension via entry points</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-a-custom-geometry">Writing a custom geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.BASIS_BL"><code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.BASIS_YOU"><code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP"><code class="docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT"><code class="docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.fivec"><code class="docutils literal notranslate"><span class="pre">fivec()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.fourch"><code class="docutils literal notranslate"><span class="pre">fourch()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.fourcv"><code class="docutils literal notranslate"><span class="pre">fourcv()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.get_geometry"><code class="docutils literal notranslate"><span class="pre">get_geometry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.kappa4ch"><code class="docutils literal notranslate"><span class="pre">kappa4ch()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.kappa4cv"><code class="docutils literal notranslate"><span class="pre">kappa4cv()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.kappa6c"><code class="docutils literal notranslate"><span class="pre">kappa6c()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.list_geometries"><code class="docutils literal notranslate"><span class="pre">list_geometries()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.make_geometry"><code class="docutils literal notranslate"><span class="pre">make_geometry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.psic"><code class="docutils literal notranslate"><span class="pre">psic()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.register_geometry"><code class="docutils literal notranslate"><span class="pre">register_geometry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.s2d2"><code class="docutils literal notranslate"><span class="pre">s2d2()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.sixc"><code class="docutils literal notranslate"><span class="pre">sixc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.zaxis"><code class="docutils literal notranslate"><span class="pre">zaxis()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/autoapi/ad_hoc_diffractometer/factories/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Pete Jemian.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

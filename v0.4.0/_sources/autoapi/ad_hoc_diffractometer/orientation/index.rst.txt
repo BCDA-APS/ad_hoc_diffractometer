@@ -1,0 +1,418 @@
+orientation
+===========
+
+.. py:module:: ad_hoc_diffractometer.orientation
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.orientation``
+
+   Functions
+   ---------
+   angles_to_phi_vector(geometry, \*\*motor_angles)
+       Convert a set of motor angles to the scattering vector expressed in the
+       phi-axis (innermost sample-stage) frame.  This is the foundational
+       computation needed for U and UB matrix determination.
+
+   ub_from_one_reflection(sample, reflection, reference_hkl, reference_stage)
+       Compute a provisional U and UB from one reflection using the Rodrigues
+       rotation that takes the crystal direction ``B @ reference_hkl`` to the
+       lab direction given by ``reference_stage``.  Sets ``sample.U`` and
+       ``sample.UB`` in-place; returns UB.
+
+   ub_from_two_reflections_bl1967(sample, r1, r2)
+       Compute U and UB from two orienting reflections using the Busing & Levy
+       (1967) algorithm (eqs. 23-27).  Sets ``sample.U`` and ``sample.UB``
+       in-place; returns UB.
+
+   ub_from_three_reflections_bl1967(sample, r1, r2, r3)
+       Compute UB directly from three reflections using the Busing & Levy (1967)
+       direct method (eqs. 29-31), without prior knowledge of the lattice.
+       Sets ``sample.UB`` in-place; also sets ``sample.U`` if a lattice B is
+       available.  Returns UB.
+
+   ub_identity(sample)
+       Set U = I, UB = B; return UB.  The crudest assumption.
+
+   Future functions (separate issues):
+       ub_from_three_reflections_bl1967 — Busing & Levy 1967, eqs. 29-31  (#6)
+
+   .. rubric:: References
+
+   Busing & Levy, Acta Cryst. 22, 457-464 (1967)
+   You, J. Appl. Cryst. 32, 614-623 (1999)
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.orientation.angles_to_phi_vector
+   ad_hoc_diffractometer.orientation.ub_from_one_reflection
+   ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967
+   ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967
+   ad_hoc_diffractometer.orientation.ub_identity
+
+
+Module Contents
+---------------
+
+.. py:function:: angles_to_phi_vector(geometry, **motor_angles: float) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation.angles_to_phi_vector``
+
+
+   Convert a set of motor angles to the scattering vector in the phi frame.
+
+   The "phi frame" is the coordinate system seen from the innermost sample
+   stage — the frame in which crystal reflections are expressed when
+   computing the orientation (U) matrix.
+
+   Algorithm (Busing & Levy 1967, section "The phi-axis frame"):
+
+   1. Temporarily set the supplied motor angles on their stages (preserving
+      the original values so the geometry is restored afterwards).
+   2. Compute the total sample rotation matrix ``Z`` (product of all sample
+      stage rotation matrices, floor-most first).
+   3. Compute the total detector rotation matrix ``D``.
+   4. The incident-beam unit vector in the lab frame is ``ŷ`` (longitudinal
+      direction, ``geometry.basis["longitudinal"]``).
+   5. The scattered-beam unit vector in the lab frame is ``D @ ŷ``.
+   6. The scattering vector in the lab frame is::
+
+          Q_lab = (2π / λ) * (D @ ŷ - ŷ)
+
+   7. Rotate Q_lab back through the sample stack::
+
+          Q_phi = Z⁻¹ @ Q_lab = Zᵀ @ Q_lab
+
+      (Z is orthogonal, so Z⁻¹ = Zᵀ.)
+
+   :param geometry: The diffractometer geometry.  Must have ``wavelength`` set (not None).
+   :type geometry: AdHocDiffractometer
+   :param \*\*motor_angles: Motor angles in degrees, keyed by stage name.  All stages present in
+                            the geometry may be supplied; stages not supplied keep their current
+                            ``angle`` attribute.  Only sample and detector stages affect the
+                            result; other stages (if any) are ignored.
+   :type \*\*motor_angles: float
+
+   :returns: **Q_phi** -- Scattering vector in the phi frame, in units of Å⁻¹.
+   :rtype: numpy.ndarray, shape (3,)
+
+   :raises KeyError: If a supplied stage name does not exist in the geometry.
+   :raises ValueError: If ``geometry.wavelength`` is None.
+   :raises ValueError: If the geometry has no sample stages.
+   :raises ValueError: If the geometry has no detector stages.
+
+   .. rubric:: Notes
+
+   The function modifies stage angles temporarily and restores them
+   afterwards, even if an exception is raised.  It is therefore safe to
+   call inside a ``try`` block or from multiple threads as long as each
+   call uses a separate geometry instance.
+
+   The scattering vector Q_phi is independent of which sample stage is
+   designated the "phi" axis; it is expressed in the frame of the *last*
+   sample stage in the stacking order (the one closest to the sample).
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.psic()
+   >>> g.wavelength = 1.5406          # Cu Kα in Å
+   >>> Q_phi = ahd.angles_to_phi_vector(
+   ...     g,
+   ...     mu=0, eta=20.97, chi=90, phi=0, nu=0, delta=41.94,
+   ... )
+   >>> Q_phi  # scattering vector for sapphire (006) in phi frame
+   array([...])
+
+   .. rubric:: References
+
+   Busing & Levy, Acta Cryst. 22, 457-464 (1967) — phi-axis frame
+   You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry conventions
+
+
+.. py:function:: ub_from_one_reflection(sample, reflection, reference_hkl: tuple[float, float, float] = (0.0, 0.0, 1.0), reference_stage=None) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation.ub_from_one_reflection``
+
+
+   Compute a provisional U and UB from one reflection (Rodrigues method).
+
+   A common first step in a diffractometer alignment session: assume that
+   a known high-symmetry crystal direction (``reference_hkl``) is parallel
+   to a specific diffractometer axis (``reference_stage``).  This gives a
+   "fake" UB sufficient to predict where to scan for a second reflection.
+
+   The algorithm:
+
+   1. Compute the crystal-frame direction: ``Bh = B @ reference_hkl``
+      (normalised to ``Bh_hat``).
+   2. Extract the lab-frame direction from ``reference_stage`` (normalised
+      to ``r_hat``).
+   3. Find the minimal rotation (Rodrigues) that takes ``Bh_hat`` to
+      ``r_hat``:
+      ``axis  = cross(Bh_hat, r_hat)``
+      ``angle = arccos(clip(dot(Bh_hat, r_hat), -1, 1))``
+      ``U     = rotation_matrix(axis, degrees(angle))``
+   4. ``UB = U @ B``
+   5. Store ``sample.U = U`` and ``sample.UB = UB``; return ``UB``.
+
+   Edge cases:
+
+   - **Parallel** (``angle ≈ 0``): ``Bh_hat`` already points along
+     ``r_hat``; ``U = I``.
+   - **Anti-parallel** (``angle ≈ π``): choose an arbitrary perpendicular
+     axis (the first vector from ``[XHAT, YHAT, ZHAT]`` not parallel to
+     ``Bh_hat``); rotate 180° about it.
+
+   .. note::
+      The result is approximate.  If ``reference_hkl`` is not truly
+      parallel to ``reference_stage.axis`` (e.g. χ = 89.32° rather than
+      90.00°), predicted angles for subsequent reflections will be slightly
+      wrong.  Refine with ``ub_from_two_reflections_bl1967()`` once a
+      second reflection is measured.
+
+   :param sample: The sample whose ``U`` and ``UB`` attributes are updated in-place.
+                  ``sample.lattice`` must be set.  If ``sample.parent`` is set, it
+                  is used to resolve a string ``reference_stage``.
+   :type sample: Sample
+   :param reflection: A ``Reflection`` object or the name of a reflection in
+                      ``sample.reflections``.
+   :type reflection: Reflection or str
+   :param reference_hkl: Miller indices of the crystal direction assumed to be aligned with
+                         ``reference_stage``.  Default ``(0, 0, 1)`` (c-axis).
+   :type reference_hkl: tuple of float, optional
+   :param reference_stage: The diffractometer axis assumed to be parallel to ``reference_hkl``.
+
+                           - ``Stage`` object: ``stage.axis`` is used directly (recommended;
+                             the sign convention is already encoded in the Stage).
+                           - ``str``: looked up as ``sample.parent.stage(name)``.
+                           - ``None`` and ``sample.parent`` is set: defaults to
+                             ``sample.parent.stage("phi")``.
+                           - ``None`` and ``sample.parent`` is ``None``: raises ``ValueError``.
+   :type reference_stage: Stage, str, or None, optional
+
+   :returns: **UB** -- Sets ``sample.U`` and ``sample.UB`` in-place before returning.
+   :rtype: numpy.ndarray, shape (3, 3)
+
+   :raises KeyError: If ``reflection`` is a string not found in ``sample.reflections``.
+   :raises ValueError: If ``reference_stage`` cannot be resolved (no parent, no stage).
+   :raises ValueError: If ``reference_hkl`` maps to the zero vector under B.
+
+   .. rubric:: Examples
+
+   >>> g = psic()
+   >>> g.add_sample("sapphire", Lattice(a=4.758, c=12.991))
+   >>> g.sample = "sapphire"
+   >>> g.add_reflection("r1", hkl=(0, 0, 6),
+   ...                  angles={"mu": 0, "eta": 20.97, "chi": 90,
+   ...                          "phi": 0, "nu": 0, "delta": 41.94})
+   >>> g.sample.reflections.setor0("r1")
+   >>> UB = ub_from_one_reflection(
+   ...     g.sample, "r1",
+   ...     reference_hkl=(0, 0, 1),
+   ...     reference_stage=g.stage("phi"),
+   ... )
+
+
+.. py:function:: ub_from_three_reflections_bl1967(sample, r1, r2, r3) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967``
+
+
+   Compute UB directly from three reflections (Busing & Levy 1967, eqs. 29-31).
+
+   This method requires no prior knowledge of the lattice: it computes UB
+   directly by matrix inversion from three measured reflections.  If a
+   lattice B matrix is available on the sample, U is also derived.
+
+   Algorithm (BL1967 eqs. 28-31):
+
+   1. For each reflection i compute the phi-frame scattering vector
+      ``hiφ = angles_to_phi_vector(geometry, **ri.angles)`` (eq. 28 gives
+      the magnitude; ``angles_to_phi_vector`` already carries the full
+      vector in Å⁻¹).
+   2. Stack as column matrices::
+
+          Hφ = [h1φ | h2φ | h3φ]    (3×3, columns are phi-frame vectors)
+          H  = [h1  | h2  | h3 ]    (3×3, columns are Miller-index triples)
+
+   3. ``UB = Hφ @ inv(H)``  (eq. 31).
+   4. If ``sample.lattice`` is set: ``U = UB @ inv(B)`` (derived from UB).
+   5. Store ``sample.UB = UB`` (first) and ``sample.U = U``; return ``UB``.
+
+   :param sample: The sample whose ``UB`` (and ``U``) attributes are updated in-place.
+                  ``sample.parent`` must be a geometry with ``wavelength`` set.
+   :type sample: Sample
+   :param r1: Three orienting reflections.  Each may be a ``Reflection`` object or
+              the name of a reflection in ``sample.reflections``.
+   :type r1: Reflection or str
+   :param r2: Three orienting reflections.  Each may be a ``Reflection`` object or
+              the name of a reflection in ``sample.reflections``.
+   :type r2: Reflection or str
+   :param r3: Three orienting reflections.  Each may be a ``Reflection`` object or
+              the name of a reflection in ``sample.reflections``.
+   :type r3: Reflection or str
+
+   :returns: **UB** -- ``sample.UB`` is set first (directly, via eq. 31), then
+             ``sample.U = UB @ inv(B)`` is derived.  Both are set in-place.
+   :rtype: numpy.ndarray, shape (3, 3)
+
+   :raises KeyError: If any of ``r1``, ``r2``, ``r3`` is a string not found in
+       ``sample.reflections``.
+   :raises TypeError: If any argument is not a ``Reflection`` or a string.
+   :raises ValueError: If ``sample.parent`` is ``None``.
+   :raises ValueError: If the three Miller-index column matrix ``H`` is singular
+       (``|det(H)| < tol``), i.e. the three hkl vectors are coplanar.
+   :raises ValueError: If ``sample.parent.wavelength`` is ``None``.
+
+   :Warns: **UserWarning** -- If ``det(H) < 0``, the hkl triples form a left-handed system.
+           The computation proceeds but the sign convention may give U with
+           ``det(U) = -1``; consider swapping r1 and r2 to make det(H) > 0.
+
+   .. rubric:: Notes
+
+   UB is computed first (``sample.UB = Hφ @ H⁻¹``).  U is then derived
+   as ``sample.U = UB @ B⁻¹``.  This is the opposite order from
+   ``ub_from_two_reflections_bl1967``, where U is computed first.
+
+   The method does not require a known lattice: ``H`` is formed from the
+   raw hkl indices, not from ``B @ hkl``.  However, if ``sample.lattice``
+   is the package default (cubic, a = 1 Å) rather than a measured lattice,
+   the derived U will not be physically meaningful.
+
+   If ``det(H)`` is exactly zero (degenerate reflections), ``numpy.linalg.inv``
+   will raise ``LinAlgError``, which is caught and re-raised as ``ValueError``.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> import math
+   >>> g = ahd.psic()
+   >>> g.wavelength = 2 * math.pi
+   >>> g.sample.lattice = ahd.Lattice(a=2 * math.pi)
+   >>> g.add_reflection("r1", hkl=(1, 0, 0),
+   ...     angles={"mu": 0, "eta": 30, "chi": 0, "phi": 0, "nu": 0, "delta": 60})
+   >>> g.add_reflection("r2", hkl=(0, 1, 0),
+   ...     angles={"mu": 0, "eta": 30, "chi": 0, "phi": 90, "nu": 0, "delta": 60})
+   >>> g.add_reflection("r3", hkl=(0, 0, 1),
+   ...     angles={"mu": 0, "eta": 30, "chi": 90, "phi": 30, "nu": 0, "delta": 60})
+   >>> UB = ahd.ub_from_three_reflections_bl1967(g.sample, "r1", "r2", "r3")
+
+   .. rubric:: References
+
+   Busing & Levy, Acta Cryst. 22, 457-464 (1967), eqs. 28-31.
+
+
+.. py:function:: ub_from_two_reflections_bl1967(sample, r1=None, r2=None) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967``
+
+
+   Compute U and UB from two orienting reflections (Busing & Levy 1967, eqs. 23-27).
+
+   Given two reflections with known hkl and measured motor angles, and a
+   known lattice (B matrix), this function computes the orientation matrix U
+   and then UB = U @ B, storing both on the sample.
+
+   Algorithm (BL1967 eqs. 23-27):
+
+   1. For each reflection, call ``angles_to_phi_vector()`` to get the
+      scattering vector in the phi frame: ``u1φ``, ``u2φ``.
+   2. From hkl and the lattice B matrix: ``h1c = B @ h1``, ``h2c = B @ h2``.
+   3. Build orthonormal triple ``Tc`` in the crystal frame via Gram-Schmidt:
+      ``t1c ∥ h1c``, ``t2c`` in the plane of ``h1c`` and ``h2c``,
+      ``t3c = t1c × t2c``.
+   4. Build the matching triple ``Tφ`` in the phi frame from ``u1φ``, ``u2φ``.
+   5. Compute ``U = Tφ @ Tc.T``  (eq. 27; Tc is orthogonal so Tc⁻¹ = Tc.T).
+   6. Compute ``UB = U @ B``.
+   7. Store ``sample.U = U``, ``sample.UB = UB``; return ``UB``.
+
+   :param sample: The sample whose ``U`` and ``UB`` attributes are updated in-place.
+                  ``sample.lattice`` must be set.  ``sample.parent`` must be a geometry
+                  with ``wavelength`` set (it is used to call ``angles_to_phi_vector``).
+   :type sample: Sample
+   :param r1: Primary orienting reflection.  If ``None``, defaults to
+              ``sample.reflections.orienting_reflections[0]``.
+   :type r1: Reflection, str, or None
+   :param r2: Secondary orienting reflection.  If ``None``, defaults to
+              ``sample.reflections.orienting_reflections[1]``.
+   :type r2: Reflection, str, or None
+
+   :returns: **UB** -- Sets ``sample.U`` (first) and ``sample.UB = sample.U @ B`` in-place
+             before returning.
+   :rtype: numpy.ndarray, shape (3, 3)
+
+   :raises KeyError: If ``r1`` or ``r2`` is a string not found in ``sample.reflections``.
+   :raises ValueError: If ``r1`` or ``r2`` is ``None`` and the required orienting reflection
+       has not been designated (``setor0``/``setor1`` not called).
+   :raises ValueError: If ``sample.parent`` is ``None`` (needed to call
+       ``angles_to_phi_vector``).
+   :raises ValueError: If ``sample.parent.wavelength`` is ``None``.
+   :raises ValueError: If the two reflections are parallel in the crystal frame (h1c and
+       h2c collinear) or in the phi frame (u1φ and u2φ collinear).
+   :raises TypeError: If ``r1`` or ``r2`` is not a ``Reflection``, string, or ``None``.
+
+   .. rubric:: Notes
+
+   U is computed first (``sample.U = Tφ @ Tc.T``), then UB is derived from
+   it (``sample.UB = sample.U @ B``).
+
+   The wavelength used for ``angles_to_phi_vector`` is taken from
+   ``sample.parent.wavelength``.  If a reflection carries its own
+   ``wavelength`` attribute, that is *not* used here; the geometry's
+   wavelength governs the conversion from motor angles to Q_phi.
+
+   .. rubric:: References
+
+   Busing & Levy, Acta Cryst. 22, 457-464 (1967), eqs. 23-27.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.psic()
+   >>> g.wavelength = 1.5406
+   >>> g.add_sample("sapphire", ahd.Lattice(a=4.758, c=12.991))
+   >>> g.sample = "sapphire"
+   >>> g.add_reflection("r1", hkl=(0, 0, 6),
+   ...     angles={"mu": 0, "eta": 20.97, "chi": 90, "phi": 0,
+   ...             "nu": 0, "delta": 41.94})
+   >>> g.add_reflection("r2", hkl=(1, 0, 4),
+   ...     angles={"mu": 0, "eta": 23.72, "chi": 57.04, "phi": 0,
+   ...             "nu": 0, "delta": 48.13})
+   >>> g.sample.reflections.setor0("r1")
+   >>> g.sample.reflections.setor1("r2")
+   >>> UB = ahd.ub_from_two_reflections_bl1967(g.sample)
+
+
+.. py:function:: ub_identity(sample) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation.ub_identity``
+
+
+   Set U = I (identity) and UB = B; return UB.
+
+   The crudest orientation assumption: crystal axes are aligned with the
+   lab axes.  Useful as a starting point when no reflection information
+   is available at all.
+
+   :param sample: The sample whose ``U`` and ``UB`` attributes are updated in-place.
+   :type sample: Sample
+
+   :returns: **UB**
+   :rtype: numpy.ndarray, shape (3, 3)
+
+

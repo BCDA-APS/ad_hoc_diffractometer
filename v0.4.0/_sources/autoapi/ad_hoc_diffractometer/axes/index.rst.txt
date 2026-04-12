@@ -1,0 +1,201 @@
+axes
+====
+
+.. py:module:: ad_hoc_diffractometer.axes
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.axes``
+
+   Provides a human-readable string notation for signed rotation axes:
+
+   - ``"+x"`` → +XHAT (right-handed rotation about the x-axis)
+   - ``"-x"`` → −XHAT (left-handed rotation about the x-axis)
+   - ``"+y"`` → +YHAT, ``"-y"`` → −YHAT
+   - ``"+z"`` → +ZHAT, ``"-z"`` → −ZHAT
+
+   The standard Cartesian basis vectors are:
+
+   - :data:`~ad_hoc_diffractometer.constants.XHAT` (+x)
+   - :data:`~ad_hoc_diffractometer.constants.YHAT` (+y)
+   - :data:`~ad_hoc_diffractometer.constants.ZHAT` (+z)
+
+   Physical direction names (``"vertical"``, ``"longitudinal"``, ``"lateral"``)
+   are also accepted and resolved against a caller-supplied basis dict that maps
+   each name to one of the three signed axis vectors.
+
+   For diffractometer geometries with tilted axes (e.g. kappa), kappa_axis()
+   computes the axis vector from the kappa angle alpha and the basis dict.
+
+   Internal stage attributes always store the axis as a numpy array.
+   This module handles only the conversion between the caller-facing string
+   notation and the internal numpy representation.
+
+   .. rubric:: References
+
+   International Tables for Crystallography, Vol. C, Section 2.2.6 (2006).
+       DOI: 10.1107/97809553602060000103
+       Confirms kappa axis tilted 50° from the omega (vertical) axis.
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.axes.axis_from_physical
+   ad_hoc_diffractometer.axes.axis_label
+   ad_hoc_diffractometer.axes.kappa_axis
+   ad_hoc_diffractometer.axes.parse_axis
+
+
+Module Contents
+---------------
+
+.. py:function:: axis_from_physical(direction: str, sign: str, basis: dict) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.axes.axis_from_physical``
+
+
+   Convenience wrapper: resolve a physical direction and sign to an axis vector.
+
+   :param direction: Physical direction name, e.g. "vertical", "lateral", "longitudinal".
+   :type direction: str
+   :param sign: "+" for right-handed, "-" for left-handed rotation.
+   :type sign: str
+   :param basis: Mapping from physical direction names to numpy arrays.
+   :type basis: dict
+
+   :returns: **axis**
+   :rtype: numpy.ndarray, shape (3,)
+
+   .. rubric:: Examples
+
+   >>> basis = {"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT}
+   >>> axis_from_physical("lateral", "-", basis)
+   array([ 0.,  0., -1.])
+
+
+.. py:function:: axis_label(vector: ~numpy.ndarray) -> str
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.axes.axis_label``
+
+
+   Convert an internal axis numpy array to its caller-facing string label.
+
+   Only the six standard signed basis vectors are recognised.  For other
+   vectors (e.g. a kappa-style tilted axis) the array is formatted
+   numerically.
+
+   :param vector: Signed axis vector.
+   :type vector: numpy.ndarray, shape (3,)
+
+   :returns: **label** -- Caller-facing label, e.g. "+x", "-z", or "[0.5, 0.5, 0.707]".
+   :rtype: str
+
+   .. rubric:: Examples
+
+   >>> axis_label(XHAT)
+   '+x'
+   >>> axis_label(-ZHAT)
+   '-z'
+
+
+.. py:function:: kappa_axis(alpha_deg: float, basis: dict | None = None) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.axes.kappa_axis``
+
+
+   Compute the kappa rotation axis vector for a kappa-geometry diffractometer.
+
+   The kappa axis lies in the vertical-lateral plane, tilted at angle alpha
+   from the vertical axis toward the lateral axis:
+
+
+       kappa_axis = vertical * cos(alpha) + lateral * sin(alpha)
+
+   In the You (1999) / default basis (xHat=vertical, zHat=lateral):
+
+       kappa_axis = XHAT * cos(alpha) + ZHAT * sin(alpha)
+
+   At alpha=0  the axis is purely vertical (degenerate with komega).
+   At alpha=90 the axis is purely lateral.
+   Typical value: alpha=50 degrees (Walko 2016; ITC Vol. C Sec. 2.2.6;
+   originally Enraf-Nonius).
+
+   The axis is a unit vector by construction (cos²α + sin²α = 1).
+
+   :param alpha_deg: Kappa tilt angle in degrees, measured from the vertical axis toward
+                     the lateral axis in the vertical-lateral plane.  Must be in (0, 90).
+   :type alpha_deg: float
+   :param basis: Mapping from physical direction names to numpy arrays.  If None,
+                 the default You (1999) basis is used
+                 (vertical -> XHAT, lateral -> ZHAT).
+   :type basis: dict or None
+
+   :returns: **axis** -- Unit vector of the kappa rotation axis in the lab frame.
+   :rtype: numpy.ndarray, shape (3,)
+
+   :raises ValueError: If alpha_deg is not in the open interval (0, 90) degrees, or if
+       the basis dict is missing 'vertical' or 'lateral' keys.
+
+   .. rubric:: Examples
+
+   >>> kappa_axis(50.0)                    # typical kappa, default basis
+   >>> kappa_axis(50.0, basis=my_basis)    # custom basis
+
+
+.. py:function:: parse_axis(label: str, basis: dict | None = None) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.axes.parse_axis``
+
+
+   Convert a caller-facing axis label to an internal numpy array.
+
+   Accepted forms:
+
+   1. Signed Cartesian label:  "+x", "-x", "+y", "-y", "+z", "-z"
+      These are resolved directly against the standard basis vectors
+      XHAT, YHAT, ZHAT regardless of the supplied basis dict.
+
+   2. Physical direction name with optional sign prefix:
+      "vertical", "+vertical", "-vertical",
+      "longitudinal", "+longitudinal", "-longitudinal",
+      "lateral", "+lateral", "-lateral"
+      These are resolved against the supplied basis dict.
+
+   :param label: Axis label in one of the forms above.  Case-insensitive.
+   :type label: str
+   :param basis: Mapping from physical direction names to numpy arrays.
+                 Required if label contains a physical direction name.
+                 Ignored if label is a signed Cartesian label.
+   :type basis: dict or None
+
+   :returns: **axis** -- Signed axis vector for internal use.
+   :rtype: numpy.ndarray, shape (3,)
+
+   :raises ValueError: If the label is not recognised, or if a physical direction name is
+       given but no basis dict is supplied, or if the direction name is
+       not in the basis dict.
+
+   .. rubric:: Examples
+
+   >>> parse_axis("+x")
+   array([1., 0., 0.])
+   >>> parse_axis("-z")
+   array([ 0.,  0., -1.])
+   >>> basis = {"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT}
+   >>> parse_axis("vertical", basis)
+   array([1., 0., 0.])
+   >>> parse_axis("-lateral", basis)
+   array([ 0.,  0., -1.])
+
+

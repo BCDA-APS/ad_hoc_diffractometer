@@ -1,0 +1,13 @@
+/* In AutoAPI module pages, the "Module Contents" section shows inline
+   class/function signatures with their fully-qualified module prefix
+   (sig-prename), e.g. "ad_hoc_diffractometer.geometry." before
+   "AdHocDiffractometer".  The full import path is already shown in the
+   Import: container on each object's own page, so the prefix is
+   redundant here.
+
+   Hide sig-prename globally — the short name alone is unambiguous in
+   context, and the Import: line provides the canonical path.
+*/
+.sig-prename {
+    display: none;
+}
