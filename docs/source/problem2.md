@@ -12,7 +12,7 @@ The incident monochromatic radiation will have wavelength lambda
 
 ## Directions:
 
-- Compare the geometry with this [article](./1999-JAppl-Cryst-32-614-623-H-You-psic-4S+2D/hn0093.pdf): 1999 J Appl Cryst 32 614-623.
+- Compare the geometry with this [article](https://doi.org/10.1107/S0021889899001223): You (1999) J Appl Cryst 32, 614-623.
 
 ## Analysis
 
