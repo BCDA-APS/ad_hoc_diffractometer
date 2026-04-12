@@ -30,53 +30,46 @@ rotation axis.
 
 .. grid:: 2
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` fourcv
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Synchrotron
       :link: fourcv
       :link-type: doc
 
-      Vertical scattering plane — synchrotron convention.
-      ω and 2θ rotate about the lateral axis.
-      ``ahd.fourcv()``
+      Vertical scattering plane — ω and 2θ rotate about the lateral axis.
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` fourch
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Laboratory
       :link: fourch
       :link-type: doc
 
-      Horizontal scattering plane — laboratory convention.
-      ω and 2θ rotate about the vertical axis.
-      ``ahd.fourch()``
+      Horizontal scattering plane — ω and 2θ rotate about the vertical axis.
 
 Eulerian six-circle
 -------------------
 
-A four-circle Eulerian sample stack with an additional mu (or shared alpha)
-base stage and a two-axis detector arm.
+A four-circle Eulerian sample stack with an additional base stage and a
+two-axis detector arm.
 
 .. grid:: 3
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` psic
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` 4S+2D
       :link: psic
       :link-type: doc
 
-      You (1999) 4S+2D. Four sample stages (mu, eta, chi, phi) and two
-      detector stages (nu, delta).
-      ``ahd.psic()``
+      Four sample stages (mu, eta, chi, phi) and two independent detector
+      stages (nu, delta). You (1999).
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` sixc
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Shared base
       :link: sixc
       :link-type: doc
 
-      Lohmeier & Vlieg (1993) surface geometry. Sample and detector share
-      an alpha base stage.
-      ``ahd.sixc()``
+      Sample and detector share a common alpha base stage.
+      Lohmeier & Vlieg (1993).
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` fivec
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Five-circle
       :link: fivec
       :link-type: doc
 
-      Vlieg et al. (1987). fourcv on a vertical mu base; sample and
-      detector coupled through mu.
-      ``ahd.fivec()``
+      Four-circle (fourcv) on a vertical mu base; sample and detector
+      coupled through mu. Vlieg et al. (1987).
 
 Kappa
 -----
@@ -87,26 +80,23 @@ obstructions.
 
 .. grid:: 3
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` kappa4cv
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Four-circle synchrotron
       :link: kappa4cv
       :link-type: doc
 
-      Four-circle kappa, vertical scattering plane (synchrotron).
-      ``ahd.kappa4cv()``
+      Vertical scattering plane.
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` kappa4ch
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Four-circle laboratory
       :link: kappa4ch
       :link-type: doc
 
-      Four-circle kappa, horizontal scattering plane (laboratory).
-      ``ahd.kappa4ch()``
+      Horizontal scattering plane.
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` kappa6c
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Six-circle
       :link: kappa6c
       :link-type: doc
 
-      Six-circle kappa with psic-style outer axes (mu, nu).
-      ``ahd.kappa6c()``
+      Psic-style outer axes (mu, nu) with kappa inner sample stages.
 
 Surface / special
 -----------------
@@ -116,18 +106,16 @@ sample and detector axes.
 
 .. grid:: 2
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` zaxis
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Z-axis
       :link: zaxis
       :link-type: doc
 
-      Bloch (1985) Z-axis geometry. Surface normal parallel to Z.
-      Sample and detector share an alpha base.
-      ``ahd.zaxis()``
+      Surface normal parallel to Z. Sample and detector share an alpha
+      base stage. Bloch (1985).
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` s2d2
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Decoupled axes
       :link: s2d2
       :link-type: doc
 
-      Evans-Lutterodt & Tang (1995). Two fully independent sample axes
-      (mu, Z) and two detector axes (nu, delta).
-      ``ahd.s2d2()``
+      Two fully independent sample axes (mu, Z) and two detector axes
+      (nu, delta). Evans-Lutterodt & Tang (1995).
