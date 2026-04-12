@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
 # SPDX-License-Identifier: CC-BY-4.0
 r"""
-engines.py — Alternative calculation engines.
+conversions.py — Alternative calculation engines.
 
 Provides standalone conversion functions between the four representations
 of a diffraction position:

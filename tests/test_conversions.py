@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
 # SPDX-License-Identifier: CC-BY-4.0
 """
-Unit tests for ad_hoc_diffractometer.engines.
+Unit tests for ad_hoc_diffractometer.conversions.
 
 Covers:
   - hkl_to_Q: basic, no-UB raises, (0,0,0) gives zero vector
@@ -28,16 +28,16 @@ import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import Lattice
 from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer import ub_identity
-from ad_hoc_diffractometer.engines import Q_mag_to_two_theta
-from ad_hoc_diffractometer.engines import Q_to_d
-from ad_hoc_diffractometer.engines import Q_to_hkl
-from ad_hoc_diffractometer.engines import d_to_Q_mag
-from ad_hoc_diffractometer.engines import d_to_two_theta
-from ad_hoc_diffractometer.engines import hkl_to_d
-from ad_hoc_diffractometer.engines import hkl_to_Q
-from ad_hoc_diffractometer.engines import hkl_to_two_theta
-from ad_hoc_diffractometer.engines import two_theta_to_d
-from ad_hoc_diffractometer.engines import two_theta_to_Q_mag
+from ad_hoc_diffractometer.conversions import Q_mag_to_two_theta
+from ad_hoc_diffractometer.conversions import Q_to_d
+from ad_hoc_diffractometer.conversions import Q_to_hkl
+from ad_hoc_diffractometer.conversions import d_to_Q_mag
+from ad_hoc_diffractometer.conversions import d_to_two_theta
+from ad_hoc_diffractometer.conversions import hkl_to_d
+from ad_hoc_diffractometer.conversions import hkl_to_Q
+from ad_hoc_diffractometer.conversions import hkl_to_two_theta
+from ad_hoc_diffractometer.conversions import two_theta_to_d
+from ad_hoc_diffractometer.conversions import two_theta_to_Q_mag
 
 # ---------------------------------------------------------------------------
 # Helpers
