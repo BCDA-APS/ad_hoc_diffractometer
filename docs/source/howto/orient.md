@@ -37,8 +37,8 @@ g.reflections.add("or2", hkl=(2, 2, 0),
                           "chi": 35.26, "phi": 90.0})
 
 # Designate which reflections to use
-g.reflections.setor1("or1")
-g.reflections.setor2("or2")
+g.reflections.setor0("or1")
+g.reflections.setor0("or2")
 ```
 
 ## Compute UB from two reflections (Busing & Levy 1967)

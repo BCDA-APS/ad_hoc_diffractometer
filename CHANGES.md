@@ -8,6 +8,19 @@ for the full issue tracker.
 
 ## Unreleased
 
+### Breaking changes
+
+- `ReflectionList.setor1()` renamed to `setor0()` and `setor2()` renamed to
+  `setor1()` to match the SPEC convention (primary = or0, secondary = or1).
+  Update all call sites: `setor1("x")` → `setor0("x")`;
+  `setor2("x")` → `setor1("x")`. (#120)
+
+### Added
+
+- `ahd.wh(geometry)` and `ahd.pa(geometry)` top-level convenience functions
+  (SPEC-familiar status commands), in addition to the existing
+  `geometry.wh()` / `geometry.pa()` methods. (#131)
+
 ## Release v0.3.1
 
 Released 2026-04-12.

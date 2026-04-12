@@ -122,8 +122,8 @@ def sapphire_geom():
         },
         wavelength=1.549802558,
     )
-    g.sample.reflections.setor1("or1")
-    g.sample.reflections.setor2("or2")
+    g.sample.reflections.setor0("or1")
+    g.sample.reflections.setor1("or2")
     ub_from_two_reflections_bl1967(g.sample)
     return g
 
