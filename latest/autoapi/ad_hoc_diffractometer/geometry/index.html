@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=abb75b46"></script>
+    <script src="../../../_static/documentation_options.js?v=89970ad1"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -553,6 +553,20 @@ The stacking order is encoded via the parent attribute of each Stage.</p>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a></p></td>
 <td><p>Description of a diffractometer as an ordered collection of rotary stages.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.geometry.pa" title="ad_hoc_diffractometer.geometry.pa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pa</span></code></a>(→ str)</p></td>
+<td><p>Verbose parameter listing for a diffractometer (the SPEC <code class="docutils literal notranslate"><span class="pre">pa</span></code> command).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.geometry.wh" title="ad_hoc_diffractometer.geometry.wh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wh</span></code></a>(→ str)</p></td>
+<td><p>Terse one-screen status for a diffractometer (the SPEC <code class="docutils literal notranslate"><span class="pre">wh</span></code> command).</p></td>
 </tr>
 </tbody>
 </table>
@@ -1639,6 +1653,100 @@ Dec 2020.</p>
 
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.geometry.pa">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.geometry.</span></span><span class="sig-name descname"><span class="pre">pa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">print</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/geometry.html#pa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.geometry.pa" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.geometry.pa</span></code></p>
+</div>
+<p>Verbose parameter listing for a diffractometer (the SPEC <code class="docutils literal notranslate"><span class="pre">pa</span></code> command).</p>
+<p>Shows the geometry name, the two designated orienting reflections (if
+set), lattice constants in real and reciprocal space, the azimuthal
+reference vector, and the wavelength.</p>
+<p>Equivalent to <code class="docutils literal notranslate"><span class="pre">geometry.pa(print=print)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>) – The diffractometer to report on.</p></li>
+<li><p><strong>print</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> (default), the string is printed to stdout before
+being returned.  Pass <code class="docutils literal notranslate"><span class="pre">print=False</span></code> to suppress output and
+capture the string instead.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Multi-line parameter string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">pa</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="nb">print</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;Geometry&quot;</span> <span class="ow">in</span> <span class="n">out</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.geometry.wh" title="ad_hoc_diffractometer.geometry.wh"><code class="xref py py-func docutils literal notranslate"><span class="pre">wh()</span></code></a></dt><dd><p>Terse one-screen status.</p>
+</dd>
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.pa" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.pa"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AdHocDiffractometer.pa()</span></code></a></dt><dd><p>Equivalent method on the geometry object.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.geometry.wh">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.geometry.</span></span><span class="sig-name descname"><span class="pre">wh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">print</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/geometry.html#wh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.geometry.wh" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.geometry.wh</span></code></p>
+</div>
+<p>Terse one-screen status for a diffractometer (the SPEC <code class="docutils literal notranslate"><span class="pre">wh</span></code> command).</p>
+<p>Shows the current reciprocal-space position (H K L), azimuthal angle ψ,
+wavelength, and a motor-angle table with SPEC-style column names.
+Graceful fallback text is shown for any field that cannot be computed
+(e.g. no UB matrix or no wavelength set).</p>
+<p>Equivalent to <code class="docutils literal notranslate"><span class="pre">geometry.wh(print=print)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>) – The diffractometer to report on.</p></li>
+<li><p><strong>print</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> (default), the string is printed to stdout before
+being returned.  Pass <code class="docutils literal notranslate"><span class="pre">print=False</span></code> to suppress output and
+capture the string instead.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Multi-line status string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">wh</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="nb">print</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;Lambda&quot;</span> <span class="ow">in</span> <span class="n">out</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.geometry.pa" title="ad_hoc_diffractometer.geometry.pa"><code class="xref py py-func docutils literal notranslate"><span class="pre">pa()</span></code></a></dt><dd><p>Verbose parameter listing.</p>
+</dd>
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.wh" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.wh"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AdHocDiffractometer.wh()</span></code></a></dt><dd><p>Equivalent method on the geometry object.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
 </section>
 </section>
 
@@ -1690,6 +1798,7 @@ Dec 2020.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.DEFAULT_BASIS"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.DEFAULT_BASIS</span></code></a></li>
@@ -1741,6 +1850,8 @@ Dec 2020.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.AdHocDiffractometer.wh"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.wh()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.pa"><code class="docutils literal notranslate"><span class="pre">pa()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.geometry.wh"><code class="docutils literal notranslate"><span class="pre">wh()</span></code></a></li>
 </ul>
 </li>
 </ul>

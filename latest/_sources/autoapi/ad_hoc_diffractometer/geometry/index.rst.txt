@@ -19,6 +19,15 @@ Classes
    ad_hoc_diffractometer.geometry.AdHocDiffractometer
 
 
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.geometry.pa
+   ad_hoc_diffractometer.geometry.wh
+
+
 Module Contents
 ---------------
 
@@ -1014,5 +1023,91 @@ Module Contents
       Align4Pete.log — ``wh`` command outputs, 7-ID-C fourc session,
       Dec 2020.
 
+
+
+.. py:function:: pa(geometry: AdHocDiffractometer, print: bool = True) -> str
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry.pa``
+
+
+   Verbose parameter listing for a diffractometer (the SPEC ``pa`` command).
+
+   Shows the geometry name, the two designated orienting reflections (if
+   set), lattice constants in real and reciprocal space, the azimuthal
+   reference vector, and the wavelength.
+
+   Equivalent to ``geometry.pa(print=print)``.
+
+   :param geometry: The diffractometer to report on.
+   :type geometry: AdHocDiffractometer
+   :param print: If ``True`` (default), the string is printed to stdout before
+                 being returned.  Pass ``print=False`` to suppress output and
+                 capture the string instead.
+   :type print: bool, optional
+
+   :returns: Multi-line parameter string.
+   :rtype: str
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.fourcv()
+   >>> out = ahd.pa(g, print=False)
+   >>> "Geometry" in out
+   True
+
+   .. seealso::
+
+      :func:`wh`
+          Terse one-screen status.
+
+      :meth:`AdHocDiffractometer.pa`
+          Equivalent method on the geometry object.
+
+
+.. py:function:: wh(geometry: AdHocDiffractometer, print: bool = True) -> str
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry.wh``
+
+
+   Terse one-screen status for a diffractometer (the SPEC ``wh`` command).
+
+   Shows the current reciprocal-space position (H K L), azimuthal angle ψ,
+   wavelength, and a motor-angle table with SPEC-style column names.
+   Graceful fallback text is shown for any field that cannot be computed
+   (e.g. no UB matrix or no wavelength set).
+
+   Equivalent to ``geometry.wh(print=print)``.
+
+   :param geometry: The diffractometer to report on.
+   :type geometry: AdHocDiffractometer
+   :param print: If ``True`` (default), the string is printed to stdout before
+                 being returned.  Pass ``print=False`` to suppress output and
+                 capture the string instead.
+   :type print: bool, optional
+
+   :returns: Multi-line status string.
+   :rtype: str
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.fourcv()
+   >>> g.wavelength = 1.5406
+   >>> out = ahd.wh(g, print=False)
+   >>> "Lambda" in out
+   True
+
+   .. seealso::
+
+      :func:`pa`
+          Verbose parameter listing.
+
+      :meth:`AdHocDiffractometer.wh`
+          Equivalent method on the geometry object.
 
 

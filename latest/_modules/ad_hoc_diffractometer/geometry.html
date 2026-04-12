@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=abb75b46"></script>
+    <script src="../../_static/documentation_options.js?v=89970ad1"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2654,6 +2654,99 @@
 
         <span class="k">return</span> <span class="n">geom</span></div>
 </div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Public top-level convenience functions (SPEC-familiar status commands)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="wh">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.wh">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wh</span><span class="p">(</span><span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span> <span class="nb">print</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Terse one-screen status for a diffractometer (the SPEC ``wh`` command).</span>
+
+<span class="sd">    Shows the current reciprocal-space position (H K L), azimuthal angle ψ,</span>
+<span class="sd">    wavelength, and a motor-angle table with SPEC-style column names.</span>
+<span class="sd">    Graceful fallback text is shown for any field that cannot be computed</span>
+<span class="sd">    (e.g. no UB matrix or no wavelength set).</span>
+
+<span class="sd">    Equivalent to ``geometry.wh(print=print)``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        The diffractometer to report on.</span>
+<span class="sd">    print : bool, optional</span>
+<span class="sd">        If ``True`` (default), the string is printed to stdout before</span>
+<span class="sd">        being returned.  Pass ``print=False`` to suppress output and</span>
+<span class="sd">        capture the string instead.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Multi-line status string.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; g = ahd.fourcv()</span>
+<span class="sd">    &gt;&gt;&gt; g.wavelength = 1.5406</span>
+<span class="sd">    &gt;&gt;&gt; out = ahd.wh(g, print=False)</span>
+<span class="sd">    &gt;&gt;&gt; &quot;Lambda&quot; in out</span>
+<span class="sd">    True</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`pa` : Verbose parameter listing.</span>
+<span class="sd">    :meth:`AdHocDiffractometer.wh` : Equivalent method on the geometry object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">wh</span><span class="p">(</span><span class="nb">print</span><span class="o">=</span><span class="nb">print</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="pa">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.pa">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pa</span><span class="p">(</span><span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span> <span class="nb">print</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Verbose parameter listing for a diffractometer (the SPEC ``pa`` command).</span>
+
+<span class="sd">    Shows the geometry name, the two designated orienting reflections (if</span>
+<span class="sd">    set), lattice constants in real and reciprocal space, the azimuthal</span>
+<span class="sd">    reference vector, and the wavelength.</span>
+
+<span class="sd">    Equivalent to ``geometry.pa(print=print)``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        The diffractometer to report on.</span>
+<span class="sd">    print : bool, optional</span>
+<span class="sd">        If ``True`` (default), the string is printed to stdout before</span>
+<span class="sd">        being returned.  Pass ``print=False`` to suppress output and</span>
+<span class="sd">        capture the string instead.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Multi-line parameter string.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; g = ahd.fourcv()</span>
+<span class="sd">    &gt;&gt;&gt; out = ahd.pa(g, print=False)</span>
+<span class="sd">    &gt;&gt;&gt; &quot;Geometry&quot; in out</span>
+<span class="sd">    True</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`wh` : Terse one-screen status.</span>
+<span class="sd">    :meth:`AdHocDiffractometer.pa` : Equivalent method on the geometry object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">pa</span><span class="p">(</span><span class="nb">print</span><span class="o">=</span><span class="nb">print</span><span class="p">)</span></div>
 
 </pre></div>
 
