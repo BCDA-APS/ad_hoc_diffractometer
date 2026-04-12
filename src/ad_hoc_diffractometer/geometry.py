@@ -2088,3 +2088,90 @@ class AdHocDiffractometer:
                 del geom.samples._data[n]
 
         return geom
+
+
+# ---------------------------------------------------------------------------
+# Public top-level convenience functions (SPEC-familiar status commands)
+# ---------------------------------------------------------------------------
+
+
+def wh(geometry: AdHocDiffractometer, print: bool = True) -> str:
+    """
+    Terse one-screen status for a diffractometer (the SPEC ``wh`` command).
+
+    Shows the current reciprocal-space position (H K L), azimuthal angle ψ,
+    wavelength, and a motor-angle table with SPEC-style column names.
+    Graceful fallback text is shown for any field that cannot be computed
+    (e.g. no UB matrix or no wavelength set).
+
+    Equivalent to ``geometry.wh(print=print)``.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+        The diffractometer to report on.
+    print : bool, optional
+        If ``True`` (default), the string is printed to stdout before
+        being returned.  Pass ``print=False`` to suppress output and
+        capture the string instead.
+
+    Returns
+    -------
+    str
+        Multi-line status string.
+
+    Examples
+    --------
+    >>> import ad_hoc_diffractometer as ahd
+    >>> g = ahd.fourcv()
+    >>> g.wavelength = 1.5406
+    >>> out = ahd.wh(g, print=False)
+    >>> "Lambda" in out
+    True
+
+    See Also
+    --------
+    :func:`pa` : Verbose parameter listing.
+    :meth:`AdHocDiffractometer.wh` : Equivalent method on the geometry object.
+    """
+    return geometry.wh(print=print)
+
+
+def pa(geometry: AdHocDiffractometer, print: bool = True) -> str:
+    """
+    Verbose parameter listing for a diffractometer (the SPEC ``pa`` command).
+
+    Shows the geometry name, the two designated orienting reflections (if
+    set), lattice constants in real and reciprocal space, the azimuthal
+    reference vector, and the wavelength.
+
+    Equivalent to ``geometry.pa(print=print)``.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+        The diffractometer to report on.
+    print : bool, optional
+        If ``True`` (default), the string is printed to stdout before
+        being returned.  Pass ``print=False`` to suppress output and
+        capture the string instead.
+
+    Returns
+    -------
+    str
+        Multi-line parameter string.
+
+    Examples
+    --------
+    >>> import ad_hoc_diffractometer as ahd
+    >>> g = ahd.fourcv()
+    >>> out = ahd.pa(g, print=False)
+    >>> "Geometry" in out
+    True
+
+    See Also
+    --------
+    :func:`wh` : Terse one-screen status.
+    :meth:`AdHocDiffractometer.pa` : Equivalent method on the geometry object.
+    """
+    return geometry.pa(print=print)
