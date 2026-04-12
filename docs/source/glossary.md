@@ -83,10 +83,17 @@ Stage
    and optional motor limits.
    See {class}`~ad_hoc_diffractometer.stage.Stage`.
 
+Serialization
+   The process of converting the complete diffractometer state to a Python
+   dict (via `to_dict()`) and restoring it (via `from_dict()`).  The dict
+   contains only JSON-compatible types and can be saved to JSON (stdlib) or
+   YAML (`pyyaml`).  All major classes support this round-trip.
+   See {doc}`howto/serialize`.
+
 Stack
    An ordered chain of stages in which each stage sits mechanically on the
    one below it (its parent).  The combined rotation matrix is the ordered
-   product of individual stage matrices, from the floor-mounted (outermost)
+   product of individual stage matrices, from the base-mounted (outermost)
    stage to the innermost.
 
 Two-theta
