@@ -48,6 +48,8 @@ from .factories import sixc
 from .factories import zaxis
 from .forward import compute_forward
 from .geometry import AdHocDiffractometer
+from .geometry import pa
+from .geometry import wh
 from .lattice import CRYSTAL_SYSTEMS
 from .lattice import Lattice
 from .lattice import b_matrix
@@ -120,6 +122,8 @@ __all__ = [
     "Stage",
     # geometry
     "AdHocDiffractometer",
+    "pa",
+    "wh",
     "Reflection",
     "ReflectionList",
     "Sample",

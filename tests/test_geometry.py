@@ -1183,6 +1183,64 @@ class TestPaMethod:
         assert "psic" in g.pa(print=False)
 
 
+class TestWhPaTopLevel:
+    """Tests for top-level ahd.wh() and ahd.pa() convenience functions."""
+
+    def test_wh_is_exported(self):
+        import ad_hoc_diffractometer as ahd
+
+        assert callable(ahd.wh)
+
+    def test_pa_is_exported(self):
+        import ad_hoc_diffractometer as ahd
+
+        assert callable(ahd.pa)
+
+    def test_wh_function_matches_method(self):
+        import ad_hoc_diffractometer as ahd
+
+        g = ahd.fourcv()
+        g.wavelength = 1.5406
+        assert ahd.wh(g, print=False) == g.wh(print=False)
+
+    def test_pa_function_matches_method(self):
+        import ad_hoc_diffractometer as ahd
+
+        g = ahd.fourcv()
+        g.wavelength = 1.5406
+        assert ahd.pa(g, print=False) == g.pa(print=False)
+
+    def test_wh_function_returns_str(self):
+        import ad_hoc_diffractometer as ahd
+
+        g = ahd.fourcv()
+        g.wavelength = 1.5406
+        assert isinstance(ahd.wh(g, print=False), str)
+
+    def test_pa_function_returns_str(self):
+        import ad_hoc_diffractometer as ahd
+
+        g = ahd.fourcv()
+        g.wavelength = 1.5406
+        assert isinstance(ahd.pa(g, print=False), str)
+
+    def test_wh_function_prints(self, capsys):
+        import ad_hoc_diffractometer as ahd
+
+        g = ahd.fourcv()
+        g.wavelength = 1.5406
+        ahd.wh(g)
+        assert "Lambda" in capsys.readouterr().out
+
+    def test_pa_function_prints(self, capsys):
+        import ad_hoc_diffractometer as ahd
+
+        g = ahd.fourcv()
+        g.wavelength = 1.5406
+        ahd.pa(g)
+        assert "Geometry" in capsys.readouterr().out
+
+
 # ---------------------------------------------------------------------------
 # Geometry — additional branch coverage
 # ---------------------------------------------------------------------------
