@@ -1,0 +1,1350 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ad_hoc_diffractometer — Development Roadmap &#8212; ad_hoc_diffractometer 0.3</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+
+    <script src="_static/documentation_options.js?v=4621528c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'roadmap';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.3.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="autoapi/index.html" />
+    <link rel="prev" title="HYou Diffractometer" href="problem3.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.3" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.3</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="changes.html">
+    Change History
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="direct-lattice.html">
+    Direct lattice in crystallography
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="problem1.html">
+    Our equipment
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="problem2.html">
+    Diffractometer with Specified Reference Frame
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="problem3.html">
+    HYou Diffractometer
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#">
+    ad_hoc_diffractometer — Development Roadmap
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="autoapi/index.html">
+    API Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="changes.html">
+    Change History
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="direct-lattice.html">
+    Direct lattice in crystallography
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="problem1.html">
+    Our equipment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="problem2.html">
+    Diffractometer with Specified Reference Frame
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="problem3.html">
+    HYou Diffractometer
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    ad_hoc_diffractometer — Development Roadmap
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="autoapi/index.html">
+    API Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer — Development Roadmap</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="ad-hoc-diffractometer-development-roadmap">
+<h1>ad_hoc_diffractometer — Development Roadmap<a class="headerlink" href="#ad-hoc-diffractometer-development-roadmap" title="Link to this heading">#</a></h1>
+<p>This document records parameters and features that are not yet implemented,
+grouped by category and priority.  It is a living document; check items off
+as they are completed.</p>
+<hr class="docutils" />
+<section id="status-key">
+<h2>Status key<a class="headerlink" href="#status-key" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>[ ] not started</p></li>
+<li><p>[~] in progress</p></li>
+<li><p>[x] done</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="already-implemented">
+<h2>Already implemented<a class="headerlink" href="#already-implemented" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>[x] Rotation axis description: signed basis vector notation (+x, -z, etc.)</p></li>
+<li><p>[x] Physical direction names (vertical, lateral, longitudinal) resolved
+against a caller-supplied basis dict</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">kappa_axis(alpha_deg,</span> <span class="pre">basis)</span></code> for tilted kappa axes</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">Stage</span></code> class: name, axis, parent, role, angle</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> class: stacking order, basis validation,
+sample/detector rotation matrices, summary</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">&#64;register_geometry</span></code> decorator and <code class="docutils literal notranslate"><span class="pre">list_geometries()</span></code> registry</p></li>
+<li><p>[x] Geometry factories: psic, fourcv, fourch, sixc, kappa4cv, kappa4ch,
+kappa6c, zaxis, s2d2, fivec</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> class: 7 crystal systems, lazy B matrix, reciprocal vectors,
+Cartesian lattice vectors, display precision</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">display.py</span></code>: package-level and per-instance display precision</p></li>
+<li><p>[x] Pre-commit hooks: ruff, isort, standard checks</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="priority-1-near-term-needed-for-diffraction-calculations">
+<h2>Priority 1 — Near-term (needed for diffraction calculations)<a class="headerlink" href="#priority-1-near-term-needed-for-diffraction-calculations" title="Link to this heading">#</a></h2>
+<section id="wavelength-on-adhocdiffractometer-1">
+<h3>1.1 Wavelength on AdHocDiffractometer (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/1">#1</a>)<a class="headerlink" href="#wavelength-on-adhocdiffractometer-1" title="Link to this heading">#</a></h3>
+<p>Units are fixed as Å to match unit cell edge lengths.  Energy conversions,
+wave number, and named laboratory lines are out of scope here — see #21.</p>
+<ul class="simple">
+<li><p>[x] Add <code class="docutils literal notranslate"><span class="pre">wavelength:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span></code> attribute to <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code>; default <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p>[x] Validate on assignment: if not <code class="docutils literal notranslate"><span class="pre">None</span></code>, must be <code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">0</span></code>; raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> otherwise</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">summary()</span></code> reports <code class="docutils literal notranslate"><span class="pre">λ</span> <span class="pre">=</span> <span class="pre">{value}</span> <span class="pre">Å</span></code> when set, <code class="docutils literal notranslate"><span class="pre">λ</span> <span class="pre">not</span> <span class="pre">set</span></code> when <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p>[x] Display value via <code class="docutils literal notranslate"><span class="pre">display.fmt()</span></code></p></li>
+<li><p>[x] Tests: default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, valid assignment, invalid (≤ 0), display in <code class="docutils literal notranslate"><span class="pre">summary()</span></code></p></li>
+</ul>
+</section>
+<section id="motor-limits-per-stage-2">
+<h3>1.2 Motor limits per stage (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/2">#2</a>)<a class="headerlink" href="#motor-limits-per-stage-2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Add <code class="docutils literal notranslate"><span class="pre">limits:</span> <span class="pre">tuple[float,</span> <span class="pre">float]</span></code> attribute to <code class="docutils literal notranslate"><span class="pre">Stage</span></code>
+(min_angle, max_angle in degrees); default (-180, 180)</p></li>
+<li><p>[x] Add <code class="docutils literal notranslate"><span class="pre">Stage.in_limits(angle_deg)</span></code> method</p></li>
+<li><p>[x] Add <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.check_limits(**angles)</span></code> method that
+verifies all supplied angles are within their stage limits</p></li>
+<li><p>[x] Validate limits at construction: min &lt; max</p></li>
+<li><p>[x] Tests covering valid, invalid, and boundary cases</p></li>
+</ul>
+</section>
+<section id="split-unit-tests-into-module-specific-files-17">
+<h3>1.4 Split unit tests into module-specific files (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/17">#17</a>)<a class="headerlink" href="#split-unit-tests-into-module-specific-files-17" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Create <code class="docutils literal notranslate"><span class="pre">tests/test_axes.py</span></code>, <code class="docutils literal notranslate"><span class="pre">test_rotation.py</span></code>, <code class="docutils literal notranslate"><span class="pre">test_stage.py</span></code>, <code class="docutils literal notranslate"><span class="pre">test_geometry.py</span></code>, <code class="docutils literal notranslate"><span class="pre">test_factories.py</span></code>, <code class="docutils literal notranslate"><span class="pre">test_display.py</span></code></p></li>
+<li><p>[x] Migrate all tests from <code class="docutils literal notranslate"><span class="pre">tests/test_diffractometer.py</span></code> into the appropriate new file</p></li>
+<li><p>[x] Remove <code class="docutils literal notranslate"><span class="pre">tests/test_diffractometer.py</span></code> once migration is complete</p></li>
+<li><p>[x] Verify full test suite still passes</p></li>
+</ul>
+</section>
+<section id="github-actions-workflow-for-unit-testing-18">
+<h3>1.5 GitHub Actions workflow for unit testing (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/18">#18</a>)<a class="headerlink" href="#github-actions-workflow-for-unit-testing-18" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Create <code class="docutils literal notranslate"><span class="pre">.github/workflows/tests.yml</span></code></p></li>
+<li><p>[x] Trigger on <code class="docutils literal notranslate"><span class="pre">push</span></code> and <code class="docutils literal notranslate"><span class="pre">pull_request</span></code> to <code class="docutils literal notranslate"><span class="pre">main</span></code></p></li>
+<li><p>[x] Matrix over all supported Python versions (<code class="docutils literal notranslate"><span class="pre">3.10</span></code>, <code class="docutils literal notranslate"><span class="pre">3.11</span></code>, <code class="docutils literal notranslate"><span class="pre">3.12</span></code>, <code class="docutils literal notranslate"><span class="pre">3.13</span></code>); <code class="docutils literal notranslate"><span class="pre">3.14-dev</span></code> included as an allowed failure for early warning</p></li>
+<li><p>[x] Install with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.[dev]</span></code> and run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pytest</span></code></p></li>
+</ul>
+</section>
+<section id="kappa-alpha-queryable-on-the-geometry-instance-3">
+<h3>1.3 Kappa alpha queryable on the geometry instance (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/3">#3</a>)<a class="headerlink" href="#kappa-alpha-queryable-on-the-geometry-instance-3" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Store <code class="docutils literal notranslate"><span class="pre">kappa_alpha_deg</span></code> as an attribute on the <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code>
+instance returned by kappa factory functions (kappa4cv, kappa4ch,
+kappa6c); currently baked only into the axis vector</p></li>
+<li><p>[x] Add a <code class="docutils literal notranslate"><span class="pre">kappa_alpha_deg</span></code> property on the instance; <code class="docutils literal notranslate"><span class="pre">None</span></code> for non-kappa geometries</p></li>
+<li><p>[x] Tests verifying the value is correct and matches the axis vector</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="priority-2-medium-term-needed-for-ub-formalism">
+<h2>Priority 2 — Medium-term (needed for UB formalism)<a class="headerlink" href="#priority-2-medium-term-needed-for-ub-formalism" title="Link to this heading">#</a></h2>
+<p>These items require motor-angle-to-phi-frame vector conversion, which must
+be implemented first.</p>
+<section id="motor-angle-to-phi-frame-conversion-4">
+<h3>2.0 Motor-angle-to-phi-frame conversion (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/4">#4</a>)<a class="headerlink" href="#motor-angle-to-phi-frame-conversion-4" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Function <code class="docutils literal notranslate"><span class="pre">angles_to_phi_vector(geometry,</span> <span class="pre">**motor_angles)</span></code>
+that computes the scattering vector in the phi-axis frame from a set
+of motor angles</p></li>
+<li><p>[x] This is the missing link needed for U and UB computation</p></li>
+<li><p>[x] Reference: Busing &amp; Levy (1967), You (1999)</p></li>
+</ul>
+</section>
+<section id="ub-from-two-reflections-bl1967-bl1967-eqs-23-27-5">
+<h3>2.1 <code class="docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967</span></code> (BL1967 eqs. 23-27) (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/5">#5</a>)<a class="headerlink" href="#ub-from-two-reflections-bl1967-bl1967-eqs-23-27-5" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Implement in <code class="docutils literal notranslate"><span class="pre">orientation.py</span></code></p></li>
+<li><p>[x] Inputs: two <code class="docutils literal notranslate"><span class="pre">Reflection</span></code> objects + known lattice (B matrix)</p></li>
+<li><p>[x] Algorithm: Gram-Schmidt orthonormal triples Tc (crystal) and Tφ (phi
+frame); U = Tφ &#64; Tc.T; UB = U &#64; B</p></li>
+<li><p>[x] Sets <code class="docutils literal notranslate"><span class="pre">sample.U</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> in-place; returns UB</p></li>
+</ul>
+</section>
+<section id="ub-from-three-reflections-bl1967-bl1967-eqs-29-31-6">
+<h3>2.2 <code class="docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967</span></code> (BL1967 eqs. 29-31) (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/6">#6</a>)<a class="headerlink" href="#ub-from-three-reflections-bl1967-bl1967-eqs-29-31-6" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Implement in <code class="docutils literal notranslate"><span class="pre">orientation.py</span></code></p></li>
+<li><p>[x] Inputs: three <code class="docutils literal notranslate"><span class="pre">Reflection</span></code> objects; no prior lattice needed</p></li>
+<li><p>[x] Algorithm: UB = Hφ &#64; H⁻¹ (direct matrix inversion); U = UB &#64; B⁻¹</p></li>
+<li><p>[x] Sets <code class="docutils literal notranslate"><span class="pre">sample.U</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> in-place; returns UB</p></li>
+</ul>
+</section>
+<section id="orienting-reflections-data-structure-7">
+<h3>2.3 Orienting reflections data structure (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/7">#7</a>)<a class="headerlink" href="#orienting-reflections-data-structure-7" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">Reflection</span></code> dataclass: <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">hkl</span></code>, <code class="docutils literal notranslate"><span class="pre">angles</span></code> (keyed by stage name),
+<code class="docutils literal notranslate"><span class="pre">wavelength</span></code>, <code class="docutils literal notranslate"><span class="pre">geometry_name</span></code>; normalisation, validation, <code class="docutils literal notranslate"><span class="pre">__eq__</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">ReflectionList</span></code> class: ordered dict of named reflections with
+dict-like interface (<code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>, <code class="docutils literal notranslate"><span class="pre">__delitem__</span></code>, <code class="docutils literal notranslate"><span class="pre">__contains__</span></code>,
+<code class="docutils literal notranslate"><span class="pre">__len__</span></code>, <code class="docutils literal notranslate"><span class="pre">__iter__</span></code>), <code class="docutils literal notranslate"><span class="pre">add()</span></code>, <code class="docutils literal notranslate"><span class="pre">remove()</span></code>, <code class="docutils literal notranslate"><span class="pre">clear()</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">ReflectionList.setor1()</span></code> / <code class="docutils literal notranslate"><span class="pre">setor2()</span></code>: designate primary/secondary
+orienting reflections; moving a reflection between slots clears the old</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">ReflectionList.orienting_reflections</span></code> property: <code class="docutils literal notranslate"><span class="pre">[]</span></code>, <code class="docutils literal notranslate"><span class="pre">[or1]</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">[or1,</span> <span class="pre">or2]</span></code></p></li>
+<li><p>[x] Angle keys validated against the geometry’s stage names at <code class="docutils literal notranslate"><span class="pre">add()</span></code> time</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.reflections</span></code> holds the <code class="docutils literal notranslate"><span class="pre">ReflectionList</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.add_reflection()</span></code> convenience wrapper (inherits
+geometry wavelength)</p></li>
+</ul>
+</section>
+<section id="spec-g1-format-and-reflection-round-trip-tests-26">
+<h3>2.4 SPEC #G1 format and reflection round-trip tests (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/26">#26</a>)<a class="headerlink" href="#spec-g1-format-and-reflection-round-trip-tests-26" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Parse and emit the SPEC #G1 line format (hkl + motor angles + wavelength)</p></li>
+<li><p>[x] Tests: store a reflection → compute UB → verify UB &#64; or1_hkl ∥ Q_phi(or1)</p></li>
+<li><p>[x] Verify compatibility with alignment data in
+<code class="docutils literal notranslate"><span class="pre">references/2020-12-13-fourcc-alignment-7-id-c/</span></code></p></li>
+<li><p>[x] Depends on: #7 (2.3), #5 (2.1 U matrix), #6 (2.2 UB matrix), #26 (2.5)</p></li>
+</ul>
+</section>
+<section id="sample-dict-on-adhocdiffractometer-25">
+<h3>2.5 Sample dict on AdHocDiffractometer (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/25">#25</a>)<a class="headerlink" href="#sample-dict-on-adhocdiffractometer-25" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] New <code class="docutils literal notranslate"><span class="pre">Sample</span></code> class (<code class="docutils literal notranslate"><span class="pre">sample.py</span></code>): <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">lattice</span></code> (Lattice),
+<code class="docutils literal notranslate"><span class="pre">reflections</span></code> (ReflectionList), <code class="docutils literal notranslate"><span class="pre">U</span></code> (3×3 or None), <code class="docutils literal notranslate"><span class="pre">UB</span></code> (3×3 or None);
+<code class="docutils literal notranslate"><span class="pre">__eq__</span></code>, <code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">SampleDict</span></code> class: guarded ordered dict; rejects non-Sample values,
+blocks remove/replace/pop/clear of the active sample; <code class="docutils literal notranslate"><span class="pre">_samples</span></code> is a
+read-only property so the container itself cannot be replaced</p></li>
+<li><p>[x] Default sample: <code class="docutils literal notranslate"><span class="pre">&quot;test&quot;</span></code>, cubic lattice a=1 Å, empty reflections,
+U=None, UB=None</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.samples</span></code> — <code class="docutils literal notranslate"><span class="pre">SampleDict</span></code>, initialised with <code class="docutils literal notranslate"><span class="pre">&quot;test&quot;</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.sample</span></code> — property for the active sample (get/set
+by name or object)</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.add_sample()</span></code> / <code class="docutils literal notranslate"><span class="pre">remove_sample()</span></code> — guarded CRUD</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.add_reflection()</span></code> delegates to the active sample’s
+<code class="docutils literal notranslate"><span class="pre">ReflectionList</span></code></p></li>
+<li><p>[x] U and UB matrices live on <code class="docutils literal notranslate"><span class="pre">Sample</span></code>, not on the geometry</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">Lattice.__eq__</span></code> added (compares all six parameters, exact — see 2.6)</p></li>
+<li><p>[x] 37 new tests in <code class="docutils literal notranslate"><span class="pre">test_sample.py</span></code></p></li>
+</ul>
+</section>
+<section id="tolerance-aware-eq-for-lattice-and-reflection-29">
+<h3>2.6 Tolerance-aware <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> for Lattice and Reflection (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/29">#29</a>)<a class="headerlink" href="#tolerance-aware-eq-for-lattice-and-reflection-29" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Add <code class="docutils literal notranslate"><span class="pre">precision_atol(digits=None)</span></code> to <code class="docutils literal notranslate"><span class="pre">display.py</span></code>: returns
+<code class="docutils literal notranslate"><span class="pre">0.5</span> <span class="pre">*</span> <span class="pre">10**(-digits)</span></code> — half a unit in the last displayed decimal place</p></li>
+<li><p>[x] Add <code class="docutils literal notranslate"><span class="pre">allclose(a,</span> <span class="pre">b,</span> <span class="pre">atol=None,</span> <span class="pre">digits=None)</span></code> to <code class="docutils literal notranslate"><span class="pre">display.py</span></code>: wraps
+<code class="docutils literal notranslate"><span class="pre">np.allclose</span></code> with <code class="docutils literal notranslate"><span class="pre">rtol=0</span></code> and the precision-derived tolerance</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">Lattice.__eq__</span></code>: pack six parameters into arrays → <code class="docutils literal notranslate"><span class="pre">np.allclose</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">Reflection.__eq__</span></code>: hkl and angle values → <code class="docutils literal notranslate"><span class="pre">np.allclose</span></code>; name and
+<code class="docutils literal notranslate"><span class="pre">geometry_name</span></code> → exact string comparison</p></li>
+<li><p>[x] Export <code class="docutils literal notranslate"><span class="pre">precision_atol</span></code> and <code class="docutils literal notranslate"><span class="pre">allclose</span></code> from <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code></p></li>
+<li><p>[x] Tests in <code class="docutils literal notranslate"><span class="pre">test_display.py</span></code>, <code class="docutils literal notranslate"><span class="pre">test_lattice.py</span></code>, <code class="docutils literal notranslate"><span class="pre">test_reflection.py</span></code></p></li>
+</ul>
+</section>
+<section id="ub-from-one-reflection-initial-ub-from-one-reflection-31">
+<h3>2.7 <code class="docutils literal notranslate"><span class="pre">ub_from_one_reflection</span></code> — initial UB from one reflection (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/31">#31</a>)<a class="headerlink" href="#ub-from-one-reflection-initial-ub-from-one-reflection-31" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">Sample.parent</span></code> attribute: back-reference to owning
+<code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code>; set by <code class="docutils literal notranslate"><span class="pre">add_sample()</span></code> and default sample
+construction; cleared to <code class="docutils literal notranslate"><span class="pre">None</span></code> by <code class="docutils literal notranslate"><span class="pre">remove_sample()</span></code>; excluded from
+<code class="docutils literal notranslate"><span class="pre">__eq__</span></code>; shown in <code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></li>
+<li><p>[x] Create <code class="docutils literal notranslate"><span class="pre">orientation.py</span></code> module</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">ub_identity(sample)</span></code>: sets U=I, UB=B; returns UB</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">ub_from_one_reflection(sample,</span> <span class="pre">reflection,</span> <span class="pre">reference_hkl,</span>&#160;&#160;&#160;&#160; <span class="pre">reference_stage)</span></code>: Rodrigues rotation from crystal direction to lab
+axis; resolves <code class="docutils literal notranslate"><span class="pre">reference_stage</span></code> from Stage, str, or None+parent;
+sets <code class="docutils literal notranslate"><span class="pre">sample.U</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> in-place; returns UB</p></li>
+<li><p>[x] Edge cases: parallel (U=I), anti-parallel (perpendicular axis)</p></li>
+<li><p>[x] Export <code class="docutils literal notranslate"><span class="pre">ub_identity</span></code> and <code class="docutils literal notranslate"><span class="pre">ub_from_one_reflection</span></code> from <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code></p></li>
+<li><p>[x] Tests in <code class="docutils literal notranslate"><span class="pre">test_orientation.py</span></code> and <code class="docutils literal notranslate"><span class="pre">test_sample.py</span></code></p></li>
+</ul>
+</section>
+<section id="refine-lattice-bl1967-least-squares-lattice-refinement-32">
+<h3>2.8 <code class="docutils literal notranslate"><span class="pre">refine_lattice_bl1967</span></code> — least-squares lattice refinement (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/32">#32</a>)<a class="headerlink" href="#refine-lattice-bl1967-least-squares-lattice-refinement-32" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Create <code class="docutils literal notranslate"><span class="pre">refinement.py</span></code> module (separate from <code class="docutils literal notranslate"><span class="pre">orientation.py</span></code>)</p></li>
+<li><p>[x] Implement <code class="docutils literal notranslate"><span class="pre">refine_lattice_bl1967(sample,</span> <span class="pre">reflections,</span> <span class="pre">...)</span></code> using
+BL1967 §Refinement; simultaneous cell + orientation least-squares</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">refine_all=False</span></code> (default): refine only the free params for the
+current crystal system; <code class="docutils literal notranslate"><span class="pre">refine_all=True</span></code>: all six params free</p></li>
+<li><p>[x] Returns result dict; updates <code class="docutils literal notranslate"><span class="pre">sample.lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">sample.U</span></code>,
+<code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> in-place</p></li>
+</ul>
+</section>
+<section id="refine-lattice-simplex-derivative-free-lattice-refinement-33">
+<h3>2.9 <code class="docutils literal notranslate"><span class="pre">refine_lattice_simplex</span></code> — derivative-free lattice refinement (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/33">#33</a>)<a class="headerlink" href="#refine-lattice-simplex-derivative-free-lattice-refinement-33" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Implement <code class="docutils literal notranslate"><span class="pre">refine_lattice_simplex(sample,</span> <span class="pre">reflections,</span> <span class="pre">...)</span></code> in
+<code class="docutils literal notranslate"><span class="pre">refinement.py</span></code> using Nelder-Mead simplex; derivative-free
+alternative to BL1967 least squares</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">refine_all</span></code> option (same semantics as <code class="docutils literal notranslate"><span class="pre">refine_lattice_bl1967</span></code>)</p></li>
+<li><p>[x] Same return dict structure as <code class="docutils literal notranslate"><span class="pre">refine_lattice_bl1967</span></code></p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="priority-3-later-instrument-specific-operational">
+<h2>Priority 3 — Later (instrument-specific, operational)<a class="headerlink" href="#priority-3-later-instrument-specific-operational" title="Link to this heading">#</a></h2>
+<section id="entry-point-extensibility-for-geometry-factories-37">
+<h3>3.0 Entry-point extensibility for geometry factories (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/37">#37</a>)<a class="headerlink" href="#entry-point-extensibility-for-geometry-factories-37" title="Link to this heading">#</a></h3>
+<p>Allow third-party packages to contribute additional diffractometer
+geometries without modifying this package, using Python’s standard
+<code class="docutils literal notranslate"><span class="pre">importlib.metadata</span></code> entry-point mechanism.</p>
+<ul class="simple">
+<li><p>[x] Declare all 10 built-in factories as entry points in
+<code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> under the group
+<code class="docutils literal notranslate"><span class="pre">&quot;ad_hoc_diffractometer.geometries&quot;</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">_load_entry_point_geometries()</span></code>: discovers and loads plugins
+from the entry-point group at first call; idempotent; silently
+skips broken plugins</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">list_geometries()</span></code> and <code class="docutils literal notranslate"><span class="pre">get_geometry()</span></code> call the loader
+automatically — no explicit registration needed for plugins</p></li>
+<li><p>[x] Export <code class="docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code> constant so callers can
+reference the group name without importing from internal modules</p></li>
+<li><p>[x] Third-party plugin authoring documented in the <code class="docutils literal notranslate"><span class="pre">factories.py</span></code>
+module docstring</p></li>
+<li><p>[x] Tests: all 10 built-ins appear after <code class="docutils literal notranslate"><span class="pre">list_geometries()</span></code>;
+mock-based test for a simulated plugin; <code class="docutils literal notranslate"><span class="pre">get_geometry()</span></code>
+discovers plugins; <code class="docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code> correct value</p></li>
+</ul>
+</section>
+<section id="diffraction-mode-operating-constraints-9">
+<h3>3.1 Diffraction mode / operating constraints (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/9">#9</a>)<a class="headerlink" href="#diffraction-mode-operating-constraints-9" title="Link to this heading">#</a></h3>
+<p>Modes are a first-class concern of the geometry description, not an
+afterthought.  A mode specifies which degrees of freedom are
+constrained during a diffraction calculation, and which are free.
+The user should be able to declare available modes as part of the
+geometry definition passed to <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code>, analogously to
+how stages are declared.</p>
+<ul class="simple">
+<li><p>[x] <strong>Mode declaration in the geometry dict / constructor</strong>: the
+<code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> constructor accepts a <code class="docutils literal notranslate"><span class="pre">modes</span></code> argument —
+a dict or <code class="docutils literal notranslate"><span class="pre">ModeDict</span></code> of named mode objects — and a <code class="docutils literal notranslate"><span class="pre">default_mode</span></code>
+argument so that the available modes and the active mode are part
+of the geometry description, not set separately after construction.
+<code class="docutils literal notranslate"><span class="pre">python</span>&#160;&#160;&#160;&#160; <span class="pre">AdHocDiffractometer(</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">name=&quot;psic&quot;,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">stages=[...],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">modes={</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">&quot;bisecting&quot;:</span>&#160;&#160; <span class="pre">BisectingMode(&quot;eta&quot;,</span> <span class="pre">&quot;delta&quot;,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">frozen_angles={&quot;mu&quot;:</span> <span class="pre">0.0,</span> <span class="pre">&quot;nu&quot;:</span> <span class="pre">0.0}),</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">&quot;fixed_chi&quot;:</span>&#160;&#160; <span class="pre">FixedAngleMode(stage=&quot;chi&quot;,</span> <span class="pre">value=90.0),</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">&quot;fixed_phi&quot;:</span>&#160;&#160; <span class="pre">FixedAngleMode(stage=&quot;phi&quot;,</span> <span class="pre">value=0.0),</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">},</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">default_mode=&quot;bisecting&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">)</span>&#160;&#160;&#160;&#160; </code></p></li>
+<li><p>[x] <strong>Mode object interface</strong>: <code class="docutils literal notranslate"><span class="pre">DiffractionMode</span></code> ABC in <code class="docutils literal notranslate"><span class="pre">mode.py</span></code>
+declares <code class="docutils literal notranslate"><span class="pre">constrained_stages</span></code>, <code class="docutils literal notranslate"><span class="pre">frozen_angles</span></code>, <code class="docutils literal notranslate"><span class="pre">cut_points</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">apply_cut_point(stage,</span> <span class="pre">angle)</span></code>; <code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code> and
+<code class="docutils literal notranslate"><span class="pre">BisectingMode</span></code> are the two built-in concrete subclasses.</p></li>
+<li><p>[x] <strong>Active mode</strong>: <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.mode_name</span></code> (read/write
+property) and <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.mode</span></code> (read-only, returns the
+active <code class="docutils literal notranslate"><span class="pre">DiffractionMode</span></code> object or <code class="docutils literal notranslate"><span class="pre">None</span></code>).</p></li>
+<li><p>[x] <strong>Geometry-specific modes</strong>: factory functions pre-populate the
+modes dict with canonical modes.  psic: bisecting, fixed_chi,
+fixed_phi, fixed_mu (You 1999); fourcv / fourch: bisecting,
+fixed_chi, fixed_phi (BL1967); kappa4cv / kappa4ch: bisecting,
+fixed_kphi; kappa6c: bisecting, fixed_kphi, fixed_mu.</p></li>
+<li><p>[x] <strong>Mode name attribute</strong>: <code class="docutils literal notranslate"><span class="pre">geometry.mode_name</span></code> (str or None).</p></li>
+<li><p>[x] <strong>Frozen angle values</strong>: <code class="docutils literal notranslate"><span class="pre">DiffractionMode.frozen_angles</span></code> dict;
+mirrors SPEC #G0 frozen motor values.</p></li>
+<li><p>[x] <strong>Cut points (per mode)</strong>: <code class="docutils literal notranslate"><span class="pre">DiffractionMode.cut_points</span></code> dict and
+<code class="docutils literal notranslate"><span class="pre">apply_cut_point(stage,</span> <span class="pre">angle)</span></code> method; mirrors SPEC #G4.</p></li>
+<li><p>[x] <strong>Cut points (per geometry)</strong>: <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.cut_points</span></code>
+dict for geometry-level SPEC #G4 defaults.</p></li>
+<li><p>[x] <strong>Serialisation</strong>: <code class="docutils literal notranslate"><span class="pre">to_dict</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict</span></code> round-trips modes
+(<code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code>, <code class="docutils literal notranslate"><span class="pre">BisectingMode</span></code>), <code class="docutils literal notranslate"><span class="pre">mode_name</span></code>, and <code class="docutils literal notranslate"><span class="pre">cut_points</span></code>
+as part of the geometry export; all JSON-serialisable.</p></li>
+<li><p>[x] <strong>ModeDict</strong>: guarded ordered dict; rejects non-<code class="docutils literal notranslate"><span class="pre">DiffractionMode</span></code>
+values; exported from <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>.</p></li>
+<li><p>[x] 73 tests in <code class="docutils literal notranslate"><span class="pre">test_mode.py</span></code>; 100% line and branch coverage.</p></li>
+</ul>
+</section>
+<section id="azimuthal-reference-vector-11">
+<h3>3.2 Azimuthal reference vector (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/11">#11</a>)<a class="headerlink" href="#azimuthal-reference-vector-11" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code> property on <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code>: stores the
+reference direction as Miller indices (h, k, l); default <code class="docutils literal notranslate"><span class="pre">None</span></code>;
+validated as a non-zero 3-vector; settable after construction</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">psi(angles=None)</span></code> method: computes azimuthal angle ψ from current
+(or supplied) motor angles and the active sample’s UB matrix;
+ψ = 0 when the reference lies in the scattering plane (You 1999
+eqs. 10-11); raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> for parallel n ‖ Q</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">pa()</span></code> shows the azimuthal reference hkl (or “not set”)</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">wh()</span></code> shows a Psi line (or “not available” when undefined)</p></li>
+<li><p>[x] Tests: psi=0 / psi=90 analytically verified; property validation;
+error cases; status command integration</p></li>
+</ul>
+</section>
+<section id="forward-hkl-angles-35">
+<h3><code class="docutils literal notranslate"><span class="pre">forward()</span></code>: hkl → angles (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/35">#35</a>)<a class="headerlink" href="#forward-hkl-angles-35" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.forward(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> — returns all valid motor-angle
+solutions as a list of dicts, filtered by stage limits</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">compute_forward(geometry,</span> <span class="pre">h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> — top-level function, exported
+from <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code></p></li>
+<li><p>[x] Numeric Gauss-Newton solver (geometry-agnostic, no analytic formulas
+per geometry needed): works for any basis convention and axis handedness</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">BisectingMode</span></code> dispatch: ttheta from Bragg’s law; bisecting stage =
+ttheta/2; two free stages (chi/phi equivalent) solved numerically;
+8 analytic seeds + 16-point coarse grid for robustness; deduplication</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code> dispatch: delegates to bisecting solver with the
+fixed stage added to frozen_angles; 1D solver for the single remaining
+free stage</p></li>
+<li><p>[x] Cut-point application (mode-level takes priority over geometry-level)</p></li>
+<li><p>[x] Stage-limit filtering (solutions outside limits dropped)</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">forward.py</span></code> module: <code class="docutils literal notranslate"><span class="pre">compute_forward</span></code>, <code class="docutils literal notranslate"><span class="pre">_solve_bisecting</span></code>,
+<code class="docutils literal notranslate"><span class="pre">_solve_fixed_angle</span></code>, <code class="docutils literal notranslate"><span class="pre">_solve_one_free_angle</span></code>, <code class="docutils literal notranslate"><span class="pre">_solve_two_angles</span></code>,
+<code class="docutils literal notranslate"><span class="pre">_apply_cut_points</span></code>, <code class="docutils literal notranslate"><span class="pre">_check_limits</span></code></p></li>
+<li><p>[x] 39 tests in <code class="docutils literal notranslate"><span class="pre">test_forward.py</span></code>; 100% line and branch coverage</p></li>
+<li><p>[x] Depends on: #9 (3.1 modes), #4 (2.0 phi-frame), UB matrix</p></li>
+</ul>
+</section>
+<section id="duplicate-geometry-name-in-entry-point-registry-71">
+<h3>Duplicate geometry name in entry-point registry (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/71">#71</a>)<a class="headerlink" href="#duplicate-geometry-name-in-entry-point-registry-71" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">_load_entry_point_geometries()</span></code> raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when an entry-point
+name collides with an already-registered geometry (built-in or plugin),
+unless the entry point resolves to the exact same callable (built-in
+re-declared via pyproject.toml — not a conflict)</p></li>
+<li><p>[x] Error message names the conflicting geometry, its source, and the
+existing registration</p></li>
+<li><p>[x] Broken entry points still silently skipped with a DEBUG log</p></li>
+<li><p>[x] Tests: collision with built-in, two-plugin collision, broken-plugin
+skip path unchanged</p></li>
+<li><p>[x] Module docstring updated to document the uniqueness requirement</p></li>
+</ul>
+</section>
+<section id="copyright-notices-77">
+<h3>Copyright notices (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/77">#77</a>)<a class="headerlink" href="#copyright-notices-77" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Two-line copyright header added to every <code class="docutils literal notranslate"><span class="pre">src/</span></code> and <code class="docutils literal notranslate"><span class="pre">tests/</span></code> Python
+module (excluding <code class="docutils literal notranslate"><span class="pre">_version.py</span></code>): author Pete R. Jemian, year 2026,
+SPDX-License-Identifier: CC-BY-4.0</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">insert-license</span></code> pre-commit hook (<code class="docutils literal notranslate"><span class="pre">Lucas-C/pre-commit-hooks</span></code>) maintains
+headers automatically; year range extends on future commits</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">.copyright.txt</span></code> license header template at repository root</p></li>
+</ul>
+</section>
+<section id="convention-fix-lattice-b-and-b-matrix-78">
+<h3>2π convention fix — <code class="docutils literal notranslate"><span class="pre">Lattice.B</span></code> and <code class="docutils literal notranslate"><span class="pre">b_matrix()</span></code> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/78">#78</a>)<a class="headerlink" href="#convention-fix-lattice-b-and-b-matrix-78" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">Lattice.B</span></code> and <code class="docutils literal notranslate"><span class="pre">b_matrix()</span></code> now include the 2π factor (BL1967 / SPEC
+convention): <code class="docutils literal notranslate"><span class="pre">|B</span> <span class="pre">&#64;</span> <span class="pre">hkl|</span> <span class="pre">=</span> <span class="pre">2π/d_hkl</span></code>, satisfying <code class="docutils literal notranslate"><span class="pre">bᵢ</span> <span class="pre">·</span> <span class="pre">aⱼ</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">δᵢⱼ</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">UB</span> <span class="pre">&#64;</span> <span class="pre">hkl</span> <span class="pre">=</span> <span class="pre">Q_phi</span></code> now holds with real wavelengths; <code class="docutils literal notranslate"><span class="pre">inverse()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">wh()</span></code> return true Miller indices</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">d-spacing</span></code> formula updated: <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">/</span> <span class="pre">|B</span> <span class="pre">&#64;</span> <span class="pre">hkl|</span></code></p></li>
+<li><p>[x] Docstring on <code class="docutils literal notranslate"><span class="pre">Lattice.B</span></code> and <code class="docutils literal notranslate"><span class="pre">b_matrix()</span></code> notes the alternative no-2π
+convention used by FullProf, CrysFML, and the hkl library (<code class="docutils literal notranslate"><span class="pre">tau=1</span></code>)</p></li>
+<li><p>[x] Two real-wavelength regression tests added to <code class="docutils literal notranslate"><span class="pre">test_orientation.py</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">fourcv_alignment_howto.ipynb</span></code> updated: <code class="docutils literal notranslate"><span class="pre">bragg_angles()</span></code> helper uses
+<code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">/</span> <span class="pre">|B</span> <span class="pre">&#64;</span> <span class="pre">hkl|</span></code>; 2π caveat removed; <code class="docutils literal notranslate"><span class="pre">wh()</span></code> shows <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">6)</span></code> ✓</p></li>
+<li><p>[x] 1011 tests; 100% coverage</p></li>
+</ul>
+</section>
+<section id="detector-geometry-parameters-10">
+<h3>3.3 Detector geometry parameters (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/10">#10</a>)<a class="headerlink" href="#detector-geometry-parameters-10" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">detector_distance</span></code> — sample-to-detector distance in mm; validated &gt; 0;
+<code class="docutils literal notranslate"><span class="pre">None</span></code> by default; settable and clearable after construction</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">detector_tilt</span></code> — detector tilt angle in degrees (pitch/roll correction
+for non-ideal alignment); any real number; <code class="docutils literal notranslate"><span class="pre">None</span></code> by default</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">detector_offset</span></code> — in-plane beam-centre offset (dx, dy) in mm; <code class="docutils literal notranslate"><span class="pre">None</span></code>
+by default; validated as a 2-element numeric sequence</p></li>
+<li><p>[x] All three properties serialised in <code class="docutils literal notranslate"><span class="pre">to_dict</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict</span></code> (JSON-safe)</p></li>
+<li><p>[x] 17 tests; 1029 tests total; 100% coverage</p></li>
+</ul>
+</section>
+<section id="alternative-calculation-engines-12">
+<h3>3.4 Alternative calculation engines (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/12">#12</a>)<a class="headerlink" href="#alternative-calculation-engines-12" title="Link to this heading">#</a></h3>
+<p>The hkl (Miller index) formalism is the primary calculation engine
+implemented here, following Busing &amp; Levy (1967) and You (1999).  Users
+have requested additional calculation engines:</p>
+<ul class="simple">
+<li><p>[ ] <strong>Q-space engine</strong>: calculate in terms of the scattering vector
+Q = (Qx, Qy, Qz) in Å⁻¹ rather than (h, k, l) in reciprocal
+lattice units.  Useful when the crystal structure is unknown or
+when doing diffuse scattering or liquid/amorphous studies.
+Relationship: Q = 2π · UB · h, so Q and hkl are interconvertible
+given UB.</p></li>
+<li><p>[ ] <strong>d-spacing / 2θ engine</strong>: express positions in terms of d-spacing
+(Å) and/or 2θ (degrees) directly.  Requires wavelength (item 1.1).</p></li>
+<li><p>[ ] <strong>Reciprocal lattice unit (rlu) engine</strong>: express Q in units of
+the reciprocal lattice vectors rather than Å⁻¹, i.e. fractional
+Miller indices without requiring integer h, k, l.</p></li>
+<li><p>[ ] Design consideration: engines should be pluggable — a common
+interface that can be swapped without changing the diffractometer
+geometry description.</p></li>
+</ul>
+</section>
+<section id="surface-geometry-incidence-and-emergence-angles-13">
+<h3>3.5 Surface geometry: incidence and emergence angles (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/13">#13</a>)<a class="headerlink" href="#surface-geometry-incidence-and-emergence-angles-13" title="Link to this heading">#</a></h3>
+<p>Surface diffraction geometries (zaxis, s2d2, sixc, psic in surface mode)
+require calculation and control of additional angles beyond the standard
+hkl mapping:</p>
+<ul class="simple">
+<li><p>[x] <strong><code class="docutils literal notranslate"><span class="pre">surface_normal</span></code> property</strong> on <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code>: Miller indices
+(h, k, l) defining the sample surface normal direction; validated
+non-zero; falls back to <code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code> if not set; serialised
+in <code class="docutils literal notranslate"><span class="pre">to_dict</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict</span></code>.</p></li>
+<li><p>[x] <strong>Angle of incidence (αi)</strong>: <code class="docutils literal notranslate"><span class="pre">alpha_i(geometry,</span> <span class="pre">angles=None)</span></code> in
+<code class="docutils literal notranslate"><span class="pre">surface.py</span></code>; <code class="docutils literal notranslate"><span class="pre">geometry.alpha_i(angles)</span></code> method.
+<code class="docutils literal notranslate"><span class="pre">sin(αi)</span> <span class="pre">=</span> <span class="pre">|ŷ</span> <span class="pre">·</span> <span class="pre">n̂_lab|</span></code> where n̂_lab = Z &#64; (UB &#64; n_hkl) / |…|.
+Verified: <code class="docutils literal notranslate"><span class="pre">alpha_i</span> <span class="pre">=</span> <span class="pre">alpha</span></code> for zaxis; <code class="docutils literal notranslate"><span class="pre">alpha_i</span> <span class="pre">=</span> <span class="pre">mu</span></code> for s2d2 and psic.</p></li>
+<li><p>[x] <strong>Angle of emergence / exit (αf)</strong>: <code class="docutils literal notranslate"><span class="pre">alpha_f(geometry,</span> <span class="pre">angles=None)</span></code>;
+<code class="docutils literal notranslate"><span class="pre">geometry.alpha_f(angles)</span></code>.  <code class="docutils literal notranslate"><span class="pre">sin(αf)</span> <span class="pre">=</span> <span class="pre">|k̂f</span> <span class="pre">·</span> <span class="pre">n̂_lab|</span></code>.
+Verified against LV1993 eq. 16 formula for zaxis/s2d2.</p></li>
+<li><p>[x] <strong>In-plane / out-of-plane decomposition</strong>: <code class="docutils literal notranslate"><span class="pre">q_components(geometry,</span>&#160;&#160;&#160;&#160; <span class="pre">angles=None)</span></code> returns <code class="docutils literal notranslate"><span class="pre">{&quot;Q_perp&quot;,</span> <span class="pre">&quot;Q_par&quot;,</span> <span class="pre">&quot;Q_perp_signed&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;Q_total&quot;}</span></code> in Å⁻¹.  Q_perp² + Q_par² = Q_total² verified.</p></li>
+<li><p>[x] <strong>Evanescent condition</strong>: <code class="docutils literal notranslate"><span class="pre">is_evanescent(geometry,</span> <span class="pre">angles=None,</span>&#160;&#160;&#160;&#160; <span class="pre">critical_angle_deg)</span></code> returns True when αi &lt; critical_angle_deg.
+Caller must supply the critical angle (material property).</p></li>
+<li><p>[x] <strong>Specular condition</strong>: <code class="docutils literal notranslate"><span class="pre">is_specular(geometry,</span> <span class="pre">angles=None,</span> <span class="pre">atol=0.01)</span></code>
+returns True when |αi − αf| ≤ atol.</p></li>
+<li><p>[x] All five functions exported from <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>; all five methods on
+<code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code>.</p></li>
+<li><p>[x] 58 tests in <code class="docutils literal notranslate"><span class="pre">test_surface.py</span></code>; 1067 tests total; 100% coverage.</p></li>
+<li><p>[x] Reference: Lohmeier &amp; Vlieg (1993) §4.2 eqs. 15-16;
+You (1999) eqs. 10-11; Vlieg et al. (1987).</p></li>
+</ul>
+</section>
+<section id="scans-about-an-arbitrary-reciprocal-space-vector-14">
+<h3>3.6 Scans about an arbitrary reciprocal-space vector (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/14">#14</a>)<a class="headerlink" href="#scans-about-an-arbitrary-reciprocal-space-vector-14" title="Link to this heading">#</a></h3>
+<p>Diffractometers are often used to scan motor angles such that the
+scattering vector Q traces a specific path in reciprocal space relative
+to a chosen reference direction.  Two important classes:</p>
+<ul class="simple">
+<li><p>[x] <strong>Arbitrary hkl vector scans</strong>: <code class="docutils literal notranslate"><span class="pre">hkl_trajectory(geometry,</span> <span class="pre">trajectory,</span>&#160;&#160;&#160;&#160; <span class="pre">n_points)</span></code> computes motor-angle sequences along line, radial, or
+transverse reciprocal-space paths.  The <code class="docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code> solution key
+suppresses branch-flip discontinuities.</p></li>
+<li><p>[x] <strong>ψ (psi) scans</strong>: <code class="docutils literal notranslate"><span class="pre">psi_trajectory(geometry,</span> <span class="pre">h,</span> <span class="pre">k,</span> <span class="pre">l,</span> <span class="pre">psi_values)</span></code>
+computes motor angles for Busing &amp; Levy (1967) operational ψ — the
+rotation of the sample about Q relative to the base forward() solution.
+Supports Eulerian (fourcv, fourch, psic) and kappa geometries
+(kappa4cv, kappa4ch, kappa6c) via analytic Z-matrix decomposition.
+Note: the BL1967 operational ψ differs from the You (1999) ψ computed
+by <code class="docutils literal notranslate"><span class="pre">geometry.psi()</span></code> — see <code class="docutils literal notranslate"><span class="pre">scan.py</span></code> module docstring for the distinction.</p></li>
+<li><p>[x] <strong>Reciprocal-space trajectory planning</strong>: <code class="docutils literal notranslate"><span class="pre">trajectory_plan(geometry,</span>&#160;&#160;&#160;&#160; <span class="pre">hkl_start,</span> <span class="pre">hkl_end,</span> <span class="pre">n_points,</span> <span class="pre">space=&quot;hkl&quot;|&quot;Q&quot;)</span></code> computes motor-angle
+paths and flags limit violations and inaccessible regions.  Both
+hkl-space (uniform in Miller indices) and Q-space (uniform in Å⁻¹)
+interpolation are supported.</p></li>
+<li><p>[x] Reference: Busing &amp; Levy (1967), section on ψ scans;
+You (1999), azimuthal angle definition;
+ITC Vol. C, Sec. 2.2.6 (ψ scan via ω, χ, φ adjustment).</p></li>
+<li><p>[x] Depends on: 2.0, 2.2, 3.1, 3.2.</p></li>
+<li><p>[x] 53 tests in <code class="docutils literal notranslate"><span class="pre">test_scan.py</span></code>.</p></li>
+</ul>
+</section>
+<section id="diffractometer-inclination-with-respect-to-the-incident-beam-15">
+<h3>3.7 Diffractometer inclination with respect to the incident beam (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/15">#15</a>)<a class="headerlink" href="#diffractometer-inclination-with-respect-to-the-incident-beam-15" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">inclination_matrix</span></code> property on <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> — a 3×3 proper
+rotation matrix (orthonormal, det = +1); default <code class="docutils literal notranslate"><span class="pre">np.eye(3)</span></code> (no
+inclination); validated on assignment</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">set_inclination(axis,</span> <span class="pre">angle_deg)</span></code> convenience method — builds the
+rotation matrix from an axis vector and angle in degrees using the
+existing <code class="docutils literal notranslate"><span class="pre">rotation_matrix</span></code> function</p></li>
+<li><p>[x] Folded into <code class="docutils literal notranslate"><span class="pre">angles_to_phi_vector</span></code>: the effective incident-beam
+direction becomes <code class="docutils literal notranslate"><span class="pre">R_inc.T</span> <span class="pre">&#64;</span> <span class="pre">ŷ</span></code>; zero inclination (identity) reproduces
+the standard result exactly</p></li>
+<li><p>[x] Serialised in <code class="docutils literal notranslate"><span class="pre">to_dict</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict</span></code> as a nested list (JSON-safe)</p></li>
+<li><p>[x] 11 tests verifying default identity, set/validate, error paths,
+Q-vector changes, and round-trip serialisation; 1023 tests total;
+100% coverage</p></li>
+</ul>
+</section>
+<section id="a-refactor-wh-and-pa-as-methods-51">
+<h3>3.7a Refactor <code class="docutils literal notranslate"><span class="pre">wh</span></code> and <code class="docutils literal notranslate"><span class="pre">pa</span></code> as methods (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/51">#51</a>)<a class="headerlink" href="#a-refactor-wh-and-pa-as-methods-51" title="Link to this heading">#</a></h3>
+<p>Move <code class="docutils literal notranslate"><span class="pre">wh()</span></code> and <code class="docutils literal notranslate"><span class="pre">pa()</span></code> from standalone functions in <code class="docutils literal notranslate"><span class="pre">status.py</span></code> to methods
+on <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code>, while keeping the module-level functions as
+thin wrappers for backward compatibility.</p>
+<ul class="simple">
+<li><p>[x] Add <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.wh</span></code> property (delegates to <code class="docutils literal notranslate"><span class="pre">status.wh(self)</span></code>)</p></li>
+<li><p>[x] Add <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.pa</span></code> property (delegates to <code class="docutils literal notranslate"><span class="pre">status.pa(self)</span></code>)</p></li>
+<li><p>[x] Module-level <code class="docutils literal notranslate"><span class="pre">wh(geometry)</span></code> and <code class="docutils literal notranslate"><span class="pre">pa(geometry)</span></code> remain as thin wrappers</p></li>
+<li><p>[x] Tests: <code class="docutils literal notranslate"><span class="pre">g.wh</span></code> and <code class="docutils literal notranslate"><span class="pre">g.pa</span></code> return the same string as <code class="docutils literal notranslate"><span class="pre">wh(g)</span></code> / <code class="docutils literal notranslate"><span class="pre">pa(g)</span></code></p></li>
+</ul>
+</section>
+<section id="b-wh-and-pa-status-commands-38">
+<h3>3.7b <code class="docutils literal notranslate"><span class="pre">wh()</span></code> and <code class="docutils literal notranslate"><span class="pre">pa()</span></code> status commands (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/38">#38</a>)<a class="headerlink" href="#b-wh-and-pa-status-commands-38" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">wh(geometry)</span></code> — terse one-screen status: current HKL (via <code class="docutils literal notranslate"><span class="pre">inverse()</span></code>),
+wavelength, and motor-angle table (SPEC-style column names)</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">pa(geometry)</span></code> — verbose parameter listing: geometry name, orienting
+reflections with angles and hkl, real- and reciprocal-space lattice
+constants, wavelength</p></li>
+<li><p>[x] Both functions return a <code class="docutils literal notranslate"><span class="pre">str</span></code>; graceful fallback when UB or wavelength
+not set; modelled on Align4Pete.log SPEC output</p></li>
+<li><p>[x] Exported from <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>; 35 tests in <code class="docutils literal notranslate"><span class="pre">test_status.py</span></code></p></li>
+</ul>
+</section>
+<section id="c-export-and-restore-full-diffractometer-settings-52">
+<h3>3.7c Export and restore full diffractometer settings (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/52">#52</a>)<a class="headerlink" href="#c-export-and-restore-full-diffractometer-settings-52" title="Link to this heading">#</a></h3>
+<p>Serialize the complete diffractometer configuration — geometry, samples,
+lattice, reflections, UB matrices, wavelength, azimuthal reference — to
+and from a JSON-compatible dictionary.  Supports documentation, archival,
+diagnostics, and programmatic reconstruction.</p>
+<ul class="simple">
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">Lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">Reflection</span></code>, <code class="docutils literal notranslate"><span class="pre">ReflectionList</span></code>, <code class="docutils literal notranslate"><span class="pre">Sample</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> each expose <code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></p></li>
+<li><p>[x] Top-level dict includes <code class="docutils literal notranslate"><span class="pre">_meta</span></code>: software name, package version,
+and ISO-8601 UTC creation timestamp</p></li>
+<li><p>[x] All dicts are JSON-serialisable (verified by <code class="docutils literal notranslate"><span class="pre">json.dumps</span></code>)</p></li>
+<li><p>[x] Full round-trip: <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.from_dict(g.to_dict())</span></code>
+restores name, wavelength, stages (roles, angles, limits),
+samples (lattice, reflections, or1/or2, U, UB), active sample,
+azimuthal reference, kappa_alpha_deg</p></li>
+<li><p>[x] 69 tests in <code class="docutils literal notranslate"><span class="pre">test_export.py</span></code>; all pass</p></li>
+</ul>
+</section>
+<section id="energy-wave-number-conversions-and-named-radiation-lines-21">
+<h3>3.8 Energy / wave-number conversions and named radiation lines (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/21">#21</a>)<a class="headerlink" href="#energy-wave-number-conversions-and-named-radiation-lines-21" title="Link to this heading">#</a></h3>
+<p>Useful for reporting and cross-checking but not load-bearing for diffraction
+angle calculations.  Depends on #1 (wavelength on <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code>).</p>
+<ul class="simple">
+<li><p>[ ] Compute photon energy E (keV) lazily: E = 12.39842 / λ (Å)</p></li>
+<li><p>[ ] Compute wave number k (Å⁻¹) lazily: k = 2π / λ</p></li>
+<li><p>[ ] <code class="docutils literal notranslate"><span class="pre">summary()</span></code> optionally reports E alongside λ</p></li>
+<li><p>[ ] Named constants for common laboratory lines:
+Cu Kα ≈ 1.5406 Å, Mo Kα ≈ 0.7107 Å, Ag Kα ≈ 0.5594 Å, Co Kα ≈ 1.7902 Å</p></li>
+<li><p>[ ] Tests covering conversions, lazy recomputation, and named constant values</p></li>
+<li><p>[ ] Related to: #8 (neutron source — independent, different formula)</p></li>
+</ul>
+</section>
+<section id="b-dynamic-versioning-with-hatch-vcs-59">
+<h3>3.8b Dynamic versioning with hatch-vcs (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/59">#59</a>)<a class="headerlink" href="#b-dynamic-versioning-with-hatch-vcs-59" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Add <code class="docutils literal notranslate"><span class="pre">hatch-vcs</span></code> to <code class="docutils literal notranslate"><span class="pre">[build-system]</span> <span class="pre">requires</span></code>; remove hardcoded
+<code class="docutils literal notranslate"><span class="pre">version</span></code>; add <code class="docutils literal notranslate"><span class="pre">dynamic</span> <span class="pre">=</span> <span class="pre">[&quot;version&quot;]</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">[tool.hatch.version]</span> <span class="pre">source</span> <span class="pre">=</span> <span class="pre">&quot;vcs&quot;</span></code> with <code class="docutils literal notranslate"><span class="pre">tag-pattern</span></code> requiring
+three-component SemVer (<code class="docutils literal notranslate"><span class="pre">v0.3.0</span></code>, etc.); ignores old <code class="docutils literal notranslate"><span class="pre">v0.1</span></code> / <code class="docutils literal notranslate"><span class="pre">v0.2</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">[tool.hatch.build.hooks.vcs]</span> <span class="pre">version-file</span></code> bakes version into wheel</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.__version__</span></code> exposed in <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code></p></li>
+<li><p>[x] CI: add <code class="docutils literal notranslate"><span class="pre">fetch-depth:</span> <span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">actions/checkout</span></code></p></li>
+<li><p>[x] Existing tags <code class="docutils literal notranslate"><span class="pre">v0.1</span></code> and <code class="docutils literal notranslate"><span class="pre">v0.2</span></code> retagged as <code class="docutils literal notranslate"><span class="pre">v0.1.0</span></code> and <code class="docutils literal notranslate"><span class="pre">v0.2.0</span></code>;
+<code class="docutils literal notranslate"><span class="pre">v0.3.0.dev0</span></code> marks start of current development line</p></li>
+</ul>
+</section>
+<section id="c-100-test-coverage-60">
+<h3>3.8c 100% test coverage (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/60">#60</a>)<a class="headerlink" href="#c-100-test-coverage-60" title="Link to this heading">#</a></h3>
+<p>Current coverage: 93% (119 uncovered lines).  <code class="docutils literal notranslate"><span class="pre">pytest-cov</span></code> is installed.</p>
+<ul class="simple">
+<li><p>[x] Coverage config in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>: <code class="docutils literal notranslate"><span class="pre">fail_under</span> <span class="pre">=</span> <span class="pre">100</span></code>,
+<code class="docutils literal notranslate"><span class="pre">branch</span> <span class="pre">=</span> <span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">addopts</span> <span class="pre">=</span> <span class="pre">&quot;--cov=ad_hoc_diffractometer</span> <span class="pre">--cov-report=term-missing&quot;</span></code></p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">pytest-cov</span></code> in <code class="docutils literal notranslate"><span class="pre">dev</span></code> optional dependencies</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">_nelder_mead_numpy</span></code> tested directly for all branches (converge,
+expansion, contraction, shrink, max-iter); scipy absence mocked to
+exercise the fallback path in <code class="docutils literal notranslate"><span class="pre">refine_lattice_simplex</span></code></p></li>
+<li><p>[x] Missing tests distributed into their proper test modules (no
+<code class="docutils literal notranslate"><span class="pre">test_coverage.py</span></code>); all parametrized where appropriate</p></li>
+<li><p>[x] Defensive <code class="docutils literal notranslate"><span class="pre">except</span></code> blocks that are unreachable via the public API
+marked <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">pragma:</span> <span class="pre">no</span> <span class="pre">cover</span></code>; <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">pragma:</span> <span class="pre">no</span> <span class="pre">branch</span></code> used for
+guaranteed-loop-break patterns</p></li>
+<li><p>[x] 100% line and branch coverage; 855 tests pass</p></li>
+</ul>
+</section>
+<section id="d-add-logging-support-61">
+<h3>3.8d Add logging support (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/61">#61</a>)<a class="headerlink" href="#d-add-logging-support-61" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">logging.getLogger(__name__)</span></code> in every source module; root logger
+<code class="docutils literal notranslate"><span class="pre">&quot;ad_hoc_diffractometer&quot;</span></code> lets users configure all output at once</p></li>
+<li><p>[x] Default level <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> (Python’s default) — silent unless user
+configures a handler; <code class="docutils literal notranslate"><span class="pre">warnings.warn</span></code> retained for library-facing alerts</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">logger.debug()</span></code> in <code class="docutils literal notranslate"><span class="pre">factories</span></code> broken-plugin skip and
+outer <code class="docutils literal notranslate"><span class="pre">entry_points()</span></code> failure; <code class="docutils literal notranslate"><span class="pre">refinement._nelder_mead_numpy</span></code>
+non-convergence; <code class="docutils literal notranslate"><span class="pre">geometry.wh</span></code> silent HKL and psi exception catches;
+<code class="docutils literal notranslate"><span class="pre">geometry.to_dict</span></code> version-lookup failure</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">logger.warning()</span></code> alongside <code class="docutils literal notranslate"><span class="pre">warnings.warn</span></code> in
+<code class="docutils literal notranslate"><span class="pre">orientation.ub_from_three_reflections_bl1967</span></code> for left-handed H</p></li>
+<li><p>[x] 5 tests via <code class="docutils literal notranslate"><span class="pre">caplog</span></code> fixture in <code class="docutils literal notranslate"><span class="pre">test_factories</span></code>,
+<code class="docutils literal notranslate"><span class="pre">test_orientation</span></code>, <code class="docutils literal notranslate"><span class="pre">test_refinement</span></code>, and <code class="docutils literal notranslate"><span class="pre">test_geometry</span></code></p></li>
+</ul>
+</section>
+<section id="f-clarify-v-h-suffix-and-fix-fourcv-fourch-stage-axes-66">
+<h3>3.8f Clarify v/h suffix and fix fourcv/fourch stage axes (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/66">#66</a>)<a class="headerlink" href="#f-clarify-v-h-suffix-and-fix-fourcv-fourch-stage-axes-66" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] The <code class="docutils literal notranslate"><span class="pre">v</span></code>/<code class="docutils literal notranslate"><span class="pre">h</span></code> suffix describes the <strong>scattering plane</strong>, not the
+detector axis: <code class="docutils literal notranslate"><span class="pre">v</span></code> = vertical scattering plane (synchrotron, ttheta on
+lateral axis); <code class="docutils literal notranslate"><span class="pre">h</span></code> = horizontal scattering plane (laboratory, ttheta on
+vertical axis)</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>: corrected — omega, chi (longitudinal), phi, ttheta all on
+lateral axis giving vertical scattering plane (BL1967 Fig. 1b is <code class="docutils literal notranslate"><span class="pre">fourch</span></code>)</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">fourch</span></code>: corrected — omega, chi (lateral), phi, ttheta all on vertical
+axis giving horizontal scattering plane, matching BL1967 Fig. 1b</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code> / <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>: same corrections applied</p></li>
+<li><p>[x] Stage axis expressions use <code class="docutils literal notranslate"><span class="pre">_BASIS_BL[&quot;lateral&quot;]</span></code> / <code class="docutils literal notranslate"><span class="pre">[&quot;vertical&quot;]</span></code> /
+<code class="docutils literal notranslate"><span class="pre">[&quot;longitudinal&quot;]</span></code> for self-documenting physical-direction assignments</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">two_theta</span></code> stage name renamed to <code class="docutils literal notranslate"><span class="pre">ttheta</span></code> throughout</p></li>
+<li><p>[x] AGENTS.md suffix table corrected; 860 tests pass, 100% coverage</p></li>
+</ul>
+</section>
+<section id="g-refactor-factory-functions-to-accept-basis-as-argument-67">
+<h3>3.8g Refactor factory functions to accept basis as argument (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/67">#67</a>)<a class="headerlink" href="#g-refactor-factory-functions-to-accept-basis-as-argument-67" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[ ] Pass basis dict as optional argument to each factory; resolve
+<code class="docutils literal notranslate"><span class="pre">_LATERAL</span></code>/<code class="docutils literal notranslate"><span class="pre">_VERTICAL</span></code>/<code class="docutils literal notranslate"><span class="pre">_LONGITUDINAL</span></code> locally</p></li>
+<li><p>[ ] Unify <code class="docutils literal notranslate"><span class="pre">_BASIS_BL</span></code> and <code class="docutils literal notranslate"><span class="pre">_BASIS_YOU</span></code> stage axis expressions into a
+single physical-direction notation</p></li>
+<li><p>[ ] Backward-compatible (basis defaults to current value per factory)</p></li>
+</ul>
+</section>
+<section id="e-sphinx-documentation-57">
+<h3>3.8e Sphinx documentation (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/57">#57</a>)<a class="headerlink" href="#e-sphinx-documentation-57" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[x] Allow either reST or Markdown source</p></li>
+<li><p>[x] Refactor existing content into <code class="docutils literal notranslate"><span class="pre">docs/source/</span></code></p></li>
+<li><p>[ ] Render Jupyter notebooks (Phase 2 — requires pandoc in CI)</p></li>
+<li><p>[x] Sections: main page (<code class="docutils literal notranslate"><span class="pre">index.rst</span></code>), API (AutoAPI via <code class="docutils literal notranslate"><span class="pre">sphinx-autoapi</span></code>),
+Install (<code class="docutils literal notranslate"><span class="pre">install.md</span></code>), Changes (<code class="docutils literal notranslate"><span class="pre">changes.md</span></code> includes <code class="docutils literal notranslate"><span class="pre">CHANGES.md</span></code>)</p></li>
+<li><p>[ ] User Guide per diataxis.fr (Phase 2)</p></li>
+<li><p>[x] GitHub Actions workflow to build and publish docs (<code class="docutils literal notranslate"><span class="pre">docs.yml</span></code>)</p></li>
+<li><p>[x] Versioned docs with <code class="docutils literal notranslate"><span class="pre">switcher.json</span></code> automation on tag push (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/91">#91</a>)</p></li>
+<li><p>[x] <code class="docutils literal notranslate"><span class="pre">docs_backfill.yml</span></code> workflow to publish docs for older tagged releases (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/91">#91</a>)</p></li>
+</ul>
+</section>
+<section id="neutron-radiation-source-support-8">
+<h3>3.9 Neutron radiation source support (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/issues/8">#8</a>)<a class="headerlink" href="#neutron-radiation-source-support-8" title="Link to this heading">#</a></h3>
+<p>Moved from Priority 1.  Wavelength storage (#1) is the only prerequisite;
+this issue is independent of the X-ray energy conversion issue (#21).</p>
+<ul class="simple">
+<li><p>[ ] Add a <code class="docutils literal notranslate"><span class="pre">source_type</span></code> parameter (or separate subclasses) to distinguish
+<code class="docutils literal notranslate"><span class="pre">&quot;xray&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;neutron&quot;</span></code> radiation</p></li>
+<li><p>[ ] For neutrons: compute E (meV) lazily via de Broglie: E = 81.8042 / λ²</p></li>
+<li><p>[ ] <code class="docutils literal notranslate"><span class="pre">summary()</span></code> reports the correct energy units for each source type</p></li>
+<li><p>[ ] Validate that energy/wavelength conversions are not mixed across source types</p></li>
+<li><p>[ ] Tests covering both source types, unit correctness, and invalid cross-type usage</p></li>
+<li><p>[ ] Related to: #21 (X-ray energy conversion — independent, different formula)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Walko (2016) designation system: S = sample axes, D = detector axes,
+number = count, parentheses = shared base.  All implemented geometries
+are catalogued in factories.py.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">v</span></code>/<code class="docutils literal notranslate"><span class="pre">h</span></code> suffix describes the scattering plane: <code class="docutils literal notranslate"><span class="pre">v</span></code> = vertical
+scattering plane (synchrotron, ttheta on lateral axis); <code class="docutils literal notranslate"><span class="pre">h</span></code> = horizontal
+scattering plane (laboratory, ttheta on vertical axis).  This matches
+Busing &amp; Levy (1967) Fig. 1b for <code class="docutils literal notranslate"><span class="pre">fourch</span></code> (horizontal scattering plane).</p></li>
+<li><p>The SPEC #G line format is documented in
+references/2020-12-13-fourcc-alignment-7-id-c/spec_G_lines.md.</p></li>
+<li><p>Threading and RunEngine diagnostics are in threading_diagnostics.md.</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="problem3.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">HYou Diffractometer</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="autoapi/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API Reference</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#status-key">Status key</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#already-implemented">Already implemented</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#priority-1-near-term-needed-for-diffraction-calculations">Priority 1 — Near-term (needed for diffraction calculations)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wavelength-on-adhocdiffractometer-1">1.1 Wavelength on AdHocDiffractometer (#1)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#motor-limits-per-stage-2">1.2 Motor limits per stage (#2)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#split-unit-tests-into-module-specific-files-17">1.4 Split unit tests into module-specific files (#17)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#github-actions-workflow-for-unit-testing-18">1.5 GitHub Actions workflow for unit testing (#18)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kappa-alpha-queryable-on-the-geometry-instance-3">1.3 Kappa alpha queryable on the geometry instance (#3)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#priority-2-medium-term-needed-for-ub-formalism">Priority 2 — Medium-term (needed for UB formalism)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#motor-angle-to-phi-frame-conversion-4">2.0 Motor-angle-to-phi-frame conversion (#4)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ub-from-two-reflections-bl1967-bl1967-eqs-23-27-5">2.1 <code class="docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967</span></code> (BL1967 eqs. 23-27) (#5)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ub-from-three-reflections-bl1967-bl1967-eqs-29-31-6">2.2 <code class="docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967</span></code> (BL1967 eqs. 29-31) (#6)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#orienting-reflections-data-structure-7">2.3 Orienting reflections data structure (#7)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spec-g1-format-and-reflection-round-trip-tests-26">2.4 SPEC #G1 format and reflection round-trip tests (#26)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-dict-on-adhocdiffractometer-25">2.5 Sample dict on AdHocDiffractometer (#25)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tolerance-aware-eq-for-lattice-and-reflection-29">2.6 Tolerance-aware <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> for Lattice and Reflection (#29)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ub-from-one-reflection-initial-ub-from-one-reflection-31">2.7 <code class="docutils literal notranslate"><span class="pre">ub_from_one_reflection</span></code> — initial UB from one reflection (#31)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#refine-lattice-bl1967-least-squares-lattice-refinement-32">2.8 <code class="docutils literal notranslate"><span class="pre">refine_lattice_bl1967</span></code> — least-squares lattice refinement (#32)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#refine-lattice-simplex-derivative-free-lattice-refinement-33">2.9 <code class="docutils literal notranslate"><span class="pre">refine_lattice_simplex</span></code> — derivative-free lattice refinement (#33)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#priority-3-later-instrument-specific-operational">Priority 3 — Later (instrument-specific, operational)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#entry-point-extensibility-for-geometry-factories-37">3.0 Entry-point extensibility for geometry factories (#37)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-mode-operating-constraints-9">3.1 Diffraction mode / operating constraints (#9)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#azimuthal-reference-vector-11">3.2 Azimuthal reference vector (#11)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#forward-hkl-angles-35"><code class="docutils literal notranslate"><span class="pre">forward()</span></code>: hkl → angles (#35)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#duplicate-geometry-name-in-entry-point-registry-71">Duplicate geometry name in entry-point registry (#71)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copyright-notices-77">Copyright notices (#77)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#convention-fix-lattice-b-and-b-matrix-78">2π convention fix — <code class="docutils literal notranslate"><span class="pre">Lattice.B</span></code> and <code class="docutils literal notranslate"><span class="pre">b_matrix()</span></code> (#78)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#detector-geometry-parameters-10">3.3 Detector geometry parameters (#10)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alternative-calculation-engines-12">3.4 Alternative calculation engines (#12)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#surface-geometry-incidence-and-emergence-angles-13">3.5 Surface geometry: incidence and emergence angles (#13)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scans-about-an-arbitrary-reciprocal-space-vector-14">3.6 Scans about an arbitrary reciprocal-space vector (#14)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#diffractometer-inclination-with-respect-to-the-incident-beam-15">3.7 Diffractometer inclination with respect to the incident beam (#15)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-refactor-wh-and-pa-as-methods-51">3.7a Refactor <code class="docutils literal notranslate"><span class="pre">wh</span></code> and <code class="docutils literal notranslate"><span class="pre">pa</span></code> as methods (#51)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-wh-and-pa-status-commands-38">3.7b <code class="docutils literal notranslate"><span class="pre">wh()</span></code> and <code class="docutils literal notranslate"><span class="pre">pa()</span></code> status commands (#38)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-export-and-restore-full-diffractometer-settings-52">3.7c Export and restore full diffractometer settings (#52)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#energy-wave-number-conversions-and-named-radiation-lines-21">3.8 Energy / wave-number conversions and named radiation lines (#21)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-dynamic-versioning-with-hatch-vcs-59">3.8b Dynamic versioning with hatch-vcs (#59)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-100-test-coverage-60">3.8c 100% test coverage (#60)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-add-logging-support-61">3.8d Add logging support (#61)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#f-clarify-v-h-suffix-and-fix-fourcv-fourch-stage-axes-66">3.8f Clarify v/h suffix and fix fourcv/fourch stage axes (#66)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#g-refactor-factory-functions-to-accept-basis-as-argument-67">3.8g Refactor factory functions to accept basis as argument (#67)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e-sphinx-documentation-57">3.8e Sphinx documentation (#57)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#neutron-radiation-source-support-8">3.9 Neutron radiation source support (#8)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/roadmap.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Pete Jemian.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
