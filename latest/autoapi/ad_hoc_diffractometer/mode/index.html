@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=ee3c08c2"></script>
+    <script src="../../../_static/documentation_options.js?v=38795a59"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -587,7 +587,7 @@ Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), section 3.3.</p>
 <td><p>Abstract base class for diffraction modes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.mode.FixedAngleMode" title="ad_hoc_diffractometer.mode.FixedAngleMode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></a></p></td>
-<td><p>Mode that constrains one stage to a fixed angle.</p></td>
+<td><p>Mode that constrains one stage to its current angle.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.mode.ModeDict" title="ad_hoc_diffractometer.mode.ModeDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModeDict</span></code></a></p></td>
 <td><p>An ordered, guarded dict of named diffraction modes.</p></td>
@@ -752,14 +752,26 @@ unchanged.</p>
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.mode.FixedAngleMode</span></code></p>
 </div>
 <p>Bases: <a class="reference internal" href="#ad_hoc_diffractometer.mode.DiffractionMode" title="ad_hoc_diffractometer.mode.DiffractionMode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DiffractionMode</span></code></a></p>
-<p>Mode that constrains one stage to a fixed angle.</p>
-<p>The stage named <code class="docutils literal notranslate"><span class="pre">stage</span></code> is held at <code class="docutils literal notranslate"><span class="pre">value</span></code> degrees for all
-diffraction calculations performed in this mode.</p>
+<p>Mode that constrains one stage to its current angle.</p>
+<p>During <code class="docutils literal notranslate"><span class="pre">forward()</span></code>, the stage named <code class="docutils literal notranslate"><span class="pre">stage</span></code> is held at whatever
+angle is <strong>currently set on the geometry</strong> — the value stored in
+<code class="docutils literal notranslate"><span class="pre">mode.frozen_angles</span></code> is used only as the initial default.  To change
+the fixed angle, set the stage angle on the geometry before calling
+<code class="docutils literal notranslate"><span class="pre">forward()</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">45.0</span><span class="p">)</span>   <span class="c1"># preset chi</span>
+<span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;fixed_chi&quot;</span>  <span class="c1"># mode will freeze chi at 45°</span>
+<span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This makes <code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code> fully general: the caller controls the
+fixed value; the mode simply declares <em>which</em> stage is held constant.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stage</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the stage to freeze.</p></li>
-<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Angle (degrees) at which to freeze the stage.</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Initial angle (degrees) stored in <code class="docutils literal notranslate"><span class="pre">frozen_angles</span></code> as a default.
+The solver always reads the stage’s current angle at call time,
+so this value is superseded by any explicit <code class="docutils literal notranslate"><span class="pre">set_angle()</span></code> call.</p></li>
 <li><p><strong>cut_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>] or </em><em>None</em>) – Branch-selection cut-points (see <a class="reference internal" href="#ad_hoc_diffractometer.mode.DiffractionMode" title="ad_hoc_diffractometer.mode.DiffractionMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code></a>).</p></li>
 </ul>
 </dd>

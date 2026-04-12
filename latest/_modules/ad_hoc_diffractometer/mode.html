@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=ee3c08c2"></script>
+    <script src="../../_static/documentation_options.js?v=38795a59"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -661,17 +661,29 @@
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.FixedAngleMode">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FixedAngleMode</span><span class="p">(</span><span class="n">DiffractionMode</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Mode that constrains one stage to a fixed angle.</span>
+<span class="sd">    Mode that constrains one stage to its current angle.</span>
 
-<span class="sd">    The stage named ``stage`` is held at ``value`` degrees for all</span>
-<span class="sd">    diffraction calculations performed in this mode.</span>
+<span class="sd">    During ``forward()``, the stage named ``stage`` is held at whatever</span>
+<span class="sd">    angle is **currently set on the geometry** — the value stored in</span>
+<span class="sd">    ``mode.frozen_angles`` is used only as the initial default.  To change</span>
+<span class="sd">    the fixed angle, set the stage angle on the geometry before calling</span>
+<span class="sd">    ``forward()``::</span>
+
+<span class="sd">        g.set_angle(&quot;chi&quot;, 45.0)   # preset chi</span>
+<span class="sd">        g.mode_name = &quot;fixed_chi&quot;  # mode will freeze chi at 45°</span>
+<span class="sd">        g.forward(h, k, l)</span>
+
+<span class="sd">    This makes ``FixedAngleMode`` fully general: the caller controls the</span>
+<span class="sd">    fixed value; the mode simply declares *which* stage is held constant.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    stage : str</span>
 <span class="sd">        Name of the stage to freeze.</span>
 <span class="sd">    value : float</span>
-<span class="sd">        Angle (degrees) at which to freeze the stage.</span>
+<span class="sd">        Initial angle (degrees) stored in ``frozen_angles`` as a default.</span>
+<span class="sd">        The solver always reads the stage&#39;s current angle at call time,</span>
+<span class="sd">        so this value is superseded by any explicit ``set_angle()`` call.</span>
 <span class="sd">    cut_points : dict[str, float] or None</span>
 <span class="sd">        Branch-selection cut-points (see :class:`DiffractionMode`).</span>
 

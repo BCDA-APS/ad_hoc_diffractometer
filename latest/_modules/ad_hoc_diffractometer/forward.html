@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=ee3c08c2"></script>
+    <script src="../../_static/documentation_options.js?v=38795a59"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -736,8 +736,14 @@
     <span class="p">}</span>
 
     <span class="c1"># Apply frozen angles from the mode.</span>
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="c1"># For each frozen stage, use the stage&#39;s *current* angle rather than</span>
+    <span class="c1"># the value stored in the mode — the caller presets the stage angle</span>
+    <span class="c1"># before calling forward(), giving full control over the fixed value.</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001</span>
+            <span class="n">angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">angle</span>  <span class="c1"># noqa: SLF001</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover  — frozen stage not in geometry (should not occur)</span>
+            <span class="n">angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
     <span class="c1"># Set the detector stage (first/outermost detector stage = ttheta/delta).</span>
     <span class="n">detector_name</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_stage</span>
@@ -1062,8 +1068,18 @@
         <span class="p">)</span>
 
     <span class="c1"># Build an effective BisectingMode that includes the fixed stage as frozen.</span>
-    <span class="n">effective_frozen</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">bisecting_mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">)</span>
-    <span class="n">effective_frozen</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">)</span>
+    <span class="c1"># Use each stage&#39;s current angle — the caller presets it before forward().</span>
+    <span class="n">effective_frozen</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">bisecting_mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001</span>
+            <span class="n">effective_frozen</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">angle</span>  <span class="c1"># noqa: SLF001</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">effective_frozen</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">bisecting_mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001</span>
+            <span class="n">effective_frozen</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">angle</span>  <span class="c1"># noqa: SLF001</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">effective_frozen</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
     <span class="n">effective_mode</span> <span class="o">=</span> <span class="n">BisectingMode</span><span class="p">(</span>
         <span class="n">sample_stage</span><span class="o">=</span><span class="n">bisecting_mode</span><span class="o">.</span><span class="n">sample_stage</span><span class="p">,</span>
