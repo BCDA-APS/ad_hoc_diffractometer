@@ -62,8 +62,8 @@ User Guide
       :link: geometries/index
       :link-type: doc
 
-      One page per geometry: fourcv, fourch, psic, sixc, kappa4cv,
-      kappa4ch, kappa6c, zaxis, s2d2, fivec.
+      fourcv · fourch · psic · sixc · kappa4cv ·
+      kappa4ch · kappa6c · zaxis · s2d2 · fivec
 
    .. grid-item-card:: :material-regular:`menu_book;3em` API Reference
       :link: api
