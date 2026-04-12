@@ -24,7 +24,7 @@ axes and the y axis is defined along the incoming beam direction."*
 ## Correspondence with You (1999)
 
 The You (1999) paper describes a 4S+2D six-circle geometry: four
-sample-orienting stages (mu, eta, chi, phi) and two detector stages (nu,
+sample-orienting stages (mu, eta, chi, and phi) and two detector stages (nu,
 delta).  This matches the case study equipment exactly.
 
 Using **R** to denote a rotation matrix whose invariant axis is identified
@@ -133,7 +133,7 @@ The full diffraction equation (You 1999, eqs. 10–11) relates Miller indices
 h^M = M H X U_mu · UB · h
 ```
 
-where U_mu, X, H, M are the motor rotation matrices for mu, eta, chi, phi
+where U_mu, X, H, M are the motor rotation matrices for mu, eta, chi, and phi
 respectively, and **h**^M is the diffraction vector in the laboratory frame.
 
 The detector position is determined by:
