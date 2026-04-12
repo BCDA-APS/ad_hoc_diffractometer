@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=e67bb708"></script>
+    <script src="../../../_static/documentation_options.js?v=ee3c08c2"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -573,17 +573,17 @@ serve as worked examples for defining custom geometries.</p>
 <td><p>Eulerian 4-circle</p></td>
 <td><p>Horizontal scattering plane (laboratory). See <a class="reference internal" href="../../../geometries/fourch.html"><span class="doc">fourch — Eulerian Four-Circle (Laboratory)</span></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.psic" title="ad_hoc_diffractometer.factories.psic"><code class="xref py py-func docutils literal notranslate"><span class="pre">psic()</span></code></a></p></td>
-<td><p>Eulerian 6-circle</p></td>
-<td><p>You (1999) 4S+2D. See <a class="reference internal" href="../../../geometries/psic.html"><span class="doc">psic — Eulerian Six-Circle, 4S+2D (You 1999)</span></a>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.sixc" title="ad_hoc_diffractometer.factories.sixc"><code class="xref py py-func docutils literal notranslate"><span class="pre">sixc()</span></code></a></p></td>
-<td><p>Eulerian 6-circle</p></td>
-<td><p>Lohmeier &amp; Vlieg (1993) surface geometry. See <a class="reference internal" href="../../../geometries/sixc.html"><span class="doc">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</span></a>.</p></td>
-</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.fivec" title="ad_hoc_diffractometer.factories.fivec"><code class="xref py py-func docutils literal notranslate"><span class="pre">fivec()</span></code></a></p></td>
 <td><p>Eulerian 5-circle</p></td>
 <td><p>Vlieg et al. (1987), fourcv on a mu base. See <a class="reference internal" href="../../../geometries/fivec.html"><span class="doc">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.psic" title="ad_hoc_diffractometer.factories.psic"><code class="xref py py-func docutils literal notranslate"><span class="pre">psic()</span></code></a></p></td>
+<td><p>Eulerian 6-circle</p></td>
+<td><p>You (1999) 4S+2D. See <a class="reference internal" href="../../../geometries/psic.html"><span class="doc">psic — Eulerian Six-Circle, 4S+2D (You 1999)</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.sixc" title="ad_hoc_diffractometer.factories.sixc"><code class="xref py py-func docutils literal notranslate"><span class="pre">sixc()</span></code></a></p></td>
+<td><p>Eulerian 6-circle</p></td>
+<td><p>Lohmeier &amp; Vlieg (1993) surface geometry. See <a class="reference internal" href="../../../geometries/sixc.html"><span class="doc">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.kappa4cv" title="ad_hoc_diffractometer.factories.kappa4cv"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4cv()</span></code></a></p></td>
 <td><p>Kappa 4-circle</p></td>
@@ -662,9 +662,9 @@ physical-direction aliases locally:</p>
 convention geometries.</p>
 <p>Naming convention:</p>
 <ul class="simple">
-<li><p>Eulerian geometries: <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">fourch</span></code>, <code class="docutils literal notranslate"><span class="pre">sixc</span></code>, <code class="docutils literal notranslate"><span class="pre">psic</span></code></p></li>
+<li><p>Eulerian geometries: <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">fourch</span></code>, <code class="docutils literal notranslate"><span class="pre">fivec</span></code>, <code class="docutils literal notranslate"><span class="pre">psic</span></code>, <code class="docutils literal notranslate"><span class="pre">sixc</span></code></p></li>
 <li><p>Kappa geometries: <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code></p></li>
-<li><p>Surface / special geometries: <code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">s2d2</span></code>, <code class="docutils literal notranslate"><span class="pre">fivec</span></code></p></li>
+<li><p>Surface / special geometries: <code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">s2d2</span></code></p></li>
 </ul>
 <p>Scattering-plane suffix convention (<code class="docutils literal notranslate"><span class="pre">v</span></code> / <code class="docutils literal notranslate"><span class="pre">h</span></code>):</p>
 <ul class="simple">
