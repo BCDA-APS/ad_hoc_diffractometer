@@ -23,8 +23,8 @@ reflection
                     angles={"mu": 0, "eta": 20, ...},
                     valid_stages=set(g._stages))
        r2 = rl.add("r2", hkl=(0, 1, 0), ...)
-       rl.setor1("r1")
-       rl.setor2("r2")
+       rl.setor0("r1")
+       rl.setor1("r2")
        rl.orienting_reflections   # -> [r1, r2]
        rl["r1"]                   # -> r1
        del rl["r1"]
@@ -150,7 +150,7 @@ Module Contents
    ...                     valid_stages={"mu", "eta", "chi", "phi",
    ...                                   "nu", "delta"})
    >>> r = rl.add("r1", hkl=(1, 0, 0), angles={"mu": 0, "eta": 20})
-   >>> rl.setor1("r1")
+   >>> rl.setor0("r1")
    >>> rl.orienting_reflections
    [Reflection(name='r1', ...)]
 
@@ -222,18 +222,18 @@ Module Contents
 
 
 
-   .. py:method:: setor1(reflection: str | Reflection) -> None
+   .. py:method:: setor0(reflection: str | Reflection) -> None
 
-      Designate a reflection as primary (or1).
+      Designate a reflection as primary (or1 slot, SPEC ``setor0``).
 
       If it was previously the secondary (or2), that designation is cleared.
       The previous or1 remains in the list without any designation.
 
 
 
-   .. py:method:: setor2(reflection: str | Reflection) -> None
+   .. py:method:: setor1(reflection: str | Reflection) -> None
 
-      Designate a reflection as secondary (or2).
+      Designate a reflection as secondary (or2 slot, SPEC ``setor1``).
 
       If it was previously the primary (or1), that designation is cleared.
       The previous or2 remains in the list without any designation.

@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=89970ad1"></script>
+    <script src="../../_static/documentation_options.js?v=70a6b5be"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -517,8 +517,8 @@
 <span class="sd">                 angles={&quot;mu&quot;: 0, &quot;eta&quot;: 20, ...},</span>
 <span class="sd">                 valid_stages=set(g._stages))</span>
 <span class="sd">    r2 = rl.add(&quot;r2&quot;, hkl=(0, 1, 0), ...)</span>
-<span class="sd">    rl.setor1(&quot;r1&quot;)</span>
-<span class="sd">    rl.setor2(&quot;r2&quot;)</span>
+<span class="sd">    rl.setor0(&quot;r1&quot;)</span>
+<span class="sd">    rl.setor1(&quot;r2&quot;)</span>
 <span class="sd">    rl.orienting_reflections   # -&gt; [r1, r2]</span>
 <span class="sd">    rl[&quot;r1&quot;]                   # -&gt; r1</span>
 <span class="sd">    del rl[&quot;r1&quot;]</span>
@@ -716,7 +716,7 @@
 <span class="sd">    ...                     valid_stages={&quot;mu&quot;, &quot;eta&quot;, &quot;chi&quot;, &quot;phi&quot;,</span>
 <span class="sd">    ...                                   &quot;nu&quot;, &quot;delta&quot;})</span>
 <span class="sd">    &gt;&gt;&gt; r = rl.add(&quot;r1&quot;, hkl=(1, 0, 0), angles={&quot;mu&quot;: 0, &quot;eta&quot;: 20})</span>
-<span class="sd">    &gt;&gt;&gt; rl.setor1(&quot;r1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; rl.setor0(&quot;r1&quot;)</span>
 <span class="sd">    &gt;&gt;&gt; rl.orienting_reflections</span>
 <span class="sd">    [Reflection(name=&#39;r1&#39;, ...)]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -864,11 +864,11 @@
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No reflection named </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">. Add it first.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">name</span>
 
-<div class="viewcode-block" id="ReflectionList.setor1">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.setor1">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">setor1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reflection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Reflection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ReflectionList.setor0">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.setor0">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setor0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reflection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Reflection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Designate a reflection as primary (or1).</span>
+<span class="sd">        Designate a reflection as primary (or1 slot, SPEC ``setor0``).</span>
 
 <span class="sd">        If it was previously the secondary (or2), that designation is cleared.</span>
 <span class="sd">        The previous or1 remains in the list without any designation.</span>
@@ -879,11 +879,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_or1_name</span> <span class="o">=</span> <span class="n">name</span></div>
 
 
-<div class="viewcode-block" id="ReflectionList.setor2">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.setor2">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">setor2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reflection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Reflection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ReflectionList.setor1">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList.setor1">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setor1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reflection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Reflection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Designate a reflection as secondary (or2).</span>
+<span class="sd">        Designate a reflection as secondary (or2 slot, SPEC ``setor1``).</span>
 
 <span class="sd">        If it was previously the primary (or1), that designation is cleared.</span>
 <span class="sd">        The previous or2 remains in the list without any designation.</span>

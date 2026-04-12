@@ -43,12 +43,13 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=89970ad1"></script>
+    <script src="../_static/documentation_options.js?v=70a6b5be"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=fd10adb8"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'howto/fourcv_alignment_howto';</script>
     <script>
@@ -553,7 +554,7 @@
 <p class="admonition-title">Note</p>
 <p>This page was generated from a Jupyter notebook.  <a class="reference internal" href="#"><span class="std std-doc">Download the notebook</span></a> to run it locally — it requires only <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code>, NumPy, and Matplotlib.</p>
 </div>
-<section id="align-a-four-circle-diffractometer-fourcv">
+<section class="tex2jax_ignore mathjax_ignore" id="align-a-four-circle-diffractometer-fourcv">
 <h1>Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)<a class="headerlink" href="#align-a-four-circle-diffractometer-fourcv" title="Link to this heading">#</a></h1>
 <p>This notebook is a <strong>how-to guide</strong> for aligning a crystal on a four-circle
 Eulerian diffractometer in the <strong>vertical scattering plane</strong>
@@ -583,7 +584,7 @@ The motor-angle values are drawn from a real alignment session at APS
 <p>This guide uses <code class="docutils literal notranslate"><span class="pre">ahd.fourcv()</span></code> — the synchrotron four-circle with ω and 2θ
 both rotating about the lateral axis (vertical scattering plane).
 Users familiar with SPEC will recognise the workflow: the steps parallel
-SPEC’s <code class="docutils literal notranslate"><span class="pre">setor0</span></code>/<code class="docutils literal notranslate"><span class="pre">setor1</span></code>, <code class="docutils literal notranslate"><span class="pre">pa</span></code>, <code class="docutils literal notranslate"><span class="pre">ca</span></code>, and <code class="docutils literal notranslate"><span class="pre">wh</span></code> commands,
+SPEC’s <code class="docutils literal notranslate"><span class="pre">setor0</span></code>/<code class="docutils literal notranslate"><span class="pre">setor0</span></code>, <code class="docutils literal notranslate"><span class="pre">pa</span></code>, <code class="docutils literal notranslate"><span class="pre">ca</span></code>, and <code class="docutils literal notranslate"><span class="pre">wh</span></code> commands,
 but everything runs in pure Python with no hardware connection.</p>
 </section>
 <hr class="docutils" />
@@ -864,7 +865,7 @@ requiring φ to move to −90°.</p>
     <span class="n">angles</span><span class="o">=</span><span class="n">or1_angles_calc</span><span class="p">,</span>
     <span class="n">wavelength</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor1</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">)</span>
 
 <span class="n">r</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or1&quot;</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;or1  hkl    : </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">hkl</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -889,7 +890,7 @@ requiring φ to move to −90°.</p>
 second, non-parallel reflection is needed to fully define the crystal
 orientation.</p>
 <p>A second reflection 90° away in φ is recorded as a geometric placeholder
-(equivalent to SPEC’s <code class="docutils literal notranslate"><span class="pre">setor1</span></code>):</p>
+(equivalent to SPEC’s <code class="docutils literal notranslate"><span class="pre">setor0</span></code>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>hkl = (1, 0, 0)
 2θ = 60°   θ = 30°   χ = 0°   φ = 0°
 </pre></div>
@@ -930,7 +931,7 @@ direction check (Step 7) — expected and acceptable at this stage.</p>
     <span class="n">angles</span><span class="o">=</span><span class="n">or2_angles</span><span class="p">,</span>
     <span class="n">wavelength</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor2</span><span class="p">(</span><span class="s2">&quot;or2&quot;</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor1</span><span class="p">(</span><span class="s2">&quot;or2&quot;</span><span class="p">)</span>
 
 <span class="n">r</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or2&quot;</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;or2  hkl    : </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">hkl</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1183,7 +1184,7 @@ The c-axis is 0.68° from the φ-axis — the crystal is slightly miscut.
     <span class="n">angles</span><span class="o">=</span><span class="n">or1_angles_meas</span><span class="p">,</span>
     <span class="n">wavelength</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor1</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Updated or1 (measured position):&quot;</span><span class="p">)</span>
 <span class="n">r</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or1&quot;</span><span class="p">]</span>

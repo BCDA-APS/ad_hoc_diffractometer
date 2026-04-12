@@ -214,7 +214,7 @@ Module Contents
    >>> g.add_reflection("r1", hkl=(0, 0, 6),
    ...                  angles={"mu": 0, "eta": 20.97, "chi": 90,
    ...                          "phi": 0, "nu": 0, "delta": 41.94})
-   >>> g.sample.reflections.setor1("r1")
+   >>> g.sample.reflections.setor0("r1")
    >>> UB = ub_from_one_reflection(
    ...     g.sample, "r1",
    ...     reference_hkl=(0, 0, 1),
@@ -356,7 +356,7 @@ Module Contents
 
    :raises KeyError: If ``r1`` or ``r2`` is a string not found in ``sample.reflections``.
    :raises ValueError: If ``r1`` or ``r2`` is ``None`` and the required orienting reflection
-       has not been designated (``setor1``/``setor2`` not called).
+       has not been designated (``setor0``/``setor1`` not called).
    :raises ValueError: If ``sample.parent`` is ``None`` (needed to call
        ``angles_to_phi_vector``).
    :raises ValueError: If ``sample.parent.wavelength`` is ``None``.
@@ -391,8 +391,8 @@ Module Contents
    >>> g.add_reflection("r2", hkl=(1, 0, 4),
    ...     angles={"mu": 0, "eta": 23.72, "chi": 57.04, "phi": 0,
    ...             "nu": 0, "delta": 48.13})
-   >>> g.sample.reflections.setor1("r1")
-   >>> g.sample.reflections.setor2("r2")
+   >>> g.sample.reflections.setor0("r1")
+   >>> g.sample.reflections.setor1("r2")
    >>> UB = ahd.ub_from_two_reflections_bl1967(g.sample)
 
 

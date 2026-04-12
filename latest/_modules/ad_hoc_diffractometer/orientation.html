@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=89970ad1"></script>
+    <script src="../../_static/documentation_options.js?v=70a6b5be"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -781,7 +781,7 @@
 <span class="sd">    &gt;&gt;&gt; g.add_reflection(&quot;r1&quot;, hkl=(0, 0, 6),</span>
 <span class="sd">    ...                  angles={&quot;mu&quot;: 0, &quot;eta&quot;: 20.97, &quot;chi&quot;: 90,</span>
 <span class="sd">    ...                          &quot;phi&quot;: 0, &quot;nu&quot;: 0, &quot;delta&quot;: 41.94})</span>
-<span class="sd">    &gt;&gt;&gt; g.sample.reflections.setor1(&quot;r1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; g.sample.reflections.setor0(&quot;r1&quot;)</span>
 <span class="sd">    &gt;&gt;&gt; UB = ub_from_one_reflection(</span>
 <span class="sd">    ...     g.sample, &quot;r1&quot;,</span>
 <span class="sd">    ...     reference_hkl=(0, 0, 1),</span>
@@ -983,7 +983,7 @@
 <span class="sd">        If ``r1`` or ``r2`` is a string not found in ``sample.reflections``.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If ``r1`` or ``r2`` is ``None`` and the required orienting reflection</span>
-<span class="sd">        has not been designated (``setor1``/``setor2`` not called).</span>
+<span class="sd">        has not been designated (``setor0``/``setor1`` not called).</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If ``sample.parent`` is ``None`` (needed to call</span>
 <span class="sd">        ``angles_to_phi_vector``).</span>
@@ -1022,8 +1022,8 @@
 <span class="sd">    &gt;&gt;&gt; g.add_reflection(&quot;r2&quot;, hkl=(1, 0, 4),</span>
 <span class="sd">    ...     angles={&quot;mu&quot;: 0, &quot;eta&quot;: 23.72, &quot;chi&quot;: 57.04, &quot;phi&quot;: 0,</span>
 <span class="sd">    ...             &quot;nu&quot;: 0, &quot;delta&quot;: 48.13})</span>
-<span class="sd">    &gt;&gt;&gt; g.sample.reflections.setor1(&quot;r1&quot;)</span>
-<span class="sd">    &gt;&gt;&gt; g.sample.reflections.setor2(&quot;r2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; g.sample.reflections.setor0(&quot;r1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; g.sample.reflections.setor1(&quot;r2&quot;)</span>
 <span class="sd">    &gt;&gt;&gt; UB = ahd.ub_from_two_reflections_bl1967(g.sample)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.reflection</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reflection</span>
@@ -1043,7 +1043,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">ors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;r1 is None and no primary orienting reflection (or1) has been &quot;</span>
-                <span class="s2">&quot;designated.  Call sample.reflections.setor1() first, or pass &quot;</span>
+                <span class="s2">&quot;designated.  Call sample.reflections.setor0() first, or pass &quot;</span>
                 <span class="s2">&quot;r1 explicitly.&quot;</span>
             <span class="p">)</span>
         <span class="n">r1</span> <span class="o">=</span> <span class="n">ors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1061,7 +1061,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;r2 is None and no secondary orienting reflection (or2) has been &quot;</span>
-                <span class="s2">&quot;designated.  Call sample.reflections.setor2() first, or pass &quot;</span>
+                <span class="s2">&quot;designated.  Call sample.reflections.setor1() first, or pass &quot;</span>
                 <span class="s2">&quot;r2 explicitly.&quot;</span>
             <span class="p">)</span>
         <span class="n">r2</span> <span class="o">=</span> <span class="n">ors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>

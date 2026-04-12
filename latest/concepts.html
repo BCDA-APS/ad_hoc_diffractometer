@@ -43,12 +43,14 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=89970ad1"></script>
+    <script src="_static/documentation_options.js?v=70a6b5be"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=fd10adb8"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'concepts';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
@@ -545,7 +547,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="concepts">
+  <section class="tex2jax_ignore mathjax_ignore" id="concepts">
 <span id="id1"></span><h1>Concepts<a class="headerlink" href="#concepts" title="Link to this heading">#</a></h1>
 <p>Key ideas behind <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code>.  Each section gives a brief
 overview and links to richer detail in the how-to guides and background
@@ -730,7 +732,7 @@ rotation matrix is the ordered product from floor to innermost stage.</p>
 <h2>Monochromatic radiation<a class="headerlink" href="#monochromatic-radiation" title="Link to this heading">#</a></h2>
 <p>The package assumes <strong>monochromatic radiation</strong> throughout — all
 calculations are performed at a fixed wavelength.  Energy and wavelength
-are related by $hc = 12.3984,\text{keV·Å}$ exactly (2019 SI redefinition).</p>
+are related by <span class="math notranslate nohighlight">\(hc = 12.3984\,\text{keV·Å}\)</span> exactly (2019 SI redefinition).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>  <span class="c1"># Å  (Cu Kα)</span>
 </pre></div>
 </div>
@@ -763,8 +765,8 @@ are related by $hc = 12.3984,\text{keV·Å}$ exactly (2019 SI redefinition).</p>
 </tbody>
 </table>
 </div>
-<p>The B matrix is constructed from unit-cell parameters $(a, b, c, \alpha,
-\beta, \gamma)$.  U is determined by measuring two or more Bragg reflections.
+<p>The B matrix is constructed from unit-cell parameters <span class="math notranslate nohighlight">\((a, b, c, \alpha,
+\beta, \gamma)\)</span>.  U is determined by measuring two or more Bragg reflections.
 UB = U × B maps Miller indices directly to the lab frame.</p>
 <p>See <a class="reference internal" href="howto/orient.html"><span class="doc">Orient a Crystal</span></a>, <a class="reference internal" href="howto/lattice.html"><span class="doc">Define the Sample Lattice</span></a>, <a class="reference internal" href="problem2.html"><span class="doc">You (1999) Geometry — Coordinate Convention and UB Matrix</span></a>, and
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/lattice/index.html#ad_hoc_diffractometer.lattice.Lattice" title="ad_hoc_diffractometer.lattice.Lattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lattice</span></code></a>.</p>

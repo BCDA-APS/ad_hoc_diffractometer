@@ -43,12 +43,14 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=89970ad1"></script>
+    <script src="_static/documentation_options.js?v=70a6b5be"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=fd10adb8"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'direct-lattice';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
@@ -513,7 +515,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="direct-lattice-in-crystallography">
+  <section class="tex2jax_ignore mathjax_ignore" id="direct-lattice-in-crystallography">
 <h1>Direct Lattice in Crystallography<a class="headerlink" href="#direct-lattice-in-crystallography" title="Link to this heading">#</a></h1>
 <p>This page summarises the vector mathematics underlying the direct lattice
 representation used throughout <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code>.  See the
@@ -522,7 +524,7 @@ representation used throughout <code class="docutils literal notranslate"><span 
 <h2>Lattice vectors<a class="headerlink" href="#lattice-vectors" title="Link to this heading">#</a></h2>
 <p>The unit cell of a crystal is described by three edge vectors
 <strong>A</strong>, <strong>B</strong>, <strong>C</strong> expressed in a Cartesian frame.  With <strong>A</strong> along the
-$x$-axis and <strong>B</strong> in the $xy$-plane, the standard crystallographic choice is:</p>
+<span class="math notranslate nohighlight">\(x\)</span>-axis and <strong>B</strong> in the <span class="math notranslate nohighlight">\(xy\)</span>-plane, the standard crystallographic choice is:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Vector</p></th>
@@ -531,52 +533,58 @@ $x$-axis and <strong>B</strong> in the $xy$-plane, the standard crystallographic
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>A</strong></p></td>
-<td><p>$(a,\ 0,\ 0)$</p></td>
+<td><p><span class="math notranslate nohighlight">\((a,\ 0,\ 0)\)</span></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>B</strong></p></td>
-<td><p>$(b\cos\gamma,\ b\sin\gamma,\ 0)$</p></td>
+<td><p><span class="math notranslate nohighlight">\((b\cos\gamma,\ b\sin\gamma,\ 0)\)</span></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>C</strong></p></td>
-<td><p>$(c\cos\beta,\ c,\tfrac{\cos\alpha - \cos\beta\cos\gamma}{\sin\gamma},\ c,v)$</p></td>
+<td><p><span class="math notranslate nohighlight">\((c\cos\beta,\ c\,\tfrac{\cos\alpha - \cos\beta\cos\gamma}{\sin\gamma},\ c\,v)\)</span></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>where</p>
-<p>$$v = \frac{\sqrt{1 - \cos^2!\alpha - \cos^2!\beta - \cos^2!\gamma
-+ 2\cos\alpha\cos\beta\cos\gamma}}{\sin\gamma}$$</p>
-<p>and $a, b, c$ are the unit-cell edge lengths; $\alpha, \beta, \gamma$ are
-the inter-edge angles ($\alpha$ between <strong>B</strong> and <strong>C</strong>, $\beta$ between
-<strong>A</strong> and <strong>C</strong>, $\gamma$ between <strong>A</strong> and <strong>B</strong>).</p>
+<div class="math notranslate nohighlight">
+\[v = \frac{\sqrt{1 - \cos^2\!\alpha - \cos^2\!\beta - \cos^2\!\gamma
+      + 2\cos\alpha\cos\beta\cos\gamma}}{\sin\gamma}\]</div>
+<p>and <span class="math notranslate nohighlight">\(a, b, c\)</span> are the unit-cell edge lengths; <span class="math notranslate nohighlight">\(\alpha, \beta, \gamma\)</span> are
+the inter-edge angles (<span class="math notranslate nohighlight">\(\alpha\)</span> between <strong>B</strong> and <strong>C</strong>, <span class="math notranslate nohighlight">\(\beta\)</span> between
+<strong>A</strong> and <strong>C</strong>, <span class="math notranslate nohighlight">\(\gamma\)</span> between <strong>A</strong> and <strong>B</strong>).</p>
 </section>
 <section id="unit-cell-volume">
 <h2>Unit cell volume<a class="headerlink" href="#unit-cell-volume" title="Link to this heading">#</a></h2>
 <p>The unit cell volume is the scalar triple product of the three lattice vectors:</p>
-<p>$$V = \mathbf{A} \cdot (\mathbf{B} \times \mathbf{C})$$</p>
+<div class="math notranslate nohighlight">
+\[V = \mathbf{A} \cdot (\mathbf{B} \times \mathbf{C})\]</div>
 <p>The cross product is evaluated first (standard vector-mathematics precedence),
 giving a vector perpendicular to <strong>B</strong> and <strong>C</strong>; the dot product with <strong>A</strong>
 then yields the signed volume of the parallelepiped spanned by the three
 vectors.  With the lattice vectors defined above, this reduces to:</p>
-<p>$$V = a,b,c,v,\sin\gamma$$</p>
+<div class="math notranslate nohighlight">
+\[V = a\,b\,c\,v\,\sin\gamma\]</div>
 </section>
 <section id="reciprocal-lattice">
 <h2>Reciprocal lattice<a class="headerlink" href="#reciprocal-lattice" title="Link to this heading">#</a></h2>
-<p>The reciprocal lattice vectors $\mathbf{b}_1, \mathbf{b}_2, \mathbf{b}_3$
+<p>The reciprocal lattice vectors <span class="math notranslate nohighlight">\(\mathbf{b}_1, \mathbf{b}_2, \mathbf{b}_3\)</span>
 satisfy the orthogonality condition</p>
-<p>$$\mathbf{b}_i \cdot \mathbf{a}<em>j = 2\pi,\delta</em>{ij}$$</p>
-<p>where $\mathbf{a}_1 = \mathbf{A}$, $\mathbf{a}_2 = \mathbf{B}$,
-$\mathbf{a}_3 = \mathbf{C}$.  Each reciprocal vector includes the $2\pi$
+<div class="math notranslate nohighlight">
+\[\mathbf{b}_i \cdot \mathbf{a}_j = 2\pi\,\delta_{ij}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{a}_1 = \mathbf{A}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{a}_2 = \mathbf{B}\)</span>,
+<span class="math notranslate nohighlight">\(\mathbf{a}_3 = \mathbf{C}\)</span>.  Each reciprocal vector includes the <span class="math notranslate nohighlight">\(2\pi\)</span>
 factor (the convention used in <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code> and by Busing &amp; Levy 1967).</p>
 </section>
 <section id="the-b-matrix">
 <h2>The B matrix<a class="headerlink" href="#the-b-matrix" title="Link to this heading">#</a></h2>
 <p>The <strong>B matrix</strong> encodes the reciprocal lattice vectors as its columns:</p>
-<p>$$\mathbf{B}^T = [\mathbf{b}_1\ \mathbf{b}_2\ \mathbf{b}_3]$$</p>
-<p>It maps Miller indices $\mathbf{h} = (h, k, l)^T$ to the scattering vector
+<div class="math notranslate nohighlight">
+\[\mathbf{B}^T = [\mathbf{b}_1\ \mathbf{b}_2\ \mathbf{b}_3]\]</div>
+<p>It maps Miller indices <span class="math notranslate nohighlight">\(\mathbf{h} = (h, k, l)^T\)</span> to the scattering vector
 in Cartesian crystal-frame coordinates (Busing &amp; Levy 1967, eq. 3):</p>
-<p>$$\mathbf{Q}_c = \mathbf{B},\mathbf{h}$$</p>
-<p>The magnitude $|\mathbf{Q}<em>c| = |\mathbf{B},\mathbf{h}| = 2\pi / d</em>{hkl}$,
-where $d_{hkl}$ is the interplanar spacing.</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{Q}_c = \mathbf{B}\,\mathbf{h}\]</div>
+<p>The magnitude <span class="math notranslate nohighlight">\(|\mathbf{Q}_c| = |\mathbf{B}\,\mathbf{h}| = 2\pi / d_{hkl}\)</span>,
+where <span class="math notranslate nohighlight">\(d_{hkl}\)</span> is the interplanar spacing.</p>
 </section>
 <section id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>

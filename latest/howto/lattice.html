@@ -43,12 +43,14 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=89970ad1"></script>
+    <script src="../_static/documentation_options.js?v=70a6b5be"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=fd10adb8"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'howto/lattice';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
@@ -548,7 +550,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="define-the-sample-lattice">
+  <section class="tex2jax_ignore mathjax_ignore" id="define-the-sample-lattice">
 <span id="howto-lattice"></span><h1>Define the Sample Lattice<a class="headerlink" href="#define-the-sample-lattice" title="Link to this heading">#</a></h1>
 <p>This guide shows how to specify unit-cell parameters for any crystal
 system and inspect the resulting B matrix and reciprocal lattice.</p>
@@ -635,7 +637,7 @@ system and inspect the resulting B matrix and reciprocal lattice.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The B matrix satisfies $|\mathbf{B},\mathbf{h}| = 2\pi / d_{hkl}$:</p>
+<p>The B matrix satisfies <span class="math notranslate nohighlight">\(|\mathbf{B}\,\mathbf{h}| = 2\pi / d_{hkl}\)</span>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">h</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 <span class="n">Q_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">B</span> <span class="o">@</span> <span class="n">h</span><span class="p">)</span>
 <span class="n">d_hkl</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">Q_mag</span>
