@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Case Study: Describing a Diffractometer &#8212; ad_hoc_diffractometer 0.3</title>
+    <title>Glossary &#8212; ad_hoc_diffractometer 0.3</title>
   
   
   
@@ -49,7 +49,7 @@
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=fd10adb8"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'problem1';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'glossary';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
@@ -60,8 +60,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="You (1999) Geometry — Coordinate Convention and UB Matrix" href="problem2.html" />
-    <link rel="prev" title="Direct Lattice in Crystallography" href="direct-lattice.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="References" href="references.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.3" />
@@ -151,7 +151,7 @@
 </li>
 
 
-<li class="nav-item ">
+<li class="nav-item current active">
   <a class="nav-link nav-internal" href="user_guide.html">
     User Guide
   </a>
@@ -187,7 +187,7 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="glossary.html">
+  <a class="nav-link dropdown-item nav-internal" href="#">
     Glossary
   </a>
 </li>
@@ -200,8 +200,8 @@
 </li>
 
 
-<li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="#">
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="problem1.html">
     Case Study: Describing a Diffractometer
   </a>
 </li>
@@ -332,7 +332,7 @@
 </li>
 
 
-<li class="nav-item ">
+<li class="nav-item current active">
   <a class="nav-link nav-internal" href="user_guide.html">
     User Guide
   </a>
@@ -361,7 +361,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="glossary.html">
+  <a class="nav-link nav-internal" href="#">
     Glossary
   </a>
 </li>
@@ -374,8 +374,8 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="problem1.html">
     Case Study: Describing a Diffractometer
   </a>
 </li>
@@ -457,7 +457,36 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"></div>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="howto/index.html">How-to Guides</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/wavelength.html">Set Wavelength / Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/lattice.html">Define the Sample Lattice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/orient.html">Orient a Crystal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/forward.html">Forward and Inverse Computations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/modes.html">Switch Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/trajectory.html">Plan a Trajectory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/refine_lattice.html">Refine the Lattice Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/fourcv_alignment_howto.html">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="geometries/index.html">Geometry Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="geometries/fourcv.html">fourcv — Four-Circle Eulerian (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/fourch.html">fourch — Four-Circle Eulerian (Laboratory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/psic.html">psic — Six-Circle 4S+2D (You 1999)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/sixc.html">sixc — Six-Circle Surface (Lohmeier &amp; Vlieg 1993)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/fivec.html">fivec — Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/kappa4cv.html">kappa4cv — Kappa Four-Circle (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/kappa4ch.html">kappa4ch — Kappa Four-Circle (Laboratory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/kappa6c.html">kappa6c — Six-Circle Kappa (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/zaxis.html">zaxis — Z-Axis Four-Circle (Surface)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Glossary</a></li>
+</ul>
+</div>
 </nav></div>
     </div>
   
@@ -496,7 +525,10 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Case Study: Describing a Diffractometer</span></li>
+    
+    <li class="breadcrumb-item"><a href="user_guide.html" class="nav-link">User Guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Glossary</span></li>
   </ul>
 </nav>
 </div>
@@ -513,99 +545,108 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="case-study-describing-a-diffractometer">
-<h1>Case Study: Describing a Diffractometer<a class="headerlink" href="#case-study-describing-a-diffractometer" title="Link to this heading">#</a></h1>
-<p>This case study presents the diffractometer geometry problem that started the
-<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code> project.  The equipment described here is a six-circle
-diffractometer matching the You (1999) psic geometry; the analysis leads
-directly to the <a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html#module-ad_hoc_diffractometer.factories" title="ad_hoc_diffractometer.factories"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factories</span></code></a> factory functions and
-the <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a> class.</p>
-<p>For a full analysis of how this geometry maps to the You (1999) convention,
-see <a class="reference internal" href="problem2.html"><span class="std std-doc">You (1999) Geometry</span></a>.</p>
-<hr class="docutils" />
-<section id="the-equipment">
-<h2>The equipment<a class="headerlink" href="#the-equipment" title="Link to this heading">#</a></h2>
-<p>We have a piece of mechanical equipment consisting of rotary stages only
-(no translational stages).  The rotational axes of all stages ideally
-coincide at a single point of intersection — the sample position.  In
-practice, engineering tolerances cause this point to expand into a small
-3-D volume known as the <em>sphere of confusion</em>.</p>
-<p>The equipment rotates the sample in three-dimensional space and positions a
-detector to observe the scattered radiation.  All stage angles are described
-at their zero-degree positions.</p>
-</section>
-<section id="reference-frame">
-<h2>Reference frame<a class="headerlink" href="#reference-frame" title="Link to this heading">#</a></h2>
-<p>The reference frame is defined relative to the floor:</p>
-<ul class="simple">
-<li><p><strong>vertical</strong>: positive direction is normal to the floor, pointing upward.</p></li>
-<li><p><strong>longitudinal</strong>: positive direction is along the line of sight toward the
-equipment, normal to the vertical.</p></li>
-<li><p><strong>lateral</strong>: positive direction is normal to both vertical and longitudinal,
-pointing to our left when facing the equipment.</p></li>
-</ul>
-</section>
-<section id="equipment-description">
-<h2>Equipment description<a class="headerlink" href="#equipment-description" title="Link to this heading">#</a></h2>
-<p>The equipment consists of two independent stage stacks that share a common
-axis at their base.</p>
-<p><strong>Stack 1 — detector stack</strong> (2 stages)</p>
-<ul class="simple">
-<li><p>Stage 1 (base)</p>
-<ul>
-<li><p>Axis of rotation: vertical</p></li>
-<li><p>Sign of rotation: right-handed (consistent with coordinate system)</p></li>
-</ul>
-</li>
-<li><p>Stage 2 (sits on stage 1)</p>
-<ul>
-<li><p>Axis of rotation: lateral</p></li>
-<li><p>Positive rotation: from longitudinal toward vertical</p></li>
-<li><p>The detector is mounted on a long radial arm pointing at the sample</p></li>
-</ul>
-</li>
-</ul>
-<p><strong>Stack 2 — sample stack</strong> (4 stages)</p>
-<ul class="simple">
-<li><p>Stage 1 (base)</p>
-<ul>
-<li><p>Axis of rotation: vertical, colinear with stack 1 stage 1</p></li>
-<li><p>Sign of rotation: same as stack 1 stage 1</p></li>
-</ul>
-</li>
-<li><p>Stage 2 (sits on stage 1)</p>
-<ul>
-<li><p>Axis of rotation: lateral</p></li>
-<li><p>Sign of rotation: same as stack 1 stage 2</p></li>
-</ul>
-</li>
-<li><p>Stage 3 (sits on stage 2)</p>
-<ul>
-<li><p>Axis of rotation: longitudinal</p></li>
-<li><p>Sign of rotation: right-handed (consistent with coordinate system)</p></li>
-</ul>
-</li>
-<li><p>Stage 4 (sits on stage 3)</p>
-<ul>
-<li><p>Axis of rotation: vertical</p></li>
-<li><p>Sign of rotation: right-handed (consistent with coordinate system)</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="questions">
-<h2>Questions<a class="headerlink" href="#questions" title="Link to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p>Assign basis vectors (xHat, yHat, zHat) to each axis of the reference
-frame.  Describe the orientation of each stack and stage in terms of these
-basis vectors, including the sign of rotation.  Describe the steps to
-compute the orientation matrix U.</p></li>
-<li><p>Is it possible to make different assignments of the basis vectors?  What
-are the resulting stage orientation vectors?  How does the U matrix differ?</p></li>
-</ol>
-<p>The answers to both questions are worked out in <a class="reference internal" href="problem2.html"><span class="std std-doc">You (1999) Geometry</span></a>,
-which shows how this equipment maps exactly to the six-circle psic geometry.</p>
-</section>
+  <section id="glossary">
+<span id="id1"></span><h1>Glossary<a class="headerlink" href="#glossary" title="Link to this heading">#</a></h1>
+<p>Key terms used throughout <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code>, in alphabetical order.</p>
+<dl class="simple glossary">
+<dt id="term-B-matrix">B matrix<a class="headerlink" href="#term-B-matrix" title="Link to this term">#</a></dt><dd><p>The matrix that encodes the reciprocal lattice and maps Miller indices
+<strong>h</strong> = (h, k, l)ᵀ to the scattering vector in Cartesian crystal-frame
+coordinates: <strong>Q</strong>_c = B <strong>h</strong>.  Constructed from unit-cell parameters
+(a, b, c, α, β, γ) following Busing &amp; Levy (1967), eq. 3.
+See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/lattice/index.html#ad_hoc_diffractometer.lattice.Lattice" title="ad_hoc_diffractometer.lattice.Lattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lattice</span></code></a> and
+<a class="reference internal" href="direct-lattice.html"><span class="doc">Direct Lattice in Crystallography</span></a>.</p>
+</dd>
+<dt id="term-Bisecting-condition">Bisecting condition<a class="headerlink" href="#term-Bisecting-condition" title="Link to this term">#</a></dt><dd><p>A diffraction mode constraint in which the sample stage angle equals half
+the detector angle (ω = 2θ/2, or equivalently η = δ/2 for psic).  Places
+the sample symmetrically between the incident and diffracted beams.
+See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectingMode" title="ad_hoc_diffractometer.mode.BisectingMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code></a>.</p>
+</dd>
+<dt id="term-d-spacing">d-spacing<a class="headerlink" href="#term-d-spacing" title="Link to this term">#</a></dt><dd><p>The interplanar spacing d_{hkl} for the reflection (h, k, l), related to
+the scattering vector magnitude by |<strong>Q</strong>| = 2π / d_{hkl} and to the
+Bragg angle by 2d sin θ = λ.</p>
+</dd>
+<dt id="term-Diffraction-mode">Diffraction mode<a class="headerlink" href="#term-Diffraction-mode" title="Link to this term">#</a></dt><dd><p>A named set of constraints that describes how
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>
+computes motor angles: which stages are free, which are held fixed, and
+which are coupled to other stages.
+See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DiffractionMode" title="ad_hoc_diffractometer.mode.DiffractionMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code></a> and <a class="reference internal" href="howto/modes.html"><span class="doc">Switch Diffraction Modes</span></a>.</p>
+</dd>
+<dt id="term-Forward-problem">Forward problem<a class="headerlink" href="#term-Forward-problem" title="Link to this term">#</a></dt><dd><p>Given Miller indices (h, k, l) and a UB matrix, find the motor angles
+that satisfy the Bragg condition.  Returns a list of 0 to ~12 solutions
+depending on geometry and active diffraction mode.
+See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>
+and <a class="reference internal" href="howto/forward.html"><span class="doc">Forward and Inverse Computations</span></a>.</p>
+</dd>
+<dt id="term-Inverse-problem">Inverse problem<a class="headerlink" href="#term-Inverse-problem" title="Link to this term">#</a></dt><dd><p>Given motor angles and a UB matrix, find the unique Miller indices (h, k, l)
+in the Bragg condition.  Unlike the forward problem, the inverse always
+has a unique solution once UB is established.
+See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">inverse()</span></code></a>.</p>
+</dd>
+<dt id="term-Miller-indices">Miller indices<a class="headerlink" href="#term-Miller-indices" title="Link to this term">#</a></dt><dd><p>Integer (or rational) triplet (h, k, l) that indexes a set of crystal
+lattice planes.  Used throughout as the reciprocal-space coordinate of a
+Bragg reflection.</p>
+</dd>
+<dt id="term-Monochromatic-radiation">Monochromatic radiation<a class="headerlink" href="#term-Monochromatic-radiation" title="Link to this term">#</a></dt><dd><p>Radiation of a single, fixed wavelength λ.  All diffraction calculations
+in this package assume monochromatic radiation — a fundamental assumption
+of the single-wavelength four-circle formalism.
+Spallation (time-of-flight) sources are out of scope.</p>
+</dd>
+<dt id="term-Orienting-reflection">Orienting reflection<a class="headerlink" href="#term-Orienting-reflection" title="Link to this term">#</a></dt><dd><p>A Bragg reflection measured at a known (h, k, l) whose measured motor
+angles are used to determine the U matrix.  Typically two reflections
+(or1 and or2) are used to compute UB via Busing &amp; Levy (1967), eqs. 23–27.
+See <code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967()</span></code> and
+<a class="reference internal" href="howto/orient.html"><span class="doc">Orient a Crystal</span></a>.</p>
+</dd>
+<dt id="term-Phi-frame">Phi frame<a class="headerlink" href="#term-Phi-frame" title="Link to this term">#</a></dt><dd><p>The Cartesian reference frame attached to the innermost sample stage (φ
+for Eulerian geometries, kφ for kappa geometries).  The UB matrix maps
+Miller indices to scattering vectors expressed in the phi frame.</p>
+</dd>
+<dt id="term-Q-scattering-vector">Q (scattering vector)<a class="headerlink" href="#term-Q-scattering-vector" title="Link to this term">#</a></dt><dd><p>The momentum transfer vector <strong>Q</strong> = <strong>k</strong>_f − <strong>k</strong>_i, where <strong>k</strong>_i and
+<strong>k</strong><em>f are the incident and scattered wave vectors.  For elastic scattering
+|<strong>Q</strong>| = (4π/λ) sin θ = 2π / d</em>{hkl}.</p>
+</dd>
+<dt id="term-Sphere-of-confusion">Sphere of confusion<a class="headerlink" href="#term-Sphere-of-confusion" title="Link to this term">#</a></dt><dd><p>The small three-dimensional volume swept out by the nominal sample position
+as all diffractometer stages rotate.  Caused by mechanical tolerances;
+ideally a point but in practice a sphere of finite radius.</p>
+</dd>
+<dt id="term-Stage">Stage<a class="headerlink" href="#term-Stage" title="Link to this term">#</a></dt><dd><p>A single rotary axis of the diffractometer.  Characterised by its axis
+direction (signed unit vector), parent stage, role (sample or detector),
+and optional motor limits.
+See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stage</span></code></a>.</p>
+</dd>
+<dt id="term-Stack">Stack<a class="headerlink" href="#term-Stack" title="Link to this term">#</a></dt><dd><p>An ordered chain of stages in which each stage sits mechanically on the
+one below it (its parent).  The combined rotation matrix is the ordered
+product of individual stage matrices, from the floor-mounted (outermost)
+stage to the innermost.</p>
+</dd>
+<dt id="term-Two-theta">Two-theta<a class="headerlink" href="#term-Two-theta" title="Link to this term">#</a></dt><dd><p>The total scattering angle 2θ between the incident and diffracted beams,
+related to d-spacing and wavelength by Bragg’s law: 2d sin θ = λ.</p>
+</dd>
+<dt id="term-U-matrix">U matrix<a class="headerlink" href="#term-U-matrix" title="Link to this term">#</a></dt><dd><p>The orthonormal orientation matrix that relates the Cartesian crystal
+frame to the phi-axis frame.  U encodes how the crystal is mounted on the
+diffractometer; it is determined from one or more orienting reflections.
+See <a class="reference internal" href="howto/orient.html"><span class="doc">Orient a Crystal</span></a> and <a class="reference internal" href="problem2.html"><span class="doc">You (1999) Geometry — Coordinate Convention and UB Matrix</span></a>.</p>
+</dd>
+<dt id="term-UB-matrix">UB matrix<a class="headerlink" href="#term-UB-matrix" title="Link to this term">#</a></dt><dd><p>The product U × B.  Maps Miller indices directly to the phi-axis frame
+scattering vector: <strong>Q</strong>_φ = UB <strong>h</strong>.  Can be determined from measured
+reflections without prior knowledge of the unit-cell parameters.
+See <a class="reference internal" href="howto/orient.html"><span class="doc">Orient a Crystal</span></a>.</p>
+</dd>
+<dt id="term-Vertical-horizontal-scattering-plane">Vertical / horizontal scattering plane<a class="headerlink" href="#term-Vertical-horizontal-scattering-plane" title="Link to this term">#</a></dt><dd><p>The plane containing the incident beam, the sample, and the diffracted
+beam.  <em>Vertical</em> — the scattering plane is vertical, the two-theta arm
+rotates about the lateral (horizontal) axis; typical for synchrotrons.
+<em>Horizontal</em> — the scattering plane is horizontal, two-theta rotates
+about the vertical axis; typical for laboratory instruments.</p>
+</dd>
+<dt id="term-psi-angle">ψ (psi) angle<a class="headerlink" href="#term-psi-angle" title="Link to this term">#</a></dt><dd><p>Two definitions appear in the literature:
+(1) <strong>You (1999)</strong>: azimuthal angle of a reference vector about <strong>Q</strong> —
+a crystal-orientation diagnostic, constant for a given (hkl, UB).
+(2) <strong>Busing &amp; Levy (1967)</strong>: angle of sample rotation about <strong>Q</strong> relative
+to a reference orientation — the quantity physically varied in a ψ scan.
+See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">psi()</span></code></a> and
+<code class="xref py py-func docutils literal notranslate"><span class="pre">psi_trajectory()</span></code>.</p>
+</dd>
+</dl>
 </section>
 
 
@@ -619,20 +660,20 @@ which shows how this equipment maps exactly to the six-circle psic geometry.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="direct-lattice.html"
+       href="references.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Direct Lattice in Crystallography</p>
+        <p class="prev-next-title">References</p>
       </div>
     </a>
     <a class="right-next"
-       href="problem2.html"
+       href="api.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">You (1999) Geometry — Coordinate Convention and UB Matrix</p>
+        <p class="prev-next-title">API Reference</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -648,24 +689,9 @@ which shows how this equipment maps exactly to the six-circle psic geometry.</p>
 
 
   <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-equipment">The equipment</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-frame">Reference frame</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equipment-description">Equipment description</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#questions">Questions</a></li>
-</ul>
-  </nav></div>
-
-  <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="_sources/problem1.md.txt">
+    <a href="_sources/glossary.md.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

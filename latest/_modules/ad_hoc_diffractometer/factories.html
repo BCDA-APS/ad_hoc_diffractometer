@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=d0f98965"></script>
+    <script src="../../_static/documentation_options.js?v=787089a5"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -170,8 +170,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../direct-lattice.html">
-    Direct Lattice in Crystallography
+  <a class="nav-link nav-internal" href="../../references.html">
+    References
   </a>
 </li>
 
@@ -183,6 +183,20 @@
                 </button>
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../direct-lattice.html">
+    Direct Lattice in Crystallography
+  </a>
+</li>
+
+
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../problem1.html">
     Case Study: Describing a Diffractometer
@@ -335,6 +349,20 @@
 
 
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../direct-lattice.html">
     Direct Lattice in Crystallography
   </a>
@@ -471,11 +499,58 @@
 <span></span><span class="c1"># Copyright (c) 2026 Pete R. Jemian &lt;prjemian+ad_hoc_diffractometer@gmail.com&gt;</span>
 <span class="c1"># SPDX-License-Identifier: CC-BY-4.0</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">factories.py — predefined diffractometer geometry factory functions.</span>
+<span class="sd">factories.py — pre-built diffractometer geometry functions.</span>
 
-<span class="sd">Each factory is decorated with @register_geometry, which registers it in</span>
-<span class="sd">_GEOMETRY_REGISTRY under its function name.  Use list_geometries() to</span>
-<span class="sd">retrieve all registered factories as a {name: callable} dict.</span>
+<span class="sd">This module provides **pre-built geometries**: factory functions that</span>
+<span class="sd">construct fully configured :class:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`</span>
+<span class="sd">instances for the most common multi-circle diffractometer designs used in</span>
+<span class="sd">synchrotron and laboratory X-ray / neutron crystallography.  They also</span>
+<span class="sd">serve as worked examples for defining custom geometries.</span>
+
+<span class="sd">Pre-built geometries</span>
+<span class="sd">--------------------</span>
+
+<span class="sd">.. list-table::</span>
+<span class="sd">   :header-rows: 1</span>
+<span class="sd">   :widths: 15 20 50</span>
+
+<span class="sd">   * - Name</span>
+<span class="sd">     - Type</span>
+<span class="sd">     - Description</span>
+<span class="sd">   * - :func:`fourcv`</span>
+<span class="sd">     - Eulerian 4-circle</span>
+<span class="sd">     - Vertical scattering plane (synchrotron). See :doc:`/geometries/fourcv`.</span>
+<span class="sd">   * - :func:`fourch`</span>
+<span class="sd">     - Eulerian 4-circle</span>
+<span class="sd">     - Horizontal scattering plane (laboratory). See :doc:`/geometries/fourch`.</span>
+<span class="sd">   * - :func:`psic`</span>
+<span class="sd">     - Eulerian 6-circle</span>
+<span class="sd">     - You (1999) 4S+2D. See :doc:`/geometries/psic`.</span>
+<span class="sd">   * - :func:`sixc`</span>
+<span class="sd">     - Eulerian 6-circle</span>
+<span class="sd">     - Lohmeier &amp; Vlieg (1993) surface geometry. See :doc:`/geometries/sixc`.</span>
+<span class="sd">   * - :func:`fivec`</span>
+<span class="sd">     - Eulerian 5-circle</span>
+<span class="sd">     - Vlieg et al. (1987), fourcv on a mu base. See :doc:`/geometries/fivec`.</span>
+<span class="sd">   * - :func:`kappa4cv`</span>
+<span class="sd">     - Kappa 4-circle</span>
+<span class="sd">     - Vertical scattering plane (synchrotron). See :doc:`/geometries/kappa4cv`.</span>
+<span class="sd">   * - :func:`kappa4ch`</span>
+<span class="sd">     - Kappa 4-circle</span>
+<span class="sd">     - Horizontal scattering plane (laboratory). See :doc:`/geometries/kappa4ch`.</span>
+<span class="sd">   * - :func:`kappa6c`</span>
+<span class="sd">     - Kappa 6-circle</span>
+<span class="sd">     - Psic-style outer axes. See :doc:`/geometries/kappa6c`.</span>
+<span class="sd">   * - :func:`zaxis`</span>
+<span class="sd">     - Surface / special</span>
+<span class="sd">     - Bloch (1985) Z-axis geometry. See :doc:`/geometries/zaxis`.</span>
+<span class="sd">   * - :func:`s2d2`</span>
+<span class="sd">     - Surface / special</span>
+<span class="sd">     - Evans-Lutterodt &amp; Tang (1995). See :doc:`/geometries/s2d2`.</span>
+
+<span class="sd">Each factory is decorated with ``@register_geometry``, which registers it</span>
+<span class="sd">in the geometry registry.  Use :func:`list_geometries` to retrieve all</span>
+<span class="sd">registered geometries as a ``{name: callable}`` dict.</span>
 
 <span class="sd">Extension via entry points</span>
 <span class="sd">--------------------------</span>
@@ -492,19 +567,14 @@
 <span class="sd">``list_geometries()`` or ``get_geometry()`` is first called; they do NOT</span>
 <span class="sd">need to call ``@register_geometry`` themselves.</span>
 
-<span class="sd">The built-in geometries (psic, fourcv, fourch, sixc, kappa4cv, kappa4ch,</span>
-<span class="sd">kappa6c, zaxis, s2d2, fivec) are also declared as entry points in the</span>
-<span class="sd">package&#39;s own ``pyproject.toml`` under the same group, so they are</span>
-<span class="sd">discoverable by any code that inspects installed entry points.</span>
-
 <span class="sd">**Geometry names must be globally unique.**  If an entry-point name</span>
 <span class="sd">duplicates an already-registered name (whether a built-in or a</span>
 <span class="sd">previously loaded plugin), a ``ValueError`` is raised at discovery time.</span>
 <span class="sd">This prevents silent shadowing: an external package cannot overwrite</span>
 <span class="sd">``fourcv``, ``psic``, or any other registered geometry.</span>
 
-<span class="sd">Writing a plugin factory</span>
-<span class="sd">------------------------</span>
+<span class="sd">Writing a custom geometry</span>
+<span class="sd">-------------------------</span>
 <span class="sd">Each factory accepts an optional ``basis`` keyword argument (defaulting to</span>
 <span class="sd">the canonical convention for that geometry).  Inside the factory, resolve</span>
 <span class="sd">physical-direction aliases locally::</span>
@@ -533,20 +603,18 @@
 <span class="sd">convention geometries.</span>
 
 <span class="sd">Naming convention:</span>
-<span class="sd">    Eulerian geometries:     fourcv, fourch, sixc, psic</span>
-<span class="sd">    Kappa geometries:        kappa4cv, kappa4ch, kappa6c</span>
-<span class="sd">    Inclined geometries:     zaxis, s2d2, fivec</span>
 
-<span class="sd">Scattering-plane suffix convention (v / h):</span>
-<span class="sd">    v  -&gt;  vertical   scattering plane  (synchrotron) — ttheta rotates about the lateral axis</span>
-<span class="sd">    h  -&gt;  horizontal scattering plane  (laboratory)  — ttheta rotates about the vertical axis</span>
+<span class="sd">- Eulerian geometries: ``fourcv``, ``fourch``, ``sixc``, ``psic``</span>
+<span class="sd">- Kappa geometries: ``kappa4cv``, ``kappa4ch``, ``kappa6c``</span>
+<span class="sd">- Surface / special geometries: ``zaxis``, ``s2d2``, ``fivec``</span>
 
-<span class="sd">    Walko (2016): &quot;at synchrotron sources the scattering plane is usually</span>
-<span class="sd">    vertical, to take advantage of the (typically) s-polarization of the</span>
-<span class="sd">    radiation and the higher degree of collimation in the vertical plane.&quot;</span>
+<span class="sd">Scattering-plane suffix convention (``v`` / ``h``):</span>
 
-<span class="sd">    Where no suffix is given, the geometry has no single-axis 2theta detector</span>
-<span class="sd">    (inclined geometries) or the detector convention is unambiguous (psic, sixc).</span>
+<span class="sd">- ``v`` — vertical scattering plane (synchrotron): ttheta rotates about the lateral axis</span>
+<span class="sd">- ``h`` — horizontal scattering plane (laboratory): ttheta rotates about the vertical axis</span>
+
+<span class="sd">Where no suffix is given, the detector convention is unambiguous (psic, sixc)</span>
+<span class="sd">or the geometry uses a non-standard detector arrangement (zaxis, s2d2, fivec).</span>
 
 <span class="sd">    fourch  (horizontal scattering plane) matches Busing &amp; Levy (1967) Fig. 1b.</span>
 <span class="sd">    fourcv  (vertical   scattering plane) is the synchrotron convention.</span>

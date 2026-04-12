@@ -10,6 +10,8 @@ User Guide
    concepts
    howto/index
    geometries/index
+   references
+   glossary
 
 .. icons: https://fonts.google.com/icons
 
@@ -36,6 +38,19 @@ User Guide
 
       Eulerian (4, 5, and 6 circle) · Kappa (4 and 6 circle) ·
       Surface and special-purpose
+
+   .. grid-item-card:: :material-outlined:`library_books;3em` References
+      :link: references
+      :link-type: doc
+
+      All literature citations — geometry papers, physical constants,
+      and numerical methods.
+
+   .. grid-item-card:: :material-outlined:`abc;3em` Glossary
+      :link: glossary
+      :link-type: doc
+
+      Alphabetised definitions of key terms.
 
    .. grid-item-card:: :material-regular:`menu_book;3em` API Reference
       :link: api
