@@ -155,17 +155,29 @@ class DiffractionMode(ABC):
 
 class FixedAngleMode(DiffractionMode):
     """
-    Mode that constrains one stage to a fixed angle.
+    Mode that constrains one stage to its current angle.
 
-    The stage named ``stage`` is held at ``value`` degrees for all
-    diffraction calculations performed in this mode.
+    During ``forward()``, the stage named ``stage`` is held at whatever
+    angle is **currently set on the geometry** — the value stored in
+    ``mode.frozen_angles`` is used only as the initial default.  To change
+    the fixed angle, set the stage angle on the geometry before calling
+    ``forward()``::
+
+        g.set_angle("chi", 45.0)   # preset chi
+        g.mode_name = "fixed_chi"  # mode will freeze chi at 45°
+        g.forward(h, k, l)
+
+    This makes ``FixedAngleMode`` fully general: the caller controls the
+    fixed value; the mode simply declares *which* stage is held constant.
 
     Parameters
     ----------
     stage : str
         Name of the stage to freeze.
     value : float
-        Angle (degrees) at which to freeze the stage.
+        Initial angle (degrees) stored in ``frozen_angles`` as a default.
+        The solver always reads the stage's current angle at call time,
+        so this value is superseded by any explicit ``set_angle()`` call.
     cut_points : dict[str, float] or None
         Branch-selection cut-points (see :class:`DiffractionMode`).
 
