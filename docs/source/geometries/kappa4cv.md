@@ -1,11 +1,11 @@
 (geometry-kappa4cv)=
 # kappa4cv — Kappa Four-Circle (Synchrotron)
 
-Four-circle kappa diffractometer, vertical scattering plane. The chi circle is replaced by a kappa axis tilted at α = 50° from the vertical toward the lateral axis (Walko 2016; ITC Vol. C §2.2.6).
+Four-circle kappa diffractometer, vertical scattering plane. The chi circle is replaced by a kappa axis tilted at α = 50° from the vertical toward the lateral axis.
 
 **Walko (2016) designation:** S3D1 (kappa)
 
-**Coordinate basis:** Busing & Levy (``BASIS_BL``): lateral=+x, longitudinal=+y, vertical=+z.
+**Coordinate basis:** Busing & Levy (`BASIS_BL`): lateral=+x, longitudinal=+y, vertical=+z.
 
 ## Quick start
 
@@ -19,41 +19,23 @@ print(g.summary())
 
 ## Stage layout
 
-**Sample stages** (floor first):
+**Sample stages (base first):**
 
-.. list-table::
-   :header-rows: 1
-   :widths: 15 40 20
+| Stage | Axis | Handedness |
+|---|---|---|
+| ``komega`` | −lateral (−x BL) | left-handed |
+| ``kappa`` | tilted axis, α=50° | right-handed |
+| ``kphi`` | −lateral (−x BL) | left-handed |
 
-   * - Stage
-     - Axis
-     - Handedness
-   * - ``komega``
-     - −lateral (−x BL)
-     - left-handed
-   * - ``kappa``
-     - tilted axis, α=50°
-     - right-handed
-   * - ``kphi``
-     - −lateral (−x BL)
-     - left-handed
+**Detector stages (base first):**
 
-**Detector stages** (floor first):
-
-.. list-table::
-   :header-rows: 1
-   :widths: 15 40 20
-
-   * - Stage
-     - Axis
-     - Handedness
-   * - ``ttheta``
-     - −lateral (−x BL)
-     - left-handed
+| Stage | Axis | Handedness |
+|---|---|---|
+| ``ttheta`` | −lateral (−x BL) | left-handed |
 
 ## Diffraction modes
 
-Available modes: ``bisecting``, ``fixed_kphi``
+Available modes: `bisecting`, `fixed_kphi`
 
 ## API reference
 
@@ -62,6 +44,5 @@ Available modes: ``bisecting``, ``fixed_kphi``
 
 ## References
 
-- ITC Vol. C §2.2.6 (2006). DOI: `10.1107/97809553602060000577 <https://doi.org/10.1107/97809553602060000577>`_
-- Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016).
+- ITC Vol. C §2.2.6 (2006). DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577)
 - Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016).

@@ -1,11 +1,11 @@
 (geometry-zaxis)=
 # zaxis — Z-Axis Four-Circle (Surface)
 
-Z-axis four-circle diffractometer for surface diffraction. The sample surface normal is parallel to the Z-axis. Sample and detector share an alpha base stage. Designed for grazing-incidence work.
+Z-axis four-circle diffractometer for surface diffraction. The sample surface normal is parallel to the Z-axis. Sample and detector share an alpha base stage.
 
 **Walko (2016) designation:** (S1D2)1
 
-**Coordinate basis:** You (1999) (``BASIS_YOU``): vertical=+x, longitudinal=+y, lateral=+z.
+**Coordinate basis:** You (1999) (`BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
 
 ## Quick start
 
@@ -19,37 +19,19 @@ print(g.summary())
 
 ## Stage layout
 
-**Sample stages** (floor first):
+**Sample stages (base first):**
 
-.. list-table::
-   :header-rows: 1
-   :widths: 15 40 20
+| Stage | Axis | Handedness |
+|---|---|---|
+| ``alpha`` | +vertical (+x) | right-handed, shared base |
+| ``Z`` | +longitudinal (+y) | right-handed |
 
-   * - Stage
-     - Axis
-     - Handedness
-   * - ``alpha``
-     - +vertical (+x)
-     - right-handed, shared base
-   * - ``Z``
-     - +longitudinal (+y)
-     - right-handed
+**Detector stages (base first):**
 
-**Detector stages** (floor first):
-
-.. list-table::
-   :header-rows: 1
-   :widths: 15 40 20
-
-   * - Stage
-     - Axis
-     - Handedness
-   * - ``delta``
-     - −lateral (−z)
-     - left-handed
-   * - ``gamma``
-     - +vertical (+x)
-     - right-handed
+| Stage | Axis | Handedness |
+|---|---|---|
+| ``delta`` | −lateral (−z) | left-handed |
+| ``gamma`` | +vertical (+x) | right-handed |
 
 **Shared stage:** alpha (base stage shared between sample and detector stacks)
 
@@ -64,6 +46,5 @@ Available modes: *(none defined)*
 
 ## References
 
-- Bloch, *J. Appl. Cryst.* **18**, 33–36 (1985). DOI: `10.1107/S0021889885009858 <https://doi.org/10.1107/S0021889885009858>`_
-- Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016).
+- Bloch, *J. Appl. Cryst.* **18**, 33–36 (1985). DOI: [10.1107/S0021889885009858](https://doi.org/10.1107/S0021889885009858)
 - Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016).
