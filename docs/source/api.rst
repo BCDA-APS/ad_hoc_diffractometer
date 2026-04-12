@@ -62,7 +62,7 @@ The package is **pure Python** with a single runtime dependency:
 
       :mod:`~ad_hoc_diffractometer.orientation` ·
       :mod:`~ad_hoc_diffractometer.forward` ·
-      :mod:`~ad_hoc_diffractometer.engines` ·
+      :mod:`~ad_hoc_diffractometer.conversions` ·
       :mod:`~ad_hoc_diffractometer.surface` ·
       :mod:`~ad_hoc_diffractometer.scan` ·
       :mod:`~ad_hoc_diffractometer.refinement`
@@ -139,7 +139,7 @@ Modules are grouped by layer.
            fontname="sans-serif" fontsize=11
            orientation [label="orientation" fillcolor="#ffd0b0"]
            forward     [label="forward"     fillcolor="#ffd0b0"]
-           engines     [label="engines"     fillcolor="#ffd0b0"]
+           conversions [label="conversions" fillcolor="#ffd0b0"]
            surface     [label="surface"     fillcolor="#ffd0b0"]
            scan        [label="scan"        fillcolor="#ffd0b0"]
            refinement  [label="refinement"  fillcolor="#ffd0b0"]
@@ -183,7 +183,7 @@ Modules are grouped by layer.
        forward     -> geometry  [style=dashed]
        forward     -> mode
        forward     -> orientation
-       engines     -> sample
+        conversions -> sample
        surface     -> geometry  [style=dashed]
        scan        -> geometry  [style=dashed]
        scan        -> rotation
