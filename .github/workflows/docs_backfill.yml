@@ -95,6 +95,8 @@ jobs:
           fi
 
           # Update switcher.json.
+          # "latest" is always first. Versioned entries follow in the order
+          # they are added (newest first).
           # Pre-releases (rcN, aN, bN) appear in the switcher but do not steal
           # "preferred" from the current stable release.
           # Stable releases also prune all pre-release entries for the same
@@ -111,36 +113,30 @@ jobs:
           with open(switcher_path) as f:
               entries = json.load(f)
 
-          versions = [e["version"] for e in entries]
-          insert_pos = next(
-              (i + 1 for i, e in enumerate(entries) if e.get("version") == "latest"),
-              1,
-          )
+          # Separate "latest" from versioned entries; "latest" is always first.
+          latest_entries = [e for e in entries if e.get("version") == "latest"]
+          versioned = [e for e in entries if e.get("version") != "latest"]
+          versions = [e["version"] for e in versioned]
 
           if not is_prerelease:
               # Remove all pre-release entries for this base version.
               prerelease_pat = re.compile(r'^' + re.escape(version) + r'(a|b|rc)\d+$')
-              pruned = [e["version"] for e in entries if prerelease_pat.match(e["version"])]
-              entries = [e for e in entries if not prerelease_pat.match(e["version"])]
+              pruned = [e["version"] for e in versioned if prerelease_pat.match(e["version"])]
+              versioned = [e for e in versioned if not prerelease_pat.match(e["version"])]
               for v in pruned:
                   print(f"Removed pre-release {v} from switcher.json")
-              # Recalculate insert position after pruning.
-              insert_pos = next(
-                  (i + 1 for i, e in enumerate(entries) if e.get("version") == "latest"),
-                  1,
-              )
-              versions = [e["version"] for e in entries]
+              versions = [e["version"] for e in versioned]
               # Clear preferred everywhere, then mark this stable version.
-              for e in entries:
+              for e in versioned:
                   e.pop("preferred", None)
               if version in versions:
-                  for e in entries:
+                  for e in versioned:
                       if e["version"] == version:
                           e["preferred"] = True
                   print(f"{version} already present; marked preferred")
               else:
                   new_entry = {"version": version, "url": f"{base_url}/{version}/", "preferred": True}
-                  entries.insert(insert_pos, new_entry)
+                  versioned.insert(0, new_entry)
                   print(f"Added {version} and marked preferred")
           else:
               # Pre-release: add without touching preferred.
@@ -148,9 +144,17 @@ jobs:
                   print(f"{version} already present (pre-release; preferred unchanged)")
               else:
                   new_entry = {"version": version, "url": f"{base_url}/{version}/"}
-                  entries.insert(insert_pos, new_entry)
+                  versioned.insert(0, new_entry)
                   print(f"Added pre-release {version} (preferred unchanged)")
 
+          # Always keep "latest" first; sort remaining entries newest-first.
+          def version_key(e):
+              try:
+                  return [int(x) for x in e["version"].lstrip("v").split(".")]
+              except ValueError:
+                  return []
+          versioned.sort(key=version_key, reverse=True)
+          entries = latest_entries + versioned
           with open(switcher_path, "w") as f:
               json.dump(entries, f, indent=4)
           PYEOF
