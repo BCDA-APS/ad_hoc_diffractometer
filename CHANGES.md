@@ -8,6 +8,14 @@ for the full issue tracker.
 
 ## Unreleased
 
+## Release v0.4.0
+
+Released 2026-04-13.
+
+Major documentation release plus several API improvements.  Introduces a
+complete User Guide (Concepts, How-to Guides, Geometry Reference, Glossary,
+References), AutoAPI fixes, and a set of API quality improvements.
+
 ### Breaking changes
 
 - `ReflectionList.setor1()` renamed to `setor0()` and `setor2()` renamed to
@@ -19,12 +27,60 @@ for the full issue tracker.
   list).  Callers that iterate with `for pt in result:` are unaffected.
   Callers that index the result directly (e.g. `result[0]`) must wrap the
   call: `list(hkl_trajectory(...))`. (#115)
+- `engines.py` renamed to `conversions.py`; all imports from
+  `ad_hoc_diffractometer.engines` must be updated to
+  `ad_hoc_diffractometer.conversions`. (#108)
 
 ### Added
 
-- `ahd.wh(geometry)` and `ahd.pa(geometry)` top-level convenience functions
-  (SPEC-familiar status commands), in addition to the existing
-  `geometry.wh()` / `geometry.pa()` methods. (#131)
+- **User Guide**: Concepts overview, How-to Guides (wavelength, lattice,
+  orient, forward/inverse, modes, trajectory, lattice refinement,
+  serialization, crystal alignment), Geometry Reference (one page per
+  pre-built geometry), Glossary, and References page. (#93, #94, #95)
+- **API Reference**: module dependency graph (graphviz), per-layer card
+  grid, AutoAPI module-prefix hidden via CSS. (#92, #102)
+- `ahd.wh(geometry)` and `ahd.pa(geometry)` top-level convenience
+  functions (SPEC-familiar status commands). (#131)
+- `AdHocDiffractometer.stages_by_role(role)` — query stages with any
+  arbitrary role string (enables analysers, polarisers, slits, etc.). (#129)
+- How-to guide: save/restore diffractometer configuration to JSON or YAML
+  via `to_dict()` / `from_dict()`. (#132)
+- `sphinx-tabs` extension; coordinate-convention tabs in `concepts.md`
+  showing You (1999), BL (1967), NeXus, and Hkl conventions side by side
+  with the project default (You 1999) as the first tab. (#93)
+- `dollarmath` MyST extension — inline `$...$` math now renders in `.md`
+  files. (#120)
+
+### Changed
+
+- `Stage.role` is now documented as an **open string** — any value is
+  accepted, not just `"sample"` and `"detector"`. (#129)
+- Physical direction definitions (vertical, longitudinal, lateral)
+  throughout the docs and docstrings now use unambiguous, observer-free
+  language: vertical = opposite to gravity; longitudinal = chosen direction
+  in the plane perpendicular to vertical; lateral = completes the
+  right-handed system. (#128)
+- `engines.py` renamed to `conversions.py` (see Breaking changes). (#108)
+- Coordinate convention section in `concepts.md` reframed: observable
+  physical directions first; Cartesian assignment shown in tabs. (#124, #125)
+- AutoAPI: `sig-prename` (module-path prefix) hidden via `custom.css`
+  so class/function signatures show short names only. (#102)
+- `myst_enable_extensions` now includes `dollarmath` for inline math
+  in Markdown files. (#120)
+- Notebooks rendered by `myst-nb` (no pandoc required). (#95)
+- `fourcv_alignment_howto.ipynb` moved from `docs/source/` to
+  `docs/source/howto/`. (#94)
+- `roadmap.md` moved from `docs/source/` to repo root (development-facing
+  document). (#93)
+
+### Fixed
+
+- All 89 Sphinx AutoAPI warnings eliminated (duplicate descriptions,
+  reST markup, ambiguous cross-references, module-prefix in signatures).
+  (#92, #102)
+- `switcher.json` automation: `latest` is always first; versions sorted
+  newest-first. (#98)
+- Inline `$...$` math in `concepts.md` now renders correctly online. (#120)
 
 ## Release v0.3.1
 
