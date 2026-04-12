@@ -34,6 +34,13 @@ ahd.ub_identity(g.sample)
 g.mode_name = "bisecting"   # omega = ttheta/2; standard synchrotron mode
 ```
 
+For fixed-angle modes, preset the stage angle **before** activating the mode:
+
+```python
+g.set_angle("chi", 90.0)   # preset chi to the desired fixed value
+g.mode_name = "fixed_chi"  # chi will be held at 90° during forward()
+```
+
 Without a mode, all stages are free and the solver returns all geometrically
 valid solutions.  See {doc}`modes` for the full list.
 

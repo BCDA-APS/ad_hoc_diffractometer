@@ -30,42 +30,61 @@ print(g.mode_name)   # 'bisecting'
 
 ### Bisecting mode
 
-Constrains omega = ttheta/2 (sample bisects the scattered beam).
-Chi and phi are free.  Available on: fourcv, fourch, psic, kappa geometries.
+The sample stage angle is constrained to half the detector stage angle,
+placing the sample symmetrically between the incident and diffracted beams.
+Available on: fourcv (omega = ttheta/2), fourch (omega = ttheta/2),
+psic (eta = delta/2), and kappa geometries (komega = ttheta/2 or
+komega = delta/2).
 
 ```python
 g.mode_name = "bisecting"
 ```
 
-### Fixed chi
+### Fixed chi / fixed phi / fixed kphi / fixed mu
 
-Holds chi at a specified angle.  Useful for surface diffraction or
-when the goniometer range is limited.
+A fixed-angle mode holds one stage at its **current angle** during
+`forward()`.  The caller presets the stage angle with `g.set_angle()`
+before activating the mode:
+
+```python
+# Freeze chi at 90° (surface diffraction geometry)
+g.set_angle("chi", 90.0)
+g.mode_name = "fixed_chi"
+solutions = g.forward(h, k, l)   # chi held at 90° throughout
+
+# Freeze chi at a different angle — same mode, new preset
+g.set_angle("chi", 45.0)
+solutions = g.forward(h, k, l)   # chi held at 45°
+```
+
+```python
+# Freeze phi at 0°
+g.set_angle("phi", 0.0)
+g.mode_name = "fixed_phi"
+```
+
+```python
+# Freeze mu at 0° on psic or kappa6c
+g = ahd.psic()
+g.set_angle("mu", 0.0)
+g.mode_name = "fixed_mu"
+```
+
+### Custom fixed-angle mode
+
+To add a fixed-angle mode that is not pre-built into the geometry:
 
 ```python
 from ad_hoc_diffractometer import FixedAngleMode
+
 g.modes["my_chi"] = FixedAngleMode(stage="chi", value=90.0)
+g.set_angle("chi", 90.0)   # preset the stage angle
 g.mode_name = "my_chi"
 ```
 
-### Fixed phi
-
-Holds phi at a specified angle.
-
-```python
-g.mode_name = "fixed_phi"
-# Default value is 0.0; override at construction or via:
-g.modes["fixed_phi"] = FixedAngleMode(stage="phi", value=45.0)
-```
-
-### Fixed mu (psic / kappa6c)
-
-Holds the outer mu stage fixed.
-
-```python
-g = ahd.psic()
-g.mode_name = "fixed_mu"
-```
+The `value` argument to `FixedAngleMode` sets the **initial** stage angle
+as a convenience default.  The solver always reads the stage's current angle
+at call time, so a subsequent `g.set_angle()` overrides it.
 
 ## Custom modes
 

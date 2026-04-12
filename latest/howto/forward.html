@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=38795a59"></script>
+    <script src="../_static/documentation_options.js?v=521bf9b5"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -581,6 +581,11 @@ solutions are physically meaningful:</p>
 <span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
 
 <span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;bisecting&quot;</span>   <span class="c1"># omega = ttheta/2; standard synchrotron mode</span>
+</pre></div>
+</div>
+<p>For fixed-angle modes, preset the stage angle <strong>before</strong> activating the mode:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>   <span class="c1"># preset chi to the desired fixed value</span>
+<span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;fixed_chi&quot;</span>  <span class="c1"># chi will be held at 90° during forward()</span>
 </pre></div>
 </div>
 <p>Without a mode, all stages are free and the solver returns all geometrically
