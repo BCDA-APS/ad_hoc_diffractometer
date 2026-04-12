@@ -553,8 +553,8 @@ class Lattice:
         """
         B matrix in Å⁻¹ (with 2π factor, Busing & Levy 1967 / SPEC convention).
 
-        Transforms Miller indices **h** = (h, k, l) to the scattering vector
-        in Cartesian crystal-frame coordinates:
+        Transforms Miller indices ``h`` = (h, k, l) to the scattering vector
+        in Cartesian crystal-frame coordinates::
 
             Q_c = B @ h
 
@@ -783,14 +783,14 @@ def b_matrix(
     """
     Compute the B matrix from the reciprocal lattice vectors.
 
-    The B matrix transforms Miller indices **h** = (h, k, l) to the
+    The B matrix transforms Miller indices ``h`` = (h, k, l) to the
     scattering vector in Cartesian crystal-frame coordinates
-    (Busing & Levy, 1967, eq. 3):
+    (Busing & Levy, 1967, eq. 3)::
 
         Q_c = B @ h
 
-    The columns of B are the reciprocal lattice vectors **b**₁, **b**₂,
-    **b**₃ (each including the 2π factor), so:
+    The columns of B are the reciprocal lattice vectors b₁, b₂, b₃
+    (each including the 2π factor), so::
 
         B.T = [b1, b2, b3]    (column-stack of the reciprocal vectors)
 

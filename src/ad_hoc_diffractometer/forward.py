@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
 # SPDX-License-Identifier: CC-BY-4.0
-"""
+r"""
 forward.py — Forward diffraction calculation: (h, k, l) → motor angles.
 
 The forward calculation is the inverse of ``inverse()``: given a reciprocal-
@@ -22,9 +22,9 @@ BisectingMode (four-sample-stage geometries with one detector arm)
 
     Algorithm:
         1. Q_phi = UB @ (h, k, l)             — target in phi frame
-        2. |Q| → ttheta via Bragg's law
+        2. \|Q\| → ttheta via Bragg's law
         3. frozen stages set from mode.frozen_angles
-        4. detector_stage = ttheta (computed from |Q|)
+        4. detector_stage = ttheta (computed from \|Q\|)
         5. sample_stage   = ttheta / 2 (bisecting)
         6. Remaining free sample stages (chi, phi or kchi, kphi) solved
            from the direction of Q_phi, choosing among the standard
@@ -47,7 +47,7 @@ ValueError
 ValueError
     If (h, k, l) = (0, 0, 0).
 ValueError
-    If the requested |Q| exceeds the Ewald sphere (wavelength too long).
+    If the requested \|Q\| exceeds the Ewald sphere (wavelength too long).
 
 References
 ----------
@@ -79,7 +79,7 @@ def compute_forward(
     k: float,
     l: float,  # noqa: E741
 ) -> list[dict[str, float]]:
-    """
+    r"""
     Compute all valid motor-angle solutions for the reciprocal-lattice point
     (h, k, l) in the geometry's active diffraction mode.
 
@@ -109,7 +109,7 @@ def compute_forward(
         If (h, k, l) == (0, 0, 0).
     ValueError
         If the scattering vector magnitude exceeds the Ewald sphere
-        (|Q| > 4π/λ, i.e. Bragg condition cannot be satisfied).
+        (\|Q\| > 4π/λ, i.e. Bragg condition cannot be satisfied).
     NotImplementedError
         If no active mode is set or the active mode type is not supported
         for this geometry.

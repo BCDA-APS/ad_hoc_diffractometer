@@ -157,9 +157,11 @@ def register_geometry(func):
 
     Example
     -------
-    @register_geometry
-    def psic() -> AdHocDiffractometer:
-        ...
+    ::
+
+        @register_geometry
+        def psic() -> AdHocDiffractometer:
+            ...
     """
     _GEOMETRY_REGISTRY[func.__name__] = func
     return func
@@ -561,11 +563,12 @@ def sixc(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
     making this a coupled geometry.  Useful for surface diffraction.
 
     From Fig. 1 and §2.1 of Lohmeier & Vlieg (1993):
-        alpha and gamma rotate about the vertical axis (x in LV convention).
-        omega, phi, and delta all rotate about the lateral axis (z in LV).
-        chi rotates about the longitudinal axis (y in LV).
+    alpha and gamma rotate about the vertical axis (x in LV convention).
+    omega, phi, and delta all rotate about the lateral axis (z in LV).
+    chi rotates about the longitudinal axis (y in LV).
 
-    Stack (floor first):
+    Stack (floor first)::
+
         alpha (shared base): vertical,     right-handed  [rotary table]
           --> omega (sample):  lateral,      left-handed
                 --> chi:       longitudinal, right-handed
@@ -822,18 +825,21 @@ def zaxis(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
     parallel to the Z-axis, so the angle of incidence equals the alpha angle.
     The detector and sample both rotate about the shared alpha (base) axis.
 
-    Stack (floor first):
+    Stack (floor first)::
+
         alpha (shared base): vertical,     right-handed
           --> Z     (sample)  : longitudinal, right-handed
           --> delta (detector): lateral,      left-handed
                 --> gamma :     vertical,     right-handed
 
     The total scattering angle is a compound of gamma, delta, and alpha
-    (Walko 2016, eq. 17):
+    (Walko 2016, eq. 17)::
+
         ttheta = arccos(cos(gamma)*cos(delta)*cos(alpha) + sin(alpha)*sin(gamma))
 
-    References: J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).
-                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.
+    References:
+    J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).
+    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.
     """
     VERTICAL = basis["vertical"]
     LATERAL = basis["lateral"]
@@ -868,22 +874,25 @@ def s2d2(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
     (nu, delta), all mechanically decoupled.  The angle of incidence is the
     mu angle; the surface normal is parallel to Z.
 
-    Sample stack (floor first):
+    Sample stack (floor first)::
+
         mu    : vertical,     right-handed
           --> Z : longitudinal, right-handed
 
-    Detector stack (floor first):
+    Detector stack (floor first)::
+
         nu    : vertical,     right-handed
           --> delta : lateral, left-handed
 
     mu and nu share the same vertical axis; mechanically independent.
 
-    The total scattering angle is (Walko 2016, eq. 18):
+    The total scattering angle is (Walko 2016, eq. 18)::
+
         ttheta = arccos(cos(nu) * cos(delta))
 
-    References: K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst.
-                    28, 318-326 (1995).
-                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.
+    References:
+    K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995).
+    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.
     """
     VERTICAL = basis["vertical"]
     LATERAL = basis["lateral"]
@@ -919,15 +928,17 @@ def fivec(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
     through mu.  This provides an additional degree of freedom for accessing
     wider regions of reciprocal space, particularly at synchrotron sources.
 
-    Stack (floor first):
+    Stack (floor first)::
+
         mu (shared base): vertical,     right-handed
           --> omega (sample): lateral,      left-handed
                 --> chi:      longitudinal, right-handed
                       --> phi: lateral,     left-handed
           --> ttheta (detector): lateral,   left-handed
 
-    References: E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
-                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+    References:
+    E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
+    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
     """
     VERTICAL = basis["vertical"]
     LATERAL = basis["lateral"]

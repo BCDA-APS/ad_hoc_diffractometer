@@ -221,9 +221,8 @@ def kappa_axis(alpha_deg: float, basis: dict | None = None) -> np.ndarray:
         the lateral axis in the vertical-lateral plane.  Must be in (0, 90).
     basis : dict or None
         Mapping from physical direction names to numpy arrays.  If None,
-        the default You (1999) basis is used:
-            vertical  -> XHAT
-            lateral   -> ZHAT
+        the default You (1999) basis is used
+        (vertical -> XHAT, lateral -> ZHAT).
 
     Returns
     -------

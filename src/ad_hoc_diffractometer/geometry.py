@@ -56,8 +56,8 @@ class AdHocDiffractometer:
         the stacking; the parent attribute of each Stage does.
     basis : dict, optional
         Mapping from physical direction names to Cartesian basis vectors.
-        Default is the You (1999) convention:
-            {'vertical': XHAT, 'longitudinal': YHAT, 'lateral': ZHAT}
+        Default is the You (1999) convention
+        ``{'vertical': XHAT, 'longitudinal': YHAT, 'lateral': ZHAT}``.
     description : str, optional
         Free-text description of the geometry.
     wavelength : float or None, optional
@@ -87,30 +87,6 @@ class AdHocDiffractometer:
         A cut-point C for stage X means the returned angle lies in
         ``[C, C + 360°)``.  ``None`` is equivalent to an empty dict.
 
-    Attributes
-    ----------
-    sample_stages : list of Stage
-        Stages with role='sample', in stacking order (floor first).
-    detector_stages : list of Stage
-        Stages with role='detector', in stacking order (floor first).
-    wavelength : float or None
-        Wavelength in Å, or None if not set.
-    kappa_alpha_deg : float or None
-        Kappa tilt angle in degrees, or None for non-kappa geometries.
-    azimuthal_reference : tuple of float or None
-        Azimuthal reference vector (h, k, l), or None if not set.
-    modes : ModeDict
-        The collection of named modes.  Empty if none were supplied.
-    mode_name : str or None
-        Name of the currently active mode, or ``None`` if no mode is set.
-    cut_points : dict[str, float]
-        Geometry-level SPEC #G4 cut-points per stage; mirrors SPEC #G4.
-    detector_distance : float or None
-        Sample-to-detector distance in mm, or ``None`` if not set.
-    detector_tilt : float or None
-        Detector tilt angle in degrees, or ``None`` if not set.
-    detector_offset : tuple of float or None
-        In-plane detector offset (dx, dy) in mm, or ``None`` if not set.
     """
 
     DEFAULT_BASIS = {
@@ -805,7 +781,7 @@ class AdHocDiffractometer:
         k: float,
         l: float,  # noqa: E741
     ) -> list[dict[str, float]]:
-        """
+        r"""
         Compute all valid motor-angle solutions for the reflection (h, k, l).
 
         This is the *forward* diffraction calculation: given a reciprocal-
@@ -843,7 +819,7 @@ class AdHocDiffractometer:
         ValueError
             If (h, k, l) == (0, 0, 0).
         ValueError
-            If the requested |Q| exceeds the Ewald sphere.
+            If the requested \|Q\| exceeds the Ewald sphere.
         NotImplementedError
             If no active mode is set or the mode type is not supported.
 
