@@ -1,0 +1,58 @@
+(geometry-s2d2)=
+# s2d2 — S2D2 General-Inclination Four-Circle
+
+S2D2 geometry with two independent sample axes (mu, Z) and two independent detector axes (nu, delta), all mechanically decoupled.
+
+**Walko (2016) designation:** S2D2
+
+**Coordinate basis:** You (1999) (`BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
+
+## Quick start
+
+```python
+import ad_hoc_diffractometer as ahd
+
+g = ahd.s2d2()
+g.wavelength = 1.0  # Å
+print(g.summary())
+```
+
+## Pre-built geometry definition
+
+This geometry is defined by the {func}`~ad_hoc_diffractometer.s2d2` factory
+function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L921) for the complete stage
+and mode configuration.
+
+## Stage layout
+
+**Sample stages (base first):**
+
+| Stage | Axis | Handedness |
+|---|---|---|
+| ``mu`` | +vertical (+x) | right-handed |
+| ``Z`` | +longitudinal (+y) | right-handed |
+
+**Detector stages (base first):**
+
+| Stage | Axis | Handedness |
+|---|---|---|
+| ``nu`` | +vertical (+x) | right-handed |
+| ``delta`` | −lateral (−z) | left-handed |
+
+## Diffraction modes
+
+*(No modes defined for this geometry.  All stages are free during*
+*`forward()` — the solver explores the full solution space.)*
+
+## API reference
+
+- {func}`~ad_hoc_diffractometer.s2d2`
+- {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
+- {class}`~ad_hoc_diffractometer.mode.DiffractionMode`
+- {class}`~ad_hoc_diffractometer.mode.BisectingMode`
+- {class}`~ad_hoc_diffractometer.mode.FixedAngleMode`
+
+## References
+
+- Evans-Lutterodt & Tang, *J. Appl. Cryst.* **28**, 318–326 (1995). DOI: [10.1107/S0021889895001063](https://doi.org/10.1107/S0021889895001063)
+- Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016).

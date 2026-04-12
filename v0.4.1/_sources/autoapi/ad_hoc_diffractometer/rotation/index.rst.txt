@@ -1,0 +1,64 @@
+rotation
+========
+
+.. py:module:: ad_hoc_diffractometer.rotation
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.rotation``
+
+   Provides the Rodrigues rotation formula for computing 3x3 rotation matrices
+   from a unit axis vector and an angle.
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.rotation.rotation_matrix
+
+
+Module Contents
+---------------
+
+.. py:function:: rotation_matrix(axis: ~numpy.ndarray, angle_deg: float) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.rotation.rotation_matrix``
+
+
+   Compute a right-handed rotation matrix about a unit axis vector.
+
+   Uses the Rodrigues formula:
+
+       R = I cos(theta) + (1 - cos(theta))(n ⊗ n) + sin(theta)[n]_x
+
+   where [n]_x is the skew-symmetric cross-product matrix of n.
+
+   For a left-handed rotation (e.g. eta, phi, delta in You 1999), pass the
+   negated axis: rotation_matrix(-ZHAT, angle_deg).
+
+   The sign of the axis vector encodes handedness:
+       +nHat  =>  right-handed rotation about nHat
+       -nHat  =>  left-handed rotation about nHat
+                  (equivalent to right-handed with negated angle)
+
+   :param axis: Rotation axis vector.  Need not be normalised; it will be normalised
+                internally.
+   :type axis: numpy.ndarray, shape (3,)
+   :param angle_deg: Rotation angle in degrees (right-handed sense about the given axis).
+   :type angle_deg: float
+
+   :returns: **R** -- Orthogonal rotation matrix with det(R) = +1.
+   :rtype: numpy.ndarray, shape (3, 3)
+
+   .. rubric:: Examples
+
+   >>> import numpy as np
+   >>> from ad_hoc_diffractometer.constants import XHAT, ZHAT
+   >>> rotation_matrix(XHAT, 0)          # identity
+   >>> rotation_matrix(-ZHAT, 30)        # left-handed 30 deg about z
+
+
