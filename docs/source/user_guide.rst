@@ -8,48 +8,62 @@ User Guide
    :hidden:
    :caption: Concepts
 
+   concepts
+
 .. toctree::
    :hidden:
    :caption: How-to Guides
 
+   howto/index
+   howto/wavelength
+   howto/lattice
+   howto/orient
+   howto/forward
+   howto/modes
+   howto/trajectory
+   howto/fourcv_alignment_howto
+
 .. toctree::
    :hidden:
-   :caption: Geometries
+   :caption: Geometry Reference
 
-.. note::
-
-   This section is under active development (#94, #95).
+   geometries/index
+   geometries/fourcv
+   geometries/fourch
+   geometries/psic
+   geometries/sixc
+   geometries/kappa4cv
+   geometries/kappa4ch
+   geometries/kappa6c
+   geometries/zaxis
+   geometries/s2d2
+   geometries/fivec
 
 .. icons: https://fonts.google.com/icons
 
 .. grid:: 2
 
    .. grid-item-card:: :material-outlined:`architecture;3em` Concepts
-      :link: user_guide
+      :link: concepts
       :link-type: doc
 
       Coordinate conventions, axis sign convention, B/U/UB matrices,
       diffraction modes, and the ψ angle.
 
-      *(Coming soon)*
-
    .. grid-item-card:: :material-outlined:`directions_run;3em` How-to Guides
-      :link: user_guide
+      :link: howto/index
       :link-type: doc
 
-      Step-by-step guides for common tasks: setting the wavelength,
-      orienting a crystal, running a trajectory, switching modes.
-
-      *(Coming soon)*
+      Step-by-step guides: set wavelength, define a lattice, orient a
+      crystal, solve the forward problem, switch modes, plan trajectories,
+      and align a crystal end-to-end.
 
    .. grid-item-card:: :material-outlined:`format_list_bulleted;3em` Geometry Reference
-      :link: user_guide
+      :link: geometries/index
       :link-type: doc
 
-      One page per geometry factory: psic, fourcv, fourch, sixc,
-      kappa4cv, kappa4ch, kappa6c, zaxis, s2d2, fivec.
-
-      *(Coming soon)*
+      One page per geometry: fourcv, fourch, psic, sixc, kappa4cv,
+      kappa4ch, kappa6c, zaxis, s2d2, fivec.
 
    .. grid-item-card:: :material-regular:`menu_book;3em` API Reference
       :link: api
