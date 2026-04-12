@@ -170,9 +170,8 @@ class Sample:
 
     Notes
     -----
-    U and UB are set by the U/UB computation routines (Priority 2 items
-    #5 and #6).  They are stored here so that each sample carries its
-    own orientation independently.
+    U and UB are set by the U/UB computation routines.  They are stored
+    here so that each sample carries its own orientation independently.
     """
 
     def __init__(

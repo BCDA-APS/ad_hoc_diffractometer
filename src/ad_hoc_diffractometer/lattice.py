@@ -279,10 +279,31 @@ class Lattice:
     """
     A crystal lattice described by up to six parameters (a, b, c, α, β, γ).
 
-    The crystal system is deduced automatically from the parameters supplied.
-    Missing parameters are filled in according to the symmetry constraints of
-    the deduced system.  The default (no arguments) is a cubic lattice with
-    a = 1 Å.
+    The crystal system is deduced automatically from the **minimum set** of
+    parameters supplied.  Missing parameters are filled in according to the
+    symmetry constraints of the deduced system.  The default (no arguments)
+    is a cubic lattice with a = 1 Å.
+
+    .. list-table:: Minimum parameters by crystal system
+       :header-rows: 1
+       :widths: 20 50
+
+       * - System
+         - Minimum parameters required
+       * - Cubic
+         - ``a``
+       * - Tetragonal
+         - ``a``, ``c``
+       * - Hexagonal
+         - ``a``, ``c``, ``gamma=120`` *(must be explicit)*
+       * - Trigonal
+         - ``a``, ``alpha`` *(alpha ≠ 90)*
+       * - Orthorhombic
+         - ``a``, ``b``, ``c``
+       * - Monoclinic
+         - ``a``, ``b``, ``c``, ``beta``
+       * - Triclinic
+         - ``a``, ``b``, ``c``, ``alpha``, ``beta``, ``gamma``
 
     All parameters are validated on construction and on every change:
       - Lengths (a, b, c) must be strictly positive.
