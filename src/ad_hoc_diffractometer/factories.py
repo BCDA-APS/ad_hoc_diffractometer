@@ -356,7 +356,15 @@ def make_geometry(name: str, **kwargs) -> AdHocDiffractometer:
 # Shared basis definitions
 # ---------------------------------------------------------------------------
 
-# You (1999) convention: xHat=vertical, yHat=longitudinal, zHat=lateral
+#: Basis vector dictionary for the You (1999) coordinate convention.
+#: Maps physical direction names to Cartesian unit vectors:
+#:
+#: - ``"vertical"`` → ``XHAT`` (+x, out of the floor)
+#: - ``"longitudinal"`` → ``YHAT`` (+y, along the beam)
+#: - ``"lateral"`` → ``ZHAT`` (+z, to our left facing the equipment)
+#:
+#: This is the default basis used by :func:`psic`, :func:`sixc`,
+#: :func:`kappa6c`, :func:`zaxis`, :func:`s2d2`, and :func:`fivec`.
 BASIS_YOU = {
     "vertical": XHAT,
     "longitudinal": YHAT,
@@ -365,7 +373,14 @@ BASIS_YOU = {
 #: Alias for backward compatibility.
 _BASIS_YOU = BASIS_YOU
 
-# Busing & Levy (1967) convention: xHat=lateral, yHat=longitudinal, zHat=vertical
+#: Basis vector dictionary for the Busing & Levy (1967) coordinate convention.
+#: Maps physical direction names to Cartesian unit vectors:
+#:
+#: - ``"lateral"`` → +x
+#: - ``"longitudinal"`` → +y (along the beam)
+#: - ``"vertical"`` → +z (out of the floor)
+#:
+#: Used by :func:`fourcv`, :func:`fourch`, :func:`kappa4cv`, and :func:`kappa4ch`.
 BASIS_BL = {
     "lateral": np.array([1.0, 0.0, 0.0]),
     "longitudinal": np.array([0.0, 1.0, 0.0]),

@@ -10,7 +10,7 @@
    Import: ``{{ obj.id }}``
 
    {% if obj.docstring %}
-   {{ obj.docstring|indent(3) }}
+   {{ obj.docstring|strip_module_header|indent(3) }}
    {% endif %}
 
       {% block submodules %}

@@ -135,10 +135,26 @@ def _tilde_type_str(s: str) -> str:
     )
 
 
+def _strip_module_header(docstring: str) -> str:
+    """Remove the leading '<filename>.py — <summary>' line from module docstrings.
+
+    The filename stub is redundant on the AutoAPI module page where the page
+    title already shows the module short name.  Strip the first line if it
+    matches the pattern ``<word>.py — <rest>``.
+    """
+    import re
+
+    lines = docstring.split("\n", 1)
+    if lines and re.match(r"^\S+\.py\s*[—–-]\s*", lines[0]):
+        return lines[1].lstrip("\n") if len(lines) > 1 else ""
+    return docstring
+
+
 def _prepare_jinja_env(jinja_env) -> None:
     """Register custom Jinja2 filters for autoapi templates."""
     jinja_env.filters["shorten_type"] = _shorten_type_str
     jinja_env.filters["tilde_type"] = _tilde_type_str
+    jinja_env.filters["strip_module_header"] = _strip_module_header
 
 
 def setup(app):

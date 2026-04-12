@@ -9,19 +9,19 @@ first-class concern of the geometry description.
 
 Classes
 -------
-DiffractionMode
+:class:`DiffractionMode`
     Abstract base class for all modes.  Declares which stages are
     constrained (frozen) and which remain free, plus optional cut-points
     for branch selection.
 
-FixedAngleMode
+:class:`FixedAngleMode`
     Constrains one named stage to a fixed angle value.
 
-BisectingMode
+:class:`BisectingMode`
     Bisecting geometry: omega = ttheta/2 (half the detector angle).
     For psic-family geometries this means eta = delta/2.
 
-ModeDict
+:class:`ModeDict`
     An ordered, guarded dict of named modes.  Validates that all entries
     are DiffractionMode instances; prevents inserting non-Mode values.
 
@@ -40,7 +40,6 @@ References
 Busing & Levy, Acta Cryst. 22, 457-464 (1967).
 You, J. Appl. Cryst. 32, 614-623 (1999).
 Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), section 3.3.
-SPEC #G0, #G4 lines — references/2020-12-13-fourcc-alignment-7-id-c/spec_G_lines.md
 """
 
 from __future__ import annotations
