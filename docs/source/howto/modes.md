@@ -1,8 +1,9 @@
 (howto-modes)=
 # Switch Diffraction Modes
 
-A **diffraction mode** constrains which motor angles are free during a
-forward calculation.  See [Concepts](../concepts.md) for background.
+A **diffraction mode** describes how `forward()` will compute the motor
+angles and which ones remain constant.  See [Concepts](../concepts.md)
+for background.
 
 ## List available modes
 

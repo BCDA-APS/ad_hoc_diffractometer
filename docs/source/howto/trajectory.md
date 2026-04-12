@@ -7,6 +7,9 @@ reciprocal space and for ψ scans.
 ## Prerequisites
 
 - A geometry with wavelength and UB matrix set (see {doc}`orient`)
+- A diffraction mode set on the geometry (see {doc}`modes`) — the mode
+  determines which motor angles are computed at each point along the
+  trajectory
 
 ## hkl trajectory — path between two reflections
 

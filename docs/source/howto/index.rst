@@ -16,6 +16,7 @@ installed the package and are familiar with the
    forward
    modes
    trajectory
+   refine_lattice
    fourcv_alignment_howto
 
 .. icons: https://fonts.google.com/icons
@@ -63,6 +64,14 @@ installed the package and are familiar with the
 
       Compute motor-angle sequences along a path through reciprocal
       space, or for a ψ scan.
+
+   .. grid-item-card:: :material-outlined:`straighten;3em` Refine Lattice Constants
+      :link: refine_lattice
+      :link-type: doc
+
+      Refine unit-cell parameters from measured Bragg peak positions using
+      Busing & Levy (1967) least-squares or the Nelder-Mead simplex method,
+      with and without crystal-system constraints.
 
    .. grid-item-card:: :material-outlined:`align_horizontal_center;3em` Align a Crystal
       :link: fourcv_alignment_howto

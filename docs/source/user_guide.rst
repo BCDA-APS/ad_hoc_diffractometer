@@ -6,38 +6,10 @@ User Guide
 
 .. toctree::
    :hidden:
-   :caption: Concepts
 
    concepts
-
-.. toctree::
-   :hidden:
-   :caption: How-to Guides
-
    howto/index
-   howto/wavelength
-   howto/lattice
-   howto/orient
-   howto/forward
-   howto/modes
-   howto/trajectory
-   howto/fourcv_alignment_howto
-
-.. toctree::
-   :hidden:
-   :caption: Geometry Reference
-
    geometries/index
-   geometries/fourcv
-   geometries/fourch
-   geometries/psic
-   geometries/sixc
-   geometries/kappa4cv
-   geometries/kappa4ch
-   geometries/kappa6c
-   geometries/zaxis
-   geometries/s2d2
-   geometries/fivec
 
 .. icons: https://fonts.google.com/icons
 

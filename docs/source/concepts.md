@@ -146,8 +146,8 @@ reflection vectors.
 
 ## Diffraction modes
 
-A **diffraction mode** constrains which motor angles are free during a
-forward calculation.  Each mode fixes one or more stages (frozen angles),
+A **diffraction mode** describes how `forward()` will compute the motor
+angles and which ones remain constant.  Each mode fixes one or more stages (frozen angles),
 or defines a relationship between stages (e.g. bisecting: ω = 2θ/2).
 
 Available modes depend on the geometry.  For four-circle geometries:
