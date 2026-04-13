@@ -1,7 +1,7 @@
 .. _geometries:
 
-Geometry Reference
-==================
+Prebuilt Geometries
+===================
 
 Each factory function returns a fully configured
 :class:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer` instance.

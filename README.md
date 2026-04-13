@@ -36,16 +36,19 @@ libraries are required.
 ```python
 import ad_hoc_diffractometer as ahd
 
-# Create a six-circle psic geometry and set the wavelength
-g = ahd.psic()
-g.wavelength = 1.0  # Å
+# Four-circle geometry (Busing & Levy 1967, vertical scattering plane)
+g = ahd.fourcv()
+g.wavelength = 1.5406          # Å (Cu Kα)
+g.sample.lattice = ahd.Lattice(a=5.431)  # cubic silicon
 
-# Define the sample lattice (cubic silicon)
-g.sample.lattice = ahd.Lattice(a=5.431)
-
-# Show a summary of the geometry
 print(g.summary())
 ```
+
+See the
+[Quick Start guide](https://prjemian.github.io/ad_hoc_diffractometer/latest/quick_start.html)
+for a step-by-step walkthrough that builds the same geometry without the
+factory function — choosing a coordinate basis, stacking stages, defining
+diffraction modes, and running a forward calculation.
 
 ## Install
 

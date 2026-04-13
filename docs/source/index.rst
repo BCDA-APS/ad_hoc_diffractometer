@@ -46,11 +46,6 @@ It provides:
    user_guide
    api
    changes
-   references
-   glossary
-   direct-lattice
-   problem1
-   problem2
 
 .. icons: https://fonts.google.com/icons
 
@@ -104,26 +99,30 @@ It provides:
    # Show a summary of the geometry
    print(g.summary())
 
+See the :doc:`Quick Start guide <quick_start>` to build a four-circle
+geometry step by step — choosing a basis, stacking stages, defining modes,
+and running a forward calculation — without using a factory function.
+
 Background
 ----------
 
 .. grid:: 3
 
    .. grid-item-card:: :material-outlined:`functions;3em` Direct Lattice
-      :link: direct-lattice
-      :link-type: doc
+      :link: direct-lattice.html
+      :link-type: url
 
       Vector mathematics and lattice vector conventions in crystallography.
 
    .. grid-item-card:: :material-outlined:`science;3em` Case Study
-      :link: problem1
-      :link-type: doc
+      :link: problem1.html
+      :link-type: url
 
       The diffractometer problem that started this project.
 
    .. grid-item-card:: :material-outlined:`calculate;3em` You (1999) Geometry
-      :link: problem2
-      :link-type: doc
+      :link: problem2.html
+      :link-type: url
 
       Coordinate conventions and B/U/UB matrix derivation following
       You (1999) and Busing & Levy (1967).
