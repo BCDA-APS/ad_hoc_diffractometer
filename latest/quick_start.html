@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Case Study: Describing a Diffractometer &#8212; ad_hoc_diffractometer 0.4</title>
+    <title>Quick Start &#8212; ad_hoc_diffractometer 0.4</title>
   
   
   
@@ -49,7 +49,7 @@
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=fd10adb8"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'problem1';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'quick_start';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
@@ -60,8 +60,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="You (1999) Geometry — Coordinate Convention and UB Matrix" href="problem2.html" />
-    <link rel="prev" title="Direct Lattice in Crystallography" href="direct-lattice.html" />
+    <link rel="next" title="How-to Guides" href="howto/index.html" />
+    <link rel="prev" title="User Guide" href="user_guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
@@ -378,8 +378,8 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Quick Start</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul class="nav bd-sidenav">
@@ -415,10 +415,10 @@
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="direct-lattice.html">Direct Lattice in Crystallography</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Case Study: Describing a Diffractometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problem1.html">Case Study: Describing a Diffractometer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="problem2.html">You (1999) Geometry — Coordinate Convention and UB Matrix</a></li>
 </ul>
 </div>
@@ -463,7 +463,7 @@
     
     <li class="breadcrumb-item"><a href="user_guide.html" class="nav-link">User Guide</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Case Study: Describing a Diffractometer</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Quick Start</span></li>
   </ul>
 </nav>
 </div>
@@ -480,108 +480,197 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="case-study-describing-a-diffractometer">
-<h1>Case Study: Describing a Diffractometer<a class="headerlink" href="#case-study-describing-a-diffractometer" title="Link to this heading">#</a></h1>
-<p>This case study presents the diffractometer geometry problem that started the
-<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code> project.  The equipment described here is a six-circle
-diffractometer matching the You (1999) psic geometry; the analysis leads
-directly to the <a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html#module-ad_hoc_diffractometer.factories" title="ad_hoc_diffractometer.factories"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factories</span></code></a> factory functions and
-the <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a> class.</p>
-<p>For a full analysis of how this geometry maps to the You (1999) convention,
-see <a class="reference internal" href="problem2.html"><span class="std std-doc">You (1999) Geometry</span></a>.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="quick-start">
+<span id="id1"></span><h1>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h1>
+<p>This guide walks through the steps to build a four-circle diffractometer
+geometry by hand — without using the pre-built factory function.  Building
+it step by step makes the design choices explicit and shows how every
+geometry in the package is constructed.</p>
+<p>The concise factory-function equivalent appears at the end.</p>
 <hr class="docutils" />
-<section id="the-equipment">
-<h2>The equipment<a class="headerlink" href="#the-equipment" title="Link to this heading">#</a></h2>
-<p>We have a piece of mechanical equipment consisting of rotary stages only
-(no translational stages).  The rotational axes of all stages ideally
-coincide at a single point of intersection — the sample position.  In
-practice, engineering tolerances cause this point to expand into a small
-3-D volume known as the <em>sphere of confusion</em>.</p>
-<p>The equipment rotates the sample in three-dimensional space and positions a
-detector to observe the scattered radiation.  All stage angles are described
-at their zero-degree positions.</p>
+<section id="choose-a-coordinate-basis">
+<h2>1. Choose a coordinate basis<a class="headerlink" href="#choose-a-coordinate-basis" title="Link to this heading">#</a></h2>
+<p>The package supports two standard coordinate conventions.  Each maps the
+physical directions of the instrument to Cartesian unit vectors:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Basis</p></th>
+<th class="head"><p>vertical</p></th>
+<th class="head"><p>longitudinal</p></th>
+<th class="head"><p>lateral</p></th>
+<th class="head"><p>Used by</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></p></td>
+<td><p>+x</p></td>
+<td><p>+y</p></td>
+<td><p>+z</p></td>
+<td><p>psic, sixc, kappa6c, zaxis, s2d2, fivec</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code></p></td>
+<td><p>+z</p></td>
+<td><p>+y</p></td>
+<td><p>+x</p></td>
+<td><p>fourcv, fourch, kappa4cv, kappa4ch</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For a standard four-circle diffractometer (Busing &amp; Levy 1967) choose
+<code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+
+<span class="n">BASIS</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">BASIS_BL</span>
+<span class="n">LATERAL</span>      <span class="o">=</span> <span class="n">BASIS</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>       <span class="c1"># +x</span>
+<span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">BASIS</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>  <span class="c1"># +y</span>
+<span class="n">VERTICAL</span>     <span class="o">=</span> <span class="n">BASIS</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>      <span class="c1"># +z</span>
+</pre></div>
+</div>
 </section>
-<section id="reference-frame">
-<h2>Reference frame<a class="headerlink" href="#reference-frame" title="Link to this heading">#</a></h2>
-<p>The reference frame is defined by three mutually perpendicular directions.
-The positive sense of each is chosen to form a right-handed system:</p>
+<hr class="docutils" />
+<section id="define-the-stage-stack">
+<h2>2. Define the stage stack<a class="headerlink" href="#define-the-stage-stack" title="Link to this heading">#</a></h2>
+<p>A four-circle diffractometer has three sample stages and one detector stage.
+Each <code class="xref py py-class docutils literal notranslate"><span class="pre">Stage</span></code> is described by:</p>
 <ul class="simple">
-<li><p><strong>vertical</strong>: opposite to the direction of gravitational acceleration
-(i.e., upward).</p></li>
-<li><p><strong>longitudinal</strong>: a chosen direction in the plane perpendicular to
-vertical, conventionally aligned with the nominal incident beam direction
-projected onto that plane, positive toward the equipment.  This is a
-property of the instrument installation, not of the beam itself.</p></li>
-<li><p><strong>lateral</strong>: orthogonal to both vertical and longitudinal, with positive
-sense chosen so that the three directions form a right-handed system
-(vertical × longitudinal).</p></li>
+<li><p><strong>name</strong> — motor name used in angle dictionaries and <code class="docutils literal notranslate"><span class="pre">forward()</span></code> results</p></li>
+<li><p><strong>axis</strong> — rotation axis vector; a leading <code class="docutils literal notranslate"><span class="pre">−</span></code> means left-handed rotation</p></li>
+<li><p><strong>parent</strong> — the stage this one sits on (<code class="docutils literal notranslate"><span class="pre">None</span></code> = directly on the floor)</p></li>
+<li><p><strong>role</strong> — <code class="docutils literal notranslate"><span class="pre">&quot;sample&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;detector&quot;</span></code></p></li>
 </ul>
-<p>These directions are properties of the physical setup — they do not depend
-on how basis vectors are assigned to Cartesian axes.  The mapping of
-vertical, longitudinal, and lateral to x, y, z (or any other symbol) is a
-separate choice made by the caller and encoded in a basis dict.  Two common
-choices are shown in <a class="reference internal" href="problem2.html"><span class="doc">You (1999) Geometry — Coordinate Convention and UB Matrix</span></a>.</p>
+<p>The fourcv (vertical scattering plane, synchrotron) stack is:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># Sample stack — base stage first</span>
+    <span class="n">ahd</span><span class="o">.</span><span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span>  <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+    <span class="n">ahd</span><span class="o">.</span><span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>    <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+    <span class="n">ahd</span><span class="o">.</span><span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span>    <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>   <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+    <span class="c1"># Detector — independent of the sample stack</span>
+    <span class="n">ahd</span><span class="o">.</span><span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">omega</span></code> and <code class="docutils literal notranslate"><span class="pre">ttheta</span></code> both rotate about the lateral axis, so their scattering
+plane is <strong>vertical</strong> (the synchrotron convention).  For the laboratory
+(horizontal scattering plane) convention swap every <code class="docutils literal notranslate"><span class="pre">LATERAL</span></code> for <code class="docutils literal notranslate"><span class="pre">VERTICAL</span></code>
+and every <code class="docutils literal notranslate"><span class="pre">LONGITUDINAL</span></code> for <code class="docutils literal notranslate"><span class="pre">LATERAL</span></code> — that is the <code class="docutils literal notranslate"><span class="pre">fourch</span></code> geometry.</p>
 </section>
-<section id="equipment-description">
-<h2>Equipment description<a class="headerlink" href="#equipment-description" title="Link to this heading">#</a></h2>
-<p>The equipment consists of two independent stage stacks that share a common
-axis at their base.</p>
-<p><strong>Stack 1 — detector stack</strong> (2 stages)</p>
+<hr class="docutils" />
+<section id="define-diffraction-modes">
+<h2>3. Define diffraction modes<a class="headerlink" href="#define-diffraction-modes" title="Link to this heading">#</a></h2>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code> specifies which degrees of
+freedom are constrained during a forward (hkl → motor angles) calculation.</p>
+<p>Two built-in mode types cover most cases:</p>
 <ul class="simple">
-<li><p>Stage 1 (base)</p>
-<ul>
-<li><p>Axis of rotation: vertical</p></li>
-<li><p>Sign of rotation: right-handed (consistent with coordinate system)</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code> — ties a sample stage to
+half the detector angle, placing the sample symmetrically in the beam.</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code> — holds one stage at a
+preset angle.</p></li>
 </ul>
-</li>
-<li><p>Stage 2 (sits on stage 1)</p>
-<ul>
-<li><p>Axis of rotation: lateral</p></li>
-<li><p>Positive rotation: from longitudinal toward vertical</p></li>
-<li><p>The detector is mounted on a long radial arm pointing at the sample</p></li>
-</ul>
-</li>
-</ul>
-<p><strong>Stack 2 — sample stack</strong> (4 stages)</p>
-<ul class="simple">
-<li><p>Stage 1 (base)</p>
-<ul>
-<li><p>Axis of rotation: vertical, colinear with stack 1 stage 1</p></li>
-<li><p>Sign of rotation: same as stack 1 stage 1</p></li>
-</ul>
-</li>
-<li><p>Stage 2 (sits on stage 1)</p>
-<ul>
-<li><p>Axis of rotation: lateral</p></li>
-<li><p>Sign of rotation: same as stack 1 stage 2</p></li>
-</ul>
-</li>
-<li><p>Stage 3 (sits on stage 2)</p>
-<ul>
-<li><p>Axis of rotation: longitudinal</p></li>
-<li><p>Sign of rotation: right-handed (consistent with coordinate system)</p></li>
-</ul>
-</li>
-<li><p>Stage 4 (sits on stage 3)</p>
-<ul>
-<li><p>Axis of rotation: vertical</p></li>
-<li><p>Sign of rotation: right-handed (consistent with coordinate system)</p></li>
-</ul>
-</li>
-</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;bisecting&quot;</span><span class="p">:</span> <span class="n">ahd</span><span class="o">.</span><span class="n">BisectingMode</span><span class="p">(</span>
+        <span class="n">sample_stage</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span>
+        <span class="n">detector_stage</span><span class="o">=</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;fixed_chi&quot;</span><span class="p">:</span> <span class="n">ahd</span><span class="o">.</span><span class="n">FixedAngleMode</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">90.0</span><span class="p">),</span>
+    <span class="s2">&quot;fixed_phi&quot;</span><span class="p">:</span> <span class="n">ahd</span><span class="o">.</span><span class="n">FixedAngleMode</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </section>
-<section id="questions">
-<h2>Questions<a class="headerlink" href="#questions" title="Link to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p>Assign basis vectors (xHat, yHat, zHat) to each axis of the reference
-frame.  Describe the orientation of each stack and stage in terms of these
-basis vectors, including the sign of rotation.  Describe the steps to
-compute the orientation matrix U.</p></li>
-<li><p>Is it possible to make different assignments of the basis vectors?  What
-are the resulting stage orientation vectors?  How does the U matrix differ?</p></li>
-</ol>
-<p>The answers to both questions are worked out in <a class="reference internal" href="problem2.html"><span class="std std-doc">You (1999) Geometry</span></a>,
-which shows how this equipment maps exactly to the six-circle psic geometry.</p>
+<hr class="docutils" />
+<section id="assemble-the-geometry">
+<h2>4. Assemble the geometry<a class="headerlink" href="#assemble-the-geometry" title="Link to this heading">#</a></h2>
+<p>Pass the stage list, basis, and modes to
+<code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">AdHocDiffractometer</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_fourcv&quot;</span><span class="p">,</span>
+    <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
+    <span class="n">basis</span><span class="o">=</span><span class="n">BASIS</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Four-circle Eulerian, vertical scattering plane&quot;</span><span class="p">,</span>
+    <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
+    <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="set-the-wavelength-and-sample-lattice">
+<h2>5. Set the wavelength and sample lattice<a class="headerlink" href="#set-the-wavelength-and-sample-lattice" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>          <span class="c1"># Å (Cu Kα)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.431</span><span class="p">)</span>  <span class="c1"># cubic silicon</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="inspect-the-geometry">
+<h2>6. Inspect the geometry<a class="headerlink" href="#inspect-the-geometry" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Example output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Geometry: my_fourcv
+  Four-circle Eulerian, vertical scattering plane
+  Wavelength: 1.5406 Å   Energy: 8.0478 keV
+  Mode: bisecting
+
+  Sample stages:
+    omega   axis=-lateral    angle=  0.000°  limits=(-180.0, 180.0)
+    chi     axis=+longitudinal  angle=  0.000°  limits=(-180.0, 180.0)
+    phi     axis=-lateral    angle=  0.000°  limits=(-180.0, 180.0)
+
+  Detector stages:
+    ttheta  axis=-lateral    angle=  0.000°  limits=(-180.0, 180.0)
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="solve-the-forward-problem">
+<h2>7. Solve the forward problem<a class="headerlink" href="#solve-the-forward-problem" title="Link to this heading">#</a></h2>
+<p>Given a reflection (hkl), find the motor angles that satisfy Bragg’s law.
+First orient the crystal (see <a class="reference internal" href="howto/orient.html"><span class="doc">Orient a Crystal</span></a>), then call <code class="docutils literal notranslate"><span class="pre">forward()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Minimal orientation: identity U matrix (crystal axes || diffractometer axes)</span>
+<span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
+
+<span class="c1"># Solve for the (0, 0, 4) reflection</span>
+<span class="n">solutions</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">solutions</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="concise-form-the-factory-function">
+<h2>Concise form — the factory function<a class="headerlink" href="#concise-form-the-factory-function" title="Link to this heading">#</a></h2>
+<p>The code above is exactly what the built-in <code class="docutils literal notranslate"><span class="pre">fourcv()</span></code> factory does.
+If you do not need to customise anything, use it directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>               <span class="c1"># Busing &amp; Levy (1967) four-circle, vertical plane</span>
+<span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>          <span class="c1"># Å</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.431</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="geometries/fourcv.html"><span class="doc">fourcv — Eulerian Four-Circle (Synchrotron)</span></a> for the full geometry reference, or
+<a class="reference internal" href="geometries/fourch.html"><span class="doc">fourch — Eulerian Four-Circle (Laboratory)</span></a> for the horizontal-plane (laboratory) variant.</p>
+</section>
+<hr class="docutils" />
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Stage</span></code></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Lattice</span></code></p></li>
+<li><p><a class="reference internal" href="howto/lattice.html"><span class="doc">Define the Sample Lattice</span></a></p></li>
+<li><p><a class="reference internal" href="howto/orient.html"><span class="doc">Orient a Crystal</span></a></p></li>
+<li><p><a class="reference internal" href="howto/forward.html"><span class="doc">Forward and Inverse Computations</span></a></p></li>
+<li><p><a class="reference internal" href="geometries/fourcv.html"><span class="doc">fourcv — Eulerian Four-Circle (Synchrotron)</span></a></p></li>
+<li><p><a class="reference internal" href="geometries/fourch.html"><span class="doc">fourch — Eulerian Four-Circle (Laboratory)</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -596,20 +685,20 @@ which shows how this equipment maps exactly to the six-circle psic geometry.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="direct-lattice.html"
+       href="user_guide.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Direct Lattice in Crystallography</p>
+        <p class="prev-next-title">User Guide</p>
       </div>
     </a>
     <a class="right-next"
-       href="problem2.html"
+       href="howto/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">You (1999) Geometry — Coordinate Convention and UB Matrix</p>
+        <p class="prev-next-title">How-to Guides</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -632,17 +721,22 @@ which shows how this equipment maps exactly to the six-circle psic geometry.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-equipment">The equipment</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-frame">Reference frame</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equipment-description">Equipment description</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#questions">Questions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-a-coordinate-basis">1. Choose a coordinate basis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-the-stage-stack">2. Define the stage stack</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-diffraction-modes">3. Define diffraction modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assemble-the-geometry">4. Assemble the geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-the-wavelength-and-sample-lattice">5. Set the wavelength and sample lattice</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-the-geometry">6. Inspect the geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solve-the-forward-problem">7. Solve the forward problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#concise-form-the-factory-function">Concise form — the factory function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
 </ul>
   </nav></div>
 
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="_sources/problem1.md.txt">
+    <a href="_sources/quick_start.md.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>
