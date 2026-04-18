@@ -219,6 +219,10 @@ def _solve_constraint_set(
     if mode.has_bisect:
         return _solve_bisecting(geometry, Q_phi, ttheta_deg, mode)
 
+    # Virtual kappa angle mode (omega, chi, phi on a kappa geometry).
+    if _is_kappa_virtual_mode(geometry, mode):
+        return _solve_kappa_virtual(geometry, Q_phi, ttheta_deg, mode)
+
     # Fixed-angle only (no bisect).
     return _solve_fixed_sample(geometry, Q_phi, ttheta_deg, mode)
 
@@ -562,6 +566,133 @@ def _solve_two_angles(
         a2 = float(x[1]) if not _one_dimensional else start_2  # pragma: no cover
         return (a1, a2)  # pragma: no cover
     return None  # pragma: no cover
+
+
+def _is_kappa_virtual_mode(
+    geometry: AdHocDiffractometer,
+    mode,
+) -> bool:
+    """
+    Return True when the mode contains a virtual Eulerian angle constraint
+    (omega, chi, or phi) on a kappa geometry.
+
+    Delegates to :func:`~kappa.is_kappa_virtual_mode`.
+    """
+    from .kappa import is_kappa_virtual_mode
+
+    return is_kappa_virtual_mode(geometry, mode)
+
+
+def _solve_kappa_virtual(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+) -> list[dict[str, float]]:
+    """
+    Kappa virtual-angle solver.
+
+    Delegates the geometric computation to :func:`~kappa.solve_kappa_virtual`,
+    then applies cut-points, limits, and deduplication.
+    """
+    from .kappa import solve_kappa_virtual
+    from .mode import DetectorConstraint
+    from .mode import SampleConstraint
+
+    # Get (komega, kappa, kphi, det_name, ttheta, other_constraints) raw tuples
+    raw = solve_kappa_virtual(geometry, Q_phi, ttheta_deg, mode)
+    if not raw:  # pragma: no cover
+        return []
+
+    from .kappa import KAPPA_VIRTUAL_ANGLES
+    from .kappa import kappa_to_eulerian
+
+    # Extract non-virtual other constraints for applying to angles dict
+    other_constraints = [
+        c
+        for c in mode.constraints
+        if not (isinstance(c, SampleConstraint) and c.name in KAPPA_VIRTUAL_ANGLES)
+    ]
+
+    # Identify kappa stage names for virtual angle validation
+    sample_stages = geometry.sample_stages
+    kappa_idx = next(
+        (i for i, s in enumerate(sample_stages) if s.name == "kappa"), None
+    )
+    komega_name = sample_stages[kappa_idx - 1].name if kappa_idx else None
+    kphi_name = sample_stages[kappa_idx + 1].name if kappa_idx else None
+    alpha_deg = geometry.kappa_alpha_deg
+
+    # Virtual angle constraints that must be verified
+    virtual_constraints = [
+        c
+        for c in mode.constraints
+        if isinstance(c, SampleConstraint) and c.name in KAPPA_VIRTUAL_ANGLES
+    ]
+
+    solutions = []
+    for angle_dict in raw:
+        angles = dict(angle_dict)
+
+        # Apply non-virtual constraints (e.g. DetectorConstraint on kappa6c modes)
+        for c in other_constraints:
+            if isinstance(c, SampleConstraint):  # pragma: no cover
+                if c.name in geometry._stages:  # noqa: SLF001
+                    angles[c.name] = float(c.value)
+            elif isinstance(c, DetectorConstraint) and not c.is_qaz:  # pragma: no cover
+                angles[c.name] = c.value
+
+        # Normalise kappa angles to (-180, 180] to satisfy typical stage limits
+        if komega_name and kphi_name:  # pragma: no branch
+            for kname in (komega_name, "kappa", kphi_name):
+                if kname in angles:  # pragma: no branch
+                    a = angles[kname]
+                    a = (a + 180.0) % 360.0 - 180.0
+                    angles[kname] = a
+
+        # Validate virtual angle constraints using kappa_to_eulerian
+        if (
+            virtual_constraints and komega_name and kphi_name and alpha_deg is not None
+        ):  # pragma: no branch
+            try:
+                om_v, chi_v, phi_v = kappa_to_eulerian(
+                    angles[komega_name],
+                    angles["kappa"],
+                    angles[kphi_name],
+                    alpha_deg=alpha_deg,
+                )
+                virtual_vals = {"omega": om_v, "chi": chi_v, "phi": phi_v}
+                valid = all(
+                    abs(virtual_vals[c.name] - float(c.value)) < 1e-2
+                    for c in virtual_constraints
+                )
+                if not valid:
+                    continue
+            except (ValueError, KeyError):  # pragma: no cover
+                continue
+
+        # Verify geometric consistency: Q_computed must match Q_target
+        from .orientation import angles_to_phi_vector as _a2phi
+
+        Q_computed = _a2phi(geometry, **angles)
+        if not np.allclose(Q_computed, Q_phi, atol=1e-3):
+            continue
+
+        _apply_cut_points(angles, mode, geometry)
+        if not _check_limits(geometry, angles):
+            continue  # pragma: no cover
+
+        duplicate = False
+        for existing in solutions:
+            if all(
+                abs(existing.get(kk, 0) - angles.get(kk, 0)) < 1e-4 for kk in angles
+            ):
+                duplicate = True
+                break
+        if not duplicate:
+            solutions.append(angles)
+
+    return solutions
 
 
 def _solve_fixed_sample(
