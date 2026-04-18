@@ -45,10 +45,10 @@ and mode configuration.
 
 Each mode is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` of 1 constraint
 (N − 3 = 1 for N = 4 DOF).
-All modes require ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.  The forward solver is not yet implemented.
+Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
 See {doc}`../howto/constraints` for the extras dict pattern.
 
-### `zaxis` *(stub)*
+### `zaxis`
 
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 surface normal aligned with the Z-axis; alpha directly equals the incidence
@@ -61,7 +61,7 @@ angle β_in, gamma directly equals the exit angle β_out.
 | **Extras (input)** | n̂ (surface normal) |
 | **Extras (output)** | alpha_i (= alpha), beta_out (= gamma) |
 
-### `reflectivity` *(stub)*
+### `reflectivity`
 
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 symmetric reflection — alpha_i = beta_out (alpha = gamma).

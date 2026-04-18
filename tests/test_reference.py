@@ -206,15 +206,51 @@ def test_naz_angle_vertical_normal_returns_zero():
 # ---------------------------------------------------------------------------
 
 
-def test_reference_constraint_is_implemented_always_false():
-    """ReferenceConstraint.is_implemented() always returns False — no solver yet."""
+@pytest.mark.parametrize(
+    "name, value, ref_attr, ref_value, expected",
+    [
+        # surface-normal constraints: implemented when surface_normal is set
+        pytest.param(
+            "alpha_i", 0.0, "surface_normal", (0, 0, 1), True, id="alpha_i-with-sn"
+        ),
+        pytest.param("alpha_i", 0.0, "surface_normal", None, False, id="alpha_i-no-sn"),
+        pytest.param(
+            "beta_out", 0.0, "surface_normal", (0, 0, 1), True, id="beta_out-with-sn"
+        ),
+        pytest.param(
+            "beta_out", 0.0, "surface_normal", None, False, id="beta_out-no-sn"
+        ),
+        pytest.param(
+            "a_eq_b", True, "surface_normal", (0, 0, 1), True, id="a_eq_b-with-sn"
+        ),
+        pytest.param("a_eq_b", True, "surface_normal", None, False, id="a_eq_b-no-sn"),
+        # psi/naz: not yet implemented regardless of reference vector
+        pytest.param(
+            "psi",
+            0.0,
+            "azimuthal_reference",
+            (0, 0, 1),
+            False,
+            id="psi-not-implemented",
+        ),
+        pytest.param(
+            "naz",
+            0.0,
+            "azimuthal_reference",
+            (0, 0, 1),
+            False,
+            id="naz-not-implemented",
+        ),
+    ],
+)
+def test_reference_constraint_is_implemented(
+    name, value, ref_attr, ref_value, expected
+):
+    """ReferenceConstraint.is_implemented() reflects solver availability."""
     g = _setup_psic()
-    g.surface_normal = (0, 0, 1)
-    g.azimuthal_reference = (0, 0, 1)
-    for name in ("alpha_i", "beta_out", "a_eq_b", "psi", "naz"):
-        value = True if name == "a_eq_b" else 0.0
-        rc = ReferenceConstraint(name, value)
-        assert rc.is_implemented(g) is False
+    setattr(g, ref_attr, ref_value)
+    rc = ReferenceConstraint(name, value)
+    assert rc.is_implemented(g) is expected
 
 
 @pytest.mark.parametrize(
@@ -321,3 +357,148 @@ def test_psi_constant_not_yet_solvable():
     # forward() raises because is_implemented=False
     with pytest.raises(NotImplementedError):
         g.forward(1, 0, 0)
+
+
+# ---------------------------------------------------------------------------
+# Issue #175 — surface diffraction forward solvers
+# ---------------------------------------------------------------------------
+
+WAVELENGTH = 1.5406
+
+
+def _setup_surface(factory, surface_normal=(0, 0, 1)):
+    """Return a geometry with wavelength, lattice, UB, and surface_normal set."""
+    g = factory()
+    g.wavelength = WAVELENGTH
+    g.sample.lattice = ahd.Lattice(a=4.0)
+    ub_identity(g.sample)
+    g.surface_normal = surface_normal
+    return g
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name",
+    [
+        pytest.param(ahd.zaxis, "zaxis", id="zaxis-zaxis"),
+        pytest.param(ahd.zaxis, "reflectivity", id="zaxis-reflectivity"),
+        pytest.param(ahd.s2d2, "reflectivity", id="s2d2-reflectivity"),
+        pytest.param(ahd.sixc, "fixed_alpha_zaxis", id="sixc-fixed_alpha_zaxis"),
+        pytest.param(ahd.sixc, "fixed_beta_zaxis", id="sixc-fixed_beta_zaxis"),
+        pytest.param(ahd.sixc, "alpha_eq_beta_zaxis", id="sixc-alpha_eq_beta_zaxis"),
+    ],
+)
+def test_surface_mode_is_implemented_with_surface_normal(factory, mode_name):
+    """Surface reference modes return is_implemented=True when surface_normal is set."""
+    g = _setup_surface(factory)
+    assert g.modes[mode_name].is_implemented(g) is True
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name",
+    [
+        pytest.param(ahd.zaxis, "zaxis", id="zaxis-zaxis"),
+        pytest.param(ahd.zaxis, "reflectivity", id="zaxis-reflectivity"),
+        pytest.param(ahd.s2d2, "reflectivity", id="s2d2-reflectivity"),
+        pytest.param(ahd.sixc, "fixed_alpha_zaxis", id="sixc-fixed_alpha_zaxis"),
+        pytest.param(ahd.sixc, "fixed_beta_zaxis", id="sixc-fixed_beta_zaxis"),
+        pytest.param(ahd.sixc, "alpha_eq_beta_zaxis", id="sixc-alpha_eq_beta_zaxis"),
+    ],
+)
+def test_surface_mode_not_implemented_without_surface_normal(factory, mode_name):
+    """Surface reference modes return is_implemented=False without surface_normal."""
+    g = factory()
+    assert g.modes[mode_name].is_implemented(g) is False
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, h, k, l",
+    [
+        pytest.param(ahd.zaxis, "zaxis", 0, 1, 0, id="zaxis-zaxis"),
+        pytest.param(ahd.zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"),
+        pytest.param(ahd.s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
+        pytest.param(
+            ahd.sixc, "fixed_alpha_zaxis", 0, 1, 0, id="sixc-fixed_alpha_zaxis"
+        ),
+        pytest.param(ahd.sixc, "fixed_beta_zaxis", 0, 1, 0, id="sixc-fixed_beta_zaxis"),
+        pytest.param(
+            ahd.sixc, "alpha_eq_beta_zaxis", 0, 1, 0, id="sixc-alpha_eq_beta_zaxis"
+        ),
+    ],
+)
+def test_surface_mode_returns_solutions(factory, mode_name, h, k, l):  # noqa: E741
+    """Surface modes return at least one solution when surface_normal is set."""
+    g = _setup_surface(factory)
+    g.mode_name = mode_name
+    solutions = g.forward(h, k, l)
+    assert len(solutions) > 0
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, h, k, l",
+    [
+        pytest.param(ahd.zaxis, "zaxis", 0, 1, 0, id="zaxis-zaxis-alpha_i=0"),
+        pytest.param(
+            ahd.sixc, "fixed_alpha_zaxis", 0, 1, 0, id="sixc-fixed_alpha-alpha_i=0"
+        ),
+    ],
+)
+def test_surface_alpha_i_fixed_constraint_satisfied(factory, mode_name, h, k, l):  # noqa: E741
+    """alpha_i modes: incidence angle equals declared target (0°) in all solutions."""
+    g = _setup_surface(factory)
+    g.mode_name = mode_name
+    solutions = g.forward(h, k, l)
+    assert len(solutions) > 0
+    for sol in solutions:
+        ai = incidence_angle(g, angles=sol)
+        assert ai == pytest.approx(0.0, abs=1e-4)
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, h, k, l",
+    [
+        pytest.param(
+            ahd.sixc, "fixed_beta_zaxis", 0, 1, 0, id="sixc-fixed_beta-beta_out=0"
+        ),
+    ],
+)
+def test_surface_beta_out_fixed_constraint_satisfied(factory, mode_name, h, k, l):  # noqa: E741
+    """beta_out modes: exit angle equals declared target (0°) in all solutions."""
+    g = _setup_surface(factory)
+    g.mode_name = mode_name
+    solutions = g.forward(h, k, l)
+    assert len(solutions) > 0
+    for sol in solutions:
+        bo = exit_angle(g, angles=sol)
+        assert bo == pytest.approx(0.0, abs=1e-4)
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, h, k, l",
+    [
+        pytest.param(ahd.zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"),
+        pytest.param(ahd.s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
+        pytest.param(ahd.sixc, "alpha_eq_beta_zaxis", 0, 1, 0, id="sixc-alpha_eq_beta"),
+    ],
+)
+def test_surface_a_eq_b_constraint_satisfied(factory, mode_name, h, k, l):  # noqa: E741
+    """a_eq_b modes: alpha_i ≈ beta_out in all solutions."""
+    g = _setup_surface(factory)
+    g.mode_name = mode_name
+    solutions = g.forward(h, k, l)
+    assert len(solutions) > 0
+    for sol in solutions:
+        ai = incidence_angle(g, angles=sol)
+        bo = exit_angle(g, angles=sol)
+        assert ai == pytest.approx(bo, abs=1e-4)
+
+
+def test_surface_mode_not_implemented_raises():
+    """Surface modes without surface_normal raise NotImplementedError on forward()."""
+    g = ahd.zaxis()
+    g.wavelength = WAVELENGTH
+    g.sample.lattice = ahd.Lattice(a=4.0)
+    ub_identity(g.sample)
+    # No surface_normal set
+    g.mode_name = "zaxis"
+    with pytest.raises(NotImplementedError):
+        g.forward(0, 1, 0)
