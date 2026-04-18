@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=2b055b73"></script>
+    <script src="../../../_static/documentation_options.js?v=71d5f3e8"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -974,73 +974,35 @@ implementations for the given geometry.</p>
 <p>This indicates either a solver error or an unimplemented virtual-angle
 constraint (e.g. a kappa Eulerian pseudoangle that has not yet been
 inverted).</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.ConstraintViolation.solution_index">
-<span class="sig-name descname"><span class="pre">solution_index</span></span><a class="headerlink" href="#ad_hoc_diffractometer.mode.ConstraintViolation.solution_index" title="Link to this definition">#</a></dt>
-<dd><p>Zero-based index of the violating solution in the returned list.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>solution_index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Zero-based index of the violating solution in the returned list.</p></li>
+<li><p><strong>constraint_repr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Human-readable representation of the violated constraint.</p></li>
+<li><p><strong>residual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The constraint residual in degrees (non-zero = violated).</p></li>
+<li><p><strong>tolerance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The tolerance used for the check (from <a class="reference internal" href="../display/index.html#ad_hoc_diffractometer.display.precision_atol" title="ad_hoc_diffractometer.display.precision_atol"><code class="xref py py-func docutils literal notranslate"><span class="pre">precision_atol()</span></code></a>).</p></li>
+<li><p><strong>signature.</strong> (<em>Initialize self.  See help</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><em>type</em></a><em>(</em><em>self</em><em>)</em><em>) </em><em>for accurate</em>)</p></li>
+</ul>
 </dd>
 </dl>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.ConstraintViolation.constraint_repr">
 <span class="sig-name descname"><span class="pre">constraint_repr</span></span><a class="headerlink" href="#ad_hoc_diffractometer.mode.ConstraintViolation.constraint_repr" title="Link to this definition">#</a></dt>
-<dd><p>Human-readable representation of the violated constraint.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.ConstraintViolation.residual">
 <span class="sig-name descname"><span class="pre">residual</span></span><a class="headerlink" href="#ad_hoc_diffractometer.mode.ConstraintViolation.residual" title="Link to this definition">#</a></dt>
-<dd><p>The constraint residual in degrees (non-zero = violated).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.ConstraintViolation.solution_index">
+<span class="sig-name descname"><span class="pre">solution_index</span></span><a class="headerlink" href="#ad_hoc_diffractometer.mode.ConstraintViolation.solution_index" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.ConstraintViolation.tolerance">
 <span class="sig-name descname"><span class="pre">tolerance</span></span><a class="headerlink" href="#ad_hoc_diffractometer.mode.ConstraintViolation.tolerance" title="Link to this definition">#</a></dt>
-<dd><p>The tolerance used for the check (from <a class="reference internal" href="../display/index.html#ad_hoc_diffractometer.display.precision_atol" title="ad_hoc_diffractometer.display.precision_atol"><code class="xref py py-func docutils literal notranslate"><span class="pre">precision_atol()</span></code></a>).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">Initialize</span> <span class="pre">self.</span>&#160; <span class="pre">See</span> <span class="pre">help(type(self))</span> <span class="pre">for</span> <span class="pre">accurate</span> <span class="pre">signature.</span></span></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">constraint_repr</span></span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">residual</span></span><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id3">
-<span class="sig-name descname"><span class="pre">solution_index</span></span><a class="headerlink" href="#id3" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id4">
-<span class="sig-name descname"><span class="pre">tolerance</span></span><a class="headerlink" href="#id4" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1150,57 +1112,29 @@ not yet implemented (requires the Q-azimuth solver).</p>
 <p>The magnitude of the scattering vector Q exceeds the diameter of the
 Ewald sphere (<code class="docutils literal notranslate"><span class="pre">|Q|</span> <span class="pre">&gt;</span> <span class="pre">4π/λ</span></code>), meaning the Bragg condition cannot be
 satisfied regardless of motor angles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q_mag</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Requested scattering vector magnitude in Å⁻¹.</p></li>
+<li><p><strong>q_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Maximum reachable <code class="docutils literal notranslate"><span class="pre">|Q|</span></code> at the current wavelength (<code class="docutils literal notranslate"><span class="pre">4π/λ</span></code>) in Å⁻¹.</p></li>
+<li><p><strong>wavelength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Current wavelength in Å.</p></li>
+<li><p><strong>signature.</strong> (<em>Initialize self.  See help</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><em>type</em></a><em>(</em><em>self</em><em>)</em><em>) </em><em>for accurate</em>)</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.EwaldSphereViolation.q_mag">
 <span class="sig-name descname"><span class="pre">q_mag</span></span><a class="headerlink" href="#ad_hoc_diffractometer.mode.EwaldSphereViolation.q_mag" title="Link to this definition">#</a></dt>
-<dd><p>Requested scattering vector magnitude in Å⁻¹.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.EwaldSphereViolation.q_max">
 <span class="sig-name descname"><span class="pre">q_max</span></span><a class="headerlink" href="#ad_hoc_diffractometer.mode.EwaldSphereViolation.q_max" title="Link to this definition">#</a></dt>
-<dd><p>Maximum reachable <code class="docutils literal notranslate"><span class="pre">|Q|</span></code> at the current wavelength (<code class="docutils literal notranslate"><span class="pre">4π/λ</span></code>) in Å⁻¹.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.EwaldSphereViolation.wavelength">
 <span class="sig-name descname"><span class="pre">wavelength</span></span><a class="headerlink" href="#ad_hoc_diffractometer.mode.EwaldSphereViolation.wavelength" title="Link to this definition">#</a></dt>
-<dd><p>Current wavelength in Å.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">Initialize</span> <span class="pre">self.</span>&#160; <span class="pre">See</span> <span class="pre">help(type(self))</span> <span class="pre">for</span> <span class="pre">accurate</span> <span class="pre">signature.</span></span></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id5">
-<span class="sig-name descname"><span class="pre">q_mag</span></span><a class="headerlink" href="#id5" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id6">
-<span class="sig-name descname"><span class="pre">q_max</span></span><a class="headerlink" href="#id6" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id7">
-<span class="sig-name descname"><span class="pre">wavelength</span></span><a class="headerlink" href="#id7" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1610,14 +1544,10 @@ is a separate issue.</p>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.ConstraintViolation"><code class="docutils literal notranslate"><span class="pre">ConstraintViolation</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.ConstraintViolation.solution_index"><code class="docutils literal notranslate"><span class="pre">ConstraintViolation.solution_index</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.ConstraintViolation.constraint_repr"><code class="docutils literal notranslate"><span class="pre">ConstraintViolation.constraint_repr</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.ConstraintViolation.residual"><code class="docutils literal notranslate"><span class="pre">ConstraintViolation.residual</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.ConstraintViolation.solution_index"><code class="docutils literal notranslate"><span class="pre">ConstraintViolation.solution_index</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.ConstraintViolation.tolerance"><code class="docutils literal notranslate"><span class="pre">ConstraintViolation.tolerance</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">ConstraintViolation.constraint_repr</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">ConstraintViolation.residual</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">ConstraintViolation.solution_index</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">ConstraintViolation.tolerance</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.DetectorConstraint"><code class="docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a><ul class="nav section-nav flex-column">
@@ -1636,9 +1566,6 @@ is a separate issue.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.EwaldSphereViolation.q_mag"><code class="docutils literal notranslate"><span class="pre">EwaldSphereViolation.q_mag</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.EwaldSphereViolation.q_max"><code class="docutils literal notranslate"><span class="pre">EwaldSphereViolation.q_max</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.EwaldSphereViolation.wavelength"><code class="docutils literal notranslate"><span class="pre">EwaldSphereViolation.wavelength</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">EwaldSphereViolation.q_mag</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6"><code class="docutils literal notranslate"><span class="pre">EwaldSphereViolation.q_max</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7"><code class="docutils literal notranslate"><span class="pre">EwaldSphereViolation.wavelength</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.ModeDict"><code class="docutils literal notranslate"><span class="pre">ModeDict</span></code></a><ul class="nav section-nav flex-column">

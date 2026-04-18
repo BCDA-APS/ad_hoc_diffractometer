@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=2b055b73"></script>
+    <script src="../_static/documentation_options.js?v=71d5f3e8"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -60,7 +60,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Plan a Trajectory" href="trajectory.html" />
+    <link rel="next" title="Work with Constraints and Diffraction Modes" href="constraints.html" />
     <link rel="prev" title="Forward and Inverse Computations" href="forward.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -389,6 +389,7 @@
 <li class="toctree-l2"><a class="reference internal" href="orient.html">Orient a Crystal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="forward.html">Forward and Inverse Computations</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Switch Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constraints.html">Work with Constraints and Diffraction Modes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trajectory.html">Plan a Trajectory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="refine_lattice.html">Refine the Lattice Constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="serialize.html">Save and Restore a Diffractometer Configuration</a></li>
@@ -485,27 +486,33 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="switch-diffraction-modes">
 <span id="howto-modes"></span><h1>Switch Diffraction Modes<a class="headerlink" href="#switch-diffraction-modes" title="Link to this heading">#</a></h1>
-<p>A <strong>diffraction mode</strong> describes how <code class="docutils literal notranslate"><span class="pre">forward()</span></code> will compute the motor
-angles and which ones remain constant.  See <a class="reference internal" href="../concepts.html"><span class="std std-doc">Concepts</span></a>
-for background.</p>
+<p>A <strong>diffraction mode</strong> is a <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>
+that describes which motor stages are free, which are held at declared values,
+and which are related to others (e.g. bisecting).
+See <a class="reference internal" href="../concepts.html"><span class="std std-doc">Concepts</span></a> for background, and
+<a class="reference internal" href="constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a> for the full constraint framework.</p>
 <section id="list-available-modes">
 <h2>List available modes<a class="headerlink" href="#list-available-modes" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
 
 <span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-<span class="c1"># [&#39;bisecting&#39;, &#39;fixed_chi&#39;, &#39;fixed_phi&#39;]</span>
+<span class="c1"># [&#39;bisecting&#39;, &#39;fixed_chi&#39;, &#39;fixed_phi&#39;, &#39;constant_omega&#39;,</span>
+<span class="c1">#  &#39;psi_constant&#39;, &#39;double_diffraction&#39;]</span>
 </pre></div>
 </div>
 </section>
 <section id="get-and-set-the-active-mode">
 <h2>Get and set the active mode<a class="headerlink" href="#get-and-set-the-active-mode" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># No mode active by default</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span><span class="p">)</span>   <span class="c1"># None</span>
-
-<span class="c1"># Set a mode</span>
-<span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;bisecting&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># The default mode is set by the factory</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span><span class="p">)</span>   <span class="c1"># &#39;bisecting&#39;</span>
+
+<span class="c1"># Switch to a different mode</span>
+<span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;fixed_chi&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span><span class="p">)</span>   <span class="c1"># &#39;fixed_chi&#39;</span>
+
+<span class="c1"># Clear the active mode (all stages free — forward() will raise)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="kc">None</span>
 </pre></div>
 </div>
 </section>
@@ -513,84 +520,100 @@ for background.</p>
 <h2>Mode reference<a class="headerlink" href="#mode-reference" title="Link to this heading">#</a></h2>
 <section id="bisecting-mode">
 <h3>Bisecting mode<a class="headerlink" href="#bisecting-mode" title="Link to this heading">#</a></h3>
-<p>The sample stage angle is constrained to half the detector stage angle,
-placing the sample symmetrically between the incident and diffracted beams.
-Available on: fourcv (omega = ttheta/2), fourch (omega = ttheta/2),
-psic (eta = delta/2), and kappa geometries (komega = ttheta/2 or
-komega = delta/2).</p>
+<p>The bisecting <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a> drives the
+co-axial sample stage to half the detector angle, placing the sample
+symmetrically between the incident and diffracted beams.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;bisecting&quot;</span>
+<span class="n">solutions</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="c1"># omega = ttheta / 2 in every solution</span>
 </pre></div>
 </div>
 </section>
-<section id="fixed-chi-fixed-phi-fixed-kphi-fixed-mu">
-<h3>Fixed chi / fixed phi / fixed kphi / fixed mu<a class="headerlink" href="#fixed-chi-fixed-phi-fixed-kphi-fixed-mu" title="Link to this heading">#</a></h3>
-<p>A fixed-angle mode holds one stage at its <strong>current angle</strong> during
-<code class="docutils literal notranslate"><span class="pre">forward()</span></code>.  The caller presets the stage angle with <code class="docutils literal notranslate"><span class="pre">g.set_angle()</span></code>
-before activating the mode:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Freeze chi at 90° (surface diffraction geometry)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>
+<section id="fixed-angle-modes">
+<h3>Fixed-angle modes<a class="headerlink" href="#fixed-angle-modes" title="Link to this heading">#</a></h3>
+<p>Fixed-angle modes hold one sample stage at its <strong>declared constraint value</strong>
+during a single <code class="docutils literal notranslate"><span class="pre">forward()</span></code> call.  The value is part of the <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>
+definition and is constant only for the duration of that call.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># fixed_chi: factory default holds chi at 90°</span>
 <span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;fixed_chi&quot;</span>
-<span class="n">solutions</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>   <span class="c1"># chi held at 90° throughout</span>
+<span class="n">solutions</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="c1"># sol[&quot;chi&quot;] == 90.0 for every solution</span>
+</pre></div>
+</div>
+<p>To use a <strong>different value</strong>, construct a new <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>
+and assign it. The constraint persists until replaced — only reassign when
+the value changes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span><span class="p">,</span> <span class="n">SampleConstraint</span>
 
-<span class="c1"># Freeze chi at a different angle — same mode, new preset</span>
-<span class="n">g</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">45.0</span><span class="p">)</span>
-<span class="n">solutions</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>   <span class="c1"># chi held at 45°</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Freeze phi at 0°</span>
-<span class="n">g</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;fixed_phi&quot;</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Freeze mu at 0° on psic or kappa6c</span>
-<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">psic</span><span class="p">()</span>
-<span class="n">g</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;fixed_mu&quot;</span>
-</pre></div>
-</div>
-</section>
-<section id="custom-fixed-angle-mode">
-<h3>Custom fixed-angle mode<a class="headerlink" href="#custom-fixed-angle-mode" title="Link to this heading">#</a></h3>
-<p>To add a fixed-angle mode that is not pre-built into the geometry:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedAngleMode</span>
-
-<span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;my_chi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FixedAngleMode</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>   <span class="c1"># preset the stage angle</span>
+<span class="c1"># Call 1: chi = 45°</span>
+<span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;my_chi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">([</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">45.0</span><span class="p">)])</span>
 <span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;my_chi&quot;</span>
+<span class="n">sols_45</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1"># chi = 45° this call</span>
+
+<span class="c1"># Call 2: chi = 60°</span>
+<span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;my_chi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">([</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">)])</span>
+<span class="n">sols_60</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1"># chi = 60° this call</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">value</span></code> argument to <code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code> sets the <strong>initial</strong> stage angle
-as a convenience default.  The solver always reads the stage’s current angle
-at call time, so a subsequent <code class="docutils literal notranslate"><span class="pre">g.set_angle()</span></code> overrides it.</p>
+<p>See <a class="reference internal" href="constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a> for the full run-time pattern.</p>
+</section>
+<section id="constant-omega">
+<h3>constant_omega<a class="headerlink" href="#constant-omega" title="Link to this heading">#</a></h3>
+<p>Holds <code class="docutils literal notranslate"><span class="pre">omega</span></code> at 0° (any geometry where omega is a sample stage).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;constant_omega&quot;</span>
+<span class="n">solutions</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="c1"># sol[&quot;omega&quot;] == 0.0 for every solution</span>
+</pre></div>
+</div>
 </section>
 </section>
-<section id="custom-modes">
-<h2>Custom modes<a class="headerlink" href="#custom-modes" title="Link to this heading">#</a></h2>
-<p>Subclass <code class="docutils literal notranslate"><span class="pre">DiffractionMode</span></code> to implement any constraint:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiffractionMode</span>
+<section id="inspect-a-mode-s-constraints">
+<h2>Inspect a mode’s constraints<a class="headerlink" href="#inspect-a-mode-s-constraints" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="n">cs</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_chi&quot;</span><span class="p">]</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">MyMode</span><span class="p">(</span><span class="n">DiffractionMode</span><span class="p">):</span>
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">constrained_stages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cs</span><span class="p">)</span>
+<span class="c1"># ConstraintSet([SampleConstraint(&#39;chi&#39;, 90.0)])</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">):</span>
-        <span class="o">...</span>  <span class="c1"># return list of angle dicts</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">computed</span><span class="p">)</span>
+<span class="c1"># [&#39;omega&#39;, &#39;phi&#39;, &#39;ttheta&#39;]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">constant_stages</span><span class="p">)</span>
+<span class="c1"># [&#39;chi&#39;]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">is_fully_constrained</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+<span class="c1"># True  (N - 3 = 1 constraint for N = 4 DOF)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+<span class="c1"># True</span>
+</pre></div>
+</div>
+</section>
+<section id="check-if-a-mode-is-implemented">
+<h2>Check if a mode is implemented<a class="headerlink" href="#check-if-a-mode-is-implemented" title="Link to this heading">#</a></h2>
+<p>Stub modes (e.g. <code class="docutils literal notranslate"><span class="pre">psi_constant</span></code>) have <code class="docutils literal notranslate"><span class="pre">is_implemented(g)</span></code> returning <code class="docutils literal notranslate"><span class="pre">False</span></code>
+and raise <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code> when <code class="docutils literal notranslate"><span class="pre">forward()</span></code> is called:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;psi_constant&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;psi_constant&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>  <span class="c1"># False</span>
+
+<span class="c1"># forward() raises NotImplementedError for unimplemented modes</span>
 </pre></div>
 </div>
 </section>
 <section id="clear-the-active-mode">
 <h2>Clear the active mode<a class="headerlink" href="#clear-the-active-mode" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># all stages free</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># all stages free; forward() raises NotImplementedError</span>
 </pre></div>
 </div>
 </section>
 <section id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code></p></li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code></p></li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></p></li>
+<li><p><a class="reference internal" href="constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a> — full constraint framework: DOF rule, custom modes, extras</p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a></p></li>
 <li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ModeDict" title="ad_hoc_diffractometer.mode.ModeDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModeDict</span></code></a></p></li>
 <li><p><a class="reference internal" href="../concepts.html"><span class="std std-doc">Concepts — Diffraction modes</span></a></p></li>
 </ul>
@@ -617,11 +640,11 @@ at call time, so a subsequent <code class="docutils literal notranslate"><span c
       </div>
     </a>
     <a class="right-next"
-       href="trajectory.html"
+       href="constraints.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Plan a Trajectory</p>
+        <p class="prev-next-title">Work with Constraints and Diffraction Modes</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -648,11 +671,12 @@ at call time, so a subsequent <code class="docutils literal notranslate"><span c
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-and-set-the-active-mode">Get and set the active mode</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mode-reference">Mode reference</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting-mode">Bisecting mode</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-chi-fixed-phi-fixed-kphi-fixed-mu">Fixed chi / fixed phi / fixed kphi / fixed mu</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-fixed-angle-mode">Custom fixed-angle mode</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-angle-modes">Fixed-angle modes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constant-omega">constant_omega</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-modes">Custom modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-a-mode-s-constraints">Inspect a mode’s constraints</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#check-if-a-mode-is-implemented">Check if a mode is implemented</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#clear-the-active-mode">Clear the active mode</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
 </ul>

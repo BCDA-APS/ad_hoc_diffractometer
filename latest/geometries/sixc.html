@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=2b055b73"></script>
+    <script src="../_static/documentation_options.js?v=71d5f3e8"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -389,6 +389,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/orient.html">Orient a Crystal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/forward.html">Forward and Inverse Computations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/modes.html">Switch Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/constraints.html">Work with Constraints and Diffraction Modes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/trajectory.html">Plan a Trajectory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/refine_lattice.html">Refine the Lattice Constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/serialize.html">Save and Restore a Diffractometer Configuration</a></li>
@@ -485,9 +486,9 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="sixc-eulerian-six-circle-surface-lohmeier-vlieg-1993">
 <span id="geometry-sixc"></span><h1>sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)<a class="headerlink" href="#sixc-eulerian-six-circle-surface-lohmeier-vlieg-1993" title="Link to this heading">#</a></h1>
-<p>Six-circle surface diffractometer. Sample and detector share a common alpha (rotary table) base stage. Designed for surface diffraction.</p>
+<p>Six-circle surface diffractometer. Sample and detector share a common alpha (rotary table) base stage. Supports both bulk crystallography (four-circle mode) and surface diffraction.</p>
 <p><strong>Walko (2016) designation:</strong> (S3D2)1</p>
-<p><strong>Coordinate basis:</strong> You (1999) (<code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code>): vertical=+x, longitudinal=+y, lateral=+z.</p>
+<p><strong>Coordinate basis:</strong> You (1999) (<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a>): vertical=+x, longitudinal=+y, lateral=+z.</p>
 <section id="quick-start">
 <h2>Quick start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
@@ -500,8 +501,8 @@
 </section>
 <section id="pre-built-geometry-definition">
 <h2>Pre-built geometry definition<a class="headerlink" href="#pre-built-geometry-definition" title="Link to this heading">#</a></h2>
-<p>This geometry is defined by the <code class="xref py py-func docutils literal notranslate"><span class="pre">sixc()</span></code> factory
-function — see the <a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L609">source</a> for the complete stage
+<p>This geometry is defined by the <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.sixc" title="ad_hoc_diffractometer.factories.sixc"><code class="xref py py-func docutils literal notranslate"><span class="pre">sixc()</span></code></a> factory
+function — see the <a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L689">source</a> for the complete stage
 and mode configuration.</p>
 </section>
 <section id="stage-layout">
@@ -554,21 +555,178 @@ and mode configuration.</p>
 </tbody>
 </table>
 </div>
-<p><strong>Shared stage:</strong> alpha (base stage shared between sample and detector stacks)</p>
+<p><strong>Shared stage:</strong> alpha (rotary table base shared between sample and detector stacks)</p>
 </section>
 <section id="diffraction-modes">
 <h2>Diffraction modes<a class="headerlink" href="#diffraction-modes" title="Link to this heading">#</a></h2>
-<p><em>(No modes defined for this geometry.  All stages are free during</em>
-<em><code class="docutils literal notranslate"><span class="pre">forward()</span></code> — the solver explores the full solution space.)</em></p>
+<p>Set the active mode with <code class="docutils literal notranslate"><span class="pre">g.mode_name</span> <span class="pre">=</span> <span class="pre">&quot;&lt;mode&gt;&quot;</span></code>.
+Each mode is a <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a> of 3 constraints
+(N − 3 = 3 for N = 6 DOF).
+See <a class="reference internal" href="../howto/modes.html"><span class="doc">Switch Diffraction Modes</span></a> for usage and <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a> for
+changing constraint values at run time.</p>
+<section id="bisecting-4c-default">
+<h3><code class="docutils literal notranslate"><span class="pre">bisecting_4c</span></code> <em>(default)</em><a class="headerlink" href="#bisecting-4c-default" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a> + <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a> + <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a>:
+<code class="docutils literal notranslate"><span class="pre">alpha</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">omega</span> <span class="pre">=</span> <span class="pre">delta</span> <span class="pre">/</span> <span class="pre">2</span></code>.
+Reduces to standard four-circle bisecting geometry.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Computed</strong></p></td>
+<td><p>omega, chi, phi, delta</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Constant during</strong> <code class="docutils literal notranslate"><span class="pre">forward()</span></code></p></td>
+<td><p>alpha = 0, gamma = 0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="fixed-gamma-5c">
+<h3><code class="docutils literal notranslate"><span class="pre">fixed_gamma_5c</span></code><a class="headerlink" href="#fixed-gamma-5c" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a> + <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a> + <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a>:
+<code class="docutils literal notranslate"><span class="pre">alpha</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">omega</span> <span class="pre">=</span> <span class="pre">delta</span> <span class="pre">/</span> <span class="pre">2</span></code>.
+<code class="docutils literal notranslate"><span class="pre">gamma</span></code> is held at the value declared in the constraint (factory default: 0°).
+The caller chooses the value by constructing a <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>; the constraint
+persists until replaced — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Computed</strong></p></td>
+<td><p>omega, chi, phi, delta, alpha</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Constant during</strong> <code class="docutils literal notranslate"><span class="pre">forward()</span></code></p></td>
+<td><p>gamma, alpha = 0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="fixed-alpha-5c">
+<h3><code class="docutils literal notranslate"><span class="pre">fixed_alpha_5c</span></code><a class="headerlink" href="#fixed-alpha-5c" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a> + <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a> + <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a>:
+<code class="docutils literal notranslate"><span class="pre">omega</span> <span class="pre">=</span> <span class="pre">delta</span> <span class="pre">/</span> <span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma</span> <span class="pre">=</span> <span class="pre">0</span></code>.
+<code class="docutils literal notranslate"><span class="pre">alpha</span></code> is held at the value declared in the constraint (factory default: 0°).
+The caller chooses the value by constructing a <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Computed</strong></p></td>
+<td><p>omega, chi, phi, delta, gamma</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Constant during</strong> <code class="docutils literal notranslate"><span class="pre">forward()</span></code></p></td>
+<td><p>alpha, gamma = 0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="zaxis-alpha-fixed-stub">
+<h3><code class="docutils literal notranslate"><span class="pre">zaxis_alpha_fixed</span></code> <em>(stub)</em><a class="headerlink" href="#zaxis-alpha-fixed-stub" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a> × 2 + <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a>:
+Z-axis mode with fixed incidence angle. Requires n̂ — not yet implemented (Issue J).</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Computed</strong></p></td>
+<td><p>omega, delta, gamma</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Constant during</strong> <code class="docutils literal notranslate"><span class="pre">forward()</span></code></p></td>
+<td><p>alpha (= β_in), chi, phi</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Extras (input)</strong></p></td>
+<td><p>n̂ (surface normal)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
+<td><p>alpha_i (incidence angle), beta_out (exit angle)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="zaxis-beta-fixed-stub">
+<h3><code class="docutils literal notranslate"><span class="pre">zaxis_beta_fixed</span></code> <em>(stub)</em><a class="headerlink" href="#zaxis-beta-fixed-stub" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a> + <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a> + <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a>:
+Z-axis mode with fixed exit angle. Requires n̂ — not yet implemented (Issue J).</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Computed</strong></p></td>
+<td><p>omega, delta, alpha</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Constant during</strong> <code class="docutils literal notranslate"><span class="pre">forward()</span></code></p></td>
+<td><p>gamma (= β_out), chi</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Extras (input)</strong></p></td>
+<td><p>n̂</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
+<td><p>alpha_i, beta_out</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="zaxis-alpha-eq-beta-stub">
+<h3><code class="docutils literal notranslate"><span class="pre">zaxis_alpha_eq_beta</span></code> <em>(stub)</em><a class="headerlink" href="#zaxis-alpha-eq-beta-stub" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a> × 2 + <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a>:
+Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Requires n̂ — not yet implemented (Issue J).</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Computed</strong></p></td>
+<td><p>omega, delta, alpha, gamma</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Constant during</strong> <code class="docutils literal notranslate"><span class="pre">forward()</span></code></p></td>
+<td><p>chi, phi</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Extras (input)</strong></p></td>
+<td><p>n̂</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
+<td><p>alpha_i, beta_out</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 </section>
 <section id="api-reference">
 <h2>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">sixc()</span></code></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.sixc" title="ad_hoc_diffractometer.factories.sixc"><code class="xref py py-func docutils literal notranslate"><span class="pre">sixc()</span></code></a></p></li>
 <li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a></p></li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code></p></li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code></p></li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.EwaldSphereViolation" title="ad_hoc_diffractometer.mode.EwaldSphereViolation"><code class="xref py py-exc docutils literal notranslate"><span class="pre">EwaldSphereViolation</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintViolation" title="ad_hoc_diffractometer.mode.ConstraintViolation"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ConstraintViolation</span></code></a></p></li>
 </ul>
 </section>
 <section id="references">
@@ -630,7 +788,15 @@ and mode configuration.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick start</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-built-geometry-definition">Pre-built geometry definition</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-layout">Stage layout</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-modes">Diffraction modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-modes">Diffraction modes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting-4c-default"><code class="docutils literal notranslate"><span class="pre">bisecting_4c</span></code> <em>(default)</em></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-gamma-5c"><code class="docutils literal notranslate"><span class="pre">fixed_gamma_5c</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-alpha-5c"><code class="docutils literal notranslate"><span class="pre">fixed_alpha_5c</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zaxis-alpha-fixed-stub"><code class="docutils literal notranslate"><span class="pre">zaxis_alpha_fixed</span></code> <em>(stub)</em></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zaxis-beta-fixed-stub"><code class="docutils literal notranslate"><span class="pre">zaxis_beta_fixed</span></code> <em>(stub)</em></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zaxis-alpha-eq-beta-stub"><code class="docutils literal notranslate"><span class="pre">zaxis_alpha_eq_beta</span></code> <em>(stub)</em></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API reference</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>

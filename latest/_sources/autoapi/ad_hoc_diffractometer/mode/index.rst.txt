@@ -499,33 +499,15 @@ Module Contents
    constraint (e.g. a kappa Eulerian pseudoangle that has not yet been
    inverted).
 
-   .. attribute:: solution_index
-
-      Zero-based index of the violating solution in the returned list.
-
-      :type: int
-
-   .. attribute:: constraint_repr
-
-      Human-readable representation of the violated constraint.
-
-      :type: str
-
-   .. attribute:: residual
-
-      The constraint residual in degrees (non-zero = violated).
-
-      :type: float
-
-   .. attribute:: tolerance
-
-      The tolerance used for the check (from :func:`~.display.precision_atol`).
-
-      :type: float
-
-   .. attribute:: Initialize self.  See help(type(self)) for accurate signature.
-
-
+   :param solution_index: Zero-based index of the violating solution in the returned list.
+   :type solution_index: int
+   :param constraint_repr: Human-readable representation of the violated constraint.
+   :type constraint_repr: str
+   :param residual: The constraint residual in degrees (non-zero = violated).
+   :type residual: float
+   :param tolerance: The tolerance used for the check (from :func:`~.display.precision_atol`).
+   :type tolerance: float
+   :param Initialize self.  See help(type(self)) for accurate signature.:
 
 
    .. py:attribute:: constraint_repr
@@ -651,27 +633,13 @@ Module Contents
    Ewald sphere (``|Q| > 4π/λ``), meaning the Bragg condition cannot be
    satisfied regardless of motor angles.
 
-   .. attribute:: q_mag
-
-      Requested scattering vector magnitude in Å⁻¹.
-
-      :type: float
-
-   .. attribute:: q_max
-
-      Maximum reachable ``|Q|`` at the current wavelength (``4π/λ``) in Å⁻¹.
-
-      :type: float
-
-   .. attribute:: wavelength
-
-      Current wavelength in Å.
-
-      :type: float
-
-   .. attribute:: Initialize self.  See help(type(self)) for accurate signature.
-
-
+   :param q_mag: Requested scattering vector magnitude in Å⁻¹.
+   :type q_mag: float
+   :param q_max: Maximum reachable ``|Q|`` at the current wavelength (``4π/λ``) in Å⁻¹.
+   :type q_max: float
+   :param wavelength: Current wavelength in Å.
+   :type wavelength: float
+   :param Initialize self.  See help(type(self)) for accurate signature.:
 
 
    .. py:attribute:: q_mag

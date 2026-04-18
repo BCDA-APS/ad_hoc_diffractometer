@@ -45,7 +45,7 @@ forward
    :raises NotImplementedError: If the active mode is None or is not a supported type for this geometry.
    :raises ValueError: If wavelength or UB matrix is not set.
    :raises ValueError: If (h, k, l) = (0, 0, 0).
-   :raises EwaldSphereViolation: If the requested |Q| exceeds the Ewald sphere (wavelength too long).
+   :raises EwaldSphereViolation: If the requested ``|Q|`` exceeds the Ewald sphere (wavelength too long).
    :raises ConstraintViolation: If a returned solution violates a declared constraint beyond tolerance.
 
    .. rubric:: References
@@ -95,7 +95,7 @@ Module Contents
    :raises ValueError: If ``geometry.sample.UB`` is None.
    :raises ValueError: If (h, k, l) == (0, 0, 0).
    :raises EwaldSphereViolation: If the scattering vector magnitude exceeds the Ewald sphere
-       (|Q| > 4π/λ, i.e. Bragg condition cannot be satisfied).
+       (``|Q|`` > 4π/λ, i.e. Bragg condition cannot be satisfied).
    :raises ConstraintViolation: If a solution returned by the solver violates a declared constraint
        beyond the display-precision tolerance.
    :raises NotImplementedError: If no active mode is set or the active mode type is not supported
