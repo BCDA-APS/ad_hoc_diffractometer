@@ -175,29 +175,25 @@ def _unsupported_mode():
 
 
 # ---------------------------------------------------------------------------
-# BisectingMode — fourcv (bisecting, omega = ttheta/2)
+# BisectingMode — fourcv and fourch round-trips
 # ---------------------------------------------------------------------------
 
 
-def test_fourcv_bisecting_round_trip_100():
-    g = _setup_cubic(fourcv, a=5.0)
+@pytest.mark.parametrize(
+    "factory, a, h, k, l",
+    [
+        pytest.param(fourcv, 5.0, 1, 0, 0, id="fourcv-100"),
+        pytest.param(fourcv, 5.0, 0, 1, 0, id="fourcv-010"),
+        pytest.param(fourcv, 5.0, 0, 0, 1, id="fourcv-001"),
+        pytest.param(fourcv, 4.0, 1, 1, 1, id="fourcv-111"),
+        pytest.param(fourch, 4.0, 1, 0, 0, id="fourch-100"),
+    ],
+)
+def test_bisecting_round_trip(factory, a, h, k, l):  # noqa: E741
+    """Bisecting mode round-trip: inverse(forward(hkl)) == hkl."""
+    g = _setup_cubic(factory, a=a)
     assert g.mode_name == "bisecting"
-    assert _round_trip_ok(g, 1, 0, 0)
-
-
-def test_fourcv_bisecting_round_trip_010():
-    g = _setup_cubic(fourcv, a=5.0)
-    assert _round_trip_ok(g, 0, 1, 0)
-
-
-def test_fourcv_bisecting_round_trip_001():
-    g = _setup_cubic(fourcv, a=5.0)
-    assert _round_trip_ok(g, 0, 0, 1)
-
-
-def test_fourcv_bisecting_round_trip_111():
-    g = _setup_cubic(fourcv, a=4.0)
-    assert _round_trip_ok(g, 1, 1, 1)
+    assert _round_trip_ok(g, h, k, l)
 
 
 def test_fourcv_bisecting_two_solutions():
@@ -239,30 +235,22 @@ def test_fourcv_bisecting_ttheta_from_bragg():
 
 
 # ---------------------------------------------------------------------------
-# BisectingMode — fourch (omega = ttheta/2, vertical axis)
-# ---------------------------------------------------------------------------
-
-
-def test_fourch_bisecting_round_trip():
-    g = _setup_cubic(fourch, a=4.0)
-    assert g.mode_name == "bisecting"
-    assert _round_trip_ok(g, 1, 0, 0)
-
-
-# ---------------------------------------------------------------------------
 # BisectingMode — psic (eta = delta/2, mu = nu = 0)
 # ---------------------------------------------------------------------------
 
 
-def test_psic_bisecting_round_trip_100():
-    g = _setup_cubic(psic, a=5.0)
+@pytest.mark.parametrize(
+    "a, h, k, l",
+    [
+        pytest.param(5.0, 1, 0, 0, id="psic-100"),
+        pytest.param(4.0, 1, 1, 1, id="psic-111"),
+    ],
+)
+def test_psic_bisecting_round_trip(a, h, k, l):  # noqa: E741
+    """psic bisecting round-trip: inverse(forward(hkl)) == hkl."""
+    g = _setup_cubic(psic, a=a)
     assert g.mode_name == "bisecting"
-    assert _round_trip_ok(g, 1, 0, 0)
-
-
-def test_psic_bisecting_round_trip_111():
-    g = _setup_cubic(psic, a=4.0)
-    assert _round_trip_ok(g, 1, 1, 1)
+    assert _round_trip_ok(g, h, k, l)
 
 
 def test_psic_bisecting_frozen_mu_nu():
@@ -327,6 +315,211 @@ def test_fourcv_fixed_chi_value_respected():
     assert len(solutions) > 0
     for sol in solutions:
         assert sol["chi"] == pytest.approx(90.0, abs=1e-8)
+
+
+# ---------------------------------------------------------------------------
+# Issue #149 — fourcv and fourch: all modes present, stubs not implemented
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        pytest.param(fourcv, id="fourcv"),
+        pytest.param(fourch, id="fourch"),
+    ],
+)
+def test_four_circle_has_all_six_modes(factory):
+    """fourcv and fourch both expose all 6 declared modes as ConstraintSet."""
+    g = factory()
+    expected = {
+        "bisecting",
+        "fixed_chi",
+        "fixed_phi",
+        "constant_omega",
+        "psi_constant",
+        "double_diffraction",
+    }
+    assert set(g.modes.keys()) == expected
+    for name, mode in g.modes.items():
+        assert isinstance(mode, ConstraintSet), f"{name} is not a ConstraintSet"
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name",
+    [
+        pytest.param(fourcv, "psi_constant", id="fourcv-psi_constant"),
+        pytest.param(fourch, "psi_constant", id="fourch-psi_constant"),
+    ],
+)
+def test_four_circle_stub_not_implemented(factory, mode_name):
+    """psi_constant requires reference infrastructure (Issue J) — not yet implemented."""
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = mode_name
+    assert not g.modes[mode_name].is_implemented(g)
+    with pytest.raises(NotImplementedError):
+        g.forward(1, 0, 0)
+
+
+@pytest.mark.parametrize(
+    "factory, h, k, l",
+    [
+        pytest.param(fourcv, 1, 0, 0, id="fourcv-100"),
+        pytest.param(fourcv, 0, 1, 0, id="fourcv-010"),
+        pytest.param(fourcv, 1, 1, 1, id="fourcv-111"),
+        pytest.param(fourch, 1, 0, 0, id="fourch-100"),
+        pytest.param(fourch, 1, 1, 1, id="fourch-111"),
+    ],
+)
+def test_four_circle_constant_omega_round_trip(factory, h, k, l):  # noqa: E741
+    """constant_omega (omega=0) is implemented by the generic solver; round-trips correctly."""
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = "constant_omega"
+    assert g.modes["constant_omega"].is_implemented(g)
+    assert _round_trip_ok(g, h, k, l)
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        pytest.param(fourcv, id="fourcv"),
+        pytest.param(fourch, id="fourch"),
+    ],
+)
+def test_four_circle_constant_omega_value_in_solution(factory):
+    """constant_omega: omega=0 in all returned solutions."""
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = "constant_omega"
+    solutions = g.forward(1, 0, 0)
+    assert len(solutions) > 0
+    for sol in solutions:
+        assert sol["omega"] == pytest.approx(0.0, abs=1e-8)
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, h, k, l",
+    [
+        pytest.param(fourcv, "fixed_phi", 0, 1, 0, id="fourcv-fixed_phi-010"),
+        pytest.param(fourcv, "fixed_phi", 1, 1, 1, id="fourcv-fixed_phi-111"),
+        pytest.param(fourch, "fixed_chi", 1, 0, 0, id="fourch-fixed_chi-100"),
+        pytest.param(fourch, "fixed_chi", 1, 1, 0, id="fourch-fixed_chi-110"),
+        pytest.param(fourch, "fixed_phi", 0, 1, 0, id="fourch-fixed_phi-010"),
+        pytest.param(fourch, "fixed_phi", 1, 1, 1, id="fourch-fixed_phi-111"),
+    ],
+)
+def test_four_circle_fixed_angle_round_trip(factory, mode_name, h, k, l):  # noqa: E741
+    """fixed_chi and fixed_phi round-trips on both fourcv and fourch."""
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = mode_name
+    assert _round_trip_ok(g, h, k, l)
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, expected_fixed_stage, expected_value, h, k, l",
+    [
+        pytest.param(
+            fourcv, "fixed_phi", "phi", 0.0, 0, 1, 0, id="fourcv-fixed_phi-value"
+        ),
+        pytest.param(
+            fourch, "fixed_chi", "chi", 90.0, 1, 0, 0, id="fourch-fixed_chi-value"
+        ),
+        pytest.param(
+            fourch, "fixed_phi", "phi", 0.0, 0, 1, 0, id="fourch-fixed_phi-value"
+        ),
+    ],
+)
+def test_four_circle_fixed_angle_constraint_value_in_solution(
+    factory,
+    mode_name,
+    expected_fixed_stage,
+    expected_value,
+    h,
+    k,
+    l,  # noqa: E741
+):
+    """The fixed stage appears at its declared constraint value in all solutions."""
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = mode_name
+    solutions = g.forward(h, k, l)
+    assert len(solutions) > 0
+    for sol in solutions:
+        assert sol[expected_fixed_stage] == pytest.approx(expected_value, abs=1e-8), (
+            f"{expected_fixed_stage} not at {expected_value} in {sol}"
+        )
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, extras_key, expected_value",
+    [
+        pytest.param(
+            fourcv,
+            "double_diffraction",
+            "h2",
+            "REQUIRED",
+            id="fourcv-double_diffraction-h2",
+        ),
+        pytest.param(
+            fourcv,
+            "double_diffraction",
+            "k2",
+            "REQUIRED",
+            id="fourcv-double_diffraction-k2",
+        ),
+        pytest.param(
+            fourcv,
+            "double_diffraction",
+            "l2",
+            "REQUIRED",
+            id="fourcv-double_diffraction-l2",
+        ),
+        pytest.param(
+            fourch,
+            "double_diffraction",
+            "h2",
+            "REQUIRED",
+            id="fourch-double_diffraction-h2",
+        ),
+        pytest.param(
+            fourch,
+            "double_diffraction",
+            "k2",
+            "REQUIRED",
+            id="fourch-double_diffraction-k2",
+        ),
+        pytest.param(
+            fourch,
+            "double_diffraction",
+            "l2",
+            "REQUIRED",
+            id="fourch-double_diffraction-l2",
+        ),
+        pytest.param(
+            fourcv, "psi_constant", "n_hat", "REQUIRED", id="fourcv-psi_constant-n_hat"
+        ),
+        pytest.param(
+            fourcv, "psi_constant", "psi", None, id="fourcv-psi_constant-psi-output"
+        ),
+        pytest.param(
+            fourch, "psi_constant", "n_hat", "REQUIRED", id="fourch-psi_constant-n_hat"
+        ),
+        pytest.param(
+            fourch, "psi_constant", "psi", None, id="fourch-psi_constant-psi-output"
+        ),
+    ],
+)
+def test_four_circle_mode_extras_declared(
+    factory, mode_name, extras_key, expected_value
+):
+    """Mode extras carry the expected sentinel or output placeholder."""
+    from ad_hoc_diffractometer import REQUIRED
+
+    g = factory()
+    mode = g.modes[mode_name]
+    actual = mode.extras.get(extras_key)
+    if expected_value == "REQUIRED":
+        assert actual is REQUIRED
+    else:
+        assert actual is expected_value
 
 
 # ---------------------------------------------------------------------------
@@ -554,55 +747,76 @@ def test_compute_forward_same_as_method():
 # ---------------------------------------------------------------------------
 
 
-def test_check_limits_all_ok():
-    g = _setup_cubic(fourcv, a=4.0)
-    angles = {s.name: 0.0 for s in g.sample_stages + g.detector_stages}
-    assert _check_limits(g, angles) is True
+@pytest.mark.parametrize(
+    "angles, expected, context",
+    [
+        pytest.param(
+            {s: 0.0 for s in ("omega", "chi", "phi", "ttheta")},
+            True,
+            does_not_raise(),
+            id="all-within-limits",
+        ),
+        pytest.param(
+            {"omega": 0.0, "chi": 200.0, "phi": 0.0, "ttheta": 0.0},
+            False,
+            does_not_raise(),
+            id="chi-out-of-limits",
+        ),
+        pytest.param(
+            {"omega": 0.0, "nonexistent": 999.0},
+            True,
+            does_not_raise(),
+            id="unknown-stage-ignored",
+        ),
+    ],
+)
+def test_check_limits(angles, expected, context):
+    with context:
+        g = _setup_cubic(fourcv, a=4.0)
+        assert _check_limits(g, angles) is expected
 
 
-def test_check_limits_one_fails():
-    g = _setup_cubic(fourcv, a=4.0)
-    angles = {"omega": 0.0, "chi": 200.0, "phi": 0.0, "ttheta": 0.0}
-    assert _check_limits(g, angles) is False
-
-
-def test_check_limits_unknown_stage_ignored():
-    g = _setup_cubic(fourcv, a=4.0)
-    angles = {"omega": 0.0, "nonexistent": 999.0}
-    assert _check_limits(g, angles) is True
-
-
-def test_apply_cut_points_mode_priority():
-    """Mode cut-point takes priority over geometry-level cut-point."""
-    g = _setup_cubic(fourcv, a=4.0)
-    mode = ConstraintSet(
-        [BisectConstraint("omega", "ttheta")],
-        cut_points={"phi": 0.0},  # phi in [0, 360)
-    )
-    g.cut_points["phi"] = -180.0  # would put phi in [-180, 180) if used
-    angles = {"phi": -10.0}
-    _apply_cut_points(angles, mode, g)
-    # Mode cut-point (0°) wins: -10° → 350°
-    assert angles["phi"] == pytest.approx(350.0, abs=1e-10)
-
-
-def test_apply_cut_points_geometry_fallback():
-    """Geometry-level cut-point used when no mode cut-point set for that stage."""
-    g = _setup_cubic(fourcv, a=4.0)
-    mode = ConstraintSet([BisectConstraint("omega", "ttheta")])
-    g.cut_points["phi"] = 0.0  # phi in [0, 360)
-    angles = {"phi": -10.0}
-    _apply_cut_points(angles, mode, g)
-    assert angles["phi"] == pytest.approx(350.0, abs=1e-10)
-
-
-def test_apply_cut_points_no_cut_unchanged():
-    """Angles without any cut-point are unchanged."""
-    g = _setup_cubic(fourcv, a=4.0)
-    mode = ConstraintSet([BisectConstraint("omega", "ttheta")])
-    angles = {"phi": -10.0}
-    _apply_cut_points(angles, mode, g)
-    assert angles["phi"] == pytest.approx(-10.0, abs=1e-10)
+@pytest.mark.parametrize(
+    "mode_cut_points, geom_cut_points, angle_in, expected_out, context",
+    [
+        pytest.param(
+            {"phi": 0.0},
+            {"phi": -180.0},
+            -10.0,
+            350.0,
+            does_not_raise(),
+            id="mode-cut-takes-priority",
+        ),
+        pytest.param(
+            {},
+            {"phi": 0.0},
+            -10.0,
+            350.0,
+            does_not_raise(),
+            id="geometry-cut-fallback",
+        ),
+        pytest.param(
+            {},
+            {},
+            -10.0,
+            -10.0,
+            does_not_raise(),
+            id="no-cut-unchanged",
+        ),
+    ],
+)
+def test_apply_cut_points(
+    mode_cut_points, geom_cut_points, angle_in, expected_out, context
+):
+    with context:
+        g = _setup_cubic(fourcv, a=4.0)
+        mode = ConstraintSet(
+            [BisectConstraint("omega", "ttheta")], cut_points=mode_cut_points
+        )
+        g.cut_points.update(geom_cut_points)
+        angles = {"phi": angle_in}
+        _apply_cut_points(angles, mode, g)
+        assert angles["phi"] == pytest.approx(expected_out, abs=1e-10)
 
 
 # ---------------------------------------------------------------------------

@@ -45,6 +45,7 @@ from ad_hoc_diffractometer import ModeDict
 from ad_hoc_diffractometer import ReferenceConstraint
 from ad_hoc_diffractometer import SampleConstraint
 from ad_hoc_diffractometer import Stage
+from ad_hoc_diffractometer import fourch
 from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
@@ -109,19 +110,18 @@ def _psic_like(**kwargs):
 
 
 @pytest.mark.parametrize(
-    "name, value, context",
+    "name, value",
     [
-        pytest.param("chi", 90.0, does_not_raise(), id="fixed-chi-90"),
-        pytest.param("phi", 0.0, does_not_raise(), id="fixed-phi-0"),
-        pytest.param("mu", -45.0, does_not_raise(), id="fixed-mu-neg45"),
+        pytest.param("chi", 90.0, id="fixed-chi-90"),
+        pytest.param("phi", 0.0, id="fixed-phi-0"),
+        pytest.param("mu", -45.0, id="fixed-mu-neg45"),
     ],
 )
-def test_sample_constraint_construction(name, value, context):
-    with context:
-        sc = SampleConstraint(name, value)
-        assert sc.name == name
-        assert sc.is_bisect is False
-        assert sc.category == "sample"
+def test_sample_constraint_construction(name, value):
+    sc = SampleConstraint(name, value)
+    assert sc.name == name
+    assert sc.is_bisect is False
+    assert sc.category == "sample"
 
 
 def test_sample_constraint_value_coerced_to_float():
@@ -138,20 +138,91 @@ def test_sample_constraint_repr_fixed():
     assert "90.0" in r
 
 
-def test_sample_constraint_eq_same():
-    assert SampleConstraint("chi", 90.0) == SampleConstraint("chi", 90.0)
-
-
-def test_sample_constraint_eq_different_name():
-    assert SampleConstraint("chi", 90.0) != SampleConstraint("phi", 90.0)
-
-
-def test_sample_constraint_eq_different_value():
-    assert SampleConstraint("chi", 90.0) != SampleConstraint("chi", 0.0)
-
-
-def test_sample_constraint_eq_different_type():
-    assert SampleConstraint("chi", 90.0) != DetectorConstraint("chi", 90.0)
+@pytest.mark.parametrize(
+    "lhs, rhs, expected",
+    [
+        pytest.param(
+            SampleConstraint("chi", 90.0),
+            SampleConstraint("chi", 90.0),
+            True,
+            id="sample-eq-same",
+        ),
+        pytest.param(
+            SampleConstraint("chi", 90.0),
+            SampleConstraint("phi", 90.0),
+            False,
+            id="sample-eq-different-name",
+        ),
+        pytest.param(
+            SampleConstraint("chi", 90.0),
+            SampleConstraint("chi", 0.0),
+            False,
+            id="sample-eq-different-value",
+        ),
+        pytest.param(
+            SampleConstraint("chi", 90.0),
+            DetectorConstraint("chi", 90.0),
+            False,
+            id="sample-eq-different-type",
+        ),
+        pytest.param(
+            BisectConstraint("omega", "ttheta"),
+            BisectConstraint("omega", "ttheta"),
+            True,
+            id="bisect-eq-same",
+        ),
+        pytest.param(
+            BisectConstraint("omega", "ttheta"),
+            BisectConstraint("eta", "delta"),
+            False,
+            id="bisect-eq-different",
+        ),
+        pytest.param(
+            BisectConstraint("omega", "ttheta"),
+            SampleConstraint("omega", 0.0),
+            False,
+            id="bisect-eq-different-type",
+        ),
+        pytest.param(
+            DetectorConstraint("nu", 0.0),
+            DetectorConstraint("nu", 0.0),
+            True,
+            id="detector-eq-same",
+        ),
+        pytest.param(
+            DetectorConstraint("nu", 0.0),
+            DetectorConstraint("delta", 0.0),
+            False,
+            id="detector-eq-different",
+        ),
+        pytest.param(
+            DetectorConstraint("nu", 0.0),
+            SampleConstraint("nu", 0.0),
+            False,
+            id="detector-eq-different-type",
+        ),
+        pytest.param(
+            ReferenceConstraint("psi", 90.0),
+            ReferenceConstraint("psi", 90.0),
+            True,
+            id="reference-eq-same",
+        ),
+        pytest.param(
+            ReferenceConstraint("psi", 90.0),
+            ReferenceConstraint("psi", 0.0),
+            False,
+            id="reference-eq-different",
+        ),
+        pytest.param(
+            ReferenceConstraint("psi", 90.0),
+            SampleConstraint("psi", 90.0),
+            False,
+            id="reference-eq-different-type",
+        ),
+    ],
+)
+def test_constraint_eq(lhs, rhs, expected):
+    assert (lhs == rhs) is expected
 
 
 def test_sample_constraint_to_dict_from_dict_fixed():
@@ -174,67 +245,210 @@ def test_bisect_constraint_to_dict_from_dict():
     assert bc2 == bc
 
 
-def test_sample_constraint_is_implemented_real_stage():
+@pytest.mark.parametrize(
+    "constraint_factory, args, geometry_factory, expected",
+    [
+        pytest.param(
+            SampleConstraint,
+            ("chi", 90.0),
+            _fourcv_like,
+            True,
+            id="sample-real-stage-chi",
+        ),
+        pytest.param(
+            SampleConstraint,
+            ("phi", 0.0),
+            _fourcv_like,
+            True,
+            id="sample-real-stage-phi",
+        ),
+        pytest.param(
+            SampleConstraint,
+            ("mu", 0.0),
+            _fourcv_like,
+            False,
+            id="sample-missing-stage-mu",
+        ),
+        pytest.param(
+            BisectConstraint,
+            ("omega", "ttheta"),
+            _fourcv_like,
+            True,
+            id="bisect-both-stages-exist-fourcv",
+        ),
+        pytest.param(
+            BisectConstraint,
+            ("eta", "delta"),
+            _psic_like,
+            True,
+            id="bisect-both-stages-exist-psic",
+        ),
+        pytest.param(
+            BisectConstraint,
+            ("eta", "ttheta"),
+            _fourcv_like,
+            False,
+            id="bisect-sample-stage-missing",
+        ),
+        pytest.param(
+            BisectConstraint,
+            ("omega", "delta"),
+            _fourcv_like,
+            False,
+            id="bisect-detector-stage-missing",
+        ),
+        pytest.param(
+            DetectorConstraint,
+            ("nu", 0.0),
+            _psic_like,
+            True,
+            id="detector-real-stage-nu",
+        ),
+        pytest.param(
+            DetectorConstraint,
+            ("delta", 0.0),
+            _psic_like,
+            True,
+            id="detector-real-stage-delta",
+        ),
+        pytest.param(
+            DetectorConstraint,
+            ("gamma", 0.0),
+            _psic_like,
+            False,
+            id="detector-missing-stage-gamma",
+        ),
+        pytest.param(
+            DetectorConstraint,
+            ("qaz", 90.0),
+            _psic_like,
+            False,
+            id="detector-qaz-not-implemented",
+        ),
+    ],
+)
+def test_constraint_is_implemented(
+    constraint_factory, args, geometry_factory, expected
+):
+    g = geometry_factory()
+    assert constraint_factory(*args).is_implemented(g) is expected
+
+
+_ANGLES_FOURCV = {"omega": 10.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
+_ANGLES_PSIC = {
+    "mu": 0.0,
+    "eta": 10.0,
+    "chi": 90.0,
+    "phi": 0.0,
+    "nu": 0.0,
+    "delta": 20.0,
+}
+
+
+@pytest.mark.parametrize(
+    "constraint_factory, args, angles, expected_residual",
+    [
+        pytest.param(
+            SampleConstraint,
+            ("chi", 90.0),
+            _ANGLES_FOURCV,
+            0.0,
+            id="sample-chi-satisfied",
+        ),
+        pytest.param(
+            SampleConstraint,
+            ("chi", 45.0),
+            _ANGLES_FOURCV,
+            45.0,
+            id="sample-chi-not-satisfied",
+        ),
+        pytest.param(
+            BisectConstraint,
+            ("omega", "ttheta"),
+            _ANGLES_FOURCV,
+            0.0,
+            id="bisect-satisfied",
+        ),
+        pytest.param(
+            BisectConstraint,
+            ("omega", "ttheta"),
+            {**_ANGLES_FOURCV, "omega": 5.0},
+            -5.0,
+            id="bisect-not-satisfied",
+        ),
+        pytest.param(
+            DetectorConstraint,
+            ("nu", 0.0),
+            _ANGLES_PSIC,
+            0.0,
+            id="detector-nu-satisfied",
+        ),
+        pytest.param(
+            DetectorConstraint,
+            ("nu", 5.0),
+            _ANGLES_PSIC,
+            -5.0,
+            id="detector-nu-not-satisfied",
+        ),
+    ],
+)
+def test_constraint_evaluate(constraint_factory, args, angles, expected_residual):
     g = _fourcv_like()
-    assert SampleConstraint("chi", 90.0).is_implemented(g) is True
-    assert SampleConstraint("phi", 0.0).is_implemented(g) is True
+    assert constraint_factory(*args).evaluate(angles, g) == pytest.approx(
+        expected_residual
+    )
 
 
-def test_sample_constraint_is_implemented_missing_stage():
+@pytest.mark.parametrize(
+    "constraint_factory, args, angles, expected_satisfied",
+    [
+        pytest.param(
+            SampleConstraint,
+            ("chi", 90.0),
+            _ANGLES_FOURCV,
+            True,
+            id="sample-chi-satisfied",
+        ),
+        pytest.param(
+            SampleConstraint,
+            ("chi", 45.0),
+            _ANGLES_FOURCV,
+            False,
+            id="sample-chi-not-satisfied",
+        ),
+        pytest.param(
+            BisectConstraint,
+            ("omega", "ttheta"),
+            _ANGLES_FOURCV,
+            True,
+            id="bisect-satisfied",
+        ),
+        pytest.param(
+            BisectConstraint,
+            ("omega", "ttheta"),
+            {**_ANGLES_FOURCV, "omega": 5.0},
+            False,
+            id="bisect-not-satisfied",
+        ),
+        pytest.param(
+            DetectorConstraint,
+            ("nu", 0.0),
+            _ANGLES_PSIC,
+            True,
+            id="detector-nu-satisfied",
+        ),
+        pytest.param(
+            DetectorConstraint,
+            ("nu", 5.0),
+            _ANGLES_PSIC,
+            False,
+            id="detector-nu-not-satisfied",
+        ),
+    ],
+)
+def test_constraint_is_satisfied(constraint_factory, args, angles, expected_satisfied):
     g = _fourcv_like()
-    assert SampleConstraint("mu", 0.0).is_implemented(g) is False
-
-
-def test_bisect_constraint_is_implemented_both_stages_exist():
-    g = _fourcv_like()
-    assert BisectConstraint("omega", "ttheta").is_implemented(g) is True
-
-
-def test_bisect_constraint_is_implemented_sample_stage_missing():
-    g = _fourcv_like()
-    assert BisectConstraint("eta", "ttheta").is_implemented(g) is False
-
-
-def test_bisect_constraint_is_implemented_detector_stage_missing():
-    g = _fourcv_like()
-    assert BisectConstraint("omega", "delta").is_implemented(g) is False
-
-
-def test_bisect_constraint_is_implemented_psic():
-    g = _psic_like()
-    assert BisectConstraint("eta", "delta").is_implemented(g) is True
-
-
-def test_sample_constraint_evaluate_fixed(tmp_path):
-    g = _fourcv_like()
-    angles = {"omega": 10.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
-    sc = SampleConstraint("chi", 90.0)
-    assert sc.evaluate(angles, g) == pytest.approx(0.0)
-    sc2 = SampleConstraint("chi", 45.0)
-    assert sc2.evaluate(angles, g) == pytest.approx(45.0)
-
-
-def test_bisect_constraint_evaluate_satisfied():
-    g = _fourcv_like()
-    angles = {"omega": 10.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
-    bc = BisectConstraint("omega", "ttheta")
-    # residual = omega - ttheta/2 = 10 - 10 = 0
-    assert bc.evaluate(angles, g) == pytest.approx(0.0)
-
-
-def test_bisect_constraint_evaluate_not_satisfied():
-    g = _fourcv_like()
-    angles = {"omega": 5.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
-    bc = BisectConstraint("omega", "ttheta")
-    assert bc.evaluate(angles, g) == pytest.approx(-5.0)
-
-
-def test_bisect_constraint_is_satisfied():
-    g = _fourcv_like()
-    angles = {"omega": 10.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
-    assert BisectConstraint("omega", "ttheta").is_satisfied(angles, g)
-    angles2 = dict(angles, omega=5.0)
-    assert not BisectConstraint("omega", "ttheta").is_satisfied(angles2, g)
+    assert constraint_factory(*args).is_satisfied(angles, g) is expected_satisfied
 
 
 def test_bisect_constraint_repr():
@@ -245,23 +459,34 @@ def test_bisect_constraint_repr():
     assert "delta" in r
 
 
-def test_bisect_constraint_eq_same():
-    assert BisectConstraint("omega", "ttheta") == BisectConstraint("omega", "ttheta")
-
-
-def test_bisect_constraint_eq_different():
-    assert BisectConstraint("omega", "ttheta") != BisectConstraint("eta", "delta")
-
-
-def test_bisect_constraint_eq_different_type():
-    assert BisectConstraint("omega", "ttheta") != SampleConstraint("omega", 0.0)
-
-
-def test_bisect_constraint_hash():
-    bc1 = BisectConstraint("omega", "ttheta")
-    bc2 = BisectConstraint("omega", "ttheta")
-    assert hash(bc1) == hash(bc2)
-    assert len({bc1, bc2}) == 1
+@pytest.mark.parametrize(
+    "c1, c2",
+    [
+        pytest.param(
+            BisectConstraint("omega", "ttheta"),
+            BisectConstraint("omega", "ttheta"),
+            id="bisect-hash",
+        ),
+        pytest.param(
+            SampleConstraint("chi", 90.0),
+            SampleConstraint("chi", 90.0),
+            id="sample-hash",
+        ),
+        pytest.param(
+            DetectorConstraint("nu", 0.0),
+            DetectorConstraint("nu", 0.0),
+            id="detector-hash",
+        ),
+        pytest.param(
+            ReferenceConstraint("psi", 90.0),
+            ReferenceConstraint("psi", 90.0),
+            id="reference-hash",
+        ),
+    ],
+)
+def test_constraint_hash(c1, c2):
+    assert hash(c1) == hash(c2)
+    assert len({c1, c2}) == 1
 
 
 def test_bisect_constraint_category():
@@ -276,34 +501,26 @@ def test_bisect_constraint_name():
     assert BisectConstraint("omega", "ttheta").name == "bisect"
 
 
-def test_sample_constraint_is_satisfied():
-    g = _fourcv_like()
-    angles = {"omega": 10.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
-    assert SampleConstraint("chi", 90.0).is_satisfied(angles, g)
-    assert not SampleConstraint("chi", 45.0).is_satisfied(angles, g)
-
-
 # ---------------------------------------------------------------------------
 # DetectorConstraint
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize(
-    "name, value, expected_is_qaz, context",
+    "name, value, expected_is_qaz",
     [
-        pytest.param("delta", 0.0, False, does_not_raise(), id="fixed-delta"),
-        pytest.param("nu", 0.0, False, does_not_raise(), id="fixed-nu"),
-        pytest.param("ttheta", 20.0, False, does_not_raise(), id="fixed-ttheta"),
-        pytest.param("qaz", 90.0, True, does_not_raise(), id="qaz-pseudo"),
+        pytest.param("delta", 0.0, False, id="fixed-delta"),
+        pytest.param("nu", 0.0, False, id="fixed-nu"),
+        pytest.param("ttheta", 20.0, False, id="fixed-ttheta"),
+        pytest.param("qaz", 90.0, True, id="qaz-pseudo"),
     ],
 )
-def test_detector_constraint_construction(name, value, expected_is_qaz, context):
-    with context:
-        dc = DetectorConstraint(name, value)
-        assert dc.name == name
-        assert dc.value == value
-        assert dc.is_qaz == expected_is_qaz
-        assert dc.category == "detector"
+def test_detector_constraint_construction(name, value, expected_is_qaz):
+    dc = DetectorConstraint(name, value)
+    assert dc.name == name
+    assert dc.value == value
+    assert dc.is_qaz == expected_is_qaz
+    assert dc.category == "detector"
 
 
 def test_detector_constraint_repr():
@@ -313,49 +530,12 @@ def test_detector_constraint_repr():
     assert "nu" in r
 
 
-def test_detector_constraint_eq_same():
-    assert DetectorConstraint("nu", 0.0) == DetectorConstraint("nu", 0.0)
-
-
-def test_detector_constraint_eq_different():
-    assert DetectorConstraint("nu", 0.0) != DetectorConstraint("delta", 0.0)
-
-
-def test_detector_constraint_eq_different_type():
-    assert DetectorConstraint("nu", 0.0) != SampleConstraint("nu", 0.0)
-
-
 def test_detector_constraint_to_dict_from_dict():
     dc = DetectorConstraint("nu", 0.0)
     d = dc.to_dict()
     assert d == {"type": "DetectorConstraint", "name": "nu", "value": 0.0}
     dc2 = DetectorConstraint.from_dict(d)
     assert dc2 == dc
-
-
-def test_detector_constraint_is_implemented_real_stage():
-    g = _psic_like()
-    assert DetectorConstraint("nu", 0.0).is_implemented(g) is True
-    assert DetectorConstraint("delta", 0.0).is_implemented(g) is True
-
-
-def test_detector_constraint_is_implemented_missing():
-    g = _psic_like()
-    assert DetectorConstraint("gamma", 0.0).is_implemented(g) is False
-
-
-def test_detector_constraint_is_implemented_qaz_not_implemented():
-    g = _psic_like()
-    assert DetectorConstraint("qaz", 90.0).is_implemented(g) is False
-
-
-def test_detector_constraint_evaluate_fixed():
-    g = _psic_like()
-    angles = {"mu": 0.0, "eta": 10.0, "chi": 90.0, "phi": 0.0, "nu": 0.0, "delta": 20.0}
-    dc = DetectorConstraint("nu", 0.0)
-    assert dc.evaluate(angles, g) == pytest.approx(0.0)
-    dc2 = DetectorConstraint("nu", 5.0)
-    assert dc2.evaluate(angles, g) == pytest.approx(-5.0)
 
 
 def test_detector_constraint_evaluate_qaz_raises():
@@ -416,18 +596,6 @@ def test_reference_constraint_repr():
     r = repr(rc)
     assert "ReferenceConstraint" in r
     assert "psi" in r
-
-
-def test_reference_constraint_eq_same():
-    assert ReferenceConstraint("psi", 90.0) == ReferenceConstraint("psi", 90.0)
-
-
-def test_reference_constraint_eq_different():
-    assert ReferenceConstraint("psi", 90.0) != ReferenceConstraint("psi", 0.0)
-
-
-def test_reference_constraint_eq_different_type():
-    assert ReferenceConstraint("psi", 90.0) != SampleConstraint("psi", 90.0)
 
 
 def test_reference_constraint_to_dict_from_dict():
@@ -681,60 +849,52 @@ def test_constraint_set_constrained_stages_det_name_present():
 # ---------------------------------------------------------------------------
 
 
-def test_constant_stages_bisect_only():
-    """constant_stages includes the bisect sample stage."""
-    cs = ConstraintSet([BisectConstraint("omega", "ttheta")])
-    assert cs.constant_stages == ["omega"]
-
-
-def test_constant_stages_psic_bisecting():
-    """constant_stages for psic bisecting includes eta, mu, nu."""
-    cs = ConstraintSet(
-        [
-            BisectConstraint("eta", "delta"),
-            SampleConstraint("mu", 0.0),
-            DetectorConstraint("nu", 0.0),
-        ]
-    )
-    assert cs.constant_stages == ["eta", "mu", "nu"]
-
-
-def test_constant_stages_no_bisect():
-    """constant_stages with only fixed sample and detector."""
-    cs = ConstraintSet(
-        [
-            SampleConstraint("chi", 90.0),
-            DetectorConstraint("nu", 0.0),
-        ]
-    )
-    assert "chi" in cs.constant_stages
-    assert "nu" in cs.constant_stages
-
-
-def test_constant_stages_reference_excluded():
-    """ReferenceConstraint does not contribute to constant_stages."""
-    cs = ConstraintSet(
-        [
-            BisectConstraint("omega", "ttheta"),
-            ReferenceConstraint("psi", 90.0),
-        ]
-    )
+@pytest.mark.parametrize(
+    "constraints, expected_in, expected_not_in",
+    [
+        pytest.param(
+            [BisectConstraint("omega", "ttheta")],
+            ["omega"],
+            [],
+            id="bisect-only",
+        ),
+        pytest.param(
+            [
+                BisectConstraint("eta", "delta"),
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            ["eta", "mu", "nu"],
+            [],
+            id="psic-bisecting",
+        ),
+        pytest.param(
+            [SampleConstraint("chi", 90.0), DetectorConstraint("nu", 0.0)],
+            ["chi", "nu"],
+            [],
+            id="fixed-sample-and-detector",
+        ),
+        pytest.param(
+            [BisectConstraint("omega", "ttheta"), ReferenceConstraint("psi", 90.0)],
+            ["omega"],
+            ["psi"],
+            id="reference-excluded",
+        ),
+        pytest.param(
+            [SampleConstraint("chi", 90.0), DetectorConstraint("qaz", 90.0)],
+            ["chi"],
+            ["qaz"],
+            id="qaz-excluded",
+        ),
+    ],
+)
+def test_constant_stages(constraints, expected_in, expected_not_in):
+    cs = ConstraintSet(constraints)
     stages = cs.constant_stages
-    assert "psi" not in stages
-    assert "omega" in stages
-
-
-def test_constant_stages_qaz_excluded():
-    """DetectorConstraint qaz does not contribute to constant_stages."""
-    cs = ConstraintSet(
-        [
-            SampleConstraint("chi", 90.0),
-            DetectorConstraint("qaz", 90.0),
-        ]
-    )
-    stages = cs.constant_stages
-    assert "qaz" not in stages
-    assert "chi" in stages
+    for name in expected_in:
+        assert name in stages
+    for name in expected_not_in:
+        assert name not in stages
 
 
 # ---------------------------------------------------------------------------
@@ -851,27 +1011,6 @@ def test_validate_solutions_sampleconstraint_violation_message():
 # ---------------------------------------------------------------------------
 
 
-def test_sample_constraint_hash_used_in_set():
-    sc1 = SampleConstraint("chi", 90.0)
-    sc2 = SampleConstraint("chi", 90.0)
-    assert len({sc1, sc2}) == 1
-
-
-def test_detector_constraint_is_satisfied():
-    g = _psic_like()
-    angles = {"mu": 0.0, "eta": 10.0, "chi": 90.0, "phi": 0.0, "nu": 0.0, "delta": 20.0}
-    dc = DetectorConstraint("nu", 0.0)
-    assert dc.is_satisfied(angles, g) is True
-    dc2 = DetectorConstraint("nu", 5.0)
-    assert dc2.is_satisfied(angles, g) is False
-
-
-def test_detector_constraint_hash_used_in_set():
-    dc1 = DetectorConstraint("nu", 0.0)
-    dc2 = DetectorConstraint("nu", 0.0)
-    assert len({dc1, dc2}) == 1
-
-
 def test_constraint_set_bisect_constraint_property_none():
     """bisect_constraint returns None when no BisectConstraint present."""
     cs = ConstraintSet([SampleConstraint("chi", 90.0)])
@@ -974,21 +1113,37 @@ def test_constraint_set_repr_contains_bisect():
     assert "delta" in r
 
 
-def test_constraint_set_eq_different_cutpoints():
-    cs1 = ConstraintSet([SampleConstraint("chi", 90.0)], cut_points={"chi": 0.0})
-    cs2 = ConstraintSet([SampleConstraint("chi", 90.0)])
-    assert cs1 != cs2
-
-
-def test_constraint_set_eq_different_type():
-    cs = ConstraintSet([SampleConstraint("chi", 90.0)])
-    assert cs != "not a constraint set"
-
-
-def test_constraint_set_eq_different_constraints():
-    cs1 = ConstraintSet([SampleConstraint("chi", 90.0)])
-    cs2 = ConstraintSet([SampleConstraint("phi", 0.0)])
-    assert cs1 != cs2
+@pytest.mark.parametrize(
+    "lhs, rhs, expected",
+    [
+        pytest.param(
+            ConstraintSet([SampleConstraint("chi", 90.0)]),
+            ConstraintSet([SampleConstraint("chi", 90.0)]),
+            True,
+            id="cs-eq-same",
+        ),
+        pytest.param(
+            ConstraintSet([SampleConstraint("chi", 90.0)], cut_points={"chi": 0.0}),
+            ConstraintSet([SampleConstraint("chi", 90.0)]),
+            False,
+            id="cs-eq-different-cutpoints",
+        ),
+        pytest.param(
+            ConstraintSet([SampleConstraint("chi", 90.0)]),
+            "not a constraint set",
+            False,
+            id="cs-eq-different-type",
+        ),
+        pytest.param(
+            ConstraintSet([SampleConstraint("chi", 90.0)]),
+            ConstraintSet([SampleConstraint("phi", 0.0)]),
+            False,
+            id="cs-eq-different-constraints",
+        ),
+    ],
+)
+def test_constraint_set_eq(lhs, rhs, expected):
+    assert (lhs == rhs) is expected
 
 
 def test_mode_dict_setitem_invalid_raises():
@@ -1087,3 +1242,237 @@ def test_geometry_from_dict_old_bisecting_mode_raises():
     d["mode_name"] = "bisecting"
     with pytest.raises(ValueError, match=re.escape("BisectingMode")):
         AdHocDiffractometer.from_dict(d)
+
+
+# ---------------------------------------------------------------------------
+# Issue #149 — fourcv and fourch mode structure
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "factory, expected_modes",
+    [
+        pytest.param(
+            fourcv,
+            {
+                "bisecting",
+                "fixed_chi",
+                "fixed_phi",
+                "constant_omega",
+                "psi_constant",
+                "double_diffraction",
+            },
+            id="fourcv-six-modes",
+        ),
+        pytest.param(
+            fourch,
+            {
+                "bisecting",
+                "fixed_chi",
+                "fixed_phi",
+                "constant_omega",
+                "psi_constant",
+                "double_diffraction",
+            },
+            id="fourch-six-modes",
+        ),
+    ],
+)
+def test_four_circle_factory_mode_names(factory, expected_modes):
+    """Both fourcv and fourch expose exactly the 6 declared mode names."""
+    g = factory()
+    assert set(g.modes.keys()) == expected_modes
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, expected_type, expected_has_bisect",
+    [
+        pytest.param(
+            fourcv, "bisecting", BisectConstraint, True, id="fourcv-bisecting"
+        ),
+        pytest.param(
+            fourcv, "fixed_chi", SampleConstraint, False, id="fourcv-fixed_chi"
+        ),
+        pytest.param(
+            fourcv, "fixed_phi", SampleConstraint, False, id="fourcv-fixed_phi"
+        ),
+        pytest.param(
+            fourcv,
+            "constant_omega",
+            SampleConstraint,
+            False,
+            id="fourcv-constant_omega",
+        ),
+        pytest.param(
+            fourcv, "psi_constant", ReferenceConstraint, False, id="fourcv-psi_constant"
+        ),
+        pytest.param(
+            fourcv,
+            "double_diffraction",
+            BisectConstraint,
+            True,
+            id="fourcv-double_diffraction",
+        ),
+        pytest.param(
+            fourch, "bisecting", BisectConstraint, True, id="fourch-bisecting"
+        ),
+        pytest.param(
+            fourch, "fixed_chi", SampleConstraint, False, id="fourch-fixed_chi"
+        ),
+        pytest.param(
+            fourch, "fixed_phi", SampleConstraint, False, id="fourch-fixed_phi"
+        ),
+        pytest.param(
+            fourch,
+            "constant_omega",
+            SampleConstraint,
+            False,
+            id="fourch-constant_omega",
+        ),
+        pytest.param(
+            fourch, "psi_constant", ReferenceConstraint, False, id="fourch-psi_constant"
+        ),
+        pytest.param(
+            fourch,
+            "double_diffraction",
+            BisectConstraint,
+            True,
+            id="fourch-double_diffraction",
+        ),
+    ],
+)
+def test_four_circle_mode_constraint_type(
+    factory, mode_name, expected_type, expected_has_bisect
+):
+    """Each mode's leading constraint is of the expected type."""
+    g = factory()
+    cs = g.modes[mode_name]
+    assert isinstance(cs, ConstraintSet)
+    assert cs.has_bisect == expected_has_bisect
+    assert any(isinstance(c, expected_type) for c in cs.constraints)
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, expected_implemented",
+    [
+        pytest.param(fourcv, "bisecting", True, id="fourcv-bisecting-implemented"),
+        pytest.param(fourcv, "fixed_chi", True, id="fourcv-fixed_chi-implemented"),
+        pytest.param(fourcv, "fixed_phi", True, id="fourcv-fixed_phi-implemented"),
+        pytest.param(
+            fourcv, "constant_omega", True, id="fourcv-constant_omega-implemented"
+        ),
+        pytest.param(fourcv, "psi_constant", False, id="fourcv-psi_constant-stub"),
+        pytest.param(
+            fourcv,
+            "double_diffraction",
+            True,
+            id="fourcv-double_diffraction-implemented",
+        ),
+        pytest.param(fourch, "bisecting", True, id="fourch-bisecting-implemented"),
+        pytest.param(fourch, "fixed_chi", True, id="fourch-fixed_chi-implemented"),
+        pytest.param(fourch, "fixed_phi", True, id="fourch-fixed_phi-implemented"),
+        pytest.param(
+            fourch, "constant_omega", True, id="fourch-constant_omega-implemented"
+        ),
+        pytest.param(fourch, "psi_constant", False, id="fourch-psi_constant-stub"),
+        pytest.param(
+            fourch,
+            "double_diffraction",
+            True,
+            id="fourch-double_diffraction-implemented",
+        ),
+    ],
+)
+def test_four_circle_mode_is_implemented(factory, mode_name, expected_implemented):
+    """Implemented modes return True; stubs return False from is_implemented()."""
+    g = factory()
+    assert g.modes[mode_name].is_implemented(g) == expected_implemented
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        pytest.param(fourcv, id="fourcv"),
+        pytest.param(fourch, id="fourch"),
+    ],
+)
+def test_four_circle_default_mode_is_bisecting(factory):
+    """Default mode for both four-circle geometries is 'bisecting'."""
+    g = factory()
+    assert g.mode_name == "bisecting"
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, expected_computed",
+    [
+        pytest.param(
+            fourcv,
+            "bisecting",
+            ["omega", "chi", "phi", "ttheta"],
+            id="fourcv-bisecting-computed",
+        ),
+        pytest.param(
+            fourcv,
+            "fixed_chi",
+            ["omega", "phi", "ttheta"],
+            id="fourcv-fixed_chi-computed",
+        ),
+        pytest.param(
+            fourcv,
+            "fixed_phi",
+            ["omega", "chi", "ttheta"],
+            id="fourcv-fixed_phi-computed",
+        ),
+        pytest.param(
+            fourcv,
+            "constant_omega",
+            ["chi", "phi", "ttheta"],
+            id="fourcv-constant_omega-computed",
+        ),
+    ],
+)
+def test_four_circle_computed_stages_declared(factory, mode_name, expected_computed):
+    """computed field lists the correct stage names for each mode."""
+    g = factory()
+    cs = g.modes[mode_name]
+    assert cs.computed == expected_computed
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        pytest.param(fourcv, id="fourcv"),
+        pytest.param(fourch, id="fourch"),
+    ],
+)
+def test_four_circle_free_dof(factory):
+    """Four-circle geometries have free_dof_after_bragg == 1."""
+    g = factory()
+    assert g.free_dof_after_bragg == 1
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        pytest.param(fourcv, id="fourcv"),
+        pytest.param(fourch, id="fourch"),
+    ],
+)
+def test_four_circle_modes_round_trip_serialisation(factory):
+    """Full to_dict / from_dict round-trip preserves all 6 modes."""
+    import json
+
+    g = factory()
+    d = g.to_dict()
+    assert json.dumps(d)  # must be JSON-serialisable
+    assert set(d["modes"].keys()) == {
+        "bisecting",
+        "fixed_chi",
+        "fixed_phi",
+        "constant_omega",
+        "psi_constant",
+        "double_diffraction",
+    }
+    g2 = AdHocDiffractometer.from_dict(d)
+    assert set(g2.modes.keys()) == set(g.modes.keys())
+    assert g2.mode_name == "bisecting"
