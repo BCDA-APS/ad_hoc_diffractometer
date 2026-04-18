@@ -679,12 +679,33 @@ class ReferenceConstraint:
             f"ReferenceConstraint('{self._name}') is not yet implemented."
         )
 
+    def has_reference_vector(self, geometry: AdHocDiffractometer) -> bool:
+        """
+        Return True when the required reference vector is set on the geometry.
+
+        For ``"psi"`` and ``"naz"``: requires
+        :attr:`~geometry.AdHocDiffractometer.azimuthal_reference` to be set.
+
+        For ``"alpha_i"``, ``"beta_out"``, and ``"a_eq_b"``: requires
+        :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
+
+        This is a prerequisite check, separate from :meth:`is_implemented`.
+        A reference constraint can have its vector set but still lack a forward
+        solver — in that case ``has_reference_vector`` returns ``True`` but
+        ``is_implemented`` returns ``False``.
+        """
+        if self._name in {"psi", "naz"}:
+            return geometry.azimuthal_reference is not None
+        return geometry.surface_normal is not None
+
     def is_implemented(self, geometry: AdHocDiffractometer) -> bool:
         """
         Return False — reference constraint solvers are not yet implemented.
 
-        Will return True once the reference vector infrastructure (Issue J)
-        is in place and the relevant solver is registered.
+        Will return True once the forward solvers for reference-constraint
+        modes are registered (Issue J).  The reference vector infrastructure
+        is available (``has_reference_vector``), but the solver that uses
+        it to compute motor angles has not been written yet.
         """
         return False
 

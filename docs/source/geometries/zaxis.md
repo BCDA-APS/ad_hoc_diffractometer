@@ -45,7 +45,7 @@ and mode configuration.
 
 Each mode is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` of 1 constraint
 (N − 3 = 1 for N = 4 DOF).
-All modes require the reference vector n̂ (surface normal) via Issue J / #157.
+All modes require ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.  The forward solver is not yet implemented.
 See {doc}`../howto/constraints` for the extras dict pattern.
 
 ### `zaxis` *(stub)*

@@ -90,7 +90,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 ### `fixed_alpha_zaxis` *(stub)*
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2 + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
-Z-axis mode with fixed incidence angle. Requires n̂ — not yet implemented (Issue J).
+Z-axis mode with fixed incidence angle. Set ``g.surface_normal = (h, k, l)`` to supply n̂; the forward solver is not yet implemented.
 
 | | |
 |---|---|
@@ -102,7 +102,7 @@ Z-axis mode with fixed incidence angle. Requires n̂ — not yet implemented (Is
 ### `fixed_beta_zaxis` *(stub)*
 
 {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
-Z-axis mode with fixed exit angle. Requires n̂ — not yet implemented (Issue J).
+Z-axis mode with fixed exit angle. Set ``g.surface_normal = (h, k, l)`` to supply n̂; the forward solver is not yet implemented.
 
 | | |
 |---|---|
@@ -114,7 +114,7 @@ Z-axis mode with fixed exit angle. Requires n̂ — not yet implemented (Issue J
 ### `alpha_eq_beta_zaxis` *(stub)*
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2 + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
-Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Requires n̂ — not yet implemented (Issue J).
+Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Set ``g.surface_normal = (h, k, l)`` to supply n̂; the forward solver is not yet implemented.
 
 | | |
 |---|---|
