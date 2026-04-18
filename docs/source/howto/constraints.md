@@ -42,19 +42,29 @@ BisectConstraint("omega", "ttheta")    # omega = ttheta / 2
 BisectConstraint("eta", "delta")       # eta = delta / 2  (psic)
 ```
 
-**Detector constraint** — fixes one detector stage at a declared value:
+**Detector constraint** — fixes one detector stage at a declared value, or
+constrains the ``"qaz"`` pseudo-angle from You (1999) eq. 18
+(``tan(qaz) = tan(delta) / sin(nu)``):
 
 ```python
 from ad_hoc_diffractometer import DetectorConstraint
 
 DetectorConstraint("nu", 0.0)     # nu fixed at 0°
 DetectorConstraint("gamma", 0.0)  # gamma fixed at 0°
+DetectorConstraint("qaz", 90.0)   # Q confined to the vertical plane
 ```
+
+``qaz = 90°`` constrains scattering to the vertical plane;
+``qaz = 0°`` to the horizontal plane.
+This is implemented for all geometries with two or more detector stages
+(psic, kappa6c) and used by the ``lifting_detector_*`` mode family.
 
 **Reference constraint** — expresses a condition between Q and a reference
 vector n̂ (surface normal, polarisation axis, etc.).
-All reference constraints are stubs pending the reference-vector
-infrastructure (see {doc}`surface`):
+The incidence/exit-angle constraints (``alpha_i``, ``beta_out``,
+``a_eq_b``) are implemented when ``surface_normal`` is set;
+``psi`` and ``naz`` are not yet implemented as forward constraints.
+See {doc}`surface`:
 
 ```python
 from ad_hoc_diffractometer import ReferenceConstraint
@@ -69,6 +79,30 @@ at most one {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`,
 remainder must be {class}`~ad_hoc_diffractometer.mode.SampleConstraint`
 or {class}`~ad_hoc_diffractometer.mode.BisectConstraint`.
 Total must equal N − 3.
+
+## Design principles
+
+The constraint system is built on three key decisions from the #122 planning
+discussion:
+
+1. **Constraints are geometry-agnostic.**  A {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+   is defined without reference to a specific geometry; validation against
+   actual DOF count and stage names happens at solve time
+   (`is_fully_constrained(g)` and `is_implemented(g)`).
+
+2. **At most one detector constraint and at most one reference constraint.**
+   Fixing more than one detector angle over-constrains the scattered beam
+   direction.  More than one reference constraint would also over-constrain
+   the problem.  Any number of sample constraints (fixed-angle or bisect) are
+   allowed, subject to the total equalling N − 3.
+
+3. **The bisect condition is relational, not heuristic.**
+   {class}`~ad_hoc_diffractometer.mode.BisectConstraint` names both stages
+   explicitly (``sample_stage = detector_stage / 2``).  No geometric
+   heuristics are used to infer which stage is "co-axial" with which.
+
+These principles make it possible to define valid modes programmatically
+at run time without any knowledge of geometry internals.
 
 ## Use a factory-defined mode
 

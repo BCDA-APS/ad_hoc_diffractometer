@@ -27,18 +27,18 @@ g.sample.lattice = ahd.Lattice(a=5.431)  # cubic silicon
 
 ```python
 # Add the primary reflection at its measured motor angles
-g.reflections.add("or1", hkl=(0, 0, 4),
-                  angles={"ttheta": 69.13, "omega": 34.56,
-                          "chi": 90.0, "phi": 0.0})
+g.sample.reflections.add("or1", hkl=(0, 0, 4),
+                          angles={"ttheta": 69.13, "omega": 34.56,
+                                  "chi": 90.0, "phi": 0.0})
 
 # Add a second reflection 90° away in phi
-g.reflections.add("or2", hkl=(2, 2, 0),
-                  angles={"ttheta": 47.30, "omega": 23.65,
-                          "chi": 35.26, "phi": 90.0})
+g.sample.reflections.add("or2", hkl=(2, 2, 0),
+                          angles={"ttheta": 47.30, "omega": 23.65,
+                                  "chi": 35.26, "phi": 90.0})
 
-# Designate which reflections to use
-g.reflections.setor0("or1")
-g.reflections.setor0("or2")
+# Designate which reflections to use for the UB calculation
+g.sample.reflections.setor0("or1")
+g.sample.reflections.setor1("or2")
 ```
 
 ## Compute UB from two reflections (Busing & Levy 1967)
@@ -70,13 +70,15 @@ For unknown lattices, UB can be determined directly from three reflections
 without prior knowledge of the unit cell:
 
 ```python
-g.reflections.add("or3", hkl=(1, 1, 3),
-                  angles={"ttheta": 56.12, "omega": 28.06,
-                          "chi": 58.0, "phi": 45.0})
+g.sample.reflections.add("or3", hkl=(1, 1, 3),
+                          angles={"ttheta": 56.12, "omega": 28.06,
+                                  "chi": 58.0, "phi": 45.0})
 
 UB = ahd.ub_from_three_reflections_bl1967(
-    g.sample, g.reflections["or1"],
-    g.reflections["or2"], g.reflections["or3"]
+    g.sample,
+    g.sample.reflections["or1"],
+    g.sample.reflections["or2"],
+    g.sample.reflections["or3"],
 )
 ```
 
@@ -97,7 +99,7 @@ Check that `UB @ h` points in the same direction as the observed Q:
 import numpy as np
 
 def direction_check(geometry, name):
-    r = geometry.reflections[name]
+    r = geometry.sample.reflections[name]
     q_phi = ahd.angles_to_phi_vector(geometry, **r.angles)
     ub_h  = geometry.sample.UB @ r.hkl
     cos_theta = np.dot(q_phi, ub_h) / (np.linalg.norm(q_phi) * np.linalg.norm(ub_h))
