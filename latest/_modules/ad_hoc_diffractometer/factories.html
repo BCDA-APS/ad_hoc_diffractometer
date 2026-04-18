@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=c1e363f7"></script>
+    <script src="../../_static/documentation_options.js?v=8f00ea1c"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -579,9 +579,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">YHAT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZHAT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdHocDiffractometer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">REQUIRED</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectConstraint</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectorConstraint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleConstraint</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.stage</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stage</span>
 
@@ -1001,7 +1003,6 @@
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="c1"># fourcv: 4 DOF, N-3=1 constraint needed per mode.</span>
-    <span class="c1"># fourcv: 4 DOF, N-3=1 constraint needed per mode.</span>
     <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;bisecting&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span><span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">)],</span>
@@ -1014,6 +1015,20 @@
         <span class="s2">&quot;fixed_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;constant_omega&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;psi_constant&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;double_diffraction&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">)],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">},</span>
         <span class="p">),</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
@@ -1067,7 +1082,6 @@
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="c1"># fourch: 4 DOF, N-3=1 constraint needed per mode.</span>
-    <span class="c1"># fourch: 4 DOF, N-3=1 constraint needed per mode.</span>
     <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;bisecting&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span><span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">)],</span>
@@ -1080,6 +1094,20 @@
         <span class="s2">&quot;fixed_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;constant_omega&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;psi_constant&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;double_diffraction&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">)],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">},</span>
         <span class="p">),</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
