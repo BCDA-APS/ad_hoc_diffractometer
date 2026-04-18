@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=72410c4d"></script>
+    <script src="../../_static/documentation_options.js?v=3cd23745"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 03:43 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 04:13 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -648,6 +648,10 @@
     <span class="c1"># Surface diffraction mode (ReferenceConstraint with surface_normal).</span>
     <span class="k">if</span> <span class="n">_is_surface_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_solve_surface</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+    <span class="c1"># qaz detector constraint mode (lifting_detector_* family).</span>
+    <span class="k">if</span> <span class="n">_is_qaz_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_solve_qaz_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
     <span class="c1"># Fixed-angle only (no bisect).</span>
     <span class="k">return</span> <span class="n">_solve_fixed_sample</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
@@ -1288,6 +1292,246 @@
     <span class="k">return</span> <span class="n">ai</span> <span class="o">-</span> <span class="n">bo</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_qaz_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return True when the mode contains a qaz DetectorConstraint.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectorConstraint</span>
+
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">DetectorConstraint</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">is_qaz</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_qaz_mode</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ttheta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Forward solver for modes with a ``DetectorConstraint(&quot;qaz&quot;, value)``.</span>
+
+<span class="sd">    These are the ``lifting_detector_*`` family of modes (You 1999).  All</span>
+<span class="sd">    sample stages are frozen by explicit :class:`~mode.SampleConstraint`</span>
+<span class="sd">    entries; the solver finds the two detector stage angles ``(nu, delta)``</span>
+<span class="sd">    that simultaneously satisfy the Bragg condition and the qaz constraint.</span>
+
+<span class="sd">    Two equations, two unknowns ``(nu, delta)``:</span>
+
+<span class="sd">    1. Bragg: ``cos(nu) * cos(delta) = cos(ttheta)``</span>
+<span class="sd">    2. qaz:   ``atan2(tan(delta), sin(nu)) = qaz_target``</span>
+
+<span class="sd">    The 2D Newton-Raphson solver is seeded from a coarse grid over</span>
+<span class="sd">    ``(nu, delta)`` to capture both the ``nu &gt; 0`` and ``nu &lt; 0`` branches.</span>
+
+<span class="sd">    After finding the detector angles, any remaining free sample stages</span>
+<span class="sd">    (those not frozen by the fixed sample constraints) are solved</span>
+<span class="sd">    numerically via :func:`_solve_one_free_angle` or :func:`_solve_two_angles`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">    Q_phi : numpy.ndarray, shape (3,)</span>
+<span class="sd">    ttheta_deg : float</span>
+<span class="sd">    mode : ConstraintSet</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectorConstraint</span>
+
+    <span class="c1"># Identify the qaz constraint</span>
+    <span class="n">qaz_c</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+        <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">DetectorConstraint</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">is_qaz</span>
+    <span class="p">)</span>
+    <span class="n">target_qaz_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">qaz_c</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="c1"># Identify detector stage names (outer = nu-like, inner = delta-like)</span>
+    <span class="n">det_stages</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span>
+    <span class="n">nu_stage</span> <span class="o">=</span> <span class="n">det_stages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">delta_stage</span> <span class="o">=</span> <span class="n">det_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Build baseline angles from current stage positions</span>
+    <span class="n">angles_base</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Apply fixed sample constraints</span>
+    <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">fixed_sample_constraints</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001  # pragma: no branch</span>
+            <span class="n">angles_base</span><span class="p">[</span><span class="n">sc</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="c1"># Bragg condition: cos(nu)*cos(delta) = cos(ttheta)</span>
+    <span class="n">ttheta_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">ttheta_deg</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_bragg_residual</span><span class="p">(</span><span class="n">nu_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">delta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;cos(nu)*cos(delta) - cos(ttheta)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">nu_deg</span><span class="p">))</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span>
+            <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">delta_deg</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ttheta_rad</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_qaz_res</span><span class="p">(</span><span class="n">nu_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">delta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;atan2(tan(delta), sin(nu)) - qaz_target  (in degrees)&quot;&quot;&quot;</span>
+        <span class="n">nu_r</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">nu_deg</span><span class="p">)</span>
+        <span class="n">delta_r</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">delta_deg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">delta_r</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">nu_r</span><span class="p">)))</span> <span class="o">-</span> <span class="n">target_qaz_deg</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_residual_2d</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">nu_d</span><span class="p">,</span> <span class="n">delta_d</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_bragg_residual</span><span class="p">(</span><span class="n">nu_d</span><span class="p">,</span> <span class="n">delta_d</span><span class="p">),</span> <span class="n">_qaz_res</span><span class="p">(</span><span class="n">nu_d</span><span class="p">,</span> <span class="n">delta_d</span><span class="p">)])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_jacobian_fd</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">r0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">xp</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">xp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+            <span class="n">J</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">_residual_2d</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span> <span class="o">-</span> <span class="n">r0</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>
+        <span class="k">return</span> <span class="n">J</span>
+
+    <span class="c1"># Build seed grid: scan over nu values and derive delta analytically</span>
+    <span class="c1"># from the Bragg condition, then let qaz iteration converge.</span>
+    <span class="c1"># Seed nu over ±ttheta range; delta seeded from analytic Bragg inversion.</span>
+    <span class="n">seed_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cos_ttheta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ttheta_rad</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">nu_seed</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="mi">13</span><span class="p">):</span>
+        <span class="n">cos_nu</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">nu_seed</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cos_nu</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">continue</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">cos_delta</span> <span class="o">=</span> <span class="n">cos_ttheta</span> <span class="o">/</span> <span class="n">cos_nu</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cos_delta</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">continue</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">delta_seed_pos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">cos_delta</span><span class="p">))))</span>
+        <span class="n">delta_seed_neg</span> <span class="o">=</span> <span class="o">-</span><span class="n">delta_seed_pos</span>
+        <span class="n">seed_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nu_seed</span><span class="p">,</span> <span class="n">delta_seed_pos</span><span class="p">))</span>
+        <span class="n">seed_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nu_seed</span><span class="p">,</span> <span class="n">delta_seed_neg</span><span class="p">))</span>
+
+    <span class="n">found_solutions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">seen_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">nu_start</span><span class="p">,</span> <span class="n">delta_start</span> <span class="ow">in</span> <span class="n">seed_pairs</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">nu_start</span><span class="p">,</span> <span class="n">delta_start</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">200</span><span class="p">):</span>  <span class="c1"># pragma: no branch</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">_residual_2d</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">_jacobian_fd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+                <span class="k">break</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="mf">30.0</span><span class="p">:</span>
+                <span class="n">dx</span> <span class="o">=</span> <span class="n">dx</span> <span class="o">*</span> <span class="p">(</span><span class="mf">30.0</span> <span class="o">/</span> <span class="n">step</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">dx</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">_residual_2d</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">continue</span>  <span class="c1"># pragma: no cover</span>
+
+        <span class="n">nu_sol</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">delta_sol</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># De-duplicate detector angle pairs</span>
+        <span class="n">duplicate</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="n">nu_sol</span> <span class="o">-</span> <span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">delta_sol</span> <span class="o">-</span> <span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-4</span>
+            <span class="k">for</span> <span class="n">ks</span> <span class="ow">in</span> <span class="n">seen_keys</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">duplicate</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">seen_keys</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nu_sol</span><span class="p">,</span> <span class="n">delta_sol</span><span class="p">))</span>
+
+        <span class="c1"># Build the full angle dict for this detector solution</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">angles_base</span><span class="p">)</span>
+        <span class="n">angles</span><span class="p">[</span><span class="n">nu_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">nu_sol</span>
+        <span class="n">angles</span><span class="p">[</span><span class="n">delta_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta_sol</span>
+
+        <span class="c1"># Check detector stage limits</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nu_stage</span><span class="o">.</span><span class="n">in_limits</span><span class="p">(</span><span class="n">nu_sol</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">delta_stage</span><span class="o">.</span><span class="n">in_limits</span><span class="p">(</span><span class="n">delta_sol</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Identify free sample stages (not frozen by any constraint)</span>
+        <span class="n">constrained_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">constrained_stages</span><span class="p">(</span><span class="n">geometry</span><span class="p">))</span>
+        <span class="n">constrained_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nu_stage</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">constrained_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">delta_stage</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">free_sample</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constrained_names</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_sample</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="c1"># All sample stages fixed — validate Q direction</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.orientation</span><span class="w"> </span><span class="kn">import</span> <span class="n">angles_to_phi_vector</span> <span class="k">as</span> <span class="n">_a2phi</span>  <span class="c1"># pragma: no cover</span>
+
+            <span class="n">Q_computed</span> <span class="o">=</span> <span class="n">_a2phi</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">angles</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">Q_computed</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+                <span class="k">continue</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">_apply_cut_points</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">if</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+                <span class="n">found_solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_sample</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">sub</span> <span class="o">=</span> <span class="n">_solve_one_free_angle</span><span class="p">(</span>  <span class="c1"># pragma: no cover</span>
+                <span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">free_sample</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">mode</span>
+            <span class="p">)</span>
+            <span class="n">found_solutions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Two+ free sample stages: solve for chi and phi</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.orientation</span><span class="w"> </span><span class="kn">import</span> <span class="n">angles_to_phi_vector</span> <span class="k">as</span> <span class="n">_a2phi</span>
+
+            <span class="n">chi_stage</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">phi_stage</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">Q_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Q_phi</span><span class="p">))</span>
+            <span class="n">q_hat</span> <span class="o">=</span> <span class="n">Q_phi</span> <span class="o">/</span> <span class="n">Q_norm</span>
+            <span class="n">chi_ax</span> <span class="o">=</span> <span class="n">chi_stage</span><span class="o">.</span><span class="n">axis</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">chi_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
+            <span class="n">q_along_chi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q_hat</span><span class="p">,</span> <span class="n">chi_ax</span><span class="p">))</span>
+            <span class="n">q_along_chi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">q_along_chi</span><span class="p">))</span>
+            <span class="n">chi_abs_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">q_along_chi</span><span class="p">)))</span>
+            <span class="n">q_in_plane</span> <span class="o">=</span> <span class="n">q_hat</span> <span class="o">-</span> <span class="n">q_along_chi</span> <span class="o">*</span> <span class="n">chi_ax</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_in_plane</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-8</span><span class="p">:</span>
+                <span class="n">phi_seed_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span>
+                    <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">q_in_plane</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">q_in_plane</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+                <span class="n">phi_seed_deg</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">seed_pairs_inner</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">chi_s</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">chi_s</span> <span class="ow">in</span> <span class="p">[</span><span class="n">chi_abs_deg</span><span class="p">,</span> <span class="o">-</span><span class="n">chi_abs_deg</span><span class="p">,</span> <span class="mf">180.0</span> <span class="o">-</span> <span class="n">chi_abs_deg</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">phi_s</span> <span class="ow">in</span> <span class="p">[</span><span class="n">phi_seed_deg</span><span class="p">,</span> <span class="n">phi_seed_deg</span> <span class="o">+</span> <span class="mf">180.0</span><span class="p">]</span>
+            <span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">ps</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">cs</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">90.0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">ps</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">chi_start_i</span><span class="p">,</span> <span class="n">phi_start_i</span> <span class="ow">in</span> <span class="n">seed_pairs_inner</span><span class="p">:</span>
+                <span class="n">sol_angles</span> <span class="o">=</span> <span class="n">_solve_two_angles</span><span class="p">(</span>
+                    <span class="n">geometry</span><span class="o">=</span><span class="n">geometry</span><span class="p">,</span>
+                    <span class="n">fixed_angles</span><span class="o">=</span><span class="n">angles</span><span class="p">,</span>
+                    <span class="n">free_stage_1</span><span class="o">=</span><span class="n">chi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">free_stage_2</span><span class="o">=</span><span class="n">phi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">start_1</span><span class="o">=</span><span class="n">chi_start_i</span><span class="p">,</span>
+                    <span class="n">start_2</span><span class="o">=</span><span class="n">phi_start_i</span><span class="p">,</span>
+                    <span class="n">Q_phi_target</span><span class="o">=</span><span class="n">Q_phi</span><span class="p">,</span>
+                    <span class="n">a2phi_fn</span><span class="o">=</span><span class="n">_a2phi</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">sol_angles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">sol</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+                <span class="n">sol</span><span class="p">[</span><span class="n">chi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">sol</span><span class="p">[</span><span class="n">phi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">_apply_cut_points</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+                <span class="n">dup</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+                    <span class="nb">all</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-4</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sol</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">ex</span> <span class="ow">in</span> <span class="n">found_solutions</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">dup</span> <span class="ow">and</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
+                    <span class="n">found_solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">found_solutions</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_solve_fixed_sample</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -1550,7 +1794,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 03:43 CDT.
+  Last updated on 2026-04-18 04:13 CDT.
   <br/>
 </p></div>
       

@@ -123,25 +123,27 @@ Bisecting solver runs; simultaneous diffraction logic not yet implemented.
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 | **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
 
-### `lifting_detector_mu` *(stub)*
+### `lifting_detector_mu`
 
-Out-of-plane mode: mu and eta frozen, nu and delta free.
-Requires the qaz pseudo-angle solver — not yet implemented.
+Out-of-plane mode: mu and eta frozen, nu and delta solved via the qaz
+constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
+``qaz = 90°`` constrains the scattering to the vertical plane.
 
 | | |
 |---|---|
 | **Computed** | mu, nu, delta |
-| **Constant during** `forward()` | mu, eta |
+| **Constant during** `forward()` | mu = 0, eta = 0 |
 
-### `lifting_detector_phi` *(stub)*
+### `lifting_detector_phi`
 
-Out-of-plane mode: phi and mu frozen, nu and delta free.
-Requires the qaz pseudo-angle solver — not yet implemented.
+Out-of-plane mode: phi and mu frozen, nu and delta solved via the qaz
+constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
+``qaz = 90°`` constrains the scattering to the vertical plane.
 
 | | |
 |---|---|
 | **Computed** | phi, nu, delta |
-| **Constant during** `forward()` | phi, mu |
+| **Constant during** `forward()` | phi = 0, mu = 0 |
 
 ### `psi_constant_vertical` *(stub)*
 

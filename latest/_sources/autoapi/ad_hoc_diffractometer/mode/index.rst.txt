@@ -576,7 +576,10 @@ Module Contents
 
       Fixed detector-stage constraints are implemented when the stage
       exists in the geometry.  The ``"qaz"`` pseudo-angle constraint is
-      not yet implemented (requires the Q-azimuth solver).
+      implemented when the geometry has at least two detector stages
+      (an outer ``nu``-like stage and an inner ``delta``-like stage),
+      which is the case for all 6-circle geometries that support
+      ``lifting_detector_*`` modes.
 
 
 
@@ -721,10 +724,6 @@ Module Contents
    and lateral axes:  ``tan(qaz) = tan(delta) / sin(nu)``.
    Setting ``qaz = 0`` constrains scattering to the horizontal plane;
    ``qaz = 90°`` constrains it to the vertical plane.
-
-   .. note::
-      The qaz solver is not yet implemented.
-      :meth:`DetectorConstraint.is_implemented` returns ``False`` for this name.
 
 .. py:data:: REFERENCE_NAMES
    :type:  frozenset[str]

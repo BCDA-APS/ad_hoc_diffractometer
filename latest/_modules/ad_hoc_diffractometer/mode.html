@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=72410c4d"></script>
+    <script src="../../_static/documentation_options.js?v=3cd23745"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 03:43 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 04:13 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -627,10 +627,6 @@
 <span class="sd">and lateral axes:  ``tan(qaz) = tan(delta) / sin(nu)``.</span>
 <span class="sd">Setting ``qaz = 0`` constrains scattering to the horizontal plane;</span>
 <span class="sd">``qaz = 90°`` constrains it to the vertical plane.</span>
-
-<span class="sd">.. note::</span>
-<span class="sd">   The qaz solver is not yet implemented.</span>
-<span class="sd">   :meth:`DetectorConstraint.is_implemented` returns ``False`` for this name.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1"># Sentinel objects for extras dict values.</span>
@@ -1031,10 +1027,13 @@
 
 <span class="sd">        Fixed detector-stage constraints are implemented when the stage</span>
 <span class="sd">        exists in the geometry.  The ``&quot;qaz&quot;`` pseudo-angle constraint is</span>
-<span class="sd">        not yet implemented (requires the Q-azimuth solver).</span>
+<span class="sd">        implemented when the geometry has at least two detector stages</span>
+<span class="sd">        (an outer ``nu``-like stage and an inner ``delta``-like stage),</span>
+<span class="sd">        which is the case for all 6-circle geometries that support</span>
+<span class="sd">        ``lifting_detector_*`` modes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># qaz solver not yet implemented</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span>
         <span class="n">det_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">in</span> <span class="n">det_names</span></div>
 
@@ -1778,15 +1777,69 @@
     <span class="n">target_qaz_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute the residual for a qaz detector constraint.</span>
+<span class="sd">    Compute the residual for a qaz detector constraint (You 1999, eq. 18).</span>
 
 <span class="sd">    ``qaz`` is the azimuthal angle of Q in the plane spanned by the</span>
-<span class="sd">    vertical and lateral axes (You 1999, eq. 18):</span>
-<span class="sd">    ``tan(qaz) = tan(delta) / sin(nu)``</span>
+<span class="sd">    vertical and lateral axes::</span>
 
-<span class="sd">    Not yet implemented — raises ``NotImplementedError``.</span>
+<span class="sd">        tan(qaz) = tan(delta) / sin(nu)</span>
+
+<span class="sd">    where ``nu`` is the outer (vertical-axis) detector stage angle and</span>
+<span class="sd">    ``delta`` is the inner (lateral-axis) detector stage angle.  The</span>
+<span class="sd">    two detector stages are identified from ``geometry.detector_stages``</span>
+<span class="sd">    by position: the outermost stage (index 0) plays the role of ``nu``</span>
+<span class="sd">    and the innermost stage (index -1) plays the role of ``delta``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    angles : dict[str, float]</span>
+<span class="sd">        Current motor angles in degrees.  Must contain entries for both</span>
+<span class="sd">        detector stage names.</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        The diffractometer.  ``geometry.detector_stages`` must contain</span>
+<span class="sd">        exactly two stages.</span>
+<span class="sd">    target_qaz_deg : float</span>
+<span class="sd">        Target qaz angle in degrees.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Residual in degrees: ``qaz_computed - target_qaz_deg``.</span>
+<span class="sd">        Zero means the constraint is satisfied.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the geometry has fewer than two detector stages.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;qaz detector constraint solver is not yet implemented.&quot;</span><span class="p">)</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+    <span class="n">det_stages</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">det_stages</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;_qaz_residual requires at least 2 detector stages; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">det_stages</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="c1"># Outer detector stage (nu-like): det_stages[0]</span>
+    <span class="c1"># Inner detector stage (delta-like): det_stages[-1]</span>
+    <span class="n">nu_name</span> <span class="o">=</span> <span class="n">det_stages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">delta_name</span> <span class="o">=</span> <span class="n">det_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="n">nu_deg</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="n">nu_name</span><span class="p">]</span>
+    <span class="n">delta_deg</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="n">delta_name</span><span class="p">]</span>
+
+    <span class="n">nu_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">nu_deg</span><span class="p">)</span>
+    <span class="n">delta_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">delta_deg</span><span class="p">)</span>
+
+    <span class="n">sin_nu</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">nu_rad</span><span class="p">)</span>
+    <span class="n">tan_delta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">delta_rad</span><span class="p">)</span>
+
+    <span class="c1"># You (1999) eq. 18: tan(qaz) = tan(delta) / sin(nu)</span>
+    <span class="c1"># atan2 gives the correct quadrant and handles sin(nu) = 0 edge cases.</span>
+    <span class="n">qaz_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">tan_delta</span><span class="p">,</span> <span class="n">sin_nu</span><span class="p">)</span>
+    <span class="n">qaz_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">qaz_rad</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">qaz_deg</span> <span class="o">-</span> <span class="n">target_qaz_deg</span>
 </pre></div>
 
                 </article>
@@ -1825,7 +1878,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 03:43 CDT.
+  Last updated on 2026-04-18 04:13 CDT.
   <br/>
 </p></div>
       

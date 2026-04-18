@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=72410c4d"></script>
+    <script src="../../../_static/documentation_options.js?v=3cd23745"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 03:43 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 04:13 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -1059,7 +1059,10 @@ For <code class="docutils literal notranslate"><span class="pre">&quot;qaz&quot;
 <dd><p>Return True when this constraint has a solver implementation.</p>
 <p>Fixed detector-stage constraints are implemented when the stage
 exists in the geometry.  The <code class="docutils literal notranslate"><span class="pre">&quot;qaz&quot;</span></code> pseudo-angle constraint is
-not yet implemented (requires the Q-azimuth solver).</p>
+implemented when the geometry has at least two detector stages
+(an outer <code class="docutils literal notranslate"><span class="pre">nu</span></code>-like stage and an inner <code class="docutils literal notranslate"><span class="pre">delta</span></code>-like stage),
+which is the case for all 6-circle geometries that support
+<code class="docutils literal notranslate"><span class="pre">lifting_detector_*</span></code> modes.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1211,11 +1214,6 @@ constrains the azimuthal angle of Q in the plane spanned by the vertical
 and lateral axes:  <code class="docutils literal notranslate"><span class="pre">tan(qaz)</span> <span class="pre">=</span> <span class="pre">tan(delta)</span> <span class="pre">/</span> <span class="pre">sin(nu)</span></code>.
 Setting <code class="docutils literal notranslate"><span class="pre">qaz</span> <span class="pre">=</span> <span class="pre">0</span></code> constrains scattering to the horizontal plane;
 <code class="docutils literal notranslate"><span class="pre">qaz</span> <span class="pre">=</span> <span class="pre">90°</span></code> constrains it to the vertical plane.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The qaz solver is not yet implemented.
-<a class="reference internal" href="#ad_hoc_diffractometer.mode.DetectorConstraint.is_implemented" title="ad_hoc_diffractometer.mode.DetectorConstraint.is_implemented"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DetectorConstraint.is_implemented()</span></code></a> returns <code class="docutils literal notranslate"><span class="pre">False</span></code> for this name.</p>
-</div>
 </dd></dl>
 
 <dl class="py data">
@@ -1670,7 +1668,7 @@ converts the virtual angle constraint to real kappa motor angles.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 03:43 CDT.
+  Last updated on 2026-04-18 04:13 CDT.
   <br/>
 </p></div>
       
