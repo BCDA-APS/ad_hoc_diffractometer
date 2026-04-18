@@ -87,6 +87,10 @@ from .radiation import neutron_wavelength_to_energy
 from .radiation import wavelength_to_energy
 from .radiation import wavelength_to_wavenumber
 from .radiation import wavenumber_to_wavelength
+from .reference import exit_angle
+from .reference import incidence_angle
+from .reference import naz_angle
+from .reference import psi_angle
 from .refinement import refine_lattice_bl1967
 from .refinement import refine_lattice_simplex
 from .reflection import Reflection
@@ -167,6 +171,11 @@ __all__ = [
     # kappa conversion
     "kappa_to_eulerian",
     "eulerian_to_kappa",
+    # reference pseudo-angles
+    "incidence_angle",
+    "exit_angle",
+    "psi_angle",
+    "naz_angle",
     # radiation — constants, X-ray and neutron conversions
     "HC_KEV_ANGSTROM",
     "HC_KEV_ANGSTROM_UNCERTAINTY",

@@ -139,7 +139,7 @@ Out-of-plane mode — requires the qaz pseudo-angle solver (not yet implemented)
 ### `psi_constant_vertical` *(stub)*
 
 Vertical bisecting with azimuthal angle ψ of n̂ about Q fixed.
-Requires reference vector infrastructure (Issue J / #157).
+Set ``g.azimuthal_reference = (h, k, l)`` and ``g.surface_normal = (h, k, l)``; the forward solver is not yet implemented.  See {doc}`../howto/surface`.
 
 | | |
 |---|---|
@@ -152,7 +152,7 @@ Requires reference vector infrastructure (Issue J / #157).
 
 Horizontal bisecting with azimuthal angle ψ of n̂ about Q fixed.
 Symmetric with `psi_constant_vertical` in the horizontal plane.
-Requires reference vector infrastructure (Issue J / #157).
+Set ``g.azimuthal_reference = (h, k, l)`` and ``g.surface_normal = (h, k, l)``; the forward solver is not yet implemented.  See {doc}`../howto/surface`.
 
 | | |
 |---|---|

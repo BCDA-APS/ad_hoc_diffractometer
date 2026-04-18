@@ -33,9 +33,9 @@ parameter).  The positive branch (kappa ≥ 0) is the default; the negative
 branch gives kappa ≤ 0.  The caller should choose the branch that keeps all
 angles within the hardware limits.
 
-Singularity: when |chi| approaches ±2·alpha_0, |kappa| approaches 180° and
+Singularity: when ``|chi|`` approaches ±2·alpha_0, ``|kappa|`` approaches 180° and
 the offset formula becomes numerically ill-conditioned.  A :class:`ValueError`
-is raised when |chi| ≥ 2·alpha_0 − epsilon.
+is raised when ``|chi|`` ≥ 2·alpha_0 − epsilon.
 
 References
 ----------
@@ -79,7 +79,7 @@ def kappa_to_eulerian(
     ------
     ValueError
         If the combination of kappa and alpha_deg places chi outside
-        the reachable range (|kappa/2| · sin(alpha_0) > 1).
+        the reachable range (``|kappa/2|`` · sin(alpha_0) > 1).
 
     Examples
     --------
@@ -153,7 +153,7 @@ def eulerian_to_kappa(
     Raises
     ------
     ValueError
-        If |chi| ≥ 2·alpha_deg (chi outside the reachable range).
+        If ``|chi|`` ≥ 2·alpha_deg (chi outside the reachable range).
     ValueError
         If branch is not +1 or -1.
 
