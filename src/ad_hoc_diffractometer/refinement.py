@@ -38,9 +38,9 @@ and ``refine_lattice_simplex``.
 
 References
 ----------
-Busing & Levy, Acta Cryst. 22, 457-464 (1967), §"Refinement of lattice
-and orientation parameters".
-Nelder & Mead, The Computer Journal 7(4), 308-313 (1965).
+* Busing & Levy, Acta Cryst. 22, 457-464 (1967),
+  §"Refinement of lattice and orientation parameters".
+* Nelder & Mead, The Computer Journal 7(4), 308-313 (1965).
 """
 
 from __future__ import annotations

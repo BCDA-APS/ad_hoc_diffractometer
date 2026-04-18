@@ -858,7 +858,8 @@ def test_psi_trajectory_beam_parallel_to_Q():
 def test_psi_trajectory_fewer_than_3_sample_stages():
     """psi_trajectory returns no-solution entries for a geometry with < 3 sample stages."""
     from ad_hoc_diffractometer import AdHocDiffractometer
-    from ad_hoc_diffractometer import BisectingMode
+    from ad_hoc_diffractometer import BisectConstraint
+    from ad_hoc_diffractometer import ConstraintSet
     from ad_hoc_diffractometer import Stage
     from ad_hoc_diffractometer.constants import YHAT
     from ad_hoc_diffractometer.constants import ZHAT
@@ -869,7 +870,7 @@ def test_psi_trajectory_fewer_than_3_sample_stages():
         Stage("phi", -ZHAT, parent="omega", role="sample"),
         Stage("ttheta", -ZHAT, parent=None, role="detector"),
     ]
-    modes = {"bisecting": BisectingMode(sample_stage="omega", detector_stage="ttheta")}
+    modes = {"bisecting": ConstraintSet([BisectConstraint("omega", "ttheta")])}
     g = AdHocDiffractometer(
         name="minimal2",
         stages=stages,

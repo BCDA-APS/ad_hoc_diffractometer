@@ -65,9 +65,9 @@ Q decomposition::
 
 References
 ----------
-Lohmeier & Vlieg, J. Appl. Cryst. 26, 706-716 (1993) §4.2
-You, J. Appl. Cryst. 32, 614-623 (1999), eqs. 10-11
-Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987)
+* Lohmeier & Vlieg, J. Appl. Cryst. 26, 706-716 (1993) §4.2
+* You, J. Appl. Cryst. 32, 614-623 (1999), eqs. 10-11
+* Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987)
 """
 
 from __future__ import annotations

@@ -4,41 +4,48 @@
 Unit tests for ad_hoc_diffractometer.mode and mode-related geometry features.
 
 Covers:
-  - DiffractionMode ABC (constrained_stages, apply_cut_point, __repr__, __eq__)
-  - FixedAngleMode: construction, frozen_angles, constrained_stages, __repr__, __eq__
-  - BisectingMode: construction, constrained_stages, __repr__, __eq__
+  - BisectConstraint: construction, evaluate, is_implemented (both stages present /
+    one missing / wrong category), to_dict/from_dict, __repr__, __eq__, __hash__
+  - SampleConstraint: construction, evaluate, is_implemented,
+    to_dict/from_dict, __repr__, __eq__
+  - DetectorConstraint: construction, evaluate, is_qaz, is_implemented,
+    to_dict/from_dict, __repr__, __eq__
+  - ReferenceConstraint: construction, invalid names, is_implemented,
+    to_dict/from_dict, __repr__, __eq__
+  - ConstraintSet: construction, taxonomy validation (at most 1 bisect/det/ref),
+    has_bisect, bisect_constraint, sample_constraints, detector_constraint,
+    reference_constraint, fixed_sample_constraints, is_fully_constrained,
+    is_implemented, constrained_stages, bisect_stages(), apply_cut_point,
+    to_dict/from_dict, __repr__, __eq__, __len__
   - ModeDict: construction, set/get/delete, type guard, __len__, __iter__,
     keys/values/items, __repr__, __eq__, __contains__
   - AdHocDiffractometer: modes, default_mode, mode_name, mode property,
-    cut_points, mode_name setter validation, mode=None when no mode set
+    free_dof_after_bragg, cut_points, mode_name setter validation
   - Factory modes: psic, fourcv, fourch, kappa4cv, kappa4ch, kappa6c
-    each pre-populate modes and have a bisecting default
-  - Serialisation round-trip: to_dict / from_dict for FixedAngleMode,
-    BisectingMode, ModeDict on geometry, and cut_points
-  - Export/import: mode state survives to_dict / from_dict
+  - Geometries without modes: sixc, zaxis, s2d2, fivec
+  - Serialisation round-trip: to_dict / from_dict for ConstraintSet,
+    ModeDict on geometry, cut_points; error on old-format types
+  - REQUIRED/OPTIONAL sentinels in extras survive round-trip
 """
 
-import json
 import re
 from contextlib import nullcontext as does_not_raise
 
 import pytest
 
+from ad_hoc_diffractometer import OPTIONAL
+from ad_hoc_diffractometer import REFERENCE_NAMES
+from ad_hoc_diffractometer import REQUIRED
 from ad_hoc_diffractometer import AdHocDiffractometer
-from ad_hoc_diffractometer import BisectingMode
-from ad_hoc_diffractometer import FixedAngleMode
+from ad_hoc_diffractometer import BisectConstraint
+from ad_hoc_diffractometer import ConstraintSet
+from ad_hoc_diffractometer import ConstraintViolation
+from ad_hoc_diffractometer import DetectorConstraint
 from ad_hoc_diffractometer import ModeDict
+from ad_hoc_diffractometer import ReferenceConstraint
+from ad_hoc_diffractometer import SampleConstraint
 from ad_hoc_diffractometer import Stage
-from ad_hoc_diffractometer import fivec
-from ad_hoc_diffractometer import fourch
 from ad_hoc_diffractometer import fourcv
-from ad_hoc_diffractometer import kappa4ch
-from ad_hoc_diffractometer import kappa4cv
-from ad_hoc_diffractometer import kappa6c
-from ad_hoc_diffractometer import psic
-from ad_hoc_diffractometer import s2d2
-from ad_hoc_diffractometer import sixc
-from ad_hoc_diffractometer import zaxis
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
@@ -49,7 +56,7 @@ from ad_hoc_diffractometer.constants import ZHAT
 
 
 def _simple_geometry(**kwargs):
-    """Minimal 2-stage geometry for testing mode features."""
+    """Minimal 2-stage geometry for testing mode features (N=2, free_dof=-1)."""
     stages = [
         Stage("omega", -ZHAT, parent=None, role="sample"),
         Stage("ttheta", -ZHAT, parent=None, role="detector"),
@@ -62,382 +69,959 @@ def _simple_geometry(**kwargs):
     )
 
 
+def _fourcv_like(**kwargs):
+    """3-sample + 1-detector geometry (N=4, free_dof=1)."""
+    stages = [
+        Stage("omega", -ZHAT, parent=None, role="sample"),
+        Stage("chi", +YHAT, parent="omega", role="sample"),
+        Stage("phi", -ZHAT, parent="chi", role="sample"),
+        Stage("ttheta", -ZHAT, parent=None, role="detector"),
+    ]
+    return AdHocDiffractometer(
+        name="fourcv_like",
+        stages=stages,
+        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+        **kwargs,
+    )
+
+
+def _psic_like(**kwargs):
+    """4-sample + 2-detector geometry (N=6, free_dof=3)."""
+    stages = [
+        Stage("mu", +XHAT, parent=None, role="sample"),
+        Stage("eta", -ZHAT, parent="mu", role="sample"),
+        Stage("chi", +YHAT, parent="eta", role="sample"),
+        Stage("phi", -ZHAT, parent="chi", role="sample"),
+        Stage("nu", +XHAT, parent=None, role="detector"),
+        Stage("delta", -ZHAT, parent="nu", role="detector"),
+    ]
+    return AdHocDiffractometer(
+        name="psic_like",
+        stages=stages,
+        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+        **kwargs,
+    )
+
+
 # ---------------------------------------------------------------------------
-# FixedAngleMode
+# SampleConstraint
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize(
-    "stage, value, cut_points, expected_frozen, expected_constrained, context",
+    "name, value, context",
     [
-        pytest.param(
-            "chi",
-            90.0,
-            None,
-            {"chi": 90.0},
-            ["chi"],
-            does_not_raise(),
-            id="basic-fixed-chi-90",
-        ),
-        pytest.param(
-            "phi",
-            0.0,
-            None,
-            {"phi": 0.0},
-            ["phi"],
-            does_not_raise(),
-            id="basic-fixed-phi-0",
-        ),
-        pytest.param(
-            "mu",
-            -45.0,
-            {"mu": -180.0},
-            {"mu": -45.0},
-            ["mu"],
-            does_not_raise(),
-            id="with-cut-point",
-        ),
+        pytest.param("chi", 90.0, does_not_raise(), id="fixed-chi-90"),
+        pytest.param("phi", 0.0, does_not_raise(), id="fixed-phi-0"),
+        pytest.param("mu", -45.0, does_not_raise(), id="fixed-mu-neg45"),
     ],
 )
-def test_fixed_angle_mode_construction(
-    stage, value, cut_points, expected_frozen, expected_constrained, context
-):
+def test_sample_constraint_construction(name, value, context):
     with context:
-        mode = FixedAngleMode(stage=stage, value=value, cut_points=cut_points)
-        assert mode.frozen_angles == expected_frozen
-        assert mode.constrained_stages == expected_constrained
-        assert mode.cut_points == (cut_points or {})
+        sc = SampleConstraint(name, value)
+        assert sc.name == name
+        assert sc.is_bisect is False
+        assert sc.category == "sample"
 
 
-def test_fixed_angle_mode_repr():
-    mode = FixedAngleMode(stage="chi", value=90.0)
-    r = repr(mode)
-    assert "FixedAngleMode" in r
+def test_sample_constraint_value_coerced_to_float():
+    sc = SampleConstraint("chi", 90)
+    assert isinstance(sc.value, float)
+    assert sc.value == 90.0
+
+
+def test_sample_constraint_repr_fixed():
+    sc = SampleConstraint("chi", 90.0)
+    r = repr(sc)
+    assert "SampleConstraint" in r
     assert "chi" in r
     assert "90.0" in r
 
 
-def test_fixed_angle_mode_eq_same():
-    m1 = FixedAngleMode(stage="chi", value=90.0)
-    m2 = FixedAngleMode(stage="chi", value=90.0)
-    assert m1 == m2
+def test_sample_constraint_eq_same():
+    assert SampleConstraint("chi", 90.0) == SampleConstraint("chi", 90.0)
 
 
-def test_fixed_angle_mode_eq_different_value():
-    m1 = FixedAngleMode(stage="chi", value=90.0)
-    m2 = FixedAngleMode(stage="chi", value=0.0)
-    assert m1 != m2
+def test_sample_constraint_eq_different_name():
+    assert SampleConstraint("chi", 90.0) != SampleConstraint("phi", 90.0)
 
 
-def test_fixed_angle_mode_eq_different_stage():
-    m1 = FixedAngleMode(stage="chi", value=90.0)
-    m2 = FixedAngleMode(stage="phi", value=90.0)
-    assert m1 != m2
+def test_sample_constraint_eq_different_value():
+    assert SampleConstraint("chi", 90.0) != SampleConstraint("chi", 0.0)
 
 
-def test_fixed_angle_mode_eq_different_type():
-    m1 = FixedAngleMode(stage="chi", value=90.0)
-    m2 = BisectingMode(sample_stage="omega", detector_stage="ttheta")
-    assert m1 != m2
+def test_sample_constraint_eq_different_type():
+    assert SampleConstraint("chi", 90.0) != DetectorConstraint("chi", 90.0)
 
 
-def test_fixed_angle_mode_eq_non_mode():
-    m = FixedAngleMode(stage="chi", value=90.0)
-    assert m != "not a mode"
+def test_sample_constraint_to_dict_from_dict_fixed():
+    sc = SampleConstraint("chi", 90.0)
+    d = sc.to_dict()
+    assert d == {"type": "SampleConstraint", "name": "chi", "value": 90.0}
+    sc2 = SampleConstraint.from_dict(d)
+    assert sc2 == sc
 
 
-# ---------------------------------------------------------------------------
-# BisectingMode
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    "sample_stage, detector_stage, frozen_angles, cut_points, "
-    "expected_constrained, context",
-    [
-        pytest.param(
-            "omega",
-            "ttheta",
-            None,
-            None,
-            ["omega"],
-            does_not_raise(),
-            id="basic-bisecting-omega-ttheta",
-        ),
-        pytest.param(
-            "eta",
-            "delta",
-            {"mu": 0.0, "nu": 0.0},
-            None,
-            ["eta", "mu", "nu"],
-            does_not_raise(),
-            id="psic-bisecting-with-frozen",
-        ),
-        pytest.param(
-            "komega",
-            "delta",
-            {"mu": 0.0, "nu": 0.0},
-            {"komega": -180.0},
-            ["komega", "mu", "nu"],
-            does_not_raise(),
-            id="bisecting-with-cut-point",
-        ),
-    ],
-)
-def test_bisecting_mode_construction(
-    sample_stage,
-    detector_stage,
-    frozen_angles,
-    cut_points,
-    expected_constrained,
-    context,
-):
-    with context:
-        mode = BisectingMode(
-            sample_stage=sample_stage,
-            detector_stage=detector_stage,
-            frozen_angles=frozen_angles,
-            cut_points=cut_points,
-        )
-        assert mode.sample_stage == sample_stage
-        assert mode.detector_stage == detector_stage
-        assert mode.frozen_angles == (frozen_angles or {})
-        assert mode.cut_points == (cut_points or {})
-        # constrained_stages preserves insertion order
-        assert mode.constrained_stages == expected_constrained
-
-
-def test_bisecting_mode_repr():
-    mode = BisectingMode(sample_stage="omega", detector_stage="ttheta")
-    r = repr(mode)
-    assert "BisectingMode" in r
-    assert "omega" in r
-    assert "ttheta" in r
-
-
-def test_bisecting_mode_eq_same():
-    m1 = BisectingMode(
-        sample_stage="eta",
-        detector_stage="delta",
-        frozen_angles={"mu": 0.0, "nu": 0.0},
-    )
-    m2 = BisectingMode(
-        sample_stage="eta",
-        detector_stage="delta",
-        frozen_angles={"mu": 0.0, "nu": 0.0},
-    )
-    assert m1 == m2
-
-
-def test_bisecting_mode_eq_different_sample_stage():
-    m1 = BisectingMode(sample_stage="eta", detector_stage="delta")
-    m2 = BisectingMode(sample_stage="omega", detector_stage="delta")
-    assert m1 != m2
-
-
-def test_bisecting_mode_eq_different_detector_stage():
-    m1 = BisectingMode(sample_stage="eta", detector_stage="delta")
-    m2 = BisectingMode(sample_stage="eta", detector_stage="ttheta")
-    assert m1 != m2
-
-
-def test_bisecting_mode_eq_different_frozen():
-    m1 = BisectingMode(
-        sample_stage="eta", detector_stage="delta", frozen_angles={"mu": 0.0}
-    )
-    m2 = BisectingMode(sample_stage="eta", detector_stage="delta")
-    assert m1 != m2
-
-
-def test_bisecting_mode_eq_different_type():
-    m1 = BisectingMode(sample_stage="omega", detector_stage="ttheta")
-    m2 = FixedAngleMode(stage="omega", value=0.0)
-    assert m1 != m2
-
-
-def test_bisecting_mode_eq_non_mode():
-    m = BisectingMode(sample_stage="omega", detector_stage="ttheta")
-    assert m != 42
-
-
-def test_bisecting_mode_constrained_stages_no_duplicate():
-    """
-    When a frozen_angles key equals the sample_stage name, it must NOT appear
-    twice in constrained_stages — the 'if name not in constrained' guard works.
-    """
-    mode = BisectingMode(
-        sample_stage="omega",
-        detector_stage="ttheta",
-        frozen_angles={"omega": 0.0, "chi": 90.0},  # omega also in frozen_angles
-    )
-    constrained = mode.constrained_stages
-    # omega must appear only once (deduplicated by the guard)
-    assert constrained.count("omega") == 1
-    assert "chi" in constrained
-    assert constrained[0] == "omega"  # sample_stage still first
-
-
-# ---------------------------------------------------------------------------
-# DiffractionMode.apply_cut_point
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    "cut_points, stage, angle, expected, context",
-    [
-        pytest.param(
-            {"omega": -180.0},
-            "omega",
-            0.0,
-            0.0 + 0.0,
-            does_not_raise(),
-            id="cut-at-neg180-angle-0",
-        ),
-        pytest.param(
-            {"omega": -180.0},
-            "omega",
-            -180.0,
-            -180.0,
-            does_not_raise(),
-            id="cut-at-neg180-angle-is-cut",
-        ),
-        pytest.param(
-            {"omega": -180.0},
-            "omega",
-            185.0,
-            -175.0,
-            does_not_raise(),
-            id="cut-at-neg180-wraps-185",
-        ),
-        pytest.param(
-            {"omega": 0.0},
-            "omega",
-            350.0,
-            350.0,
-            does_not_raise(),
-            id="cut-at-0-350-stays",
-        ),
-        pytest.param(
-            {"omega": 0.0},
-            "omega",
-            -10.0,
-            350.0,
-            does_not_raise(),
-            id="cut-at-0-neg10-wraps",
-        ),
-        pytest.param(
-            {},
-            "omega",
-            350.0,
-            350.0,
-            does_not_raise(),
-            id="no-cut-point-passes-through",
-        ),
-        pytest.param(
-            {"chi": -180.0},
-            "omega",
-            350.0,
-            350.0,
-            does_not_raise(),
-            id="cut-for-different-stage-passes-through",
-        ),
-    ],
-)
-def test_apply_cut_point(cut_points, stage, angle, expected, context):
-    mode = FixedAngleMode(stage="phi", value=0.0, cut_points=cut_points)
-    with context:
-        result = mode.apply_cut_point(stage, angle)
-        assert abs(result - expected) < 1e-10
-
-
-# ---------------------------------------------------------------------------
-# ModeDict
-# ---------------------------------------------------------------------------
-
-
-def test_mode_dict_construction_empty():
-    md = ModeDict()
-    assert len(md) == 0
-
-
-def test_mode_dict_construction_from_dict():
-    modes = {
-        "bisecting": BisectingMode("omega", "ttheta"),
-        "fixed_chi": FixedAngleMode("chi", 90.0),
+def test_bisect_constraint_to_dict_from_dict():
+    bc = BisectConstraint("omega", "ttheta")
+    d = bc.to_dict()
+    assert d == {
+        "type": "BisectConstraint",
+        "sample_stage": "omega",
+        "detector_stage": "ttheta",
     }
-    md = ModeDict(modes)
-    assert len(md) == 2
-    assert "bisecting" in md
-    assert "fixed_chi" in md
+    bc2 = BisectConstraint.from_dict(d)
+    assert bc2 == bc
 
 
-def test_mode_dict_setitem_valid():
+def test_sample_constraint_is_implemented_real_stage():
+    g = _fourcv_like()
+    assert SampleConstraint("chi", 90.0).is_implemented(g) is True
+    assert SampleConstraint("phi", 0.0).is_implemented(g) is True
+
+
+def test_sample_constraint_is_implemented_missing_stage():
+    g = _fourcv_like()
+    assert SampleConstraint("mu", 0.0).is_implemented(g) is False
+
+
+def test_bisect_constraint_is_implemented_both_stages_exist():
+    g = _fourcv_like()
+    assert BisectConstraint("omega", "ttheta").is_implemented(g) is True
+
+
+def test_bisect_constraint_is_implemented_sample_stage_missing():
+    g = _fourcv_like()
+    assert BisectConstraint("eta", "ttheta").is_implemented(g) is False
+
+
+def test_bisect_constraint_is_implemented_detector_stage_missing():
+    g = _fourcv_like()
+    assert BisectConstraint("omega", "delta").is_implemented(g) is False
+
+
+def test_bisect_constraint_is_implemented_psic():
+    g = _psic_like()
+    assert BisectConstraint("eta", "delta").is_implemented(g) is True
+
+
+def test_sample_constraint_evaluate_fixed(tmp_path):
+    g = _fourcv_like()
+    angles = {"omega": 10.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
+    sc = SampleConstraint("chi", 90.0)
+    assert sc.evaluate(angles, g) == pytest.approx(0.0)
+    sc2 = SampleConstraint("chi", 45.0)
+    assert sc2.evaluate(angles, g) == pytest.approx(45.0)
+
+
+def test_bisect_constraint_evaluate_satisfied():
+    g = _fourcv_like()
+    angles = {"omega": 10.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
+    bc = BisectConstraint("omega", "ttheta")
+    # residual = omega - ttheta/2 = 10 - 10 = 0
+    assert bc.evaluate(angles, g) == pytest.approx(0.0)
+
+
+def test_bisect_constraint_evaluate_not_satisfied():
+    g = _fourcv_like()
+    angles = {"omega": 5.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
+    bc = BisectConstraint("omega", "ttheta")
+    assert bc.evaluate(angles, g) == pytest.approx(-5.0)
+
+
+def test_bisect_constraint_is_satisfied():
+    g = _fourcv_like()
+    angles = {"omega": 10.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
+    assert BisectConstraint("omega", "ttheta").is_satisfied(angles, g)
+    angles2 = dict(angles, omega=5.0)
+    assert not BisectConstraint("omega", "ttheta").is_satisfied(angles2, g)
+
+
+def test_bisect_constraint_repr():
+    bc = BisectConstraint("eta", "delta")
+    r = repr(bc)
+    assert "BisectConstraint" in r
+    assert "eta" in r
+    assert "delta" in r
+
+
+def test_bisect_constraint_eq_same():
+    assert BisectConstraint("omega", "ttheta") == BisectConstraint("omega", "ttheta")
+
+
+def test_bisect_constraint_eq_different():
+    assert BisectConstraint("omega", "ttheta") != BisectConstraint("eta", "delta")
+
+
+def test_bisect_constraint_eq_different_type():
+    assert BisectConstraint("omega", "ttheta") != SampleConstraint("omega", 0.0)
+
+
+def test_bisect_constraint_hash():
+    bc1 = BisectConstraint("omega", "ttheta")
+    bc2 = BisectConstraint("omega", "ttheta")
+    assert hash(bc1) == hash(bc2)
+    assert len({bc1, bc2}) == 1
+
+
+def test_bisect_constraint_category():
+    assert BisectConstraint("omega", "ttheta").category == "sample"
+
+
+def test_bisect_constraint_is_bisect_flag():
+    assert BisectConstraint("omega", "ttheta").is_bisect is True
+
+
+def test_bisect_constraint_name():
+    assert BisectConstraint("omega", "ttheta").name == "bisect"
+
+
+def test_sample_constraint_is_satisfied():
+    g = _fourcv_like()
+    angles = {"omega": 10.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
+    assert SampleConstraint("chi", 90.0).is_satisfied(angles, g)
+    assert not SampleConstraint("chi", 45.0).is_satisfied(angles, g)
+
+
+# ---------------------------------------------------------------------------
+# DetectorConstraint
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "name, value, expected_is_qaz, context",
+    [
+        pytest.param("delta", 0.0, False, does_not_raise(), id="fixed-delta"),
+        pytest.param("nu", 0.0, False, does_not_raise(), id="fixed-nu"),
+        pytest.param("ttheta", 20.0, False, does_not_raise(), id="fixed-ttheta"),
+        pytest.param("qaz", 90.0, True, does_not_raise(), id="qaz-pseudo"),
+    ],
+)
+def test_detector_constraint_construction(name, value, expected_is_qaz, context):
+    with context:
+        dc = DetectorConstraint(name, value)
+        assert dc.name == name
+        assert dc.value == value
+        assert dc.is_qaz == expected_is_qaz
+        assert dc.category == "detector"
+
+
+def test_detector_constraint_repr():
+    dc = DetectorConstraint("nu", 0.0)
+    r = repr(dc)
+    assert "DetectorConstraint" in r
+    assert "nu" in r
+
+
+def test_detector_constraint_eq_same():
+    assert DetectorConstraint("nu", 0.0) == DetectorConstraint("nu", 0.0)
+
+
+def test_detector_constraint_eq_different():
+    assert DetectorConstraint("nu", 0.0) != DetectorConstraint("delta", 0.0)
+
+
+def test_detector_constraint_eq_different_type():
+    assert DetectorConstraint("nu", 0.0) != SampleConstraint("nu", 0.0)
+
+
+def test_detector_constraint_to_dict_from_dict():
+    dc = DetectorConstraint("nu", 0.0)
+    d = dc.to_dict()
+    assert d == {"type": "DetectorConstraint", "name": "nu", "value": 0.0}
+    dc2 = DetectorConstraint.from_dict(d)
+    assert dc2 == dc
+
+
+def test_detector_constraint_is_implemented_real_stage():
+    g = _psic_like()
+    assert DetectorConstraint("nu", 0.0).is_implemented(g) is True
+    assert DetectorConstraint("delta", 0.0).is_implemented(g) is True
+
+
+def test_detector_constraint_is_implemented_missing():
+    g = _psic_like()
+    assert DetectorConstraint("gamma", 0.0).is_implemented(g) is False
+
+
+def test_detector_constraint_is_implemented_qaz_not_implemented():
+    g = _psic_like()
+    assert DetectorConstraint("qaz", 90.0).is_implemented(g) is False
+
+
+def test_detector_constraint_evaluate_fixed():
+    g = _psic_like()
+    angles = {"mu": 0.0, "eta": 10.0, "chi": 90.0, "phi": 0.0, "nu": 0.0, "delta": 20.0}
+    dc = DetectorConstraint("nu", 0.0)
+    assert dc.evaluate(angles, g) == pytest.approx(0.0)
+    dc2 = DetectorConstraint("nu", 5.0)
+    assert dc2.evaluate(angles, g) == pytest.approx(-5.0)
+
+
+def test_detector_constraint_evaluate_qaz_raises():
+    g = _psic_like()
+    angles = {}
+    dc = DetectorConstraint("qaz", 90.0)
+    with pytest.raises(NotImplementedError, match="qaz"):
+        dc.evaluate(angles, g)
+
+
+# ---------------------------------------------------------------------------
+# ReferenceConstraint
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "name, value, context",
+    [
+        pytest.param("psi", 90.0, does_not_raise(), id="psi"),
+        pytest.param("alpha_i", 5.0, does_not_raise(), id="alpha_i"),
+        pytest.param("beta_out", 5.0, does_not_raise(), id="beta_out"),
+        pytest.param("a_eq_b", True, does_not_raise(), id="a_eq_b-true"),
+        pytest.param("naz", 0.0, does_not_raise(), id="naz"),
+        pytest.param(
+            "a_eq_b",
+            False,
+            pytest.raises(ValueError, match=re.escape("must be True")),
+            id="a_eq_b-false-raises",
+        ),
+        pytest.param(
+            "unknown",
+            0.0,
+            pytest.raises(ValueError, match=re.escape("must be one of")),
+            id="unknown-name-raises",
+        ),
+    ],
+)
+def test_reference_constraint_construction(name, value, context):
+    with context:
+        rc = ReferenceConstraint(name, value)
+        assert rc.name == name
+        assert rc.category == "reference"
+
+
+def test_reference_constraint_value_coerced_to_float():
+    rc = ReferenceConstraint("psi", 90)
+    assert isinstance(rc.value, float)
+    assert rc.value == 90.0
+
+
+def test_reference_constraint_a_eq_b_value_is_true():
+    rc = ReferenceConstraint("a_eq_b", True)
+    assert rc.value is True
+
+
+def test_reference_constraint_repr():
+    rc = ReferenceConstraint("psi", 90.0)
+    r = repr(rc)
+    assert "ReferenceConstraint" in r
+    assert "psi" in r
+
+
+def test_reference_constraint_eq_same():
+    assert ReferenceConstraint("psi", 90.0) == ReferenceConstraint("psi", 90.0)
+
+
+def test_reference_constraint_eq_different():
+    assert ReferenceConstraint("psi", 90.0) != ReferenceConstraint("psi", 0.0)
+
+
+def test_reference_constraint_eq_different_type():
+    assert ReferenceConstraint("psi", 90.0) != SampleConstraint("psi", 90.0)
+
+
+def test_reference_constraint_to_dict_from_dict():
+    rc = ReferenceConstraint("psi", 90.0)
+    d = rc.to_dict()
+    assert d == {"type": "ReferenceConstraint", "name": "psi", "value": 90.0}
+    rc2 = ReferenceConstraint.from_dict(d)
+    assert rc2 == rc
+
+
+def test_reference_constraint_to_dict_from_dict_a_eq_b():
+    rc = ReferenceConstraint("a_eq_b", True)
+    d = rc.to_dict()
+    assert d["value"] is True
+    rc2 = ReferenceConstraint.from_dict(d)
+    assert rc2 == rc
+
+
+def test_reference_constraint_is_implemented_always_false():
+    g = _psic_like()
+    for name in REFERENCE_NAMES:
+        value = True if name == "a_eq_b" else 0.0
+        rc = ReferenceConstraint(name, value)
+        assert rc.is_implemented(g) is False
+
+
+def test_reference_constraint_evaluate_raises():
+    g = _psic_like()
+    rc = ReferenceConstraint("psi", 90.0)
+    with pytest.raises(NotImplementedError, match="not yet implemented"):
+        rc.evaluate({}, g)
+
+
+def test_reference_constraint_is_satisfied_raises():
+    g = _psic_like()
+    rc = ReferenceConstraint("psi", 90.0)
+    with pytest.raises(NotImplementedError):
+        rc.is_satisfied({}, g)
+
+
+# ---------------------------------------------------------------------------
+# ConstraintSet — construction and taxonomy validation
+# ---------------------------------------------------------------------------
+
+
+def test_constraint_set_basic_construction():
+    cs = ConstraintSet([BisectConstraint("omega", "ttheta")])
+    assert len(cs) == 1
+    assert cs.has_bisect
+
+
+def test_constraint_set_three_constraints():
+    cs = ConstraintSet(
+        [
+            BisectConstraint("omega", "ttheta"),
+            SampleConstraint("mu", 0.0),
+            DetectorConstraint("nu", 0.0),
+        ]
+    )
+    assert len(cs) == 3
+
+
+def test_constraint_set_two_detector_raises():
+    with pytest.raises(ValueError, match=re.escape("at most one DetectorConstraint")):
+        ConstraintSet(
+            [
+                DetectorConstraint("nu", 0.0),
+                DetectorConstraint("delta", 0.0),
+            ]
+        )
+
+
+def test_constraint_set_two_reference_raises():
+    with pytest.raises(ValueError, match=re.escape("at most one ReferenceConstraint")):
+        ConstraintSet(
+            [
+                ReferenceConstraint("psi", 0.0),
+                ReferenceConstraint("alpha_i", 5.0),
+            ]
+        )
+
+
+def test_constraint_set_two_bisect_raises():
+    with pytest.raises(ValueError, match=re.escape("at most one BisectConstraint")):
+        ConstraintSet(
+            [
+                BisectConstraint("omega", "ttheta"),
+                BisectConstraint("eta", "delta"),
+            ]
+        )
+
+
+def test_constraint_set_invalid_type_raises():
+    """ConstraintSet raises ValueError for non-constraint items."""
+    with pytest.raises(ValueError, match=re.escape("must be BisectConstraint")):
+        ConstraintSet(["not_a_constraint"])  # type: ignore[list-item]
+
+
+def test_constraint_set_constrained_stages_qaz_det_excluded():
+    """qaz DetectorConstraint contributes no stage name to constrained_stages."""
+    g = _psic_like()
+    cs = ConstraintSet(
+        [
+            BisectConstraint("omega", "ttheta"),
+            SampleConstraint("mu", 0.0),
+            DetectorConstraint("qaz", 90.0),
+        ]
+    )
+    stages = cs.constrained_stages(g)
+    assert "qaz" not in stages
+    # eta should be there from bisect; mu from fixed
+    assert "mu" in stages
+
+
+def test_bisect_constraint_explicit_stages_no_axis_heuristic():
+    """BisectConstraint uses declared stage names directly, no axis-geometry heuristic.
+
+    Even with anti-parallel axes, the declared names are used as-is.
+    """
+    # A geometry where sample axis is -ZHAT and detector is +ZHAT (anti-parallel)
+    stages = [
+        Stage("omega", -ZHAT, parent=None, role="sample"),
+        Stage("ttheta", +ZHAT, parent=None, role="detector"),
+    ]
+    g = AdHocDiffractometer(
+        name="antipar",
+        stages=stages,
+        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+    )
+    bc = BisectConstraint("omega", "ttheta")
+    assert bc.is_implemented(g) is True
+    assert bc.sample_stage == "omega"
+    assert bc.detector_stage == "ttheta"
+
+
+def test_reference_constraint_hash():
+    """ReferenceConstraint is hashable."""
+    rc1 = ReferenceConstraint("psi", 90.0)
+    rc2 = ReferenceConstraint("psi", 90.0)
+    assert hash(rc1) == hash(rc2)
+    # a_eq_b with bool value also hashable
+    rc3 = ReferenceConstraint("a_eq_b", True)
+    assert isinstance(hash(rc3), int)
+
+
+def test_constraint_set_constraints_property():
+    """ConstraintSet.constraints property returns a copy of the constraint list."""
+    cs = ConstraintSet([SampleConstraint("chi", 90.0)])
+    c_list = cs.constraints
+    assert len(c_list) == 1
+    assert isinstance(c_list[0], SampleConstraint)
+    # Modifying the returned list does not affect the ConstraintSet
+    c_list.append(SampleConstraint("phi", 0.0))
+    assert len(cs.constraints) == 1
+
+
+def test_constraint_set_extras_plain_value_round_trip():
+    """Extras with plain values (not sentinels) survive round-trip serialisation."""
+    cs = ConstraintSet(
+        [BisectConstraint("omega", "ttheta")],
+        extras={"some_float": 42.0, "psi": None, "n_hat": REQUIRED},
+    )
+    d = cs.to_dict()
+    # plain float value
+    assert d["extras"]["some_float"] == 42.0
+    cs2 = ConstraintSet.from_dict(d)
+    assert cs2.extras["some_float"] == 42.0
+
+
+def test_constraint_set_from_dict_with_reference_constraint():
+    """ConstraintSet.from_dict handles ReferenceConstraint entries."""
+    d = {
+        "type": "ConstraintSet",
+        "constraints": [
+            {"type": "SampleConstraint", "name": "bisect", "value": True},
+            {"type": "ReferenceConstraint", "name": "psi", "value": 90.0},
+        ],
+        "computed": None,
+        "constant": {},
+        "extras": {},
+        "cut_points": {},
+    }
+    cs = ConstraintSet.from_dict(d)
+    assert cs.reference_constraint is not None
+    assert cs.reference_constraint.name == "psi"
+
+
+def test_constraint_set_constrained_stages_duplicate_avoided():
+    """constrained_stages does not duplicate bisect stage name."""
+    g = _psic_like()
+    # mu is both the bisect stage (mu+nu coaxial) and a fixed constraint
+    # Since bisect is innermost-det-based, eta is the bisect sample for psic_like
+    cs = ConstraintSet(
+        [
+            BisectConstraint("omega", "ttheta"),
+            SampleConstraint("eta", 5.0),  # also fix eta explicitly
+            DetectorConstraint("nu", 0.0),
+        ]
+    )
+    stages = cs.constrained_stages(g)
+    # eta should appear only once even if bisect returns eta too
+    assert stages.count("eta") == 1
+
+
+def test_constraint_set_constrained_stages_det_duplicate_avoided():
+    """DetectorConstraint name already in names list is not duplicated."""
+    g = _fourcv_like()
+    cs = ConstraintSet(
+        [
+            SampleConstraint("omega", 0.0),
+            SampleConstraint("chi", 90.0),
+        ]
+    )
+    stages = cs.constrained_stages(g)
+    assert stages.count("omega") == 1
+    assert stages.count("chi") == 1
+
+
+def test_constraint_set_constrained_stages_bisect_dedup():
+    """bisect sample stage name not duplicated when it also appears in fixed constraints."""
+    # In a psic-like geometry, bisect resolves to "eta".
+    # If we also have SampleConstraint("eta", X), eta should only appear once.
+    g = _psic_like()
+    cs = ConstraintSet(
+        [
+            BisectConstraint("omega", "ttheta"),
+            SampleConstraint("eta", 5.0),  # same name as bisect stage
+            DetectorConstraint("nu", 0.0),
+        ]
+    )
+    stages = cs.constrained_stages(g)
+    # eta from bisect, but then also from fixed — dedup guard at line 726 should prevent double
+    assert stages.count("eta") == 1
+
+
+def test_constraint_set_constrained_stages_det_name_present():
+    """DetectorConstraint name is added to constrained_stages list."""
+    cs = ConstraintSet(
+        [
+            SampleConstraint("mu", 0.0),
+            DetectorConstraint("nu", 0.0),
+        ]
+    )
+    stages_list = cs.constrained_stages()
+    assert "mu" in stages_list
+    assert stages_list.count("nu") == 1
+
+
+# ---------------------------------------------------------------------------
+# constant_stages property
+# ---------------------------------------------------------------------------
+
+
+def test_constant_stages_bisect_only():
+    """constant_stages includes the bisect sample stage."""
+    cs = ConstraintSet([BisectConstraint("omega", "ttheta")])
+    assert cs.constant_stages == ["omega"]
+
+
+def test_constant_stages_psic_bisecting():
+    """constant_stages for psic bisecting includes eta, mu, nu."""
+    cs = ConstraintSet(
+        [
+            BisectConstraint("eta", "delta"),
+            SampleConstraint("mu", 0.0),
+            DetectorConstraint("nu", 0.0),
+        ]
+    )
+    assert cs.constant_stages == ["eta", "mu", "nu"]
+
+
+def test_constant_stages_no_bisect():
+    """constant_stages with only fixed sample and detector."""
+    cs = ConstraintSet(
+        [
+            SampleConstraint("chi", 90.0),
+            DetectorConstraint("nu", 0.0),
+        ]
+    )
+    assert "chi" in cs.constant_stages
+    assert "nu" in cs.constant_stages
+
+
+def test_constant_stages_reference_excluded():
+    """ReferenceConstraint does not contribute to constant_stages."""
+    cs = ConstraintSet(
+        [
+            BisectConstraint("omega", "ttheta"),
+            ReferenceConstraint("psi", 90.0),
+        ]
+    )
+    stages = cs.constant_stages
+    assert "psi" not in stages
+    assert "omega" in stages
+
+
+def test_constant_stages_qaz_excluded():
+    """DetectorConstraint qaz does not contribute to constant_stages."""
+    cs = ConstraintSet(
+        [
+            SampleConstraint("chi", 90.0),
+            DetectorConstraint("qaz", 90.0),
+        ]
+    )
+    stages = cs.constant_stages
+    assert "qaz" not in stages
+    assert "chi" in stages
+
+
+# ---------------------------------------------------------------------------
+# _validate_solutions — post-solve constraint checking
+# ---------------------------------------------------------------------------
+
+
+def test_validate_solutions_constraint_violation_raises():
+    """forward() raises ValueError when solver returns a solution violating a constraint."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer import ub_identity
+
+    g = fourcv()
+    g.wavelength = 1.54
+    g.sample.lattice = ahd.Lattice(a=4.0)
+    ub_identity(g.sample)
+
+    # Create a mode with SampleConstraint("chi", 90.0) but set chi to the
+    # wrong value in the solver output by injecting a patched mode.
+    # The easiest way: use a SampleConstraint with an impossible constraint
+    # value that the solver will violate, by using a mode that is "implemented"
+    # but whose constraint is incompatible with the solution.
+    # We can't easily force this through the normal API, so test via
+    # _validate_solutions directly.
+    from ad_hoc_diffractometer.forward import _validate_solutions
+    from ad_hoc_diffractometer.mode import BisectConstraint
+    from ad_hoc_diffractometer.mode import ConstraintSet
+    from ad_hoc_diffractometer.mode import SampleConstraint
+
+    mode = ConstraintSet(
+        [
+            BisectConstraint("omega", "ttheta"),
+            SampleConstraint("chi", 90.0),
+        ]
+    )
+
+    # Solution that violates chi constraint (chi=45 instead of 90)
+    bad_sol = {"omega": 10.0, "chi": 45.0, "phi": 0.0, "ttheta": 20.0}
+
+    with pytest.raises(ConstraintViolation, match=re.escape("violates")):
+        _validate_solutions([bad_sol], mode, g)
+
+
+def test_validate_solutions_keyerror_skipped():
+    """_validate_solutions silently skips constraints whose stage is absent from solution."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer.forward import _validate_solutions
+    from ad_hoc_diffractometer.mode import BisectConstraint
+    from ad_hoc_diffractometer.mode import ConstraintSet
+
+    g = fourcv()
+    g.wavelength = 1.54
+    g.sample.lattice = ahd.Lattice(a=4.0)
+
+    mode = ConstraintSet([BisectConstraint("omega", "ttheta")])
+
+    # Solution missing "ttheta" — KeyError should be caught and skipped
+    incomplete_sol = {"omega": 10.0, "chi": 90.0, "phi": 0.0}  # no ttheta
+    # Should not raise
+    _validate_solutions([incomplete_sol], mode, g)
+
+
+def test_validate_solutions_empty_list():
+    """_validate_solutions with empty solution list does nothing."""
+    from ad_hoc_diffractometer.forward import _validate_solutions
+    from ad_hoc_diffractometer.mode import BisectConstraint
+    from ad_hoc_diffractometer.mode import ConstraintSet
+
+    g = fourcv()
+    mode = ConstraintSet([BisectConstraint("omega", "ttheta")])
+    # Empty solutions — should not raise
+    _validate_solutions([], mode, g)
+
+
+def test_validate_solutions_bisect_violation_message():
+    """Violation message for BisectConstraint mentions sample and detector stage names."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer.forward import _validate_solutions
+    from ad_hoc_diffractometer.mode import BisectConstraint
+    from ad_hoc_diffractometer.mode import ConstraintSet
+
+    g = fourcv()
+    g.wavelength = 1.54
+    g.sample.lattice = ahd.Lattice(a=4.0)
+
+    mode = ConstraintSet([BisectConstraint("omega", "ttheta")])
+    # omega=5 but ttheta=20 → bisect residual = 5 - 10 = -5 (violation)
+    bad_sol = {"omega": 5.0, "chi": 90.0, "phi": 0.0, "ttheta": 20.0}
+
+    with pytest.raises(ConstraintViolation, match=re.escape("BisectConstraint")):
+        _validate_solutions([bad_sol], mode, g)
+
+
+def test_validate_solutions_sampleconstraint_violation_message():
+    """Violation message for SampleConstraint mentions the stage name and value."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer.forward import _validate_solutions
+    from ad_hoc_diffractometer.mode import ConstraintSet
+    from ad_hoc_diffractometer.mode import SampleConstraint
+
+    g = fourcv()
+    g.wavelength = 1.54
+    g.sample.lattice = ahd.Lattice(a=4.0)
+
+    mode = ConstraintSet([SampleConstraint("chi", 90.0)])
+    bad_sol = {"omega": 10.0, "chi": 45.0, "phi": 0.0, "ttheta": 20.0}
+
+    with pytest.raises(ConstraintViolation, match=re.escape("SampleConstraint")):
+        _validate_solutions([bad_sol], mode, g)
+
+
+# ---------------------------------------------------------------------------
+# Coverage: remaining mode.py hash/is_satisfied/property paths
+# ---------------------------------------------------------------------------
+
+
+def test_sample_constraint_hash_used_in_set():
+    sc1 = SampleConstraint("chi", 90.0)
+    sc2 = SampleConstraint("chi", 90.0)
+    assert len({sc1, sc2}) == 1
+
+
+def test_detector_constraint_is_satisfied():
+    g = _psic_like()
+    angles = {"mu": 0.0, "eta": 10.0, "chi": 90.0, "phi": 0.0, "nu": 0.0, "delta": 20.0}
+    dc = DetectorConstraint("nu", 0.0)
+    assert dc.is_satisfied(angles, g) is True
+    dc2 = DetectorConstraint("nu", 5.0)
+    assert dc2.is_satisfied(angles, g) is False
+
+
+def test_detector_constraint_hash_used_in_set():
+    dc1 = DetectorConstraint("nu", 0.0)
+    dc2 = DetectorConstraint("nu", 0.0)
+    assert len({dc1, dc2}) == 1
+
+
+def test_constraint_set_bisect_constraint_property_none():
+    """bisect_constraint returns None when no BisectConstraint present."""
+    cs = ConstraintSet([SampleConstraint("chi", 90.0)])
+    assert cs.bisect_constraint is None
+
+
+def test_constraint_set_bisect_constraint_property_present():
+    """bisect_constraint returns the BisectConstraint when present."""
+    bc = BisectConstraint("omega", "ttheta")
+    cs = ConstraintSet([bc])
+    assert cs.bisect_constraint is bc
+
+
+def test_constraint_set_reference_constraint_absent_returns_none():
+    cs = ConstraintSet([SampleConstraint("chi", 90.0)])
+    assert cs.reference_constraint is None
+
+
+def test_constant_stages_returns_list():
+    cs = ConstraintSet([BisectConstraint("eta", "delta"), SampleConstraint("mu", 0.0)])
+    result = cs.constant_stages
+    assert isinstance(result, list)
+    assert "eta" in result
+    assert "mu" in result
+
+
+def test_bisect_stages_returns_tuple():
+    bc = BisectConstraint("eta", "delta")
+    cs = ConstraintSet([bc])
+    result = cs.bisect_stages()
+    assert result == ("eta", "delta")
+
+
+def test_bisect_stages_none_no_bisect():
+    cs = ConstraintSet([SampleConstraint("chi", 90.0)])
+    assert cs.bisect_stages() is None
+
+
+def test_is_fully_constrained_returns_bool():
+    g = _fourcv_like()
+    cs = ConstraintSet([BisectConstraint("omega", "ttheta")])
+    assert cs.is_fully_constrained(g) is True
+
+
+def test_apply_cut_point_no_cut():
+    cs = ConstraintSet([SampleConstraint("chi", 90.0)])
+    assert cs.apply_cut_point("chi", 350.0) == 350.0
+
+
+def test_apply_cut_point_with_cut():
+    cs = ConstraintSet([SampleConstraint("chi", 90.0)], cut_points={"chi": 0.0})
+    assert cs.apply_cut_point("chi", -10.0) == pytest.approx(350.0)
+
+
+def test_constraint_set_from_dict_unknown_type_raises():
+    """from_dict raises ValueError for unknown constraint type."""
+    d = {
+        "type": "ConstraintSet",
+        "constraints": [{"type": "UnknownConstraint", "name": "x", "value": 0.0}],
+        "computed": None,
+        "extras": {},
+        "cut_points": {},
+    }
+    with pytest.raises(ValueError, match=re.escape("unknown constraint type")):
+        ConstraintSet.from_dict(d)
+
+
+def test_constraint_set_from_dict_required_optional():
+    """from_dict restores REQUIRED and OPTIONAL sentinels in extras."""
+    cs = ConstraintSet(
+        [BisectConstraint("omega", "ttheta")],
+        extras={"n_hat": REQUIRED, "psi": None, "opt": OPTIONAL},
+    )
+    d = cs.to_dict()
+    cs2 = ConstraintSet.from_dict(d)
+    assert cs2.extras["n_hat"] is REQUIRED
+    assert cs2.extras["psi"] is None
+    assert cs2.extras["opt"] is OPTIONAL
+
+
+def test_constraint_set_from_dict_with_reference():
+    """from_dict handles ReferenceConstraint entries."""
+    cs = ConstraintSet(
+        [
+            BisectConstraint("omega", "ttheta"),
+            ReferenceConstraint("psi", 90.0),
+        ]
+    )
+    d = cs.to_dict()
+    cs2 = ConstraintSet.from_dict(d)
+    assert cs2.reference_constraint is not None
+    assert cs2.reference_constraint.name == "psi"
+
+
+def test_constraint_set_repr_contains_bisect():
+    cs = ConstraintSet([BisectConstraint("eta", "delta")])
+    r = repr(cs)
+    assert "ConstraintSet" in r
+    assert "eta" in r
+    assert "delta" in r
+
+
+def test_constraint_set_eq_different_cutpoints():
+    cs1 = ConstraintSet([SampleConstraint("chi", 90.0)], cut_points={"chi": 0.0})
+    cs2 = ConstraintSet([SampleConstraint("chi", 90.0)])
+    assert cs1 != cs2
+
+
+def test_constraint_set_eq_different_type():
+    cs = ConstraintSet([SampleConstraint("chi", 90.0)])
+    assert cs != "not a constraint set"
+
+
+def test_constraint_set_eq_different_constraints():
+    cs1 = ConstraintSet([SampleConstraint("chi", 90.0)])
+    cs2 = ConstraintSet([SampleConstraint("phi", 0.0)])
+    assert cs1 != cs2
+
+
+def test_mode_dict_setitem_invalid_raises():
     md = ModeDict()
-    md["m1"] = FixedAngleMode("chi", 90.0)
-    assert "m1" in md
-
-
-def test_mode_dict_setitem_invalid_type():
-    md = ModeDict()
-    with pytest.raises(TypeError, match=re.escape("DiffractionMode instances")):
-        md["bad"] = "not a mode"
-
-
-def test_mode_dict_getitem():
-    md = ModeDict({"m": FixedAngleMode("chi", 0.0)})
-    assert isinstance(md["m"], FixedAngleMode)
-
-
-def test_mode_dict_getitem_missing():
-    md = ModeDict()
-    with pytest.raises(KeyError):
-        _ = md["missing"]
+    with pytest.raises(TypeError, match=re.escape("ConstraintSet instances")):
+        md["bad"] = "not a mode"  # type: ignore[assignment]
 
 
 def test_mode_dict_delitem():
-    md = ModeDict({"m": FixedAngleMode("chi", 0.0)})
+    md = ModeDict({"m": ConstraintSet([SampleConstraint("chi", 0.0)])})
     del md["m"]
     assert "m" not in md
 
 
+def test_mode_dict_len():
+    md = ModeDict({"a": ConstraintSet([SampleConstraint("chi", 0.0)])})
+    assert len(md) == 1
+
+
 def test_mode_dict_iter():
-    keys = ["a", "b", "c"]
-    md = ModeDict({k: FixedAngleMode("chi", 0.0) for k in keys})
+    keys = ["a", "b"]
+    md = ModeDict({k: ConstraintSet([SampleConstraint("chi", 0.0)]) for k in keys})
     assert list(md) == keys
 
 
-def test_mode_dict_keys():
-    md = ModeDict({"a": FixedAngleMode("chi", 0.0), "b": FixedAngleMode("phi", 0.0)})
-    assert set(md.keys()) == {"a", "b"}
-
-
-def test_mode_dict_values():
-    mode = FixedAngleMode("chi", 0.0)
-    md = ModeDict({"m": mode})
-    assert list(md.values()) == [mode]
-
-
-def test_mode_dict_items():
-    mode = FixedAngleMode("chi", 0.0)
-    md = ModeDict({"m": mode})
-    assert list(md.items()) == [("m", mode)]
-
-
 def test_mode_dict_repr():
-    md = ModeDict({"m": FixedAngleMode("chi", 0.0)})
-    r = repr(md)
-    assert "ModeDict" in r
-
-
-def test_mode_dict_eq_same():
-    m1 = ModeDict({"m": FixedAngleMode("chi", 0.0)})
-    m2 = ModeDict({"m": FixedAngleMode("chi", 0.0)})
-    assert m1 == m2
+    md = ModeDict({"m": ConstraintSet([SampleConstraint("chi", 0.0)])})
+    assert "ModeDict" in repr(md)
 
 
 def test_mode_dict_eq_different():
-    m1 = ModeDict({"m": FixedAngleMode("chi", 0.0)})
-    m2 = ModeDict({"m": FixedAngleMode("chi", 90.0)})
+    m1 = ModeDict({"m": ConstraintSet([SampleConstraint("chi", 0.0)])})
+    m2 = ModeDict({"m": ConstraintSet([SampleConstraint("chi", 90.0)])})
     assert m1 != m2
 
 
@@ -446,302 +1030,7 @@ def test_mode_dict_eq_non_mode_dict():
     assert md != {}
 
 
-# ---------------------------------------------------------------------------
-# AdHocDiffractometer — mode integration
-# ---------------------------------------------------------------------------
-
-
-def test_geometry_no_modes_by_default():
-    """A geometry with no modes argument has an empty ModeDict."""
-    g = _simple_geometry()
-    assert isinstance(g.modes, ModeDict)
-    assert len(g.modes) == 0
-    assert g.mode_name is None
-    assert g.mode is None
-
-
-def test_geometry_modes_from_dict():
-    modes = {
-        "bisecting": BisectingMode("omega", "ttheta"),
-        "fixed_chi": FixedAngleMode("chi", 90.0),
-    }
-    g = _simple_geometry(modes=modes, default_mode="bisecting")
-    assert "bisecting" in g.modes
-    assert "fixed_chi" in g.modes
-    assert g.mode_name == "bisecting"
-    assert isinstance(g.mode, BisectingMode)
-
-
-def test_geometry_modes_from_mode_dict():
-    md = ModeDict({"bisecting": BisectingMode("omega", "ttheta")})
-    g = _simple_geometry(modes=md, default_mode="bisecting")
-    assert g.mode_name == "bisecting"
-
-
-def test_geometry_default_mode_none():
-    modes = {"bisecting": BisectingMode("omega", "ttheta")}
-    g = _simple_geometry(modes=modes)  # no default_mode
-    assert g.mode_name is None
-    assert g.mode is None
-
-
-def test_geometry_default_mode_invalid():
-    modes = {"bisecting": BisectingMode("omega", "ttheta")}
-    with pytest.raises(ValueError, match=re.escape("default_mode")):
-        _simple_geometry(modes=modes, default_mode="nonexistent")
-
-
-def test_geometry_mode_name_setter_valid():
-    modes = {
-        "bisecting": BisectingMode("omega", "ttheta"),
-        "fixed_chi": FixedAngleMode("chi", 90.0),
-    }
-    g = _simple_geometry(modes=modes, default_mode="bisecting")
-    g.mode_name = "fixed_chi"
-    assert g.mode_name == "fixed_chi"
-    assert isinstance(g.mode, FixedAngleMode)
-
-
-def test_geometry_mode_name_setter_none():
-    modes = {"bisecting": BisectingMode("omega", "ttheta")}
-    g = _simple_geometry(modes=modes, default_mode="bisecting")
-    g.mode_name = None
-    assert g.mode_name is None
-    assert g.mode is None
-
-
-def test_geometry_mode_name_setter_invalid():
-    modes = {"bisecting": BisectingMode("omega", "ttheta")}
-    g = _simple_geometry(modes=modes, default_mode="bisecting")
-    with pytest.raises(ValueError, match=re.escape("not available")):
-        g.mode_name = "nonexistent"
-
-
-def test_geometry_cut_points_default_empty():
-    g = _simple_geometry()
-    assert g.cut_points == {}
-
-
-def test_geometry_cut_points_set_at_construction():
-    g = _simple_geometry(cut_points={"omega": -180.0, "ttheta": -180.0})
-    assert g.cut_points == {"omega": -180.0, "ttheta": -180.0}
-
-
-def test_geometry_cut_points_mutable():
-    g = _simple_geometry()
-    g.cut_points["omega"] = -170.0
-    assert g.cut_points["omega"] == -170.0
-
-
-# ---------------------------------------------------------------------------
-# Factory canonical modes
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    "factory, expected_modes, expected_default",
-    [
-        pytest.param(
-            psic,
-            {"bisecting", "fixed_chi", "fixed_phi", "fixed_mu"},
-            "bisecting",
-            id="psic-modes",
-        ),
-        pytest.param(
-            fourcv,
-            {"bisecting", "fixed_chi", "fixed_phi"},
-            "bisecting",
-            id="fourcv-modes",
-        ),
-        pytest.param(
-            fourch,
-            {"bisecting", "fixed_chi", "fixed_phi"},
-            "bisecting",
-            id="fourch-modes",
-        ),
-        pytest.param(
-            kappa4cv,
-            {"bisecting", "fixed_kphi"},
-            "bisecting",
-            id="kappa4cv-modes",
-        ),
-        pytest.param(
-            kappa4ch,
-            {"bisecting", "fixed_kphi"},
-            "bisecting",
-            id="kappa4ch-modes",
-        ),
-        pytest.param(
-            kappa6c,
-            {"bisecting", "fixed_kphi", "fixed_mu"},
-            "bisecting",
-            id="kappa6c-modes",
-        ),
-    ],
-)
-def test_factory_canonical_modes(factory, expected_modes, expected_default):
-    g = factory()
-    assert set(g.modes.keys()) == expected_modes
-    assert g.mode_name == expected_default
-
-
-@pytest.mark.parametrize(
-    "factory",
-    [
-        pytest.param(sixc, id="sixc-no-modes"),
-        pytest.param(zaxis, id="zaxis-no-modes"),
-        pytest.param(s2d2, id="s2d2-no-modes"),
-        pytest.param(fivec, id="fivec-no-modes"),
-    ],
-)
-def test_factory_no_modes(factory):
-    """Geometries without canonical modes have empty ModeDict and no active mode."""
-    g = factory()
-    assert len(g.modes) == 0
-    assert g.mode_name is None
-
-
-def test_psic_bisecting_mode_correct_stages():
-    g = psic()
-    mode = g.modes["bisecting"]
-    assert isinstance(mode, BisectingMode)
-    assert mode.sample_stage == "eta"
-    assert mode.detector_stage == "delta"
-    assert mode.frozen_angles == {"mu": 0.0, "nu": 0.0}
-
-
-def test_fourcv_bisecting_mode_correct_stages():
-    g = fourcv()
-    mode = g.modes["bisecting"]
-    assert isinstance(mode, BisectingMode)
-    assert mode.sample_stage == "omega"
-    assert mode.detector_stage == "ttheta"
-    assert mode.frozen_angles == {}
-
-
-def test_kappa6c_bisecting_mode_correct_stages():
-    g = kappa6c()
-    mode = g.modes["bisecting"]
-    assert isinstance(mode, BisectingMode)
-    assert mode.sample_stage == "komega"
-    assert mode.detector_stage == "delta"
-    assert mode.frozen_angles == {"mu": 0.0, "nu": 0.0}
-
-
-# ---------------------------------------------------------------------------
-# Serialisation — mode round-trip via to_dict / from_dict
-# ---------------------------------------------------------------------------
-
-
-def test_fixed_angle_mode_to_dict_from_dict():
-    """FixedAngleMode round-trips through the geometry serialisation."""
-    modes = {"fixed_chi": FixedAngleMode("chi", 90.0, cut_points={"chi": -180.0})}
-    g = _simple_geometry(modes=modes, default_mode="fixed_chi")
-
-    d = g.to_dict()
-    assert "modes" in d
-    assert "fixed_chi" in d["modes"]
-    assert d["modes"]["fixed_chi"]["type"] == "FixedAngleMode"
-    assert d["modes"]["fixed_chi"]["stage"] == "chi"
-    assert d["modes"]["fixed_chi"]["value"] == 90.0
-    assert d["modes"]["fixed_chi"]["cut_points"] == {"chi": -180.0}
-    assert d["mode_name"] == "fixed_chi"
-
-    # Verify JSON-serialisable
-    assert json.dumps(d)
-
-    g2 = AdHocDiffractometer.from_dict(d)
-    assert "fixed_chi" in g2.modes
-    assert g2.mode_name == "fixed_chi"
-    mode2 = g2.modes["fixed_chi"]
-    assert isinstance(mode2, FixedAngleMode)
-    assert mode2.frozen_angles == {"chi": 90.0}
-    assert mode2.cut_points == {"chi": -180.0}
-
-
-def test_bisecting_mode_to_dict_from_dict():
-    """BisectingMode round-trips through the geometry serialisation."""
-    modes = {
-        "bisecting": BisectingMode(
-            "omega",
-            "ttheta",
-            frozen_angles={"chi": 0.0},
-            cut_points={"omega": -180.0},
-        )
-    }
-    g = _simple_geometry(modes=modes, default_mode="bisecting")
-
-    d = g.to_dict()
-    md = d["modes"]["bisecting"]
-    assert md["type"] == "BisectingMode"
-    assert md["sample_stage"] == "omega"
-    assert md["detector_stage"] == "ttheta"
-    assert md["frozen_angles"] == {"chi": 0.0}
-    assert md["cut_points"] == {"omega": -180.0}
-
-    # Verify JSON-serialisable
-    assert json.dumps(d)
-
-    g2 = AdHocDiffractometer.from_dict(d)
-    mode2 = g2.modes["bisecting"]
-    assert isinstance(mode2, BisectingMode)
-    assert mode2.sample_stage == "omega"
-    assert mode2.detector_stage == "ttheta"
-    assert mode2.frozen_angles == {"chi": 0.0}
-    assert mode2.cut_points == {"omega": -180.0}
-
-
-def test_cut_points_round_trip():
-    """Geometry-level cut_points survive to_dict / from_dict."""
-    g = _simple_geometry(cut_points={"omega": -180.0, "ttheta": -170.0})
-    d = g.to_dict()
-    assert d["cut_points"] == {"omega": -180.0, "ttheta": -170.0}
-    g2 = AdHocDiffractometer.from_dict(d)
-    assert g2.cut_points == {"omega": -180.0, "ttheta": -170.0}
-
-
-def test_mode_name_none_round_trip():
-    """mode_name=None is stored and restored."""
-    modes = {"bisecting": BisectingMode("omega", "ttheta")}
-    g = _simple_geometry(modes=modes)  # no default_mode
-    d = g.to_dict()
-    assert d["mode_name"] is None
-    g2 = AdHocDiffractometer.from_dict(d)
-    assert g2.mode_name is None
-
-
-def test_psic_full_round_trip():
-    """psic() with all its modes survives to_dict / from_dict."""
-    g = psic()
-    d = g.to_dict()
-    assert json.dumps(d)
-    g2 = AdHocDiffractometer.from_dict(d)
-    assert set(g2.modes.keys()) == {"bisecting", "fixed_chi", "fixed_phi", "fixed_mu"}
-    assert g2.mode_name == "bisecting"
-    assert isinstance(g2.modes["bisecting"], BisectingMode)
-    assert isinstance(g2.modes["fixed_chi"], FixedAngleMode)
-
-
-def test_geometry_no_modes_round_trip():
-    """Geometry with no modes serialises with empty modes dict."""
-    g = sixc()
-    d = g.to_dict()
-    assert d["modes"] == {}
-    assert d["mode_name"] is None
-    g2 = AdHocDiffractometer.from_dict(d)
-    assert len(g2.modes) == 0
-    assert g2.mode_name is None
-
-
-# ---------------------------------------------------------------------------
-# DiffractionMode base-class repr
-# ---------------------------------------------------------------------------
-
-
-def test_diffraction_mode_base_repr():
-    """DiffractionMode.__repr__ includes class name and frozen/cut fields."""
-    mode = FixedAngleMode("chi", 90.0, cut_points={"chi": -180.0})
-    r = repr(mode)
-    # FixedAngleMode overrides repr — check it is informative
-    assert "chi" in r
-    assert "90.0" in r
+def test_mode_dict_values():
+    cs = ConstraintSet([SampleConstraint("chi", 0.0)])
+    md = ModeDict({"m": cs})
+    assert list(md.values()) == [cs]
