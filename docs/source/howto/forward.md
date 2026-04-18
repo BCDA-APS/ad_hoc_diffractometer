@@ -87,7 +87,7 @@ print(f"d = {d:.4f} Å,  2θ = {tth:.3f}°")
 Stage limits are enforced automatically by `forward()`.  To set limits:
 
 ```python
-g.stages["chi"].limits = (-10.0, 100.0)   # degrees
+g.stage("chi").limits = (-10.0, 100.0)   # degrees
 ```
 
 Solutions outside the limits are filtered out.
@@ -119,11 +119,73 @@ This is useful for identifying an unknown peak found during a scan, or
 for verifying that the diffractometer is positioned at the expected
 reflection after moving motors.
 
+## Handle errors from forward()
+
+`forward()` raises specific exceptions for distinct failure modes:
+
+### EwaldSphereViolation
+
+Raised when the requested reflection cannot be reached at the current
+wavelength — `|Q| > 4π/λ` regardless of motor angles:
+
+```python
+from ad_hoc_diffractometer import EwaldSphereViolation
+
+try:
+    solutions = g.forward(10, 10, 10)
+except EwaldSphereViolation as e:
+    print(f"|Q| = {e.q_mag:.4f} Å⁻¹")
+    print(f"Ewald sphere limit = {e.q_max:.4f} Å⁻¹  (λ = {e.wavelength} Å)")
+    print("Reduce wavelength or choose a smaller reflection.")
+```
+
+Attributes: `q_mag` (requested |Q| in Å⁻¹), `q_max` (4π/λ), `wavelength`.
+
+### ConstraintViolation
+
+Raised when the solver returns a solution that violates a declared
+constraint beyond the display-precision tolerance.  This signals either a
+solver bug or an unimplemented virtual-angle constraint:
+
+```python
+from ad_hoc_diffractometer import ConstraintViolation
+
+try:
+    solutions = g.forward(1, 0, 0)
+except ConstraintViolation as e:
+    print(f"Solution {e.solution_index} violated {e.constraint_repr}")
+    print(f"Residual = {e.residual:.2e}°  (tolerance = {e.tolerance:.2e}°)")
+```
+
+Attributes: `solution_index`, `constraint_repr`, `residual`, `tolerance`.
+
+### NotImplementedError
+
+Raised when the active mode is `None` or its `is_implemented(geometry)`
+returns `False`:
+
+```python
+g.mode_name = None
+try:
+    g.forward(1, 0, 0)
+except NotImplementedError as e:
+    print(e)
+
+g.mode_name = "psi_constant"
+try:
+    g.forward(1, 0, 0)
+except NotImplementedError as e:
+    print(e)  # describes which solver is missing
+```
+
 ## See also
 
 - {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`
 - {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse`
 - {func}`~ad_hoc_diffractometer.hkl_to_d`
 - {func}`~ad_hoc_diffractometer.hkl_to_two_theta`
+- {exc}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`
+- {exc}`~ad_hoc_diffractometer.mode.ConstraintViolation`
 - {doc}`modes`
+- {doc}`constraints`
 - {doc}`orient`

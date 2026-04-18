@@ -117,6 +117,65 @@ sample_dict = g.sample.to_dict()
 # sample2 = Sample.from_dict(sample_dict, parent=g)  # requires parent geometry
 ```
 
+## ConstraintSet round-trip
+
+Diffraction modes ({class}`~ad_hoc_diffractometer.mode.ConstraintSet`) are
+serialised as part of the geometry dict.  They can also be inspected and
+round-tripped independently:
+
+```python
+import json
+from ad_hoc_diffractometer import ConstraintSet, BisectConstraint
+from ad_hoc_diffractometer import SampleConstraint, DetectorConstraint
+from ad_hoc_diffractometer import REQUIRED
+
+# A custom psic mode
+cs = ConstraintSet(
+    [
+        BisectConstraint("eta", "delta"),
+        SampleConstraint("mu", 0.0),
+        DetectorConstraint("nu", 0.0),
+    ],
+    computed=["eta", "chi", "phi", "delta"],
+)
+
+# Serialise
+d = cs.to_dict()
+print(json.dumps(d, indent=2))
+
+# Restore
+cs2 = ConstraintSet.from_dict(d)
+assert cs2 == cs
+
+# REQUIRED / OPTIONAL sentinels survive the round-trip
+cs_extras = ConstraintSet(
+    [BisectConstraint("eta", "delta"),
+     SampleConstraint("mu", 0.0),
+     SampleConstraint("chi", 0.0)],
+    extras={"n_hat": REQUIRED, "psi": None},
+)
+d2 = cs_extras.to_dict()
+cs_extras2 = ConstraintSet.from_dict(d2)
+from ad_hoc_diffractometer import REQUIRED as REQ
+assert cs_extras2.extras["n_hat"] is REQ  # sentinel restored
+```
+
+The geometry-level round-trip preserves all modes, the active mode name,
+and cut points:
+
+```python
+import ad_hoc_diffractometer as ahd
+
+g = ahd.psic()
+g.mode_name = "bisecting_vertical"
+
+d = g.to_dict()
+g2 = ahd.AdHocDiffractometer.from_dict(d)
+
+assert set(g2.modes.keys()) == set(g.modes.keys())
+assert g2.mode_name == "bisecting_vertical"
+```
+
 ## Typical workflow
 
 A common pattern is to save the configuration after alignment and restore
