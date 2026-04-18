@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=7a69b170"></script>
+    <script src="../../../_static/documentation_options.js?v=fc50a347"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 01:36 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 02:42 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -1429,10 +1429,13 @@ it to compute motor angles has not been written yet.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.SampleConstraint.is_implemented">
 <span class="sig-name descname"><span class="pre">is_implemented</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/mode.html#SampleConstraint.is_implemented"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.mode.SampleConstraint.is_implemented" title="Link to this definition">#</a></dt>
-<dd><p>Return True when the named stage exists in the geometry.</p>
-<p>Virtual kappa angles (<code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;chi&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;phi&quot;</span></code> on kappa
-geometries) are not yet implemented — the kappa inversion solver
-is a separate issue.</p>
+<dd><p>Return True when the named stage exists in the geometry, or when the
+name is a virtual Eulerian kappa pseudoangle on a kappa geometry.</p>
+<p>Virtual kappa angles <code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;chi&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;phi&quot;</span></code> are
+implemented when the geometry has a <code class="docutils literal notranslate"><span class="pre">kappa_alpha_deg</span></code> attribute set
+(i.e. it is a kappa diffractometer) and contains a stage named
+<code class="docutils literal notranslate"><span class="pre">&quot;kappa&quot;</span></code>.  The kappa inversion solver (<code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code>)
+converts the virtual angle constraint to real kappa motor angles.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1657,7 +1660,7 @@ is a separate issue.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 01:36 CDT.
+  Last updated on 2026-04-18 02:42 CDT.
   <br/>
 </p></div>
       

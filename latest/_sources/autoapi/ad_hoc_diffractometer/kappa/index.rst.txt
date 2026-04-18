@@ -47,17 +47,30 @@ kappa
    * ITC Vol. C §2.2.6 (2006).
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.kappa.KAPPA_VIRTUAL_ANGLES
+
+
 Functions
 ---------
 
 .. autoapisummary::
 
    ad_hoc_diffractometer.kappa.eulerian_to_kappa
+   ad_hoc_diffractometer.kappa.is_kappa_virtual_mode
    ad_hoc_diffractometer.kappa.kappa_to_eulerian
+   ad_hoc_diffractometer.kappa.solve_kappa_virtual
 
 
 Module Contents
 ---------------
+
+.. py:data:: KAPPA_VIRTUAL_ANGLES
+   :type:  frozenset[str]
 
 .. py:function:: eulerian_to_kappa(omega: float, chi: float, phi: float, alpha_deg: float = 50.0, branch: int = +1) -> tuple[float, float, float]
 
@@ -96,6 +109,27 @@ Module Contents
    (-57.04519..., -134.75594..., -57.04519...)
 
 
+.. py:function:: is_kappa_virtual_mode(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.is_kappa_virtual_mode``
+
+
+   Return True when *mode* contains a virtual Eulerian angle constraint
+   (omega, chi, or phi) and *geometry* is a kappa diffractometer.
+
+   Used by :func:`~forward._solve_constraint_set` to detect when the
+   kappa virtual-angle solver should be dispatched.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param mode:
+   :type mode: ConstraintSet
+
+   :rtype: bool
+
+
 .. py:function:: kappa_to_eulerian(komega: float, kappa: float, kphi: float, alpha_deg: float = 50.0) -> tuple[float, float, float]
 
    .. container:: import-path
@@ -126,5 +160,40 @@ Module Contents
 
    >>> kappa_to_eulerian(57.045, 134.756, 57.045, alpha_deg=50.0)
    (-0.0, 90.0, -0.0)
+
+
+.. py:function:: solve_kappa_virtual(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, Q_phi, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.solve_kappa_virtual``
+
+
+   Solve a kappa virtual-angle mode: find real kappa motor angles satisfying
+   the virtual Eulerian angle constraints and the Bragg condition.
+
+   The solver works in virtual Eulerian space by using the sample rotation
+   Newton-Raphson numeric solver (2D free virtual angles):
+
+   1. Reads the fixed virtual Eulerian angles (omega, chi, phi) from the mode.
+   2. Applies fixed-angle rotations to reduce Q to the remaining free-angle
+      subspace, then decomposes to find the free angles.
+   3. Converts each Eulerian solution to real kappa motor angles via
+      :func:`eulerian_to_kappa` (both branches ±1).
+
+   :param geometry: A kappa geometry with ``kappa_alpha_deg`` set.
+   :type geometry: AdHocDiffractometer
+   :param Q_phi: Scattering vector in the phi frame (Å⁻¹).
+   :type Q_phi: array-like, shape (3,)
+   :param ttheta_deg: Detector angle (2θ) in degrees.
+   :type ttheta_deg: float
+   :param mode: Must contain at least one ``SampleConstraint`` naming a virtual
+                Eulerian angle.
+   :type mode: ConstraintSet
+
+   :returns: One angles dict per solution, keyed by real stage names.
+             Cut-points, limits, and deduplication are applied by the caller
+             (:func:`~forward._solve_kappa_virtual`).
+   :rtype: list of dict[str, float]
 
 

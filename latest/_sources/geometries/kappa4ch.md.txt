@@ -74,17 +74,32 @@ changing constraint values at run time.
 | **Computed** | komega, kappa, ttheta |
 | **Constant during** `forward()` | kphi |
 
-### `constant_omega` *(stub)*
+### `constant_omega`
 
-Fix virtual Eulerian omega (default 0°). Requires Issue I / #153.
+Fix virtual Eulerian omega at declared value (default 0°) — see {doc}`kappa4cv` for details.
 
-### `constant_chi` *(stub)*
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, ttheta |
+| **Constant during** `forward()` | omega (virtual) |
 
-Fix virtual Eulerian chi (default 90°). Requires Issue I / #153.
+### `constant_chi`
 
-### `constant_phi` *(stub)*
+Fix virtual Eulerian chi at declared value (default 90°).
 
-Fix virtual Eulerian phi (default 0°). Requires Issue I / #153.
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, ttheta |
+| **Constant during** `forward()` | chi (virtual) |
+
+### `constant_phi`
+
+Fix virtual Eulerian phi at declared value (default 0°).
+
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, ttheta |
+| **Constant during** `forward()` | phi (virtual) |
 
 ### `psi_constant` *(stub)*
 

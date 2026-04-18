@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=7a69b170"></script>
+    <script src="../../../_static/documentation_options.js?v=fc50a347"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 01:36 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 02:42 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -503,6 +503,17 @@ is raised when <code class="docutils literal notranslate"><span class="pre">|chi
 <li><p>ITC Vol. C §2.2.6 (2006).</p></li>
 </ul>
 </section>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa.KAPPA_VIRTUAL_ANGLES" title="ad_hoc_diffractometer.kappa.KAPPA_VIRTUAL_ANGLES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KAPPA_VIRTUAL_ANGLES</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="id1">
 <h2>Functions<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
@@ -510,8 +521,14 @@ is raised when <code class="docutils literal notranslate"><span class="pre">|chi
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa.eulerian_to_kappa" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eulerian_to_kappa</span></code></a>(→ tuple[float, float, float])</p></td>
 <td><p>Convert virtual Eulerian pseudoangles to real kappa angles.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa.kappa_to_eulerian" title="ad_hoc_diffractometer.kappa.kappa_to_eulerian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa_to_eulerian</span></code></a>(→ tuple[float, float, float])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa.is_kappa_virtual_mode" title="ad_hoc_diffractometer.kappa.is_kappa_virtual_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_kappa_virtual_mode</span></code></a>(→ bool)</p></td>
+<td><p>Return True when <em>mode</em> contains a virtual Eulerian angle constraint</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa.kappa_to_eulerian" title="ad_hoc_diffractometer.kappa.kappa_to_eulerian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa_to_eulerian</span></code></a>(→ tuple[float, float, float])</p></td>
 <td><p>Convert real kappa angles to virtual Eulerian pseudoangles.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa.solve_kappa_virtual" title="ad_hoc_diffractometer.kappa.solve_kappa_virtual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_kappa_virtual</span></code></a>(→ list[dict[str, float]])</p></td>
+<td><p>Solve a kappa virtual-angle mode: find real kappa motor angles satisfying</p></td>
 </tr>
 </tbody>
 </table>
@@ -519,6 +536,11 @@ is raised when <code class="docutils literal notranslate"><span class="pre">|chi
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.kappa.KAPPA_VIRTUAL_ANGLES">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.kappa.</span></span><span class="sig-name descname"><span class="pre">KAPPA_VIRTUAL_ANGLES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ad_hoc_diffractometer.kappa.KAPPA_VIRTUAL_ANGLES" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.kappa.eulerian_to_kappa">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.kappa.</span></span><span class="sig-name descname"><span class="pre">eulerian_to_kappa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">+1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/kappa.html#eulerian_to_kappa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.kappa.eulerian_to_kappa" title="Link to this definition">#</a></dt>
@@ -561,6 +583,29 @@ is raised when <code class="docutils literal notranslate"><span class="pre">|chi
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.kappa.is_kappa_virtual_mode">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.kappa.</span></span><span class="sig-name descname"><span class="pre">is_kappa_virtual_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/kappa.html#is_kappa_virtual_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.kappa.is_kappa_virtual_mode" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.kappa.is_kappa_virtual_mode</span></code></p>
+</div>
+<p>Return True when <em>mode</em> contains a virtual Eulerian angle constraint
+(omega, chi, or phi) and <em>geometry</em> is a kappa diffractometer.</p>
+<p>Used by <code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_constraint_set()</span></code> to detect when the
+kappa virtual-angle solver should be dispatched.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>)</p></li>
+<li><p><strong>mode</strong> (<a class="reference internal" href="../mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><em>ConstraintSet</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.kappa.kappa_to_eulerian">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.kappa.</span></span><span class="sig-name descname"><span class="pre">kappa_to_eulerian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">komega</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kphi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/kappa.html#kappa_to_eulerian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.kappa.kappa_to_eulerian" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
@@ -593,6 +638,44 @@ the reachable range (<code class="docutils literal notranslate"><span class="pre
 <span class="go">(-0.0, 90.0, -0.0)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.kappa.solve_kappa_virtual">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.kappa.</span></span><span class="sig-name descname"><span class="pre">solve_kappa_virtual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttheta_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/kappa.html#solve_kappa_virtual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.kappa.solve_kappa_virtual" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.kappa.solve_kappa_virtual</span></code></p>
+</div>
+<p>Solve a kappa virtual-angle mode: find real kappa motor angles satisfying
+the virtual Eulerian angle constraints and the Bragg condition.</p>
+<p>The solver works in virtual Eulerian space by using the sample rotation
+Newton-Raphson numeric solver (2D free virtual angles):</p>
+<ol class="arabic simple">
+<li><p>Reads the fixed virtual Eulerian angles (omega, chi, phi) from the mode.</p></li>
+<li><p>Applies fixed-angle rotations to reduce Q to the remaining free-angle
+subspace, then decomposes to find the free angles.</p></li>
+<li><p>Converts each Eulerian solution to real kappa motor angles via
+<a class="reference internal" href="#ad_hoc_diffractometer.kappa.eulerian_to_kappa" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa"><code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code></a> (both branches ±1).</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="../geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>) – A kappa geometry with <code class="docutils literal notranslate"><span class="pre">kappa_alpha_deg</span></code> set.</p></li>
+<li><p><strong>Q_phi</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Scattering vector in the phi frame (Å⁻¹).</p></li>
+<li><p><strong>ttheta_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Detector angle (2θ) in degrees.</p></li>
+<li><p><strong>mode</strong> (<a class="reference internal" href="../mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><em>ConstraintSet</em></a>) – Must contain at least one <code class="docutils literal notranslate"><span class="pre">SampleConstraint</span></code> naming a virtual
+Eulerian angle.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>One angles dict per solution, keyed by real stage names.
+Cut-points, limits, and deduplication are applied by the caller
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_kappa_virtual()</span></code>).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -646,10 +729,14 @@ the reachable range (<code class="docutils literal notranslate"><span class="pre
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.kappa.KAPPA_VIRTUAL_ANGLES"><code class="docutils literal notranslate"><span class="pre">KAPPA_VIRTUAL_ANGLES</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.kappa.eulerian_to_kappa"><code class="docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.kappa.is_kappa_virtual_mode"><code class="docutils literal notranslate"><span class="pre">is_kappa_virtual_mode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.kappa.kappa_to_eulerian"><code class="docutils literal notranslate"><span class="pre">kappa_to_eulerian()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.kappa.solve_kappa_virtual"><code class="docutils literal notranslate"><span class="pre">solve_kappa_virtual()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -686,7 +773,7 @@ the reachable range (<code class="docutils literal notranslate"><span class="pre
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 01:36 CDT.
+  Last updated on 2026-04-18 02:42 CDT.
   <br/>
 </p></div>
       
