@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=8a799eb1"></script>
+    <script src="../../../_static/documentation_options.js?v=c1e363f7"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -609,32 +609,42 @@ S4D2      psic, kappa6c
 (S1D2)1   zaxis  (sample and detector share alpha base stage)
 S2D2      s2d2   (fully decoupled sample/detector pairs)</p>
 </dd>
-<dt>References (chronological):</dt><dd><p>W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967)               fourcv / fourch
-J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985)                          zaxis
-E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987)                   fivec
-M. Lohmeier &amp; E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993)            sixc
-K.W. Evans-Lutterodt &amp; M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) s2d2
-H. You, J. Appl. Cryst. 32, 614-623 (1999) DOI:10.1107/S0021889899001223   psic
-ITC Vol. C, Sec. 2.2.6 (2006) DOI:10.1107/97809553602060000577         kappa
-D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)                 kappa, zaxis, s2d2, fivec</p>
-</dd>
 </dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967) — fourcv / fourch</p></li>
+<li><p>J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985) — zaxis</p></li>
+<li><ol class="upperalpha simple" start="5">
+<li><p>Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987) — fivec</p></li>
+</ol>
+</li>
+<li><ol class="upperalpha simple" start="13">
+<li><p>Lohmeier &amp; E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993) — sixc</p></li>
+</ol>
+</li>
+<li><p>K.W. Evans-Lutterodt &amp; M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) — s2d2</p></li>
+<li><p>H. You, J. Appl. Cryst. 32, 614-623 (1999)
+DOI:10.1107/S0021889899001223 — psic</p></li>
+<li><p>ITC Vol. C, Sec. 2.2.6 (2006)
+DOI:10.1107/97809553602060000577 — kappa</p></li>
+<li><p>D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — kappa, zaxis, s2d2, fivec</p></li>
+</ul>
 </section>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Basis vector dictionary for the Busing &amp; Levy (1967) coordinate convention.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Basis vector dictionary for the You (1999) coordinate convention.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP" title="ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Entry-point group name for geometry plugins.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT" title="ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C).</p></td>
 </tr>
 </tbody>
 </table>
@@ -695,22 +705,41 @@ D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)                 kappa, za
 <dl class="py data">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.BASIS_BL">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">BASIS_BL</span></span><a class="headerlink" href="#ad_hoc_diffractometer.factories.BASIS_BL" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Basis vector dictionary for the Busing &amp; Levy (1967) coordinate convention.</p>
+<p>Maps physical direction names to Cartesian unit vectors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;lateral&quot;</span></code> → +x</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;longitudinal&quot;</span></code> → +y (along the beam)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;vertical&quot;</span></code> → +z (opposite to gravitational acceleration)</p></li>
+</ul>
+<p>Used by <a class="reference internal" href="#ad_hoc_diffractometer.factories.fourcv" title="ad_hoc_diffractometer.factories.fourcv"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourcv()</span></code></a>, <a class="reference internal" href="#ad_hoc_diffractometer.factories.fourch" title="ad_hoc_diffractometer.factories.fourch"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourch()</span></code></a>, <a class="reference internal" href="#ad_hoc_diffractometer.factories.kappa4cv" title="ad_hoc_diffractometer.factories.kappa4cv"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4cv()</span></code></a>, and <a class="reference internal" href="#ad_hoc_diffractometer.factories.kappa4ch" title="ad_hoc_diffractometer.factories.kappa4ch"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4ch()</span></code></a>.</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.BASIS_YOU">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">BASIS_YOU</span></span><a class="headerlink" href="#ad_hoc_diffractometer.factories.BASIS_YOU" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Basis vector dictionary for the You (1999) coordinate convention.</p>
+<p>Maps physical direction names to Cartesian unit vectors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;vertical&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">XHAT</span></code> (+x, opposite to gravitational acceleration)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;longitudinal&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">YHAT</span></code> (+y, along the beam)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;lateral&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">ZHAT</span></code> (+z, completes the right-handed system: vertical × longitudinal)</p></li>
+</ul>
+<p>Default basis used by <a class="reference internal" href="#ad_hoc_diffractometer.factories.psic" title="ad_hoc_diffractometer.factories.psic"><code class="xref py py-func docutils literal notranslate"><span class="pre">psic()</span></code></a>, <a class="reference internal" href="#ad_hoc_diffractometer.factories.sixc" title="ad_hoc_diffractometer.factories.sixc"><code class="xref py py-func docutils literal notranslate"><span class="pre">sixc()</span></code></a>, <a class="reference internal" href="#ad_hoc_diffractometer.factories.kappa6c" title="ad_hoc_diffractometer.factories.kappa6c"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa6c()</span></code></a>,
+<a class="reference internal" href="#ad_hoc_diffractometer.factories.zaxis" title="ad_hoc_diffractometer.factories.zaxis"><code class="xref py py-func docutils literal notranslate"><span class="pre">zaxis()</span></code></a>, <a class="reference internal" href="#ad_hoc_diffractometer.factories.s2d2" title="ad_hoc_diffractometer.factories.s2d2"><code class="xref py py-func docutils literal notranslate"><span class="pre">s2d2()</span></code></a>, and <a class="reference internal" href="#ad_hoc_diffractometer.factories.fivec" title="ad_hoc_diffractometer.factories.fivec"><code class="xref py py-func docutils literal notranslate"><span class="pre">fivec()</span></code></a>.</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ad_hoc_diffractometer.geometries'</span></span><a class="headerlink" href="#ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Entry-point group name for geometry plugins.</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">KAPPA_ALPHA_DEFAULT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">50.0</span></span><a class="headerlink" href="#ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C).</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.fivec">

@@ -82,7 +82,7 @@ Module Contents
    :param modes: Named diffraction modes available for this geometry.  Keys are
                  mode names (str); values are :class:`~mode.DiffractionMode`
                  instances.  ``None`` (default) means no modes are declared.
-   :type modes: dict[str, DiffractionMode] or ModeDict or None, optional
+   :type modes: dict[str, ConstraintSet] or ModeDict or None, optional
    :param default_mode: Name of the mode that is active at construction time.  Must be a
                         key of ``modes`` if both are supplied.  ``None`` (default) means no
                         active mode is set (``mode_name`` returns ``None``).
@@ -425,6 +425,29 @@ Module Contents
 
 
 
+   .. py:property:: free_dof_after_bragg
+      :type: int
+
+
+      Number of free degrees of freedom after satisfying the Bragg
+      condition.
+
+      Equals ``N − 3`` where N is the total number of real motor axes
+      (sample stages + detector stages).  The value determines how many
+      constraints a :class:`~mode.ConstraintSet` must contain for this
+      geometry.
+
+      :rtype: int
+
+      .. rubric:: Examples
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> ahd.fourcv().free_dof_after_bragg
+      1
+      >>> ahd.psic().free_dof_after_bragg
+      3
+
+
    .. py:method:: from_dict(d: dict) -> AdHocDiffractometer
       :classmethod:
 
@@ -595,15 +618,15 @@ Module Contents
 
 
    .. py:property:: mode
-      :type: ~ad_hoc_diffractometer.mode.DiffractionMode | None
+      :type: ~ad_hoc_diffractometer.mode.ConstraintSet | None
 
 
-      The currently active :class:`~mode.DiffractionMode`, or ``None``.
+      The currently active :class:`~mode.ConstraintSet`, or ``None``.
 
       Equivalent to ``self.modes[self.mode_name]`` when a mode is
       active; ``None`` when :attr:`mode_name` is ``None``.
 
-      :rtype: DiffractionMode or None
+      :rtype: ConstraintSet or None
 
 
    .. py:property:: mode_name
@@ -627,7 +650,7 @@ Module Contents
       The collection of named diffraction modes for this geometry.
 
       A ``ModeDict`` mapping mode name (str) to
-      :class:`~mode.DiffractionMode` instance.  Empty when no modes
+      :class:`~mode.ConstraintSet` instance.  Empty when no modes
       have been declared.
 
       :rtype: ModeDict

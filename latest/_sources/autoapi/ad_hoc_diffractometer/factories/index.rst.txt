@@ -138,15 +138,18 @@ factories
        (S1D2)1   zaxis  (sample and detector share alpha base stage)
        S2D2      s2d2   (fully decoupled sample/detector pairs)
 
-   References (chronological):
-       W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967)               fourcv / fourch
-       J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985)                          zaxis
-       E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987)                   fivec
-       M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993)            sixc
-       K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) s2d2
-       H. You, J. Appl. Cryst. 32, 614-623 (1999) DOI:10.1107/S0021889899001223   psic
-       ITC Vol. C, Sec. 2.2.6 (2006) DOI:10.1107/97809553602060000577         kappa
-       D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)                 kappa, zaxis, s2d2, fivec
+   .. rubric:: References
+
+   * W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967) — fourcv / fourch
+   * J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985) — zaxis
+   * E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987) — fivec
+   * M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993) — sixc
+   * K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) — s2d2
+   * H. You, J. Appl. Cryst. 32, 614-623 (1999)
+     DOI:10.1107/S0021889899001223 — psic
+   * ITC Vol. C, Sec. 2.2.6 (2006)
+     DOI:10.1107/97809553602060000577 — kappa
+   * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — kappa, zaxis, s2d2, fivec
 
 
 Attributes
@@ -186,15 +189,40 @@ Module Contents
 
 .. py:data:: BASIS_BL
 
+   Basis vector dictionary for the Busing & Levy (1967) coordinate convention.
+
+   Maps physical direction names to Cartesian unit vectors:
+
+   - ``"lateral"`` → +x
+   - ``"longitudinal"`` → +y (along the beam)
+   - ``"vertical"`` → +z (opposite to gravitational acceleration)
+
+   Used by :func:`fourcv`, :func:`fourch`, :func:`kappa4cv`, and :func:`kappa4ch`.
+
 .. py:data:: BASIS_YOU
+
+   Basis vector dictionary for the You (1999) coordinate convention.
+
+   Maps physical direction names to Cartesian unit vectors:
+
+   - ``"vertical"`` → ``XHAT`` (+x, opposite to gravitational acceleration)
+   - ``"longitudinal"`` → ``YHAT`` (+y, along the beam)
+   - ``"lateral"`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)
+
+   Default basis used by :func:`psic`, :func:`sixc`, :func:`kappa6c`,
+   :func:`zaxis`, :func:`s2d2`, and :func:`fivec`.
 
 .. py:data:: GEOMETRY_ENTRY_POINT_GROUP
    :value: 'ad_hoc_diffractometer.geometries'
 
 
+   Entry-point group name for geometry plugins.
+
 .. py:data:: KAPPA_ALPHA_DEFAULT
    :value: 50.0
 
+
+   Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C).
 
 .. py:function:: fivec(basis: dict = _BASIS_YOU) -> ~ad_hoc_diffractometer.geometry.AdHocDiffractometer
 

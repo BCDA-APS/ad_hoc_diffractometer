@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=8a799eb1"></script>
+    <script src="../../_static/documentation_options.js?v=c1e363f7"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -433,7 +433,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">XHAT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">YHAT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZHAT</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiffractionMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModeDict</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.reflection</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reflection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.reflection</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReflectionList</span>
@@ -493,7 +493,7 @@
 <span class="sd">        Azimuthal reference direction as Miller indices (h, k, l).  Used</span>
 <span class="sd">        by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)</span>
 <span class="sd">        means no reference is set.  Must be a non-zero vector.</span>
-<span class="sd">    modes : dict[str, DiffractionMode] or ModeDict or None, optional</span>
+<span class="sd">    modes : dict[str, ConstraintSet] or ModeDict or None, optional</span>
 <span class="sd">        Named diffraction modes available for this geometry.  Keys are</span>
 <span class="sd">        mode names (str); values are :class:`~mode.DiffractionMode`</span>
 <span class="sd">        instances.  ``None`` (default) means no modes are declared.</span>
@@ -986,12 +986,37 @@
     <span class="c1"># ------------------------------------------------------------------</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">free_dof_after_bragg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of free degrees of freedom after satisfying the Bragg</span>
+<span class="sd">        condition.</span>
+
+<span class="sd">        Equals ``N − 3`` where N is the total number of real motor axes</span>
+<span class="sd">        (sample stages + detector stages).  The value determines how many</span>
+<span class="sd">        constraints a :class:`~mode.ConstraintSet` must contain for this</span>
+<span class="sd">        geometry.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">        &gt;&gt;&gt; ahd.fourcv().free_dof_after_bragg</span>
+<span class="sd">        1</span>
+<span class="sd">        &gt;&gt;&gt; ahd.psic().free_dof_after_bragg</span>
+<span class="sd">        3</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">modes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModeDict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The collection of named diffraction modes for this geometry.</span>
 
 <span class="sd">        A ``ModeDict`` mapping mode name (str) to</span>
-<span class="sd">        :class:`~mode.DiffractionMode` instance.  Empty when no modes</span>
+<span class="sd">        :class:`~mode.ConstraintSet` instance.  Empty when no modes</span>
 <span class="sd">        have been declared.</span>
 
 <span class="sd">        Returns</span>
@@ -1030,16 +1055,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_mode_name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DiffractionMode</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConstraintSet</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The currently active :class:`~mode.DiffractionMode`, or ``None``.</span>
+<span class="sd">        The currently active :class:`~mode.ConstraintSet`, or ``None``.</span>
 
 <span class="sd">        Equivalent to ``self.modes[self.mode_name]`` when a mode is</span>
 <span class="sd">        active; ``None`` when :attr:`mode_name` is ``None``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        DiffractionMode or None</span>
+<span class="sd">        ConstraintSet or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -2291,80 +2316,33 @@
     <span class="c1"># ------------------------------------------------------------------</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_mode_to_dict</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="s2">&quot;DiffractionMode&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mode_to_dict</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="s2">&quot;ConstraintSet&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Serialise a :class:`~mode.DiffractionMode` to a JSON-serialisable dict.</span>
-
-<span class="sd">        The ``&quot;type&quot;`` key records the class name so that :meth:`_mode_from_dict`</span>
-<span class="sd">        can reconstruct the correct subclass.  Currently supports</span>
-<span class="sd">        ``FixedAngleMode`` and ``BisectingMode``; other subclasses are</span>
-<span class="sd">        serialised with their class name and common fields only (they will</span>
-<span class="sd">        be reconstructed as the base type on round-trip, which is a no-op</span>
-<span class="sd">        for the abstract base class — callers should not round-trip custom</span>
-<span class="sd">        subclasses through ``to_dict`` / ``from_dict``).</span>
+<span class="sd">        Serialise a :class:`~mode.ConstraintSet` to a JSON-serialisable dict.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectingMode</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedAngleMode</span>
-
-        <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-            <span class="s2">&quot;frozen_angles&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">),</span>
-            <span class="s2">&quot;cut_points&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">cut_points</span><span class="p">),</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">FixedAngleMode</span><span class="p">):</span>
-            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;stage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">_stage</span>
-            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">_value</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">BisectingMode</span><span class="p">):</span>  <span class="c1"># pragma: no branch</span>
-            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;sample_stage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">sample_stage</span>
-            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;detector_stage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_stage</span>
-        <span class="k">return</span> <span class="n">d</span>
+        <span class="k">return</span> <span class="n">mode</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_mode_from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DiffractionMode&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mode_from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ConstraintSet&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reconstruct a :class:`~mode.DiffractionMode` from a dict produced by</span>
+<span class="sd">        Reconstruct a :class:`~mode.ConstraintSet` from a dict produced by</span>
 <span class="sd">        :meth:`_mode_to_dict`.</span>
 
-<span class="sd">        Unknown ``&quot;type&quot;`` values fall back to reconstructing a plain</span>
-<span class="sd">        :class:`~mode.DiffractionMode`-compatible object; practically, an</span>
-<span class="sd">        unrecognised type is silently skipped and a ``FixedAngleMode`` with</span>
-<span class="sd">        no stage is not valid.  In practice this code path is unreachable</span>
-<span class="sd">        from the built-in types.</span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the dict does not have ``&quot;type&quot;: &quot;ConstraintSet&quot;``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectingMode</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiffractionMode</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedAngleMode</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span>
 
         <span class="n">type_name</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">frozen</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;frozen_angles&quot;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="n">cuts</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cut_points&quot;</span><span class="p">,</span> <span class="p">{})</span>
-
-        <span class="k">if</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s2">&quot;FixedAngleMode&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">FixedAngleMode</span><span class="p">(</span>
-                <span class="n">stage</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;stage&quot;</span><span class="p">],</span>
-                <span class="n">value</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">],</span>
-                <span class="n">cut_points</span><span class="o">=</span><span class="n">cuts</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="k">if</span> <span class="n">type_name</span> <span class="o">!=</span> <span class="s2">&quot;ConstraintSet&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;_mode_from_dict: expected type &#39;ConstraintSet&#39;; got </span><span class="si">{</span><span class="n">type_name</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;The old BisectingMode / FixedAngleMode serialisation format is no &quot;</span>
+                <span class="s2">&quot;longer supported.  Re-save the geometry with the current version.&quot;</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s2">&quot;BisectingMode&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">BisectingMode</span><span class="p">(</span>
-                <span class="n">sample_stage</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;sample_stage&quot;</span><span class="p">],</span>
-                <span class="n">detector_stage</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;detector_stage&quot;</span><span class="p">],</span>
-                <span class="n">frozen_angles</span><span class="o">=</span><span class="n">frozen</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="n">cut_points</span><span class="o">=</span><span class="n">cuts</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="c1"># Unknown type — reconstruct as a minimal anonymous subclass so the</span>
-        <span class="c1"># round-trip does not crash, preserving frozen_angles and cut_points.</span>
-        <span class="c1"># (This branch is not exercised by built-in types — pragma: no cover)</span>
-
-        <span class="k">class</span><span class="w"> </span><span class="nc">_UnknownMode</span><span class="p">(</span><span class="n">DiffractionMode</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
-            <span class="nd">@property</span>
-            <span class="k">def</span><span class="w"> </span><span class="nf">constrained_stages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-                <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frozen_angles</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-        <span class="n">obj</span> <span class="o">=</span> <span class="n">_UnknownMode</span><span class="p">(</span>  <span class="c1"># pragma: no cover</span>
-            <span class="n">frozen_angles</span><span class="o">=</span><span class="n">frozen</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cut_points</span><span class="o">=</span><span class="n">cuts</span> <span class="ow">or</span> <span class="kc">None</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">obj</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">return</span> <span class="n">ConstraintSet</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AdHocDiffractometer.to_dict">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.to_dict">[docs]</a>
@@ -2538,7 +2516,7 @@
 
         <span class="c1"># Restore modes</span>
         <span class="n">raw_modes</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modes&quot;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="n">restored_modes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DiffractionMode</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">restored_modes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConstraintSet</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">mname</span><span class="p">,</span> <span class="n">mdict</span> <span class="ow">in</span> <span class="n">raw_modes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">restored_modes</span><span class="p">[</span><span class="n">mname</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_mode_from_dict</span><span class="p">(</span><span class="n">mdict</span><span class="p">)</span>
 

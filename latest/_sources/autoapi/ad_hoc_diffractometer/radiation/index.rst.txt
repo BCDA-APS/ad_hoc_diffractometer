@@ -110,28 +110,58 @@ Module Contents
    :value: 12.398419843320026
 
 
+   hc = 12.398 419 843 320 026 keV·Å.
+
+   Exact (h, c, and e are all defined SI constants since 2019).
+   Source: NIST CODATA 2022.
+
 .. py:data:: HC_KEV_ANGSTROM_UNCERTAINTY
    :type:  float
    :value: 0.0
 
+
+   Uncertainty of :data:`HC_KEV_ANGSTROM` in keV·Å.
+
+   Exactly **0.0** — not a placeholder.  The 2019 redefinition of the SI
+   fixed the numerical values of Planck's constant *h* and the speed of light
+   *c* exactly; their product *hc* therefore has zero uncertainty by
+   definition.  Reference: BIPM SI Brochure, 9th edition (2019); NIST CODATA 2022.
 
 .. py:data:: NEUTRON_MEV_ANGSTROM2
    :type:  float
    :value: 81.8042102352
 
 
+   h²/(2 m_n) = 81.804 210 235 2 meV·Å².
+
+   Used for reactor-neutron kinetic energy via the de Broglie relation.
+   Source: NIST CODATA 2022; m_n = 1.674 927 500 56(85) × 10⁻²⁷ kg.
+
 .. py:data:: NEUTRON_MEV_ANGSTROM2_UNCERTAINTY
    :type:  float
    :value: 4.15e-08
 
+
+   Uncertainty of :data:`NEUTRON_MEV_ANGSTROM2` in meV·Å².
+
+   Propagated from the CODATA 2022 uncertainty in the neutron mass m_n.
 
 .. py:data:: SOURCE_TYPES
    :type:  tuple[str, Ellipsis]
    :value: ('xray', 'neutron')
 
 
+   Valid source-type strings for :attr:`AdHocDiffractometer.source_type`.
+
+   ``"xray"`` uses hc/λ (keV); ``"neutron"`` uses de Broglie h²/(2 m_n λ²) (meV).
+
 .. py:data:: XRAY_LINES
    :type:  dict[str, float]
+
+   Common laboratory X-ray emission line wavelengths in Å.
+
+   Weighted means (Kα) use the standard 2:1 weighting of Kα1 and Kα2.
+   Values from NIST X-Ray Transition Energies Database.
 
 .. py:function:: energy_to_wavelength(energy_kev: float) -> float
 

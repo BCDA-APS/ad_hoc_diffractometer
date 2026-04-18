@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=8a799eb1"></script>
+    <script src="../../_static/documentation_options.js?v=c1e363f7"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -433,28 +433,28 @@
 
 <span class="sd">Supported modes</span>
 <span class="sd">---------------</span>
-<span class="sd">BisectingMode (four-sample-stage geometries with one detector arm)</span>
+<span class="sd">Bisecting (ConstraintSet with BisectConstraint)</span>
 <span class="sd">    Classic Eulerian four-circle bisecting solution (Busing &amp; Levy 1967,</span>
 <span class="sd">    section &quot;Angle settings&quot;).  Valid for psic (eta/delta bisecting),</span>
 <span class="sd">    fourcv, fourch (omega/ttheta bisecting), and analogous geometries.</span>
+<span class="sd">    Stage names are read directly from the BisectConstraint — no</span>
+<span class="sd">    axis-geometry heuristic is used.</span>
 
 <span class="sd">    Algorithm:</span>
 <span class="sd">        1. Q_phi = UB @ (h, k, l)             — target in phi frame</span>
 <span class="sd">        2. \|Q\| → ttheta via Bragg&#39;s law</span>
-<span class="sd">        3. frozen stages set from mode.frozen_angles</span>
-<span class="sd">        4. detector_stage = ttheta (computed from \|Q\|)</span>
-<span class="sd">        5. sample_stage   = ttheta / 2 (bisecting)</span>
+<span class="sd">        3. fixed sample stages set from SampleConstraint values</span>
+<span class="sd">        4. detector_stage = ttheta            (from BisectConstraint.detector_stage)</span>
+<span class="sd">        5. sample_stage   = ttheta / 2        (from BisectConstraint.sample_stage)</span>
 <span class="sd">        6. Remaining free sample stages (chi, phi or kchi, kphi) solved</span>
 <span class="sd">           from the direction of Q_phi, choosing among the standard</span>
 <span class="sd">           solution branches (two solutions: chi in [0°,180°] and</span>
 <span class="sd">           chi in [-180°, 0°]).</span>
 
-<span class="sd">FixedAngleMode</span>
-<span class="sd">    The named stage is frozen at the stored value.  The remaining</span>
-<span class="sd">    geometry-specific solver is then called with the reduced set of</span>
-<span class="sd">    free stages.  Currently only supported when the fixed stage is</span>
-<span class="sd">    one of the &quot;outer&quot; sample stages (not the detector or the bisected</span>
-<span class="sd">    stage).</span>
+<span class="sd">Fixed sample angle (ConstraintSet without BisectConstraint)</span>
+<span class="sd">    One or more sample stages are frozen at declared values.  The</span>
+<span class="sd">    remaining free stages are solved numerically from the direction</span>
+<span class="sd">    of Q_phi.</span>
 
 <span class="sd">Raises</span>
 <span class="sd">------</span>
@@ -464,13 +464,15 @@
 <span class="sd">    If wavelength or UB matrix is not set.</span>
 <span class="sd">ValueError</span>
 <span class="sd">    If (h, k, l) = (0, 0, 0).</span>
-<span class="sd">ValueError</span>
-<span class="sd">    If the requested \|Q\| exceeds the Ewald sphere (wavelength too long).</span>
+<span class="sd">EwaldSphereViolation</span>
+<span class="sd">    If the requested |Q| exceeds the Ewald sphere (wavelength too long).</span>
+<span class="sd">ConstraintViolation</span>
+<span class="sd">    If a returned solution violates a declared constraint beyond tolerance.</span>
 
 <span class="sd">References</span>
 <span class="sd">----------</span>
-<span class="sd">Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967) — angle-setting equations</span>
-<span class="sd">You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry</span>
+<span class="sd">* Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967) — angle-setting equations</span>
+<span class="sd">* You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
@@ -527,15 +529,18 @@
 <span class="sd">        If ``geometry.sample.UB`` is None.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If (h, k, l) == (0, 0, 0).</span>
-<span class="sd">    ValueError</span>
+<span class="sd">    EwaldSphereViolation</span>
 <span class="sd">        If the scattering vector magnitude exceeds the Ewald sphere</span>
-<span class="sd">        (\|Q\| &gt; 4π/λ, i.e. Bragg condition cannot be satisfied).</span>
+<span class="sd">        (|Q| &gt; 4π/λ, i.e. Bragg condition cannot be satisfied).</span>
+<span class="sd">    ConstraintViolation</span>
+<span class="sd">        If a solution returned by the solver violates a declared constraint</span>
+<span class="sd">        beyond the display-precision tolerance.</span>
 <span class="sd">    NotImplementedError</span>
 <span class="sd">        If no active mode is set or the active mode type is not supported</span>
 <span class="sd">        for this geometry.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectingMode</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedAngleMode</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">EwaldSphereViolation</span>
 
     <span class="c1"># --- Precondition checks ------------------------------------------------</span>
 
@@ -573,10 +578,10 @@
     <span class="n">wavelength</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">wavelength</span>
     <span class="n">sin_theta</span> <span class="o">=</span> <span class="n">Q_mag</span> <span class="o">*</span> <span class="n">wavelength</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">sin_theta</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;forward(): |Q| = </span><span class="si">{</span><span class="n">Q_mag</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2"> Å⁻¹ exceeds the Ewald sphere &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;(max = </span><span class="si">{</span><span class="mf">4.0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">wavelength</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2"> Å⁻¹) at &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;λ = </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2"> Å.  The reflection cannot be reached.&quot;</span>
+        <span class="k">raise</span> <span class="n">EwaldSphereViolation</span><span class="p">(</span>
+            <span class="n">q_mag</span><span class="o">=</span><span class="n">Q_mag</span><span class="p">,</span>
+            <span class="n">q_max</span><span class="o">=</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavelength</span><span class="p">,</span>
+            <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">ttheta_rad</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">sin_theta</span><span class="p">)</span>
@@ -586,19 +591,57 @@
 
     <span class="n">mode</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">mode</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">BisectingMode</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">ConstraintSet</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;forward(): mode </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">) is not a ConstraintSet. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;All modes must be ConstraintSet instances.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">mode</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">(</span><span class="n">geometry</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;forward(): mode </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> is not yet implemented &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;for geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">.  &quot;</span>
+            <span class="s2">&quot;Check mode.is_implemented(geometry) before calling forward().&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">solutions</span> <span class="o">=</span> <span class="n">_solve_constraint_set</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="n">_validate_solutions</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">solutions</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Constraint-set dispatcher</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_constraint_set</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ttheta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dispatch to the appropriate analytic or numeric solver based on the</span>
+<span class="sd">    constraint pattern encoded in the ConstraintSet.</span>
+
+<span class="sd">    Currently supported patterns:</span>
+
+<span class="sd">    - Bisect (any geometry): a :class:`~mode.BisectConstraint` is present,</span>
+<span class="sd">      with an optional ``DetectorConstraint`` freezing an outer detector</span>
+<span class="sd">      stage and optional fixed ``SampleConstraint`` values.</span>
+<span class="sd">    - Fixed sample angle without bisect: one or more fixed sample angles;</span>
+<span class="sd">      delegates to _solve_fixed_sample.</span>
+
+<span class="sd">    Unsupported patterns fall back to the numeric solver.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">has_bisect</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_solve_bisecting</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">FixedAngleMode</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_solve_fixed_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
-
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;forward(): mode </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">) is not supported for geometry &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">.  Supported mode types: &quot;</span>
-        <span class="s2">&quot;BisectingMode, FixedAngleMode.&quot;</span>
-    <span class="p">)</span></div>
-
+    <span class="c1"># Fixed-angle only (no bisect).</span>
+    <span class="k">return</span> <span class="n">_solve_fixed_sample</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -613,15 +656,19 @@
     <span class="n">mode</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Bisecting-mode forward solver.</span>
+<span class="sd">    Bisecting-mode forward solver for ConstraintSet.</span>
 
 <span class="sd">    Implements the Busing &amp; Levy (1967) angle-setting algorithm for an</span>
 <span class="sd">    Eulerian geometry in the bisecting condition.</span>
 
-<span class="sd">    The detector stage is set to ``ttheta_deg``.</span>
-<span class="sd">    The sample_stage (omega/eta) is set to ``ttheta_deg / 2``.</span>
-<span class="sd">    The remaining two sample stages (chi, phi) are computed from the</span>
-<span class="sd">    direction of Q_phi.</span>
+<span class="sd">    The bisect stage pair (sample_stage, detector_stage) is read directly</span>
+<span class="sd">    from the :class:`~mode.BisectConstraint` — no geometry heuristics are</span>
+<span class="sd">    used.  ``bisect_constraint.detector_stage`` receives ``ttheta_deg``;</span>
+<span class="sd">    ``bisect_constraint.sample_stage`` is set to ``ttheta_deg / 2``.</span>
+
+<span class="sd">    Any ``DetectorConstraint`` in the mode (e.g. ``nu=0`` in psic) freezes</span>
+<span class="sd">    that stage at its declared value.  Any fixed ``SampleConstraint`` values</span>
+<span class="sd">    are applied before solving for the remaining free stages.</span>
 
 <span class="sd">    Two solutions are returned corresponding to:</span>
 <span class="sd">        - &quot;positive chi&quot; branch: chi ∈ [0°, 180°]</span>
@@ -637,16 +684,15 @@
 <span class="sd">        Target scattering vector in the phi frame (Å⁻¹).</span>
 <span class="sd">    ttheta_deg : float</span>
 <span class="sd">        Detector angle (2θ) in degrees.</span>
-<span class="sd">    mode : BisectingMode</span>
+<span class="sd">    mode : ConstraintSet</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    list of dict[str, float]</span>
 <span class="sd">        Valid solutions (may be empty if all are out of limits).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Identify the three free sample stages (beyond the bisected one).</span>
-    <span class="c1"># For standard four-circle: [omega/eta, chi, phi].</span>
-    <span class="c1"># For psic with frozen mu/nu:  [eta, chi, phi].</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectConstraint</span>
+
     <span class="n">sample_stages</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span>
 
     <span class="c1"># Build the baseline angle dict: all stages at their current angles.</span>
@@ -655,29 +701,30 @@
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>  <span class="c1"># noqa: SLF001</span>
     <span class="p">}</span>
 
-    <span class="c1"># Apply frozen angles from the mode.</span>
-    <span class="c1"># For each frozen stage, use the stage&#39;s *current* angle rather than</span>
-    <span class="c1"># the value stored in the mode — the caller presets the stage angle</span>
-    <span class="c1"># before calling forward(), giving full control over the fixed value.</span>
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001</span>
-            <span class="n">angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">angle</span>  <span class="c1"># noqa: SLF001</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover  — frozen stage not in geometry (should not occur)</span>
-            <span class="n">angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="c1"># Apply fixed sample constraints from the ConstraintSet.</span>
+    <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">fixed_sample_constraints</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001</span>
+            <span class="n">angles</span><span class="p">[</span><span class="n">sc</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="c1"># Set the detector stage (first/outermost detector stage = ttheta/delta).</span>
-    <span class="n">detector_name</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_stage</span>
+    <span class="c1"># Freeze any explicitly constrained detector stage (e.g. nu=0 in psic).</span>
+    <span class="n">det_constraint</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_constraint</span>
+    <span class="k">if</span> <span class="n">det_constraint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>
+        <span class="n">angles</span><span class="p">[</span><span class="n">det_constraint</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="c1"># Read the bisect stage pair from the BisectConstraint — explicit, no heuristic.</span>
+    <span class="n">bisect_c</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">BisectConstraint</span><span class="p">))</span>
+    <span class="n">detector_name</span> <span class="o">=</span> <span class="n">bisect_c</span><span class="o">.</span><span class="n">detector_stage</span>  <span class="c1"># receives ttheta_deg</span>
+    <span class="n">sample_bisect_name</span> <span class="o">=</span> <span class="n">bisect_c</span><span class="o">.</span><span class="n">sample_stage</span>  <span class="c1"># receives ttheta_deg / 2</span>
+
     <span class="n">angles</span><span class="p">[</span><span class="n">detector_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttheta_deg</span>
-    <span class="c1"># Any additional detector stages (e.g. nu in psic) keep frozen or current.</span>
-
-    <span class="c1"># The bisecting sample stage = ttheta / 2.</span>
-    <span class="n">sample_bisect_name</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">sample_stage</span>
     <span class="n">angles</span><span class="p">[</span><span class="n">sample_bisect_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttheta_deg</span> <span class="o">/</span> <span class="mf">2.0</span>
 
-    <span class="c1"># The remaining two free sample stages are the ones not frozen and not bisected.</span>
-    <span class="n">constrained</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">constrained_stages</span><span class="p">)</span>
-    <span class="n">constrained</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">detector_name</span><span class="p">)</span>
-    <span class="n">free_sample</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample_stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constrained</span><span class="p">]</span>
+    <span class="c1"># The remaining free sample stages are those not fixed by any constraint.</span>
+    <span class="n">constrained_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">constrained_stages</span><span class="p">(</span><span class="n">geometry</span><span class="p">))</span>
+    <span class="n">constrained_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">detector_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">det_constraint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>
+        <span class="n">constrained_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">det_constraint</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">free_sample</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample_stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constrained_names</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_sample</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># All sample stages constrained — return the fixed solution if valid.</span>
@@ -938,77 +985,111 @@
     <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># pragma: no cover</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_solve_fixed_angle</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_fixed_sample</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">ttheta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">mode</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    FixedAngleMode forward solver.</span>
+<span class="sd">    Fixed-sample-angle solver (no bisect condition).</span>
 
-<span class="sd">    Freezes the named stage at its fixed value, then delegates to the</span>
-<span class="sd">    bisecting solver treating the remaining stages as free — provided the</span>
-<span class="sd">    geometry has a bisecting-capable structure (detector + 3 sample stages</span>
-<span class="sd">    where one is the equivalent of omega/eta).</span>
-
-<span class="sd">    This covers the common case of fixed_chi (chi frozen at e.g. 90°,</span>
-<span class="sd">    omega/ttheta bisecting, phi free) or fixed_mu (mu=0, rest as psic</span>
-<span class="sd">    bisecting).</span>
-
-<span class="sd">    For each frozen-stage value, the remaining angles are solved via the</span>
-<span class="sd">    bisecting equations restricted to the appropriate stages.</span>
+<span class="sd">    Freezes all named sample stages at their constraint values, sets the</span>
+<span class="sd">    detector stage to ``ttheta_deg``, and solves for any remaining free</span>
+<span class="sd">    sample stages numerically.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    geometry : AdHocDiffractometer</span>
 <span class="sd">    Q_phi : numpy.ndarray, shape (3,)</span>
 <span class="sd">    ttheta_deg : float</span>
-<span class="sd">    mode : FixedAngleMode</span>
+<span class="sd">    mode : ConstraintSet</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    list of dict[str, float]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectingMode</span>
+    <span class="n">sample_stages</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span>
 
-    <span class="c1"># Find the geometry&#39;s default bisecting mode to re-use its stage names.</span>
-    <span class="n">bisecting_mode</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">BisectingMode</span><span class="p">):</span>
-            <span class="n">bisecting_mode</span> <span class="o">=</span> <span class="n">m</span>
-            <span class="k">break</span>
+    <span class="c1"># Build the baseline angle dict.</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="p">}</span>
 
-    <span class="k">if</span> <span class="n">bisecting_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;forward(): FixedAngleMode solver for geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> &quot;</span>
-            <span class="s2">&quot;requires a BisectingMode to be defined in the geometry&#39;s modes &quot;</span>
-            <span class="s2">&quot;to identify the bisecting and detector stage names.  &quot;</span>
-            <span class="s2">&quot;No BisectingMode found.&quot;</span>
+    <span class="c1"># Apply fixed sample constraints.</span>
+    <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">fixed_sample_constraints</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001</span>
+            <span class="n">angles</span><span class="p">[</span><span class="n">sc</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="c1"># Apply detector constraint if present.</span>
+    <span class="n">det_constraint</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_constraint</span>
+    <span class="k">if</span> <span class="n">det_constraint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>
+        <span class="n">angles</span><span class="p">[</span><span class="n">det_constraint</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">active_det_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ds</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="n">active_det_name</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">active_det_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">active_det_name</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">active_det_name</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="n">angles</span><span class="p">[</span><span class="n">active_det_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttheta_deg</span>
+
+    <span class="c1"># Free sample stages: those not constrained.</span>
+    <span class="n">constrained_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">constrained_stages</span><span class="p">(</span><span class="n">geometry</span><span class="p">))</span>
+    <span class="n">constrained_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">active_det_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">det_constraint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>
+        <span class="n">constrained_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">det_constraint</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">free_sample</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample_stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constrained_names</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_sample</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">_apply_cut_points</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">angles</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_sample</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_solve_one_free_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">free_sample</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+    <span class="n">chi_stage</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">phi_stage</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.orientation</span><span class="w"> </span><span class="kn">import</span> <span class="n">angles_to_phi_vector</span> <span class="k">as</span> <span class="n">_a2phi</span>
+
+    <span class="n">grid_seeds</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">chi_s</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">chi_s</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">45.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">135.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">phi_s</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">solutions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">chi_start</span><span class="p">,</span> <span class="n">phi_start</span> <span class="ow">in</span> <span class="n">grid_seeds</span><span class="p">:</span>
+        <span class="n">sol_angles</span> <span class="o">=</span> <span class="n">_solve_two_angles</span><span class="p">(</span>
+            <span class="n">geometry</span><span class="o">=</span><span class="n">geometry</span><span class="p">,</span>
+            <span class="n">fixed_angles</span><span class="o">=</span><span class="n">angles</span><span class="p">,</span>
+            <span class="n">free_stage_1</span><span class="o">=</span><span class="n">chi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">free_stage_2</span><span class="o">=</span><span class="n">phi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">start_1</span><span class="o">=</span><span class="n">chi_start</span><span class="p">,</span>
+            <span class="n">start_2</span><span class="o">=</span><span class="n">phi_start</span><span class="p">,</span>
+            <span class="n">Q_phi_target</span><span class="o">=</span><span class="n">Q_phi</span><span class="p">,</span>
+            <span class="n">a2phi_fn</span><span class="o">=</span><span class="n">_a2phi</span><span class="p">,</span>
         <span class="p">)</span>
-
-    <span class="c1"># Build an effective BisectingMode that includes the fixed stage as frozen.</span>
-    <span class="c1"># Use each stage&#39;s current angle — the caller presets it before forward().</span>
-    <span class="n">effective_frozen</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">bisecting_mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001</span>
-            <span class="n">effective_frozen</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">angle</span>  <span class="c1"># noqa: SLF001</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-            <span class="n">effective_frozen</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">bisecting_mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001</span>
-            <span class="n">effective_frozen</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">angle</span>  <span class="c1"># noqa: SLF001</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-            <span class="n">effective_frozen</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">frozen_angles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-
-    <span class="n">effective_mode</span> <span class="o">=</span> <span class="n">BisectingMode</span><span class="p">(</span>
-        <span class="n">sample_stage</span><span class="o">=</span><span class="n">bisecting_mode</span><span class="o">.</span><span class="n">sample_stage</span><span class="p">,</span>
-        <span class="n">detector_stage</span><span class="o">=</span><span class="n">bisecting_mode</span><span class="o">.</span><span class="n">detector_stage</span><span class="p">,</span>
-        <span class="n">frozen_angles</span><span class="o">=</span><span class="n">effective_frozen</span><span class="p">,</span>
-        <span class="n">cut_points</span><span class="o">=</span><span class="n">mode</span><span class="o">.</span><span class="n">cut_points</span> <span class="ow">or</span> <span class="n">bisecting_mode</span><span class="o">.</span><span class="n">cut_points</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">_solve_bisecting</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">effective_mode</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sol_angles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
+            <span class="k">continue</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+        <span class="n">sol</span><span class="p">[</span><span class="n">chi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sol</span><span class="p">[</span><span class="n">phi_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">_apply_cut_points</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+        <span class="n">duplicate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">existing</span> <span class="ow">in</span> <span class="n">solutions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">existing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-4</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sol</span><span class="p">):</span>
+                <span class="n">duplicate</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">duplicate</span> <span class="ow">and</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
+            <span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">solutions</span>
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -1033,6 +1114,82 @@
             <span class="n">cut</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">cut_points</span><span class="p">[</span><span class="n">stage_name</span><span class="p">]</span>
             <span class="n">remainder</span> <span class="o">=</span> <span class="p">(</span><span class="n">angles</span><span class="p">[</span><span class="n">stage_name</span><span class="p">]</span> <span class="o">-</span> <span class="n">cut</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span>
             <span class="n">angles</span><span class="p">[</span><span class="n">stage_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">cut</span> <span class="o">+</span> <span class="n">remainder</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_solutions</span><span class="p">(</span>
+    <span class="n">solutions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">mode</span><span class="p">,</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate that every returned solution actually satisfies all constraints</span>
+<span class="sd">    in the mode, raising ``ValueError`` if any constraint is violated beyond</span>
+<span class="sd">    the display precision tolerance.</span>
+
+<span class="sd">    This catches solver bugs and virtual-angle mismatches (e.g. a kappa</span>
+<span class="sd">    geometry where the declared ``SampleConstraint`` value cannot be achieved</span>
+<span class="sd">    by the approximate solver).</span>
+
+<span class="sd">    Uses :func:`~.display.precision_atol` as the tolerance — half a unit in</span>
+<span class="sd">    the last displayed decimal place, consistent with the package&#39;s display</span>
+<span class="sd">    precision setting.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    solutions : list of dict[str, float]</span>
+<span class="sd">        Motor-angle dicts returned by the solver.</span>
+<span class="sd">    mode : ConstraintSet</span>
+<span class="sd">        The active constraint set.</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        The diffractometer (needed for :meth:`~.mode.ConstraintSet.is_implemented`</span>
+<span class="sd">        checks and stage-name resolution).</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ConstraintViolation</span>
+<span class="sd">        If any solution violates a constraint beyond tolerance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">precision_atol</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectConstraint</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintViolation</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleConstraint</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">solutions</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">atol</span> <span class="o">=</span> <span class="n">precision_atol</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">solutions</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span>
+            <span class="c1"># Only validate constraints that have a numeric residual we can check.</span>
+            <span class="c1"># BisectConstraint and SampleConstraint are the checkable ones;</span>
+            <span class="c1"># DetectorConstraint is applied by the solver directly (ttheta_deg);</span>
+            <span class="c1"># ReferenceConstraint is not yet implemented.</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">BisectConstraint</span> <span class="o">|</span> <span class="n">SampleConstraint</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">residual</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="c1"># Stage not in solution dict (virtual angle not yet computed).</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">atol</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">BisectConstraint</span><span class="p">):</span>
+                        <span class="n">constraint_repr</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;BisectConstraint(</span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">sample_stage</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">detector_stage</span><span class="si">!r}</span><span class="s2">): &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;expected </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">sample_stage</span><span class="si">}</span><span class="s2">=&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">detector_stage</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;?&#39;</span><span class="p">)</span><span class="si">!s}</span><span class="s2">/2, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">sample_stage</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">sample_stage</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;?&#39;</span><span class="p">)</span><span class="si">!s}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">constraint_repr</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;SampleConstraint(</span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="si">!r}</span><span class="s2">): &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;?&#39;</span><span class="p">)</span><span class="si">!s}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">ConstraintViolation</span><span class="p">(</span>
+                        <span class="n">solution_index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                        <span class="n">constraint_repr</span><span class="o">=</span><span class="n">constraint_repr</span><span class="p">,</span>
+                        <span class="n">residual</span><span class="o">=</span><span class="n">residual</span><span class="p">,</span>
+                        <span class="n">tolerance</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span>
+                    <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_check_limits</span><span class="p">(</span>

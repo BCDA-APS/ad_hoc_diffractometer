@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=8a799eb1"></script>
+    <script src="../../_static/documentation_options.js?v=c1e363f7"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -448,9 +448,6 @@
 <span class="c1"># Crystal system definitions</span>
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
-<span class="c1">#: Parameters that are independent (not symmetry-constrained) for each system.</span>
-<span class="c1">#: These are the parameters reported by __str__.  Ordered from most constrained</span>
-<span class="c1">#: (cubic) to most general (triclinic).</span>
 <span class="n">_SYSTEM_FREE_PARAMS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;cubic&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,),</span>
     <span class="s2">&quot;tetragonal&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">),</span>
@@ -460,10 +457,17 @@
     <span class="s2">&quot;monoclinic&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;beta&quot;</span><span class="p">),</span>
     <span class="s2">&quot;triclinic&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">),</span>
 <span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Parameters that are independent (not symmetry-constrained) for each system.</span>
 
-<span class="c1">#: The seven crystal systems, derived from _SYSTEM_FREE_PARAMS so that</span>
-<span class="c1">#: membership and order are always consistent with the free-parameter table.</span>
+<span class="sd">These are the parameters reported by ``__str__``.  Ordered from most</span>
+<span class="sd">constrained (cubic) to most general (triclinic).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="n">CRYSTAL_SYSTEMS</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_SYSTEM_FREE_PARAMS</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;The seven crystal systems, derived from :data:`_SYSTEM_FREE_PARAMS`.</span>
+
+<span class="sd">Membership and order are always consistent with the free-parameter table.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1"># Sentinel: marks a parameter as &quot;not supplied by the caller&quot;</span>
 <span class="n">_UNSET</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>

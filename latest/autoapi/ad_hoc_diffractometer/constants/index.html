@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=8a799eb1"></script>
+    <script src="../../../_static/documentation_options.js?v=c1e363f7"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -478,13 +478,13 @@ The caller-facing notation (+x, -z, etc.) is handled in axes.py.</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.constants.XHAT" title="ad_hoc_diffractometer.constants.XHAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XHAT</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Unit vector along the +x axis.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.constants.YHAT" title="ad_hoc_diffractometer.constants.YHAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">YHAT</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Unit vector along the +y axis.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.constants.ZHAT" title="ad_hoc_diffractometer.constants.ZHAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ZHAT</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Unit vector along the +z axis.</p></td>
 </tr>
 </tbody>
 </table>
@@ -495,17 +495,29 @@ The caller-facing notation (+x, -z, etc.) is handled in axes.py.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.constants.XHAT">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.constants.</span></span><span class="sig-name descname"><span class="pre">XHAT</span></span><a class="headerlink" href="#ad_hoc_diffractometer.constants.XHAT" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Unit vector along the +x axis.</p>
+<p>In the You (1999) convention this is the <strong>vertical</strong> direction
+(opposite to gravitational acceleration).
+In the Busing &amp; Levy (1967) convention this is the <strong>lateral</strong> direction.</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.constants.YHAT">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.constants.</span></span><span class="sig-name descname"><span class="pre">YHAT</span></span><a class="headerlink" href="#ad_hoc_diffractometer.constants.YHAT" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Unit vector along the +y axis.</p>
+<p><strong>Longitudinal</strong> direction — a chosen direction in the plane perpendicular
+to vertical, conventionally aligned with the nominal incident beam.
+Consistent across both the You (1999) and Busing &amp; Levy (1967) conventions.</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.constants.ZHAT">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.constants.</span></span><span class="sig-name descname"><span class="pre">ZHAT</span></span><a class="headerlink" href="#ad_hoc_diffractometer.constants.ZHAT" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Unit vector along the +z axis.</p>
+<p>In the You (1999) convention this is the <strong>lateral</strong> direction
+(completes the right-handed system: vertical × longitudinal).
+In the Busing &amp; Levy (1967) convention this is the <strong>vertical</strong> direction.</p>
+</dd></dl>
 
 </section>
 </section>

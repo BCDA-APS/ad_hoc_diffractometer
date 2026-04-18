@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=8a799eb1"></script>
+    <script src="../../../_static/documentation_options.js?v=c1e363f7"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -477,16 +477,18 @@ mode type.</p>
 <section id="supported-modes">
 <h2>Supported modes<a class="headerlink" href="#supported-modes" title="Link to this heading">#</a></h2>
 <dl>
-<dt>BisectingMode (four-sample-stage geometries with one detector arm)</dt><dd><p>Classic Eulerian four-circle bisecting solution (Busing &amp; Levy 1967,
+<dt>Bisecting (ConstraintSet with BisectConstraint)</dt><dd><p>Classic Eulerian four-circle bisecting solution (Busing &amp; Levy 1967,
 section “Angle settings”).  Valid for psic (eta/delta bisecting),
-fourcv, fourch (omega/ttheta bisecting), and analogous geometries.</p>
+fourcv, fourch (omega/ttheta bisecting), and analogous geometries.
+Stage names are read directly from the BisectConstraint — no
+axis-geometry heuristic is used.</p>
 <dl class="simple">
 <dt>Algorithm:</dt><dd><ol class="arabic simple">
 <li><p>Q_phi = UB &#64; (h, k, l)             — target in phi frame</p></li>
 <li><p>|Q| → ttheta via Bragg’s law</p></li>
-<li><p>frozen stages set from mode.frozen_angles</p></li>
-<li><p>detector_stage = ttheta (computed from |Q|)</p></li>
-<li><p>sample_stage   = ttheta / 2 (bisecting)</p></li>
+<li><p>fixed sample stages set from SampleConstraint values</p></li>
+<li><p>detector_stage = ttheta            (from BisectConstraint.detector_stage)</p></li>
+<li><p>sample_stage   = ttheta / 2        (from BisectConstraint.sample_stage)</p></li>
 <li><p>Remaining free sample stages (chi, phi or kchi, kphi) solved
 from the direction of Q_phi, choosing among the standard
 solution branches (two solutions: chi in [0°,180°] and
@@ -495,11 +497,9 @@ chi in [-180°, 0°]).</p></li>
 </dd>
 </dl>
 </dd>
-<dt>FixedAngleMode</dt><dd><p>The named stage is frozen at the stored value.  The remaining
-geometry-specific solver is then called with the reduced set of
-free stages.  Currently only supported when the fixed stage is
-one of the “outer” sample stages (not the detector or the bisected
-stage).</p>
+<dt>Fixed sample angle (ConstraintSet without BisectConstraint)</dt><dd><p>One or more sample stages are frozen at declared values.  The
+remaining free stages are solved numerically from the direction
+of Q_phi.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -512,13 +512,18 @@ stage).</p>
 <dt class="field-odd">raises ValueError<span class="colon">:</span></dt>
 <dd class="field-odd"><p>If (h, k, l) = (0, 0, 0).</p>
 </dd>
-<dt class="field-even">raises ValueError<span class="colon">:</span></dt>
-<dd class="field-even"><p>If the requested |Q| exceeds the Ewald sphere (wavelength too long).</p>
+<dt class="field-even">raises EwaldSphereViolation<span class="colon">:</span></dt>
+<dd class="field-even"><p>If the requested <a href="#id1"><span class="problematic" id="id2">|Q|</span></a> exceeds the Ewald sphere (wavelength too long).</p>
+</dd>
+<dt class="field-odd">raises ConstraintViolation<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If a returned solution violates a declared constraint beyond tolerance.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p>Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967) — angle-setting equations
-You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry</p>
+<ul class="simple">
+<li><p>Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967) — angle-setting equations</p></li>
+<li><p>You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry</p></li>
+</ul>
 </section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
@@ -565,8 +570,10 @@ solutions depending on the geometry and mode.</p>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">geometry.wavelength</span></code> is None.</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">geometry.sample.UB</span></code> is None.</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If (h, k, l) == (0, 0, 0).</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the scattering vector magnitude exceeds the Ewald sphere
-(|Q| &gt; 4π/λ, i.e. Bragg condition cannot be satisfied).</p></li>
+<li><p><a class="reference internal" href="../mode/index.html#ad_hoc_diffractometer.mode.EwaldSphereViolation" title="ad_hoc_diffractometer.mode.EwaldSphereViolation"><strong>EwaldSphereViolation</strong></a> – If the scattering vector magnitude exceeds the Ewald sphere
+(<a href="#id3"><span class="problematic" id="id4">|Q|</span></a> &gt; 4π/λ, i.e. Bragg condition cannot be satisfied).</p></li>
+<li><p><a class="reference internal" href="../mode/index.html#ad_hoc_diffractometer.mode.ConstraintViolation" title="ad_hoc_diffractometer.mode.ConstraintViolation"><strong>ConstraintViolation</strong></a> – If a solution returned by the solver violates a declared constraint
+beyond the display-precision tolerance.</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.14)"><strong>NotImplementedError</strong></a> – If no active mode is set or the active mode type is not supported
 for this geometry.</p></li>
 </ul>

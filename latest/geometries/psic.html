@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=8a799eb1"></script>
+    <script src="../_static/documentation_options.js?v=c1e363f7"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -556,26 +556,26 @@ and mode configuration.</p>
 </section>
 <section id="diffraction-modes">
 <h2>Diffraction modes<a class="headerlink" href="#diffraction-modes" title="Link to this heading">#</a></h2>
-<p>Set the active mode with <code class="docutils literal notranslate"><span class="pre">g.mode_name</span> <span class="pre">=</span> <span class="pre">&quot;&lt;mode&gt;&quot;</span></code>. Preset any fixed-stage angles with <code class="docutils literal notranslate"><span class="pre">g.set_angle(name,</span> <span class="pre">value)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>. See <a class="reference internal" href="../howto/modes.html"><span class="doc">Switch Diffraction Modes</span></a> for usage details and <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DiffractionMode" title="ad_hoc_diffractometer.mode.DiffractionMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code></a> for the base class.</p>
+<p>Set the active mode with <code class="docutils literal notranslate"><span class="pre">g.mode_name</span> <span class="pre">=</span> <span class="pre">&quot;&lt;mode&gt;&quot;</span></code>. Preset any fixed-stage angles with <code class="docutils literal notranslate"><span class="pre">g.set_angle(name,</span> <span class="pre">value)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>. See <a class="reference internal" href="../howto/modes.html"><span class="doc">Switch Diffraction Modes</span></a> for usage details and <code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code> for the base class.</p>
 <section id="bisecting">
 <h3><code class="docutils literal notranslate"><span class="pre">bisecting</span></code><a class="headerlink" href="#bisecting" title="Link to this heading">#</a></h3>
-<p><strong>Class:</strong> <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectingMode" title="ad_hoc_diffractometer.mode.BisectingMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code></a> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L227">source</a>)</p>
+<p><strong>Class:</strong> <code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L227">source</a>)</p>
 <p><code class="docutils literal notranslate"><span class="pre">eta</span></code> is constrained to <code class="docutils literal notranslate"><span class="pre">delta</span></code> / 2, placing the sample symmetrically between the incident and diffracted beams (the bisecting condition).</p>
 <p>Additional stages frozen at their current angles: <code class="docutils literal notranslate"><span class="pre">mu</span></code> = current angle, <code class="docutils literal notranslate"><span class="pre">nu</span></code> = current angle.</p>
 </section>
 <section id="fixed-chi">
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_chi</span></code><a class="headerlink" href="#fixed-chi" title="Link to this heading">#</a></h3>
-<p><strong>Class:</strong> <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.FixedAngleMode" title="ad_hoc_diffractometer.mode.FixedAngleMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></a> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156">source</a>)</p>
+<p><strong>Class:</strong> <code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156">source</a>)</p>
 <p>Holds <code class="docutils literal notranslate"><span class="pre">chi</span></code> fixed at its <strong>current angle</strong> during <code class="docutils literal notranslate"><span class="pre">forward()</span></code>. Preset the angle with <code class="docutils literal notranslate"><span class="pre">g.set_angle(&quot;chi&quot;,</span> <span class="pre">value)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 </section>
 <section id="fixed-phi">
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_phi</span></code><a class="headerlink" href="#fixed-phi" title="Link to this heading">#</a></h3>
-<p><strong>Class:</strong> <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.FixedAngleMode" title="ad_hoc_diffractometer.mode.FixedAngleMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></a> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156">source</a>)</p>
+<p><strong>Class:</strong> <code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156">source</a>)</p>
 <p>Holds <code class="docutils literal notranslate"><span class="pre">phi</span></code> fixed at its <strong>current angle</strong> during <code class="docutils literal notranslate"><span class="pre">forward()</span></code>. Preset the angle with <code class="docutils literal notranslate"><span class="pre">g.set_angle(&quot;phi&quot;,</span> <span class="pre">value)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 </section>
 <section id="fixed-mu">
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_mu</span></code><a class="headerlink" href="#fixed-mu" title="Link to this heading">#</a></h3>
-<p><strong>Class:</strong> <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.FixedAngleMode" title="ad_hoc_diffractometer.mode.FixedAngleMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></a> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156">source</a>)</p>
+<p><strong>Class:</strong> <code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code> (<a class="reference external" href="https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156">source</a>)</p>
 <p>Holds <code class="docutils literal notranslate"><span class="pre">mu</span></code> fixed at its <strong>current angle</strong> during <code class="docutils literal notranslate"><span class="pre">forward()</span></code>. Preset the angle with <code class="docutils literal notranslate"><span class="pre">g.set_angle(&quot;mu&quot;,</span> <span class="pre">value)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 </section>
 </section>
@@ -584,9 +584,9 @@ and mode configuration.</p>
 <ul class="simple">
 <li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">psic()</span></code></p></li>
 <li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DiffractionMode" title="ad_hoc_diffractometer.mode.DiffractionMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectingMode" title="ad_hoc_diffractometer.mode.BisectingMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.FixedAngleMode" title="ad_hoc_diffractometer.mode.FixedAngleMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></a></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedAngleMode</span></code></p></li>
 </ul>
 </section>
 <section id="references">
