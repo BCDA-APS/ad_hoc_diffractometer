@@ -114,7 +114,7 @@ class EwaldSphereViolation(ValueError):
     Ewald sphere (``|Q| > 4π/λ``), meaning the Bragg condition cannot be
     satisfied regardless of motor angles.
 
-    Attributes
+    Parameters
     ----------
     q_mag : float
         Requested scattering vector magnitude in Å⁻¹.
@@ -143,7 +143,7 @@ class ConstraintViolation(ValueError):
     constraint (e.g. a kappa Eulerian pseudoangle that has not yet been
     inverted).
 
-    Attributes
+    Parameters
     ----------
     solution_index : int
         Zero-based index of the violating solution in the returned list.

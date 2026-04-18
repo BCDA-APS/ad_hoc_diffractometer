@@ -724,6 +724,63 @@ def sixc(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
         Stage("delta", -LATERAL, parent="alpha", role="detector"),
         Stage("gamma", +VERTICAL, parent="delta", role="detector"),
     ]
+    # sixc: 6 DOF, N-3=3 constraints needed per mode.
+    # four_circle: alpha=0, gamma=0 frozen; bisect on omega/delta.
+    # Reduces to fourcv bisecting — the generic bisecting solver handles it.
+    # Surface modes (five_circle_*, zaxis_*) require reference infrastructure (Issue J).
+    modes = {
+        "bisecting_4c": ConstraintSet(
+            [
+                SampleConstraint("alpha", 0.0),
+                DetectorConstraint("gamma", 0.0),
+                BisectConstraint("omega", "delta"),
+            ],
+            computed=["omega", "chi", "phi", "delta"],
+        ),
+        "fixed_gamma_5c": ConstraintSet(
+            [
+                DetectorConstraint("gamma", 0.0),
+                SampleConstraint("alpha", 0.0),
+                BisectConstraint("omega", "delta"),
+            ],
+            computed=["omega", "chi", "phi", "delta", "alpha"],
+        ),
+        "fixed_alpha_5c": ConstraintSet(
+            [
+                SampleConstraint("alpha", 0.0),
+                BisectConstraint("omega", "delta"),
+                DetectorConstraint("gamma", 0.0),
+            ],
+            computed=["omega", "chi", "phi", "delta", "gamma"],
+        ),
+        "zaxis_alpha_fixed": ConstraintSet(
+            [
+                SampleConstraint("alpha", 0.0),
+                SampleConstraint("chi", 0.0),
+                ReferenceConstraint("alpha_i", 0.0),
+            ],
+            computed=["omega", "delta", "gamma"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "zaxis_beta_fixed": ConstraintSet(
+            [
+                DetectorConstraint("gamma", 0.0),
+                SampleConstraint("chi", 0.0),
+                ReferenceConstraint("beta_out", 0.0),
+            ],
+            computed=["omega", "delta", "alpha"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "zaxis_alpha_eq_beta": ConstraintSet(
+            [
+                SampleConstraint("chi", 0.0),
+                SampleConstraint("phi", 0.0),
+                ReferenceConstraint("a_eq_b", True),
+            ],
+            computed=["omega", "delta", "alpha", "gamma"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+    }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
@@ -733,6 +790,8 @@ def sixc(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
             "(IUCr six-circle; Walko S(3D2)1). "
             "Sample and detector share the alpha (rotary table) base stage."
         ),
+        modes=modes,
+        default_mode="bisecting_4c",
     )
 
 
@@ -1124,7 +1183,7 @@ def fivec(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
     # handles this case identically to fourcv bisecting.
     # Modes where mu != 0 require a tilted-plane solver (not yet implemented).
     modes = {
-        "bisecting": ConstraintSet(
+        "bisecting_4c": ConstraintSet(
             [
                 SampleConstraint("mu", 0.0),
                 BisectConstraint("omega", "ttheta"),
@@ -1170,5 +1229,5 @@ def fivec(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
             "Sample and detector coupled through mu."
         ),
         modes=modes,
-        default_mode="bisecting",
+        default_mode="bisecting_4c",
     )

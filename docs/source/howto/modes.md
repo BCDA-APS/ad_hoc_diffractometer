@@ -1,9 +1,11 @@
 (howto-modes)=
 # Switch Diffraction Modes
 
-A **diffraction mode** describes how `forward()` will compute the motor
-angles and which ones remain constant.  See [Concepts](../concepts.md)
-for background.
+A **diffraction mode** is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+that describes which motor stages are free, which are held at declared values,
+and which are related to others (e.g. bisecting).
+See [Concepts](../concepts.md) for background, and
+{doc}`constraints` for the full constraint framework.
 
 ## List available modes
 
@@ -12,106 +14,126 @@ import ad_hoc_diffractometer as ahd
 
 g = ahd.fourcv()
 print(list(g.modes.keys()))
-# ['bisecting', 'fixed_chi', 'fixed_phi']
+# ['bisecting', 'fixed_chi', 'fixed_phi', 'constant_omega',
+#  'psi_constant', 'double_diffraction']
 ```
 
 ## Get and set the active mode
 
 ```python
-# No mode active by default
-print(g.mode_name)   # None
-
-# Set a mode
-g.mode_name = "bisecting"
+# The default mode is set by the factory
 print(g.mode_name)   # 'bisecting'
+
+# Switch to a different mode
+g.mode_name = "fixed_chi"
+print(g.mode_name)   # 'fixed_chi'
+
+# Clear the active mode (all stages free — forward() will raise)
+g.mode_name = None
 ```
 
 ## Mode reference
 
 ### Bisecting mode
 
-The sample stage angle is constrained to half the detector stage angle,
-placing the sample symmetrically between the incident and diffracted beams.
-Available on: fourcv (omega = ttheta/2), fourch (omega = ttheta/2),
-psic (eta = delta/2), and kappa geometries (komega = ttheta/2 or
-komega = delta/2).
+The bisecting {class}`~ad_hoc_diffractometer.mode.BisectConstraint` drives the
+co-axial sample stage to half the detector angle, placing the sample
+symmetrically between the incident and diffracted beams.
 
 ```python
 g.mode_name = "bisecting"
+solutions = g.forward(1, 0, 0)
+# omega = ttheta / 2 in every solution
 ```
 
-### Fixed chi / fixed phi / fixed kphi / fixed mu
+### Fixed-angle modes
 
-A fixed-angle mode holds one stage at its **current angle** during
-`forward()`.  The caller presets the stage angle with `g.set_angle()`
-before activating the mode:
+Fixed-angle modes hold one sample stage at its **declared constraint value**
+during a single `forward()` call.  The value is part of the {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+definition and is constant only for the duration of that call.
 
 ```python
-# Freeze chi at 90° (surface diffraction geometry)
-g.set_angle("chi", 90.0)
+# fixed_chi: factory default holds chi at 90°
 g.mode_name = "fixed_chi"
-solutions = g.forward(h, k, l)   # chi held at 90° throughout
-
-# Freeze chi at a different angle — same mode, new preset
-g.set_angle("chi", 45.0)
-solutions = g.forward(h, k, l)   # chi held at 45°
+solutions = g.forward(1, 0, 0)
+# sol["chi"] == 90.0 for every solution
 ```
 
-```python
-# Freeze phi at 0°
-g.set_angle("phi", 0.0)
-g.mode_name = "fixed_phi"
-```
+To use a **different value**, construct a new {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+and assign it. The constraint persists until replaced — only reassign when
+the value changes:
 
 ```python
-# Freeze mu at 0° on psic or kappa6c
-g = ahd.psic()
-g.set_angle("mu", 0.0)
-g.mode_name = "fixed_mu"
-```
+from ad_hoc_diffractometer import ConstraintSet, SampleConstraint
 
-### Custom fixed-angle mode
-
-To add a fixed-angle mode that is not pre-built into the geometry:
-
-```python
-from ad_hoc_diffractometer import FixedAngleMode
-
-g.modes["my_chi"] = FixedAngleMode(stage="chi", value=90.0)
-g.set_angle("chi", 90.0)   # preset the stage angle
+# Call 1: chi = 45°
+g.modes["my_chi"] = ConstraintSet([SampleConstraint("chi", 45.0)])
 g.mode_name = "my_chi"
+sols_45 = g.forward(1, 0, 0)   # chi = 45° this call
+
+# Call 2: chi = 60°
+g.modes["my_chi"] = ConstraintSet([SampleConstraint("chi", 60.0)])
+sols_60 = g.forward(1, 0, 0)   # chi = 60° this call
 ```
 
-The `value` argument to `FixedAngleMode` sets the **initial** stage angle
-as a convenience default.  The solver always reads the stage's current angle
-at call time, so a subsequent `g.set_angle()` overrides it.
+See {doc}`constraints` for the full run-time pattern.
 
-## Custom modes
+### constant_omega
 
-Subclass `DiffractionMode` to implement any constraint:
+Holds `omega` at 0° (any geometry where omega is a sample stage).
 
 ```python
-from ad_hoc_diffractometer import DiffractionMode
+g.mode_name = "constant_omega"
+solutions = g.forward(1, 0, 0)
+# sol["omega"] == 0.0 for every solution
+```
 
-class MyMode(DiffractionMode):
-    @property
-    def constrained_stages(self):
-        return ["phi"]
+## Inspect a mode's constraints
 
-    def solve(self, geometry, h, k, l):
-        ...  # return list of angle dicts
+```python
+g = ahd.fourcv()
+cs = g.modes["fixed_chi"]
+
+print(cs)
+# ConstraintSet([SampleConstraint('chi', 90.0)])
+
+print(cs.computed)
+# ['omega', 'phi', 'ttheta']
+
+print(cs.constant_stages)
+# ['chi']
+
+print(cs.is_fully_constrained(g))
+# True  (N - 3 = 1 constraint for N = 4 DOF)
+
+print(cs.is_implemented(g))
+# True
+```
+
+## Check if a mode is implemented
+
+Stub modes (e.g. `psi_constant`) have `is_implemented(g)` returning `False`
+and raise `NotImplementedError` when `forward()` is called:
+
+```python
+g.mode_name = "psi_constant"
+print(g.modes["psi_constant"].is_implemented(g))  # False
+
+# forward() raises NotImplementedError for unimplemented modes
 ```
 
 ## Clear the active mode
 
 ```python
-g.mode_name = None   # all stages free
+g.mode_name = None   # all stages free; forward() raises NotImplementedError
 ```
 
 ## See also
 
-- {class}`~ad_hoc_diffractometer.mode.DiffractionMode`
-- {class}`~ad_hoc_diffractometer.mode.BisectingMode`
-- {class}`~ad_hoc_diffractometer.mode.FixedAngleMode`
+- {doc}`constraints` — full constraint framework: DOF rule, custom modes, extras
+- {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+- {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
+- {class}`~ad_hoc_diffractometer.mode.SampleConstraint`
+- {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`
 - {class}`~ad_hoc_diffractometer.mode.ModeDict`
 - [Concepts — Diffraction modes](../concepts.md)
