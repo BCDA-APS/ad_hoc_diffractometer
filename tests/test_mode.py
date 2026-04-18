@@ -34,7 +34,6 @@ from contextlib import nullcontext as does_not_raise
 import pytest
 
 from ad_hoc_diffractometer import OPTIONAL
-from ad_hoc_diffractometer import REFERENCE_NAMES
 from ad_hoc_diffractometer import REQUIRED
 from ad_hoc_diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer import BisectConstraint
@@ -621,12 +620,26 @@ def test_reference_constraint_to_dict_from_dict_a_eq_b():
     assert rc2 == rc
 
 
-def test_reference_constraint_is_implemented_always_false():
+@pytest.mark.parametrize(
+    "name, value, surface_normal, expected",
+    [
+        # alpha_i/beta_out/a_eq_b: implemented when surface_normal is set
+        pytest.param("alpha_i", 0.0, (0, 0, 1), True, id="alpha_i-with-sn"),
+        pytest.param("alpha_i", 0.0, None, False, id="alpha_i-no-sn"),
+        pytest.param("beta_out", 0.0, (0, 0, 1), True, id="beta_out-with-sn"),
+        pytest.param("a_eq_b", True, (0, 0, 1), True, id="a_eq_b-with-sn"),
+        pytest.param("a_eq_b", True, None, False, id="a_eq_b-no-sn"),
+        # psi/naz: never implemented (no forward solver yet)
+        pytest.param("psi", 0.0, (0, 0, 1), False, id="psi-not-implemented"),
+        pytest.param("naz", 0.0, (0, 0, 1), False, id="naz-not-implemented"),
+    ],
+)
+def test_reference_constraint_is_implemented(name, value, surface_normal, expected):
+    """ReferenceConstraint.is_implemented() reflects surface_normal presence and solver."""
     g = _psic_like()
-    for name in REFERENCE_NAMES:
-        value = True if name == "a_eq_b" else 0.0
-        rc = ReferenceConstraint(name, value)
-        assert rc.is_implemented(g) is False
+    g._surface_normal = surface_normal  # noqa: SLF001
+    rc = ReferenceConstraint(name, value)
+    assert rc.is_implemented(g) is expected
 
 
 def test_reference_constraint_evaluate_raises():
@@ -1644,12 +1657,23 @@ def test_sixc_mode_is_constraint_set(mode_name):
 @pytest.mark.parametrize(
     "mode_name, expected_implemented",
     [pytest.param(m, True, id=f"{m}-implemented") for m in _SIXC_IMPLEMENTED]
-    + [pytest.param(m, False, id=f"{m}-stub") for m in _SIXC_STUBS],
+    + [pytest.param(m, False, id=f"{m}-no-sn") for m in _SIXC_STUBS],
 )
 def test_sixc_mode_is_implemented(mode_name, expected_implemented):
-    """Implemented modes return True; zaxis stubs return False."""
+    """Implemented modes return True; surface modes return False without surface_normal."""
     g = sixc()
     assert g.modes[mode_name].is_implemented(g) == expected_implemented
+
+
+@pytest.mark.parametrize(
+    "mode_name",
+    [pytest.param(m, id=m) for m in _SIXC_STUBS],
+)
+def test_sixc_surface_mode_implemented_with_surface_normal(mode_name):
+    """sixc surface modes return is_implemented=True when surface_normal is set."""
+    g = sixc()
+    g._surface_normal = (0, 0, 1)  # noqa: SLF001
+    assert g.modes[mode_name].is_implemented(g) is True
 
 
 @pytest.mark.parametrize(
@@ -1758,14 +1782,31 @@ def test_zaxis_s2d2_free_dof(factory, expected_modes):
         pytest.param(s2d2, "reflectivity", id="s2d2-reflectivity"),
     ],
 )
-def test_zaxis_s2d2_reference_modes_are_stubs(factory, mode_name):
-    """All reference-constraint modes return is_implemented=False."""
+def test_zaxis_s2d2_reference_modes_not_implemented_without_surface_normal(
+    factory, mode_name
+):
+    """Reference modes return is_implemented=False without surface_normal."""
     g = factory()
     cs = g.modes[mode_name]
     assert isinstance(cs, ConstraintSet)
     assert len(cs) == 1
     assert cs.reference_constraint is not None
     assert cs.is_implemented(g) is False
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name",
+    [
+        pytest.param(zaxis, "zaxis", id="zaxis-zaxis"),
+        pytest.param(zaxis, "reflectivity", id="zaxis-reflectivity"),
+        pytest.param(s2d2, "reflectivity", id="s2d2-reflectivity"),
+    ],
+)
+def test_zaxis_s2d2_reference_modes_implemented_with_surface_normal(factory, mode_name):
+    """Reference modes return is_implemented=True when surface_normal is set."""
+    g = factory()
+    g._surface_normal = (0, 0, 1)  # noqa: SLF001
+    assert g.modes[mode_name].is_implemented(g) is True
 
 
 def test_s2d2_mu_fixed_is_implemented():
