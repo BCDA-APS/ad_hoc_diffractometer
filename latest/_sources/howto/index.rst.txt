@@ -16,6 +16,7 @@ installed the package and are familiar with the
    forward
    modes
    constraints
+   surface
    trajectory
    refine_lattice
    serialize
@@ -66,6 +67,13 @@ installed the package and are familiar with the
 
       Understand the constraint framework: DOF rule, constraint categories,
       custom modes, and the extras dict for advanced modes.
+
+   .. grid-item-card:: :material-outlined:`layers;3em` Surface Geometry and Reference Vector
+      :link: surface
+      :link-type: doc
+
+      Set the surface normal and azimuthal reference vector; compute
+      incidence angle, exit angle, ψ, and naz.
 
    .. grid-item-card:: :material-outlined:`route;3em` Plan a Trajectory
       :link: trajectory

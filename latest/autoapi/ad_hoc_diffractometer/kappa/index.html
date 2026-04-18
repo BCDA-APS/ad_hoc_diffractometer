@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=4d0e62de"></script>
+    <script src="../../../_static/documentation_options.js?v=7a69b170"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 00:59 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 01:36 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -392,6 +392,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../mode/index.html">mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../orientation/index.html">orientation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../radiation/index.html">radiation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/index.html">reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../refinement/index.html">refinement</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reflection/index.html">reflection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../rotation/index.html">rotation</a></li>
@@ -493,9 +494,9 @@ ITC Vol. C §2.2.6).</p>
 parameter).  The positive branch (kappa ≥ 0) is the default; the negative
 branch gives kappa ≤ 0.  The caller should choose the branch that keeps all
 angles within the hardware limits.</p>
-<p>Singularity: when <a href="#id2"><span class="problematic" id="id3">|chi|</span></a> approaches ±2·alpha_0, <a href="#id4"><span class="problematic" id="id5">|kappa|</span></a> approaches 180° and
+<p>Singularity: when <code class="docutils literal notranslate"><span class="pre">|chi|</span></code> approaches ±2·alpha_0, <code class="docutils literal notranslate"><span class="pre">|kappa|</span></code> approaches 180° and
 the offset formula becomes numerically ill-conditioned.  A <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>
-is raised when <a href="#id6"><span class="problematic" id="id7">|chi|</span></a> ≥ 2·alpha_0 − epsilon.</p>
+is raised when <code class="docutils literal notranslate"><span class="pre">|chi|</span></code> ≥ 2·alpha_0 − epsilon.</p>
 <p class="rubric">References</p>
 <ul class="simple">
 <li><p>Walko, <em>Ref. Module Mater. Sci. Mater. Eng.</em> (2016), eq. [16].</p></li>
@@ -545,7 +546,7 @@ is raised when <a href="#id6"><span class="problematic" id="id7">|chi|</span></a
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <a href="#id8"><span class="problematic" id="id9">|chi|</span></a> ≥ 2·alpha_deg (chi outside the reachable range).</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">|chi|</span></code> ≥ 2·alpha_deg (chi outside the reachable range).</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If branch is not +1 or -1.</p></li>
 </ul>
 </dd>
@@ -584,7 +585,7 @@ is raised when <a href="#id6"><span class="problematic" id="id7">|chi|</span></a
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the combination of kappa and alpha_deg places chi outside
-the reachable range (<a href="#id10"><span class="problematic" id="id11">|kappa/2|</span></a> · sin(alpha_0) &gt; 1).</p>
+the reachable range (<code class="docutils literal notranslate"><span class="pre">|kappa/2|</span></code> · sin(alpha_0) &gt; 1).</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -685,7 +686,7 @@ the reachable range (<a href="#id10"><span class="problematic" id="id11">|kappa/
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 00:59 CDT.
+  Last updated on 2026-04-18 01:36 CDT.
   <br/>
 </p></div>
       

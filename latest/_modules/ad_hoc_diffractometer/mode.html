@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=4d0e62de"></script>
+    <script src="../../_static/documentation_options.js?v=7a69b170"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 00:59 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 01:36 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -1166,14 +1166,38 @@
         <span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="ReferenceConstraint.has_reference_vector">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint.has_reference_vector">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_reference_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return True when the required reference vector is set on the geometry.</span>
+
+<span class="sd">        For ``&quot;psi&quot;`` and ``&quot;naz&quot;``: requires</span>
+<span class="sd">        :attr:`~geometry.AdHocDiffractometer.azimuthal_reference` to be set.</span>
+
+<span class="sd">        For ``&quot;alpha_i&quot;``, ``&quot;beta_out&quot;``, and ``&quot;a_eq_b&quot;``: requires</span>
+<span class="sd">        :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.</span>
+
+<span class="sd">        This is a prerequisite check, separate from :meth:`is_implemented`.</span>
+<span class="sd">        A reference constraint can have its vector set but still lack a forward</span>
+<span class="sd">        solver — in that case ``has_reference_vector`` returns ``True`` but</span>
+<span class="sd">        ``is_implemented`` returns ``False``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="s2">&quot;naz&quot;</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">surface_normal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
 <div class="viewcode-block" id="ReferenceConstraint.is_implemented">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint.is_implemented">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_implemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return False — reference constraint solvers are not yet implemented.</span>
 
-<span class="sd">        Will return True once the reference vector infrastructure (Issue J)</span>
-<span class="sd">        is in place and the relevant solver is registered.</span>
+<span class="sd">        Will return True once the forward solvers for reference-constraint</span>
+<span class="sd">        modes are registered (Issue J).  The reference vector infrastructure</span>
+<span class="sd">        is available (``has_reference_vector``), but the solver that uses</span>
+<span class="sd">        it to compute motor angles has not been written yet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
@@ -1780,7 +1804,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 00:59 CDT.
+  Last updated on 2026-04-18 01:36 CDT.
   <br/>
 </p></div>
       

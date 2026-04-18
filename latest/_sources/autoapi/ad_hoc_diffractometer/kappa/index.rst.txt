@@ -37,9 +37,9 @@ kappa
    branch gives kappa ≤ 0.  The caller should choose the branch that keeps all
    angles within the hardware limits.
 
-   Singularity: when |chi| approaches ±2·alpha_0, |kappa| approaches 180° and
+   Singularity: when ``|chi|`` approaches ±2·alpha_0, ``|kappa|`` approaches 180° and
    the offset formula becomes numerically ill-conditioned.  A :class:`ValueError`
-   is raised when |chi| ≥ 2·alpha_0 − epsilon.
+   is raised when ``|chi|`` ≥ 2·alpha_0 − epsilon.
 
    .. rubric:: References
 
@@ -85,7 +85,7 @@ Module Contents
    :returns: **komega, kappa, kphi** -- Real kappa motor angles in degrees.
    :rtype: tuple of float
 
-   :raises ValueError: If |chi| ≥ 2·alpha_deg (chi outside the reachable range).
+   :raises ValueError: If ``|chi|`` ≥ 2·alpha_deg (chi outside the reachable range).
    :raises ValueError: If branch is not +1 or -1.
 
    .. rubric:: Examples
@@ -120,7 +120,7 @@ Module Contents
    :rtype: tuple of float
 
    :raises ValueError: If the combination of kappa and alpha_deg places chi outside
-       the reachable range (|kappa/2| · sin(alpha_0) > 1).
+       the reachable range (``|kappa/2|`` · sin(alpha_0) > 1).
 
    .. rubric:: Examples
 
