@@ -35,6 +35,7 @@ from ad_hoc_diffractometer import fourch
 from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer import kappa4cv
 from ad_hoc_diffractometer import psic
+from ad_hoc_diffractometer import sixc
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
@@ -1077,9 +1078,9 @@ def test_fixed_sample_with_detector_constraint():
 @pytest.mark.parametrize(
     "mode_name, h, k, l",
     [
-        pytest.param("bisecting", 1, 0, 0, id="bisecting-100"),
-        pytest.param("bisecting", 0, 1, 0, id="bisecting-010"),
-        pytest.param("bisecting", 1, 1, 1, id="bisecting-111"),
+        pytest.param("bisecting_4c", 1, 0, 0, id="bisecting_4c-100"),
+        pytest.param("bisecting_4c", 0, 1, 0, id="bisecting_4c-010"),
+        pytest.param("bisecting_4c", 1, 1, 1, id="bisecting_4c-111"),
         pytest.param("fixed_chi", 1, 0, 0, id="fixed_chi-100"),
         pytest.param("fixed_chi", 0, 1, 0, id="fixed_chi-010"),
         pytest.param("fixed_phi", 0, 1, 0, id="fixed_phi-010"),
@@ -1104,7 +1105,7 @@ def test_fivec_round_trip(mode_name, h, k, l):  # noqa: E741
 @pytest.mark.parametrize(
     "mode_name, stage, expected_value",
     [
-        pytest.param("bisecting", "mu", 0.0, id="bisecting-mu-zero"),
+        pytest.param("bisecting_4c", "mu", 0.0, id="bisecting_4c-mu-zero"),
         pytest.param("fixed_chi", "mu", 0.0, id="fixed_chi-mu-zero"),
         pytest.param("fixed_chi", "chi", 90.0, id="fixed_chi-chi-value"),
         pytest.param("fixed_phi", "mu", 0.0, id="fixed_phi-mu-zero"),
@@ -1126,8 +1127,81 @@ def test_fivec_constraint_value_in_solution(mode_name, stage, expected_value):
 
 
 def test_fivec_bisecting_omega_equals_ttheta_half():
-    """In fivec bisecting mode, omega must equal ttheta/2 for all solutions."""
+    """In fivec bisecting_4c mode, omega must equal ttheta/2 for all solutions."""
     g = _setup_cubic(fivec, a=4.0)
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
         assert sol["omega"] == pytest.approx(sol["ttheta"] / 2.0, abs=1e-10)
+
+
+# ---------------------------------------------------------------------------
+# Issue #155 — sixc: implemented modes round-trip; stubs raise
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "mode_name, h, k, l",
+    [
+        pytest.param("bisecting_4c", 1, 0, 0, id="bisecting_4c-100"),
+        pytest.param("bisecting_4c", 0, 1, 0, id="bisecting_4c-010"),
+        pytest.param("bisecting_4c", 1, 1, 1, id="bisecting_4c-111"),
+        pytest.param("fixed_gamma_5c", 1, 0, 0, id="fixed_gamma_5c-100"),
+        pytest.param("fixed_gamma_5c", 0, 1, 0, id="fixed_gamma_5c-010"),
+        pytest.param("fixed_alpha_5c", 1, 0, 0, id="fixed_alpha_5c-100"),
+        pytest.param("fixed_alpha_5c", 1, 1, 1, id="fixed_alpha_5c-111"),
+    ],
+)
+def test_sixc_round_trip(mode_name, h, k, l):  # noqa: E741
+    """Implemented sixc modes solve and round-trip correctly."""
+    g = _setup_cubic(sixc, a=4.0)
+    g.mode_name = mode_name
+    assert _round_trip_ok(g, h, k, l)
+
+
+@pytest.mark.parametrize(
+    "mode_name",
+    [
+        pytest.param("zaxis_alpha_fixed", id="zaxis_alpha_fixed"),
+        pytest.param("zaxis_beta_fixed", id="zaxis_beta_fixed"),
+        pytest.param("zaxis_alpha_eq_beta", id="zaxis_alpha_eq_beta"),
+    ],
+)
+def test_sixc_zaxis_stub_not_implemented(mode_name):
+    """zaxis modes require reference infrastructure (Issue J) — not yet implemented."""
+    g = _setup_cubic(sixc, a=4.0)
+    g.mode_name = mode_name
+    assert not g.modes[mode_name].is_implemented(g)
+    with pytest.raises(NotImplementedError):
+        g.forward(1, 0, 0)
+
+
+def test_sixc_four_circle_matches_fourcv():
+    """sixc four_circle mode with alpha=gamma=0 gives same ttheta as fourcv bisecting."""
+    g_sixc = _setup_cubic(sixc, a=4.0)
+    g_fourcv = _setup_cubic(fourcv, a=4.0)
+
+    sols_sixc = g_sixc.forward(1, 0, 0)
+    sols_fourcv = g_fourcv.forward(1, 0, 0)
+
+    assert len(sols_sixc) > 0 and len(sols_fourcv) > 0
+    # ttheta/delta should match between the two geometries
+    ttheta_fourcv = sols_fourcv[0]["ttheta"]
+    delta_sixc = sols_sixc[0]["delta"]
+    assert delta_sixc == pytest.approx(ttheta_fourcv, abs=1e-8)
+
+
+def test_sixc_four_circle_alpha_gamma_frozen():
+    """In four_circle mode, alpha=0 and gamma=0 in all solutions."""
+    g = _setup_cubic(sixc, a=4.0)
+    solutions = g.forward(1, 0, 0)
+    for sol in solutions:
+        assert sol["alpha"] == pytest.approx(0.0, abs=1e-8)
+        assert sol["gamma"] == pytest.approx(0.0, abs=1e-8)
+
+
+def test_sixc_four_circle_omega_equals_delta_half():
+    """In sixc four_circle mode, omega must equal delta/2 for all solutions."""
+    g = _setup_cubic(sixc, a=4.0)
+    solutions = g.forward(1, 0, 0)
+    for sol in solutions:
+        assert sol["omega"] == pytest.approx(sol["delta"] / 2.0, abs=1e-10)

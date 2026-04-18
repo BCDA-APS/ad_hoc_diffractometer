@@ -5,7 +5,7 @@ Busing & Levy (1967) four-circle Eulerian diffractometer, horizontal scattering 
 
 **Walko (2016) designation:** S3D1
 
-**Coordinate basis:** Busing & Levy (`BASIS_BL`): lateral=+x, longitudinal=+y, vertical=+z.
+**Coordinate basis:** Busing & Levy ({data}`~ad_hoc_diffractometer.factories.BASIS_BL`): lateral=+x, longitudinal=+y, vertical=+z.
 
 ## Quick start
 
@@ -19,8 +19,8 @@ print(g.summary())
 
 ## Pre-built geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.fourch` factory
-function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L556) for the complete stage
+This geometry is defined by the {func}`~ad_hoc_diffractometer.factories.fourch` factory
+function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L613) for the complete stage
 and mode configuration.
 
 ## Stage layout
@@ -41,34 +41,88 @@ and mode configuration.
 
 ## Diffraction modes
 
-Set the active mode with `g.mode_name = "<mode>"`. Preset any fixed-stage angles with `g.set_angle(name, value)` before calling `forward()`. See {doc}`../howto/modes` for usage details and {class}`~ad_hoc_diffractometer.mode.DiffractionMode` for the base class.
+Set the active mode with `g.mode_name = "<mode>"`.
+Each mode is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` of 1 constraint
+(N − 3 = 1 for N = 4 DOF).
+See {doc}`../howto/modes` for usage and {doc}`../howto/constraints` for
+changing constraint values at run time.
 
-### `bisecting`
+### `bisecting` *(default)*
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.BisectingMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L227))
+{class}`~ad_hoc_diffractometer.mode.BisectConstraint`:
+`omega = ttheta / 2`.
+Places the sample symmetrically between the incident and diffracted beams.
 
-`omega` is constrained to `ttheta` / 2, placing the sample symmetrically between the incident and diffracted beams (the bisecting condition).
+| | Stages |
+|---|---|
+| **Computed** | omega, chi, phi, ttheta |
+| **Constant during** `forward()` | — |
 
 ### `fixed_chi`
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.FixedAngleMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156))
+{class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
+`chi` is held at the value declared in the constraint (factory default: 90°).
+The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; the constraint
+persists until replaced — see {doc}`../howto/constraints`.
 
-Holds `chi` fixed at its **current angle** during `forward()`. Preset the angle with `g.set_angle("chi", value)` before calling `forward()`.
+| | |
+|---|---|
+| **Computed** | omega, phi, ttheta |
+| **Constant during** `forward()` | chi |
 
 ### `fixed_phi`
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.FixedAngleMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156))
+{class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
+`phi` is held at the value declared in the constraint (factory default: 0°).
+The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
 
-Holds `phi` fixed at its **current angle** during `forward()`. Preset the angle with `g.set_angle("phi", value)` before calling `forward()`.
+| | |
+|---|---|
+| **Computed** | omega, chi, ttheta |
+| **Constant during** `forward()` | phi |
 
+### `constant_omega`
+
+{class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
+`omega` is held at the value declared in the constraint (factory default: 0°).
+The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
+
+| | |
+|---|---|
+| **Computed** | chi, phi, ttheta |
+| **Constant during** `forward()` | omega |
+
+### `psi_constant` *(stub)*
+
+{class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
+Fix the azimuthal angle ψ of the reference vector about Q.
+Requires n̂ — not yet implemented (Issue J).
+
+| | |
+|---|---|
+| **Extras (input)** | n̂ (reference vector), ψ (target, degrees) |
+| **Extras (output)** | psi (computed azimuth) |
+
+### `double_diffraction` *(stub)*
+
+{class}`~ad_hoc_diffractometer.mode.BisectConstraint` with secondary reflection extras.
+Simultaneous diffraction condition — not yet implemented.
+
+| | |
+|---|---|
+| **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.fourch`
+- {func}`~ad_hoc_diffractometer.factories.fourch`
 - {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
-- {class}`~ad_hoc_diffractometer.mode.DiffractionMode`
-- {class}`~ad_hoc_diffractometer.mode.BisectingMode`
-- {class}`~ad_hoc_diffractometer.mode.FixedAngleMode`
+- {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+- {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
+- {class}`~ad_hoc_diffractometer.mode.SampleConstraint`
+- {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`
+- {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`
+- {exc}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`
+- {exc}`~ad_hoc_diffractometer.mode.ConstraintViolation`
 
 ## References
 
