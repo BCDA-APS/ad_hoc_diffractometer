@@ -48,7 +48,9 @@ from ad_hoc_diffractometer import Stage
 from ad_hoc_diffractometer import fivec
 from ad_hoc_diffractometer import fourch
 from ad_hoc_diffractometer import fourcv
+from ad_hoc_diffractometer import s2d2
 from ad_hoc_diffractometer import sixc
+from ad_hoc_diffractometer import zaxis
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
@@ -1600,13 +1602,13 @@ _SIXC_MODES = {
     "bisecting_4c",
     "fixed_gamma_5c",
     "fixed_alpha_5c",
-    "zaxis_alpha_fixed",
-    "zaxis_beta_fixed",
-    "zaxis_alpha_eq_beta",
+    "fixed_alpha_zaxis",
+    "fixed_beta_zaxis",
+    "alpha_eq_beta_zaxis",
 }
 
 _SIXC_IMPLEMENTED = {"bisecting_4c", "fixed_gamma_5c", "fixed_alpha_5c"}
-_SIXC_STUBS = {"zaxis_alpha_fixed", "zaxis_beta_fixed", "zaxis_alpha_eq_beta"}
+_SIXC_STUBS = {"fixed_alpha_zaxis", "fixed_beta_zaxis", "alpha_eq_beta_zaxis"}
 
 
 def test_sixc_factory_mode_names():
@@ -1653,9 +1655,9 @@ def test_sixc_mode_is_implemented(mode_name, expected_implemented):
         pytest.param("bisecting_4c", True, id="bisecting_4c-has-bisect"),
         pytest.param("fixed_gamma_5c", True, id="fixed_gamma_5c-has-bisect"),
         pytest.param("fixed_alpha_5c", True, id="fixed_alpha_5c-has-bisect"),
-        pytest.param("zaxis_alpha_fixed", False, id="zaxis_alpha_fixed-no-bisect"),
-        pytest.param("zaxis_beta_fixed", False, id="zaxis_beta_fixed-no-bisect"),
-        pytest.param("zaxis_alpha_eq_beta", False, id="zaxis_alpha_eq_beta-no-bisect"),
+        pytest.param("fixed_alpha_zaxis", False, id="fixed_alpha_zaxis-no-bisect"),
+        pytest.param("fixed_beta_zaxis", False, id="fixed_beta_zaxis-no-bisect"),
+        pytest.param("alpha_eq_beta_zaxis", False, id="alpha_eq_beta_zaxis-no-bisect"),
     ],
 )
 def test_sixc_mode_has_bisect(mode_name, expected_has_bisect):
@@ -1667,19 +1669,19 @@ def test_sixc_mode_has_bisect(mode_name, expected_has_bisect):
     "mode_name, extras_key, expected_value",
     [
         pytest.param(
-            "zaxis_alpha_fixed", "n_hat", "REQUIRED", id="zaxis_alpha_fixed-n_hat"
+            "fixed_alpha_zaxis", "n_hat", "REQUIRED", id="fixed_alpha_zaxis-n_hat"
         ),
         pytest.param(
-            "zaxis_alpha_fixed", "alpha_i", None, id="zaxis_alpha_fixed-alpha_i-output"
+            "fixed_alpha_zaxis", "alpha_i", None, id="fixed_alpha_zaxis-alpha_i-output"
         ),
         pytest.param(
-            "zaxis_beta_fixed", "n_hat", "REQUIRED", id="zaxis_beta_fixed-n_hat"
+            "fixed_beta_zaxis", "n_hat", "REQUIRED", id="fixed_beta_zaxis-n_hat"
         ),
         pytest.param(
-            "zaxis_beta_fixed", "beta_out", None, id="zaxis_beta_fixed-beta_out-output"
+            "fixed_beta_zaxis", "beta_out", None, id="fixed_beta_zaxis-beta_out-output"
         ),
         pytest.param(
-            "zaxis_alpha_eq_beta", "n_hat", "REQUIRED", id="zaxis_alpha_eq_beta-n_hat"
+            "alpha_eq_beta_zaxis", "n_hat", "REQUIRED", id="alpha_eq_beta_zaxis-n_hat"
         ),
     ],
 )
@@ -1711,3 +1713,128 @@ def test_sixc_modes_round_trip_serialisation():
     g2 = AdHocDiffractometer.from_dict(d)
     assert set(g2.modes.keys()) == _SIXC_MODES
     assert g2.mode_name == "bisecting_4c"
+
+
+# ---------------------------------------------------------------------------
+# Issue #156 — zaxis and s2d2 mode structure
+# ---------------------------------------------------------------------------
+
+_ZAXIS_MODES = {"zaxis", "reflectivity"}
+_S2D2_MODES = {"mu_fixed", "reflectivity"}
+
+
+@pytest.mark.parametrize(
+    "factory, expected_modes",
+    [
+        pytest.param(zaxis, _ZAXIS_MODES, id="zaxis"),
+        pytest.param(s2d2, _S2D2_MODES, id="s2d2"),
+    ],
+)
+def test_zaxis_s2d2_factory_mode_names(factory, expected_modes):
+    """zaxis and s2d2 expose exactly their declared mode names."""
+    assert set(factory().modes.keys()) == expected_modes
+
+
+@pytest.mark.parametrize(
+    "factory, expected_modes",
+    [
+        pytest.param(zaxis, _ZAXIS_MODES, id="zaxis"),
+        pytest.param(s2d2, _S2D2_MODES, id="s2d2"),
+    ],
+)
+def test_zaxis_s2d2_free_dof(factory, expected_modes):
+    """Both geometries have free_dof_after_bragg == 1."""
+    assert factory().free_dof_after_bragg == 1
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name",
+    [
+        pytest.param(zaxis, "zaxis", id="zaxis-zaxis"),
+        pytest.param(zaxis, "reflectivity", id="zaxis-reflectivity"),
+        pytest.param(s2d2, "reflectivity", id="s2d2-reflectivity"),
+    ],
+)
+def test_zaxis_s2d2_reference_modes_are_stubs(factory, mode_name):
+    """All reference-constraint modes return is_implemented=False."""
+    g = factory()
+    cs = g.modes[mode_name]
+    assert isinstance(cs, ConstraintSet)
+    assert len(cs) == 1
+    assert cs.reference_constraint is not None
+    assert cs.is_implemented(g) is False
+
+
+def test_s2d2_mu_fixed_is_implemented():
+    """s2d2 mu_fixed uses a SampleConstraint — is_implemented returns True."""
+    g = s2d2()
+    cs = g.modes["mu_fixed"]
+    assert isinstance(cs, ConstraintSet)
+    assert len(cs) == 1
+    assert cs.is_implemented(g) is True
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, extras_key, expected_value",
+    [
+        pytest.param(zaxis, "zaxis", "n_hat", "REQUIRED", id="zaxis-n_hat"),
+        pytest.param(zaxis, "zaxis", "alpha_i", None, id="zaxis-alpha_i-output"),
+        pytest.param(zaxis, "zaxis", "beta_out", None, id="zaxis-beta_out-output"),
+        pytest.param(zaxis, "reflectivity", "n_hat", "REQUIRED", id="zaxis-refl-n_hat"),
+        pytest.param(s2d2, "reflectivity", "n_hat", "REQUIRED", id="s2d2-refl-n_hat"),
+        pytest.param(s2d2, "reflectivity", "alpha_i", None, id="s2d2-alpha_i-output"),
+    ],
+)
+def test_zaxis_s2d2_extras_declared(factory, mode_name, extras_key, expected_value):
+    """Reference modes carry expected REQUIRED sentinels and output placeholders."""
+    g = factory()
+    mode = g.modes[mode_name]
+    actual = mode.extras.get(extras_key)
+    if expected_value == "REQUIRED":
+        assert actual is REQUIRED
+    else:
+        assert actual is expected_value
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, expected_computed",
+    [
+        pytest.param(zaxis, "zaxis", ["Z", "delta", "gamma"], id="zaxis-computed"),
+        pytest.param(
+            zaxis,
+            "reflectivity",
+            ["Z", "delta", "alpha", "gamma"],
+            id="zaxis-refl-computed",
+        ),
+        pytest.param(
+            s2d2, "mu_fixed", ["Z", "nu", "delta"], id="s2d2-mu_fixed-computed"
+        ),
+        pytest.param(
+            s2d2, "reflectivity", ["mu", "Z", "nu", "delta"], id="s2d2-refl-computed"
+        ),
+    ],
+)
+def test_zaxis_s2d2_computed_stages(factory, mode_name, expected_computed):
+    """computed field lists the correct stage names."""
+    cs = factory().modes[mode_name]
+    assert cs.computed == expected_computed
+
+
+@pytest.mark.parametrize(
+    "factory, expected_modes",
+    [
+        pytest.param(zaxis, _ZAXIS_MODES, id="zaxis"),
+        pytest.param(s2d2, _S2D2_MODES, id="s2d2"),
+    ],
+)
+def test_zaxis_s2d2_modes_round_trip(factory, expected_modes):
+    """Full to_dict / from_dict round-trip preserves all modes."""
+    import json
+
+    g = factory()
+    d = g.to_dict()
+    assert json.dumps(d)
+    assert set(d["modes"].keys()) == expected_modes
+    g2 = AdHocDiffractometer.from_dict(d)
+    assert set(g2.modes.keys()) == expected_modes
+    assert g2.mode_name is None

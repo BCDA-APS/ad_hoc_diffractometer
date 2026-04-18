@@ -5,7 +5,7 @@ Z-axis four-circle diffractometer for surface diffraction. The sample surface no
 
 **Walko (2016) designation:** (S1D2)1
 
-**Coordinate basis:** You (1999) (`BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
+**Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
 
 ## Quick start
 
@@ -19,8 +19,8 @@ print(g.summary())
 
 ## Pre-built geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.zaxis` factory
-function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L872) for the complete stage
+This geometry is defined by the {func}`~ad_hoc_diffractometer.factories.zaxis` factory
+function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L1109) for the complete stage
 and mode configuration.
 
 ## Stage layout
@@ -43,16 +43,44 @@ and mode configuration.
 
 ## Diffraction modes
 
-*(No modes defined for this geometry.  All stages are free during*
-*`forward()` — the solver explores the full solution space.)*
+Each mode is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` of 1 constraint
+(N − 3 = 1 for N = 4 DOF).
+All modes require the reference vector n̂ (surface normal) via Issue J / #157.
+See {doc}`../howto/constraints` for the extras dict pattern.
+
+### `zaxis` *(stub)*
+
+{class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
+surface normal aligned with the Z-axis; alpha directly equals the incidence
+angle β_in, gamma directly equals the exit angle β_out.
+
+| | |
+|---|---|
+| **Computed** | Z, delta, gamma |
+| **Constant during** `forward()` | — |
+| **Extras (input)** | n̂ (surface normal) |
+| **Extras (output)** | alpha_i (= alpha), beta_out (= gamma) |
+
+### `reflectivity` *(stub)*
+
+{class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
+symmetric reflection — alpha_i = beta_out (alpha = gamma).
+
+| | |
+|---|---|
+| **Computed** | Z, delta, alpha, gamma |
+| **Constant during** `forward()` | — |
+| **Extras (input)** | n̂ |
+| **Extras (output)** | alpha_i, beta_out |
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.zaxis`
+- {func}`~ad_hoc_diffractometer.factories.zaxis`
 - {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
-- {class}`~ad_hoc_diffractometer.mode.DiffractionMode`
-- {class}`~ad_hoc_diffractometer.mode.BisectingMode`
-- {class}`~ad_hoc_diffractometer.mode.FixedAngleMode`
+- {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+- {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`
+- {class}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`
+- {class}`~ad_hoc_diffractometer.mode.ConstraintViolation`
 
 ## References
 
