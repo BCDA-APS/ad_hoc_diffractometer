@@ -1856,7 +1856,13 @@ _KAPPA4_MODES = {
     "psi_constant",
 }
 
-_KAPPA4_IMPLEMENTED = {"bisecting", "fixed_kphi"}
+_KAPPA4_IMPLEMENTED = {
+    "bisecting",
+    "fixed_kphi",
+    "constant_omega",
+    "constant_chi",
+    "constant_phi",
+}
 _KAPPA4_STUBS = _KAPPA4_MODES - _KAPPA4_IMPLEMENTED
 
 

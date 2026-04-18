@@ -357,3 +357,97 @@ def test_default_alpha_inverse():
     k2 = eulerian_to_kappa(10.0, 45.0, 5.0, alpha_deg=50.0)
     for v1, v2 in zip(k1, k2, strict=False):
         assert v1 == pytest.approx(v2)
+
+
+# ---------------------------------------------------------------------------
+# Issue #174 — kappa virtual-angle mode helpers and coverage
+# ---------------------------------------------------------------------------
+
+
+def test_is_kappa_virtual_mode_no_kappa_alpha():
+    """is_kappa_virtual_mode returns False when geometry has no kappa_alpha_deg."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import SampleConstraint
+    from ad_hoc_diffractometer.kappa import is_kappa_virtual_mode
+
+    g = ahd.fourcv()  # no kappa_alpha_deg
+    mode = ConstraintSet([SampleConstraint("omega", 0.0)])
+    assert is_kappa_virtual_mode(g, mode) is False
+
+
+def test_is_kappa_virtual_mode_kappa_alpha_but_no_kappa_stage():
+    """is_kappa_virtual_mode returns False when kappa_alpha_deg is set but no 'kappa' stage."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import SampleConstraint
+    from ad_hoc_diffractometer.kappa import is_kappa_virtual_mode
+
+    g = ahd.fourcv()
+    g._kappa_alpha_deg = 50.0  # noqa: SLF001  — set kappa_alpha_deg manually
+    mode = ConstraintSet([SampleConstraint("omega", 0.0)])
+    # Has kappa_alpha_deg but no stage named "kappa" → False (line 247)
+    assert is_kappa_virtual_mode(g, mode) is False
+
+
+def test_is_kappa_virtual_mode_no_virtual_constraint():
+    """is_kappa_virtual_mode returns False when mode has no virtual angle."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import SampleConstraint
+    from ad_hoc_diffractometer.kappa import is_kappa_virtual_mode
+
+    g = ahd.kappa4cv()
+    # fixed_kphi uses real stage name — not virtual
+    mode = ConstraintSet([SampleConstraint("kphi", 0.0)])
+    assert is_kappa_virtual_mode(g, mode) is False
+
+
+def test_solve_kappa_virtual_no_kappa_stage_returns_empty():
+    """solve_kappa_virtual returns [] when geometry has no kappa stage."""
+    import math
+
+    import numpy as np
+
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import SampleConstraint
+    from ad_hoc_diffractometer.kappa import solve_kappa_virtual
+
+    # Build a fake geometry with no "kappa" stage
+    g = ahd.fourcv()
+    g.wavelength = 1.5406
+    g.sample.lattice = ahd.Lattice(a=4.0)
+    ahd.ub_identity(g.sample)
+    # Override kappa_alpha_deg to non-None so the function proceeds
+    g._kappa_alpha_deg = 50.0  # noqa: SLF001
+
+    mode = ConstraintSet([SampleConstraint("omega", 0.0)])
+    Q_phi = g.sample.UB @ np.array([0.0, 1.0, 0.0])
+    ttheta = 2 * math.degrees(
+        math.asin(float(np.linalg.norm(Q_phi)) * g.wavelength / (4 * math.pi))
+    )
+    result = solve_kappa_virtual(g, Q_phi, ttheta, mode)
+    # No "kappa" stage found → returns []
+    assert result == []
+
+
+def test_sample_constraint_is_implemented_kappa_geometry():
+    """SampleConstraint with virtual name returns True on kappa geometry."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer import SampleConstraint
+
+    g = ahd.kappa4cv()
+    for vname in ("omega", "chi", "phi"):
+        assert SampleConstraint(vname, 0.0).is_implemented(g) is True
+
+
+def test_sample_constraint_is_implemented_virtual_on_non_kappa():
+    """Virtual kappa names not in a non-kappa geometry return False if not real stages."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer import SampleConstraint
+
+    # psic has mu, eta, chi, phi — 'omega' is NOT a real stage, and psic
+    # has no kappa_alpha_deg, so SampleConstraint('omega') returns False.
+    g = ahd.psic()
+    assert SampleConstraint("omega", 0.0).is_implemented(g) is False
