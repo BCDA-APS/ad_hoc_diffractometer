@@ -1034,3 +1034,56 @@ def test_mode_dict_values():
     cs = ConstraintSet([SampleConstraint("chi", 0.0)])
     md = ModeDict({"m": cs})
     assert list(md.values()) == [cs]
+
+
+# ---------------------------------------------------------------------------
+# AdHocDiffractometer — geometry.py lines 126, 132-133, 627-628, 647, 1857
+# ---------------------------------------------------------------------------
+
+
+def test_geometry_modes_accepts_mode_dict_directly():
+    """Passing a ModeDict directly to AdHocDiffractometer.modes covers line 126."""
+    cs = ConstraintSet([BisectConstraint("omega", "ttheta")])
+    md = ModeDict({"bisecting": cs})
+    g = _fourcv_like(modes=md, default_mode="bisecting")
+    assert g.mode_name == "bisecting"
+    assert isinstance(g.modes, ModeDict)
+
+
+def test_geometry_default_mode_invalid_raises():
+    """Invalid default_mode raises ValueError (lines 132-133)."""
+    cs = ConstraintSet([BisectConstraint("omega", "ttheta")])
+    with pytest.raises(ValueError, match=re.escape("default_mode")):
+        _fourcv_like(modes={"bisecting": cs}, default_mode="nonexistent")
+
+
+def test_geometry_mode_name_setter_invalid_raises():
+    """Setting mode_name to unknown name raises ValueError (lines 627-628)."""
+    cs = ConstraintSet([BisectConstraint("omega", "ttheta")])
+    g = _fourcv_like(modes={"bisecting": cs}, default_mode="bisecting")
+    with pytest.raises(ValueError, match=re.escape("not available")):
+        g.mode_name = "nonexistent"
+
+
+def test_geometry_mode_property_returns_none_when_no_mode():
+    """mode property returns None when mode_name is None (line 647)."""
+    cs = ConstraintSet([BisectConstraint("omega", "ttheta")])
+    g = _fourcv_like(modes={"bisecting": cs})
+    assert g.mode_name is None
+    assert g.mode is None
+
+
+def test_geometry_from_dict_old_bisecting_mode_raises():
+    """_mode_from_dict raises ValueError for old BisectingMode format (line 1857)."""
+    g = _psic_like()
+    d = g.to_dict()
+    d["modes"]["bisecting"] = {
+        "type": "BisectingMode",
+        "sample_stage": "eta",
+        "detector_stage": "delta",
+        "frozen_angles": {"mu": 0.0, "nu": 0.0},
+        "cut_points": {},
+    }
+    d["mode_name"] = "bisecting"
+    with pytest.raises(ValueError, match=re.escape("BisectingMode")):
+        AdHocDiffractometer.from_dict(d)
