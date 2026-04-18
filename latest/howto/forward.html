@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=d4ffc219"></script>
+    <script src="../_static/documentation_options.js?v=fa5977a2"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 04:40 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 06:11 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -635,18 +635,21 @@ solver bug or an unimplemented virtual-angle constraint:</p>
 <section id="notimplementederror">
 <h3>NotImplementedError<a class="headerlink" href="#notimplementederror" title="Link to this heading">#</a></h3>
 <p>Raised when the active mode is <code class="docutils literal notranslate"><span class="pre">None</span></code> or its <code class="docutils literal notranslate"><span class="pre">is_implemented(geometry)</span></code>
-returns <code class="docutils literal notranslate"><span class="pre">False</span></code>:</p>
+returns <code class="docutils literal notranslate"><span class="pre">False</span></code> (e.g. a prerequisite like <code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code> or
+<code class="docutils literal notranslate"><span class="pre">surface_normal</span></code> is not set):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
+<span class="c1"># psi_constant requires azimuthal_reference to be set</span>
 <span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;psi_constant&quot;</span>
+<span class="n">g</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>  <span class="c1"># describes which solver is missing</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>  <span class="c1"># describes which prerequisite is missing</span>
 </pre></div>
 </div>
 </section>
@@ -762,7 +765,7 @@ returns <code class="docutils literal notranslate"><span class="pre">False</span
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 04:40 CDT.
+  Last updated on 2026-04-18 06:11 CDT.
   <br/>
 </p></div>
       

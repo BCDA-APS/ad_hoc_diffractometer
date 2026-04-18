@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=d4ffc219"></script>
+    <script src="../_static/documentation_options.js?v=fa5977a2"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 04:40 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 06:11 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -744,10 +744,12 @@ constraint (<code class="docutils literal notranslate"><span class="pre">tan(qaz
 </table>
 </div>
 </section>
-<section id="psi-constant-vertical-stub">
-<h3><code class="docutils literal notranslate"><span class="pre">psi_constant_vertical</span></code> <em>(stub)</em><a class="headerlink" href="#psi-constant-vertical-stub" title="Link to this heading">#</a></h3>
-<p>Vertical bisecting with azimuthal angle ψ of n̂ about Q fixed.
-Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> and <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>; the forward solver is not yet implemented.  See <a class="reference internal" href="../howto/surface.html"><span class="doc">Surface Geometry and the Reference Vector</span></a>.</p>
+<section id="psi-constant-vertical">
+<h3><code class="docutils literal notranslate"><span class="pre">psi_constant_vertical</span></code><a class="headerlink" href="#psi-constant-vertical" title="Link to this heading">#</a></h3>
+<p>Vertical bisecting with azimuthal angle ψ validation.
+Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.
+The solver returns bisecting solutions only when the natural ψ for the
+requested (h,k,l) matches the stored target.  See <a class="reference internal" href="../howto/surface.html"><span class="doc">Surface Geometry and the Reference Vector</span></a>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p></p></th>
@@ -771,11 +773,11 @@ Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_ref
 </table>
 </div>
 </section>
-<section id="psi-constant-horizontal-stub">
-<h3><code class="docutils literal notranslate"><span class="pre">psi_constant_horizontal</span></code> <em>(stub)</em><a class="headerlink" href="#psi-constant-horizontal-stub" title="Link to this heading">#</a></h3>
-<p>Horizontal bisecting with azimuthal angle ψ of n̂ about Q fixed.
+<section id="psi-constant-horizontal">
+<h3><code class="docutils literal notranslate"><span class="pre">psi_constant_horizontal</span></code><a class="headerlink" href="#psi-constant-horizontal" title="Link to this heading">#</a></h3>
+<p>Horizontal bisecting with azimuthal angle ψ validation.
 Symmetric with <code class="docutils literal notranslate"><span class="pre">psi_constant_vertical</span></code> in the horizontal plane.
-Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> and <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>; the forward solver is not yet implemented.  See <a class="reference internal" href="../howto/surface.html"><span class="doc">Surface Geometry and the Reference Vector</span></a>.</p>
+Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p></p></th>
@@ -794,6 +796,54 @@ Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_ref
 </tr>
 <tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
 <td><p>psi (computed azimuth)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="double-diffraction-vertical">
+<h3><code class="docutils literal notranslate"><span class="pre">double_diffraction_vertical</span></code><a class="headerlink" href="#double-diffraction-vertical" title="Link to this heading">#</a></h3>
+<p>Full 4D simultaneous solver in the vertical scattering plane: finds motor
+angles where both the primary (h₁,k₁,l₁) and secondary (h₂,k₂,l₂)
+reflections satisfy the Ewald sphere condition.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Computed</strong></p></td>
+<td><p>komega, kappa, kphi, delta</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Constant during</strong> <code class="docutils literal notranslate"><span class="pre">forward()</span></code></p></td>
+<td><p>mu = 0, nu = 0</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Extras (input)</strong></p></td>
+<td><p>h₂, k₂, l₂ (secondary reflection Miller indices)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="double-diffraction-horizontal">
+<h3><code class="docutils literal notranslate"><span class="pre">double_diffraction_horizontal</span></code><a class="headerlink" href="#double-diffraction-horizontal" title="Link to this heading">#</a></h3>
+<p>Full 4D simultaneous solver in the horizontal scattering plane.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Computed</strong></p></td>
+<td><p>mu, kappa, kphi, nu</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Constant during</strong> <code class="docutils literal notranslate"><span class="pre">forward()</span></code></p></td>
+<td><p>komega = 0, delta = 0</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Extras (input)</strong></p></td>
+<td><p>h₂, k₂, l₂ (secondary reflection Miller indices)</p></td>
 </tr>
 </tbody>
 </table>
@@ -883,8 +933,10 @@ Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_ref
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-delta"><code class="docutils literal notranslate"><span class="pre">fixed_delta</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lifting-detector-mu"><code class="docutils literal notranslate"><span class="pre">lifting_detector_mu</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lifting-detector-kphi"><code class="docutils literal notranslate"><span class="pre">lifting_detector_kphi</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#psi-constant-vertical-stub"><code class="docutils literal notranslate"><span class="pre">psi_constant_vertical</span></code> <em>(stub)</em></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#psi-constant-horizontal-stub"><code class="docutils literal notranslate"><span class="pre">psi_constant_horizontal</span></code> <em>(stub)</em></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#psi-constant-vertical"><code class="docutils literal notranslate"><span class="pre">psi_constant_vertical</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#psi-constant-horizontal"><code class="docutils literal notranslate"><span class="pre">psi_constant_horizontal</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#double-diffraction-vertical"><code class="docutils literal notranslate"><span class="pre">double_diffraction_vertical</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#double-diffraction-horizontal"><code class="docutils literal notranslate"><span class="pre">double_diffraction_horizontal</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API reference</a></li>
@@ -923,7 +975,7 @@ Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_ref
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 04:40 CDT.
+  Last updated on 2026-04-18 06:11 CDT.
   <br/>
 </p></div>
       

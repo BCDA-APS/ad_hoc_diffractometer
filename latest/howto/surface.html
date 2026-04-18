@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=d4ffc219"></script>
+    <script src="../_static/documentation_options.js?v=fa5977a2"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 04:40 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 06:11 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -635,13 +635,12 @@ and restored by <code class="docutils literal notranslate"><span class="pre">fro
 </pre></div>
 </div>
 </section>
-<section id="reference-constraint-modes-stubs">
-<h2>Reference constraint modes (stubs)<a class="headerlink" href="#reference-constraint-modes-stubs" title="Link to this heading">#</a></h2>
-<p>Modes such as <code class="docutils literal notranslate"><span class="pre">psi_constant_vertical</span></code>, <code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, and <code class="docutils literal notranslate"><span class="pre">reflectivity</span></code> require
-both the reference vector <em>and</em> a forward solver.  Setting <code class="docutils literal notranslate"><span class="pre">surface_normal</span></code>
-or <code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code> satisfies the vector prerequisite (check with
-<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint.has_reference_vector" title="ad_hoc_diffractometer.mode.ReferenceConstraint.has_reference_vector"><code class="xref py py-meth docutils literal notranslate"><span class="pre">has_reference_vector()</span></code></a>),
-but the forward solver for these modes is not yet implemented.</p>
+<section id="reference-constraint-modes">
+<h2>Reference constraint modes<a class="headerlink" href="#reference-constraint-modes" title="Link to this heading">#</a></h2>
+<p>Modes that use a <code class="docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code> require the appropriate reference
+vector to be set on the geometry.  <code class="docutils literal notranslate"><span class="pre">psi_constant_*</span></code> modes require
+<code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code>; surface modes (<code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">reflectivity</span></code>) require
+<code class="docutils literal notranslate"><span class="pre">surface_normal</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;psi_constant_vertical&quot;</span>
 
@@ -649,11 +648,16 @@ but the forward solver for these modes is not yet implemented.</p>
 <span class="n">rc</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">reference_constraint</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">has_reference_vector</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>   <span class="c1"># True  — vector is set</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>          <span class="c1"># False — solver not yet available</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>          <span class="c1"># True  — solver available</span>
 
-<span class="c1"># forward() raises NotImplementedError until the solver is implemented</span>
+<span class="c1"># forward() returns bisecting solutions whose natural ψ matches the target</span>
+<span class="n">solutions</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>The <code class="docutils literal notranslate"><span class="pre">psi_constant</span></code> solver acts as a <strong>validation filter</strong>: ψ is a pure
+phi-frame quantity that is the same for every Bragg solution of a given
+(h,k,l) and UB.  The solver computes the natural ψ and returns solutions
+only if it matches the stored target — otherwise it returns an empty list.</p>
 </section>
 <section id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
@@ -723,7 +727,7 @@ but the forward solver for these modes is not yet implemented.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-naz">Compute naz</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#symmetric-reflection-condition-i-out">Symmetric reflection condition (α_i = β_out)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serialisation">Serialisation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-constraint-modes-stubs">Reference constraint modes (stubs)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-constraint-modes">Reference constraint modes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
 </ul>
   </nav></div>
@@ -759,7 +763,7 @@ but the forward solver for these modes is not yet implemented.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 04:40 CDT.
+  Last updated on 2026-04-18 06:11 CDT.
   <br/>
 </p></div>
       

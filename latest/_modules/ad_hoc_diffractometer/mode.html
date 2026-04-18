@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=d4ffc219"></script>
+    <script src="../../_static/documentation_options.js?v=fa5977a2"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 04:40 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 06:11 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -1203,21 +1203,27 @@
 <span class="sd">        Return True when the required reference vector is set on the geometry</span>
 <span class="sd">        and a forward solver is available for this constraint name.</span>
 
-<span class="sd">        Implemented constraints (surface normal / incidence / exit angle):</span>
+<span class="sd">        Implemented constraints:</span>
 
 <span class="sd">        - ``&quot;alpha_i&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
 <span class="sd">        - ``&quot;beta_out&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
 <span class="sd">        - ``&quot;a_eq_b&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
+<span class="sd">        - ``&quot;psi&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`.</span>
+<span class="sd">          The forward solver treats ψ as a **validation filter**: for a given</span>
+<span class="sd">          (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for</span>
+<span class="sd">          every Bragg solution.  The solver computes the natural ψ from UB and</span>
+<span class="sd">          the reference direction; if it matches the stored target the bisecting</span>
+<span class="sd">          solutions are returned, otherwise an empty list is returned.  See</span>
+<span class="sd">          issue #176 for the full analysis.</span>
 
 <span class="sd">        Not yet implemented:</span>
 
-<span class="sd">        - ``&quot;psi&quot;`` — the You (1999) azimuthal angle ψ is constant for all Bragg</span>
-<span class="sd">          solutions of a given (h,k,l); ``psi_constant`` as a forward-problem</span>
-<span class="sd">          constraint for fixed (h,k,l) is not physically meaningful.  See issue #176.</span>
 <span class="sd">        - ``&quot;naz&quot;`` — no forward solver yet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="s2">&quot;naz&quot;</span><span class="p">}:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;naz&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="c1"># alpha_i, beta_out, a_eq_b — implemented when surface_normal is set</span>
         <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">surface_normal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
@@ -1878,7 +1884,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 04:40 CDT.
+  Last updated on 2026-04-18 06:11 CDT.
   <br/>
 </p></div>
       

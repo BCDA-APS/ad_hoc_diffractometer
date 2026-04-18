@@ -113,14 +113,25 @@ Horizontal scattering plane bisecting condition (You 1999, §5.1).
 
 ### `double_diffraction_vertical`
 
-{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`
-with secondary-reflection extras.
-Bisecting solver runs; simultaneous diffraction logic not yet implemented.
+Full 4D simultaneous solver in the vertical scattering plane: finds motor
+angles where both the primary (h₁,k₁,l₁) and secondary (h₂,k₂,l₂)
+reflections satisfy the Ewald sphere condition.  Set
+``mode.extras['h2']``, ``['k2']``, ``['l2']`` before calling ``forward()``.
 
 | | |
 |---|---|
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
+
+### `double_diffraction_horizontal`
+
+Full 4D simultaneous solver in the horizontal scattering plane.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
 | **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
 
 ### `lifting_detector_mu`
@@ -145,10 +156,12 @@ constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
 | **Computed** | phi, nu, delta |
 | **Constant during** `forward()` | phi = 0, mu = 0 |
 
-### `psi_constant_vertical` *(stub)*
+### `psi_constant_vertical`
 
-Vertical bisecting with azimuthal angle ψ of n̂ about Q fixed.
-Set ``g.azimuthal_reference = (h, k, l)`` and ``g.surface_normal = (h, k, l)``; the forward solver is not yet implemented.  See {doc}`../howto/surface`.
+Vertical bisecting with azimuthal angle ψ validation.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+The solver returns bisecting solutions only when the natural ψ for the
+requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
 
 | | |
 |---|---|
@@ -157,10 +170,10 @@ Set ``g.azimuthal_reference = (h, k, l)`` and ``g.surface_normal = (h, k, l)``; 
 | **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
 | **Extras (output)** | psi (computed azimuth) |
 
-### `psi_constant_horizontal` *(stub)*
+### `psi_constant_horizontal`
 
-Horizontal bisecting with azimuthal angle ψ fixed.
-Set ``g.azimuthal_reference = (h, k, l)`` and ``g.surface_normal = (h, k, l)``; the forward solver is not yet implemented.  See {doc}`../howto/surface`.
+Horizontal bisecting with azimuthal angle ψ validation.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
 
 | | |
 |---|---|
