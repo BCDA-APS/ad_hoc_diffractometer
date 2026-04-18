@@ -914,9 +914,11 @@ def kappa4cv(
         Stage("ttheta", -LATERAL, parent=None, role="detector"),
     ]
     # kappa4cv: 4 DOF, N-3=1 constraint needed per mode.
-    # Note: bisect on kappa means virtual omega=0 (not real komega=ttheta/2).
-    # komega is named as the sample bisect stage; the kappa inversion solver
-    # (Issue I) will correct this to operate in virtual Eulerian space.
+    # Virtual Eulerian angles (omega, chi, phi) are computed from real kappa
+    # angles (komega, kappa, kphi) via Walko (2016) eq. [16].  Constraints
+    # using virtual angle names are stubs pending Issue I (#153).
+    # BisectConstraint('komega','ttheta') approximates bisecting but is
+    # physically inaccurate — true bisect requires virtual omega=0.
     modes = {
         "bisecting": ConstraintSet(
             [BisectConstraint("komega", "ttheta")],
@@ -925,6 +927,23 @@ def kappa4cv(
         "fixed_kphi": ConstraintSet(
             [SampleConstraint("kphi", 0.0)],
             computed=["komega", "kappa", "ttheta"],
+        ),
+        "constant_omega": ConstraintSet(
+            [SampleConstraint("omega", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "constant_chi": ConstraintSet(
+            [SampleConstraint("chi", 90.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "constant_phi": ConstraintSet(
+            [SampleConstraint("phi", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "psi_constant": ConstraintSet(
+            [ReferenceConstraint("psi", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+            extras={"n_hat": REQUIRED, "psi": None},
         ),
     }
     return AdHocDiffractometer(
@@ -984,6 +1003,7 @@ def kappa4ch(
         Stage("ttheta", -VERTICAL, parent=None, role="detector"),
     ]
     # kappa4ch: 4 DOF, N-3=1 constraint needed per mode.
+    # Same mode set as kappa4cv; virtual angle stubs pending Issue I (#153).
     modes = {
         "bisecting": ConstraintSet(
             [BisectConstraint("komega", "ttheta")],
@@ -992,6 +1012,23 @@ def kappa4ch(
         "fixed_kphi": ConstraintSet(
             [SampleConstraint("kphi", 0.0)],
             computed=["komega", "kappa", "ttheta"],
+        ),
+        "constant_omega": ConstraintSet(
+            [SampleConstraint("omega", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "constant_chi": ConstraintSet(
+            [SampleConstraint("chi", 90.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "constant_phi": ConstraintSet(
+            [SampleConstraint("phi", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "psi_constant": ConstraintSet(
+            [ReferenceConstraint("psi", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+            extras={"n_hat": REQUIRED, "psi": None},
         ),
     }
     return AdHocDiffractometer(
