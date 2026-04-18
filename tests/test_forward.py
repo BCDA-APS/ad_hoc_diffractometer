@@ -33,6 +33,7 @@ from ad_hoc_diffractometer import compute_forward
 from ad_hoc_diffractometer import fivec
 from ad_hoc_diffractometer import fourch
 from ad_hoc_diffractometer import fourcv
+from ad_hoc_diffractometer import kappa4ch
 from ad_hoc_diffractometer import kappa4cv
 from ad_hoc_diffractometer import psic
 from ad_hoc_diffractometer import sixc
@@ -282,6 +283,73 @@ def test_kappa4cv_bisecting_round_trip():
     g = _setup_cubic(kappa4cv, a=4.0)
     assert g.mode_name == "bisecting"
     assert _round_trip_ok(g, 0, 1, 0)
+
+
+# ---------------------------------------------------------------------------
+# Issue #151 — kappa4cv and kappa4ch: mode counts, stubs, fixed_kphi
+# ---------------------------------------------------------------------------
+
+_KAPPA4_ALL_MODES = {
+    "bisecting",
+    "fixed_kphi",
+    "constant_omega",
+    "constant_chi",
+    "constant_phi",
+    "psi_constant",
+}
+_KAPPA4_STUB_MODES = {"constant_omega", "constant_chi", "constant_phi", "psi_constant"}
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [pytest.param(kappa4cv, id="kappa4cv"), pytest.param(kappa4ch, id="kappa4ch")],
+)
+def test_kappa4_has_all_six_modes(factory):
+    """kappa4cv and kappa4ch both expose all 6 declared modes."""
+    assert set(factory().modes.keys()) == _KAPPA4_ALL_MODES
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name",
+    [pytest.param(kappa4cv, m, id=f"kappa4cv-{m}") for m in sorted(_KAPPA4_STUB_MODES)]
+    + [
+        pytest.param(kappa4ch, m, id=f"kappa4ch-{m}")
+        for m in sorted(_KAPPA4_STUB_MODES)
+    ],
+)
+def test_kappa4_stub_not_implemented(factory, mode_name):
+    """Virtual-angle stubs raise NotImplementedError on forward()."""
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = mode_name
+    assert not g.modes[mode_name].is_implemented(g)
+    with pytest.raises(NotImplementedError):
+        g.forward(0, 1, 0)
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [pytest.param(kappa4cv, id="kappa4cv"), pytest.param(kappa4ch, id="kappa4ch")],
+)
+def test_kappa4_fixed_kphi_round_trip(factory):
+    """fixed_kphi (real stage) is implemented and round-trips correctly."""
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = "fixed_kphi"
+    assert g.modes["fixed_kphi"].is_implemented(g)
+    assert _round_trip_ok(g, 0, 1, 0)
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [pytest.param(kappa4cv, id="kappa4cv"), pytest.param(kappa4ch, id="kappa4ch")],
+)
+def test_kappa4_fixed_kphi_value_in_solution(factory):
+    """fixed_kphi: kphi=0 in all solutions."""
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = "fixed_kphi"
+    solutions = g.forward(0, 1, 0)
+    assert len(solutions) > 0
+    for sol in solutions:
+        assert sol["kphi"] == pytest.approx(0.0, abs=1e-8)
 
 
 # ---------------------------------------------------------------------------
