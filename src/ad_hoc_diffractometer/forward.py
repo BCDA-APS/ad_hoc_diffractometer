@@ -216,6 +216,18 @@ def _solve_constraint_set(
     Unsupported patterns fall back to the numeric solver.
     """
 
+    # Psi-constant mode (ReferenceConstraint("psi") validation filter).
+    # Must be checked FIRST: psic/kappa6c psi_constant_vertical has a
+    # BisectConstraint but needs psi validation before bisecting.
+    if _is_psi_mode(geometry, mode):
+        return _solve_psi_mode(geometry, Q_phi, ttheta_deg, mode)
+
+    # Double-diffraction mode (simultaneous Bragg for two reflections).
+    # Must be checked before has_bisect: double_diffraction modes have a
+    # BisectConstraint but use a 4D solver instead of plain bisecting.
+    if _is_double_diffraction_mode(geometry, mode):
+        return _solve_double_diffraction(geometry, Q_phi, ttheta_deg, mode)
+
     if mode.has_bisect:
         return _solve_bisecting(geometry, Q_phi, ttheta_deg, mode)
 
@@ -704,16 +716,415 @@ def _solve_kappa_virtual(
 
 
 # ---------------------------------------------------------------------------
+# Psi-constant solver (ReferenceConstraint("psi") validation filter)
+# ---------------------------------------------------------------------------
+
+
+def _compute_natural_psi(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+) -> float | None:
+    """
+    Compute the natural azimuthal angle ψ from the phi frame only.
+
+    ψ is a pure phi-frame quantity: it depends on ``Q_phi = UB @ hkl``,
+    ``n_phi = UB @ n_hkl`` (the azimuthal reference in the phi frame),
+    and ``y_hat`` (the incident-beam direction from the geometry's basis).
+    **No motor angles are involved.**
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+        Must have ``sample.UB`` and ``azimuthal_reference`` set.
+    Q_phi : numpy.ndarray, shape (3,)
+        Target scattering vector in the phi frame (``UB @ hkl``).
+
+    Returns
+    -------
+    float or None
+        ψ in degrees (−180°, +180°], or ``None`` when ψ is undefined
+        (Q ∥ incident beam, or reference vector ∥ Q).
+    """
+    n_hkl = geometry.azimuthal_reference
+    if n_hkl is None:
+        return None  # pragma: no cover
+
+    n_phi = geometry.sample.UB @ np.asarray(n_hkl, dtype=float)
+    y_raw = np.asarray(
+        geometry.basis.get("longitudinal", np.array([0.0, 1.0, 0.0])),
+        dtype=float,
+    )
+    y_hat = y_raw / np.linalg.norm(y_raw)
+
+    Q_mag = float(np.linalg.norm(Q_phi))
+    if Q_mag < 1e-14:
+        return None  # pragma: no cover
+    Q_hat = Q_phi / Q_mag
+
+    # Project n and y onto the plane perpendicular to Q
+    n_perp = n_phi - np.dot(n_phi, Q_hat) * Q_hat
+    y_perp = y_hat - np.dot(y_hat, Q_hat) * Q_hat
+
+    n_perp_mag = float(np.linalg.norm(n_perp))
+    y_perp_mag = float(np.linalg.norm(y_perp))
+
+    if n_perp_mag < 1e-10 or y_perp_mag < 1e-10:
+        return None  # ψ undefined (reference ∥ Q, or Q ∥ incident beam)
+
+    n_perp_hat = n_perp / n_perp_mag
+    y_perp_hat = y_perp / y_perp_mag
+
+    cos_psi = float(np.clip(np.dot(y_perp_hat, n_perp_hat), -1.0, 1.0))
+    sin_psi = float(np.dot(Q_hat, np.cross(y_perp_hat, n_perp_hat)))
+    return math.degrees(math.atan2(sin_psi, cos_psi))
+
+
+def _is_psi_mode(geometry: AdHocDiffractometer, mode) -> bool:
+    """Return True when the mode contains a psi ReferenceConstraint and the reference is set."""
+    from .mode import ReferenceConstraint
+
+    if geometry.azimuthal_reference is None:
+        return False
+    return any(
+        isinstance(c, ReferenceConstraint) and c.name == "psi" for c in mode.constraints
+    )
+
+
+def _solve_psi_mode(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+) -> list[dict[str, float]]:
+    """
+    Forward solver for ``psi_constant`` modes (validation filter).
+
+    For a given (h,k,l) and UB, the azimuthal angle ψ is a pure phi-frame
+    quantity — the same for every Bragg solution.  This solver:
+
+    1. Computes the natural ψ from ``Q_phi`` (no motor angles).
+    2. Compares with ``psi_target`` from the mode's
+       :class:`~mode.ReferenceConstraint`.
+    3. If they disagree (beyond 0.1° tolerance): returns ``[]``.
+    4. If they agree: delegates to the appropriate existing solver
+       (bisecting, kappa-virtual, or synthetic bisecting) and returns
+       all solutions.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+    Q_phi : numpy.ndarray, shape (3,)
+    ttheta_deg : float
+    mode : ConstraintSet
+
+    Returns
+    -------
+    list of dict[str, float]
+    """
+    from .mode import BisectConstraint
+    from .mode import ConstraintSet
+    from .mode import ReferenceConstraint
+
+    # Extract the psi target value
+    rc = next(
+        c
+        for c in mode.constraints
+        if isinstance(c, ReferenceConstraint) and c.name == "psi"
+    )
+    psi_target = float(rc.value)
+
+    # Compute natural psi from the phi frame (motor-angle independent)
+    natural_psi = _compute_natural_psi(geometry, Q_phi)
+    if natural_psi is None:
+        return []  # ψ undefined for this reflection
+
+    # Compare natural psi with target (tolerance 0.1° — generous enough
+    # to handle float rounding, tight enough to be physically meaningful)
+    diff = abs(natural_psi - psi_target)
+    # Handle wraparound: e.g. -179.9 vs 180.1
+    if diff > 180.0:
+        diff = 360.0 - diff
+    if diff > 0.1:
+        return []  # this (h,k,l) is not accessible at the stored ψ
+
+    # ψ is satisfied — delegate to the appropriate existing solver.
+    # The psi constraint is automatically satisfied by ALL Bragg solutions.
+
+    if mode.has_bisect:
+        # psic, kappa6c: mode already has a BisectConstraint
+        return _solve_bisecting(geometry, Q_phi, ttheta_deg, mode)
+
+    if _is_kappa_virtual_mode(geometry, mode):  # pragma: no cover
+        # kappa4cv, kappa4ch: kappa virtual angle mode
+        return _solve_kappa_virtual(geometry, Q_phi, ttheta_deg, mode)
+
+    # fourcv, fourch, kappa4cv, kappa4ch: no BisectConstraint in the mode.
+    # Build a synthetic bisecting mode using the geometry's natural
+    # bisect pair: first sample stage + first detector stage.
+    sample_stages = geometry.sample_stages
+    detector_stages = geometry.detector_stages
+
+    if not sample_stages or not detector_stages:
+        return []  # pragma: no cover
+
+    bisect_sample = sample_stages[0].name  # omega in fourcv/fourch
+    bisect_detector = detector_stages[-1].name  # ttheta in fourcv/fourch
+
+    # Collect any non-psi constraints from the original mode
+    other_constraints = [
+        c
+        for c in mode.constraints
+        if not (isinstance(c, ReferenceConstraint) and c.name == "psi")
+    ]
+
+    synthetic = ConstraintSet(
+        [BisectConstraint(bisect_sample, bisect_detector)] + other_constraints,
+        computed=mode.computed,
+    )
+
+    return _solve_bisecting(geometry, Q_phi, ttheta_deg, synthetic)
+
+
+# ---------------------------------------------------------------------------
+# Double-diffraction solver (simultaneous Bragg for two reflections)
+# ---------------------------------------------------------------------------
+
+
+def _is_double_diffraction_mode(geometry: AdHocDiffractometer, mode) -> bool:
+    """Return True when mode.extras contains h2, k2, l2 keys."""
+    extras = mode.extras
+    return extras is not None and all(k in extras for k in ("h2", "k2", "l2"))
+
+
+def _solve_double_diffraction(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+) -> list[dict[str, float]]:
+    """
+    Full 4D simultaneous solver for double-diffraction modes.
+
+    Finds motor angles where both the primary reflection (h₁,k₁,l₁) and a
+    secondary reflection (h₂,k₂,l₂) simultaneously satisfy the Ewald sphere
+    condition.  Matches the Hkl library's ``_double_diffraction`` function
+    (``hkl-pseudoaxis-common-hkl.c``).
+
+    Four equations, four unknowns:
+
+    1-3. Bragg condition for primary hkl₁:
+         ``Q_phi_computed - Q_phi_target = 0``  (3 components)
+    4.   Ewald sphere for secondary hkl₂:
+         ``|ki + Z @ UB @ hkl₂|² - |ki|² = 0``
+
+    where ``Z`` is the sample rotation matrix and ``ki = (2π/λ) ŷ``.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+    Q_phi : numpy.ndarray, shape (3,)
+    ttheta_deg : float
+    mode : ConstraintSet
+
+    Returns
+    -------
+    list of dict[str, float]
+
+    Raises
+    ------
+    ValueError
+        If h2, k2, l2 are not set in ``mode.extras`` (still ``REQUIRED``).
+    """
+    from .mode import REQUIRED
+    from .rotation import rotation_matrix
+
+    extras = mode.extras
+
+    # Validate that h2, k2, l2 are set to numeric values
+    hkl2_values = [extras.get("h2"), extras.get("k2"), extras.get("l2")]
+    if any(v is REQUIRED for v in hkl2_values):
+        raise ValueError(
+            "double_diffraction mode requires h2, k2, l2 to be set in "
+            "mode.extras before calling forward(). "
+            "Set them with e.g. "
+            "g.modes['double_diffraction'].extras['h2'] = 1.0"
+        )
+
+    hkl2 = np.array([float(v) for v in hkl2_values], dtype=float)
+    Q2_phi = geometry.sample.UB @ hkl2
+
+    # Incident beam: ki = (2π/λ) * longitudinal_hat
+    wavelength = geometry.wavelength
+    k_mag = 2.0 * math.pi / wavelength
+    y_raw = np.asarray(
+        geometry.basis.get("longitudinal", np.array([0.0, 1.0, 0.0])),
+        dtype=float,
+    )
+    ki = k_mag * (y_raw / np.linalg.norm(y_raw))
+    ki_sq = float(np.dot(ki, ki))
+
+    # Build baseline angles: all stages at their current positions
+    all_stages = list(geometry._stages.values())  # noqa: SLF001
+    angles_base: dict[str, float] = {s.name: s.angle for s in all_stages}
+
+    # Apply fixed sample constraints (mu=0, eta=0, etc.)
+    for sc in mode.fixed_sample_constraints:
+        if sc.name in geometry._stages:  # noqa: SLF001  # pragma: no branch
+            angles_base[sc.name] = float(sc.value)
+
+    # Apply fixed detector constraints (nu=0, delta=0, etc.)
+    det_c = mode.detector_constraint
+    if det_c is not None and not det_c.is_qaz:
+        angles_base[det_c.name] = det_c.value
+
+    # The 4 free stages are taken from the mode's ``computed`` field,
+    # which explicitly lists the writable axes.  The BisectConstraint
+    # stages ARE included (they are seeding hints, not hard constraints
+    # in the 4D solver).
+    free_names = list(mode.computed)
+
+    if len(free_names) != 4:  # pragma: no cover
+        logger.warning(
+            "double_diffraction expects 4 free stages, got %d: %s",
+            len(free_names),
+            free_names,
+        )
+        return []
+
+    # Ordered list of ALL stages (for building the sample rotation matrix Z)
+    sample_stages = geometry.sample_stages
+
+    from .orientation import angles_to_phi_vector as _a2phi
+
+    def _build_Z(angles: dict[str, float]) -> np.ndarray:
+        """Compute sample rotation matrix from angle values (no mutation)."""
+        Z = np.eye(3)
+        for s in sample_stages:
+            Z = Z @ rotation_matrix(s.axis, angles[s.name])
+        return Z
+
+    def _residual_4d(x: np.ndarray) -> np.ndarray:
+        """4-component residual: 3 Bragg + 1 Ewald sphere."""
+        trial = dict(angles_base)
+        for i, name in enumerate(free_names):
+            trial[name] = float(x[i])
+
+        # Bragg residual for primary hkl₁ (3 components)
+        Q_computed = _a2phi(geometry, **trial)
+        bragg_res = Q_computed - Q_phi
+
+        # Ewald sphere residual for secondary hkl₂
+        Z = _build_Z(trial)
+        Q2_lab = Z @ Q2_phi
+        kf2 = ki + Q2_lab
+        ewald_res = float(np.dot(kf2, kf2)) - ki_sq
+
+        return np.array([bragg_res[0], bragg_res[1], bragg_res[2], ewald_res])
+
+    def _jacobian_fd(x: np.ndarray, r0: np.ndarray, h: float = 1e-4) -> np.ndarray:
+        """Finite-difference Jacobian (4 × 4)."""
+        J = np.zeros((4, 4))
+        for i in range(4):
+            xp = x.copy()
+            xp[i] += h
+            J[:, i] = (_residual_4d(xp) - r0) / h
+        return J
+
+    # Seed from bisecting solutions + coarse grid.
+    # The bisecting solution satisfies the primary Bragg condition and is
+    # a good starting point for the Newton-Raphson solver.  We build a
+    # temporary bisecting mode from the first sample and last detector stage
+    # in the computed list, then run _solve_bisecting().
+    seeds: list[np.ndarray] = []
+
+    # Find sample and detector stages among the 4 free stages
+    sample_names = {s.name for s in geometry.sample_stages}
+    det_names = {s.name for s in geometry.detector_stages}
+    free_sample = [n for n in free_names if n in sample_names]
+    free_det = [n for n in free_names if n in det_names]
+
+    if free_sample and free_det:  # pragma: no branch
+        from .mode import BisectConstraint as _BC
+        from .mode import ConstraintSet as _CS
+
+        bisect_sample = free_sample[0]
+        bisect_det = free_det[-1]
+        other_constraints = list(mode.constraints)  # frozen stages
+        synth = _CS(
+            [_BC(bisect_sample, bisect_det)] + other_constraints,
+            computed=mode.computed,
+        )
+        try:
+            bisect_sols = _solve_bisecting(geometry, Q_phi, ttheta_deg, synth)
+            for sol in bisect_sols:
+                seeds.append(np.array([sol[n] for n in free_names], dtype=float))
+        except Exception:  # pragma: no cover
+            pass  # pragma: no cover
+
+    # Coarse grid seeds
+    half_tth = ttheta_deg / 2.0
+    for a0 in (half_tth, -half_tth, 0.0):
+        for a1 in (0.0, 45.0, 90.0, -90.0):
+            for a2 in (0.0, 90.0, 180.0, -90.0):
+                seeds.append(np.array([a0, a1, a2, ttheta_deg], dtype=float))
+
+    # Newton-Raphson over all seeds
+    found_solutions: list[dict[str, float]] = []
+    seen_keys: list[np.ndarray] = []
+
+    for seed in seeds:
+        x = seed.copy()
+        for _ in range(300):  # pragma: no branch
+            r = _residual_4d(x)
+            if np.linalg.norm(r) < 1e-9:
+                break
+            J = _jacobian_fd(x, r)
+            try:
+                dx = np.linalg.solve(J, -r)
+            except np.linalg.LinAlgError:  # pragma: no cover
+                break  # pragma: no cover
+            step = np.linalg.norm(dx)
+            if step > 30.0:
+                dx = dx * (30.0 / step)
+            x = x + dx
+
+        r = _residual_4d(x)
+        if np.linalg.norm(r) > 1e-5:  # pragma: no cover
+            continue  # pragma: no cover
+
+        # De-duplicate
+        duplicate = any(np.allclose(x, sk, atol=1e-3) for sk in seen_keys)
+        if duplicate:
+            continue
+        seen_keys.append(x.copy())
+
+        # Build solution dict
+        sol = dict(angles_base)
+        for i, name in enumerate(free_names):
+            sol[name] = float(x[i])
+
+        _apply_cut_points(sol, mode, geometry)
+        if _check_limits(geometry, sol):
+            found_solutions.append(sol)
+
+    return found_solutions
+
+
+# ---------------------------------------------------------------------------
 # Surface diffraction solvers (ReferenceConstraint modes)
 # ---------------------------------------------------------------------------
 
 
 def _is_surface_mode(geometry: AdHocDiffractometer, mode) -> bool:
-    """Return True when mode has a ReferenceConstraint and surface_normal is set."""
+    """Return True when mode has a surface ReferenceConstraint and surface_normal is set.
+
+    The ``"psi"`` ReferenceConstraint is NOT a surface mode — it is handled
+    by :func:`_is_psi_mode` / :func:`_solve_psi_mode` instead.
+    """
     from .mode import ReferenceConstraint
 
     return geometry.surface_normal is not None and any(
-        isinstance(c, ReferenceConstraint) for c in mode.constraints
+        isinstance(c, ReferenceConstraint) and c.name != "psi" for c in mode.constraints
     )
 
 

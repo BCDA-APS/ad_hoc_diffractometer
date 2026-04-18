@@ -92,24 +92,29 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 | **Computed** | chi, phi, ttheta |
 | **Constant during** `forward()` | omega |
 
-### `psi_constant` *(stub)*
+### `psi_constant`
 
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
-Fix the azimuthal angle ψ of the reference vector about Q.
-Set ``g.azimuthal_reference = (h, k, l)`` — see {doc}`../howto/surface`. The forward solver is not yet implemented.
+azimuthal angle ψ validation filter.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+Returns bisecting solutions only when the natural ψ for (h,k,l) matches
+the stored target.  See {doc}`../howto/surface`.
 
 | | |
 |---|---|
 | **Extras (input)** | n̂ (reference vector), ψ (target, degrees) |
 | **Extras (output)** | psi (computed azimuth) |
 
-### `double_diffraction` *(stub)*
+### `double_diffraction`
 
-{class}`~ad_hoc_diffractometer.mode.BisectConstraint` with secondary reflection extras.
-Simultaneous diffraction condition — not yet implemented.
+Full 4D simultaneous solver: finds motor angles where both the primary
+(h₁,k₁,l₁) and secondary (h₂,k₂,l₂) reflections satisfy the Ewald
+sphere condition.  Set ``mode.extras['h2']``, ``['k2']``, ``['l2']``
+before calling ``forward()``.
 
 | | |
 |---|---|
+| **Computed** | omega, chi, phi, ttheta |
 | **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
 
 ## API reference

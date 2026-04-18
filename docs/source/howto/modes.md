@@ -112,12 +112,15 @@ print(cs.is_implemented(g))
 
 ## Check if a mode is implemented
 
-Stub modes (e.g. `psi_constant`) have `is_implemented(g)` returning `False`
-and raise `NotImplementedError` when `forward()` is called:
+Some modes require a prerequisite on the geometry.  For example,
+`psi_constant` requires ``g.azimuthal_reference`` to be set:
 
 ```python
 g.mode_name = "psi_constant"
-print(g.modes["psi_constant"].is_implemented(g))  # False
+print(g.modes["psi_constant"].is_implemented(g))  # False (no azimuthal_reference)
+
+g.azimuthal_reference = (0, 0, 1)
+print(g.modes["psi_constant"].is_implemented(g))  # True
 
 # forward() raises NotImplementedError for unimplemented modes
 ```

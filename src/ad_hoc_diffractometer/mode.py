@@ -711,21 +711,27 @@ class ReferenceConstraint:
         Return True when the required reference vector is set on the geometry
         and a forward solver is available for this constraint name.
 
-        Implemented constraints (surface normal / incidence / exit angle):
+        Implemented constraints:
 
         - ``"alpha_i"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"beta_out"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"a_eq_b"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+        - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`.
+          The forward solver treats ψ as a **validation filter**: for a given
+          (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for
+          every Bragg solution.  The solver computes the natural ψ from UB and
+          the reference direction; if it matches the stored target the bisecting
+          solutions are returned, otherwise an empty list is returned.  See
+          issue #176 for the full analysis.
 
         Not yet implemented:
 
-        - ``"psi"`` — the You (1999) azimuthal angle ψ is constant for all Bragg
-          solutions of a given (h,k,l); ``psi_constant`` as a forward-problem
-          constraint for fixed (h,k,l) is not physically meaningful.  See issue #176.
         - ``"naz"`` — no forward solver yet.
         """
-        if self._name in {"psi", "naz"}:
+        if self._name == "naz":
             return False
+        if self._name == "psi":
+            return geometry.azimuthal_reference is not None
         # alpha_i, beta_out, a_eq_b — implemented when surface_normal is set
         return geometry.surface_normal is not None
 
