@@ -126,5 +126,5 @@ Vertical / horizontal scattering plane
    (2) **Busing & Levy (1967)**: angle of sample rotation about **Q** relative
    to a reference orientation — the quantity physically varied in a ψ scan.
    See {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi` and
-   {func}`~ad_hoc_diffractometer.psi_trajectory`.
+   {func}`~ad_hoc_diffractometer.scan.psi_trajectory`.
 ```

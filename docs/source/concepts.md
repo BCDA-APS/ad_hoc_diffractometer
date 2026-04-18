@@ -149,11 +149,11 @@ Available modes depend on the geometry.
 
 ```python
 # Four-circle geometries use "bisecting"
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 g.mode_name = "bisecting"
 
 # Six-circle psic uses named variants
-g = ahd.psic()
+g = ahd.presets.psic()
 g.mode_name = "bisecting_vertical"   # vertical scattering plane
 g.mode_name = "bisecting_horizontal" # horizontal scattering plane
 ```
@@ -238,7 +238,7 @@ The conversion follows Walko (2016) eq. [16] with a fixed tilt angle
 α₀ (default 50°):
 
 ```python
-from ad_hoc_diffractometer import kappa_to_eulerian, eulerian_to_kappa
+from ad_hoc_diffractometer.kappa import kappa_to_eulerian, eulerian_to_kappa
 
 # Real kappa angles → virtual Eulerian angles
 omega, chi, phi = kappa_to_eulerian(komega, kappa, kphi, alpha_deg=50.0)
@@ -256,13 +256,13 @@ Kappa modes accept virtual angle names directly in
 ```python
 from ad_hoc_diffractometer import ConstraintSet, SampleConstraint, BisectConstraint
 
-g = ahd.kappa4cv()
+g = ahd.presets.kappa4cv()
 # "chi" is a virtual angle — the kappa inversion solver handles it
 g.modes["fixed_chi"] = ConstraintSet([SampleConstraint("chi", 90.0)])
 ```
 
-See {func}`~ad_hoc_diffractometer.kappa_to_eulerian`,
-{func}`~ad_hoc_diffractometer.eulerian_to_kappa`, and the
+See {func}`~ad_hoc_diffractometer.kappa.kappa_to_eulerian`,
+{func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa`, and the
 {doc}`howto/constraints` guide.
 
 ---

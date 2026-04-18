@@ -33,29 +33,29 @@ from contextlib import nullcontext as does_not_raise
 
 import pytest
 
-from ad_hoc_diffractometer import OPTIONAL
 from ad_hoc_diffractometer import REQUIRED
 from ad_hoc_diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer import BisectConstraint
 from ad_hoc_diffractometer import ConstraintSet
 from ad_hoc_diffractometer import ConstraintViolation
 from ad_hoc_diffractometer import DetectorConstraint
-from ad_hoc_diffractometer import ModeDict
 from ad_hoc_diffractometer import ReferenceConstraint
 from ad_hoc_diffractometer import SampleConstraint
-from ad_hoc_diffractometer import Stage
-from ad_hoc_diffractometer import fivec
-from ad_hoc_diffractometer import fourch
-from ad_hoc_diffractometer import fourcv
-from ad_hoc_diffractometer import kappa4ch
-from ad_hoc_diffractometer import kappa4cv
-from ad_hoc_diffractometer import kappa6c
-from ad_hoc_diffractometer import s2d2
-from ad_hoc_diffractometer import sixc
-from ad_hoc_diffractometer import zaxis
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
+from ad_hoc_diffractometer.mode import OPTIONAL
+from ad_hoc_diffractometer.mode import ModeDict
+from ad_hoc_diffractometer.presets import fivec
+from ad_hoc_diffractometer.presets import fourch
+from ad_hoc_diffractometer.presets import fourcv
+from ad_hoc_diffractometer.presets import kappa4ch
+from ad_hoc_diffractometer.presets import kappa4cv
+from ad_hoc_diffractometer.presets import kappa6c
+from ad_hoc_diffractometer.presets import s2d2
+from ad_hoc_diffractometer.presets import sixc
+from ad_hoc_diffractometer.presets import zaxis
+from ad_hoc_diffractometer.stage import Stage
 
 # ---------------------------------------------------------------------------
 # Helpers

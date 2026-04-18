@@ -815,13 +815,13 @@ def test_lattice_instance_precision(precision, expected_fragment, context):
 def test_package_precision(set_digits, expected_fragment, context):
     """Package-level set_precision() controls __str__ for instances with precision=None."""
     with context:
-        original = ahd.get_precision()
+        original = ahd.display.get_precision()
         try:
-            ahd.set_precision(set_digits)
+            ahd.display.set_precision(set_digits)
             lat = Lattice(a=5.0)  # precision=None -> uses package default
             assert expected_fragment in str(lat)
         finally:
-            ahd.set_precision(original)  # always restore
+            ahd.display.set_precision(original)  # always restore
 
 
 @pytest.mark.parametrize(
@@ -849,23 +849,23 @@ def test_package_precision(set_digits, expected_fragment, context):
 )
 def test_set_precision_validation(digits, context):
     with context:
-        original = ahd.get_precision()
+        original = ahd.display.get_precision()
         try:
-            ahd.set_precision(digits)
+            ahd.display.set_precision(digits)
         finally:
-            ahd.set_precision(original)
+            ahd.display.set_precision(original)
 
 
 def test_instance_precision_overrides_package():
     """Instance precision takes precedence over the package-level default."""
-    original = ahd.get_precision()
+    original = ahd.display.get_precision()
     try:
-        ahd.set_precision(6)
+        ahd.display.set_precision(6)
         lat = Lattice(a=5.0, precision=2)
         assert "a=5.00 " in str(lat)
         assert "a=5.000000" not in str(lat)
     finally:
-        ahd.set_precision(original)
+        ahd.display.set_precision(original)
 
 
 # ---------------------------------------------------------------------------

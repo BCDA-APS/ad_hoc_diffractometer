@@ -22,8 +22,8 @@ from contextlib import nullcontext as does_not_raise
 
 import pytest
 
-from ad_hoc_diffractometer import eulerian_to_kappa
-from ad_hoc_diffractometer import kappa_to_eulerian
+from ad_hoc_diffractometer.kappa import eulerian_to_kappa
+from ad_hoc_diffractometer.kappa import kappa_to_eulerian
 
 # ---------------------------------------------------------------------------
 # Known values from Walko (2016) eq. [16] at alpha_0 = 50°
@@ -371,7 +371,7 @@ def test_is_kappa_virtual_mode_no_kappa_alpha():
     from ad_hoc_diffractometer import SampleConstraint
     from ad_hoc_diffractometer.kappa import is_kappa_virtual_mode
 
-    g = ahd.fourcv()  # no kappa_alpha_deg
+    g = ahd.presets.fourcv()  # no kappa_alpha_deg
     mode = ConstraintSet([SampleConstraint("omega", 0.0)])
     assert is_kappa_virtual_mode(g, mode) is False
 
@@ -383,7 +383,7 @@ def test_is_kappa_virtual_mode_kappa_alpha_but_no_kappa_stage():
     from ad_hoc_diffractometer import SampleConstraint
     from ad_hoc_diffractometer.kappa import is_kappa_virtual_mode
 
-    g = ahd.fourcv()
+    g = ahd.presets.fourcv()
     g._kappa_alpha_deg = 50.0  # noqa: SLF001  — set kappa_alpha_deg manually
     mode = ConstraintSet([SampleConstraint("omega", 0.0)])
     # Has kappa_alpha_deg but no stage named "kappa" → False (line 247)
@@ -397,7 +397,7 @@ def test_is_kappa_virtual_mode_no_virtual_constraint():
     from ad_hoc_diffractometer import SampleConstraint
     from ad_hoc_diffractometer.kappa import is_kappa_virtual_mode
 
-    g = ahd.kappa4cv()
+    g = ahd.presets.kappa4cv()
     # fixed_kphi uses real stage name — not virtual
     mode = ConstraintSet([SampleConstraint("kphi", 0.0)])
     assert is_kappa_virtual_mode(g, mode) is False
@@ -415,7 +415,7 @@ def test_solve_kappa_virtual_no_kappa_stage_returns_empty():
     from ad_hoc_diffractometer.kappa import solve_kappa_virtual
 
     # Build a fake geometry with no "kappa" stage
-    g = ahd.fourcv()
+    g = ahd.presets.fourcv()
     g.wavelength = 1.5406
     g.sample.lattice = ahd.Lattice(a=4.0)
     ahd.ub_identity(g.sample)
@@ -437,7 +437,7 @@ def test_sample_constraint_is_implemented_kappa_geometry():
     import ad_hoc_diffractometer as ahd
     from ad_hoc_diffractometer import SampleConstraint
 
-    g = ahd.kappa4cv()
+    g = ahd.presets.kappa4cv()
     for vname in ("omega", "chi", "phi"):
         assert SampleConstraint(vname, 0.0).is_implemented(g) is True
 
@@ -449,5 +449,5 @@ def test_sample_constraint_is_implemented_virtual_on_non_kappa():
 
     # psic has mu, eta, chi, phi — 'omega' is NOT a real stage, and psic
     # has no kappa_alpha_deg, so SampleConstraint('omega') returns False.
-    g = ahd.psic()
+    g = ahd.presets.psic()
     assert SampleConstraint("omega", 0.0).is_implemented(g) is False

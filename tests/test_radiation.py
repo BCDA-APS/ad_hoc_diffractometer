@@ -30,7 +30,7 @@ from contextlib import nullcontext as does_not_raise
 import pytest
 
 import ad_hoc_diffractometer as ahd
-from ad_hoc_diffractometer import fourcv
+from ad_hoc_diffractometer.presets import fourcv
 from ad_hoc_diffractometer.radiation import HC_KEV_ANGSTROM
 from ad_hoc_diffractometer.radiation import HC_KEV_ANGSTROM_UNCERTAINTY
 from ad_hoc_diffractometer.radiation import NEUTRON_MEV_ANGSTROM2
@@ -362,18 +362,21 @@ def test_summary_no_energy_when_wavelength_not_set(capsys):
 
 def test_public_api_exports():
     """All radiation symbols are importable from the top-level package."""
-    assert ahd.HC_KEV_ANGSTROM is HC_KEV_ANGSTROM
-    assert ahd.HC_KEV_ANGSTROM_UNCERTAINTY is HC_KEV_ANGSTROM_UNCERTAINTY
-    assert ahd.NEUTRON_MEV_ANGSTROM2 is NEUTRON_MEV_ANGSTROM2
-    assert ahd.NEUTRON_MEV_ANGSTROM2_UNCERTAINTY is NEUTRON_MEV_ANGSTROM2_UNCERTAINTY
-    assert ahd.SOURCE_TYPES is SOURCE_TYPES
-    assert ahd.XRAY_LINES is XRAY_LINES
-    assert ahd.wavelength_to_energy is wavelength_to_energy
-    assert ahd.energy_to_wavelength is energy_to_wavelength
-    assert ahd.wavelength_to_wavenumber is wavelength_to_wavenumber
-    assert ahd.wavenumber_to_wavelength is wavenumber_to_wavelength
-    assert ahd.neutron_wavelength_to_energy is neutron_wavelength_to_energy
-    assert ahd.neutron_energy_to_wavelength is neutron_energy_to_wavelength
+    assert ahd.radiation.HC_KEV_ANGSTROM is HC_KEV_ANGSTROM
+    assert ahd.radiation.HC_KEV_ANGSTROM_UNCERTAINTY is HC_KEV_ANGSTROM_UNCERTAINTY
+    assert ahd.radiation.NEUTRON_MEV_ANGSTROM2 is NEUTRON_MEV_ANGSTROM2
+    assert (
+        ahd.radiation.NEUTRON_MEV_ANGSTROM2_UNCERTAINTY
+        is NEUTRON_MEV_ANGSTROM2_UNCERTAINTY
+    )
+    assert ahd.radiation.SOURCE_TYPES is SOURCE_TYPES
+    assert ahd.radiation.XRAY_LINES is XRAY_LINES
+    assert ahd.radiation.wavelength_to_energy is wavelength_to_energy
+    assert ahd.radiation.energy_to_wavelength is energy_to_wavelength
+    assert ahd.radiation.wavelength_to_wavenumber is wavelength_to_wavenumber
+    assert ahd.radiation.wavenumber_to_wavelength is wavenumber_to_wavelength
+    assert ahd.radiation.neutron_wavelength_to_energy is neutron_wavelength_to_energy
+    assert ahd.radiation.neutron_energy_to_wavelength is neutron_energy_to_wavelength
 
 
 # ---------------------------------------------------------------------------
@@ -639,7 +642,7 @@ def test_summary_neutron_reports_meV(capsys):
 def test_xray_and_neutron_energies_differ_at_same_wavelength():
     """X-ray (keV) and neutron (meV) formulas give numerically different results."""
     wl = 1.5406
-    e_xray = ahd.wavelength_to_energy(wl)  # ~8 keV
-    e_neutron = ahd.neutron_wavelength_to_energy(wl)  # ~35 meV
+    e_xray = ahd.radiation.wavelength_to_energy(wl)  # ~8 keV
+    e_neutron = ahd.radiation.neutron_wavelength_to_energy(wl)  # ~35 meV
     # Not equal even after ×1000 (different physical formulas)
     assert abs(e_xray * 1000 - e_neutron) > 1.0

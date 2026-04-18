@@ -12,14 +12,14 @@ Z-axis four-circle diffractometer for surface diffraction. The sample surface no
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.zaxis()
+g = ahd.presets.zaxis()
 g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
 ## Pre-built geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.factories.zaxis` factory
+This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.zaxis` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L1109) for the complete stage
 and mode configuration.
 
@@ -75,7 +75,7 @@ symmetric reflection — alpha_i = beta_out (alpha = gamma).
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.factories.zaxis`
+- {func}`~ad_hoc_diffractometer.presets.zaxis`
 - {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`

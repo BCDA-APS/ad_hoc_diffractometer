@@ -17,11 +17,11 @@ physical directions of the instrument to Cartesian unit vectors:
 
 | Basis | vertical | longitudinal | lateral | Used by |
 |---|---|---|---|---|
-| `BASIS_YOU` | +x | +y | +z | psic, sixc, kappa6c, zaxis, s2d2, fivec |
-| `BASIS_BL` | +z | +y | +x | fourcv, fourch, kappa4cv, kappa4ch |
+| {data}`~ad_hoc_diffractometer.factories.BASIS_YOU` | +x | +y | +z | {func}`~ad_hoc_diffractometer.presets.psic`, {func}`~ad_hoc_diffractometer.presets.sixc`, {func}`~ad_hoc_diffractometer.presets.kappa6c`, {func}`~ad_hoc_diffractometer.presets.zaxis`, {func}`~ad_hoc_diffractometer.presets.s2d2`, {func}`~ad_hoc_diffractometer.presets.fivec` |
+| {data}`~ad_hoc_diffractometer.factories.BASIS_BL` | +z | +y | +x | {func}`~ad_hoc_diffractometer.presets.fourcv`, {func}`~ad_hoc_diffractometer.presets.fourch`, {func}`~ad_hoc_diffractometer.presets.kappa4cv`, {func}`~ad_hoc_diffractometer.presets.kappa4ch` |
 
 For a standard four-circle diffractometer (Busing & Levy 1967) choose
-`BASIS_BL`:
+{data}`~ad_hoc_diffractometer.factories.BASIS_BL`:
 
 ```python
 import numpy as np
@@ -38,7 +38,7 @@ VERTICAL     = BASIS["vertical"]      # +z
 ## 2. Define the stage stack
 
 A four-circle diffractometer has three sample stages and one detector stage.
-Each {class}`~ad_hoc_diffractometer.Stage` is described by:
+Each {class}`~ad_hoc_diffractometer.stage.Stage` is described by:
 
 - **name** — motor name used in angle dictionaries and `forward()` results
 - **axis** — rotation axis vector; a leading `−` means left-handed rotation
@@ -61,30 +61,38 @@ stages = [
 `omega` and `ttheta` both rotate about the lateral axis, so their scattering
 plane is **vertical** (the synchrotron convention).  For the laboratory
 (horizontal scattering plane) convention swap every `LATERAL` for `VERTICAL`
-and every `LONGITUDINAL` for `LATERAL` — that is the `fourch` geometry.
+and every `LONGITUDINAL` for `LATERAL` — that is the {func}`~ad_hoc_diffractometer.presets.fourch` geometry.
 
 ---
 
 ## 3. Define diffraction modes
 
-A {class}`~ad_hoc_diffractometer.DiffractionMode` specifies which degrees of
+A {class}`~ad_hoc_diffractometer.mode.ConstraintSet` specifies which degrees of
 freedom are constrained during a forward (hkl → motor angles) calculation.
 
-Two built-in mode types cover most cases:
+Three constraint types cover most cases:
 
-- {class}`~ad_hoc_diffractometer.BisectingMode` — ties a sample stage to
+- {class}`~ad_hoc_diffractometer.mode.BisectConstraint` — ties a sample stage to
   half the detector angle, placing the sample symmetrically in the beam.
-- {class}`~ad_hoc_diffractometer.FixedAngleMode` — holds one stage at a
-  preset angle.
+- {class}`~ad_hoc_diffractometer.mode.SampleConstraint` — holds one sample stage
+  at a fixed angle.
+- {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` — holds one detector
+  stage at a fixed angle.
 
 ```python
 modes = {
-    "bisecting": ahd.BisectingMode(
-        sample_stage="omega",
-        detector_stage="ttheta",
+    "bisecting": ahd.ConstraintSet(
+        [ahd.BisectConstraint("omega", "ttheta")],
+        computed=["omega", "chi", "phi", "ttheta"],
     ),
-    "fixed_chi": ahd.FixedAngleMode(stage="chi", value=90.0),
-    "fixed_phi": ahd.FixedAngleMode(stage="phi", value=0.0),
+    "fixed_chi": ahd.ConstraintSet(
+        [ahd.SampleConstraint("chi", 90.0)],
+        computed=["omega", "phi", "ttheta"],
+    ),
+    "fixed_phi": ahd.ConstraintSet(
+        [ahd.SampleConstraint("phi", 0.0)],
+        computed=["omega", "chi", "ttheta"],
+    ),
 }
 ```
 
@@ -93,7 +101,7 @@ modes = {
 ## 4. Assemble the geometry
 
 Pass the stage list, basis, and modes to
-{class}`~ad_hoc_diffractometer.AdHocDiffractometer`:
+{class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`:
 
 ```python
 g = ahd.AdHocDiffractometer(
@@ -167,7 +175,7 @@ If you do not need to customise anything, use it directly:
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.fourcv()               # Busing & Levy (1967) four-circle, vertical plane
+g = ahd.presets.fourcv()       # Busing & Levy (1967) four-circle, vertical plane
 g.wavelength = 1.5406          # Å
 g.sample.lattice = ahd.Lattice(a=5.431)
 print(g.summary())
@@ -180,11 +188,12 @@ See {doc}`geometries/fourcv` for the full geometry reference, or
 
 ## See also
 
-- {class}`~ad_hoc_diffractometer.AdHocDiffractometer`
-- {class}`~ad_hoc_diffractometer.Stage`
-- {class}`~ad_hoc_diffractometer.BisectingMode`
-- {class}`~ad_hoc_diffractometer.FixedAngleMode`
-- {class}`~ad_hoc_diffractometer.Lattice`
+- {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
+- {class}`~ad_hoc_diffractometer.stage.Stage`
+- {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+- {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
+- {class}`~ad_hoc_diffractometer.mode.SampleConstraint`
+- {class}`~ad_hoc_diffractometer.lattice.Lattice`
 - {doc}`howto/lattice`
 - {doc}`howto/orient`
 - {doc}`howto/forward`

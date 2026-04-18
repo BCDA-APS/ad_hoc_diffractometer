@@ -12,14 +12,14 @@ Four-circle kappa diffractometer, vertical scattering plane. The chi circle is r
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.kappa4cv()
+g = ahd.presets.kappa4cv()
 g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
 ## Pre-built geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.factories.kappa4cv` factory
+This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.kappa4cv` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L871) for the complete stage
 and mode configuration.
 
@@ -136,7 +136,7 @@ before calling ``forward()``.
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.factories.kappa4cv`
+- {func}`~ad_hoc_diffractometer.presets.kappa4cv`
 - {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
