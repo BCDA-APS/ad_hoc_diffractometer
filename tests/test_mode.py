@@ -50,6 +50,7 @@ from ad_hoc_diffractometer import fourch
 from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer import kappa4ch
 from ad_hoc_diffractometer import kappa4cv
+from ad_hoc_diffractometer import kappa6c
 from ad_hoc_diffractometer import s2d2
 from ad_hoc_diffractometer import sixc
 from ad_hoc_diffractometer import zaxis
@@ -1989,3 +1990,135 @@ def test_kappa4_modes_round_trip(factory):
     g2 = AdHocDiffractometer.from_dict(d)
     assert set(g2.modes.keys()) == _KAPPA4_MODES
     assert g2.mode_name == "bisecting"
+
+
+# ---------------------------------------------------------------------------
+# Issue #152 — kappa6c mode structure
+# ---------------------------------------------------------------------------
+
+_KAPPA6C_MODES = {
+    "bisecting_vertical",
+    "bisecting_horizontal",
+    "fixed_kphi",
+    "fixed_mu",
+    "fixed_nu",
+    "fixed_delta",
+    "lifting_detector_mu",
+    "lifting_detector_kphi",
+    "psi_constant_vertical",
+    "psi_constant_horizontal",
+}
+
+_KAPPA6C_IMPLEMENTED = {
+    "bisecting_vertical",
+    "bisecting_horizontal",
+    "fixed_kphi",
+    "fixed_mu",
+    "fixed_nu",
+    "fixed_delta",
+}
+_KAPPA6C_STUBS = (
+    _KAPPA6C_MODES - _KAPPA6C_IMPLEMENTED
+)  # psi_constant_*, lifting_detector_*
+
+
+def test_kappa6c_factory_mode_names():
+    """kappa6c exposes exactly the 7 declared mode names."""
+    assert set(kappa6c().modes.keys()) == _KAPPA6C_MODES
+
+
+def test_kappa6c_free_dof():
+    """kappa6c has free_dof_after_bragg == 3."""
+    assert kappa6c().free_dof_after_bragg == 3
+
+
+def test_kappa6c_default_mode():
+    """Default mode for kappa6c is 'bisecting_vertical'."""
+    assert kappa6c().mode_name == "bisecting_vertical"
+
+
+@pytest.mark.parametrize(
+    "mode_name, expected_implemented",
+    [pytest.param(m, True, id=f"{m}-impl") for m in sorted(_KAPPA6C_IMPLEMENTED)]
+    + [pytest.param(m, False, id=f"{m}-stub") for m in sorted(_KAPPA6C_STUBS)],
+)
+def test_kappa6c_mode_is_implemented(mode_name, expected_implemented):
+    """Implemented modes return True; stubs return False."""
+    g = kappa6c()
+    assert g.modes[mode_name].is_implemented(g) == expected_implemented
+
+
+@pytest.mark.parametrize(
+    "mode_name, expected_has_bisect",
+    [
+        pytest.param("bisecting_vertical", True, id="bisecting_vertical-has-bisect"),
+        pytest.param(
+            "bisecting_horizontal", True, id="bisecting_horizontal-has-bisect"
+        ),
+        pytest.param("fixed_kphi", False, id="fixed_kphi-no-bisect"),
+        pytest.param("fixed_mu", True, id="fixed_mu-has-bisect"),
+        pytest.param("fixed_nu", True, id="fixed_nu-has-bisect"),
+        pytest.param("fixed_delta", True, id="fixed_delta-has-bisect"),
+        pytest.param("lifting_detector_mu", False, id="lifting_detector_mu-no-bisect"),
+        pytest.param(
+            "psi_constant_vertical", True, id="psi_constant_vertical-has-bisect"
+        ),
+        pytest.param(
+            "psi_constant_horizontal", True, id="psi_constant_horizontal-has-bisect"
+        ),
+    ],
+)
+def test_kappa6c_mode_has_bisect(mode_name, expected_has_bisect):
+    """BisectConstraint presence matches expected."""
+    assert kappa6c().modes[mode_name].has_bisect == expected_has_bisect
+
+
+@pytest.mark.parametrize(
+    "mode_name",
+    [
+        pytest.param("psi_constant_vertical", id="psi_constant_vertical"),
+        pytest.param("psi_constant_horizontal", id="psi_constant_horizontal"),
+    ],
+)
+def test_kappa6c_psi_constant_extras(mode_name):
+    """Both psi_constant modes carry REQUIRED n_hat and None psi output."""
+    cs = kappa6c().modes[mode_name]
+    assert cs.extras.get("n_hat") is REQUIRED
+    assert cs.extras.get("psi") is None
+
+
+@pytest.mark.parametrize(
+    "mode_name, expected_computed",
+    [
+        pytest.param(
+            "bisecting_vertical",
+            ["komega", "kappa", "kphi", "delta"],
+            id="bisecting_vertical",
+        ),
+        pytest.param(
+            "bisecting_horizontal",
+            ["mu", "kappa", "kphi", "nu"],
+            id="bisecting_horizontal",
+        ),
+        pytest.param("fixed_kphi", ["komega", "kappa", "delta"], id="fixed_kphi"),
+        pytest.param("fixed_mu", ["komega", "kappa", "kphi", "delta"], id="fixed_mu"),
+        pytest.param("fixed_nu", ["komega", "kappa", "kphi", "delta"], id="fixed_nu"),
+        pytest.param("fixed_delta", ["mu", "kappa", "kphi", "nu"], id="fixed_delta"),
+    ],
+)
+def test_kappa6c_computed_stages(mode_name, expected_computed):
+    """computed field lists the correct stage names."""
+    assert kappa6c().modes[mode_name].computed == expected_computed
+
+
+def test_kappa6c_modes_round_trip():
+    """Full to_dict / from_dict round-trip preserves all 7 kappa6c modes."""
+    import json
+
+    g = kappa6c()
+    d = g.to_dict()
+    assert json.dumps(d)
+    assert set(d["modes"].keys()) == _KAPPA6C_MODES
+    g2 = AdHocDiffractometer.from_dict(d)
+    assert set(g2.modes.keys()) == _KAPPA6C_MODES
+    assert g2.mode_name == "bisecting_vertical"

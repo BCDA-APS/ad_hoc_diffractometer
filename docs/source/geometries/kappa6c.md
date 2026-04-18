@@ -3,7 +3,7 @@
 
 Six-circle kappa diffractometer with psic-style outer axes (mu, nu). The inner sample axes (komega, kappa, and kphi) replace the Eulerian chi circle. Lateral detector, vertical scattering plane.
 
-**Coordinate basis:** You (1999) (`BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
+**Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
 
 ## Quick start
 
@@ -17,8 +17,8 @@ print(g.summary())
 
 ## Pre-built geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.kappa6c` factory
-function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L794) for the complete stage
+This geometry is defined by the {func}`~ad_hoc_diffractometer.factories.kappa6c` factory
+function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L1049) for the complete stage
 and mode configuration.
 
 ## Stage layout
@@ -39,40 +39,142 @@ and mode configuration.
 | ``nu`` | +vertical (+x) | right-handed |
 | ``delta`` | −lateral (−z) | left-handed |
 
+**Virtual Eulerian angles** (computed from komega, kappa, kphi via Walko 2016 eq. [16]):
+omega, chi, phi.  Used in stub mode descriptions; kappa inversion required (Issue I / #153).
+
+**Bisect pairs:**
+
+- Vertical: komega (lateral) ↔ delta (lateral) → `komega = delta/2`
+- Horizontal: mu (vertical) ↔ nu (vertical) → `mu = nu/2`
+
 ## Diffraction modes
 
-Set the active mode with `g.mode_name = "<mode>"`. Preset any fixed-stage angles with `g.set_angle(name, value)` before calling `forward()`. See {doc}`../howto/modes` for usage details and {class}`~ad_hoc_diffractometer.mode.DiffractionMode` for the base class.
+Each mode is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` of 3 constraints
+(N − 3 = 3 for N = 6 DOF).
+See {doc}`../howto/modes` for usage and {doc}`../howto/constraints` for
+changing constraint values at run time.
 
-### `bisecting`
+### `bisecting_vertical` *(default)*
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.BisectingMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L227))
+{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+`komega = delta/2`, `mu = 0`, `nu = 0`.
+Vertical scattering plane (psic-style).
 
-`komega` is constrained to `delta` / 2, placing the sample symmetrically between the incident and diffracted beams (the bisecting condition).
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
 
-Additional stages frozen at their current angles: `mu` = current angle, `nu` = current angle.
+### `bisecting_horizontal`
+
+{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+`mu = nu/2`, `komega = 0`, `delta = 0`.
+Horizontal scattering plane.
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | komega = 0, delta = 0 |
 
 ### `fixed_kphi`
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.FixedAngleMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156))
+{class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
+`kphi` held at declared value (default 0°), `mu = 0`, `nu = 0`.
 
-Holds `kphi` fixed at its **current angle** during `forward()`. Preset the angle with `g.set_angle("kphi", value)` before calling `forward()`.
+| | |
+|---|---|
+| **Computed** | komega, kappa, delta |
+| **Constant during** `forward()` | kphi, mu = 0, nu = 0 |
 
 ### `fixed_mu`
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.FixedAngleMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156))
+{class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+`mu` held at declared value (default 0°), `komega = delta/2`, `nu = 0`.
 
-Holds `mu` fixed at its **current angle** during `forward()`. Preset the angle with `g.set_angle("mu", value)` before calling `forward()`.
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, delta |
+| **Constant during** `forward()` | mu, nu = 0 |
 
+### `fixed_nu`
+
+{class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
+`nu` held at declared value (default 0°), `komega = delta/2`, `mu = 0`.
+Analogous to psic `fixed_nu`.
+
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, delta |
+| **Constant during** `forward()` | nu, mu = 0 |
+
+### `fixed_delta`
+
+{class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
+`delta` held at declared value (default 0°), `mu = nu/2`, `komega = 0`.
+Horizontal plane with delta frozen.
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | delta, komega = 0 |
+
+### `lifting_detector_mu` *(stub)*
+
+Out-of-plane mode — requires the qaz pseudo-angle solver (not yet implemented).
+
+| | |
+|---|---|
+| **Computed** | mu, nu, delta |
+| **Constant during** `forward()` | mu, komega |
+
+### `lifting_detector_kphi` *(stub)*
+
+Out-of-plane mode — requires the qaz pseudo-angle solver (not yet implemented).
+
+| | |
+|---|---|
+| **Computed** | kphi, nu, delta |
+| **Constant during** `forward()` | kphi, mu |
+
+### `psi_constant_vertical` *(stub)*
+
+Vertical bisecting with azimuthal angle ψ of n̂ about Q fixed.
+Requires reference vector infrastructure (Issue J / #157).
+
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (output)** | psi (computed azimuth) |
+
+### `psi_constant_horizontal` *(stub)*
+
+Horizontal bisecting with azimuthal angle ψ of n̂ about Q fixed.
+Symmetric with `psi_constant_vertical` in the horizontal plane.
+Requires reference vector infrastructure (Issue J / #157).
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | komega = 0, delta = 0 |
+| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (output)** | psi (computed azimuth) |
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.kappa6c`
+- {func}`~ad_hoc_diffractometer.factories.kappa6c`
 - {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
-- {class}`~ad_hoc_diffractometer.mode.DiffractionMode`
-- {class}`~ad_hoc_diffractometer.mode.BisectingMode`
-- {class}`~ad_hoc_diffractometer.mode.FixedAngleMode`
+- {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+- {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
+- {class}`~ad_hoc_diffractometer.mode.SampleConstraint`
+- {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`
+- {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`
+- {class}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`
+- {class}`~ad_hoc_diffractometer.mode.ConstraintViolation`
 
 ## References
 
 - ITC Vol. C §2.2.6 (2006). DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577)
-- Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016).
+- You, *J. Appl. Cryst.* **32**, 614–623 (1999). DOI: [10.1107/S0021889899001223](https://doi.org/10.1107/S0021889899001223)
+- Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016), eq. [16].
