@@ -92,11 +92,13 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 | **Computed** | chi, phi, ttheta |
 | **Constant during** `forward()` | omega |
 
-### `psi_constant` *(stub)*
+### `psi_constant`
 
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
-Fix the azimuthal angle ψ of the reference vector about Q.
-Set ``g.azimuthal_reference = (h, k, l)`` — see {doc}`../howto/surface`. The forward solver is not yet implemented.
+azimuthal angle ψ validation filter.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+Returns bisecting solutions only when the natural ψ for (h,k,l) matches
+the stored target.  See {doc}`../howto/surface`.
 
 | | |
 |---|---|

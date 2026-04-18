@@ -158,13 +158,12 @@ g2 = AdHocDiffractometer.from_dict(d)
 print(g2.surface_normal)          # (0.0, 0.0, 1.0)
 ```
 
-## Reference constraint modes (stubs)
+## Reference constraint modes
 
-Modes such as `psi_constant_vertical`, `zaxis`, and `reflectivity` require
-both the reference vector *and* a forward solver.  Setting `surface_normal`
-or `azimuthal_reference` satisfies the vector prerequisite (check with
-{meth}`~ad_hoc_diffractometer.mode.ReferenceConstraint.has_reference_vector`),
-but the forward solver for these modes is not yet implemented.
+Modes that use a ``ReferenceConstraint`` require the appropriate reference
+vector to be set on the geometry.  ``psi_constant_*`` modes require
+``azimuthal_reference``; surface modes (``zaxis``, ``reflectivity``) require
+``surface_normal``.
 
 ```python
 g.azimuthal_reference = (0, 0, 1)
@@ -174,10 +173,16 @@ cs = g.modes["psi_constant_vertical"]
 rc = cs.reference_constraint
 
 print(rc.has_reference_vector(g))   # True  — vector is set
-print(rc.is_implemented(g))          # False — solver not yet available
+print(rc.is_implemented(g))          # True  — solver available
 
-# forward() raises NotImplementedError until the solver is implemented
+# forward() returns bisecting solutions whose natural ψ matches the target
+solutions = g.forward(1, 0, 0)
 ```
+
+The ``psi_constant`` solver acts as a **validation filter**: ψ is a pure
+phi-frame quantity that is the same for every Bragg solution of a given
+(h,k,l) and UB.  The solver computes the natural ψ and returns solutions
+only if it matches the stored target — otherwise it returns an empty list.
 
 ## See also
 

@@ -219,18 +219,21 @@ print(cs.extras)
 
 Modes whose constraint patterns do not yet have a solver implementation
 return `False` from `is_implemented()` and raise `NotImplementedError`
-when `forward()` is called:
+when `forward()` is called.  Some modes require a prerequisite to be
+set on the geometry (e.g. ``azimuthal_reference`` for psi modes,
+``surface_normal`` for surface modes) — they are considered stubs until
+the prerequisite is met:
 
 ```python
 g = ahd.fourcv()
 g.mode_name = "psi_constant"
 
+# Without azimuthal_reference: not implemented
 print(g.modes["psi_constant"].is_implemented(g))  # False
 
-try:
-    g.forward(1, 0, 0)
-except NotImplementedError as e:
-    print(e)   # describes which infrastructure is missing
+# With azimuthal_reference: implemented
+g.azimuthal_reference = (0, 0, 1)
+print(g.modes["psi_constant"].is_implemented(g))  # True
 ```
 
 ## Serialisation

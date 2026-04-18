@@ -145,10 +145,12 @@ constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
 | **Computed** | phi, nu, delta |
 | **Constant during** `forward()` | phi = 0, mu = 0 |
 
-### `psi_constant_vertical` *(stub)*
+### `psi_constant_vertical`
 
-Vertical bisecting with azimuthal angle ψ of n̂ about Q fixed.
-Set ``g.azimuthal_reference = (h, k, l)`` and ``g.surface_normal = (h, k, l)``; the forward solver is not yet implemented.  See {doc}`../howto/surface`.
+Vertical bisecting with azimuthal angle ψ validation.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+The solver returns bisecting solutions only when the natural ψ for the
+requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
 
 | | |
 |---|---|
@@ -157,10 +159,10 @@ Set ``g.azimuthal_reference = (h, k, l)`` and ``g.surface_normal = (h, k, l)``; 
 | **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
 | **Extras (output)** | psi (computed azimuth) |
 
-### `psi_constant_horizontal` *(stub)*
+### `psi_constant_horizontal`
 
-Horizontal bisecting with azimuthal angle ψ fixed.
-Set ``g.azimuthal_reference = (h, k, l)`` and ``g.surface_normal = (h, k, l)``; the forward solver is not yet implemented.  See {doc}`../howto/surface`.
+Horizontal bisecting with azimuthal angle ψ validation.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
 
 | | |
 |---|---|
