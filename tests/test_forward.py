@@ -298,7 +298,7 @@ _KAPPA4_ALL_MODES = {
     "constant_phi",
     "psi_constant",
 }
-_KAPPA4_STUB_MODES = {"constant_omega", "constant_chi", "constant_phi", "psi_constant"}
+_KAPPA4_STUB_MODES = {"psi_constant"}
 
 
 @pytest.mark.parametrize(
@@ -351,6 +351,74 @@ def test_kappa4_fixed_kphi_value_in_solution(factory):
     assert len(solutions) > 0
     for sol in solutions:
         assert sol["kphi"] == pytest.approx(0.0, abs=1e-8)
+
+
+# ---------------------------------------------------------------------------
+# Issue #174 — kappa4cv/kappa4ch virtual-angle modes now implemented
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, h, k, l",
+    [
+        # kappa4cv (BL basis: lateral=x, longitudinal=y, vertical=z)
+        pytest.param(kappa4cv, "constant_omega", 0, 1, 0, id="kappa4cv-constant_omega"),
+        pytest.param(kappa4cv, "constant_chi", 0, 0, 1, id="kappa4cv-constant_chi"),
+        pytest.param(kappa4cv, "constant_phi", 0, 1, 0, id="kappa4cv-constant_phi"),
+        # kappa4ch (horizontal scattering plane — different reachable reflections)
+        pytest.param(kappa4ch, "constant_omega", 0, 0, 1, id="kappa4ch-constant_omega"),
+        pytest.param(kappa4ch, "constant_chi", 0, 0, 1, id="kappa4ch-constant_chi"),
+        pytest.param(kappa4ch, "constant_phi", 0, 1, 0, id="kappa4ch-constant_phi"),
+    ],
+)
+def test_kappa4_virtual_angle_round_trip(factory, mode_name, h, k, l):  # noqa: E741
+    """Virtual Eulerian angle modes on kappa4cv/kappa4ch round-trip correctly."""
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = mode_name
+    assert g.modes[mode_name].is_implemented(g)
+    # Newton-Raphson converges to ~1e-6; use looser tolerance for these modes
+    assert _round_trip_ok(g, h, k, l, atol=1e-4)
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, virtual_angle, expected_value, h, k, l",
+    [
+        pytest.param(
+            kappa4cv, "constant_omega", "omega", 0.0, 0, 1, 0, id="kappa4cv-omega=0"
+        ),
+        pytest.param(
+            kappa4cv, "constant_chi", "chi", 90.0, 0, 0, 1, id="kappa4cv-chi=90"
+        ),
+        pytest.param(
+            kappa4cv, "constant_phi", "phi", 0.0, 0, 1, 0, id="kappa4cv-phi=0"
+        ),
+    ],
+)
+def test_kappa4_virtual_angle_constraint_satisfied(
+    factory,
+    mode_name,
+    virtual_angle,
+    expected_value,
+    h,
+    k,
+    l,  # noqa: E741
+):
+    """Virtual angle constraint is satisfied in all returned solutions."""
+    from ad_hoc_diffractometer import kappa_to_eulerian
+
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = mode_name
+    solutions = g.forward(h, k, l)
+    assert len(solutions) > 0
+    for sol in solutions:
+        o, c, p = kappa_to_eulerian(
+            sol["komega"],
+            sol["kappa"],
+            sol["kphi"],
+            alpha_deg=g.kappa_alpha_deg,
+        )
+        virtual_vals = {"omega": o, "chi": c, "phi": p}
+        assert virtual_vals[virtual_angle] == pytest.approx(expected_value, abs=1e-4)
 
 
 # ---------------------------------------------------------------------------

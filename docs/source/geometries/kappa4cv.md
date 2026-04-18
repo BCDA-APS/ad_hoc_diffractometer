@@ -74,33 +74,34 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 | **Computed** | komega, kappa, ttheta |
 | **Constant during** `forward()` | kphi |
 
-### `constant_omega` *(stub)*
+### `constant_omega`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 Fix the virtual Eulerian omega at declared value (default 0°).
-Requires kappa inversion solver (Issue I / #153).
+Uses the kappa Newton-Raphson solver — the caller chooses the value by
+constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
 
 | | |
 |---|---|
 | **Computed** | komega, kappa, kphi, ttheta |
 | **Constant during** `forward()` | omega (virtual) |
 
-### `constant_chi` *(stub)*
+### `constant_chi`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 Fix the virtual Eulerian chi at declared value (default 90°).
-Requires kappa inversion solver (Issue I / #153).
+The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
 
 | | |
 |---|---|
 | **Computed** | komega, kappa, kphi, ttheta |
 | **Constant during** `forward()` | chi (virtual) |
 
-### `constant_phi` *(stub)*
+### `constant_phi`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 Fix the virtual Eulerian phi at declared value (default 0°).
-Requires kappa inversion solver (Issue I / #153).
+The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
 
 | | |
 |---|---|

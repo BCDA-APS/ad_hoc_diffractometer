@@ -445,14 +445,23 @@ class SampleConstraint:
 
     def is_implemented(self, geometry: AdHocDiffractometer) -> bool:
         """
-        Return True when the named stage exists in the geometry.
+        Return True when the named stage exists in the geometry, or when the
+        name is a virtual Eulerian kappa pseudoangle on a kappa geometry.
 
-        Virtual kappa angles (``"omega"``, ``"chi"``, ``"phi"`` on kappa
-        geometries) are not yet implemented — the kappa inversion solver
-        is a separate issue.
+        Virtual kappa angles ``"omega"``, ``"chi"``, and ``"phi"`` are
+        implemented when the geometry has a ``kappa_alpha_deg`` attribute set
+        (i.e. it is a kappa diffractometer) and contains a stage named
+        ``"kappa"``.  The kappa inversion solver (:func:`~kappa.eulerian_to_kappa`)
+        converts the virtual angle constraint to real kappa motor angles.
         """
         stage_names = {s.name for s in geometry._stages.values()}  # noqa: SLF001
-        return self._name in stage_names
+        if self._name in stage_names:
+            return True
+        # Virtual Eulerian pseudoangles on kappa geometries
+        _KAPPA_VIRTUAL = {"omega", "chi", "phi"}
+        if self._name in _KAPPA_VIRTUAL:
+            return geometry.kappa_alpha_deg is not None and "kappa" in stage_names
+        return False
 
     def to_dict(self) -> dict:
         """Return a JSON-serialisable dict."""
