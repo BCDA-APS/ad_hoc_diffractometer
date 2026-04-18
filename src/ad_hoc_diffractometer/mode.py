@@ -202,10 +202,6 @@ constrains the azimuthal angle of Q in the plane spanned by the vertical
 and lateral axes:  ``tan(qaz) = tan(delta) / sin(nu)``.
 Setting ``qaz = 0`` constrains scattering to the horizontal plane;
 ``qaz = 90°`` constrains it to the vertical plane.
-
-.. note::
-   The qaz solver is not yet implemented.
-   :meth:`DetectorConstraint.is_implemented` returns ``False`` for this name.
 """
 
 # Sentinel objects for extras dict values.
@@ -560,10 +556,13 @@ class DetectorConstraint:
 
         Fixed detector-stage constraints are implemented when the stage
         exists in the geometry.  The ``"qaz"`` pseudo-angle constraint is
-        not yet implemented (requires the Q-azimuth solver).
+        implemented when the geometry has at least two detector stages
+        (an outer ``nu``-like stage and an inner ``delta``-like stage),
+        which is the case for all 6-circle geometries that support
+        ``lifting_detector_*`` modes.
         """
         if self.is_qaz:
-            return False  # qaz solver not yet implemented
+            return len(geometry.detector_stages) >= 2
         det_names = {s.name for s in geometry.detector_stages}
         return self._name in det_names
 
@@ -1242,12 +1241,66 @@ def _qaz_residual(
     target_qaz_deg: float,
 ) -> float:
     """
-    Compute the residual for a qaz detector constraint.
+    Compute the residual for a qaz detector constraint (You 1999, eq. 18).
 
     ``qaz`` is the azimuthal angle of Q in the plane spanned by the
-    vertical and lateral axes (You 1999, eq. 18):
-    ``tan(qaz) = tan(delta) / sin(nu)``
+    vertical and lateral axes::
 
-    Not yet implemented — raises ``NotImplementedError``.
+        tan(qaz) = tan(delta) / sin(nu)
+
+    where ``nu`` is the outer (vertical-axis) detector stage angle and
+    ``delta`` is the inner (lateral-axis) detector stage angle.  The
+    two detector stages are identified from ``geometry.detector_stages``
+    by position: the outermost stage (index 0) plays the role of ``nu``
+    and the innermost stage (index -1) plays the role of ``delta``.
+
+    Parameters
+    ----------
+    angles : dict[str, float]
+        Current motor angles in degrees.  Must contain entries for both
+        detector stage names.
+    geometry : AdHocDiffractometer
+        The diffractometer.  ``geometry.detector_stages`` must contain
+        exactly two stages.
+    target_qaz_deg : float
+        Target qaz angle in degrees.
+
+    Returns
+    -------
+    float
+        Residual in degrees: ``qaz_computed - target_qaz_deg``.
+        Zero means the constraint is satisfied.
+
+    Raises
+    ------
+    ValueError
+        If the geometry has fewer than two detector stages.
     """
-    raise NotImplementedError("qaz detector constraint solver is not yet implemented.")
+    import math
+
+    det_stages = geometry.detector_stages
+    if len(det_stages) < 2:
+        raise ValueError(
+            f"_qaz_residual requires at least 2 detector stages; "
+            f"geometry {geometry.name!r} has {len(det_stages)}."
+        )
+    # Outer detector stage (nu-like): det_stages[0]
+    # Inner detector stage (delta-like): det_stages[-1]
+    nu_name = det_stages[0].name
+    delta_name = det_stages[-1].name
+
+    nu_deg = angles[nu_name]
+    delta_deg = angles[delta_name]
+
+    nu_rad = math.radians(nu_deg)
+    delta_rad = math.radians(delta_deg)
+
+    sin_nu = math.sin(nu_rad)
+    tan_delta = math.tan(delta_rad)
+
+    # You (1999) eq. 18: tan(qaz) = tan(delta) / sin(nu)
+    # atan2 gives the correct quadrant and handles sin(nu) = 0 edge cases.
+    qaz_rad = math.atan2(tan_delta, sin_nu)
+    qaz_deg = math.degrees(qaz_rad)
+
+    return qaz_deg - target_qaz_deg

@@ -227,6 +227,10 @@ def _solve_constraint_set(
     if _is_surface_mode(geometry, mode):
         return _solve_surface(geometry, Q_phi, ttheta_deg, mode)
 
+    # qaz detector constraint mode (lifting_detector_* family).
+    if _is_qaz_mode(geometry, mode):
+        return _solve_qaz_mode(geometry, Q_phi, ttheta_deg, mode)
+
     # Fixed-angle only (no bisect).
     return _solve_fixed_sample(geometry, Q_phi, ttheta_deg, mode)
 
@@ -864,6 +868,246 @@ def _surface_residual(
     ai = _alpha_i(geometry, angles=angles)
     bo = _beta_out(geometry, angles=angles)
     return ai - bo
+
+
+def _is_qaz_mode(geometry: AdHocDiffractometer, mode) -> bool:
+    """Return True when the mode contains a qaz DetectorConstraint."""
+    from .mode import DetectorConstraint
+
+    return any(isinstance(c, DetectorConstraint) and c.is_qaz for c in mode.constraints)
+
+
+def _solve_qaz_mode(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+) -> list[dict[str, float]]:
+    """
+    Forward solver for modes with a ``DetectorConstraint("qaz", value)``.
+
+    These are the ``lifting_detector_*`` family of modes (You 1999).  All
+    sample stages are frozen by explicit :class:`~mode.SampleConstraint`
+    entries; the solver finds the two detector stage angles ``(nu, delta)``
+    that simultaneously satisfy the Bragg condition and the qaz constraint.
+
+    Two equations, two unknowns ``(nu, delta)``:
+
+    1. Bragg: ``cos(nu) * cos(delta) = cos(ttheta)``
+    2. qaz:   ``atan2(tan(delta), sin(nu)) = qaz_target``
+
+    The 2D Newton-Raphson solver is seeded from a coarse grid over
+    ``(nu, delta)`` to capture both the ``nu > 0`` and ``nu < 0`` branches.
+
+    After finding the detector angles, any remaining free sample stages
+    (those not frozen by the fixed sample constraints) are solved
+    numerically via :func:`_solve_one_free_angle` or :func:`_solve_two_angles`.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+    Q_phi : numpy.ndarray, shape (3,)
+    ttheta_deg : float
+    mode : ConstraintSet
+
+    Returns
+    -------
+    list of dict[str, float]
+    """
+    import math
+
+    from .mode import DetectorConstraint
+
+    # Identify the qaz constraint
+    qaz_c = next(
+        c for c in mode.constraints if isinstance(c, DetectorConstraint) and c.is_qaz
+    )
+    target_qaz_deg = float(qaz_c.value)
+
+    # Identify detector stage names (outer = nu-like, inner = delta-like)
+    det_stages = geometry.detector_stages
+    nu_stage = det_stages[0]
+    delta_stage = det_stages[-1]
+
+    # Build baseline angles from current stage positions
+    angles_base: dict[str, float] = {
+        s.name: s.angle
+        for s in list(geometry._stages.values())  # noqa: SLF001
+    }
+
+    # Apply fixed sample constraints
+    for sc in mode.fixed_sample_constraints:
+        if sc.name in geometry._stages:  # noqa: SLF001  # pragma: no branch
+            angles_base[sc.name] = float(sc.value)
+
+    # Bragg condition: cos(nu)*cos(delta) = cos(ttheta)
+    ttheta_rad = math.radians(ttheta_deg)
+
+    def _bragg_residual(nu_deg: float, delta_deg: float) -> float:
+        """cos(nu)*cos(delta) - cos(ttheta)"""
+        return math.cos(math.radians(nu_deg)) * math.cos(
+            math.radians(delta_deg)
+        ) - math.cos(ttheta_rad)
+
+    def _qaz_res(nu_deg: float, delta_deg: float) -> float:
+        """atan2(tan(delta), sin(nu)) - qaz_target  (in degrees)"""
+        nu_r = math.radians(nu_deg)
+        delta_r = math.radians(delta_deg)
+        return (
+            math.degrees(math.atan2(math.tan(delta_r), math.sin(nu_r))) - target_qaz_deg
+        )
+
+    def _residual_2d(x: np.ndarray) -> np.ndarray:
+        nu_d, delta_d = float(x[0]), float(x[1])
+        return np.array([_bragg_residual(nu_d, delta_d), _qaz_res(nu_d, delta_d)])
+
+    def _jacobian_fd(x: np.ndarray, r0: np.ndarray, h: float = 1e-4) -> np.ndarray:
+        J = np.zeros((2, 2))
+        for i in range(2):
+            xp = x.copy()
+            xp[i] += h
+            J[:, i] = (_residual_2d(xp) - r0) / h
+        return J
+
+    # Build seed grid: scan over nu values and derive delta analytically
+    # from the Bragg condition, then let qaz iteration converge.
+    # Seed nu over ±ttheta range; delta seeded from analytic Bragg inversion.
+    seed_pairs = []
+    cos_ttheta = math.cos(ttheta_rad)
+    for nu_seed in np.linspace(-ttheta_deg, ttheta_deg, 13):
+        cos_nu = math.cos(math.radians(nu_seed))
+        if abs(cos_nu) < 1e-12:  # pragma: no cover
+            continue  # pragma: no cover
+        cos_delta = cos_ttheta / cos_nu
+        if abs(cos_delta) > 1.0:  # pragma: no cover
+            continue  # pragma: no cover
+        delta_seed_pos = math.degrees(math.acos(min(1.0, max(-1.0, cos_delta))))
+        delta_seed_neg = -delta_seed_pos
+        seed_pairs.append((nu_seed, delta_seed_pos))
+        seed_pairs.append((nu_seed, delta_seed_neg))
+
+    found_solutions = []
+    seen_keys: list[tuple[float, float]] = []
+
+    for nu_start, delta_start in seed_pairs:
+        x = np.array([nu_start, delta_start], dtype=float)
+        for _ in range(200):  # pragma: no branch
+            r = _residual_2d(x)
+            if np.linalg.norm(r) < 1e-10:
+                break
+            J = _jacobian_fd(x, r)
+            try:
+                dx = np.linalg.solve(J, -r)
+            except np.linalg.LinAlgError:  # pragma: no cover
+                break  # pragma: no cover
+            step = np.linalg.norm(dx)
+            if step > 30.0:
+                dx = dx * (30.0 / step)
+            x = x + dx
+
+        r = _residual_2d(x)
+        if np.linalg.norm(r) > 1e-6:  # pragma: no cover
+            continue  # pragma: no cover
+
+        nu_sol = float(x[0])
+        delta_sol = float(x[1])
+
+        # De-duplicate detector angle pairs
+        duplicate = any(
+            abs(nu_sol - ks[0]) < 1e-4 and abs(delta_sol - ks[1]) < 1e-4
+            for ks in seen_keys
+        )
+        if duplicate:
+            continue
+        seen_keys.append((nu_sol, delta_sol))
+
+        # Build the full angle dict for this detector solution
+        angles = dict(angles_base)
+        angles[nu_stage.name] = nu_sol
+        angles[delta_stage.name] = delta_sol
+
+        # Check detector stage limits
+        if not nu_stage.in_limits(nu_sol) or not delta_stage.in_limits(delta_sol):
+            continue
+
+        # Identify free sample stages (not frozen by any constraint)
+        constrained_names = set(mode.constrained_stages(geometry))
+        constrained_names.add(nu_stage.name)
+        constrained_names.add(delta_stage.name)
+        free_sample = [
+            s for s in geometry.sample_stages if s.name not in constrained_names
+        ]
+
+        if len(free_sample) == 0:  # pragma: no cover
+            # All sample stages fixed — validate Q direction
+            from .orientation import angles_to_phi_vector as _a2phi  # pragma: no cover
+
+            Q_computed = _a2phi(geometry, **angles)  # pragma: no cover
+            if not np.allclose(Q_computed, Q_phi, atol=1e-3):  # pragma: no cover
+                continue  # pragma: no cover
+            _apply_cut_points(angles, mode, geometry)  # pragma: no cover
+            if _check_limits(geometry, angles):  # pragma: no cover
+                found_solutions.append(angles)  # pragma: no cover
+
+        elif len(free_sample) == 1:  # pragma: no cover
+            sub = _solve_one_free_angle(  # pragma: no cover
+                geometry, angles, free_sample[0], Q_phi, mode
+            )
+            found_solutions.extend(sub)  # pragma: no cover
+
+        else:
+            # Two+ free sample stages: solve for chi and phi
+            from .orientation import angles_to_phi_vector as _a2phi
+
+            chi_stage = free_sample[-2]
+            phi_stage = free_sample[-1]
+            Q_norm = float(np.linalg.norm(Q_phi))
+            q_hat = Q_phi / Q_norm
+            chi_ax = chi_stage.axis / np.linalg.norm(chi_stage.axis)
+            q_along_chi = float(np.dot(q_hat, chi_ax))
+            q_along_chi = max(-1.0, min(1.0, q_along_chi))
+            chi_abs_deg = math.degrees(math.asin(abs(q_along_chi)))
+            q_in_plane = q_hat - q_along_chi * chi_ax
+            if np.linalg.norm(q_in_plane) > 1e-8:
+                phi_seed_deg = math.degrees(
+                    math.atan2(float(q_in_plane[1]), float(q_in_plane[0]))
+                )
+            else:  # pragma: no cover
+                phi_seed_deg = 0.0  # pragma: no cover
+            seed_pairs_inner = [
+                (chi_s, phi_s)
+                for chi_s in [chi_abs_deg, -chi_abs_deg, 180.0 - chi_abs_deg]
+                for phi_s in [phi_seed_deg, phi_seed_deg + 180.0]
+            ] + [
+                (cs, ps)
+                for cs in (0.0, 90.0, -90.0)
+                for ps in (0.0, 90.0, 180.0, 270.0)
+            ]
+            for chi_start_i, phi_start_i in seed_pairs_inner:
+                sol_angles = _solve_two_angles(
+                    geometry=geometry,
+                    fixed_angles=angles,
+                    free_stage_1=chi_stage.name,
+                    free_stage_2=phi_stage.name,
+                    start_1=chi_start_i,
+                    start_2=phi_start_i,
+                    Q_phi_target=Q_phi,
+                    a2phi_fn=_a2phi,
+                )
+                if sol_angles is None:
+                    continue
+                sol = dict(angles)
+                sol[chi_stage.name] = sol_angles[0]
+                sol[phi_stage.name] = sol_angles[1]
+                _apply_cut_points(sol, mode, geometry)
+                dup = any(
+                    all(abs(ex.get(k, 0) - sol.get(k, 0)) < 1e-4 for k in sol)
+                    for ex in found_solutions
+                )
+                if not dup and _check_limits(geometry, sol):
+                    found_solutions.append(sol)
+
+    return found_solutions
 
 
 def _solve_fixed_sample(
