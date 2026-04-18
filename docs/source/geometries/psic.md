@@ -47,10 +47,15 @@ Each mode is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` of 3 constrain
 See {doc}`../howto/modes` for usage and {doc}`../howto/constraints` for
 changing constraint values at run time.
 
-### `bisecting` *(default)*
+**Bisect pairs:**
+
+- Vertical plane: eta (lateral) ↔ delta (lateral) → `eta = delta/2`
+- Horizontal plane: mu (vertical) ↔ nu (vertical) → `mu = nu/2`
+
+### `bisecting_vertical` *(default)*
 
 {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
-`eta = delta / 2`, `mu = 0`, `nu = 0`.
+`eta = delta/2`, `mu = 0`, `nu = 0`.
 Vertical scattering plane bisecting condition (You 1999, §5.3).
 
 | | |
@@ -60,11 +65,8 @@ Vertical scattering plane bisecting condition (You 1999, §5.3).
 
 ### `fixed_chi`
 
-{class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
-`eta = delta / 2`, `mu = 0`, `nu = 0`.
-`chi` is held at the value declared in the constraint (factory default: 90°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; the constraint
-persists until replaced — see {doc}`../howto/constraints`.
+`chi` held at declared value (default 90°), `eta = delta/2`, `nu = 0`.
+The caller chooses the chi value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -73,10 +75,7 @@ persists until replaced — see {doc}`../howto/constraints`.
 
 ### `fixed_phi`
 
-{class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
-`eta = delta / 2`, `mu = 0`, `nu = 0`.
-`phi` is held at the value declared in the constraint (factory default: 0°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
+`phi` held at declared value (default 0°), `eta = delta/2`, `nu = 0`.
 
 | | |
 |---|---|
@@ -85,15 +84,88 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 
 ### `fixed_mu`
 
-{class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
-`eta = delta / 2`, `nu = 0`.
-`mu` is held at the value declared in the constraint (factory default: 0°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
+`mu` held at declared value (default 0°), `eta = delta/2`, `nu = 0`.
 
 | | |
 |---|---|
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu, nu = 0 |
+
+### `bisecting_horizontal`
+
+{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+`mu = nu/2`, `eta = 0`, `delta = 0`.
+Horizontal scattering plane bisecting condition (You 1999, §5.1).
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
+
+### `fixed_nu`
+
+`nu` held at declared value (default 0°), `eta = delta/2`, `mu = 0`.
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | nu, mu = 0 |
+
+### `double_diffraction_vertical`
+
+{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`
+with secondary-reflection extras.
+Bisecting solver runs; simultaneous diffraction logic not yet implemented.
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
+
+### `lifting_detector_mu` *(stub)*
+
+Out-of-plane mode: mu and eta frozen, nu and delta free.
+Requires the qaz pseudo-angle solver — not yet implemented.
+
+| | |
+|---|---|
+| **Computed** | mu, nu, delta |
+| **Constant during** `forward()` | mu, eta |
+
+### `lifting_detector_phi` *(stub)*
+
+Out-of-plane mode: phi and mu frozen, nu and delta free.
+Requires the qaz pseudo-angle solver — not yet implemented.
+
+| | |
+|---|---|
+| **Computed** | phi, nu, delta |
+| **Constant during** `forward()` | phi, mu |
+
+### `psi_constant_vertical` *(stub)*
+
+Vertical bisecting with azimuthal angle ψ of n̂ about Q fixed.
+Requires reference vector infrastructure (Issue J / #157).
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (output)** | psi (computed azimuth) |
+
+### `psi_constant_horizontal` *(stub)*
+
+Horizontal bisecting with azimuthal angle ψ fixed.
+Requires reference vector infrastructure (Issue J / #157).
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
+| **Extras (input)** | n̂, ψ |
+| **Extras (output)** | psi |
 
 ## API reference
 
@@ -104,8 +176,8 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 - {class}`~ad_hoc_diffractometer.mode.SampleConstraint`
 - {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`
 - {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`
-- {exc}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`
-- {exc}`~ad_hoc_diffractometer.mode.ConstraintViolation`
+- {class}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`
+- {class}`~ad_hoc_diffractometer.mode.ConstraintViolation`
 
 ## References
 

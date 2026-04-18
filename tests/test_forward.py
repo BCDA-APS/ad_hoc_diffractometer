@@ -251,7 +251,7 @@ def test_fourcv_bisecting_ttheta_from_bragg():
 def test_psic_bisecting_round_trip(a, h, k, l):  # noqa: E741
     """psic bisecting round-trip: inverse(forward(hkl)) == hkl."""
     g = _setup_cubic(psic, a=a)
-    assert g.mode_name == "bisecting"
+    assert g.mode_name == "bisecting_vertical"
     assert _round_trip_ok(g, h, k, l)
 
 
@@ -1205,3 +1205,177 @@ def test_sixc_four_circle_omega_equals_delta_half():
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
         assert sol["omega"] == pytest.approx(sol["delta"] / 2.0, abs=1e-10)
+
+
+# ---------------------------------------------------------------------------
+# Issue #150 — psic: all modes, bisecting_horizontal, stubs
+# ---------------------------------------------------------------------------
+
+_PSIC_MODES_ALL = {
+    "bisecting_vertical",
+    "fixed_chi",
+    "fixed_phi",
+    "fixed_mu",
+    "bisecting_horizontal",
+    "fixed_nu",
+    "double_diffraction_vertical",
+    "lifting_detector_mu",
+    "lifting_detector_phi",
+    "psi_constant_vertical",
+    "psi_constant_horizontal",
+}
+
+_PSIC_MODES_IMPLEMENTED = {
+    "bisecting_vertical",
+    "fixed_chi",
+    "fixed_phi",
+    "fixed_mu",
+    "bisecting_horizontal",
+    "fixed_nu",
+    "double_diffraction_vertical",
+}
+
+_PSIC_MODES_STUBS = _PSIC_MODES_ALL - _PSIC_MODES_IMPLEMENTED
+
+
+def test_psic_has_all_eleven_modes():
+    """psic exposes exactly 11 declared modes."""
+    assert set(psic().modes.keys()) == _PSIC_MODES_ALL
+
+
+@pytest.mark.parametrize(
+    "mode_name, expected_implemented",
+    [pytest.param(m, True, id=f"{m}-impl") for m in sorted(_PSIC_MODES_IMPLEMENTED)]
+    + [pytest.param(m, False, id=f"{m}-stub") for m in sorted(_PSIC_MODES_STUBS)],
+)
+def test_psic_mode_is_implemented(mode_name, expected_implemented):
+    """Implemented psic modes return True; stubs return False."""
+    g = psic()
+    assert g.modes[mode_name].is_implemented(g) == expected_implemented
+
+
+@pytest.mark.parametrize(
+    "mode_name, h, k, l",
+    [
+        pytest.param("bisecting_vertical", 1, 0, 0, id="bisecting_vertical-100"),
+        pytest.param("bisecting_vertical", 1, 1, 1, id="bisecting_vertical-111"),
+        pytest.param("fixed_chi", 0, 0, 1, id="fixed_chi-001"),
+        pytest.param("fixed_chi", 0, 1, 0, id="fixed_chi-010"),
+        pytest.param("fixed_phi", 0, 1, 0, id="fixed_phi-010"),
+        pytest.param("fixed_phi", 1, 1, 1, id="fixed_phi-111"),
+        pytest.param("fixed_mu", 1, 0, 0, id="fixed_mu-100"),
+        pytest.param("fixed_mu", 0, 1, 0, id="fixed_mu-010"),
+        # bisecting_horizontal: Q must lie in the horizontal plane (no longitudinal component)
+        pytest.param("bisecting_horizontal", 1, 0, 0, id="bisecting_horiz-100"),
+        pytest.param("bisecting_horizontal", 0, 0, 1, id="bisecting_horiz-001"),
+        pytest.param("bisecting_horizontal", 1, 0, 1, id="bisecting_horiz-101"),
+        pytest.param("fixed_nu", 1, 0, 0, id="fixed_nu-100"),
+        pytest.param("fixed_nu", 1, 1, 1, id="fixed_nu-111"),
+        pytest.param("double_diffraction_vertical", 1, 0, 0, id="double_diff-100"),
+    ],
+)
+def test_psic_mode_round_trip(mode_name, h, k, l):  # noqa: E741
+    """All implemented psic modes solve and round-trip correctly."""
+    g = _setup_cubic(psic, a=4.0)
+    g.mode_name = mode_name
+    assert _round_trip_ok(g, h, k, l)
+
+
+@pytest.mark.parametrize(
+    "mode_name",
+    [pytest.param(m, id=m) for m in sorted(_PSIC_MODES_STUBS)],
+)
+def test_psic_stub_not_implemented(mode_name):
+    """Stub modes raise NotImplementedError on forward()."""
+    g = _setup_cubic(psic, a=4.0)
+    g.mode_name = mode_name
+    with pytest.raises(NotImplementedError):
+        g.forward(1, 0, 0)
+
+
+def test_psic_bisecting_horizontal_mu_equals_nu_half():
+    """bisecting_horizontal: mu = nu/2 for all solutions."""
+    g = _setup_cubic(psic, a=4.0)
+    g.mode_name = "bisecting_horizontal"
+    solutions = g.forward(1, 0, 0)
+    assert len(solutions) > 0
+    for sol in solutions:
+        assert sol["mu"] == pytest.approx(sol["nu"] / 2.0, abs=1e-10)
+
+
+def test_psic_bisecting_horizontal_eta_delta_frozen():
+    """bisecting_horizontal: eta=0 and delta=0 in all solutions."""
+    g = _setup_cubic(psic, a=4.0)
+    g.mode_name = "bisecting_horizontal"
+    solutions = g.forward(1, 0, 0)
+    for sol in solutions:
+        assert sol["eta"] == pytest.approx(0.0, abs=1e-8)
+        assert sol["delta"] == pytest.approx(0.0, abs=1e-8)
+
+
+@pytest.mark.parametrize(
+    "mode_name, stage, expected_value, h, k, l",
+    [
+        pytest.param(
+            "bisecting_vertical", "mu", 0.0, 1, 0, 0, id="bisecting_vertical-mu=0"
+        ),
+        pytest.param(
+            "bisecting_vertical", "nu", 0.0, 1, 0, 0, id="bisecting_vertical-nu=0"
+        ),
+        pytest.param("fixed_phi", "phi", 0.0, 0, 1, 0, id="fixed_phi-phi=0"),
+        pytest.param("fixed_mu", "mu", 0.0, 1, 0, 0, id="fixed_mu-mu=0"),
+        pytest.param("fixed_nu", "nu", 0.0, 1, 0, 0, id="fixed_nu-nu=0"),
+        # fixed_chi: (0,0,1) gives mu=0; chi=90 is the only declared constraint
+        pytest.param("fixed_chi", "chi", 90.0, 0, 0, 1, id="fixed_chi-chi=90"),
+        # bisecting_horizontal: Q must lie in horizontal plane; (1,0,0) works
+        pytest.param(
+            "bisecting_horizontal", "eta", 0.0, 1, 0, 0, id="bisecting_horiz-eta=0"
+        ),
+        pytest.param(
+            "bisecting_horizontal", "delta", 0.0, 1, 0, 0, id="bisecting_horiz-delta=0"
+        ),
+    ],
+)
+def test_psic_constraint_value_in_solution(mode_name, stage, expected_value, h, k, l):  # noqa: E741
+    """Constraint values appear at their declared values in all solutions."""
+    g = _setup_cubic(psic, a=4.0)
+    g.mode_name = mode_name
+    solutions = g.forward(h, k, l)
+    assert len(solutions) > 0
+    for sol in solutions:
+        assert sol[stage] == pytest.approx(expected_value, abs=1e-8)
+
+
+def test_psic_psi_constant_extras_declared():
+    """psi_constant modes carry REQUIRED n_hat and None psi output extras."""
+    from ad_hoc_diffractometer import REQUIRED
+
+    for mode_name in ("psi_constant_vertical", "psi_constant_horizontal"):
+        cs = psic().modes[mode_name]
+        assert cs.extras.get("n_hat") is REQUIRED
+        assert cs.extras.get("psi") is None
+
+
+def test_psic_double_diffraction_extras_declared():
+    """double_diffraction_vertical carries REQUIRED h2, k2, l2 extras."""
+    from ad_hoc_diffractometer import REQUIRED
+
+    cs = psic().modes["double_diffraction_vertical"]
+    assert cs.extras.get("h2") is REQUIRED
+    assert cs.extras.get("k2") is REQUIRED
+    assert cs.extras.get("l2") is REQUIRED
+
+
+def test_psic_modes_serialisation_round_trip():
+    """All 11 psic modes survive to_dict / from_dict round-trip."""
+    import json
+
+    from ad_hoc_diffractometer import AdHocDiffractometer
+
+    g = psic()
+    d = g.to_dict()
+    assert json.dumps(d)
+    assert set(d["modes"].keys()) == _PSIC_MODES_ALL
+    g2 = AdHocDiffractometer.from_dict(d)
+    assert set(g2.modes.keys()) == _PSIC_MODES_ALL
+    assert g2.mode_name == "bisecting_vertical"
