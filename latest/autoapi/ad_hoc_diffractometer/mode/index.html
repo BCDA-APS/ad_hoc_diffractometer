@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=cc42383f"></script>
+    <script src="../../../_static/documentation_options.js?v=72410c4d"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 03:06 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 03:43 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -1339,11 +1339,12 @@ and a forward solver is available for this constraint name.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code> — requires <code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code> — requires <code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code></p></li>
 </ul>
-<p>Not yet implemented (psi / azimuthal reference):</p>
+<p>Not yet implemented:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code> — requires <code class="xref py py-attr docutils literal notranslate"><span class="pre">azimuthal_reference</span></code>
-and a psi-constant forward solver (Issue #176)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;naz&quot;</span></code> — not yet implemented</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code> — the You (1999) azimuthal angle ψ is constant for all Bragg
+solutions of a given (h,k,l); <code class="docutils literal notranslate"><span class="pre">psi_constant</span></code> as a forward-problem
+constraint for fixed (h,k,l) is not physically meaningful.  See issue #176.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;naz&quot;</span></code> — no forward solver yet.</p></li>
 </ul>
 </dd></dl>
 
@@ -1669,7 +1670,7 @@ converts the virtual angle constraint to real kappa motor angles.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 03:06 CDT.
+  Last updated on 2026-04-18 03:43 CDT.
   <br/>
 </p></div>
       
