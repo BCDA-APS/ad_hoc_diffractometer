@@ -10,14 +10,14 @@ Six-circle kappa diffractometer with psic-style outer axes (mu, nu). The inner s
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.kappa6c()
+g = ahd.presets.kappa6c()
 g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
 ## Pre-built geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.factories.kappa6c` factory
+This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.kappa6c` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L1049) for the complete stage
 and mode configuration.
 
@@ -191,7 +191,7 @@ Full 4D simultaneous solver in the horizontal scattering plane.
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.factories.kappa6c`
+- {func}`~ad_hoc_diffractometer.presets.kappa6c`
 - {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`

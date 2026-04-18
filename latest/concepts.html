@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=fa5977a2"></script>
+    <script src="_static/documentation_options.js?v=77e49fba"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 06:11 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 15:51 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -717,11 +717,11 @@ that describes how <code class="docutils literal notranslate"><span class="pre">
 stages are fixed, which are coupled, and which are solved freely.
 Available modes depend on the geometry.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Four-circle geometries use &quot;bisecting&quot;</span>
-<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
 <span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;bisecting&quot;</span>
 
 <span class="c1"># Six-circle psic uses named variants</span>
-<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">psic</span><span class="p">()</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">psic</span><span class="p">()</span>
 <span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;bisecting_vertical&quot;</span>   <span class="c1"># vertical scattering plane</span>
 <span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;bisecting_horizontal&quot;</span> <span class="c1"># horizontal scattering plane</span>
 </pre></div>
@@ -790,7 +790,7 @@ angles</strong> (komega, kappa, kphi) and <strong>virtual Eulerian pseudoangles<
 chi, phi) that are more intuitive to specify.</p>
 <p>The conversion follows Walko (2016) eq. [16] with a fixed tilt angle
 α₀ (default 50°):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">kappa_to_eulerian</span><span class="p">,</span> <span class="n">eulerian_to_kappa</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">kappa_to_eulerian</span><span class="p">,</span> <span class="n">eulerian_to_kappa</span>
 
 <span class="c1"># Real kappa angles → virtual Eulerian angles</span>
 <span class="n">omega</span><span class="p">,</span> <span class="n">chi</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">kappa_to_eulerian</span><span class="p">(</span><span class="n">komega</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">kphi</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
@@ -805,13 +805,13 @@ chi; the negative branch (kappa &lt; 0) to negative chi.</p>
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span><span class="p">,</span> <span class="n">SampleConstraint</span><span class="p">,</span> <span class="n">BisectConstraint</span>
 
-<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">kappa4cv</span><span class="p">()</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">kappa4cv</span><span class="p">()</span>
 <span class="c1"># &quot;chi&quot; is a virtual angle — the kappa inversion solver handles it</span>
 <span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_chi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">([</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)])</span>
 </pre></div>
 </div>
-<p>See <code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_to_eulerian()</span></code>,
-<code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code>, and the
+<p>See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.kappa_to_eulerian" title="ad_hoc_diffractometer.kappa.kappa_to_eulerian"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_to_eulerian()</span></code></a>,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.eulerian_to_kappa" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa"><code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code></a>, and the
 <a class="reference internal" href="howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a> guide.</p>
 </section>
 <hr class="docutils" />
@@ -990,7 +990,7 @@ The dict contains only JSON-compatible types; save to JSON (stdlib) or YAML
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 06:11 CDT.
+  Last updated on 2026-04-18 15:51 CDT.
   <br/>
 </p></div>
       

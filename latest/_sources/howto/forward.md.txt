@@ -26,7 +26,7 @@ solutions are physically meaningful:
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 g.wavelength = 1.5406   # Å
 g.sample.lattice = ahd.Lattice(a=5.431)
 ahd.ub_identity(g.sample)
@@ -185,8 +185,8 @@ except NotImplementedError as e:
 
 - {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`
 - {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse`
-- {func}`~ad_hoc_diffractometer.hkl_to_d`
-- {func}`~ad_hoc_diffractometer.hkl_to_two_theta`
+- {func}`~ad_hoc_diffractometer.conversions.hkl_to_d`
+- {func}`~ad_hoc_diffractometer.conversions.hkl_to_two_theta`
 - {exc}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`
 - {exc}`~ad_hoc_diffractometer.mode.ConstraintViolation`
 - {doc}`modes`

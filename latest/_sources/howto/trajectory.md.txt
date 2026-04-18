@@ -20,7 +20,7 @@ one by one, or `list(func(...))` to collect all points at once.
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 g.wavelength = 1.5406
 g.sample.lattice = ahd.Lattice(a=5.431)
 ahd.ub_identity(g.sample)
@@ -47,7 +47,7 @@ satisfied.  This is used to probe azimuthal anisotropy.
 import numpy as np
 
 psi_values = np.linspace(-180, 180, 37)  # degrees
-points = ahd.psi_trajectory(g, 1, 1, 0, psi_values)
+points = ahd.scan.psi_trajectory(g, 1, 1, 0, psi_values)
 for p in points:
     print(p["psi"], p["omega"], p["chi"], p["phi"])
 ```
@@ -86,8 +86,8 @@ points = ahd.hkl_trajectory(
 
 ## See also
 
-- {func}`~ad_hoc_diffractometer.hkl_trajectory`
-- {func}`~ad_hoc_diffractometer.psi_trajectory`
-- {func}`~ad_hoc_diffractometer.trajectory_plan`
-- {data}`~ad_hoc_diffractometer.NEAREST_ANGLES`
+- {func}`~ad_hoc_diffractometer.scan.hkl_trajectory`
+- {func}`~ad_hoc_diffractometer.scan.psi_trajectory`
+- {func}`~ad_hoc_diffractometer.scan.trajectory_plan`
+- {data}`~ad_hoc_diffractometer.scan.NEAREST_ANGLES`
 - {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi`

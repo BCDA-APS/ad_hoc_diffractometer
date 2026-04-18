@@ -25,7 +25,7 @@ More reflections give a more reliable result; six or more are recommended.
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 g.wavelength = 1.5498   # Å
 g.sample.lattice = ahd.Lattice(a=4.785, c=12.991, gamma=120.0)  # sapphire
 
@@ -160,8 +160,8 @@ may indicate a real distortion, an indexing error, or miscalibrated angles.
 
 ## See also
 
-- {func}`~ad_hoc_diffractometer.refine_lattice_bl1967`
-- {func}`~ad_hoc_diffractometer.refine_lattice_simplex`
+- {func}`~ad_hoc_diffractometer.refinement.refine_lattice_bl1967`
+- {func}`~ad_hoc_diffractometer.refinement.refine_lattice_simplex`
 - {class}`~ad_hoc_diffractometer.lattice.Lattice`
 - {doc}`orient`
 - {doc}`lattice`

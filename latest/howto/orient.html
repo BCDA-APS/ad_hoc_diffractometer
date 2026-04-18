@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=fa5977a2"></script>
+    <script src="../_static/documentation_options.js?v=77e49fba"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 06:11 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 15:51 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -504,7 +504,7 @@ B, U, and UB mean.</p>
 <h2>Set up the geometry and sample<a class="headerlink" href="#set-up-the-geometry-and-sample" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
 
-<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
 <span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>   <span class="c1"># Å  (Cu Kα)</span>
 <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.431</span><span class="p">)</span>  <span class="c1"># cubic silicon</span>
 </pre></div>
@@ -581,7 +581,7 @@ axes), use the identity orientation:</p>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">direction_check</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-    <span class="n">q_phi</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">angles_to_phi_vector</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span>
+    <span class="n">q_phi</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">angles_to_phi_vector</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span>
     <span class="n">ub_h</span>  <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">r</span><span class="o">.</span><span class="n">hkl</span>
     <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q_phi</span><span class="p">,</span> <span class="n">ub_h</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">ub_h</span><span class="p">))</span>
     <span class="n">angle_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cos_theta</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
@@ -601,11 +601,11 @@ step-by-step crystal alignment on a real instrument.</p>
 <section id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_one_reflection()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_identity()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">angles_to_phi_vector()</span></code></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.ub_from_one_reflection" title="ad_hoc_diffractometer.orientation.ub_from_one_reflection"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_one_reflection()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.ub_identity" title="ad_hoc_diffractometer.orientation.ub_identity"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_identity()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.angles_to_phi_vector" title="ad_hoc_diffractometer.orientation.angles_to_phi_vector"><code class="xref py py-func docutils literal notranslate"><span class="pre">angles_to_phi_vector()</span></code></a></p></li>
 <li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList" title="ad_hoc_diffractometer.reflection.ReflectionList"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReflectionList</span></code></a></p></li>
 </ul>
 </section>
@@ -702,7 +702,7 @@ step-by-step crystal alignment on a real instrument.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 06:11 CDT.
+  Last updated on 2026-04-18 15:51 CDT.
   <br/>
 </p></div>
       

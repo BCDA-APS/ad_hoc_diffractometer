@@ -12,14 +12,14 @@ S2D2 geometry with two independent sample axes (mu, Z) and two independent detec
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.s2d2()
+g = ahd.presets.s2d2()
 g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
 ## Pre-built geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.factories.s2d2` factory
+This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.s2d2` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L1173) for the complete stage
 and mode configuration.
 
@@ -74,7 +74,7 @@ Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.factories.s2d2`
+- {func}`~ad_hoc_diffractometer.presets.s2d2`
 - {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.SampleConstraint`

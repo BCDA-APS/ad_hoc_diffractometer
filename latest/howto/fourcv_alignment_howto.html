@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=fa5977a2"></script>
+    <script src="../_static/documentation_options.js?v=77e49fba"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 06:11 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 15:51 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -496,7 +496,7 @@
 <h1>Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)<a class="headerlink" href="#align-a-four-circle-diffractometer-fourcv" title="Link to this heading">#</a></h1>
 <p>This notebook is a <strong>how-to guide</strong> for aligning a crystal on a four-circle
 Eulerian diffractometer in the <strong>vertical scattering plane</strong>
-(<a class="reference internal" href="../geometries/fourcv.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">ahd.fourcv</span></code></span></a>),
+(<a class="reference internal" href="../geometries/fourcv.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">ahd.presets.fourcv</span></code></span></a>),
 the synchrotron convention where ω and 2θ rotate about the lateral axis.</p>
 <p>The example uses <strong>sapphire (α-Al₂O₃)</strong> with the (001) axis pre-aligned
 along the φ-axis — a common starting configuration at synchrotron beamlines.
@@ -519,7 +519,7 @@ The motor-angle values are drawn from a real alignment session at APS
 <hr class="docutils" />
 <section id="before-you-begin">
 <h2>Before you begin<a class="headerlink" href="#before-you-begin" title="Link to this heading">#</a></h2>
-<p>This guide uses <code class="docutils literal notranslate"><span class="pre">ahd.fourcv()</span></code> — the synchrotron four-circle with ω and 2θ
+<p>This guide uses <code class="docutils literal notranslate"><span class="pre">ahd.presets.fourcv()</span></code> — the synchrotron four-circle with ω and 2θ
 both rotating about the lateral axis (vertical scattering plane).
 Users familiar with SPEC will recognise the workflow: the steps parallel
 SPEC’s <code class="docutils literal notranslate"><span class="pre">setor0</span></code>/<code class="docutils literal notranslate"><span class="pre">setor0</span></code>, <code class="docutils literal notranslate"><span class="pre">pa</span></code>, <code class="docutils literal notranslate"><span class="pre">ca</span></code>, and <code class="docutils literal notranslate"><span class="pre">wh</span></code> commands,
@@ -556,7 +556,7 @@ APS 7-ID-C sapphire alignment session</p></li>
 <hr class="docutils" />
 <section id="step-1-create-the-geometry-and-set-the-wavelength">
 <h2>Step 1 — Create the geometry and set the wavelength<a class="headerlink" href="#step-1-create-the-geometry-and-set-the-wavelength" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">ahd.fourcv()</span></code> creates a four-circle Eulerian diffractometer in the
+<p><code class="docutils literal notranslate"><span class="pre">ahd.presets.fourcv()</span></code> creates a four-circle Eulerian diffractometer in the
 <strong>vertical scattering plane</strong> (synchrotron convention).  ω and 2θ both
 rotate about the <strong>lateral</strong> axis (−x in the Busing &amp; Levy coordinate
 system), so the scattering plane is vertical.</p>
@@ -596,7 +596,7 @@ system), so the scattering plane is vertical.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
 
 <span class="c1"># Wavelength from the beamline monochromator at APS 7-ID-C</span>
 <span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5498</span>  <span class="c1"># Angstroms</span>
@@ -607,10 +607,10 @@ system), so the scattering plane is vertical.</p>
 <span class="nb">print</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sample stages:&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2">  axis = </span><span class="si">{</span><span class="n">ahd</span><span class="o">.</span><span class="n">axis_label</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2">  axis = </span><span class="si">{</span><span class="n">ahd</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">axis_label</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Detector stages:&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2">  axis = </span><span class="si">{</span><span class="n">ahd</span><span class="o">.</span><span class="n">axis_label</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2">  axis = </span><span class="si">{</span><span class="n">ahd</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">axis_label</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -968,7 +968,7 @@ direction and the φ-rotation plane.</p>
 <span class="sd">    (1.0 = perfectly aligned, 0° angular discrepancy).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="n">reflection_name</span><span class="p">]</span>
-    <span class="n">Q_phi</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">angles_to_phi_vector</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span>
+    <span class="n">Q_phi</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">angles_to_phi_vector</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span>
     <span class="n">UB_hkl</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">hkl</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
     <span class="n">Q_hat</span>   <span class="o">=</span> <span class="n">Q_phi</span>   <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Q_phi</span><span class="p">)</span>
@@ -1496,7 +1496,7 @@ The saved state can be restored later with:
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 06:11 CDT.
+  Last updated on 2026-04-18 15:51 CDT.
   <br/>
 </p></div>
       

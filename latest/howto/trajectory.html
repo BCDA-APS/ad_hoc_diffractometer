@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=fa5977a2"></script>
+    <script src="../_static/documentation_options.js?v=77e49fba"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 06:11 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 15:51 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -506,7 +506,7 @@ trajectory</p></li>
 <h2>hkl trajectory — path between two reflections<a class="headerlink" href="#hkl-trajectory-path-between-two-reflections" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
 
-<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
 <span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
 <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.431</span><span class="p">)</span>
 <span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
@@ -531,7 +531,7 @@ satisfied.  This is used to probe azimuthal anisotropy.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">psi_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">37</span><span class="p">)</span>  <span class="c1"># degrees</span>
-<span class="n">points</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">psi_trajectory</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">psi_values</span><span class="p">)</span>
+<span class="n">points</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">scan</span><span class="o">.</span><span class="n">psi_trajectory</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">psi_values</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;psi&quot;</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">])</span>
 </pre></div>
@@ -570,10 +570,10 @@ between chi branches:</p>
 <section id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">hkl_trajectory()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">psi_trajectory()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">trajectory_plan()</span></code></p></li>
-<li><p><code class="xref py py-data docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.hkl_trajectory" title="ad_hoc_diffractometer.scan.hkl_trajectory"><code class="xref py py-func docutils literal notranslate"><span class="pre">hkl_trajectory()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.psi_trajectory" title="ad_hoc_diffractometer.scan.psi_trajectory"><code class="xref py py-func docutils literal notranslate"><span class="pre">psi_trajectory()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.trajectory_plan" title="ad_hoc_diffractometer.scan.trajectory_plan"><code class="xref py py-func docutils literal notranslate"><span class="pre">trajectory_plan()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.NEAREST_ANGLES" title="ad_hoc_diffractometer.scan.NEAREST_ANGLES"><code class="xref py py-data docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code></a></p></li>
 <li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">psi()</span></code></a></p></li>
 </ul>
 </section>
@@ -666,7 +666,7 @@ between chi branches:</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 06:11 CDT.
+  Last updated on 2026-04-18 15:51 CDT.
   <br/>
 </p></div>
       

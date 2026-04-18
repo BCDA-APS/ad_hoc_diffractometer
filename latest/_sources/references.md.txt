@@ -16,10 +16,10 @@ Geometries, algorithms, and conventions are traced to their primary sources.
 
   Foundational reference for the four-circle geometry, B matrix, U matrix,
   and UB matrix.  Defines the orientation refinement least-squares procedure.
-  Used by: {func}`~ad_hoc_diffractometer.factories.fourcv`,
-  {func}`~ad_hoc_diffractometer.factories.fourch`,
-  {func}`~ad_hoc_diffractometer.factories.kappa4cv`,
-  {func}`~ad_hoc_diffractometer.factories.kappa4ch`.
+  Used by: {func}`~ad_hoc_diffractometer.presets.fourcv`,
+  {func}`~ad_hoc_diffractometer.presets.fourch`,
+  {func}`~ad_hoc_diffractometer.presets.kappa4cv`,
+  {func}`~ad_hoc_diffractometer.presets.kappa4ch`.
 
 **Bloch (1985)**
 : J.M. Bloch.
@@ -29,7 +29,7 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   DOI: [10.1107/S0021889885009858](https://doi.org/10.1107/S0021889885009858)
 
   Defines the Z-axis diffractometer geometry.
-  Used by: {func}`~ad_hoc_diffractometer.factories.zaxis`.
+  Used by: {func}`~ad_hoc_diffractometer.presets.zaxis`.
 
 **Vlieg et al. (1987)**
 : E. Vlieg, A.E.M.J. Fischer, J.F. van der Veen, B.N. Dev, and G. Materlik.
@@ -38,7 +38,7 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   DOI: [10.1107/S0021889887087266](https://doi.org/10.1107/S0021889887087266)
 
   Defines the five-circle geometry.
-  Used by: {func}`~ad_hoc_diffractometer.factories.fivec`.
+  Used by: {func}`~ad_hoc_diffractometer.presets.fivec`.
 
 **Lohmeier & Vlieg (1993)**
 : M. Lohmeier and E. Vlieg.
@@ -47,7 +47,7 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   DOI: [10.1107/S0021889893006198](https://doi.org/10.1107/S0021889893006198)
 
   Defines the six-circle surface diffractometer geometry.
-  Used by: {func}`~ad_hoc_diffractometer.factories.sixc`.
+  Used by: {func}`~ad_hoc_diffractometer.presets.sixc`.
 
 **Evans-Lutterodt & Tang (1995)**
 : K.W. Evans-Lutterodt and M.-T. Tang.
@@ -56,7 +56,7 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   DOI: [10.1107/S0021889895001063](https://doi.org/10.1107/S0021889895001063)
 
   Defines the S2D2 (2+2) diffractometer geometry.
-  Used by: {func}`~ad_hoc_diffractometer.factories.s2d2`.
+  Used by: {func}`~ad_hoc_diffractometer.presets.s2d2`.
 
 **You (1999)**
 : H. You.
@@ -66,8 +66,8 @@ Geometries, algorithms, and conventions are traced to their primary sources.
 
   Defines the psic (4S+2D) six-circle geometry; axis sign conventions
   (mixed handedness); ψ angle definitions (eqs. 10–11).
-  Used by: {func}`~ad_hoc_diffractometer.factories.psic`,
-  {func}`~ad_hoc_diffractometer.factories.kappa6c`.
+   Used by: {func}`~ad_hoc_diffractometer.presets.psic`,
+   {func}`~ad_hoc_diffractometer.presets.kappa6c`.
 
 **ITC Vol. C §2.2.6 (2006)**
 : International Tables for Crystallography, Volume C, Section 2.2.6.
@@ -75,9 +75,9 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577)
 
   Confirms the kappa 50° tilt convention and normal-beam equatorial geometry.
-  Used by: {func}`~ad_hoc_diffractometer.factories.kappa4cv`,
-  {func}`~ad_hoc_diffractometer.factories.kappa4ch`,
-  {func}`~ad_hoc_diffractometer.factories.kappa6c`.
+  Used by: {func}`~ad_hoc_diffractometer.presets.kappa4cv`,
+  {func}`~ad_hoc_diffractometer.presets.kappa4ch`,
+  {func}`~ad_hoc_diffractometer.presets.kappa6c`.
 
 **Walko (2016)**
 : D.A. Walko.

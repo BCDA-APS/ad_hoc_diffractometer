@@ -15,15 +15,15 @@ by exactly one constraint.
 
 | Geometry family | N | N − 3 |
 |---|---|---|
-| {func}`~ad_hoc_diffractometer.factories.fourcv`, {func}`~ad_hoc_diffractometer.factories.fourch`, {func}`~ad_hoc_diffractometer.factories.zaxis`, {func}`~ad_hoc_diffractometer.factories.s2d2` | 4 | 1 |
-| {func}`~ad_hoc_diffractometer.factories.fivec` | 5 | 2 |
-| {func}`~ad_hoc_diffractometer.factories.psic`, {func}`~ad_hoc_diffractometer.factories.kappa6c`, {func}`~ad_hoc_diffractometer.factories.sixc` | 6 | 3 |
+| {func}`~ad_hoc_diffractometer.presets.fourcv`, {func}`~ad_hoc_diffractometer.presets.fourch`, {func}`~ad_hoc_diffractometer.presets.zaxis`, {func}`~ad_hoc_diffractometer.presets.s2d2` | 4 | 1 |
+| {func}`~ad_hoc_diffractometer.presets.fivec` | 5 | 2 |
+| {func}`~ad_hoc_diffractometer.presets.psic`, {func}`~ad_hoc_diffractometer.presets.kappa6c`, {func}`~ad_hoc_diffractometer.presets.sixc` | 6 | 3 |
 
 ```python
 import ad_hoc_diffractometer as ahd
 
-print(ahd.fourcv().free_dof_after_bragg)   # 1
-print(ahd.psic().free_dof_after_bragg)     # 3
+print(ahd.presets.fourcv().free_dof_after_bragg)   # 1
+print(ahd.presets.psic().free_dof_after_bragg)     # 3
 ```
 
 ## Constraint categories
@@ -107,7 +107,7 @@ at run time without any knowledge of geometry internals.
 ## Use a factory-defined mode
 
 ```python
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 g.mode_name = "bisecting"   # 1 BisectConstraint (N-3=1)
 solutions = g.forward(1, 0, 0)
 ```
@@ -123,7 +123,7 @@ value does not change between calls.
 ```python
 from ad_hoc_diffractometer import ConstraintSet, SampleConstraint
 
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 
 # Set once — all subsequent forward() calls use chi = 45°
 g.modes["my_chi"] = ConstraintSet([SampleConstraint("chi", 45.0)])
@@ -156,7 +156,7 @@ from ad_hoc_diffractometer import (
     ConstraintSet, BisectConstraint, SampleConstraint, DetectorConstraint
 )
 
-g = ahd.psic()
+g = ahd.presets.psic()
 
 # Custom bisecting mode with mu=5° (non-zero mu)
 g.modes["bisecting_mu5"] = ConstraintSet(
@@ -225,7 +225,7 @@ set on the geometry (e.g. ``azimuthal_reference`` for psi modes,
 the prerequisite is met:
 
 ```python
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 g.mode_name = "psi_constant"
 
 # Without azimuthal_reference: not implemented
@@ -244,7 +244,7 @@ print(g.modes["psi_constant"].is_implemented(g))  # True
 import json
 from ad_hoc_diffractometer import AdHocDiffractometer
 
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 d = g.to_dict()
 json.dumps(d)   # JSON-serialisable
 

@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=fa5977a2"></script>
+    <script src="../../_static/documentation_options.js?v=77e49fba"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 06:11 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 15:51 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -420,58 +420,29 @@
 <span></span><span class="c1"># Copyright (c) 2026 Pete R. Jemian &lt;prjemian+ad_hoc_diffractometer@gmail.com&gt;</span>
 <span class="c1"># SPDX-License-Identifier: CC-BY-4.0</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">factories.py — pre-built diffractometer geometry functions.</span>
+<span class="sd">factories.py — geometry registry and shared definitions.</span>
 
-<span class="sd">This module provides **pre-built geometries**: factory functions that</span>
-<span class="sd">construct fully configured :class:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`</span>
-<span class="sd">instances for the most common multi-circle diffractometer designs used in</span>
-<span class="sd">synchrotron and laboratory X-ray / neutron crystallography.  They also</span>
-<span class="sd">serve as worked examples for defining custom geometries.</span>
+<span class="sd">This module provides the **geometry registry** infrastructure: the</span>
+<span class="sd">``@register_geometry`` decorator, discovery of third-party geometry plugins</span>
+<span class="sd">via entry points, and the ``list_geometries()`` / ``get_geometry()`` /</span>
+<span class="sd">``make_geometry()`` lookup functions.</span>
+
+<span class="sd">It also defines the shared **basis dictionaries** (``BASIS_YOU``,</span>
+<span class="sd">``BASIS_BL``) and the default **kappa tilt angle** (``KAPPA_ALPHA_DEFAULT``)</span>
+<span class="sd">used by the pre-built geometry functions in</span>
+<span class="sd">:mod:`ad_hoc_diffractometer.presets`.</span>
 
 <span class="sd">Pre-built geometries</span>
 <span class="sd">--------------------</span>
 
-<span class="sd">.. list-table::</span>
-<span class="sd">   :header-rows: 1</span>
-<span class="sd">   :widths: 15 20 50</span>
+<span class="sd">The 10 pre-built geometry factory functions (``psic``, ``fourcv``,</span>
+<span class="sd">``fourch``, ``sixc``, ``kappa4cv``, ``kappa4ch``, ``kappa6c``, ``zaxis``,</span>
+<span class="sd">``s2d2``, ``fivec``) live in :mod:`ad_hoc_diffractometer.presets`.</span>
+<span class="sd">Access them as::</span>
 
-<span class="sd">   * - Name</span>
-<span class="sd">     - Type</span>
-<span class="sd">     - Description</span>
-<span class="sd">   * - :func:`fourcv`</span>
-<span class="sd">     - Eulerian 4-circle</span>
-<span class="sd">     - Vertical scattering plane (synchrotron). See :doc:`/geometries/fourcv`.</span>
-<span class="sd">   * - :func:`fourch`</span>
-<span class="sd">     - Eulerian 4-circle</span>
-<span class="sd">     - Horizontal scattering plane (laboratory). See :doc:`/geometries/fourch`.</span>
-<span class="sd">   * - :func:`fivec`</span>
-<span class="sd">     - Eulerian 5-circle</span>
-<span class="sd">     - Vlieg et al. (1987), fourcv on a mu base. See :doc:`/geometries/fivec`.</span>
-<span class="sd">   * - :func:`psic`</span>
-<span class="sd">     - Eulerian 6-circle</span>
-<span class="sd">     - You (1999) 4S+2D. See :doc:`/geometries/psic`.</span>
-<span class="sd">   * - :func:`sixc`</span>
-<span class="sd">     - Eulerian 6-circle</span>
-<span class="sd">     - Lohmeier &amp; Vlieg (1993) surface geometry. See :doc:`/geometries/sixc`.</span>
-<span class="sd">   * - :func:`kappa4cv`</span>
-<span class="sd">     - Kappa 4-circle</span>
-<span class="sd">     - Vertical scattering plane (synchrotron). See :doc:`/geometries/kappa4cv`.</span>
-<span class="sd">   * - :func:`kappa4ch`</span>
-<span class="sd">     - Kappa 4-circle</span>
-<span class="sd">     - Horizontal scattering plane (laboratory). See :doc:`/geometries/kappa4ch`.</span>
-<span class="sd">   * - :func:`kappa6c`</span>
-<span class="sd">     - Kappa 6-circle</span>
-<span class="sd">     - Psic-style outer axes. See :doc:`/geometries/kappa6c`.</span>
-<span class="sd">   * - :func:`zaxis`</span>
-<span class="sd">     - Surface / special</span>
-<span class="sd">     - Bloch (1985) Z-axis geometry. See :doc:`/geometries/zaxis`.</span>
-<span class="sd">   * - :func:`s2d2`</span>
-<span class="sd">     - Surface / special</span>
-<span class="sd">     - Evans-Lutterodt &amp; Tang (1995). See :doc:`/geometries/s2d2`.</span>
+<span class="sd">    import ad_hoc_diffractometer as ahd</span>
 
-<span class="sd">Each factory is decorated with ``@register_geometry``, which registers it</span>
-<span class="sd">in the geometry registry.  Use :func:`list_geometries` to retrieve all</span>
-<span class="sd">registered geometries as a ``{name: callable}`` dict.</span>
+<span class="sd">    g = ahd.presets.fourcv()</span>
 
 <span class="sd">Extension via entry points</span>
 <span class="sd">--------------------------</span>
@@ -500,9 +471,9 @@
 <span class="sd">the canonical convention for that geometry).  Inside the factory, resolve</span>
 <span class="sd">physical-direction aliases locally::</span>
 
-<span class="sd">    from ad_hoc_diffractometer import (</span>
-<span class="sd">        AdHocDiffractometer, Stage, register_geometry, BASIS_YOU</span>
-<span class="sd">    )</span>
+<span class="sd">    from ad_hoc_diffractometer import AdHocDiffractometer, register_geometry</span>
+<span class="sd">    from ad_hoc_diffractometer.factories import BASIS_YOU</span>
+<span class="sd">    from ad_hoc_diffractometer.stage import Stage</span>
 
 <span class="sd">    @register_geometry</span>
 <span class="sd">    def my_geometry(basis=BASIS_YOU):</span>
@@ -519,74 +490,30 @@
 <span class="sd">            name=&quot;my_geometry&quot;, stages=stages, basis=basis,</span>
 <span class="sd">        )</span>
 
-<span class="sd">The two public basis dicts ``BASIS_YOU`` and ``BASIS_BL`` are exported from</span>
-<span class="sd">``ad_hoc_diffractometer``.  Pass ``basis=BASIS_BL`` for Busing &amp; Levy</span>
-<span class="sd">convention geometries.</span>
-
-<span class="sd">Naming convention:</span>
-
-<span class="sd">- Eulerian geometries: ``fourcv``, ``fourch``, ``fivec``, ``psic``, ``sixc``</span>
-<span class="sd">- Kappa geometries: ``kappa4cv``, ``kappa4ch``, ``kappa6c``</span>
-<span class="sd">- Surface / special geometries: ``zaxis``, ``s2d2``</span>
-
-<span class="sd">Scattering-plane suffix convention (``v`` / ``h``):</span>
-
-<span class="sd">- ``v`` — vertical scattering plane (synchrotron): ttheta rotates about the lateral axis</span>
-<span class="sd">- ``h`` — horizontal scattering plane (laboratory): ttheta rotates about the vertical axis</span>
-
-<span class="sd">Where no suffix is given, the detector convention is unambiguous (psic, sixc)</span>
-<span class="sd">or the geometry uses a non-standard detector arrangement (zaxis, s2d2, fivec).</span>
-
-<span class="sd">    fourch  (horizontal scattering plane) matches Busing &amp; Levy (1967) Fig. 1b.</span>
-<span class="sd">    fourcv  (vertical   scattering plane) is the synchrotron convention.</span>
-<span class="sd">    kappa4ch and kappa4cv follow the same convention as fourch and fourcv.</span>
-
-<span class="sd">Kappa angle (alpha) convention (Walko 2016; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):</span>
-<span class="sd">    The kappa axis lies in the vertical-lateral plane, tilted alpha degrees</span>
-<span class="sd">    from the vertical axis toward the lateral axis.  Typical value: 50 deg.</span>
-
-<span class="sd">Walko (2016) designations:</span>
-<span class="sd">    S3D1      fourcv, fourch, kappa4cv, kappa4ch</span>
-<span class="sd">    S4D2      psic, kappa6c</span>
-<span class="sd">    (S3D2)1   sixc   (sample and detector share base stage)</span>
-<span class="sd">    (S3D1)1   fivec  (fourcv mounted on vertical base)</span>
-<span class="sd">    (S1D2)1   zaxis  (sample and detector share alpha base stage)</span>
-<span class="sd">    S2D2      s2d2   (fully decoupled sample/detector pairs)</span>
+<span class="sd">The two public basis dicts ``BASIS_YOU`` and ``BASIS_BL`` are available</span>
+<span class="sd">from this module.  Pass ``basis=BASIS_BL`` for Busing &amp; Levy convention</span>
+<span class="sd">geometries.</span>
 
 <span class="sd">References</span>
 <span class="sd">----------</span>
-<span class="sd">* W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967) — fourcv / fourch</span>
-<span class="sd">* J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985) — zaxis</span>
-<span class="sd">* E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987) — fivec</span>
-<span class="sd">* M. Lohmeier &amp; E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993) — sixc</span>
-<span class="sd">* K.W. Evans-Lutterodt &amp; M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) — s2d2</span>
+<span class="sd">* W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967)</span>
 <span class="sd">* H. You, J. Appl. Cryst. 32, 614-623 (1999)</span>
-<span class="sd">  DOI:10.1107/S0021889899001223 — psic</span>
+<span class="sd">  DOI:10.1107/S0021889899001223</span>
 <span class="sd">* ITC Vol. C, Sec. 2.2.6 (2006)</span>
-<span class="sd">  DOI:10.1107/97809553602060000577 — kappa</span>
-<span class="sd">* D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — kappa, zaxis, s2d2, fivec</span>
+<span class="sd">  DOI:10.1107/97809553602060000577</span>
+<span class="sd">* D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">entry_points</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">kappa_axis</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">XHAT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">YHAT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZHAT</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdHocDiffractometer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">REQUIRED</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectConstraint</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectorConstraint</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleConstraint</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.stage</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stage</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -792,7 +719,7 @@
 
 <div class="viewcode-block" id="make_geometry">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.make_geometry">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">make_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instantiate a geometry by name, passing keyword arguments to its factory.</span>
 
@@ -849,8 +776,8 @@
 <span class="sd">- ``&quot;longitudinal&quot;`` → ``YHAT`` (+y, along the beam)</span>
 <span class="sd">- ``&quot;lateral&quot;`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)</span>
 
-<span class="sd">Default basis used by :func:`psic`, :func:`sixc`, :func:`kappa6c`,</span>
-<span class="sd">:func:`zaxis`, :func:`s2d2`, and :func:`fivec`.</span>
+<span class="sd">Default basis used by ``psic``, ``sixc``, ``kappa6c``,</span>
+<span class="sd">``zaxis``, ``s2d2``, and ``fivec`` (in :mod:`ad_hoc_diffractometer.presets`).</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="n">_BASIS_YOU</span> <span class="o">=</span> <span class="n">BASIS_YOU</span>
@@ -869,1047 +796,19 @@
 <span class="sd">- ``&quot;longitudinal&quot;`` → +y (along the beam)</span>
 <span class="sd">- ``&quot;vertical&quot;`` → +z (opposite to gravitational acceleration)</span>
 
-<span class="sd">Used by :func:`fourcv`, :func:`fourch`, :func:`kappa4cv`, and :func:`kappa4ch`.</span>
+<span class="sd">Used by ``fourcv``, ``fourch``, ``kappa4cv``, and ``kappa4ch``</span>
+<span class="sd">(in :mod:`ad_hoc_diffractometer.presets`).</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="n">_BASIS_BL</span> <span class="o">=</span> <span class="n">BASIS_BL</span>
 <span class="sd">&quot;&quot;&quot;Alias for :data:`BASIS_BL` (backward compatibility).&quot;&quot;&quot;</span>
 
-
 <span class="c1"># ---------------------------------------------------------------------------</span>
-<span class="c1"># Eulerian geometries</span>
-<span class="c1"># ---------------------------------------------------------------------------</span>
-
-
-<div class="viewcode-block" id="psic">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.psic">[docs]</a>
-<span class="nd">@register_geometry</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">psic</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_YOU</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    You (1999) &#39;4S+2D&#39; six-circle diffractometer (psic geometry).</span>
-
-<span class="sd">    Walko (2016) designation: S4D2.</span>
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
-<span class="sd">    Detector axis: lateral.  Vertical scattering plane.</span>
-
-<span class="sd">    Sample stack (floor first):</span>
-<span class="sd">        mu  : vertical,     right-handed</span>
-<span class="sd">        eta : lateral,      left-handed</span>
-<span class="sd">        chi : longitudinal, right-handed</span>
-<span class="sd">        phi : lateral,      left-handed</span>
-
-<span class="sd">    Detector stack (floor first):</span>
-<span class="sd">        nu    : vertical, right-handed</span>
-<span class="sd">        delta : lateral,  left-handed</span>
-
-<span class="sd">    mu and nu share the same vertical rotation axis; mechanically independent.</span>
-
-<span class="sd">    Reference: H. You, J. Appl. Cryst. 32, 614-623 (1999).</span>
-<span class="sd">               DOI: 10.1107/S0021889899001223</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
-    <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
-    <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="c1"># psic: 6 DOF, N-3=3 constraints needed per mode (You 1999, S4D2).</span>
-    <span class="c1"># Vertical bisect pair: eta(lateral) &lt;-&gt; delta(lateral)  =&gt; eta = delta/2</span>
-    <span class="c1"># Horizontal bisect pair: mu(vertical) &lt;-&gt; nu(vertical)  =&gt; mu = nu/2</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="c1"># ── Implemented analytic modes ──────────────────────────────────────</span>
-        <span class="s2">&quot;bisecting_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_chi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_mu&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;bisecting_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_nu&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;double_diffraction_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;double_diffraction_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;lifting_detector_mu&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;qaz&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;lifting_detector_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;qaz&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;psi_constant_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;psi_constant_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
-        <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
-        <span class="n">basis</span><span class="o">=</span><span class="n">_BASIS_YOU</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;You (1999) 4S+2D six-circle diffractometer &quot;</span>
-            <span class="s2">&quot;(lateral detector, vertical scattering plane, synchrotron)&quot;</span>
-        <span class="p">),</span>
-        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
-        <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting_vertical&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="fourcv">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.fourcv">[docs]</a>
-<span class="nd">@register_geometry</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">fourcv</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_BL</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Four-circle Eulerian diffractometer, vertical scattering plane (synchrotron).</span>
-
-<span class="sd">    Walko (2016) designation: S3D1.</span>
-
-<span class="sd">    Synchrotron configuration: omega and ttheta both rotate about the</span>
-<span class="sd">    lateral axis, so the scattering plane is vertical.  This exploits the</span>
-<span class="sd">    s-polarisation and tighter vertical collimation of synchrotron radiation</span>
-<span class="sd">    (Walko 2016).</span>
-
-<span class="sd">    Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</span>
-
-<span class="sd">    Sample stack (floor first):</span>
-<span class="sd">        omega  : lateral,      left-handed</span>
-<span class="sd">        chi    : longitudinal, right-handed</span>
-<span class="sd">        phi    : lateral,      left-handed</span>
-
-<span class="sd">    Detector (floor, mechanically independent of sample stack):</span>
-<span class="sd">        ttheta : lateral,      left-handed</span>
-
-<span class="sd">    omega and ttheta share the same lateral axis; mechanically independent.</span>
-
-<span class="sd">    References: W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).</span>
-<span class="sd">                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
-    <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
-    <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="c1"># fourcv: 4 DOF, N-3=1 constraint needed per mode.</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;bisecting&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_chi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;constant_omega&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;psi_constant&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;double_diffraction&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">},</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
-        <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
-        <span class="n">basis</span><span class="o">=</span><span class="n">_BASIS_BL</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Busing &amp; Levy (1967) four-circle Eulerian diffractometer &quot;</span>
-            <span class="s2">&quot;(vertical scattering plane, lateral ttheta, synchrotron)&quot;</span>
-        <span class="p">),</span>
-        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
-        <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="fourch">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.fourch">[docs]</a>
-<span class="nd">@register_geometry</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">fourch</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_BL</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Four-circle Eulerian diffractometer, horizontal scattering plane (laboratory).</span>
-
-<span class="sd">    Walko (2016) designation: S3D1.</span>
-
-<span class="sd">    Laboratory / default configuration: omega and ttheta both rotate about</span>
-<span class="sd">    the vertical axis, so the scattering plane is horizontal.  This is the</span>
-<span class="sd">    geometry described in Busing &amp; Levy (1967), Fig. 1b.</span>
-
-<span class="sd">    Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</span>
-
-<span class="sd">    Sample stack (floor first):</span>
-<span class="sd">        omega  : vertical, left-handed</span>
-<span class="sd">        chi    : lateral,  right-handed</span>
-<span class="sd">        phi    : vertical, left-handed</span>
-
-<span class="sd">    Detector (floor, mechanically independent):</span>
-<span class="sd">        ttheta : vertical, left-handed</span>
-
-<span class="sd">    omega and ttheta share the same vertical axis; mechanically independent.</span>
-
-<span class="sd">    Reference: W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).</span>
-<span class="sd">               D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
-    <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="c1"># fourch: 4 DOF, N-3=1 constraint needed per mode.</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;bisecting&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_chi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;constant_omega&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;psi_constant&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;double_diffraction&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">},</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
-        <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
-        <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Busing &amp; Levy (1967) four-circle Eulerian diffractometer &quot;</span>
-            <span class="s2">&quot;(horizontal scattering plane, vertical ttheta, laboratory)&quot;</span>
-        <span class="p">),</span>
-        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
-        <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="sixc">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.sixc">[docs]</a>
-<span class="nd">@register_geometry</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">sixc</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_YOU</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Lohmeier &amp; Vlieg (1993) six-circle surface diffractometer (sixc geometry).</span>
-
-<span class="sd">    Also known as the IUCr six-circle diffractometer.</span>
-<span class="sd">    Walko (2016) designation: (S3D2)1.</span>
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
-
-<span class="sd">    Sample and detector stacks share the alpha (rotary table) base stage,</span>
-<span class="sd">    making this a coupled geometry.  Useful for surface diffraction.</span>
-
-<span class="sd">    From Fig. 1 and §2.1 of Lohmeier &amp; Vlieg (1993):</span>
-<span class="sd">    alpha and gamma rotate about the vertical axis (x in LV convention).</span>
-<span class="sd">    omega, phi, and delta all rotate about the lateral axis (z in LV).</span>
-<span class="sd">    chi rotates about the longitudinal axis (y in LV).</span>
-
-<span class="sd">    Stack (floor first)::</span>
-
-<span class="sd">        alpha (shared base): vertical,     right-handed  [rotary table]</span>
-<span class="sd">          --&gt; omega (sample):  lateral,      left-handed</span>
-<span class="sd">                --&gt; chi:       longitudinal, right-handed</span>
-<span class="sd">                      --&gt; phi: lateral,      left-handed</span>
-<span class="sd">          --&gt; delta (detector): lateral,     left-handed</span>
-<span class="sd">                --&gt; gamma:      vertical,    right-handed</span>
-
-<span class="sd">    Reference: M. Lohmeier &amp; E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
-    <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
-    <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="c1"># sixc: 6 DOF, N-3=3 constraints needed per mode.</span>
-    <span class="c1"># four_circle: alpha=0, gamma=0 frozen; bisect on omega/delta.</span>
-    <span class="c1"># Reduces to fourcv bisecting — the generic bisecting solver handles it.</span>
-    <span class="c1"># Surface modes (five_circle_*, zaxis_*) require reference infrastructure (Issue J).</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;bisecting_4c&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_gamma_5c&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_alpha_5c&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_alpha_zaxis&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;alpha_i&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_beta_zaxis&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;beta_out&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;alpha_eq_beta_zaxis&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;a_eq_b&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
-        <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
-        <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Lohmeier &amp; Vlieg (1993) six-circle surface diffractometer &quot;</span>
-            <span class="s2">&quot;(IUCr six-circle; Walko S(3D2)1). &quot;</span>
-            <span class="s2">&quot;Sample and detector share the alpha (rotary table) base stage.&quot;</span>
-        <span class="p">),</span>
-        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
-        <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting_4c&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-
-<span class="c1"># ---------------------------------------------------------------------------</span>
-<span class="c1"># Kappa geometries</span>
+<span class="c1"># Kappa angle default</span>
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 <span class="n">KAPPA_ALPHA_DEFAULT</span> <span class="o">=</span> <span class="mf">50.0</span>
 <span class="sd">&quot;&quot;&quot;Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C).&quot;&quot;&quot;</span>
-
-
-<div class="viewcode-block" id="kappa4cv">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.kappa4cv">[docs]</a>
-<span class="nd">@register_geometry</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">kappa4cv</span><span class="p">(</span>
-    <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_ALPHA_DEFAULT</span><span class="p">,</span>
-    <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_BL</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Four-circle kappa diffractometer, vertical scattering plane (synchrotron).</span>
-
-<span class="sd">    Walko (2016) designation: S3D1.</span>
-
-<span class="sd">    The chi circle of a standard Eulerian fourcv is replaced by a kappa arm.</span>
-<span class="sd">    The kappa axis lies in the vertical-lateral plane, tilted alpha degrees</span>
-<span class="sd">    from the vertical toward the lateral axis.</span>
-
-<span class="sd">    komega and ttheta both rotate about the lateral axis; the scattering</span>
-<span class="sd">    plane is vertical (synchrotron convention).</span>
-
-<span class="sd">    Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</span>
-
-<span class="sd">    Sample stack (floor first):</span>
-<span class="sd">        komega : lateral, left-handed</span>
-<span class="sd">        kappa  : tilted,  kappa_axis(alpha), right-handed</span>
-<span class="sd">        kphi   : lateral, left-handed</span>
-
-<span class="sd">    Detector (floor, mechanically independent):</span>
-<span class="sd">        ttheta : lateral, left-handed</span>
-
-<span class="sd">    komega and ttheta share the same lateral axis; mechanically independent.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    alpha_deg : float</span>
-<span class="sd">        Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</span>
-
-<span class="sd">    References: D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</span>
-<span class="sd">                W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).</span>
-<span class="sd">                ITC Vol. C, Sec. 2.2.6 (2006).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
-    <span class="n">kax</span> <span class="o">=</span> <span class="n">kappa_axis</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
-    <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">kax</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="c1"># kappa4cv: 4 DOF, N-3=1 constraint needed per mode.</span>
-    <span class="c1"># Virtual Eulerian angles (omega, chi, phi) are computed from real kappa</span>
-    <span class="c1"># angles (komega, kappa, kphi) via Walko (2016) eq. [16].  Constraints</span>
-    <span class="c1"># using virtual angle names are stubs pending Issue I (#153).</span>
-    <span class="c1"># BisectConstraint(&#39;komega&#39;,&#39;ttheta&#39;) approximates bisecting but is</span>
-    <span class="c1"># physically inaccurate — true bisect requires virtual omega=0.</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;bisecting&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_kphi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;constant_omega&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;constant_chi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;constant_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;psi_constant&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;double_diffraction&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">},</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
-        <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
-        <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Four-circle kappa diffractometer, vertical scattering plane &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;(synchrotron). Kappa alpha = </span><span class="si">{</span><span class="n">alpha_deg</span><span class="si">}</span><span class="s2"> deg.&quot;</span>
-        <span class="p">),</span>
-        <span class="n">kappa_alpha_deg</span><span class="o">=</span><span class="n">alpha_deg</span><span class="p">,</span>
-        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
-        <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="kappa4ch">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.kappa4ch">[docs]</a>
-<span class="nd">@register_geometry</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">kappa4ch</span><span class="p">(</span>
-    <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_ALPHA_DEFAULT</span><span class="p">,</span>
-    <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_BL</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Four-circle kappa diffractometer, horizontal scattering plane (laboratory).</span>
-
-<span class="sd">    Walko (2016) designation: S3D1.</span>
-
-<span class="sd">    Identical to kappa4cv() but komega and ttheta rotate about the vertical</span>
-<span class="sd">    axis, giving a horizontal scattering plane (laboratory convention).</span>
-
-<span class="sd">    Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</span>
-
-<span class="sd">    Sample stack (floor first):</span>
-<span class="sd">        komega : vertical, left-handed</span>
-<span class="sd">        kappa  : tilted,   kappa_axis(alpha), right-handed</span>
-<span class="sd">        kphi   : vertical, left-handed</span>
-
-<span class="sd">    Detector (floor, mechanically independent):</span>
-<span class="sd">        ttheta : vertical, left-handed</span>
-
-<span class="sd">    komega and ttheta share the same vertical axis; mechanically independent.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    alpha_deg : float</span>
-<span class="sd">        Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</span>
-
-<span class="sd">    References: D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</span>
-<span class="sd">                W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).</span>
-<span class="sd">                ITC Vol. C, Sec. 2.2.6 (2006).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">kax</span> <span class="o">=</span> <span class="n">kappa_axis</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
-    <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">kax</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="c1"># kappa4ch: 4 DOF, N-3=1 constraint needed per mode.</span>
-    <span class="c1"># Same mode set as kappa4cv; virtual angle stubs pending Issue I (#153).</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;bisecting&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_kphi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;constant_omega&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;constant_chi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;constant_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;psi_constant&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
-        <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
-        <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Four-circle kappa diffractometer, horizontal scattering plane &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;(laboratory). Kappa alpha = </span><span class="si">{</span><span class="n">alpha_deg</span><span class="si">}</span><span class="s2"> deg.&quot;</span>
-        <span class="p">),</span>
-        <span class="n">kappa_alpha_deg</span><span class="o">=</span><span class="n">alpha_deg</span><span class="p">,</span>
-        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
-        <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="kappa6c">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.kappa6c">[docs]</a>
-<span class="nd">@register_geometry</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">kappa6c</span><span class="p">(</span>
-    <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_ALPHA_DEFAULT</span><span class="p">,</span>
-    <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_YOU</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Six-circle kappa diffractometer (psic-style outer axes, kappa inner sample).</span>
-
-<span class="sd">    Walko (2016) designation: S4D2.</span>
-
-<span class="sd">    Extends the kappa4cv geometry with two additional axes (mu, nu) in</span>
-<span class="sd">    the style of the psic geometry (You 1999), giving full orientation freedom.</span>
-<span class="sd">    This is the synchrotron configuration with a lateral detector.</span>
-
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
-
-<span class="sd">    Sample stack (floor first):</span>
-<span class="sd">        mu     : vertical,     right-handed   [outermost]</span>
-<span class="sd">        komega : lateral,      left-handed</span>
-<span class="sd">        kappa  : tilted,       kappa_axis(alpha), right-handed</span>
-<span class="sd">        kphi   : lateral,      left-handed</span>
-
-<span class="sd">    Detector stack (floor first):</span>
-<span class="sd">        nu     : vertical,     right-handed</span>
-<span class="sd">        delta  : lateral,      left-handed</span>
-
-<span class="sd">    mu and nu share the same vertical axis; mechanically independent.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    alpha_deg : float</span>
-<span class="sd">        Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</span>
-
-<span class="sd">    References: D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</span>
-<span class="sd">                H. You, J. Appl. Cryst. 32, 614-623 (1999).</span>
-<span class="sd">                ITC Vol. C, Sec. 2.2.6 (2006).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
-    <span class="n">kax</span> <span class="o">=</span> <span class="n">kappa_axis</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
-    <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">kax</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="c1"># kappa6c: 6 DOF, N-3=3 constraints needed per mode.</span>
-    <span class="c1"># Vertical bisect pair: komega(lateral) &lt;-&gt; delta(lateral) =&gt; komega = delta/2</span>
-    <span class="c1">#   (approximates virtual omega_euler = delta/2; corrected by Issue I / #153)</span>
-    <span class="c1"># Horizontal bisect pair: mu(vertical) &lt;-&gt; nu(vertical) =&gt; mu = nu/2</span>
-    <span class="c1"># Virtual Eulerian angles (omega, chi, phi) via Walko (2016) eq. [16].</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="c1"># ── Implemented (generic solver) ────────────────────────────────────</span>
-        <span class="s2">&quot;bisecting_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;bisecting_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_kphi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_mu&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_nu&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_delta&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="c1"># ── Stubs: solver not yet implemented ───────────────────────────────</span>
-        <span class="s2">&quot;lifting_detector_mu&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;qaz&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;lifting_detector_kphi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;qaz&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;psi_constant_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;psi_constant_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;double_diffraction_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;double_diffraction_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">},</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
-        <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
-        <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Six-circle kappa diffractometer, psic-style outer axes &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;(lateral detector, synchrotron). &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Kappa alpha = </span><span class="si">{</span><span class="n">alpha_deg</span><span class="si">}</span><span class="s2"> deg.&quot;</span>
-        <span class="p">),</span>
-        <span class="n">kappa_alpha_deg</span><span class="o">=</span><span class="n">alpha_deg</span><span class="p">,</span>
-        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
-        <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting_vertical&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-
-<span class="c1"># ---------------------------------------------------------------------------</span>
-<span class="c1"># General-inclination geometries (Walko 2016, Sections 4.2 and 5)</span>
-<span class="c1"># ---------------------------------------------------------------------------</span>
-
-
-<div class="viewcode-block" id="zaxis">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.zaxis">[docs]</a>
-<span class="nd">@register_geometry</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">zaxis</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_YOU</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Z-axis four-circle diffractometer (general-inclination geometry).</span>
-
-<span class="sd">    Walko (2016) designation: (S1D2)1.</span>
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
-
-<span class="sd">    Designed for surface diffraction.  The sample surface normal is aligned</span>
-<span class="sd">    parallel to the Z-axis, so the angle of incidence equals the alpha angle.</span>
-<span class="sd">    The detector and sample both rotate about the shared alpha (base) axis.</span>
-
-<span class="sd">    Stack (floor first)::</span>
-
-<span class="sd">        alpha (shared base): vertical,     right-handed</span>
-<span class="sd">          --&gt; Z     (sample)  : longitudinal, right-handed</span>
-<span class="sd">          --&gt; delta (detector): lateral,      left-handed</span>
-<span class="sd">                --&gt; gamma :     vertical,     right-handed</span>
-
-<span class="sd">    The total scattering angle is a compound of gamma, delta, and alpha</span>
-<span class="sd">    (Walko 2016, eq. 17)::</span>
-
-<span class="sd">        ttheta = arccos(cos(gamma)*cos(delta)*cos(alpha) + sin(alpha)*sin(gamma))</span>
-
-<span class="sd">    References:</span>
-<span class="sd">    J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).</span>
-<span class="sd">    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
-    <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
-    <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="c1"># zaxis: 4 DOF, N-3=1 constraint needed per mode.</span>
-    <span class="c1"># All modes require reference vector n̂ (Issue J / #157).</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;zaxis&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;alpha_i&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;reflectivity&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;a_eq_b&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
-        <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
-        <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Z-axis four-circle diffractometer (Bloch 1985; Walko 2016 (S1D2)1). &quot;</span>
-            <span class="s2">&quot;Surface normal parallel to Z-axis. &quot;</span>
-            <span class="s2">&quot;Sample and detector share the alpha (base) stage.&quot;</span>
-        <span class="p">),</span>
-        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="s2d2">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.s2d2">[docs]</a>
-<span class="nd">@register_geometry</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">s2d2</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_YOU</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    S2D2 four-circle diffractometer (general-inclination geometry).</span>
-
-<span class="sd">    Walko (2016) designation: S2D2.</span>
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
-
-<span class="sd">    Two independent sample axes (mu, Z) and two independent detector axes</span>
-<span class="sd">    (nu, delta), all mechanically decoupled.  The angle of incidence is the</span>
-<span class="sd">    mu angle; the surface normal is parallel to Z.</span>
-
-<span class="sd">    Sample stack (floor first)::</span>
-
-<span class="sd">        mu    : vertical,     right-handed</span>
-<span class="sd">          --&gt; Z : longitudinal, right-handed</span>
-
-<span class="sd">    Detector stack (floor first)::</span>
-
-<span class="sd">        nu    : vertical,     right-handed</span>
-<span class="sd">          --&gt; delta : lateral, left-handed</span>
-
-<span class="sd">    mu and nu share the same vertical axis; mechanically independent.</span>
-
-<span class="sd">    The total scattering angle is (Walko 2016, eq. 18)::</span>
-
-<span class="sd">        ttheta = arccos(cos(nu) * cos(delta))</span>
-
-<span class="sd">    References:</span>
-<span class="sd">    K.W. Evans-Lutterodt &amp; M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995).</span>
-<span class="sd">    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
-    <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
-    <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="c1"># s2d2: 4 DOF, N-3=1 constraint needed per mode.</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;mu_fixed&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;reflectivity&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;a_eq_b&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
-        <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
-        <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;S2D2 four-circle diffractometer (Evans-Lutterodt &amp; Tang 1995; &quot;</span>
-            <span class="s2">&quot;Walko 2016 S2D2). &quot;</span>
-            <span class="s2">&quot;Fully decoupled sample (mu, Z) and detector (nu, delta) axes.&quot;</span>
-        <span class="p">),</span>
-        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="fivec">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.fivec">[docs]</a>
-<span class="nd">@register_geometry</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">fivec</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">_BASIS_YOU</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Five-circle diffractometer (fourcv mounted on a vertical base).</span>
-
-<span class="sd">    Walko (2016) designation: (S3D1)1.</span>
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
-
-<span class="sd">    A standard Eulerian four-circle (fourcv) is mounted on a fifth vertical</span>
-<span class="sd">    rotation stage (mu) as a base.  The sample and detector motions are coupled</span>
-<span class="sd">    through mu.  This provides an additional degree of freedom for accessing</span>
-<span class="sd">    wider regions of reciprocal space, particularly at synchrotron sources.</span>
-
-<span class="sd">    Stack (floor first)::</span>
-
-<span class="sd">        mu (shared base): vertical,     right-handed</span>
-<span class="sd">          --&gt; omega (sample): lateral,      left-handed</span>
-<span class="sd">                --&gt; chi:      longitudinal, right-handed</span>
-<span class="sd">                      --&gt; phi: lateral,     left-handed</span>
-<span class="sd">          --&gt; ttheta (detector): lateral,   left-handed</span>
-
-<span class="sd">    References:</span>
-<span class="sd">    E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).</span>
-<span class="sd">    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
-    <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
-    <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="c1"># fivec: 5 DOF, N-3=2 constraints needed per mode.</span>
-    <span class="c1"># With mu=0 the geometry reduces to fourcv; the bisecting solver</span>
-    <span class="c1"># handles this case identically to fourcv bisecting.</span>
-    <span class="c1"># Modes where mu != 0 require a tilted-plane solver (not yet implemented).</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;bisecting_4c&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_chi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_mu&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;constant_omega_noncoplanar&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
-        <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
-        <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Five-circle diffractometer: fourcv on vertical mu base &quot;</span>
-            <span class="s2">&quot;(Vlieg et al. 1987; Walko 2016 (S3D1)1). &quot;</span>
-            <span class="s2">&quot;Sample and detector coupled through mu.&quot;</span>
-        <span class="p">),</span>
-        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
-        <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting_4c&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
 </pre></div>
 
                 </article>
@@ -1948,7 +847,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 06:11 CDT.
+  Last updated on 2026-04-18 15:51 CDT.
   <br/>
 </p></div>
       
