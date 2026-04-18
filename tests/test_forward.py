@@ -1370,6 +1370,8 @@ _PSIC_MODES_IMPLEMENTED = {
     "bisecting_horizontal",
     "fixed_nu",
     "double_diffraction_vertical",
+    "lifting_detector_mu",
+    "lifting_detector_phi",
 }
 
 _PSIC_MODES_STUBS = _PSIC_MODES_ALL - _PSIC_MODES_IMPLEMENTED
@@ -1409,6 +1411,11 @@ def test_psic_mode_is_implemented(mode_name, expected_implemented):
         pytest.param("fixed_nu", 1, 0, 0, id="fixed_nu-100"),
         pytest.param("fixed_nu", 1, 1, 1, id="fixed_nu-111"),
         pytest.param("double_diffraction_vertical", 1, 0, 0, id="double_diff-100"),
+        # lifting_detector_* modes: qaz=90 out-of-plane constraint
+        pytest.param("lifting_detector_mu", 1, 0, 0, id="lifting_detector_mu-100"),
+        pytest.param("lifting_detector_mu", 0, 0, 1, id="lifting_detector_mu-001"),
+        pytest.param("lifting_detector_phi", 1, 0, 0, id="lifting_detector_phi-100"),
+        pytest.param("lifting_detector_phi", 0, 1, 0, id="lifting_detector_phi-010"),
     ],
 )
 def test_psic_mode_round_trip(mode_name, h, k, l):  # noqa: E741
@@ -1535,8 +1542,6 @@ _KAPPA6C_ALL_MODES = {
     "psi_constant_horizontal",
 }
 _KAPPA6C_STUB_MODES = {
-    "lifting_detector_mu",
-    "lifting_detector_kphi",
     "psi_constant_vertical",
     "psi_constant_horizontal",
 }
@@ -1557,6 +1562,11 @@ _KAPPA6C_STUB_MODES = {
         pytest.param("fixed_nu", 0, 1, 0, id="fixed_nu-010"),
         pytest.param("fixed_delta", 1, 0, 0, id="fixed_delta-100"),
         pytest.param("fixed_delta", 0, 0, 1, id="fixed_delta-001"),
+        # lifting_detector_* modes: qaz=90 out-of-plane constraint
+        pytest.param("lifting_detector_mu", 1, 0, 0, id="lifting_detector_mu-100"),
+        pytest.param("lifting_detector_mu", 0, 1, 0, id="lifting_detector_mu-010"),
+        pytest.param("lifting_detector_kphi", 1, 0, 0, id="lifting_detector_kphi-100"),
+        pytest.param("lifting_detector_kphi", 0, 1, 0, id="lifting_detector_kphi-010"),
     ],
 )
 def test_kappa6c_mode_round_trip(mode_name, h, k, l):  # noqa: E741
@@ -1599,3 +1609,156 @@ def test_kappa6c_bisecting_horizontal_invariants():
         assert sol["mu"] == pytest.approx(sol["nu"] / 2.0, abs=1e-10)
         assert sol["komega"] == pytest.approx(0.0, abs=1e-8)
         assert sol["delta"] == pytest.approx(0.0, abs=1e-8)
+
+
+# ---------------------------------------------------------------------------
+# Issue #177 — qaz detector constraint solver
+# ---------------------------------------------------------------------------
+
+
+def _qaz_from_angles(nu_deg: float, delta_deg: float) -> float:
+    """Compute qaz from detector angles per You (1999) eq. 18."""
+    import math
+
+    nu_r = math.radians(nu_deg)
+    delta_r = math.radians(delta_deg)
+    return math.degrees(math.atan2(math.tan(delta_r), math.sin(nu_r)))
+
+
+@pytest.mark.parametrize(
+    "nu_deg, delta_deg, target_qaz_deg, expected_residual",
+    [
+        pytest.param(
+            0.0,
+            20.0,
+            90.0,
+            0.0,
+            id="nu=0-delta=20-qaz=90-satisfied",
+        ),
+        pytest.param(
+            90.0,
+            30.0,
+            30.0,
+            0.0,
+            id="nu=90-delta=30-qaz=30-satisfied",
+        ),
+        pytest.param(
+            45.0,
+            0.0,
+            0.0,
+            0.0,
+            id="nu=45-delta=0-qaz=0-satisfied",
+        ),
+        pytest.param(
+            30.0,
+            20.0,
+            90.0,
+            _qaz_from_angles(30.0, 20.0) - 90.0,
+            id="nu=30-delta=20-qaz=90-nonzero-residual",
+        ),
+    ],
+)
+def test_qaz_residual(nu_deg, delta_deg, target_qaz_deg, expected_residual):
+    """_qaz_residual returns correct residual per You (1999) eq. 18."""
+    from ad_hoc_diffractometer.mode import _qaz_residual
+
+    g = psic()
+    angles = {
+        "mu": 0.0,
+        "eta": 0.0,
+        "chi": 90.0,
+        "phi": 0.0,
+        "nu": nu_deg,
+        "delta": delta_deg,
+    }
+    residual = _qaz_residual(angles, g, target_qaz_deg)
+    assert residual == pytest.approx(expected_residual, abs=1e-6)
+
+
+def test_psic_lifting_detector_mu_limits_exclude_nu_zero():
+    """If nu stage limits exclude nu=0, qaz=90 solutions are filtered out."""
+    g = _setup_cubic(psic, a=4.0)
+    g.mode_name = "lifting_detector_mu"
+    # Default solution for qaz=90 uses nu=0; excluding nu=0 gives no solutions.
+    nu_stage = g.stage("nu")
+    nu_stage.limits = (1.0, 180.0)
+    solutions = g.forward(1, 0, 0)
+    # All detector solutions use nu=0 which is now outside limits
+    assert len(solutions) == 0
+
+
+def test_qaz_residual_two_detector_stages_required():
+    """_qaz_residual raises ValueError for geometry with < 2 detector stages."""
+
+    import pytest
+
+    # Build a geometry with only 1 detector stage
+    from ad_hoc_diffractometer import AdHocDiffractometer
+    from ad_hoc_diffractometer import Stage
+    from ad_hoc_diffractometer.constants import XHAT
+    from ad_hoc_diffractometer.constants import YHAT
+    from ad_hoc_diffractometer.constants import ZHAT
+    from ad_hoc_diffractometer.mode import _qaz_residual
+
+    stages = [
+        Stage("omega", -ZHAT, parent=None, role="sample"),
+        Stage("ttheta", -ZHAT, parent=None, role="detector"),
+    ]
+    g_1det = AdHocDiffractometer(
+        name="one_det",
+        stages=stages,
+        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+    )
+    angles = {"omega": 0.0, "ttheta": 20.0}
+    with pytest.raises(ValueError, match="at least 2 detector stages"):
+        _qaz_residual(angles, g_1det, 90.0)
+
+
+@pytest.mark.parametrize(
+    "mode_name, h, k, l",
+    [
+        pytest.param("lifting_detector_mu", 1, 0, 0, id="psic-liftmu-100"),
+        pytest.param("lifting_detector_mu", 0, 0, 1, id="psic-liftmu-001"),
+        pytest.param("lifting_detector_phi", 1, 0, 0, id="psic-liftphi-100"),
+        pytest.param("lifting_detector_phi", 0, 1, 0, id="psic-liftphi-010"),
+    ],
+)
+def test_psic_lifting_detector_qaz_satisfied(mode_name, h, k, l):  # noqa: E741
+    """lifting_detector_* modes: qaz = 90.0 verified in all solutions."""
+    g = _setup_cubic(psic, a=4.0)
+    g.mode_name = mode_name
+    solutions = g.forward(h, k, l)
+    assert len(solutions) > 0, f"No solutions for {mode_name} ({h},{k},{l})"
+    for sol in solutions:
+        nu_deg = sol["nu"]
+        delta_deg = sol["delta"]
+        qaz_computed = _qaz_from_angles(nu_deg, delta_deg)
+        assert qaz_computed == pytest.approx(90.0, abs=1e-4), (
+            f"{mode_name}: expected qaz=90, got {qaz_computed:.6f} "
+            f"(nu={nu_deg:.4f}, delta={delta_deg:.4f})"
+        )
+
+
+@pytest.mark.parametrize(
+    "mode_name, h, k, l",
+    [
+        pytest.param("lifting_detector_mu", 1, 0, 0, id="kappa6c-liftmu-100"),
+        pytest.param("lifting_detector_mu", 0, 1, 0, id="kappa6c-liftmu-010"),
+        pytest.param("lifting_detector_kphi", 1, 0, 0, id="kappa6c-liftkphi-100"),
+        pytest.param("lifting_detector_kphi", 0, 1, 0, id="kappa6c-liftkphi-010"),
+    ],
+)
+def test_kappa6c_lifting_detector_qaz_satisfied(mode_name, h, k, l):  # noqa: E741
+    """kappa6c lifting_detector_* modes: qaz = 90.0 verified in all solutions."""
+    g = _setup_cubic(kappa6c, a=4.0)
+    g.mode_name = mode_name
+    solutions = g.forward(h, k, l)
+    assert len(solutions) > 0, f"No solutions for {mode_name} ({h},{k},{l})"
+    for sol in solutions:
+        nu_deg = sol["nu"]
+        delta_deg = sol["delta"]
+        qaz_computed = _qaz_from_angles(nu_deg, delta_deg)
+        assert qaz_computed == pytest.approx(90.0, abs=1e-4), (
+            f"{mode_name}: expected qaz=90, got {qaz_computed:.6f} "
+            f"(nu={nu_deg:.4f}, delta={delta_deg:.4f})"
+        )
