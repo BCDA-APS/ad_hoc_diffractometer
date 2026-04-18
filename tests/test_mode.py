@@ -328,8 +328,8 @@ def test_bisect_constraint_to_dict_from_dict():
             DetectorConstraint,
             ("qaz", 90.0),
             _psic_like,
-            False,
-            id="detector-qaz-not-implemented",
+            True,
+            id="detector-qaz-implemented",
         ),
     ],
 )
@@ -544,12 +544,19 @@ def test_detector_constraint_to_dict_from_dict():
     assert dc2 == dc
 
 
-def test_detector_constraint_evaluate_qaz_raises():
+def test_detector_constraint_evaluate_qaz():
+    """DetectorConstraint('qaz') evaluate() returns a float via _qaz_residual."""
     g = _psic_like()
-    angles = {}
+    # nu=0, delta=20 => tan(qaz) = tan(20)/sin(0) = inf => qaz=90 deg
+    # residual = 90 - 90 = 0
+    import math
+
+    angles = {"mu": 0.0, "eta": 10.0, "chi": 90.0, "phi": 0.0, "nu": 0.0, "delta": 20.0}
     dc = DetectorConstraint("qaz", 90.0)
-    with pytest.raises(NotImplementedError, match="qaz"):
-        dc.evaluate(angles, g)
+    residual = dc.evaluate(angles, g)
+    assert math.isfinite(residual)
+    # With nu=0, sin(nu)=0, atan2(tan(delta), 0) = +-90 => qaz = 90 or -90
+    assert abs(residual) < 1e-6 or abs(residual - 180.0) < 1e-6  # noqa: PLR2004
 
 
 # ---------------------------------------------------------------------------
@@ -2063,10 +2070,10 @@ _KAPPA6C_IMPLEMENTED = {
     "fixed_mu",
     "fixed_nu",
     "fixed_delta",
+    "lifting_detector_mu",
+    "lifting_detector_kphi",
 }
-_KAPPA6C_STUBS = (
-    _KAPPA6C_MODES - _KAPPA6C_IMPLEMENTED
-)  # psi_constant_*, lifting_detector_*
+_KAPPA6C_STUBS = _KAPPA6C_MODES - _KAPPA6C_IMPLEMENTED  # psi_constant_*
 
 
 def test_kappa6c_factory_mode_names():
@@ -2169,3 +2176,99 @@ def test_kappa6c_modes_round_trip():
     g2 = AdHocDiffractometer.from_dict(d)
     assert set(g2.modes.keys()) == _KAPPA6C_MODES
     assert g2.mode_name == "bisecting_vertical"
+
+
+# ---------------------------------------------------------------------------
+# Issue #177 — _qaz_residual unit tests
+# ---------------------------------------------------------------------------
+
+
+from ad_hoc_diffractometer.mode import _qaz_residual  # noqa: E402
+
+
+@pytest.mark.parametrize(
+    "nu_deg, delta_deg, target_qaz_deg, expected_residual, context",
+    [
+        pytest.param(
+            0.0,
+            20.0,
+            90.0,
+            0.0,
+            does_not_raise(),
+            id="nu=0-delta=20-qaz=90-satisfied",
+        ),
+        pytest.param(
+            90.0,
+            30.0,
+            30.0,
+            0.0,
+            does_not_raise(),
+            id="nu=90-delta=30-qaz=30-satisfied",
+        ),
+        pytest.param(
+            45.0,
+            0.0,
+            0.0,
+            0.0,
+            does_not_raise(),
+            id="nu=45-delta=0-qaz=0-satisfied",
+        ),
+    ],
+)
+def test_qaz_residual_satisfied(
+    nu_deg, delta_deg, target_qaz_deg, expected_residual, context
+):
+    """_qaz_residual returns ~0 when qaz constraint is satisfied."""
+    import math
+
+    g = _psic_like()
+    angles = {
+        "mu": 0.0,
+        "eta": 0.0,
+        "chi": 90.0,
+        "phi": 0.0,
+        "nu": nu_deg,
+        "delta": delta_deg,
+    }
+    with context:
+        residual = _qaz_residual(angles, g, target_qaz_deg)
+        assert math.isfinite(residual)
+        assert residual == pytest.approx(expected_residual, abs=1e-6)
+
+
+def test_qaz_residual_few_detector_stages_raises():
+    """_qaz_residual raises ValueError when geometry has fewer than 2 detector stages."""
+    stages = [
+        Stage("omega", -ZHAT, parent=None, role="sample"),
+        Stage("ttheta", -ZHAT, parent=None, role="detector"),
+    ]
+    g_1det = AdHocDiffractometer(
+        name="one_det",
+        stages=stages,
+        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+    )
+    angles = {"omega": 0.0, "ttheta": 20.0}
+    with pytest.raises(ValueError, match=re.escape("at least 2 detector stages")):
+        _qaz_residual(angles, g_1det, 90.0)
+
+
+def test_qaz_residual_nonzero():
+    """_qaz_residual is nonzero when constraint is not satisfied."""
+    import math
+
+    g = _psic_like()
+    # For nu=30, delta=20: qaz = atan2(tan(20), sin(30)) != 90
+    nu_deg, delta_deg = 30.0, 20.0
+    nu_r, delta_r = math.radians(nu_deg), math.radians(delta_deg)
+    qaz_actual = math.degrees(math.atan2(math.tan(delta_r), math.sin(nu_r)))
+    angles = {
+        "mu": 0.0,
+        "eta": 0.0,
+        "chi": 90.0,
+        "phi": 0.0,
+        "nu": nu_deg,
+        "delta": delta_deg,
+    }
+    residual = _qaz_residual(angles, g, 90.0)
+    assert residual == pytest.approx(qaz_actual - 90.0, abs=1e-6)
+    assert abs(residual) > 1e-3  # not satisfied

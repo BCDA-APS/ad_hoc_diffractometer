@@ -118,23 +118,27 @@ Horizontal plane with delta frozen.
 | **Computed** | mu, kappa, kphi, nu |
 | **Constant during** `forward()` | delta, komega = 0 |
 
-### `lifting_detector_mu` *(stub)*
+### `lifting_detector_mu`
 
-Out-of-plane mode — requires the qaz pseudo-angle solver (not yet implemented).
+Out-of-plane mode: mu and komega frozen, nu and delta solved via the qaz
+constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
+``qaz = 90°`` constrains the scattering to the vertical plane.
 
 | | |
 |---|---|
 | **Computed** | mu, nu, delta |
-| **Constant during** `forward()` | mu, komega |
+| **Constant during** `forward()` | mu = 0, komega = 0 |
 
-### `lifting_detector_kphi` *(stub)*
+### `lifting_detector_kphi`
 
-Out-of-plane mode — requires the qaz pseudo-angle solver (not yet implemented).
+Out-of-plane mode: kphi and mu frozen, nu and delta solved via the qaz
+constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
+``qaz = 90°`` constrains the scattering to the vertical plane.
 
 | | |
 |---|---|
 | **Computed** | kphi, nu, delta |
-| **Constant during** `forward()` | kphi, mu |
+| **Constant during** `forward()` | kphi = 0, mu = 0 |
 
 ### `psi_constant_vertical` *(stub)*
 
