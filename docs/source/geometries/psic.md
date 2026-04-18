@@ -3,7 +3,7 @@
 
 You (1999) 4S+2D six-circle diffractometer. Four sample stages (mu, eta, chi, and phi) and two detector stages (nu, delta). Lateral detector, vertical scattering plane. Standard synchrotron six-circle.
 
-**Coordinate basis:** You (1999) (`BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
+**Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
 
 ## Quick start
 
@@ -17,8 +17,8 @@ print(g.summary())
 
 ## Pre-built geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.psic` factory
-function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L439) for the complete stage
+This geometry is defined by the {func}`~ad_hoc_diffractometer.factories.psic` factory
+function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L454) for the complete stage
 and mode configuration.
 
 ## Stage layout
@@ -41,42 +41,71 @@ and mode configuration.
 
 ## Diffraction modes
 
-Set the active mode with `g.mode_name = "<mode>"`. Preset any fixed-stage angles with `g.set_angle(name, value)` before calling `forward()`. See {doc}`../howto/modes` for usage details and {class}`~ad_hoc_diffractometer.mode.DiffractionMode` for the base class.
+Set the active mode with `g.mode_name = "<mode>"`.
+Each mode is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` of 3 constraints
+(N − 3 = 3 for N = 6 DOF).
+See {doc}`../howto/modes` for usage and {doc}`../howto/constraints` for
+changing constraint values at run time.
 
-### `bisecting`
+### `bisecting` *(default)*
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.BisectingMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L227))
+{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+`eta = delta / 2`, `mu = 0`, `nu = 0`.
+Vertical scattering plane bisecting condition (You 1999, §5.3).
 
-`eta` is constrained to `delta` / 2, placing the sample symmetrically between the incident and diffracted beams (the bisecting condition).
-
-Additional stages frozen at their current angles: `mu` = current angle, `nu` = current angle.
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
 
 ### `fixed_chi`
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.FixedAngleMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156))
+{class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+`eta = delta / 2`, `mu = 0`, `nu = 0`.
+`chi` is held at the value declared in the constraint (factory default: 90°).
+The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; the constraint
+persists until replaced — see {doc}`../howto/constraints`.
 
-Holds `chi` fixed at its **current angle** during `forward()`. Preset the angle with `g.set_angle("chi", value)` before calling `forward()`.
+| | |
+|---|---|
+| **Computed** | eta, phi, delta |
+| **Constant during** `forward()` | chi, mu = 0, nu = 0 |
 
 ### `fixed_phi`
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.FixedAngleMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156))
+{class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+`eta = delta / 2`, `mu = 0`, `nu = 0`.
+`phi` is held at the value declared in the constraint (factory default: 0°).
+The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
 
-Holds `phi` fixed at its **current angle** during `forward()`. Preset the angle with `g.set_angle("phi", value)` before calling `forward()`.
+| | |
+|---|---|
+| **Computed** | eta, chi, delta |
+| **Constant during** `forward()` | phi, mu = 0, nu = 0 |
 
 ### `fixed_mu`
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.FixedAngleMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156))
+{class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+`eta = delta / 2`, `nu = 0`.
+`mu` is held at the value declared in the constraint (factory default: 0°).
+The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
 
-Holds `mu` fixed at its **current angle** during `forward()`. Preset the angle with `g.set_angle("mu", value)` before calling `forward()`.
-
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu, nu = 0 |
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.psic`
+- {func}`~ad_hoc_diffractometer.factories.psic`
 - {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
-- {class}`~ad_hoc_diffractometer.mode.DiffractionMode`
-- {class}`~ad_hoc_diffractometer.mode.BisectingMode`
-- {class}`~ad_hoc_diffractometer.mode.FixedAngleMode`
+- {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+- {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
+- {class}`~ad_hoc_diffractometer.mode.SampleConstraint`
+- {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`
+- {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`
+- {exc}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`
+- {exc}`~ad_hoc_diffractometer.mode.ConstraintViolation`
 
 ## References
 

@@ -1,0 +1,247 @@
+(howto-constraints)=
+# Work with Constraints and Diffraction Modes
+
+This guide explains the constraint system in detail: how modes are defined,
+how to customise constraint values, how to build entirely new modes, and how
+to work with the `extras` dict for advanced modes.
+
+## Background: degrees of freedom
+
+Specifying a reflection (h, k, l) provides exactly **3 equations** on the
+motor angles (the three components of the scattering vector Q).
+A geometry with N real motor axes therefore has **N − 3 free parameters**
+after the Bragg condition is satisfied.  Each free parameter must be resolved
+by exactly one constraint.
+
+| Geometry family | N | N − 3 |
+|---|---|---|
+| {func}`~ad_hoc_diffractometer.factories.fourcv`, {func}`~ad_hoc_diffractometer.factories.fourch`, {func}`~ad_hoc_diffractometer.factories.zaxis`, {func}`~ad_hoc_diffractometer.factories.s2d2` | 4 | 1 |
+| {func}`~ad_hoc_diffractometer.factories.fivec` | 5 | 2 |
+| {func}`~ad_hoc_diffractometer.factories.psic`, {func}`~ad_hoc_diffractometer.factories.kappa6c`, {func}`~ad_hoc_diffractometer.factories.sixc` | 6 | 3 |
+
+```python
+import ad_hoc_diffractometer as ahd
+
+print(ahd.fourcv().free_dof_after_bragg)   # 1
+print(ahd.psic().free_dof_after_bragg)     # 3
+```
+
+## Constraint categories
+
+Every constraint belongs to one of three categories:
+
+**Sample constraint** — fixes one sample stage at a declared value, or
+declares the bisecting relational condition:
+
+```python
+from ad_hoc_diffractometer import SampleConstraint, BisectConstraint
+
+SampleConstraint("chi", 90.0)          # chi fixed at 90°
+SampleConstraint("omega", 0.0)         # omega fixed at 0°
+BisectConstraint("omega", "ttheta")    # omega = ttheta / 2
+BisectConstraint("eta", "delta")       # eta = delta / 2  (psic)
+```
+
+**Detector constraint** — fixes one detector stage at a declared value:
+
+```python
+from ad_hoc_diffractometer import DetectorConstraint
+
+DetectorConstraint("nu", 0.0)     # nu fixed at 0°
+DetectorConstraint("gamma", 0.0)  # gamma fixed at 0°
+```
+
+**Reference constraint** — expresses a condition between Q and a reference
+vector n̂ (surface normal, polarisation axis, etc.).
+All reference constraints are stubs pending the reference-vector
+infrastructure (Issue J):
+
+```python
+from ad_hoc_diffractometer import ReferenceConstraint
+
+ReferenceConstraint("psi", 90.0)       # azimuthal angle of n̂ about Q
+ReferenceConstraint("alpha_i", 5.0)    # incidence angle
+ReferenceConstraint("a_eq_b", True)    # alpha_i = beta_out (symmetric)
+```
+
+**Rules:** at most one {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`,
+at most one {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`,
+remainder must be {class}`~ad_hoc_diffractometer.mode.SampleConstraint`
+or {class}`~ad_hoc_diffractometer.mode.BisectConstraint`.
+Total must equal N − 3.
+
+## Use a factory-defined mode
+
+```python
+g = ahd.fourcv()
+g.mode_name = "bisecting"   # 1 BisectConstraint (N-3=1)
+solutions = g.forward(1, 0, 0)
+```
+
+## Set a constraint value at run time
+
+A constraint value is **constant for the duration of a single
+{func}`~ad_hoc_diffractometer.forward.compute_forward` call**.
+The {class}`~ad_hoc_diffractometer.mode.ConstraintSet` object persists on the
+geometry until explicitly replaced — there is no need to reassign it if the
+value does not change between calls.
+
+```python
+from ad_hoc_diffractometer import ConstraintSet, SampleConstraint
+
+g = ahd.fourcv()
+
+# Set once — all subsequent forward() calls use chi = 45°
+g.modes["my_chi"] = ConstraintSet([SampleConstraint("chi", 45.0)])
+g.mode_name = "my_chi"
+
+sols_100 = g.forward(1, 0, 0)   # chi = 45°
+sols_010 = g.forward(0, 1, 0)   # chi = 45° (same constraint, no reassignment needed)
+sols_111 = g.forward(1, 1, 1)   # chi = 45°
+
+# Only reassign when the value changes
+g.modes["my_chi"] = ConstraintSet([SampleConstraint("chi", 60.0)])
+sols_new = g.forward(1, 0, 0)   # chi = 60° from here on
+```
+
+The factory mode `"fixed_chi"` has a default chi = 90°.
+Replacing the {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+in `g.modes["fixed_chi"]` changes the value for all subsequent calls
+until it is replaced again.
+
+The `computed` field on {class}`~ad_hoc_diffractometer.mode.ConstraintSet` is
+informational (documents which stages the solver computes) and does not
+affect the calculation.
+
+## Build a multi-constraint mode (six-circle)
+
+For psic (N − 3 = 3), three constraints are needed:
+
+```python
+from ad_hoc_diffractometer import (
+    ConstraintSet, BisectConstraint, SampleConstraint, DetectorConstraint
+)
+
+g = ahd.psic()
+
+# Custom bisecting mode with mu=5° (non-zero mu)
+g.modes["bisecting_mu5"] = ConstraintSet(
+    [
+        BisectConstraint("eta", "delta"),   # sample: eta = delta/2
+        SampleConstraint("mu", 5.0),        # sample: mu fixed at 5°
+        DetectorConstraint("nu", 0.0),      # detector: nu fixed at 0°
+    ],
+    computed=["eta", "chi", "phi", "delta"],
+)
+g.mode_name = "bisecting_mu5"
+```
+
+## Inspect a mode
+
+```python
+cs = g.modes["bisecting"]
+
+# All constraints in definition order
+print(cs.constraints)
+
+# Stage names held fixed (derived from constraints, not a separate dict)
+print(cs.constant_stages)    # e.g. ['eta', 'mu', 'nu']
+
+# Stage names computed by the solver
+print(cs.computed)           # e.g. ['eta', 'chi', 'phi', 'delta']
+
+# Bisect pair (sample stage, detector stage)
+print(cs.bisect_stages())    # e.g. ('eta', 'delta')
+
+# DOF check
+print(cs.is_fully_constrained(g))   # True if len(constraints) == N-3
+
+# Solver availability
+print(cs.is_implemented(g))         # True if all constraints have solvers
+```
+
+## The extras dict
+
+Some modes require additional input beyond (h, k, l), or compute additional
+output quantities alongside the motor angles.
+These are declared in the `extras` dict using {data}`~ad_hoc_diffractometer.mode.REQUIRED`
+and {data}`~ad_hoc_diffractometer.mode.OPTIONAL` sentinels:
+
+```python
+from ad_hoc_diffractometer import REQUIRED, OPTIONAL, ConstraintSet, ReferenceConstraint
+
+# psi_constant mode on fourcv: requires a reference vector n̂
+cs = g.modes["psi_constant"]
+print(cs.extras)
+# {'n_hat': <REQUIRED>, 'psi': None}
+# n_hat must be supplied; psi is an output populated by the solver
+```
+
+`REQUIRED` marks inputs that **must** be supplied before calling `forward()`.
+`None` marks output slots populated by the solver.
+`OPTIONAL` marks inputs with a sensible default.
+
+## Stub modes
+
+Modes whose constraint patterns do not yet have a solver implementation
+return `False` from `is_implemented()` and raise `NotImplementedError`
+when `forward()` is called:
+
+```python
+g = ahd.fourcv()
+g.mode_name = "psi_constant"
+
+print(g.modes["psi_constant"].is_implemented(g))  # False
+
+try:
+    g.forward(1, 0, 0)
+except NotImplementedError as e:
+    print(e)   # describes which infrastructure is missing
+```
+
+## Serialisation
+
+{class}`~ad_hoc_diffractometer.mode.ConstraintSet` round-trips through `to_dict()` / `from_dict()`:
+
+```python
+import json
+from ad_hoc_diffractometer import AdHocDiffractometer
+
+g = ahd.fourcv()
+d = g.to_dict()
+json.dumps(d)   # JSON-serialisable
+
+g2 = AdHocDiffractometer.from_dict(d)
+print(g2.modes.keys())    # same modes as g
+print(g2.mode_name)       # 'bisecting'
+```
+
+## Custom constraint protocol
+
+Any object satisfying the {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+interface can be added to a {class}`~ad_hoc_diffractometer.mode.ModeDict`.
+A minimal custom constraint must implement:
+
+- `name: str` — a unique identifier
+- `category: str` — `"sample"`, `"detector"`, or `"reference"`
+- `extras: dict` — input/output parameters
+- `evaluate(angles, geometry) -> float` — residual (0 = satisfied)
+- `is_satisfied(angles, geometry, tol) -> bool`
+- `is_implemented(geometry) -> bool`
+- `to_dict() / from_dict()` — serialisation
+
+The numeric fallback solver in `forward.py` handles any custom constraint
+that has `is_implemented()` returning `True`, even without an analytic solver.
+
+## See also
+
+- {doc}`modes` — everyday mode switching
+- {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+- {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
+- {class}`~ad_hoc_diffractometer.mode.SampleConstraint`
+- {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`
+- {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`
+- {data}`~ad_hoc_diffractometer.mode.REQUIRED`
+- {data}`~ad_hoc_diffractometer.mode.OPTIONAL`
+- {exc}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`
+- {exc}`~ad_hoc_diffractometer.mode.ConstraintViolation`

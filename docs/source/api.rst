@@ -180,9 +180,10 @@ Modules are grouped by layer.
        orientation -> reflection
        orientation -> rotation
        orientation -> stage
-       forward     -> geometry  [style=dashed]
-       forward     -> mode
-       forward     -> orientation
+        forward     -> display    [style=dashed]
+        forward     -> geometry  [style=dashed]
+        forward     -> mode
+        forward     -> orientation
         conversions -> sample
        surface     -> geometry  [style=dashed]
        scan        -> geometry  [style=dashed]

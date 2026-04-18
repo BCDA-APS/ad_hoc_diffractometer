@@ -47,7 +47,7 @@ ValueError
 ValueError
     If (h, k, l) = (0, 0, 0).
 EwaldSphereViolation
-    If the requested |Q| exceeds the Ewald sphere (wavelength too long).
+    If the requested ``|Q|`` exceeds the Ewald sphere (wavelength too long).
 ConstraintViolation
     If a returned solution violates a declared constraint beyond tolerance.
 
@@ -111,7 +111,7 @@ def compute_forward(
         If (h, k, l) == (0, 0, 0).
     EwaldSphereViolation
         If the scattering vector magnitude exceeds the Ewald sphere
-        (|Q| > 4π/λ, i.e. Bragg condition cannot be satisfied).
+        (``|Q|`` > 4π/λ, i.e. Bragg condition cannot be satisfied).
     ConstraintViolation
         If a solution returned by the solver violates a declared constraint
         beyond the display-precision tolerance.

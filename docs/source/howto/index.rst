@@ -15,6 +15,7 @@ installed the package and are familiar with the
    orient
    forward
    modes
+   constraints
    trajectory
    refine_lattice
    serialize
@@ -58,6 +59,13 @@ installed the package and are familiar with the
 
       Choose which stages are free, fixed, or coupled during a
       forward calculation.
+
+   .. grid-item-card:: :material-outlined:`rule;3em` Work with Constraints
+      :link: constraints
+      :link-type: doc
+
+      Understand the constraint framework: DOF rule, constraint categories,
+      custom modes, and the extras dict for advanced modes.
 
    .. grid-item-card:: :material-outlined:`route;3em` Plan a Trajectory
       :link: trajectory

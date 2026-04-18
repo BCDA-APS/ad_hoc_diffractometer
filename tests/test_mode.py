@@ -48,6 +48,7 @@ from ad_hoc_diffractometer import Stage
 from ad_hoc_diffractometer import fivec
 from ad_hoc_diffractometer import fourch
 from ad_hoc_diffractometer import fourcv
+from ad_hoc_diffractometer import sixc
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
@@ -1484,7 +1485,7 @@ def test_four_circle_modes_round_trip_serialisation(factory):
 # ---------------------------------------------------------------------------
 
 _FIVEC_MODES = {
-    "bisecting",
+    "bisecting_4c",
     "fixed_chi",
     "fixed_phi",
     "fixed_mu",
@@ -1497,9 +1498,9 @@ def test_fivec_factory_mode_names():
     assert set(fivec().modes.keys()) == _FIVEC_MODES
 
 
-def test_fivec_default_mode_is_bisecting():
-    """Default mode for fivec is 'bisecting'."""
-    assert fivec().mode_name == "bisecting"
+def test_fivec_default_mode_is_bisecting_4c():
+    """Default mode for fivec is 'bisecting_4c'."""
+    assert fivec().mode_name == "bisecting_4c"
 
 
 def test_fivec_free_dof():
@@ -1522,7 +1523,7 @@ def test_fivec_mode_is_constraint_set(mode_name):
 @pytest.mark.parametrize(
     "mode_name, expected_implemented",
     [
-        pytest.param("bisecting", True, id="bisecting-implemented"),
+        pytest.param("bisecting_4c", True, id="bisecting_4c-implemented"),
         pytest.param("fixed_chi", True, id="fixed_chi-implemented"),
         pytest.param("fixed_phi", True, id="fixed_phi-implemented"),
         pytest.param("fixed_mu", True, id="fixed_mu-implemented"),
@@ -1542,7 +1543,7 @@ def test_fivec_mode_is_implemented(mode_name, expected_implemented):
 @pytest.mark.parametrize(
     "mode_name, expected_has_bisect",
     [
-        pytest.param("bisecting", True, id="bisecting-has-bisect"),
+        pytest.param("bisecting_4c", True, id="bisecting_4c-has-bisect"),
         pytest.param("fixed_chi", False, id="fixed_chi-no-bisect"),
         pytest.param("fixed_phi", False, id="fixed_phi-no-bisect"),
         pytest.param("fixed_mu", True, id="fixed_mu-has-bisect"),
@@ -1560,7 +1561,9 @@ def test_fivec_mode_has_bisect(mode_name, expected_has_bisect):
 @pytest.mark.parametrize(
     "mode_name, expected_computed",
     [
-        pytest.param("bisecting", ["omega", "chi", "phi", "ttheta"], id="bisecting"),
+        pytest.param(
+            "bisecting_4c", ["omega", "chi", "phi", "ttheta"], id="bisecting_4c"
+        ),
         pytest.param("fixed_chi", ["omega", "phi", "ttheta"], id="fixed_chi"),
         pytest.param("fixed_phi", ["omega", "chi", "ttheta"], id="fixed_phi"),
         pytest.param(
@@ -1586,4 +1589,125 @@ def test_fivec_modes_round_trip_serialisation():
     assert set(d["modes"].keys()) == _FIVEC_MODES
     g2 = AdHocDiffractometer.from_dict(d)
     assert set(g2.modes.keys()) == _FIVEC_MODES
-    assert g2.mode_name == "bisecting"
+    assert g2.mode_name == "bisecting_4c"
+
+
+# ---------------------------------------------------------------------------
+# Issue #155 — sixc mode structure
+# ---------------------------------------------------------------------------
+
+_SIXC_MODES = {
+    "bisecting_4c",
+    "fixed_gamma_5c",
+    "fixed_alpha_5c",
+    "zaxis_alpha_fixed",
+    "zaxis_beta_fixed",
+    "zaxis_alpha_eq_beta",
+}
+
+_SIXC_IMPLEMENTED = {"bisecting_4c", "fixed_gamma_5c", "fixed_alpha_5c"}
+_SIXC_STUBS = {"zaxis_alpha_fixed", "zaxis_beta_fixed", "zaxis_alpha_eq_beta"}
+
+
+def test_sixc_factory_mode_names():
+    """sixc exposes exactly the 6 declared mode names."""
+    assert set(sixc().modes.keys()) == _SIXC_MODES
+
+
+def test_sixc_default_mode_is_bisecting_4c():
+    """Default mode for sixc is 'bisecting_4c'."""
+    assert sixc().mode_name == "bisecting_4c"
+
+
+def test_sixc_free_dof():
+    """sixc has free_dof_after_bragg == 3."""
+    assert sixc().free_dof_after_bragg == 3
+
+
+@pytest.mark.parametrize(
+    "mode_name",
+    [pytest.param(m, id=m) for m in _SIXC_MODES],
+)
+def test_sixc_mode_is_constraint_set(mode_name):
+    """Every sixc mode is a ConstraintSet with exactly 3 constraints."""
+    g = sixc()
+    cs = g.modes[mode_name]
+    assert isinstance(cs, ConstraintSet)
+    assert len(cs) == 3
+
+
+@pytest.mark.parametrize(
+    "mode_name, expected_implemented",
+    [pytest.param(m, True, id=f"{m}-implemented") for m in _SIXC_IMPLEMENTED]
+    + [pytest.param(m, False, id=f"{m}-stub") for m in _SIXC_STUBS],
+)
+def test_sixc_mode_is_implemented(mode_name, expected_implemented):
+    """Implemented modes return True; zaxis stubs return False."""
+    g = sixc()
+    assert g.modes[mode_name].is_implemented(g) == expected_implemented
+
+
+@pytest.mark.parametrize(
+    "mode_name, expected_has_bisect",
+    [
+        pytest.param("bisecting_4c", True, id="bisecting_4c-has-bisect"),
+        pytest.param("fixed_gamma_5c", True, id="fixed_gamma_5c-has-bisect"),
+        pytest.param("fixed_alpha_5c", True, id="fixed_alpha_5c-has-bisect"),
+        pytest.param("zaxis_alpha_fixed", False, id="zaxis_alpha_fixed-no-bisect"),
+        pytest.param("zaxis_beta_fixed", False, id="zaxis_beta_fixed-no-bisect"),
+        pytest.param("zaxis_alpha_eq_beta", False, id="zaxis_alpha_eq_beta-no-bisect"),
+    ],
+)
+def test_sixc_mode_has_bisect(mode_name, expected_has_bisect):
+    """BisectConstraint presence matches expected for each sixc mode."""
+    assert sixc().modes[mode_name].has_bisect == expected_has_bisect
+
+
+@pytest.mark.parametrize(
+    "mode_name, extras_key, expected_value",
+    [
+        pytest.param(
+            "zaxis_alpha_fixed", "n_hat", "REQUIRED", id="zaxis_alpha_fixed-n_hat"
+        ),
+        pytest.param(
+            "zaxis_alpha_fixed", "alpha_i", None, id="zaxis_alpha_fixed-alpha_i-output"
+        ),
+        pytest.param(
+            "zaxis_beta_fixed", "n_hat", "REQUIRED", id="zaxis_beta_fixed-n_hat"
+        ),
+        pytest.param(
+            "zaxis_beta_fixed", "beta_out", None, id="zaxis_beta_fixed-beta_out-output"
+        ),
+        pytest.param(
+            "zaxis_alpha_eq_beta", "n_hat", "REQUIRED", id="zaxis_alpha_eq_beta-n_hat"
+        ),
+    ],
+)
+def test_sixc_zaxis_extras_declared(mode_name, extras_key, expected_value):
+    """zaxis mode extras carry the expected sentinel or output placeholder."""
+    g = sixc()
+    mode = g.modes[mode_name]
+    actual = mode.extras.get(extras_key)
+    if expected_value == "REQUIRED":
+        assert actual is REQUIRED
+    else:
+        assert actual is expected_value
+
+
+def test_sixc_four_circle_computed_stages():
+    """four_circle mode computed field lists omega, chi, phi, delta."""
+    cs = sixc().modes["bisecting_4c"]
+    assert cs.computed == ["omega", "chi", "phi", "delta"]
+
+
+def test_sixc_modes_round_trip_serialisation():
+    """Full to_dict / from_dict round-trip preserves all 6 sixc modes."""
+    import json
+
+    g = sixc()
+    d = g.to_dict()
+    assert json.dumps(d)
+    assert set(d["modes"].keys()) == _SIXC_MODES
+    g2 = AdHocDiffractometer.from_dict(d)
+    assert set(g2.modes.keys()) == _SIXC_MODES
+    assert g2.mode_name == "bisecting_4c"
