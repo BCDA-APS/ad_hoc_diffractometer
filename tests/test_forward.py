@@ -290,7 +290,7 @@ def test_kappa4cv_bisecting_round_trip():
 # Issue #151 — kappa4cv and kappa4ch: mode counts, stubs, fixed_kphi
 # ---------------------------------------------------------------------------
 
-_KAPPA4_ALL_MODES = {
+_KAPPA4_BASE_MODES = {
     "bisecting",
     "fixed_kphi",
     "constant_omega",
@@ -298,16 +298,19 @@ _KAPPA4_ALL_MODES = {
     "constant_phi",
     "psi_constant",
 }
+_KAPPA4CV_ALL_MODES = _KAPPA4_BASE_MODES | {"double_diffraction"}
+_KAPPA4CH_ALL_MODES = _KAPPA4_BASE_MODES
 _KAPPA4_STUB_MODES = {"psi_constant"}
 
 
-@pytest.mark.parametrize(
-    "factory",
-    [pytest.param(kappa4cv, id="kappa4cv"), pytest.param(kappa4ch, id="kappa4ch")],
-)
-def test_kappa4_has_all_six_modes(factory):
-    """kappa4cv and kappa4ch both expose all 6 declared modes."""
-    assert set(factory().modes.keys()) == _KAPPA4_ALL_MODES
+def test_kappa4cv_has_all_modes():
+    """kappa4cv exposes all declared modes including double_diffraction."""
+    assert set(kappa4cv().modes.keys()) == _KAPPA4CV_ALL_MODES
+
+
+def test_kappa4ch_has_all_modes():
+    """kappa4ch exposes all declared modes (no double_diffraction)."""
+    assert set(kappa4ch().modes.keys()) == _KAPPA4CH_ALL_MODES
 
 
 @pytest.mark.parametrize(
@@ -1356,6 +1359,7 @@ _PSIC_MODES_ALL = {
     "bisecting_horizontal",
     "fixed_nu",
     "double_diffraction_vertical",
+    "double_diffraction_horizontal",
     "lifting_detector_mu",
     "lifting_detector_phi",
     "psi_constant_vertical",
@@ -1370,6 +1374,7 @@ _PSIC_MODES_IMPLEMENTED = {
     "bisecting_horizontal",
     "fixed_nu",
     "double_diffraction_vertical",
+    "double_diffraction_horizontal",
     "lifting_detector_mu",
     "lifting_detector_phi",
 }
@@ -1377,8 +1382,8 @@ _PSIC_MODES_IMPLEMENTED = {
 _PSIC_MODES_STUBS = _PSIC_MODES_ALL - _PSIC_MODES_IMPLEMENTED
 
 
-def test_psic_has_all_eleven_modes():
-    """psic exposes exactly 11 declared modes."""
+def test_psic_has_all_twelve_modes():
+    """psic exposes exactly 12 declared modes."""
     assert set(psic().modes.keys()) == _PSIC_MODES_ALL
 
 
@@ -1410,7 +1415,7 @@ def test_psic_mode_is_implemented(mode_name, expected_implemented):
         pytest.param("bisecting_horizontal", 1, 0, 1, id="bisecting_horiz-101"),
         pytest.param("fixed_nu", 1, 0, 0, id="fixed_nu-100"),
         pytest.param("fixed_nu", 1, 1, 1, id="fixed_nu-111"),
-        pytest.param("double_diffraction_vertical", 1, 0, 0, id="double_diff-100"),
+        # double_diffraction_vertical tested separately (requires extras h2/k2/l2)
         # lifting_detector_* modes: qaz=90 out-of-plane constraint
         pytest.param("lifting_detector_mu", 1, 0, 0, id="lifting_detector_mu-100"),
         pytest.param("lifting_detector_mu", 0, 0, 1, id="lifting_detector_mu-001"),
@@ -1540,6 +1545,8 @@ _KAPPA6C_ALL_MODES = {
     "lifting_detector_kphi",
     "psi_constant_vertical",
     "psi_constant_horizontal",
+    "double_diffraction_vertical",
+    "double_diffraction_horizontal",
 }
 _KAPPA6C_STUB_MODES = {
     "psi_constant_vertical",
@@ -1761,4 +1768,511 @@ def test_kappa6c_lifting_detector_qaz_satisfied(mode_name, h, k, l):  # noqa: E7
         assert qaz_computed == pytest.approx(90.0, abs=1e-4), (
             f"{mode_name}: expected qaz=90, got {qaz_computed:.6f} "
             f"(nu={nu_deg:.4f}, delta={delta_deg:.4f})"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Issue #176 — psi_constant forward solver (validation filter)
+# ---------------------------------------------------------------------------
+
+
+def _setup_psi(factory, ref=(0, 0, 1), a=4.0):
+    """Return a geometry with wavelength, UB=B, and azimuthal_reference set."""
+    g = _setup_cubic(factory, a=a)
+    g.azimuthal_reference = ref
+    return g
+
+
+def _natural_psi(g, h, k, l):  # noqa: E741
+    """Compute the natural psi from the phi frame (motor-angle independent)."""
+    from ad_hoc_diffractometer.forward import _compute_natural_psi
+
+    Q_phi = g.sample.UB @ np.array([h, k, l], dtype=float)
+    return _compute_natural_psi(g, Q_phi)
+
+
+# --- _compute_natural_psi unit tests ---
+
+
+@pytest.mark.parametrize(
+    "factory, h, k, l, ref, expected_psi",
+    [
+        pytest.param(fourcv, 1, 0, 0, (0, 0, 1), 90.0, id="fourcv-100-ref001"),
+        pytest.param(fourcv, 1, 1, 1, (0, 0, 1), 120.0, id="fourcv-111-ref001"),
+        pytest.param(fourcv, 1, 0, 1, (0, 0, 1), 90.0, id="fourcv-101-ref001"),
+        pytest.param(psic, 1, 0, 0, (0, 0, 1), 90.0, id="psic-100-ref001"),
+        pytest.param(psic, 1, 1, 1, (0, 0, 1), 120.0, id="psic-111-ref001"),
+    ],
+)
+def test_compute_natural_psi(factory, h, k, l, ref, expected_psi):  # noqa: E741
+    """_compute_natural_psi returns the correct motor-angle-independent psi."""
+    g = _setup_psi(factory, ref=ref)
+    psi = _natural_psi(g, h, k, l)
+    assert psi is not None
+    assert psi == pytest.approx(expected_psi, abs=1e-4)
+
+
+def test_compute_natural_psi_undefined_when_ref_parallel_to_Q():
+    """_compute_natural_psi returns None when reference is parallel to Q."""
+    g = _setup_psi(fourcv, ref=(1, 0, 0))
+    psi = _natural_psi(g, 1, 0, 0)  # Q along x, ref along x -> parallel
+    assert psi is None
+
+
+def test_compute_natural_psi_undefined_when_Q_parallel_to_beam():
+    """_compute_natural_psi returns None when Q is parallel to incident beam."""
+    g = _setup_psi(fourcv, ref=(0, 0, 1))
+    psi = _natural_psi(g, 0, 1, 0)  # Q along y (longitudinal = beam direction)
+    assert psi is None
+
+
+# --- fourcv / fourch psi_constant round-trip tests (synthetic bisect path) ---
+
+
+@pytest.mark.parametrize(
+    "factory, h, k, l, ref",
+    [
+        pytest.param(fourcv, 1, 0, 0, (0, 0, 1), id="fourcv-100-ref001"),
+        pytest.param(fourcv, 1, 0, 1, (0, 0, 1), id="fourcv-101-ref001"),
+        pytest.param(fourcv, 1, 1, 1, (0, 0, 1), id="fourcv-111-ref001"),
+        pytest.param(fourch, 1, 0, 0, (0, 0, 1), id="fourch-100-ref001"),
+        pytest.param(fourch, 1, 1, 1, (0, 0, 1), id="fourch-111-ref001"),
+    ],
+)
+def test_four_circle_psi_constant_round_trip(factory, h, k, l, ref):  # noqa: E741
+    """psi_constant returns bisecting solutions when natural psi matches target."""
+    g = _setup_psi(factory, ref=ref)
+    natural = _natural_psi(g, h, k, l)
+    assert natural is not None
+
+    from ad_hoc_diffractometer import REQUIRED
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import ReferenceConstraint
+
+    g.modes["psi_constant"] = ConstraintSet(
+        [ReferenceConstraint("psi", natural)],
+        computed=g.modes["psi_constant"].computed,
+        extras={"n_hat": REQUIRED, "psi": None},
+    )
+    g.mode_name = "psi_constant"
+    assert _round_trip_ok(g, h, k, l)
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        pytest.param(fourcv, id="fourcv"),
+        pytest.param(fourch, id="fourch"),
+    ],
+)
+def test_four_circle_psi_constant_wrong_target_returns_empty(factory):
+    """psi_constant returns [] when natural psi does not match psi_target."""
+    g = _setup_psi(factory, ref=(0, 0, 1))
+    natural = _natural_psi(g, 1, 0, 0)
+    assert natural is not None
+
+    from ad_hoc_diffractometer import REQUIRED
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import ReferenceConstraint
+
+    wrong_target = natural + 45.0
+    g.modes["psi_constant"] = ConstraintSet(
+        [ReferenceConstraint("psi", wrong_target)],
+        computed=g.modes["psi_constant"].computed,
+        extras={"n_hat": REQUIRED, "psi": None},
+    )
+    g.mode_name = "psi_constant"
+    solutions = g.forward(1, 0, 0)
+    assert solutions == []
+
+
+# --- psic psi_constant_vertical / horizontal round-trip tests (bisecting path) ---
+
+
+@pytest.mark.parametrize(
+    "mode_name, h, k, l, ref",
+    [
+        pytest.param(
+            "psi_constant_vertical", 1, 0, 0, (0, 0, 1), id="psic-psi_vert-100"
+        ),
+        pytest.param(
+            "psi_constant_vertical", 1, 0, 1, (0, 0, 1), id="psic-psi_vert-101"
+        ),
+        pytest.param(
+            "psi_constant_vertical", 1, 1, 1, (0, 0, 1), id="psic-psi_vert-111"
+        ),
+        pytest.param(
+            "psi_constant_horizontal", 1, 0, 0, (0, 0, 1), id="psic-psi_horiz-100"
+        ),
+    ],
+)
+def test_psic_psi_constant_round_trip(mode_name, h, k, l, ref):  # noqa: E741
+    """psic psi_constant modes return bisecting solutions when psi matches."""
+    g = _setup_psi(psic, ref=ref)
+    natural = _natural_psi(g, h, k, l)
+    assert natural is not None
+
+    from ad_hoc_diffractometer import REQUIRED
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import ReferenceConstraint
+
+    old_mode = g.modes[mode_name]
+    new_constraints = []
+    for c in old_mode.constraints:
+        if isinstance(c, ReferenceConstraint) and c.name == "psi":
+            new_constraints.append(ReferenceConstraint("psi", natural))
+        else:
+            new_constraints.append(c)
+    g.modes[mode_name] = ConstraintSet(
+        new_constraints,
+        computed=old_mode.computed,
+        extras={"n_hat": REQUIRED, "psi": None},
+    )
+    g.mode_name = mode_name
+    assert _round_trip_ok(g, h, k, l)
+
+
+def test_psic_psi_constant_wrong_target_returns_empty():
+    """psic psi_constant_vertical returns [] when psi target is wrong."""
+    g = _setup_psi(psic, ref=(0, 0, 1))
+    natural = _natural_psi(g, 1, 0, 0)
+    assert natural is not None
+
+    from ad_hoc_diffractometer import REQUIRED
+    from ad_hoc_diffractometer import BisectConstraint
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import ReferenceConstraint
+    from ad_hoc_diffractometer import SampleConstraint
+
+    g.modes["psi_constant_vertical"] = ConstraintSet(
+        [
+            BisectConstraint("eta", "delta"),
+            SampleConstraint("mu", 0.0),
+            ReferenceConstraint("psi", natural + 45.0),
+        ],
+        computed=["eta", "chi", "phi", "delta"],
+        extras={"n_hat": REQUIRED, "psi": None},
+    )
+    g.mode_name = "psi_constant_vertical"
+    solutions = g.forward(1, 0, 0)
+    assert solutions == []
+
+
+# --- psi_constant psi verification in solutions ---
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, h, k, l, ref",
+    [
+        pytest.param(fourcv, "psi_constant", 1, 0, 0, (0, 0, 1), id="fourcv-100"),
+        pytest.param(fourcv, "psi_constant", 1, 1, 1, (0, 0, 1), id="fourcv-111"),
+        pytest.param(
+            psic, "psi_constant_vertical", 1, 0, 0, (0, 0, 1), id="psic-vert-100"
+        ),
+        pytest.param(
+            psic, "psi_constant_vertical", 1, 1, 1, (0, 0, 1), id="psic-vert-111"
+        ),
+        pytest.param(
+            psic, "psi_constant_horizontal", 1, 0, 0, (0, 0, 1), id="psic-horiz-100"
+        ),
+    ],
+)
+def test_psi_constant_psi_verified_in_solutions(
+    factory,
+    mode_name,
+    h,
+    k,
+    l,  # noqa: E741
+    ref,
+):
+    """All psi_constant solutions have psi == natural_psi."""
+    g = _setup_psi(factory, ref=ref)
+    natural = _natural_psi(g, h, k, l)
+    assert natural is not None
+
+    from ad_hoc_diffractometer import REQUIRED
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import ReferenceConstraint
+
+    old_mode = g.modes[mode_name]
+    new_constraints = []
+    for c in old_mode.constraints:
+        if isinstance(c, ReferenceConstraint) and c.name == "psi":
+            new_constraints.append(ReferenceConstraint("psi", natural))
+        else:
+            new_constraints.append(c)
+    g.modes[mode_name] = ConstraintSet(
+        new_constraints,
+        computed=old_mode.computed,
+        extras={"n_hat": REQUIRED, "psi": None},
+    )
+    g.mode_name = mode_name
+    solutions = g.forward(h, k, l)
+    assert len(solutions) > 0, f"No solutions for {mode_name} ({h},{k},{l})"
+    for sol in solutions:
+        psi_check = g.psi(angles=sol)
+        assert psi_check == pytest.approx(natural, abs=1e-3), (
+            f"psi mismatch: expected {natural:.4f}, got {psi_check:.4f}"
+        )
+
+
+# --- kappa6c psi_constant (bisecting path with kappa stages) ---
+
+
+@pytest.mark.parametrize(
+    "mode_name, h, k, l, ref",
+    [
+        pytest.param(
+            "psi_constant_vertical", 1, 0, 0, (0, 0, 1), id="kappa6c-psi_vert-100"
+        ),
+        pytest.param(
+            "psi_constant_vertical", 1, 1, 0, (0, 0, 1), id="kappa6c-psi_vert-110"
+        ),
+    ],
+)
+def test_kappa6c_psi_constant_round_trip(mode_name, h, k, l, ref):  # noqa: E741
+    """kappa6c psi_constant modes return bisecting solutions when psi matches."""
+    g = _setup_psi(kappa6c, ref=ref)
+    natural = _natural_psi(g, h, k, l)
+    assert natural is not None
+
+    from ad_hoc_diffractometer import REQUIRED
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import ReferenceConstraint
+
+    old_mode = g.modes[mode_name]
+    new_constraints = []
+    for c in old_mode.constraints:
+        if isinstance(c, ReferenceConstraint) and c.name == "psi":
+            new_constraints.append(ReferenceConstraint("psi", natural))
+        else:
+            new_constraints.append(c)
+    g.modes[mode_name] = ConstraintSet(
+        new_constraints,
+        computed=old_mode.computed,
+        extras={"n_hat": REQUIRED, "psi": None},
+    )
+    g.mode_name = mode_name
+    assert _round_trip_ok(g, h, k, l)
+
+
+# --- kappa4cv psi_constant (synthetic bisect path) ---
+
+
+def test_kappa4cv_psi_constant_round_trip():
+    """kappa4cv psi_constant returns bisecting solutions via synthetic bisect."""
+    g = _setup_psi(kappa4cv, ref=(0, 0, 1))
+    natural = _natural_psi(g, 1, 1, 0)
+    assert natural is not None
+
+    from ad_hoc_diffractometer import REQUIRED
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import ReferenceConstraint
+
+    g.modes["psi_constant"] = ConstraintSet(
+        [ReferenceConstraint("psi", natural)],
+        computed=g.modes["psi_constant"].computed,
+        extras={"n_hat": REQUIRED, "psi": None},
+    )
+    g.mode_name = "psi_constant"
+    assert _round_trip_ok(g, 1, 1, 0)
+
+
+# --- psi undefined → empty solutions ---
+
+
+def test_psi_constant_undefined_psi_returns_empty():
+    """psi_constant returns [] when psi is undefined (Q ∥ incident beam)."""
+    g = _setup_psi(fourcv, ref=(0, 0, 1))
+    from ad_hoc_diffractometer import REQUIRED
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import ReferenceConstraint
+
+    g.modes["psi_constant"] = ConstraintSet(
+        [ReferenceConstraint("psi", 0.0)],
+        computed=g.modes["psi_constant"].computed,
+        extras={"n_hat": REQUIRED, "psi": None},
+    )
+    g.mode_name = "psi_constant"
+    # (0,1,0) has Q along y (longitudinal = incident beam direction) → psi undefined
+    solutions = g.forward(0, 1, 0)
+    assert solutions == []
+
+
+# --- wraparound tolerance test ---
+
+
+def test_psi_constant_wraparound_tolerance():
+    """psi_constant handles ±180° wraparound correctly."""
+    g = _setup_psi(fourcv, ref=(1, 0, 0))
+    natural = _natural_psi(g, 1, 1, 0)
+    assert natural is not None
+
+    from ad_hoc_diffractometer import REQUIRED
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import ReferenceConstraint
+
+    # Set target to the opposite wraparound side (shift by 360°)
+    if natural > 0:
+        wrapped = natural - 360.0
+    else:
+        wrapped = natural + 360.0
+
+    g.modes["psi_constant"] = ConstraintSet(
+        [ReferenceConstraint("psi", wrapped)],
+        computed=g.modes["psi_constant"].computed,
+        extras={"n_hat": REQUIRED, "psi": None},
+    )
+    g.mode_name = "psi_constant"
+    solutions = g.forward(1, 1, 0)
+    # wrapped and natural differ by 360° — should still match
+    assert len(solutions) > 0
+
+
+# ---------------------------------------------------------------------------
+# Issue #176 — double_diffraction forward solver (4D simultaneous)
+# ---------------------------------------------------------------------------
+
+
+def _setup_dd(factory, hkl2=(0, 1, 0), a=4.0, mode_name=None):
+    """Return a geometry with double_diffraction mode and h2/k2/l2 set."""
+    g = _setup_cubic(factory, a=a)
+    if mode_name is None:
+        # Pick the first double_diffraction mode available
+        for m in g.modes:
+            if "double_diffraction" in m:
+                mode_name = m
+                break
+    assert mode_name is not None, f"No double_diffraction mode found in {factory}"
+    g.mode_name = mode_name
+    cs = g.modes[mode_name]
+    cs.extras["h2"] = float(hkl2[0])
+    cs.extras["k2"] = float(hkl2[1])
+    cs.extras["l2"] = float(hkl2[2])
+    return g
+
+
+# --- ValueError when extras not set ---
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name",
+    [
+        pytest.param(fourcv, "double_diffraction", id="fourcv"),
+        pytest.param(fourch, "double_diffraction", id="fourch"),
+        pytest.param(psic, "double_diffraction_vertical", id="psic-vert"),
+        pytest.param(psic, "double_diffraction_horizontal", id="psic-horiz"),
+        pytest.param(kappa4cv, "double_diffraction", id="kappa4cv"),
+        pytest.param(kappa6c, "double_diffraction_vertical", id="kappa6c-vert"),
+        pytest.param(kappa6c, "double_diffraction_horizontal", id="kappa6c-horiz"),
+    ],
+)
+def test_double_diffraction_raises_without_extras(factory, mode_name):
+    """forward() raises ValueError when h2/k2/l2 are REQUIRED sentinels."""
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = mode_name
+    with pytest.raises(ValueError, match="h2, k2, l2"):
+        g.forward(1, 0, 0)
+
+
+# --- Round-trip tests ---
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, h, k, l, hkl2",
+    [
+        pytest.param(fourcv, "double_diffraction", 1, 0, 0, (0, 1, 0), id="fourcv-100"),
+        pytest.param(fourcv, "double_diffraction", 1, 1, 0, (0, 0, 1), id="fourcv-110"),
+        pytest.param(fourch, "double_diffraction", 1, 0, 0, (0, 1, 0), id="fourch-100"),
+        pytest.param(
+            psic,
+            "double_diffraction_vertical",
+            1,
+            0,
+            0,
+            (0, 1, 0),
+            id="psic-vert-100",
+        ),
+        pytest.param(
+            psic,
+            "double_diffraction_horizontal",
+            1,
+            0,
+            0,
+            (0, 1, 0),
+            id="psic-horiz-100",
+        ),
+    ],
+)
+def test_double_diffraction_round_trip(
+    factory,
+    mode_name,
+    h,
+    k,
+    l,  # noqa: E741
+    hkl2,
+):
+    """double_diffraction returns solutions that round-trip via inverse()."""
+    g = _setup_dd(factory, hkl2=hkl2, mode_name=mode_name)
+    solutions = g.forward(h, k, l)
+    # May return 0 solutions if no simultaneous diffraction exists
+    for sol in solutions:
+        hkl_back = g.inverse(sol)
+        assert np.allclose(hkl_back, [h, k, l], atol=1e-6), (
+            f"Round-trip failed: {[h, k, l]} -> {sol} -> {hkl_back}"
+        )
+
+
+# --- Ewald sphere verification for secondary reflection ---
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, h, k, l, hkl2",
+    [
+        pytest.param(fourcv, "double_diffraction", 1, 0, 0, (0, 1, 0), id="fourcv-100"),
+        pytest.param(
+            psic,
+            "double_diffraction_vertical",
+            1,
+            0,
+            0,
+            (0, 1, 0),
+            id="psic-vert-100",
+        ),
+    ],
+)
+def test_double_diffraction_secondary_on_ewald_sphere(
+    factory,
+    mode_name,
+    h,
+    k,
+    l,  # noqa: E741
+    hkl2,
+):
+    """In all solutions, the secondary reflection satisfies the Ewald sphere."""
+    import math
+
+    from ad_hoc_diffractometer.rotation import rotation_matrix
+
+    g = _setup_dd(factory, hkl2=hkl2, mode_name=mode_name)
+    solutions = g.forward(h, k, l)
+
+    hkl2_arr = np.array(hkl2, dtype=float)
+    Q2_phi = g.sample.UB @ hkl2_arr
+    k_mag = 2.0 * math.pi / g.wavelength
+    y_raw = np.asarray(g.basis.get("longitudinal", [0, 1, 0]), dtype=float)
+    ki = k_mag * (y_raw / np.linalg.norm(y_raw))
+    ki_sq = float(np.dot(ki, ki))
+
+    for sol in solutions:
+        # Build Z from solution angles
+        Z = np.eye(3)
+        for s in g.sample_stages:
+            Z = Z @ rotation_matrix(s.axis, sol[s.name])
+        Q2_lab = Z @ Q2_phi
+        kf2 = ki + Q2_lab
+        kf2_sq = float(np.dot(kf2, kf2))
+        residual = abs(kf2_sq - ki_sq)
+        assert residual < 1e-3, (  # noqa: PLR2004
+            f"Secondary reflection not on Ewald sphere: |kf2|²-|ki|² = {residual:.6f}"
         )

@@ -224,15 +224,24 @@ def test_naz_angle_vertical_normal_returns_zero():
             "a_eq_b", True, "surface_normal", (0, 0, 1), True, id="a_eq_b-with-sn"
         ),
         pytest.param("a_eq_b", True, "surface_normal", None, False, id="a_eq_b-no-sn"),
-        # psi/naz: not yet implemented regardless of reference vector
+        # psi: implemented when azimuthal_reference is set
         pytest.param(
             "psi",
             0.0,
             "azimuthal_reference",
             (0, 0, 1),
-            False,
-            id="psi-not-implemented",
+            True,
+            id="psi-with-azref",
         ),
+        pytest.param(
+            "psi",
+            0.0,
+            "azimuthal_reference",
+            None,
+            False,
+            id="psi-no-azref",
+        ),
+        # naz: not yet implemented regardless of reference vector
         pytest.param(
             "naz",
             0.0,
@@ -336,25 +345,37 @@ def test_surface_normal_none_serialisation():
 # ---------------------------------------------------------------------------
 
 
-def test_psi_constant_not_yet_solvable():
-    """psi_constant is_implemented=False and forward() raises NotImplementedError.
+def test_psi_constant_implemented_with_azref():
+    """psi_constant is_implemented=True when azimuthal_reference is set.
 
-    Even with azimuthal_reference set, the forward solver for psi_constant
-    is not yet wired up — is_implemented stays False until the solver is
-    registered (Issue J).  has_reference_vector() returns True to indicate
-    the vector prerequisite is met.
+    With azimuthal_reference set, the psi_constant forward solver is available.
+    It acts as a validation filter: it returns bisecting solutions only when
+    the natural psi for (h,k,l) matches the stored target.
     """
     g = _setup_psic()
     g.azimuthal_reference = (0, 0, 1)
     g.mode_name = "psi_constant_vertical"
     cs = g.modes["psi_constant_vertical"]
-    # is_implemented is False — no solver yet
-    assert cs.is_implemented(g) is False
+    # is_implemented is True — solver available
+    assert cs.is_implemented(g) is True
     # has_reference_vector is True — the prerequisite is met
     rc = cs.reference_constraint
     assert rc is not None
     assert rc.has_reference_vector(g) is True
-    # forward() raises because is_implemented=False
+    # forward() with correct psi target returns solutions
+    # Natural psi for (1,0,0) with ref=(0,0,1) is 90.0 on psic with identity UB.
+    # The mode's default psi target is 0.0, which does NOT match → empty list.
+    solutions = g.forward(1, 0, 0)
+    assert solutions == []  # natural psi=90 != target psi=0
+
+
+def test_psi_constant_not_implemented_without_azref():
+    """psi_constant is_implemented=False when azimuthal_reference is not set."""
+    g = _setup_psic()
+    assert g.azimuthal_reference is None
+    g.mode_name = "psi_constant_vertical"
+    cs = g.modes["psi_constant_vertical"]
+    assert cs.is_implemented(g) is False
     with pytest.raises(NotImplementedError):
         g.forward(1, 0, 0)
 

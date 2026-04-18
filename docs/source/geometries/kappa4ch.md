@@ -101,10 +101,13 @@ Fix virtual Eulerian phi at declared value (default 0°).
 | **Computed** | komega, kappa, kphi, ttheta |
 | **Constant during** `forward()` | phi (virtual) |
 
-### `psi_constant` *(stub)*
+### `psi_constant`
 
-Fix azimuthal angle ψ of n̂ about Q.
-Requires kappa inversion (#153) and a forward solver for psi constraints (not yet implemented).  Set ``g.azimuthal_reference = (h, k, l)`` — see {doc}`../howto/surface`.
+{class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
+azimuthal angle ψ validation filter.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+Returns bisecting solutions only when the natural ψ for (h,k,l) matches
+the stored target.  See {doc}`../howto/surface`.
 
 | | |
 |---|---|
