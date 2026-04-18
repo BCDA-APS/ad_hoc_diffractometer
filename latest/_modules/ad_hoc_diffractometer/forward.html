@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=fc50a347"></script>
+    <script src="../../_static/documentation_options.js?v=cc42383f"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 02:42 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 03:06 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -645,6 +645,10 @@
     <span class="k">if</span> <span class="n">_is_kappa_virtual_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_solve_kappa_virtual</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
+    <span class="c1"># Surface diffraction mode (ReferenceConstraint with surface_normal).</span>
+    <span class="k">if</span> <span class="n">_is_surface_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_solve_surface</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
     <span class="c1"># Fixed-angle only (no bisect).</span>
     <span class="k">return</span> <span class="n">_solve_fixed_sample</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
@@ -1117,6 +1121,173 @@
     <span class="k">return</span> <span class="n">solutions</span>
 
 
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Surface diffraction solvers (ReferenceConstraint modes)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_surface_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return True when mode has a ReferenceConstraint and surface_normal is set.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
+
+    <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">surface_normal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ReferenceConstraint</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_surface</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ttheta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Surface diffraction forward solver.</span>
+
+<span class="sd">    Supports ReferenceConstraint modes where the constraint is:</span>
+
+<span class="sd">    - ``&quot;alpha_i&quot;`` — incidence angle fixed at target value</span>
+<span class="sd">    - ``&quot;beta_out&quot;`` — exit angle fixed at target value</span>
+<span class="sd">    - ``&quot;a_eq_b&quot;`` — symmetric reflection: alpha_i = beta_out</span>
+
+<span class="sd">    The solver builds a baseline angles dict (applying all fixed sample/detector</span>
+<span class="sd">    constraints and setting the detector stage to ttheta_deg), then performs a</span>
+<span class="sd">    1D Newton-Raphson root-find over the remaining free stage to satisfy the</span>
+<span class="sd">    surface reference constraint.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">    Q_phi : numpy.ndarray, shape (3,)</span>
+<span class="sd">    ttheta_deg : float</span>
+<span class="sd">    mode : ConstraintSet</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
+
+    <span class="c1"># Extract the reference constraint</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ReferenceConstraint</span><span class="p">))</span>
+    <span class="n">target_name</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span>  <span class="c1"># &quot;alpha_i&quot;, &quot;beta_out&quot;, or &quot;a_eq_b&quot;</span>
+    <span class="n">target_value</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># float or True</span>
+
+    <span class="c1"># Build baseline angles dict with all fixed constraints applied</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Apply fixed sample constraints</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">fixed_sample_constraints</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001  # pragma: no branch</span>
+            <span class="n">angles</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="c1"># Apply detector constraint if present</span>
+    <span class="n">det_constraint</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_constraint</span>
+    <span class="k">if</span> <span class="n">det_constraint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>
+        <span class="n">angles</span><span class="p">[</span><span class="n">det_constraint</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="c1"># Set the active detector stage to ttheta_deg</span>
+    <span class="n">det_stage</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">angles</span><span class="p">[</span><span class="n">det_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttheta_deg</span>
+
+    <span class="c1"># Identify the one free sample stage (the one not fixed by any constraint)</span>
+    <span class="n">constrained_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">constrained_stages</span><span class="p">(</span><span class="n">geometry</span><span class="p">))</span>
+    <span class="n">constrained_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">det_stage</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">det_constraint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>
+        <span class="n">constrained_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">det_constraint</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">free_sample</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constrained_names</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">free_sample</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="c1"># All stages fixed — evaluate the constraint and return if satisfied</span>
+        <span class="k">if</span> <span class="n">_surface_residual</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">target_value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+            <span class="n">_apply_cut_points</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">angles</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_sample</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
+        <span class="c1"># More than one free sample stage — use the first one (rocking stage)</span>
+        <span class="c1"># and leave others at current values.  This handles cases where the</span>
+        <span class="c1"># reference constraint only restricts one angle.</span>
+        <span class="k">pass</span>
+
+    <span class="n">free_stage</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># 1D Newton-Raphson over the free stage angle</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">residual</span><span class="p">(</span><span class="n">angle_val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">trial</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+        <span class="n">trial</span><span class="p">[</span><span class="n">free_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">angle_val</span>
+        <span class="k">return</span> <span class="n">_surface_residual</span><span class="p">(</span><span class="n">trial</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">target_value</span><span class="p">)</span>
+
+    <span class="n">solutions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Seed from a grid of starting values</span>
+    <span class="n">lim_lo</span><span class="p">,</span> <span class="n">lim_hi</span> <span class="o">=</span> <span class="n">free_stage</span><span class="o">.</span><span class="n">limits</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="p">(</span><span class="n">lim_hi</span> <span class="o">-</span> <span class="n">lim_lo</span><span class="p">)</span> <span class="o">/</span> <span class="mf">40.0</span><span class="p">)</span>
+    <span class="n">seeds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lim_lo</span> <span class="o">+</span> <span class="n">step</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">lim_hi</span><span class="p">,</span> <span class="n">step</span><span class="p">))</span>
+
+    <span class="n">seen_angles</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">seeds</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">r0</span> <span class="o">=</span> <span class="n">residual</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">):</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="mf">1e-4</span>
+            <span class="n">dr</span> <span class="o">=</span> <span class="p">(</span><span class="n">residual</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">h</span><span class="p">)</span> <span class="o">-</span> <span class="n">residual</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">h</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dr</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="o">-</span><span class="n">r0</span> <span class="o">/</span> <span class="n">dr</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="n">dx</span>
+            <span class="n">r0</span> <span class="o">=</span> <span class="n">residual</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-8</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-5</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="c1"># Check it&#39;s within limits</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">lim_lo</span> <span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">lim_hi</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="c1"># Deduplicate</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">xs</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-3</span> <span class="k">for</span> <span class="n">xs</span> <span class="ow">in</span> <span class="n">seen_angles</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">seen_angles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+        <span class="n">sol</span><span class="p">[</span><span class="n">free_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">_apply_cut_points</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>  <span class="c1"># pragma: no branch</span>
+            <span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">solutions</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_surface_residual</span><span class="p">(</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">target_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">target_value</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the surface constraint residual for the given angles.</span>
+
+<span class="sd">    Returns a float residual in degrees (zero = constraint satisfied).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.reference</span><span class="w"> </span><span class="kn">import</span> <span class="n">exit_angle</span> <span class="k">as</span> <span class="n">_beta_out</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.reference</span><span class="w"> </span><span class="kn">import</span> <span class="n">incidence_angle</span> <span class="k">as</span> <span class="n">_alpha_i</span>
+
+    <span class="k">if</span> <span class="n">target_name</span> <span class="o">==</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span>
+        <span class="n">ai</span> <span class="o">=</span> <span class="n">_alpha_i</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ai</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">target_name</span> <span class="o">==</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span>
+        <span class="n">bo</span> <span class="o">=</span> <span class="n">_beta_out</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bo</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_value</span><span class="p">)</span>
+    <span class="c1"># a_eq_b: alpha_i = beta_out</span>
+    <span class="n">ai</span> <span class="o">=</span> <span class="n">_alpha_i</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span>
+    <span class="n">bo</span> <span class="o">=</span> <span class="n">_beta_out</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ai</span> <span class="o">-</span> <span class="n">bo</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_solve_fixed_sample</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -1379,7 +1550,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 02:42 CDT.
+  Last updated on 2026-04-18 03:06 CDT.
   <br/>
 </p></div>
       
