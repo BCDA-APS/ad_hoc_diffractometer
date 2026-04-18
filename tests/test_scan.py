@@ -47,13 +47,17 @@ WAVELENGTH = 1.5406  # Cu Kα in Å
 HKL_TEST = (1, 1, 0)  # reflection used throughout psi tests
 
 
-def _setup(factory, a=4.0, *, mode="bisecting"):
-    """Return a geometry with wavelength set, cubic lattice, UB=B."""
+def _setup(factory, a=4.0, *, mode=None):
+    """Return a geometry with wavelength set, cubic lattice, UB=B.
+
+    If mode is None (default), use the geometry's factory default mode.
+    """
     g = factory()
     g.wavelength = WAVELENGTH
     g.sample.lattice = Lattice(a=a)
     ub_identity(g.sample)
-    g.mode_name = mode
+    if mode is not None:
+        g.mode_name = mode
     return g
 
 

@@ -36,13 +36,15 @@ version = ".".join(release.split(".")[:2])
 # Falls back to release so local builds still work.
 switcher_version_match = os.environ.get("DOC_VERSION", release)
 
-# Timestamp displayed in the page footer.
-# Uses Chicago local time (America/Chicago — CDT/CST depending on season)
-# regardless of the timezone of the build environment (e.g. UTC in CI).
-html_last_updated_fmt = (
-    datetime.datetime.now(tz=zoneinfo.ZoneInfo("America/Chicago"))
-    .strftime("%Y-%m-%d %H:%M %Z")
-)
+# All build timestamps use Chicago local time (America/Chicago — CDT/CST)
+# regardless of the CI build environment timezone.
+_chicago_now = datetime.datetime.now(tz=zoneinfo.ZoneInfo("America/Chicago"))
+
+# Footer "Last updated on …" timestamp.
+html_last_updated_fmt = _chicago_now.strftime("%Y-%m-%d %H:%M %Z")
+
+# |today| substitution used in index.rst "Published" table row.
+today = _chicago_now.strftime("%Y-%m-%d %H:%M %Z")
 
 # -- General configuration ---------------------------------------------------
 

@@ -485,8 +485,12 @@ def psic(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
         Stage("nu", +VERTICAL, parent=None, role="detector"),
         Stage("delta", -LATERAL, parent="nu", role="detector"),
     ]
+    # psic: 6 DOF, N-3=3 constraints needed per mode (You 1999, S4D2).
+    # Vertical bisect pair: eta(lateral) <-> delta(lateral)  => eta = delta/2
+    # Horizontal bisect pair: mu(vertical) <-> nu(vertical)  => mu = nu/2
     modes = {
-        "bisecting": ConstraintSet(
+        # ── Implemented analytic modes ──────────────────────────────────────
+        "bisecting_vertical": ConstraintSet(
             [
                 BisectConstraint("eta", "delta"),
                 SampleConstraint("mu", 0.0),
@@ -518,6 +522,66 @@ def psic(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["eta", "chi", "phi", "delta"],
         ),
+        "bisecting_horizontal": ConstraintSet(
+            [
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+        ),
+        "fixed_nu": ConstraintSet(
+            [
+                DetectorConstraint("nu", 0.0),
+                BisectConstraint("eta", "delta"),
+                SampleConstraint("mu", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+        ),
+        "double_diffraction_vertical": ConstraintSet(
+            [
+                BisectConstraint("eta", "delta"),
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
+        ),
+        # ── Stubs: solver not yet implemented ───────────────────────────────
+        "lifting_detector_mu": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("qaz", 90.0),
+            ],
+            computed=["mu", "nu", "delta"],
+        ),
+        "lifting_detector_phi": ConstraintSet(
+            [
+                SampleConstraint("phi", 0.0),
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("qaz", 90.0),
+            ],
+            computed=["phi", "nu", "delta"],
+        ),
+        "psi_constant_vertical": ConstraintSet(
+            [
+                BisectConstraint("eta", "delta"),
+                SampleConstraint("mu", 0.0),
+                ReferenceConstraint("psi", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "psi_constant_horizontal": ConstraintSet(
+            [
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("eta", 0.0),
+                ReferenceConstraint("psi", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
     }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
@@ -528,7 +592,7 @@ def psic(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
             "(lateral detector, vertical scattering plane, synchrotron)"
         ),
         modes=modes,
-        default_mode="bisecting",
+        default_mode="bisecting_vertical",
     )
 
 
