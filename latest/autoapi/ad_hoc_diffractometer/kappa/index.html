@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>display &#8212; ad_hoc_diffractometer 0.4</title>
+    <title>kappa &#8212; ad_hoc_diffractometer 0.4</title>
   
   
   
@@ -49,7 +49,7 @@
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=fd10adb8"></script>
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/ad_hoc_diffractometer/display/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/ad_hoc_diffractometer/kappa/index';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
@@ -60,8 +60,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="factories" href="../factories/index.html" />
-    <link rel="prev" title="conversions" href="../conversions/index.html" />
+    <link rel="next" title="lattice" href="../lattice/index.html" />
+    <link rel="prev" title="geometry" href="../geometry/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
@@ -383,11 +383,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../axes/index.html">axes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../constants/index.html">constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../conversions/index.html">conversions</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">display</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../display/index.html">display</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../factories/index.html">factories</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../forward/index.html">forward</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../geometry/index.html">geometry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../kappa/index.html">kappa</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">kappa</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../lattice/index.html">lattice</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mode/index.html">mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../orientation/index.html">orientation</a></li>
@@ -447,7 +447,7 @@
     
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">ad_hoc_diffractometer</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">display</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">kappa</span></li>
   </ul>
 </nav>
 </div>
@@ -464,49 +464,53 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-ad_hoc_diffractometer.display">
-<span id="display"></span><h1>display<a class="headerlink" href="#module-ad_hoc_diffractometer.display" title="Link to this heading">#</a></h1>
-<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.display</span></code></p>
-<p>Provides a package-level default number of decimal places for displaying
-floating-point values.  Any class or function that formats numbers for
-display should use get_precision() to honour the current setting.</p>
-<p>The default precision can be changed at the package level:</p>
+  <section id="module-ad_hoc_diffractometer.kappa">
+<span id="kappa"></span><h1>kappa<a class="headerlink" href="#module-ad_hoc_diffractometer.kappa" title="Link to this heading">#</a></h1>
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.kappa</span></code></p>
+<p>Kappa diffractometers replace the Eulerian chi circle with a kappa arm
+tilted at angle alpha_0 from the omega axis.  The real kappa motor angles
+(komega, kappa, kphi) map to virtual Eulerian pseudoangles (omega, chi, phi)
+via the relations in Walko (2016), eq. [16]:</p>
 <blockquote>
-<div><p>import ad_hoc_diffractometer as ahd
-ahd.set_precision(4)</p>
+<div><p>chi   = 2 arcsin[sin(kappa/2) · sin(alpha_0)]
+offset = arccos[cos(kappa/2) / cos(chi/2)]
+omega = komega − offset
+phi   = kphi   − offset</p>
 </div></blockquote>
-<p>Or per-object where the class supports it (e.g. Lattice):</p>
-<blockquote>
-<div><p>lat = Lattice(a=4.785, c=12.991, gamma=120.0)
-lat.precision = 4
-print(lat)   # shows 4 decimal places</p>
-</div></blockquote>
-<p>Internal representation is always full floating-point precision.  Only
-display (str, repr-like summaries) is affected.</p>
-<p><code class="docutils literal notranslate"><span class="pre">isclose(a,</span> <span class="pre">b)</span></code> provides a tolerance-aware numeric comparison whose
-absolute tolerance is derived from the current display precision:
-<code class="docutils literal notranslate"><span class="pre">atol</span> <span class="pre">=</span> <span class="pre">0.5</span> <span class="pre">*</span> <span class="pre">10</span> <span class="pre">**</span> <span class="pre">(-get_precision())</span></code>.  This means two values are
-considered equal when they agree to within half a unit in the last
-<em>displayed</em> decimal place — the same resolution the user sees.  An
-explicit tolerance can be supplied to override this default.</p>
+<p>Both directions are implemented here as pure-NumPy functions.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.kappa.kappa_to_eulerian" title="ad_hoc_diffractometer.kappa.kappa_to_eulerian"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_to_eulerian()</span></code></a></dt><dd><p>Forward direction: real (komega, kappa, kphi) → virtual (omega, chi, phi).</p>
+</dd>
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.kappa.eulerian_to_kappa" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa"><code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code></a></dt><dd><p>Inverse direction: virtual (omega, chi, phi) → real (komega, kappa, kphi).</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The default kappa tilt angle is 50° (Walko 2016; Enraf-Nonius convention;
+ITC Vol. C §2.2.6).</p>
+<p>The inverse has two solutions distinguished by the sign of kappa (the <em>branch</em>
+parameter).  The positive branch (kappa ≥ 0) is the default; the negative
+branch gives kappa ≤ 0.  The caller should choose the branch that keeps all
+angles within the hardware limits.</p>
+<p>Singularity: when <a href="#id2"><span class="problematic" id="id3">|chi|</span></a> approaches ±2·alpha_0, <a href="#id4"><span class="problematic" id="id5">|kappa|</span></a> approaches 180° and
+the offset formula becomes numerically ill-conditioned.  A <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>
+is raised when <a href="#id6"><span class="problematic" id="id7">|chi|</span></a> ≥ 2·alpha_0 − epsilon.</p>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Walko, <em>Ref. Module Mater. Sci. Mater. Eng.</em> (2016), eq. [16].</p></li>
+<li><p>ITC Vol. C §2.2.6 (2006).</p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>Functions<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.display.allclose" title="ad_hoc_diffractometer.display.allclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allclose</span></code></a>(→ bool)</p></td>
-<td><p>Tolerance-aware comparison for scalars or array-like sequences.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa.eulerian_to_kappa" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eulerian_to_kappa</span></code></a>(→ tuple[float, float, float])</p></td>
+<td><p>Convert virtual Eulerian pseudoangles to real kappa angles.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.display.fmt" title="ad_hoc_diffractometer.display.fmt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fmt</span></code></a>(→ str)</p></td>
-<td><p>Format a float for display with the given number of decimal places.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.display.get_precision" title="ad_hoc_diffractometer.display.get_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_precision</span></code></a>(→ int)</p></td>
-<td><p>Return the current package-level display precision (decimal places).</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.display.precision_atol" title="ad_hoc_diffractometer.display.precision_atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">precision_atol</span></code></a>(→ float)</p></td>
-<td><p>Return an absolute tolerance matching the current display precision.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.display.set_precision" title="ad_hoc_diffractometer.display.set_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_precision</span></code></a>(→ None)</p></td>
-<td><p>Set the package-level display precision.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.kappa.kappa_to_eulerian" title="ad_hoc_diffractometer.kappa.kappa_to_eulerian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kappa_to_eulerian</span></code></a>(→ tuple[float, float, float])</p></td>
+<td><p>Convert real kappa angles to virtual Eulerian pseudoangles.</p></td>
 </tr>
 </tbody>
 </table>
@@ -515,115 +519,77 @@ explicit tolerance can be supplied to override this default.</p>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.display.allclose">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.display.</span></span><span class="sig-name descname"><span class="pre">allclose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/display.html#allclose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.display.allclose" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.kappa.eulerian_to_kappa">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.kappa.</span></span><span class="sig-name descname"><span class="pre">eulerian_to_kappa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">+1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/kappa.html#eulerian_to_kappa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.kappa.eulerian_to_kappa" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
-<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.display.allclose</span></code></p>
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.kappa.eulerian_to_kappa</span></code></p>
 </div>
-<p>Tolerance-aware comparison for scalars or array-like sequences.</p>
-<p>Uses <code class="docutils literal notranslate"><span class="pre">np.allclose</span></code> with <code class="docutils literal notranslate"><span class="pre">rtol=0</span></code> and an absolute tolerance derived
-from the display precision (or an explicit value).</p>
+<p>Convert virtual Eulerian pseudoangles to real kappa angles.</p>
+<p>Inverse of Walko (2016), eq. [16].</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>scalar</em><em> or </em><em>array-like</em>) – Values to compare.</p></li>
-<li><p><strong>b</strong> (<em>scalar</em><em> or </em><em>array-like</em>) – Values to compare.</p></li>
-<li><p><strong>atol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>None</em>) – Explicit absolute tolerance.  If None, derived from <code class="docutils literal notranslate"><span class="pre">digits</span></code>.</p></li>
-<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><em>None</em>) – Display precision to derive tolerance from.  If None, uses
-<code class="docutils literal notranslate"><span class="pre">get_precision()</span></code>.  Ignored when <code class="docutils literal notranslate"><span class="pre">atol</span></code> is given explicitly.</p></li>
+<li><p><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Virtual Eulerian omega in degrees.</p></li>
+<li><p><strong>chi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Virtual Eulerian chi in degrees.</p></li>
+<li><p><strong>phi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Virtual Eulerian phi in degrees.</p></li>
+<li><p><strong>alpha_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Kappa tilt angle in degrees.  Default 50°.</p></li>
+<li><p><strong>branch</strong> (<em>{+1</em><em>, </em><em>-1}</em><em>, </em><em>optional</em>) – Branch selection.  <code class="docutils literal notranslate"><span class="pre">+1</span></code> gives kappa ≥ 0 (default);
+<code class="docutils literal notranslate"><span class="pre">-1</span></code> gives kappa ≤ 0.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>komega, kappa, kphi</strong> – Real kappa motor angles in degrees.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <a href="#id8"><span class="problematic" id="id9">|chi|</span></a> ≥ 2·alpha_deg (chi outside the reachable range).</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If branch is not +1 or -1.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">allclose</span><span class="p">(</span><span class="mf">1.0000001</span><span class="p">,</span> <span class="mf">1.0000002</span><span class="p">)</span>          <span class="c1"># within default 6-digit tol</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">allclose</span><span class="p">(</span><span class="mf">1.001</span><span class="p">,</span> <span class="mf">1.002</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>        <span class="c1"># within 3-digit tol (0.0005)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">allclose</span><span class="p">(</span><span class="mf">1.001</span><span class="p">,</span> <span class="mf">1.002</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>        <span class="c1"># outside 4-digit tol (0.00005)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">allclose</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
-<span class="go">True</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">eulerian_to_kappa</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
+<span class="go">(57.04519..., 134.75594..., 57.04519...)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eulerian_to_kappa</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">branch</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">(-57.04519..., -134.75594..., -57.04519...)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.display.fmt">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.display.</span></span><span class="sig-name descname"><span class="pre">fmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/display.html#fmt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.display.fmt" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.kappa.kappa_to_eulerian">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.kappa.</span></span><span class="sig-name descname"><span class="pre">kappa_to_eulerian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">komega</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kphi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/kappa.html#kappa_to_eulerian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.kappa.kappa_to_eulerian" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
-<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.display.fmt</span></code></p>
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.kappa.kappa_to_eulerian</span></code></p>
 </div>
-<p>Format a float for display with the given number of decimal places.</p>
+<p>Convert real kappa angles to virtual Eulerian pseudoangles.</p>
+<p>Implements Walko (2016), eq. [16] — forward direction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The value to format.</p></li>
-<li><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><em>None</em>) – Number of decimal places.  If None, uses the package-level default
-from get_precision().</p></li>
+<li><p><strong>komega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Real kappa-omega angle in degrees.</p></li>
+<li><p><strong>kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Real kappa angle in degrees.</p></li>
+<li><p><strong>kphi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Real kappa-phi angle in degrees.</p></li>
+<li><p><strong>alpha_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Kappa tilt angle in degrees.  Default 50°.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Formatted string, e.g. ‘4.785000’ for fmt(4.785, 6).</p>
+<dd class="field-even"><p><strong>omega, chi, phi</strong> – Virtual Eulerian pseudoangles in degrees.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.display.get_precision">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.display.</span></span><span class="sig-name descname"><span class="pre">get_precision</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/display.html#get_precision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.display.get_precision" title="Link to this definition">#</a></dt>
-<dd><div class="import-path docutils container">
-<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.display.get_precision</span></code></p>
-</div>
-<p>Return the current package-level display precision (decimal places).</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.display.precision_atol">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.display.</span></span><span class="sig-name descname"><span class="pre">precision_atol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/display.html#precision_atol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.display.precision_atol" title="Link to this definition">#</a></dt>
-<dd><div class="import-path docutils container">
-<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.display.precision_atol</span></code></p>
-</div>
-<p>Return an absolute tolerance matching the current display precision.</p>
-<p><code class="docutils literal notranslate"><span class="pre">atol</span> <span class="pre">=</span> <span class="pre">0.5</span> <span class="pre">*</span> <span class="pre">10</span> <span class="pre">**</span> <span class="pre">(-digits)</span></code> — half a unit in the last displayed
-decimal place, i.e. the smallest difference that would show up in the
-formatted output.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><em>None</em>) – Number of decimal places.  If None, uses <code class="docutils literal notranslate"><span class="pre">get_precision()</span></code>.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.display.set_precision">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.display.</span></span><span class="sig-name descname"><span class="pre">set_precision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/display.html#set_precision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.display.set_precision" title="Link to this definition">#</a></dt>
-<dd><div class="import-path docutils container">
-<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.display.set_precision</span></code></p>
-</div>
-<p>Set the package-level display precision.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>digits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of decimal places for displaying floating-point values.
-Must be a non-negative integer.</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If digits is negative or not an integer.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the combination of kappa and alpha_deg places chi outside
+the reachable range (<a href="#id10"><span class="problematic" id="id11">|kappa/2|</span></a> · sin(alpha_0) &gt; 1).</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ahd</span><span class="o">.</span><span class="n">set_precision</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ahd</span><span class="o">.</span><span class="n">get_precision</span><span class="p">()</span>
-<span class="go">4</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">kappa_to_eulerian</span><span class="p">(</span><span class="mf">57.045</span><span class="p">,</span> <span class="mf">134.756</span><span class="p">,</span> <span class="mf">57.045</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
+<span class="go">(-0.0, 90.0, -0.0)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -642,20 +608,20 @@ Must be a non-negative integer.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../conversions/index.html"
+       href="../geometry/index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">conversions</p>
+        <p class="prev-next-title">geometry</p>
       </div>
     </a>
     <a class="right-next"
-       href="../factories/index.html"
+       href="../lattice/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">factories</p>
+        <p class="prev-next-title">lattice</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -679,12 +645,10 @@ Must be a non-negative integer.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.display.allclose"><code class="docutils literal notranslate"><span class="pre">allclose()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.display.fmt"><code class="docutils literal notranslate"><span class="pre">fmt()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.display.get_precision"><code class="docutils literal notranslate"><span class="pre">get_precision()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.display.precision_atol"><code class="docutils literal notranslate"><span class="pre">precision_atol()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.display.set_precision"><code class="docutils literal notranslate"><span class="pre">set_precision()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.kappa.eulerian_to_kappa"><code class="docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.kappa.kappa_to_eulerian"><code class="docutils literal notranslate"><span class="pre">kappa_to_eulerian()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -693,7 +657,7 @@ Must be a non-negative integer.</p>
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../../../_sources/autoapi/ad_hoc_diffractometer/display/index.rst.txt">
+    <a href="../../../_sources/autoapi/ad_hoc_diffractometer/kappa/index.rst.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>
