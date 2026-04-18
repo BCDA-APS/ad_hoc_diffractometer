@@ -1094,16 +1094,27 @@ def kappa6c(
         Stage("delta", -LATERAL, parent="nu", role="detector"),
     ]
     # kappa6c: 6 DOF, N-3=3 constraints needed per mode.
-    # komega is named as the bisect sample stage; the kappa inversion solver
-    # (Issue I) will correct operation to virtual Eulerian space.
+    # Vertical bisect pair: komega(lateral) <-> delta(lateral) => komega = delta/2
+    #   (approximates virtual omega_euler = delta/2; corrected by Issue I / #153)
+    # Horizontal bisect pair: mu(vertical) <-> nu(vertical) => mu = nu/2
+    # Virtual Eulerian angles (omega, chi, phi) via Walko (2016) eq. [16].
     modes = {
-        "bisecting": ConstraintSet(
+        # ── Implemented (generic solver) ────────────────────────────────────
+        "bisecting_vertical": ConstraintSet(
             [
                 BisectConstraint("komega", "delta"),
                 SampleConstraint("mu", 0.0),
                 DetectorConstraint("nu", 0.0),
             ],
             computed=["komega", "kappa", "kphi", "delta"],
+        ),
+        "bisecting_horizontal": ConstraintSet(
+            [
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("komega", 0.0),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "kappa", "kphi", "nu"],
         ),
         "fixed_kphi": ConstraintSet(
             [
@@ -1121,6 +1132,57 @@ def kappa6c(
             ],
             computed=["komega", "kappa", "kphi", "delta"],
         ),
+        "fixed_nu": ConstraintSet(
+            [
+                DetectorConstraint("nu", 0.0),
+                BisectConstraint("komega", "delta"),
+                SampleConstraint("mu", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
+        ),
+        "fixed_delta": ConstraintSet(
+            [
+                DetectorConstraint("delta", 0.0),
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("komega", 0.0),
+            ],
+            computed=["mu", "kappa", "kphi", "nu"],
+        ),
+        # ── Stubs: solver not yet implemented ───────────────────────────────
+        "lifting_detector_mu": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                SampleConstraint("komega", 0.0),
+                DetectorConstraint("qaz", 90.0),
+            ],
+            computed=["mu", "nu", "delta"],
+        ),
+        "lifting_detector_kphi": ConstraintSet(
+            [
+                SampleConstraint("kphi", 0.0),
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("qaz", 90.0),
+            ],
+            computed=["kphi", "nu", "delta"],
+        ),
+        "psi_constant_vertical": ConstraintSet(
+            [
+                BisectConstraint("komega", "delta"),
+                SampleConstraint("mu", 0.0),
+                ReferenceConstraint("psi", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "psi_constant_horizontal": ConstraintSet(
+            [
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("komega", 0.0),
+                ReferenceConstraint("psi", 0.0),
+            ],
+            computed=["mu", "kappa", "kphi", "nu"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
     }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
@@ -1133,7 +1195,7 @@ def kappa6c(
         ),
         kappa_alpha_deg=alpha_deg,
         modes=modes,
-        default_mode="bisecting",
+        default_mode="bisecting_vertical",
     )
 
 
