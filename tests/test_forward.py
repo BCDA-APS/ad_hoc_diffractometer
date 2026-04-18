@@ -30,6 +30,7 @@ from ad_hoc_diffractometer import DetectorConstraint
 from ad_hoc_diffractometer import SampleConstraint
 from ad_hoc_diffractometer import Stage
 from ad_hoc_diffractometer import compute_forward
+from ad_hoc_diffractometer import fivec
 from ad_hoc_diffractometer import fourch
 from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer import kappa4cv
@@ -1066,3 +1067,67 @@ def test_fixed_sample_with_detector_constraint():
     result = _solve_fixed_sample(g, Q_phi, ttheta_deg, mode)
     # Result may be empty or non-empty — just ensure it doesn't crash
     assert isinstance(result, list)
+
+
+# ---------------------------------------------------------------------------
+# Issue #154 — fivec: all modes implemented, round-trips
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "mode_name, h, k, l",
+    [
+        pytest.param("bisecting", 1, 0, 0, id="bisecting-100"),
+        pytest.param("bisecting", 0, 1, 0, id="bisecting-010"),
+        pytest.param("bisecting", 1, 1, 1, id="bisecting-111"),
+        pytest.param("fixed_chi", 1, 0, 0, id="fixed_chi-100"),
+        pytest.param("fixed_chi", 0, 1, 0, id="fixed_chi-010"),
+        pytest.param("fixed_phi", 0, 1, 0, id="fixed_phi-010"),
+        pytest.param("fixed_phi", 1, 1, 1, id="fixed_phi-111"),
+        pytest.param("fixed_mu", 1, 0, 0, id="fixed_mu-100"),
+        pytest.param("fixed_mu", 1, 1, 1, id="fixed_mu-111"),
+        pytest.param(
+            "constant_omega_noncoplanar", 1, 0, 0, id="constant_omega_noncoplanar-100"
+        ),
+        pytest.param(
+            "constant_omega_noncoplanar", 0, 1, 0, id="constant_omega_noncoplanar-010"
+        ),
+    ],
+)
+def test_fivec_round_trip(mode_name, h, k, l):  # noqa: E741
+    """All fivec modes solve and round-trip correctly with mu=0."""
+    g = _setup_cubic(fivec, a=4.0)
+    g.mode_name = mode_name
+    assert _round_trip_ok(g, h, k, l)
+
+
+@pytest.mark.parametrize(
+    "mode_name, stage, expected_value",
+    [
+        pytest.param("bisecting", "mu", 0.0, id="bisecting-mu-zero"),
+        pytest.param("fixed_chi", "mu", 0.0, id="fixed_chi-mu-zero"),
+        pytest.param("fixed_chi", "chi", 90.0, id="fixed_chi-chi-value"),
+        pytest.param("fixed_phi", "mu", 0.0, id="fixed_phi-mu-zero"),
+        pytest.param("fixed_phi", "phi", 0.0, id="fixed_phi-phi-value"),
+        pytest.param("fixed_mu", "mu", 0.0, id="fixed_mu-mu-zero"),
+        pytest.param(
+            "constant_omega_noncoplanar", "omega", 0.0, id="constant_omega-omega-zero"
+        ),
+    ],
+)
+def test_fivec_constraint_value_in_solution(mode_name, stage, expected_value):
+    """Declared constraint values appear at their declared value in all solutions."""
+    g = _setup_cubic(fivec, a=4.0)
+    g.mode_name = mode_name
+    solutions = g.forward(1, 0, 0)
+    assert len(solutions) > 0
+    for sol in solutions:
+        assert sol[stage] == pytest.approx(expected_value, abs=1e-8)
+
+
+def test_fivec_bisecting_omega_equals_ttheta_half():
+    """In fivec bisecting mode, omega must equal ttheta/2 for all solutions."""
+    g = _setup_cubic(fivec, a=4.0)
+    solutions = g.forward(1, 0, 0)
+    for sol in solutions:
+        assert sol["omega"] == pytest.approx(sol["ttheta"] / 2.0, abs=1e-10)

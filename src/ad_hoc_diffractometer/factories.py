@@ -1119,6 +1119,47 @@ def fivec(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
         Stage("phi", -LATERAL, parent="chi", role="sample"),
         Stage("ttheta", -LATERAL, parent="mu", role="detector"),
     ]
+    # fivec: 5 DOF, N-3=2 constraints needed per mode.
+    # With mu=0 the geometry reduces to fourcv; the bisecting solver
+    # handles this case identically to fourcv bisecting.
+    # Modes where mu != 0 require a tilted-plane solver (not yet implemented).
+    modes = {
+        "bisecting": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                BisectConstraint("omega", "ttheta"),
+            ],
+            computed=["omega", "chi", "phi", "ttheta"],
+        ),
+        "fixed_chi": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                SampleConstraint("chi", 90.0),
+            ],
+            computed=["omega", "phi", "ttheta"],
+        ),
+        "fixed_phi": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                SampleConstraint("phi", 0.0),
+            ],
+            computed=["omega", "chi", "ttheta"],
+        ),
+        "fixed_mu": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                BisectConstraint("omega", "ttheta"),
+            ],
+            computed=["omega", "chi", "phi", "ttheta"],
+        ),
+        "constant_omega_noncoplanar": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                SampleConstraint("omega", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "ttheta"],
+        ),
+    }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
@@ -1128,4 +1169,6 @@ def fivec(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
             "(Vlieg et al. 1987; Walko 2016 (S3D1)1). "
             "Sample and detector coupled through mu."
         ),
+        modes=modes,
+        default_mode="bisecting",
     )
