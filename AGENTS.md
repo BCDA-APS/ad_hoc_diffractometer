@@ -378,18 +378,11 @@ The B matrix follows the I16 convention: `(b1, b2, b3) = 2π * B.T`.
 
 ---
 
-## What is NOT yet implemented (see docs/source/roadmap.md)
+## Roadmap status
 
-- Wavelength / energy (Priority 1.1)
-- Motor limits per stage (Priority 1.2)
-- Kappa alpha queryable on instance (Priority 1.3)
-- Motor-angle-to-phi-frame conversion (Priority 2.0) — prerequisite for:
-  - U matrix computation (Priority 2.1)
-  - UB matrix computation (Priority 2.2)
-  - Orienting reflections (Priority 2.3)
-- Diffraction modes as part of geometry constructor (Priority 3.1)
-- Azimuthal reference vector (Priority 3.2)
+See `roadmap.md` in the repository root for the full feature checklist
+with completion status.  Priorities 1.x and 2.x are fully implemented.
+Priority 3.x is mostly complete; the remaining open items are:
+
 - Detector geometry parameters (Priority 3.3)
 - Alternative calculation engines: Q-space, d-spacing (Priority 3.4)
-- Surface geometry: incidence/emergence angles, ψ scans (Priority 3.5, 3.6)
-- Diffractometer inclination relative to beam (Priority 3.7)

@@ -20,6 +20,7 @@ installed the package and are familiar with the
    trajectory
    refine_lattice
    serialize
+   inclination
    fourcv_alignment_howto
 
 .. icons: https://fonts.google.com/icons
@@ -96,6 +97,13 @@ installed the package and are familiar with the
 
       Save the complete diffractometer state to JSON or YAML and restore
       it in a later session.
+
+   .. grid-item-card:: :material-outlined:`screen_rotation;3em` Set Diffractometer Inclination
+      :link: inclination
+      :link-type: doc
+
+      Account for a diffractometer mounted at a non-zero angle relative
+      to the incident beam.
 
    .. grid-item-card:: :material-outlined:`align_horizontal_center;3em` Align a Crystal
       :link: fourcv_alignment_howto
