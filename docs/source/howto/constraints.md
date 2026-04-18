@@ -54,7 +54,7 @@ DetectorConstraint("gamma", 0.0)  # gamma fixed at 0°
 **Reference constraint** — expresses a condition between Q and a reference
 vector n̂ (surface normal, polarisation axis, etc.).
 All reference constraints are stubs pending the reference-vector
-infrastructure (Issue J):
+infrastructure (see {doc}`surface`):
 
 ```python
 from ad_hoc_diffractometer import ReferenceConstraint

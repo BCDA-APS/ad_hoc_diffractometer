@@ -89,7 +89,7 @@ Fix virtual Eulerian phi (default 0°). Requires Issue I / #153.
 ### `psi_constant` *(stub)*
 
 Fix azimuthal angle ψ of n̂ about Q.
-Requires kappa inversion (Issue I) and reference infrastructure (Issue J / #157).
+Requires kappa inversion (#153) and a forward solver for psi constraints (not yet implemented).  Set ``g.azimuthal_reference = (h, k, l)`` — see {doc}`../howto/surface`.
 
 | | |
 |---|---|

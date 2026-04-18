@@ -96,7 +96,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 Fix the azimuthal angle ψ of the reference vector about Q.
-Requires n̂ — not yet implemented (Issue J).
+Set ``g.azimuthal_reference = (h, k, l)`` — see {doc}`../howto/surface`. The forward solver is not yet implemented.
 
 | | |
 |---|---|
