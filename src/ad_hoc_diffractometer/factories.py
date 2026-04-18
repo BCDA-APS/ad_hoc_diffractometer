@@ -134,15 +134,18 @@ Walko (2016) designations:
     (S1D2)1   zaxis  (sample and detector share alpha base stage)
     S2D2      s2d2   (fully decoupled sample/detector pairs)
 
-References (chronological):
-    W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967)               fourcv / fourch
-    J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985)                          zaxis
-    E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987)                   fivec
-    M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993)            sixc
-    K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) s2d2
-    H. You, J. Appl. Cryst. 32, 614-623 (1999) DOI:10.1107/S0021889899001223   psic
-    ITC Vol. C, Sec. 2.2.6 (2006) DOI:10.1107/97809553602060000577         kappa
-    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)                 kappa, zaxis, s2d2, fivec
+References
+----------
+* W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967) — fourcv / fourch
+* J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985) — zaxis
+* E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987) — fivec
+* M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993) — sixc
+* K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) — s2d2
+* H. You, J. Appl. Cryst. 32, 614-623 (1999)
+  DOI:10.1107/S0021889899001223 — psic
+* ITC Vol. C, Sec. 2.2.6 (2006)
+  DOI:10.1107/97809553602060000577 — kappa
+* D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — kappa, zaxis, s2d2, fivec
 """
 
 from __future__ import annotations
@@ -158,8 +161,10 @@ from .constants import XHAT
 from .constants import YHAT
 from .constants import ZHAT
 from .geometry import AdHocDiffractometer
-from .mode import BisectingMode
-from .mode import FixedAngleMode
+from .mode import BisectConstraint
+from .mode import ConstraintSet
+from .mode import DetectorConstraint
+from .mode import SampleConstraint
 from .stage import Stage
 
 logger = logging.getLogger(__name__)
@@ -168,17 +173,19 @@ logger = logging.getLogger(__name__)
 # Registry
 # ---------------------------------------------------------------------------
 
-#: Maps factory function name -> factory callable.
-#: Populated first by @register_geometry at import time, then supplemented
-#: by installed third-party entry points the first time list_geometries()
-#: or get_geometry() is called.
 _GEOMETRY_REGISTRY: dict[str, type] = {}
+"""Maps factory function name to factory callable.
 
-#: Set to True once entry-point discovery has run, so it only runs once.
+Populated first by ``@register_geometry`` at import time, then supplemented
+by installed third-party entry points the first time :func:`list_geometries`
+or :func:`get_geometry` is called.
+"""
+
 _EP_LOADED: bool = False
+"""``True`` once entry-point discovery has run, so it only runs once."""
 
-#: Entry-point group name for geometry plugins.
 GEOMETRY_ENTRY_POINT_GROUP = "ad_hoc_diffractometer.geometries"
+"""Entry-point group name for geometry plugins."""
 
 
 def register_geometry(func):
@@ -396,38 +403,44 @@ def make_geometry(name: str, **kwargs) -> AdHocDiffractometer:
 # Shared basis definitions
 # ---------------------------------------------------------------------------
 
-#: Basis vector dictionary for the You (1999) coordinate convention.
-#: Maps physical direction names to Cartesian unit vectors:
-#:
-#: - ``"vertical"`` → ``XHAT`` (+x, opposite to gravitational acceleration)
-#: - ``"longitudinal"`` → ``YHAT`` (+y, along the beam)
-#: - ``"lateral"`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)
-#:
-#: This is the default basis used by :func:`psic`, :func:`sixc`,
-#: :func:`kappa6c`, :func:`zaxis`, :func:`s2d2`, and :func:`fivec`.
 BASIS_YOU = {
     "vertical": XHAT,
     "longitudinal": YHAT,
     "lateral": ZHAT,
 }
-#: Alias for backward compatibility.
-_BASIS_YOU = BASIS_YOU
+"""Basis vector dictionary for the You (1999) coordinate convention.
 
-#: Basis vector dictionary for the Busing & Levy (1967) coordinate convention.
-#: Maps physical direction names to Cartesian unit vectors:
-#:
-#: - ``"lateral"`` → +x
-#: - ``"longitudinal"`` → +y (along the beam)
-#: - ``"vertical"`` → +z (opposite to gravitational acceleration)
-#:
-#: Used by :func:`fourcv`, :func:`fourch`, :func:`kappa4cv`, and :func:`kappa4ch`.
+Maps physical direction names to Cartesian unit vectors:
+
+- ``"vertical"`` → ``XHAT`` (+x, opposite to gravitational acceleration)
+- ``"longitudinal"`` → ``YHAT`` (+y, along the beam)
+- ``"lateral"`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)
+
+Default basis used by :func:`psic`, :func:`sixc`, :func:`kappa6c`,
+:func:`zaxis`, :func:`s2d2`, and :func:`fivec`.
+"""
+
+_BASIS_YOU = BASIS_YOU
+"""Alias for :data:`BASIS_YOU` (backward compatibility)."""
+
 BASIS_BL = {
     "lateral": np.array([1.0, 0.0, 0.0]),
     "longitudinal": np.array([0.0, 1.0, 0.0]),
     "vertical": np.array([0.0, 0.0, 1.0]),
 }
-#: Alias for backward compatibility.
+"""Basis vector dictionary for the Busing & Levy (1967) coordinate convention.
+
+Maps physical direction names to Cartesian unit vectors:
+
+- ``"lateral"`` → +x
+- ``"longitudinal"`` → +y (along the beam)
+- ``"vertical"`` → +z (opposite to gravitational acceleration)
+
+Used by :func:`fourcv`, :func:`fourch`, :func:`kappa4cv`, and :func:`kappa4ch`.
+"""
+
 _BASIS_BL = BASIS_BL
+"""Alias for :data:`BASIS_BL` (backward compatibility)."""
 
 
 # ---------------------------------------------------------------------------
@@ -470,20 +483,39 @@ def psic(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
         Stage("nu", +VERTICAL, parent=None, role="detector"),
         Stage("delta", -LATERAL, parent="nu", role="detector"),
     ]
-    # Canonical modes from You (1999) section on operating modes.
-    # "bisecting": eta = delta/2, mu = nu = 0  (symmetric reflection geometry)
-    # "fixed_chi":  chi held at a fixed angle (default 90°)
-    # "fixed_phi":  phi held at a fixed angle (default 0°)
-    # "fixed_mu":   mu held at a fixed angle  (default 0°)
     modes = {
-        "bisecting": BisectingMode(
-            sample_stage="eta",
-            detector_stage="delta",
-            frozen_angles={"mu": 0.0, "nu": 0.0},
+        "bisecting": ConstraintSet(
+            [
+                BisectConstraint("eta", "delta"),
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
         ),
-        "fixed_chi": FixedAngleMode(stage="chi", value=90.0),
-        "fixed_phi": FixedAngleMode(stage="phi", value=0.0),
-        "fixed_mu": FixedAngleMode(stage="mu", value=0.0),
+        "fixed_chi": ConstraintSet(
+            [
+                SampleConstraint("chi", 90.0),
+                BisectConstraint("eta", "delta"),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["eta", "phi", "delta"],
+        ),
+        "fixed_phi": ConstraintSet(
+            [
+                SampleConstraint("phi", 0.0),
+                BisectConstraint("eta", "delta"),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["eta", "chi", "delta"],
+        ),
+        "fixed_mu": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                BisectConstraint("eta", "delta"),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+        ),
     }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
@@ -533,11 +565,21 @@ def fourcv(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
         Stage("phi", -LATERAL, parent="chi", role="sample"),
         Stage("ttheta", -LATERAL, parent=None, role="detector"),
     ]
-    # Canonical four-circle modes (BL1967 / standard practice)
+    # fourcv: 4 DOF, N-3=1 constraint needed per mode.
+    # fourcv: 4 DOF, N-3=1 constraint needed per mode.
     modes = {
-        "bisecting": BisectingMode(sample_stage="omega", detector_stage="ttheta"),
-        "fixed_chi": FixedAngleMode(stage="chi", value=90.0),
-        "fixed_phi": FixedAngleMode(stage="phi", value=0.0),
+        "bisecting": ConstraintSet(
+            [BisectConstraint("omega", "ttheta")],
+            computed=["omega", "chi", "phi", "ttheta"],
+        ),
+        "fixed_chi": ConstraintSet(
+            [SampleConstraint("chi", 90.0)],
+            computed=["omega", "phi", "ttheta"],
+        ),
+        "fixed_phi": ConstraintSet(
+            [SampleConstraint("phi", 0.0)],
+            computed=["omega", "chi", "ttheta"],
+        ),
     }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
@@ -586,11 +628,21 @@ def fourch(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
         Stage("phi", -VERTICAL, parent="chi", role="sample"),
         Stage("ttheta", -VERTICAL, parent=None, role="detector"),
     ]
-    # Canonical four-circle modes (BL1967 / standard practice)
+    # fourch: 4 DOF, N-3=1 constraint needed per mode.
+    # fourch: 4 DOF, N-3=1 constraint needed per mode.
     modes = {
-        "bisecting": BisectingMode(sample_stage="omega", detector_stage="ttheta"),
-        "fixed_chi": FixedAngleMode(stage="chi", value=90.0),
-        "fixed_phi": FixedAngleMode(stage="phi", value=0.0),
+        "bisecting": ConstraintSet(
+            [BisectConstraint("omega", "ttheta")],
+            computed=["omega", "chi", "phi", "ttheta"],
+        ),
+        "fixed_chi": ConstraintSet(
+            [SampleConstraint("chi", 90.0)],
+            computed=["omega", "phi", "ttheta"],
+        ),
+        "fixed_phi": ConstraintSet(
+            [SampleConstraint("phi", 0.0)],
+            computed=["omega", "chi", "ttheta"],
+        ),
     }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
@@ -660,8 +712,8 @@ def sixc(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
 # Kappa geometries
 # ---------------------------------------------------------------------------
 
-#: Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C).
 KAPPA_ALPHA_DEFAULT = 50.0
+"""Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C)."""
 
 
 @register_geometry
@@ -710,10 +762,19 @@ def kappa4cv(
         Stage("kphi", -LATERAL, parent="kappa", role="sample"),
         Stage("ttheta", -LATERAL, parent=None, role="detector"),
     ]
-    # Canonical kappa four-circle modes
+    # kappa4cv: 4 DOF, N-3=1 constraint needed per mode.
+    # Note: bisect on kappa means virtual omega=0 (not real komega=ttheta/2).
+    # komega is named as the sample bisect stage; the kappa inversion solver
+    # (Issue I) will correct this to operate in virtual Eulerian space.
     modes = {
-        "bisecting": BisectingMode(sample_stage="komega", detector_stage="ttheta"),
-        "fixed_kphi": FixedAngleMode(stage="kphi", value=0.0),
+        "bisecting": ConstraintSet(
+            [BisectConstraint("komega", "ttheta")],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "fixed_kphi": ConstraintSet(
+            [SampleConstraint("kphi", 0.0)],
+            computed=["komega", "kappa", "ttheta"],
+        ),
     }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
@@ -771,10 +832,16 @@ def kappa4ch(
         Stage("kphi", -VERTICAL, parent="kappa", role="sample"),
         Stage("ttheta", -VERTICAL, parent=None, role="detector"),
     ]
-    # Canonical kappa four-circle modes
+    # kappa4ch: 4 DOF, N-3=1 constraint needed per mode.
     modes = {
-        "bisecting": BisectingMode(sample_stage="komega", detector_stage="ttheta"),
-        "fixed_kphi": FixedAngleMode(stage="kphi", value=0.0),
+        "bisecting": ConstraintSet(
+            [BisectConstraint("komega", "ttheta")],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "fixed_kphi": ConstraintSet(
+            [SampleConstraint("kphi", 0.0)],
+            computed=["komega", "kappa", "ttheta"],
+        ),
     }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
@@ -838,15 +905,34 @@ def kappa6c(
         Stage("nu", +VERTICAL, parent=None, role="detector"),
         Stage("delta", -LATERAL, parent="nu", role="detector"),
     ]
-    # Canonical six-circle kappa modes (psic-style, You 1999)
+    # kappa6c: 6 DOF, N-3=3 constraints needed per mode.
+    # komega is named as the bisect sample stage; the kappa inversion solver
+    # (Issue I) will correct operation to virtual Eulerian space.
     modes = {
-        "bisecting": BisectingMode(
-            sample_stage="komega",
-            detector_stage="delta",
-            frozen_angles={"mu": 0.0, "nu": 0.0},
+        "bisecting": ConstraintSet(
+            [
+                BisectConstraint("komega", "delta"),
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
         ),
-        "fixed_kphi": FixedAngleMode(stage="kphi", value=0.0),
-        "fixed_mu": FixedAngleMode(stage="mu", value=0.0),
+        "fixed_kphi": ConstraintSet(
+            [
+                SampleConstraint("kphi", 0.0),
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["komega", "kappa", "delta"],
+        ),
+        "fixed_mu": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                BisectConstraint("komega", "delta"),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
+        ),
     }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,

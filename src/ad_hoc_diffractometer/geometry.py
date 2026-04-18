@@ -15,7 +15,7 @@ import numpy as np
 from .constants import XHAT
 from .constants import YHAT
 from .constants import ZHAT
-from .mode import DiffractionMode
+from .mode import ConstraintSet
 from .mode import ModeDict
 from .reflection import Reflection
 from .reflection import ReflectionList
@@ -73,7 +73,7 @@ class AdHocDiffractometer:
         Azimuthal reference direction as Miller indices (h, k, l).  Used
         by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)
         means no reference is set.  Must be a non-zero vector.
-    modes : dict[str, DiffractionMode] or ModeDict or None, optional
+    modes : dict[str, ConstraintSet] or ModeDict or None, optional
         Named diffraction modes available for this geometry.  Keys are
         mode names (str); values are :class:`~mode.DiffractionMode`
         instances.  ``None`` (default) means no modes are declared.
@@ -563,12 +563,37 @@ class AdHocDiffractometer:
     # ------------------------------------------------------------------
 
     @property
+    def free_dof_after_bragg(self) -> int:
+        """
+        Number of free degrees of freedom after satisfying the Bragg
+        condition.
+
+        Equals ``N − 3`` where N is the total number of real motor axes
+        (sample stages + detector stages).  The value determines how many
+        constraints a :class:`~mode.ConstraintSet` must contain for this
+        geometry.
+
+        Returns
+        -------
+        int
+
+        Examples
+        --------
+        >>> import ad_hoc_diffractometer as ahd
+        >>> ahd.fourcv().free_dof_after_bragg
+        1
+        >>> ahd.psic().free_dof_after_bragg
+        3
+        """
+        return len(self.sample_stages) + len(self.detector_stages) - 3
+
+    @property
     def modes(self) -> ModeDict:
         """
         The collection of named diffraction modes for this geometry.
 
         A ``ModeDict`` mapping mode name (str) to
-        :class:`~mode.DiffractionMode` instance.  Empty when no modes
+        :class:`~mode.ConstraintSet` instance.  Empty when no modes
         have been declared.
 
         Returns
@@ -607,16 +632,16 @@ class AdHocDiffractometer:
         self._mode_name = name
 
     @property
-    def mode(self) -> DiffractionMode | None:
+    def mode(self) -> ConstraintSet | None:
         """
-        The currently active :class:`~mode.DiffractionMode`, or ``None``.
+        The currently active :class:`~mode.ConstraintSet`, or ``None``.
 
         Equivalent to ``self.modes[self.mode_name]`` when a mode is
         active; ``None`` when :attr:`mode_name` is ``None``.
 
         Returns
         -------
-        DiffractionMode or None
+        ConstraintSet or None
         """
         if self._mode_name is None:
             return None
@@ -1808,80 +1833,33 @@ class AdHocDiffractometer:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _mode_to_dict(mode: "DiffractionMode") -> dict:
+    def _mode_to_dict(mode: "ConstraintSet") -> dict:
         """
-        Serialise a :class:`~mode.DiffractionMode` to a JSON-serialisable dict.
-
-        The ``"type"`` key records the class name so that :meth:`_mode_from_dict`
-        can reconstruct the correct subclass.  Currently supports
-        ``FixedAngleMode`` and ``BisectingMode``; other subclasses are
-        serialised with their class name and common fields only (they will
-        be reconstructed as the base type on round-trip, which is a no-op
-        for the abstract base class — callers should not round-trip custom
-        subclasses through ``to_dict`` / ``from_dict``).
+        Serialise a :class:`~mode.ConstraintSet` to a JSON-serialisable dict.
         """
-        from .mode import BisectingMode
-        from .mode import FixedAngleMode
-
-        d: dict = {
-            "type": type(mode).__name__,
-            "frozen_angles": dict(mode.frozen_angles),
-            "cut_points": dict(mode.cut_points),
-        }
-        if isinstance(mode, FixedAngleMode):
-            d["stage"] = mode._stage
-            d["value"] = mode._value
-        elif isinstance(mode, BisectingMode):  # pragma: no branch
-            d["sample_stage"] = mode.sample_stage
-            d["detector_stage"] = mode.detector_stage
-        return d
+        return mode.to_dict()
 
     @staticmethod
-    def _mode_from_dict(d: dict) -> "DiffractionMode":
+    def _mode_from_dict(d: dict) -> "ConstraintSet":
         """
-        Reconstruct a :class:`~mode.DiffractionMode` from a dict produced by
+        Reconstruct a :class:`~mode.ConstraintSet` from a dict produced by
         :meth:`_mode_to_dict`.
 
-        Unknown ``"type"`` values fall back to reconstructing a plain
-        :class:`~mode.DiffractionMode`-compatible object; practically, an
-        unrecognised type is silently skipped and a ``FixedAngleMode`` with
-        no stage is not valid.  In practice this code path is unreachable
-        from the built-in types.
+        Raises
+        ------
+        ValueError
+            If the dict does not have ``"type": "ConstraintSet"``.
         """
-        from .mode import BisectingMode
-        from .mode import DiffractionMode
-        from .mode import FixedAngleMode
+        from .mode import ConstraintSet
 
         type_name = d.get("type", "")
-        frozen = d.get("frozen_angles", {})
-        cuts = d.get("cut_points", {})
-
-        if type_name == "FixedAngleMode":
-            return FixedAngleMode(
-                stage=d["stage"],
-                value=d["value"],
-                cut_points=cuts or None,
+        if type_name != "ConstraintSet":
+            raise ValueError(
+                f"_mode_from_dict: expected type 'ConstraintSet'; got {type_name!r}. "
+                "The old BisectingMode / FixedAngleMode serialisation format is no "
+                "longer supported.  Re-save the geometry with the current version."
             )
-        if type_name == "BisectingMode":
-            return BisectingMode(
-                sample_stage=d["sample_stage"],
-                detector_stage=d["detector_stage"],
-                frozen_angles=frozen or None,
-                cut_points=cuts or None,
-            )
-        # Unknown type — reconstruct as a minimal anonymous subclass so the
-        # round-trip does not crash, preserving frozen_angles and cut_points.
-        # (This branch is not exercised by built-in types — pragma: no cover)
-
-        class _UnknownMode(DiffractionMode):  # pragma: no cover
-            @property
-            def constrained_stages(self) -> list[str]:
-                return list(self.frozen_angles.keys())
-
-        obj = _UnknownMode(  # pragma: no cover
-            frozen_angles=frozen or None, cut_points=cuts or None
-        )
-        return obj  # pragma: no cover
+        return ConstraintSet.from_dict(d)
 
     def to_dict(self) -> dict:
         """
@@ -2050,7 +2028,7 @@ class AdHocDiffractometer:
 
         # Restore modes
         raw_modes = d.get("modes", {})
-        restored_modes: dict[str, DiffractionMode] = {}
+        restored_modes: dict[str, ConstraintSet] = {}
         for mname, mdict in raw_modes.items():
             restored_modes[mname] = cls._mode_from_dict(mdict)
 

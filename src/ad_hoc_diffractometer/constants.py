@@ -19,22 +19,26 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
-
-#: Unit vector along the +x axis.
-#: In the You (1999) convention this is the **vertical** direction
-#: (opposite to gravitational acceleration).
-#: In the Busing & Levy (1967) convention this is the **lateral** direction.
 XHAT = np.array([1.0, 0.0, 0.0])
+"""Unit vector along the +x axis.
 
-#: Unit vector along the +y axis.
-#: **Longitudinal** direction — a chosen direction in the plane perpendicular
-#: to vertical, conventionally aligned with the nominal incident beam.
-#: Consistent across both the You (1999) and Busing & Levy (1967) conventions.
+In the You (1999) convention this is the **vertical** direction
+(opposite to gravitational acceleration).
+In the Busing & Levy (1967) convention this is the **lateral** direction.
+"""
+
 YHAT = np.array([0.0, 1.0, 0.0])
+"""Unit vector along the +y axis.
 
-#: Unit vector along the +z axis.
-#: In the You (1999) convention this is the **lateral** direction
-#: (completes the right-handed system: vertical × longitudinal).
-#: In the Busing & Levy (1967) convention this is the **vertical** direction.
+**Longitudinal** direction — a chosen direction in the plane perpendicular
+to vertical, conventionally aligned with the nominal incident beam.
+Consistent across both the You (1999) and Busing & Levy (1967) conventions.
+"""
+
 ZHAT = np.array([0.0, 0.0, 1.0])
+"""Unit vector along the +z axis.
+
+In the You (1999) convention this is the **lateral** direction
+(completes the right-handed system: vertical × longitudinal).
+In the Busing & Levy (1967) convention this is the **vertical** direction.
+"""

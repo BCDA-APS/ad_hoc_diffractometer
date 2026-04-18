@@ -15,28 +15,28 @@ mode type.
 
 Supported modes
 ---------------
-BisectingMode (four-sample-stage geometries with one detector arm)
+Bisecting (ConstraintSet with BisectConstraint)
     Classic Eulerian four-circle bisecting solution (Busing & Levy 1967,
     section "Angle settings").  Valid for psic (eta/delta bisecting),
     fourcv, fourch (omega/ttheta bisecting), and analogous geometries.
+    Stage names are read directly from the BisectConstraint — no
+    axis-geometry heuristic is used.
 
     Algorithm:
         1. Q_phi = UB @ (h, k, l)             — target in phi frame
         2. \|Q\| → ttheta via Bragg's law
-        3. frozen stages set from mode.frozen_angles
-        4. detector_stage = ttheta (computed from \|Q\|)
-        5. sample_stage   = ttheta / 2 (bisecting)
+        3. fixed sample stages set from SampleConstraint values
+        4. detector_stage = ttheta            (from BisectConstraint.detector_stage)
+        5. sample_stage   = ttheta / 2        (from BisectConstraint.sample_stage)
         6. Remaining free sample stages (chi, phi or kchi, kphi) solved
            from the direction of Q_phi, choosing among the standard
            solution branches (two solutions: chi in [0°,180°] and
            chi in [-180°, 0°]).
 
-FixedAngleMode
-    The named stage is frozen at the stored value.  The remaining
-    geometry-specific solver is then called with the reduced set of
-    free stages.  Currently only supported when the fixed stage is
-    one of the "outer" sample stages (not the detector or the bisected
-    stage).
+Fixed sample angle (ConstraintSet without BisectConstraint)
+    One or more sample stages are frozen at declared values.  The
+    remaining free stages are solved numerically from the direction
+    of Q_phi.
 
 Raises
 ------
@@ -46,13 +46,15 @@ ValueError
     If wavelength or UB matrix is not set.
 ValueError
     If (h, k, l) = (0, 0, 0).
-ValueError
-    If the requested \|Q\| exceeds the Ewald sphere (wavelength too long).
+EwaldSphereViolation
+    If the requested |Q| exceeds the Ewald sphere (wavelength too long).
+ConstraintViolation
+    If a returned solution violates a declared constraint beyond tolerance.
 
 References
 ----------
-Busing & Levy, Acta Cryst. 22, 457-464 (1967) — angle-setting equations
-You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry
+* Busing & Levy, Acta Cryst. 22, 457-464 (1967) — angle-setting equations
+* You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry
 """
 
 from __future__ import annotations
@@ -107,15 +109,18 @@ def compute_forward(
         If ``geometry.sample.UB`` is None.
     ValueError
         If (h, k, l) == (0, 0, 0).
-    ValueError
+    EwaldSphereViolation
         If the scattering vector magnitude exceeds the Ewald sphere
-        (\|Q\| > 4π/λ, i.e. Bragg condition cannot be satisfied).
+        (|Q| > 4π/λ, i.e. Bragg condition cannot be satisfied).
+    ConstraintViolation
+        If a solution returned by the solver violates a declared constraint
+        beyond the display-precision tolerance.
     NotImplementedError
         If no active mode is set or the active mode type is not supported
         for this geometry.
     """
-    from .mode import BisectingMode
-    from .mode import FixedAngleMode
+    from .mode import ConstraintSet
+    from .mode import EwaldSphereViolation
 
     # --- Precondition checks ------------------------------------------------
 
@@ -153,10 +158,10 @@ def compute_forward(
     wavelength = geometry.wavelength
     sin_theta = Q_mag * wavelength / (4.0 * math.pi)
     if sin_theta > 1.0:
-        raise ValueError(
-            f"forward(): |Q| = {Q_mag:.6g} Å⁻¹ exceeds the Ewald sphere "
-            f"(max = {4.0 * math.pi / wavelength:.6g} Å⁻¹) at "
-            f"λ = {wavelength} Å.  The reflection cannot be reached."
+        raise EwaldSphereViolation(
+            q_mag=Q_mag,
+            q_max=4.0 * math.pi / wavelength,
+            wavelength=wavelength,
         )
 
     ttheta_rad = 2.0 * math.asin(sin_theta)
@@ -166,18 +171,56 @@ def compute_forward(
 
     mode = geometry.mode
 
-    if isinstance(mode, BisectingMode):
+    if not isinstance(mode, ConstraintSet):  # pragma: no cover
+        raise NotImplementedError(
+            f"forward(): mode {geometry.mode_name!r} "
+            f"({type(mode).__name__}) is not a ConstraintSet. "
+            f"All modes must be ConstraintSet instances."
+        )
+
+    if not mode.is_implemented(geometry):
+        raise NotImplementedError(
+            f"forward(): mode {geometry.mode_name!r} is not yet implemented "
+            f"for geometry {geometry.name!r}.  "
+            "Check mode.is_implemented(geometry) before calling forward()."
+        )
+
+    solutions = _solve_constraint_set(geometry, Q_phi, ttheta_deg, mode)
+    _validate_solutions(solutions, mode, geometry)
+    return solutions
+
+
+# ---------------------------------------------------------------------------
+# Constraint-set dispatcher
+# ---------------------------------------------------------------------------
+
+
+def _solve_constraint_set(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+) -> list[dict[str, float]]:
+    """
+    Dispatch to the appropriate analytic or numeric solver based on the
+    constraint pattern encoded in the ConstraintSet.
+
+    Currently supported patterns:
+
+    - Bisect (any geometry): a :class:`~mode.BisectConstraint` is present,
+      with an optional ``DetectorConstraint`` freezing an outer detector
+      stage and optional fixed ``SampleConstraint`` values.
+    - Fixed sample angle without bisect: one or more fixed sample angles;
+      delegates to _solve_fixed_sample.
+
+    Unsupported patterns fall back to the numeric solver.
+    """
+
+    if mode.has_bisect:
         return _solve_bisecting(geometry, Q_phi, ttheta_deg, mode)
 
-    if isinstance(mode, FixedAngleMode):
-        return _solve_fixed_angle(geometry, Q_phi, ttheta_deg, mode)
-
-    raise NotImplementedError(
-        f"forward(): mode {geometry.mode_name!r} "
-        f"({type(mode).__name__}) is not supported for geometry "
-        f"{geometry.name!r}.  Supported mode types: "
-        "BisectingMode, FixedAngleMode."
-    )
+    # Fixed-angle only (no bisect).
+    return _solve_fixed_sample(geometry, Q_phi, ttheta_deg, mode)
 
 
 # ---------------------------------------------------------------------------
@@ -192,15 +235,19 @@ def _solve_bisecting(
     mode,
 ) -> list[dict[str, float]]:
     """
-    Bisecting-mode forward solver.
+    Bisecting-mode forward solver for ConstraintSet.
 
     Implements the Busing & Levy (1967) angle-setting algorithm for an
     Eulerian geometry in the bisecting condition.
 
-    The detector stage is set to ``ttheta_deg``.
-    The sample_stage (omega/eta) is set to ``ttheta_deg / 2``.
-    The remaining two sample stages (chi, phi) are computed from the
-    direction of Q_phi.
+    The bisect stage pair (sample_stage, detector_stage) is read directly
+    from the :class:`~mode.BisectConstraint` — no geometry heuristics are
+    used.  ``bisect_constraint.detector_stage`` receives ``ttheta_deg``;
+    ``bisect_constraint.sample_stage`` is set to ``ttheta_deg / 2``.
+
+    Any ``DetectorConstraint`` in the mode (e.g. ``nu=0`` in psic) freezes
+    that stage at its declared value.  Any fixed ``SampleConstraint`` values
+    are applied before solving for the remaining free stages.
 
     Two solutions are returned corresponding to:
         - "positive chi" branch: chi ∈ [0°, 180°]
@@ -216,16 +263,15 @@ def _solve_bisecting(
         Target scattering vector in the phi frame (Å⁻¹).
     ttheta_deg : float
         Detector angle (2θ) in degrees.
-    mode : BisectingMode
+    mode : ConstraintSet
 
     Returns
     -------
     list of dict[str, float]
         Valid solutions (may be empty if all are out of limits).
     """
-    # Identify the three free sample stages (beyond the bisected one).
-    # For standard four-circle: [omega/eta, chi, phi].
-    # For psic with frozen mu/nu:  [eta, chi, phi].
+    from .mode import BisectConstraint
+
     sample_stages = geometry.sample_stages
 
     # Build the baseline angle dict: all stages at their current angles.
@@ -234,29 +280,30 @@ def _solve_bisecting(
         for s in list(geometry._stages.values())  # noqa: SLF001
     }
 
-    # Apply frozen angles from the mode.
-    # For each frozen stage, use the stage's *current* angle rather than
-    # the value stored in the mode — the caller presets the stage angle
-    # before calling forward(), giving full control over the fixed value.
-    for name in mode.frozen_angles:
-        if name in geometry._stages:  # noqa: SLF001
-            angles[name] = geometry._stages[name].angle  # noqa: SLF001
-        else:  # pragma: no cover  — frozen stage not in geometry (should not occur)
-            angles[name] = mode.frozen_angles[name]
+    # Apply fixed sample constraints from the ConstraintSet.
+    for sc in mode.fixed_sample_constraints:
+        if sc.name in geometry._stages:  # noqa: SLF001
+            angles[sc.name] = float(sc.value)
 
-    # Set the detector stage (first/outermost detector stage = ttheta/delta).
-    detector_name = mode.detector_stage
+    # Freeze any explicitly constrained detector stage (e.g. nu=0 in psic).
+    det_constraint = mode.detector_constraint
+    if det_constraint is not None and not det_constraint.is_qaz:
+        angles[det_constraint.name] = det_constraint.value
+
+    # Read the bisect stage pair from the BisectConstraint — explicit, no heuristic.
+    bisect_c = next(c for c in mode.constraints if isinstance(c, BisectConstraint))
+    detector_name = bisect_c.detector_stage  # receives ttheta_deg
+    sample_bisect_name = bisect_c.sample_stage  # receives ttheta_deg / 2
+
     angles[detector_name] = ttheta_deg
-    # Any additional detector stages (e.g. nu in psic) keep frozen or current.
-
-    # The bisecting sample stage = ttheta / 2.
-    sample_bisect_name = mode.sample_stage
     angles[sample_bisect_name] = ttheta_deg / 2.0
 
-    # The remaining two free sample stages are the ones not frozen and not bisected.
-    constrained = set(mode.constrained_stages)
-    constrained.add(detector_name)
-    free_sample = [s for s in sample_stages if s.name not in constrained]
+    # The remaining free sample stages are those not fixed by any constraint.
+    constrained_names = set(mode.constrained_stages(geometry))
+    constrained_names.add(detector_name)
+    if det_constraint is not None and not det_constraint.is_qaz:
+        constrained_names.add(det_constraint.name)
+    free_sample = [s for s in sample_stages if s.name not in constrained_names]
 
     if len(free_sample) == 0:
         # All sample stages constrained — return the fixed solution if valid.
@@ -517,77 +564,111 @@ def _solve_two_angles(
     return None  # pragma: no cover
 
 
-def _solve_fixed_angle(
+def _solve_fixed_sample(
     geometry: AdHocDiffractometer,
     Q_phi: np.ndarray,
     ttheta_deg: float,
     mode,
 ) -> list[dict[str, float]]:
     """
-    FixedAngleMode forward solver.
+    Fixed-sample-angle solver (no bisect condition).
 
-    Freezes the named stage at its fixed value, then delegates to the
-    bisecting solver treating the remaining stages as free — provided the
-    geometry has a bisecting-capable structure (detector + 3 sample stages
-    where one is the equivalent of omega/eta).
-
-    This covers the common case of fixed_chi (chi frozen at e.g. 90°,
-    omega/ttheta bisecting, phi free) or fixed_mu (mu=0, rest as psic
-    bisecting).
-
-    For each frozen-stage value, the remaining angles are solved via the
-    bisecting equations restricted to the appropriate stages.
+    Freezes all named sample stages at their constraint values, sets the
+    detector stage to ``ttheta_deg``, and solves for any remaining free
+    sample stages numerically.
 
     Parameters
     ----------
     geometry : AdHocDiffractometer
     Q_phi : numpy.ndarray, shape (3,)
     ttheta_deg : float
-    mode : FixedAngleMode
+    mode : ConstraintSet
 
     Returns
     -------
     list of dict[str, float]
     """
-    from .mode import BisectingMode
+    sample_stages = geometry.sample_stages
 
-    # Find the geometry's default bisecting mode to re-use its stage names.
-    bisecting_mode = None
-    for m in geometry.modes.values():
-        if isinstance(m, BisectingMode):
-            bisecting_mode = m
-            break
+    # Build the baseline angle dict.
+    angles: dict[str, float] = {
+        s.name: s.angle
+        for s in list(geometry._stages.values())  # noqa: SLF001
+    }
 
-    if bisecting_mode is None:
-        raise NotImplementedError(
-            f"forward(): FixedAngleMode solver for geometry {geometry.name!r} "
-            "requires a BisectingMode to be defined in the geometry's modes "
-            "to identify the bisecting and detector stage names.  "
-            "No BisectingMode found."
+    # Apply fixed sample constraints.
+    for sc in mode.fixed_sample_constraints:
+        if sc.name in geometry._stages:  # noqa: SLF001
+            angles[sc.name] = float(sc.value)
+
+    # Apply detector constraint if present.
+    det_constraint = mode.detector_constraint
+    if det_constraint is not None and not det_constraint.is_qaz:
+        angles[det_constraint.name] = det_constraint.value
+        active_det_name = None
+        for ds in geometry.detector_stages:
+            if ds.name != det_constraint.name:
+                active_det_name = ds.name
+                break
+        if active_det_name is None:
+            active_det_name = geometry.detector_stages[-1].name
+    else:
+        active_det_name = geometry.detector_stages[-1].name
+
+    angles[active_det_name] = ttheta_deg
+
+    # Free sample stages: those not constrained.
+    constrained_names = set(mode.constrained_stages(geometry))
+    constrained_names.add(active_det_name)
+    if det_constraint is not None and not det_constraint.is_qaz:
+        constrained_names.add(det_constraint.name)
+    free_sample = [s for s in sample_stages if s.name not in constrained_names]
+
+    if len(free_sample) == 0:
+        _apply_cut_points(angles, mode, geometry)
+        if _check_limits(geometry, angles):
+            return [angles]
+        return []
+
+    if len(free_sample) == 1:
+        return _solve_one_free_angle(geometry, angles, free_sample[0], Q_phi, mode)
+
+    chi_stage = free_sample[-2]
+    phi_stage = free_sample[-1]
+
+    from .orientation import angles_to_phi_vector as _a2phi
+
+    grid_seeds = [
+        (chi_s, phi_s)
+        for chi_s in (0.0, 45.0, 90.0, -90.0, 135.0, 180.0)
+        for phi_s in (0.0, 90.0, 180.0, 270.0)
+    ]
+    solutions = []
+    for chi_start, phi_start in grid_seeds:
+        sol_angles = _solve_two_angles(
+            geometry=geometry,
+            fixed_angles=angles,
+            free_stage_1=chi_stage.name,
+            free_stage_2=phi_stage.name,
+            start_1=chi_start,
+            start_2=phi_start,
+            Q_phi_target=Q_phi,
+            a2phi_fn=_a2phi,
         )
-
-    # Build an effective BisectingMode that includes the fixed stage as frozen.
-    # Use each stage's current angle — the caller presets it before forward().
-    effective_frozen = {}
-    for name in bisecting_mode.frozen_angles:
-        if name in geometry._stages:  # noqa: SLF001
-            effective_frozen[name] = geometry._stages[name].angle  # noqa: SLF001
-        else:  # pragma: no cover
-            effective_frozen[name] = bisecting_mode.frozen_angles[name]
-    for name in mode.frozen_angles:
-        if name in geometry._stages:  # noqa: SLF001
-            effective_frozen[name] = geometry._stages[name].angle  # noqa: SLF001
-        else:  # pragma: no cover
-            effective_frozen[name] = mode.frozen_angles[name]
-
-    effective_mode = BisectingMode(
-        sample_stage=bisecting_mode.sample_stage,
-        detector_stage=bisecting_mode.detector_stage,
-        frozen_angles=effective_frozen,
-        cut_points=mode.cut_points or bisecting_mode.cut_points or None,
-    )
-
-    return _solve_bisecting(geometry, Q_phi, ttheta_deg, effective_mode)
+        if sol_angles is None:  # pragma: no branch
+            continue  # pragma: no cover
+        sol = dict(angles)
+        sol[chi_stage.name] = sol_angles[0]
+        sol[phi_stage.name] = sol_angles[1]
+        _apply_cut_points(sol, mode, geometry)
+        duplicate = False
+        for existing in solutions:
+            if all(abs(existing.get(k, 0) - sol.get(k, 0)) < 1e-4 for k in sol):
+                duplicate = True
+                break
+        if not duplicate and _check_limits(geometry, sol):
+            solutions.append(sol)
+    return solutions
 
 
 # ---------------------------------------------------------------------------
@@ -612,6 +693,82 @@ def _apply_cut_points(
             cut = geometry.cut_points[stage_name]
             remainder = (angles[stage_name] - cut) % 360.0
             angles[stage_name] = cut + remainder
+
+
+def _validate_solutions(
+    solutions: list[dict[str, float]],
+    mode,
+    geometry: AdHocDiffractometer,
+) -> None:
+    """
+    Validate that every returned solution actually satisfies all constraints
+    in the mode, raising ``ValueError`` if any constraint is violated beyond
+    the display precision tolerance.
+
+    This catches solver bugs and virtual-angle mismatches (e.g. a kappa
+    geometry where the declared ``SampleConstraint`` value cannot be achieved
+    by the approximate solver).
+
+    Uses :func:`~.display.precision_atol` as the tolerance — half a unit in
+    the last displayed decimal place, consistent with the package's display
+    precision setting.
+
+    Parameters
+    ----------
+    solutions : list of dict[str, float]
+        Motor-angle dicts returned by the solver.
+    mode : ConstraintSet
+        The active constraint set.
+    geometry : AdHocDiffractometer
+        The diffractometer (needed for :meth:`~.mode.ConstraintSet.is_implemented`
+        checks and stage-name resolution).
+
+    Raises
+    ------
+    ConstraintViolation
+        If any solution violates a constraint beyond tolerance.
+    """
+    from .display import precision_atol
+    from .mode import BisectConstraint
+    from .mode import ConstraintViolation
+    from .mode import SampleConstraint
+
+    if not solutions:
+        return
+
+    atol = precision_atol()
+
+    for i, sol in enumerate(solutions):
+        for c in mode.constraints:
+            # Only validate constraints that have a numeric residual we can check.
+            # BisectConstraint and SampleConstraint are the checkable ones;
+            # DetectorConstraint is applied by the solver directly (ttheta_deg);
+            # ReferenceConstraint is not yet implemented.
+            if isinstance(c, BisectConstraint | SampleConstraint):
+                try:
+                    residual = c.evaluate(sol, geometry)
+                except KeyError:
+                    # Stage not in solution dict (virtual angle not yet computed).
+                    continue
+                if abs(residual) > atol:
+                    if isinstance(c, BisectConstraint):
+                        constraint_repr = (
+                            f"BisectConstraint({c.sample_stage!r}, {c.detector_stage!r}): "
+                            f"expected {c.sample_stage}="
+                            f"{sol.get(c.detector_stage, '?')!s}/2, "
+                            f"got {c.sample_stage}={sol.get(c.sample_stage, '?')!s}"
+                        )
+                    else:
+                        constraint_repr = (
+                            f"SampleConstraint({c.name!r}, {c.value!r}): "
+                            f"got {c.name}={sol.get(c.name, '?')!s}"
+                        )
+                    raise ConstraintViolation(
+                        solution_index=i,
+                        constraint_repr=constraint_repr,
+                        residual=residual,
+                        tolerance=atol,
+                    )
 
 
 def _check_limits(

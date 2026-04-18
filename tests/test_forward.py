@@ -5,14 +5,13 @@ Unit tests for ad_hoc_diffractometer.forward (compute_forward / geometry.forward
 
 Covers:
   - Precondition errors: no wavelength, no UB, hkl=(0,0,0), Q > Ewald sphere,
-    no active mode, unsupported mode type
-  - BisectingMode solver: fourcv, fourch, psic (bisecting)
-  - FixedAngleMode solver: fourcv fixed_chi, psic fixed_chi
+    no active mode, unimplemented mode
+  - ConstraintSet bisecting solver: fourcv, fourch, psic (bisecting)
+  - ConstraintSet fixed-angle solver: fourcv fixed_chi, psic fixed_chi
   - Round-trip invariant: inverse(forward(hkl)) == hkl for every solution
   - Stage limits: solutions outside limits are filtered out
   - Cut-point application: mode and geometry-level
   - Q along ±z (degenerate chi branch): phi set to 0
-  - No BisectingMode available for FixedAngleMode dispatch raises
   - _check_limits and _apply_cut_points helpers
   - compute_forward top-level function (same as geometry.forward)
 """
@@ -25,8 +24,10 @@ import numpy as np
 import pytest
 
 import ad_hoc_diffractometer as ahd
-from ad_hoc_diffractometer import BisectingMode
-from ad_hoc_diffractometer import FixedAngleMode
+from ad_hoc_diffractometer import BisectConstraint
+from ad_hoc_diffractometer import ConstraintSet
+from ad_hoc_diffractometer import DetectorConstraint
+from ad_hoc_diffractometer import SampleConstraint
 from ad_hoc_diffractometer import Stage
 from ad_hoc_diffractometer import compute_forward
 from ad_hoc_diffractometer import fourch
@@ -114,7 +115,7 @@ def _round_trip_ok(g, h, k, l, atol=1e-8):  # noqa: E741
             100,
             0,
             0,
-            ValueError,
+            ahd.EwaldSphereViolation,
             re.escape("exceeds the Ewald sphere"),
             does_not_raise(),
             id="q-too-large",
@@ -135,7 +136,7 @@ def _round_trip_ok(g, h, k, l, atol=1e-8):  # noqa: E741
             0,
             0,
             NotImplementedError,
-            re.escape("is not supported"),
+            re.escape("is not yet implemented"),
             does_not_raise(),
             id="unsupported-mode-type",
         ),
@@ -162,17 +163,14 @@ def _no_mode():
 
 
 def _unsupported_mode():
-    """A geometry whose active mode is a subclass not handled by the solver."""
-    from ad_hoc_diffractometer.mode import DiffractionMode
+    """A geometry whose active mode has is_implemented() returning False."""
+    # Use a ReferenceConstraint which is not yet implemented
+    from ad_hoc_diffractometer import ReferenceConstraint
 
-    class WeirdMode(DiffractionMode):
-        @property
-        def constrained_stages(self):
-            return []
-
+    cs = ConstraintSet([ReferenceConstraint("psi", 90.0)])
     g = _setup_cubic(fourcv)
-    g.modes["weird"] = WeirdMode()
-    g.mode_name = "weird"
+    g.modes["psi_mode"] = cs
+    g.mode_name = "psi_mode"
     return g
 
 
@@ -302,21 +300,17 @@ def test_kappa4cv_bisecting_round_trip():
 
 
 def test_fourcv_fixed_chi_round_trip():
-    """fixed_chi round-trip: caller presets chi=90°, mode respects current angle."""
+    """fixed_chi round-trip: constraint freezes chi at its declared value (90°)."""
     g = _setup_cubic(fourcv, a=4.0)
-    g.set_angle("chi", 90.0)  # caller presets chi before activating the mode
     g.mode_name = "fixed_chi"
     assert _round_trip_ok(g, 1, 0, 0)
 
 
-def test_psic_fixed_chi_uses_current_angle_with_bisecting_frozen():
-    """fixed_chi on psic exercises the bisecting.frozen_angles (mu, nu) path."""
+def test_psic_fixed_chi_uses_constraint_value():
+    """fixed_chi on psic: chi=90°, mu=0, nu=0 from constraint values."""
     from ad_hoc_diffractometer import psic
 
     g = _setup_cubic(psic, a=4.0)
-    g.set_angle("mu", 0.0)
-    g.set_angle("nu", 0.0)
-    g.set_angle("chi", 90.0)
     g.mode_name = "fixed_chi"
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
@@ -326,26 +320,13 @@ def test_psic_fixed_chi_uses_current_angle_with_bisecting_frozen():
 
 
 def test_fourcv_fixed_chi_value_respected():
-    """chi must equal the caller-preset value in all solutions."""
+    """chi must equal 90° (constraint value) in all solutions."""
     g = _setup_cubic(fourcv, a=4.0)
-    g.set_angle("chi", 90.0)  # caller presets chi; mode will freeze it here
     g.mode_name = "fixed_chi"
     solutions = g.forward(1, 0, 0)
     assert len(solutions) > 0
     for sol in solutions:
         assert sol["chi"] == pytest.approx(90.0, abs=1e-8)
-
-
-def test_fourcv_fixed_chi_caller_controls_value():
-    """Caller can freeze chi at any angle by presetting it before forward()."""
-    g = _setup_cubic(fourcv, a=4.0)
-    g.set_angle("chi", 45.0)  # freeze at 45° instead of the mode default 90°
-    g.mode_name = "fixed_chi"
-    solutions = g.forward(1, 0, 0)
-    # solutions may be empty if chi=45 has no valid solution, but if present
-    # all must have chi=45
-    for sol in solutions:
-        assert sol["chi"] == pytest.approx(45.0, abs=1e-8)
 
 
 # ---------------------------------------------------------------------------
@@ -356,10 +337,14 @@ def test_fourcv_fixed_chi_caller_controls_value():
 def test_all_stages_constrained_within_limits():
     """When all sample stages are constrained and within limits, returns [solution]."""
     g = _setup_cubic(fourcv, a=4.0)
-    fully_frozen_mode = BisectingMode(
-        sample_stage="omega",
-        detector_stage="ttheta",
-        frozen_angles={"chi": 90.0, "phi": 0.0},
+    # BisectConstraint + chi=90 + phi=0 — all 3 sample stages constrained for a 4-circle
+    # (over-constrained DOF-wise but valid for testing the "all frozen" solver path)
+    fully_frozen_mode = ConstraintSet(
+        [
+            BisectConstraint("omega", "ttheta"),
+            SampleConstraint("chi", 90.0),
+            SampleConstraint("phi", 0.0),
+        ]
     )
     g.modes["fully_frozen"] = fully_frozen_mode
     g.mode_name = "fully_frozen"
@@ -370,15 +355,16 @@ def test_all_stages_constrained_within_limits():
 def test_all_stages_constrained_out_of_limits():
     """When all sample stages are constrained but out of limits, returns []."""
     g = _setup_cubic(fourcv, a=4.0)
-    # Freeze chi at an out-of-limits value
-    fully_frozen_mode = BisectingMode(
-        sample_stage="omega",
-        detector_stage="ttheta",
-        frozen_angles={"chi": 90.0, "phi": 0.0},
+    fully_frozen_mode = ConstraintSet(
+        [
+            BisectConstraint("omega", "ttheta"),
+            SampleConstraint("chi", 90.0),
+            SampleConstraint("phi", 0.0),
+        ]
     )
     g.modes["fully_frozen"] = fully_frozen_mode
     g.mode_name = "fully_frozen"
-    # Restrict omega limits so the frozen omega (ttheta/2) is out of range
+    # Restrict omega limits so the bisected omega (ttheta/2) is out of range
     g.stage("omega").limits = (100.0, 180.0)
     solutions = g.forward(1, 0, 0)
     assert solutions == []
@@ -450,8 +436,10 @@ def test_solver_1d_none_when_no_convergence():
     assert result is None or (isinstance(result, tuple) and len(result) == 2)
 
 
-def test_fixed_angle_no_bisecting_mode_raises():
-    """FixedAngleMode solver raises NotImplementedError if no BisectingMode exists."""
+def test_not_implemented_mode_raises():
+    """A mode with is_implemented()=False raises NotImplementedError on forward()."""
+    from ad_hoc_diffractometer import ReferenceConstraint
+
     stages = [
         Stage("omega", -ZHAT, parent=None, role="sample"),
         Stage("ttheta", -ZHAT, parent=None, role="detector"),
@@ -460,13 +448,13 @@ def test_fixed_angle_no_bisecting_mode_raises():
         name="minimal",
         stages=stages,
         basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
-        modes={"fixed_omega": FixedAngleMode("omega", 0.0)},
-        default_mode="fixed_omega",
+        modes={"psi_mode": ConstraintSet([ReferenceConstraint("psi", 90.0)])},
+        default_mode="psi_mode",
     )
     g.wavelength = WAVELENGTH
     g.sample.lattice = ahd.Lattice(a=1.0)
     ub_identity(g.sample)
-    with pytest.raises(NotImplementedError, match=re.escape("No BisectingMode found")):
+    with pytest.raises(NotImplementedError, match=re.escape("not yet implemented")):
         g.forward(1, 0, 0)
 
 
@@ -525,10 +513,8 @@ def test_limits_filter_can_return_empty():
 def test_mode_cut_point_applied():
     """A mode-level cut-point shifts angles into [cut, cut+360)."""
     g = _setup_cubic(fourcv, a=4.0)
-    # Add a cut-point on phi at -180° (default range)
-    mode = BisectingMode(
-        sample_stage="omega",
-        detector_stage="ttheta",
+    mode = ConstraintSet(
+        [BisectConstraint("omega", "ttheta")],
         cut_points={"phi": -180.0},
     )
     g.modes["bisecting_cut"] = mode
@@ -589,9 +575,8 @@ def test_check_limits_unknown_stage_ignored():
 def test_apply_cut_points_mode_priority():
     """Mode cut-point takes priority over geometry-level cut-point."""
     g = _setup_cubic(fourcv, a=4.0)
-    mode = BisectingMode(
-        sample_stage="omega",
-        detector_stage="ttheta",
+    mode = ConstraintSet(
+        [BisectConstraint("omega", "ttheta")],
         cut_points={"phi": 0.0},  # phi in [0, 360)
     )
     g.cut_points["phi"] = -180.0  # would put phi in [-180, 180) if used
@@ -604,7 +589,7 @@ def test_apply_cut_points_mode_priority():
 def test_apply_cut_points_geometry_fallback():
     """Geometry-level cut-point used when no mode cut-point set for that stage."""
     g = _setup_cubic(fourcv, a=4.0)
-    mode = BisectingMode(sample_stage="omega", detector_stage="ttheta")
+    mode = ConstraintSet([BisectConstraint("omega", "ttheta")])
     g.cut_points["phi"] = 0.0  # phi in [0, 360)
     angles = {"phi": -10.0}
     _apply_cut_points(angles, mode, g)
@@ -614,7 +599,256 @@ def test_apply_cut_points_geometry_fallback():
 def test_apply_cut_points_no_cut_unchanged():
     """Angles without any cut-point are unchanged."""
     g = _setup_cubic(fourcv, a=4.0)
-    mode = BisectingMode(sample_stage="omega", detector_stage="ttheta")
+    mode = ConstraintSet([BisectConstraint("omega", "ttheta")])
     angles = {"phi": -10.0}
     _apply_cut_points(angles, mode, g)
     assert angles["phi"] == pytest.approx(-10.0, abs=1e-10)
+
+
+# ---------------------------------------------------------------------------
+# _solve_bisecting — virtual-stage-name (non-existent stage) branch
+# ---------------------------------------------------------------------------
+
+
+def test_bisecting_virtual_stage_name_skipped():
+    """SampleConstraint with a name not in geometry._stages is silently skipped."""
+    # Use psic bisecting mode which includes SampleConstraint("mu", 0.0).
+    # Inject a fake "virtual" constraint with a name not in the geometry.
+    from ad_hoc_diffractometer.forward import _solve_bisecting
+
+    g = _setup_cubic(psic, a=5.0)
+    import math
+
+    Q_phi = g.sample.UB @ np.array([1.0, 0.0, 0.0])
+    sin_theta = float(np.linalg.norm(Q_phi)) * WAVELENGTH / (4.0 * math.pi)
+    ttheta_deg = 2.0 * math.degrees(math.asin(sin_theta))
+
+    # Mode with a virtual stage name that does NOT exist in psic geometry
+    mode = ConstraintSet(
+        [
+            BisectConstraint("eta", "delta"),
+            SampleConstraint("virtual_omega", 0.0),  # not a real stage — skipped
+            DetectorConstraint("nu", 0.0),
+        ]
+    )
+    # Should not raise — virtual_omega is skipped silently
+    result = _solve_bisecting(g, Q_phi, ttheta_deg, mode)
+    assert isinstance(result, list)
+
+
+def test_bisecting_det_constraint_names_only_detector_stage():
+    """When DetectorConstraint names the only detector stage, fallback to that stage."""
+    from ad_hoc_diffractometer.constants import XHAT as _XHAT
+    from ad_hoc_diffractometer.constants import YHAT as _YHAT
+    from ad_hoc_diffractometer.constants import ZHAT as _ZHAT
+    from ad_hoc_diffractometer.forward import _solve_bisecting
+
+    # Build a 2-circle geometry: 1 sample + 1 detector (same axis)
+    stages = [
+        Stage("omega", -_ZHAT, parent=None, role="sample"),
+        Stage("ttheta", -_ZHAT, parent=None, role="detector"),
+    ]
+    g = ahd.AdHocDiffractometer(
+        name="twocircle",
+        stages=stages,
+        basis={"vertical": _XHAT, "longitudinal": _YHAT, "lateral": _ZHAT},
+    )
+    g.wavelength = WAVELENGTH
+    g.sample.lattice = ahd.Lattice(a=5.0)
+    ub_identity(g.sample)
+
+    import math
+
+    Q_phi = g.sample.UB @ np.array([1.0, 0.0, 0.0])
+    sin_theta = float(np.linalg.norm(Q_phi)) * WAVELENGTH / (4.0 * math.pi)
+    ttheta_deg = 2.0 * math.degrees(math.asin(sin_theta))
+
+    # DetectorConstraint names the ONLY detector stage ("ttheta")
+    # → active_det_stage fallback to geometry.detector_stages[-1]
+    mode = ConstraintSet(
+        [
+            BisectConstraint("omega", "ttheta"),
+            DetectorConstraint("ttheta", 0.0),  # the only detector stage
+        ]
+    )
+    result = _solve_bisecting(g, Q_phi, ttheta_deg, mode)
+    assert isinstance(result, list)
+
+
+# ---------------------------------------------------------------------------
+# _solve_fixed_sample — virtual-stage and single-detector-stage branches
+# ---------------------------------------------------------------------------
+
+
+def test_fixed_sample_virtual_stage_skipped():
+    """SampleConstraint with name not in geometry._stages is skipped in _solve_fixed_sample."""
+    from ad_hoc_diffractometer.forward import _solve_fixed_sample
+
+    g = _setup_cubic(fourcv, a=5.0)
+    import math
+
+    Q_phi = g.sample.UB @ np.array([1.0, 0.0, 0.0])
+    sin_theta = float(np.linalg.norm(Q_phi)) * WAVELENGTH / (4.0 * math.pi)
+    ttheta_deg = 2.0 * math.degrees(math.asin(sin_theta))
+
+    mode = ConstraintSet(
+        [
+            SampleConstraint("virtual_nonexistent", 0.0),  # not a real stage
+            SampleConstraint("chi", 90.0),
+        ]
+    )
+    result = _solve_fixed_sample(g, Q_phi, ttheta_deg, mode)
+    assert isinstance(result, list)
+
+
+def test_fixed_sample_det_constraint_names_only_detector():
+    """_solve_fixed_sample: DetectorConstraint names the only detector; fallback used."""
+    from ad_hoc_diffractometer.constants import XHAT as _XHAT
+    from ad_hoc_diffractometer.constants import YHAT as _YHAT
+    from ad_hoc_diffractometer.constants import ZHAT as _ZHAT
+    from ad_hoc_diffractometer.forward import _solve_fixed_sample
+
+    stages = [
+        Stage("omega", -_ZHAT, parent=None, role="sample"),
+        Stage("chi", np.array([0.0, 1.0, 0.0]), parent="omega", role="sample"),
+        Stage("phi", -_ZHAT, parent="chi", role="sample"),
+        Stage("ttheta", -_ZHAT, parent=None, role="detector"),
+    ]
+    g = ahd.AdHocDiffractometer(
+        name="fourcv_test",
+        stages=stages,
+        basis={"vertical": _XHAT, "longitudinal": _YHAT, "lateral": _ZHAT},
+    )
+    g.wavelength = WAVELENGTH
+    g.sample.lattice = ahd.Lattice(a=5.0)
+    ub_identity(g.sample)
+
+    import math
+
+    Q_phi = g.sample.UB @ np.array([1.0, 0.0, 0.0])
+    sin_theta = float(np.linalg.norm(Q_phi)) * WAVELENGTH / (4.0 * math.pi)
+    ttheta_deg = 2.0 * math.degrees(math.asin(sin_theta))
+
+    # DetectorConstraint names the ONLY detector stage
+    mode = ConstraintSet(
+        [
+            SampleConstraint("omega", ttheta_deg / 2.0),
+            SampleConstraint("chi", 90.0),
+            DetectorConstraint("ttheta", 0.0),  # the only detector stage
+        ]
+    )
+    result = _solve_fixed_sample(g, Q_phi, ttheta_deg, mode)
+    assert isinstance(result, list)
+
+
+# ---------------------------------------------------------------------------
+# _solve_fixed_sample — unconstrained paths
+# ---------------------------------------------------------------------------
+
+
+def test_fixed_sample_all_constrained_in_limits():
+    """_solve_fixed_sample: all sample stages fixed, valid solution returned."""
+    g = _setup_cubic(fourcv, a=4.0)
+    # For fourcv, fix all 3 sample stages; only ttheta (detector) is free.
+    # With bisect=False and no bisect stage, _solve_fixed_sample handles this.
+    # omega=ttheta/2, chi=90, phi=0 is a valid bisecting solution for (1,0,0).
+    solutions_ref = g.forward(1, 0, 0)  # bisecting mode reference
+    assert len(solutions_ref) > 0
+    ref_sol = solutions_ref[0]  # use this as our "all fixed" solution
+
+    from ad_hoc_diffractometer.forward import _solve_fixed_sample
+
+    mode = ConstraintSet(
+        [
+            SampleConstraint("omega", ref_sol["omega"]),
+            SampleConstraint("chi", ref_sol["chi"]),
+            SampleConstraint("phi", ref_sol["phi"]),
+        ]
+    )
+    # Compute ttheta from bragg
+    import math
+
+    Q_phi = g.sample.UB @ np.array([1.0, 0.0, 0.0])
+    sin_theta = float(np.linalg.norm(Q_phi)) * WAVELENGTH / (4.0 * math.pi)
+    ttheta_deg = 2.0 * math.degrees(math.asin(sin_theta))
+    result = _solve_fixed_sample(g, Q_phi, ttheta_deg, mode)
+    assert len(result) == 1
+
+
+def test_fixed_sample_all_constrained_out_of_limits():
+    """_solve_fixed_sample: all sample stages fixed but out of limits returns []."""
+    from ad_hoc_diffractometer.forward import _solve_fixed_sample
+
+    g = _setup_cubic(fourcv, a=4.0)
+    g.stage("omega").limits = (100.0, 180.0)  # omega out of range
+
+    import math
+
+    Q_phi = g.sample.UB @ np.array([1.0, 0.0, 0.0])
+    sin_theta = float(np.linalg.norm(Q_phi)) * WAVELENGTH / (4.0 * math.pi)
+    ttheta_deg = 2.0 * math.degrees(math.asin(sin_theta))
+
+    mode = ConstraintSet(
+        [
+            SampleConstraint("omega", 0.0),  # out of limits
+            SampleConstraint("chi", 90.0),
+            SampleConstraint("phi", 0.0),
+        ]
+    )
+    result = _solve_fixed_sample(g, Q_phi, ttheta_deg, mode)
+    assert result == []
+
+
+def test_fixed_sample_one_free():
+    """_solve_fixed_sample: one free stage (chi fixed, phi free) round-trips."""
+    from ad_hoc_diffractometer.forward import _solve_fixed_sample
+
+    g = _setup_cubic(fourcv, a=4.0)
+    import math
+
+    Q_phi = g.sample.UB @ np.array([1.0, 0.0, 0.0])
+    sin_theta = float(np.linalg.norm(Q_phi)) * WAVELENGTH / (4.0 * math.pi)
+    ttheta_deg = 2.0 * math.degrees(math.asin(sin_theta))
+
+    # Fix omega and chi; phi is free
+    omega_val = ttheta_deg / 2.0
+    mode = ConstraintSet(
+        [
+            SampleConstraint("omega", omega_val),
+            SampleConstraint("chi", 90.0),
+        ]
+    )
+    result = _solve_fixed_sample(g, Q_phi, ttheta_deg, mode)
+    assert len(result) > 0
+    for sol in result:
+        hkl_back = g.inverse(sol)
+        assert np.allclose(hkl_back, [1, 0, 0], atol=1e-5)
+
+
+def test_fixed_sample_with_detector_constraint():
+    """_solve_fixed_sample: DetectorConstraint branch (line 617-624) is exercised."""
+    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.forward import _solve_fixed_sample
+
+    g = psic()
+    g.wavelength = WAVELENGTH
+    g.sample.lattice = ahd.Lattice(a=5.0)
+    ub_identity(g.sample)
+
+    import math
+
+    Q_phi = g.sample.UB @ np.array([1.0, 0.0, 0.0])
+    sin_theta = float(np.linalg.norm(Q_phi)) * WAVELENGTH / (4.0 * math.pi)
+    ttheta_deg = 2.0 * math.degrees(math.asin(sin_theta))
+
+    # Fix mu + DetectorConstraint(nu); no bisect — exercises the det constraint branch
+    mode = ConstraintSet(
+        [
+            SampleConstraint("mu", 0.0),
+            DetectorConstraint("nu", 0.0),
+        ]
+    )
+    # This leaves eta, chi, phi free (3 stages > 2) — will use _solve_two_angles
+    result = _solve_fixed_sample(g, Q_phi, ttheta_deg, mode)
+    # Result may be empty or non-empty — just ensure it doesn't crash
+    assert isinstance(result, list)

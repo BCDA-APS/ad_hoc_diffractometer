@@ -29,9 +29,9 @@ notation and the internal numpy representation.
 
 References
 ----------
-International Tables for Crystallography, Vol. C, Section 2.2.6 (2006).
-    DOI: 10.1107/97809553602060000103
-    Confirms kappa axis tilted 50° from the omega (vertical) axis.
+* International Tables for Crystallography, Vol. C, Section 2.2.6 (2006).
+  DOI: 10.1107/97809553602060000103 —
+  Confirms kappa axis tilted 50° from the omega (vertical) axis.
 """
 
 import logging

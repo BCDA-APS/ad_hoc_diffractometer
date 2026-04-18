@@ -96,6 +96,35 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    same branch and include it in the PR.  The roadmap update is accepted when
    the PR is merged — no separate post-merge commit to `main` is needed.
 
+6. **Monitor CI** after the PR is opened.  Watch for test failures, lint
+   errors, or coverage gaps reported by the CI checks.  Push additional
+   commits to the feature branch to resolve any failures — do **not** force-
+   push unless explicitly requested.
+
+7. **Resolve PR comments**.  Address reviewer feedback with further commits
+   on the same branch.  Update the PR description if the scope changes
+   materially.
+
+8. **Merge** once all CI checks are green and the PR is approved (or
+   self-approved if the repository allows it).  Use the merge strategy
+   preferred by the repository (typically squash-merge or merge commit —
+   follow the existing pattern in the commit history).  The `closes #N`
+   keyword in the PR body closes the issue and moves the project card to
+   "Done" automatically.
+
+9. **Local cleanup** after a successful merge:
+   ```bash
+   git checkout main
+   git pull --ff-only origin main
+   git branch -d <feature-branch>
+   ```
+   Confirm the issue is closed on GitHub and the project card has moved to
+   "Done" before starting the next item.
+
+**Confirm before acting on implied direction.**  If a user's message could
+be interpreted as either a question or an instruction, ask for clarification
+before taking action (committing, pushing, opening PRs, etc.).
+
 Contributed by: OpenCode (argo/claudesonnet46)
 
 ---

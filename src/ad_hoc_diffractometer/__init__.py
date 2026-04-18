@@ -55,10 +55,19 @@ from .lattice import Lattice
 from .lattice import b_matrix
 from .lattice import lattice_vectors
 from .lattice import reciprocal_vectors
-from .mode import BisectingMode
-from .mode import DiffractionMode
-from .mode import FixedAngleMode
+from .mode import OPTIONAL
+from .mode import QAZ
+from .mode import REFERENCE_NAMES
+from .mode import REQUIRED
+from .mode import AnyConstraint
+from .mode import BisectConstraint
+from .mode import ConstraintSet
+from .mode import ConstraintViolation
+from .mode import DetectorConstraint
+from .mode import EwaldSphereViolation
 from .mode import ModeDict
+from .mode import ReferenceConstraint
+from .mode import SampleConstraint
 from .orientation import angles_to_phi_vector
 from .orientation import ub_from_one_reflection
 from .orientation import ub_from_three_reflections_bl1967
@@ -96,8 +105,6 @@ from .surface import q_components
 
 logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
-
 __all__ = [
     # version
     "__version__",
@@ -128,11 +135,20 @@ __all__ = [
     "ReflectionList",
     "Sample",
     "SampleDict",
-    # modes
-    "DiffractionMode",
-    "FixedAngleMode",
-    "BisectingMode",
+    # modes and exceptions
+    "QAZ",
+    "REQUIRED",
+    "OPTIONAL",
+    "REFERENCE_NAMES",
+    "AnyConstraint",
+    "BisectConstraint",
+    "ConstraintSet",
+    "SampleConstraint",
+    "DetectorConstraint",
+    "ReferenceConstraint",
     "ModeDict",
+    "EwaldSphereViolation",
+    "ConstraintViolation",
     # alternative calculation engines
     "hkl_to_Q",
     "Q_to_hkl",
