@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../_static/documentation_options.js?v=8f00ea1c"></script>
+    <script src="../../_static/documentation_options.js?v=2b055b73"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1578,6 +1578,47 @@
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
+    <span class="c1"># fivec: 5 DOF, N-3=2 constraints needed per mode.</span>
+    <span class="c1"># With mu=0 the geometry reduces to fourcv; the bisecting solver</span>
+    <span class="c1"># handles this case identically to fourcv bisecting.</span>
+    <span class="c1"># Modes where mu != 0 require a tilted-plane solver (not yet implemented).</span>
+    <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;bisecting&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_chi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_mu&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;constant_omega_noncoplanar&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+    <span class="p">}</span>
     <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
         <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
@@ -1587,6 +1628,8 @@
             <span class="s2">&quot;(Vlieg et al. 1987; Walko 2016 (S3D1)1). &quot;</span>
             <span class="s2">&quot;Sample and detector coupled through mu.&quot;</span>
         <span class="p">),</span>
+        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
+        <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 </pre></div>
