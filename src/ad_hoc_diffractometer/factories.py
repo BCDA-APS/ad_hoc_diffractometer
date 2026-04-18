@@ -161,9 +161,11 @@ from .constants import XHAT
 from .constants import YHAT
 from .constants import ZHAT
 from .geometry import AdHocDiffractometer
+from .mode import REQUIRED
 from .mode import BisectConstraint
 from .mode import ConstraintSet
 from .mode import DetectorConstraint
+from .mode import ReferenceConstraint
 from .mode import SampleConstraint
 from .stage import Stage
 
@@ -566,7 +568,6 @@ def fourcv(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
         Stage("ttheta", -LATERAL, parent=None, role="detector"),
     ]
     # fourcv: 4 DOF, N-3=1 constraint needed per mode.
-    # fourcv: 4 DOF, N-3=1 constraint needed per mode.
     modes = {
         "bisecting": ConstraintSet(
             [BisectConstraint("omega", "ttheta")],
@@ -579,6 +580,20 @@ def fourcv(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
         "fixed_phi": ConstraintSet(
             [SampleConstraint("phi", 0.0)],
             computed=["omega", "chi", "ttheta"],
+        ),
+        "constant_omega": ConstraintSet(
+            [SampleConstraint("omega", 0.0)],
+            computed=["chi", "phi", "ttheta"],
+        ),
+        "psi_constant": ConstraintSet(
+            [ReferenceConstraint("psi", 0.0)],
+            computed=["omega", "chi", "phi", "ttheta"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "double_diffraction": ConstraintSet(
+            [BisectConstraint("omega", "ttheta")],
+            computed=["omega", "chi", "phi", "ttheta"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
         ),
     }
     return AdHocDiffractometer(
@@ -629,7 +644,6 @@ def fourch(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
         Stage("ttheta", -VERTICAL, parent=None, role="detector"),
     ]
     # fourch: 4 DOF, N-3=1 constraint needed per mode.
-    # fourch: 4 DOF, N-3=1 constraint needed per mode.
     modes = {
         "bisecting": ConstraintSet(
             [BisectConstraint("omega", "ttheta")],
@@ -642,6 +656,20 @@ def fourch(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
         "fixed_phi": ConstraintSet(
             [SampleConstraint("phi", 0.0)],
             computed=["omega", "chi", "ttheta"],
+        ),
+        "constant_omega": ConstraintSet(
+            [SampleConstraint("omega", 0.0)],
+            computed=["chi", "phi", "ttheta"],
+        ),
+        "psi_constant": ConstraintSet(
+            [ReferenceConstraint("psi", 0.0)],
+            computed=["omega", "chi", "phi", "ttheta"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "double_diffraction": ConstraintSet(
+            [BisectConstraint("omega", "ttheta")],
+            computed=["omega", "chi", "phi", "ttheta"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
         ),
     }
     return AdHocDiffractometer(
