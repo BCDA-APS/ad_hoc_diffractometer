@@ -35,8 +35,8 @@ Future functions (separate issues):
 
 References
 ----------
-Busing & Levy, Acta Cryst. 22, 457-464 (1967)
-You, J. Appl. Cryst. 32, 614-623 (1999)
+* Busing & Levy, Acta Cryst. 22, 457-464 (1967)
+* You, J. Appl. Cryst. 32, 614-623 (1999)
 """
 
 from __future__ import annotations

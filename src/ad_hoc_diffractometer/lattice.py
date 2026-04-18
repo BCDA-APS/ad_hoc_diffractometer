@@ -30,9 +30,6 @@ logger = logging.getLogger(__name__)
 # Crystal system definitions
 # ---------------------------------------------------------------------------
 
-#: Parameters that are independent (not symmetry-constrained) for each system.
-#: These are the parameters reported by __str__.  Ordered from most constrained
-#: (cubic) to most general (triclinic).
 _SYSTEM_FREE_PARAMS: dict[str, tuple[str, ...]] = {
     "cubic": ("a",),
     "tetragonal": ("a", "c"),
@@ -42,10 +39,17 @@ _SYSTEM_FREE_PARAMS: dict[str, tuple[str, ...]] = {
     "monoclinic": ("a", "b", "c", "beta"),
     "triclinic": ("a", "b", "c", "alpha", "beta", "gamma"),
 }
+"""Parameters that are independent (not symmetry-constrained) for each system.
 
-#: The seven crystal systems, derived from _SYSTEM_FREE_PARAMS so that
-#: membership and order are always consistent with the free-parameter table.
+These are the parameters reported by ``__str__``.  Ordered from most
+constrained (cubic) to most general (triclinic).
+"""
+
 CRYSTAL_SYSTEMS = list(_SYSTEM_FREE_PARAMS)
+"""The seven crystal systems, derived from :data:`_SYSTEM_FREE_PARAMS`.
+
+Membership and order are always consistent with the free-parameter table.
+"""
 
 # Sentinel: marks a parameter as "not supplied by the caller"
 _UNSET = object()

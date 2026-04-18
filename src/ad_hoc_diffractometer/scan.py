@@ -104,14 +104,14 @@ scan shape.  Supported types:
 
 References
 ----------
-Busing & Levy, Acta Cryst. 22, 457-464 (1967)
-    Four-circle geometry, ψ scan formulation, angle-setting equations.
-You, J. Appl. Cryst. 32, 614-623 (1999)
-    psic geometry, azimuthal angle definition (eqs. 10-11).
-ITC Vol. C, Sec. 2.2.6 (2006)
-    Kappa geometry, ψ scan via ω, χ, φ.
-D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)
-    Kappa conversion formulae.
+* Busing & Levy, Acta Cryst. 22, 457-464 (1967) —
+  Four-circle geometry, ψ scan formulation, angle-setting equations.
+* You, J. Appl. Cryst. 32, 614-623 (1999) —
+  psic geometry, azimuthal angle definition (eqs. 10-11).
+* ITC Vol. C, Sec. 2.2.6 (2006) —
+  Kappa geometry, ψ scan via ω, χ, φ.
+* D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) —
+  Kappa conversion formulae.
 """
 
 from __future__ import annotations
