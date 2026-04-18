@@ -35,6 +35,7 @@ from ad_hoc_diffractometer import fourch
 from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer import kappa4ch
 from ad_hoc_diffractometer import kappa4cv
+from ad_hoc_diffractometer import kappa6c
 from ad_hoc_diffractometer import psic
 from ad_hoc_diffractometer import sixc
 from ad_hoc_diffractometer import ub_identity
@@ -1447,3 +1448,86 @@ def test_psic_modes_serialisation_round_trip():
     g2 = AdHocDiffractometer.from_dict(d)
     assert set(g2.modes.keys()) == _PSIC_MODES_ALL
     assert g2.mode_name == "bisecting_vertical"
+
+
+# ---------------------------------------------------------------------------
+# Issue #152 — kappa6c: implemented modes round-trip; stubs raise
+# ---------------------------------------------------------------------------
+
+_KAPPA6C_ALL_MODES = {
+    "bisecting_vertical",
+    "bisecting_horizontal",
+    "fixed_kphi",
+    "fixed_mu",
+    "fixed_nu",
+    "fixed_delta",
+    "lifting_detector_mu",
+    "lifting_detector_kphi",
+    "psi_constant_vertical",
+    "psi_constant_horizontal",
+}
+_KAPPA6C_STUB_MODES = {
+    "lifting_detector_mu",
+    "lifting_detector_kphi",
+    "psi_constant_vertical",
+    "psi_constant_horizontal",
+}
+
+
+@pytest.mark.parametrize(
+    "mode_name, h, k, l",
+    [
+        pytest.param("bisecting_vertical", 1, 0, 0, id="bisecting_vertical-100"),
+        pytest.param("bisecting_vertical", 0, 1, 0, id="bisecting_vertical-010"),
+        pytest.param("bisecting_horizontal", 1, 0, 0, id="bisecting_horizontal-100"),
+        pytest.param("bisecting_horizontal", 0, 0, 1, id="bisecting_horizontal-001"),
+        pytest.param("fixed_kphi", 0, 1, 0, id="fixed_kphi-010"),
+        pytest.param("fixed_kphi", 1, 0, 0, id="fixed_kphi-100"),
+        pytest.param("fixed_mu", 1, 0, 0, id="fixed_mu-100"),
+        pytest.param("fixed_mu", 0, 1, 0, id="fixed_mu-010"),
+        pytest.param("fixed_nu", 1, 0, 0, id="fixed_nu-100"),
+        pytest.param("fixed_nu", 0, 1, 0, id="fixed_nu-010"),
+        pytest.param("fixed_delta", 1, 0, 0, id="fixed_delta-100"),
+        pytest.param("fixed_delta", 0, 0, 1, id="fixed_delta-001"),
+    ],
+)
+def test_kappa6c_mode_round_trip(mode_name, h, k, l):  # noqa: E741
+    """Implemented kappa6c modes solve and round-trip correctly."""
+    g = _setup_cubic(kappa6c, a=4.0)
+    g.mode_name = mode_name
+    assert _round_trip_ok(g, h, k, l)
+
+
+@pytest.mark.parametrize(
+    "mode_name",
+    [pytest.param(m, id=m) for m in sorted(_KAPPA6C_STUB_MODES)],
+)
+def test_kappa6c_stub_not_implemented(mode_name):
+    """kappa6c stub modes raise NotImplementedError on forward()."""
+    g = _setup_cubic(kappa6c, a=4.0)
+    g.mode_name = mode_name
+    with pytest.raises(NotImplementedError):
+        g.forward(1, 0, 0)
+
+
+def test_kappa6c_bisecting_vertical_invariants():
+    """bisecting_vertical: komega=delta/2, mu=0, nu=0 in all solutions."""
+    g = _setup_cubic(kappa6c, a=4.0)
+    solutions = g.forward(1, 0, 0)
+    assert len(solutions) > 0
+    for sol in solutions:
+        assert sol["komega"] == pytest.approx(sol["delta"] / 2.0, abs=1e-10)
+        assert sol["mu"] == pytest.approx(0.0, abs=1e-8)
+        assert sol["nu"] == pytest.approx(0.0, abs=1e-8)
+
+
+def test_kappa6c_bisecting_horizontal_invariants():
+    """bisecting_horizontal: mu=nu/2, komega=0, delta=0 in all solutions."""
+    g = _setup_cubic(kappa6c, a=4.0)
+    g.mode_name = "bisecting_horizontal"
+    solutions = g.forward(1, 0, 0)
+    assert len(solutions) > 0
+    for sol in solutions:
+        assert sol["mu"] == pytest.approx(sol["nu"] / 2.0, abs=1e-10)
+        assert sol["komega"] == pytest.approx(0.0, abs=1e-8)
+        assert sol["delta"] == pytest.approx(0.0, abs=1e-8)
