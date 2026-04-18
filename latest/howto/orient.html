@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=3cd23745"></script>
+    <script src="../_static/documentation_options.js?v=d4ffc219"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 04:13 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 04:40 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -513,18 +513,18 @@ B, U, and UB mean.</p>
 <section id="add-orienting-reflections">
 <h2>Add orienting reflections<a class="headerlink" href="#add-orienting-reflections" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add the primary reflection at its measured motor angles</span>
-<span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-                  <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">69.13</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">34.56</span><span class="p">,</span>
-                          <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                          <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">69.13</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">34.56</span><span class="p">,</span>
+                                  <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
 
 <span class="c1"># Add a second reflection 90° away in phi</span>
-<span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or2&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-                  <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">47.30</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">23.65</span><span class="p">,</span>
-                          <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">35.26</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">})</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or2&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                          <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">47.30</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">23.65</span><span class="p">,</span>
+                                  <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">35.26</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">})</span>
 
-<span class="c1"># Designate which reflections to use</span>
-<span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;or2&quot;</span><span class="p">)</span>
+<span class="c1"># Designate which reflections to use for the UB calculation</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor1</span><span class="p">(</span><span class="s2">&quot;or2&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -553,13 +553,15 @@ by specifying a reference crystal direction and a reference stage:</p>
 <h2>Compute UB from three reflections (direct method)<a class="headerlink" href="#compute-ub-from-three-reflections-direct-method" title="Link to this heading">#</a></h2>
 <p>For unknown lattices, UB can be determined directly from three reflections
 without prior knowledge of the unit cell:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or3&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-                  <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">56.12</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">28.06</span><span class="p">,</span>
-                          <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">58.0</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">45.0</span><span class="p">})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or3&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                          <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">56.12</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">28.06</span><span class="p">,</span>
+                                  <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">58.0</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">45.0</span><span class="p">})</span>
 
 <span class="n">UB</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">ub_from_three_reflections_bl1967</span><span class="p">(</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or1&quot;</span><span class="p">],</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or2&quot;</span><span class="p">],</span> <span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or3&quot;</span><span class="p">]</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or1&quot;</span><span class="p">],</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or2&quot;</span><span class="p">],</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or3&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -578,7 +580,7 @@ axes), use the identity orientation:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">direction_check</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
     <span class="n">q_phi</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">angles_to_phi_vector</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span>
     <span class="n">ub_h</span>  <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">r</span><span class="o">.</span><span class="n">hkl</span>
     <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q_phi</span><span class="p">,</span> <span class="n">ub_h</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">ub_h</span><span class="p">))</span>
@@ -700,7 +702,7 @@ step-by-step crystal alignment on a real instrument.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 04:13 CDT.
+  Last updated on 2026-04-18 04:40 CDT.
   <br/>
 </p></div>
       

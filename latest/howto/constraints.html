@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=3cd23745"></script>
+    <script src="../_static/documentation_options.js?v=d4ffc219"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 04:13 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-18 04:40 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -541,17 +541,26 @@ declares the bisecting relational condition:</p>
 <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">)</span>       <span class="c1"># eta = delta / 2  (psic)</span>
 </pre></div>
 </div>
-<p><strong>Detector constraint</strong> — fixes one detector stage at a declared value:</p>
+<p><strong>Detector constraint</strong> — fixes one detector stage at a declared value, or
+constrains the <code class="docutils literal notranslate"><span class="pre">&quot;qaz&quot;</span></code> pseudo-angle from You (1999) eq. 18
+(<code class="docutils literal notranslate"><span class="pre">tan(qaz)</span> <span class="pre">=</span> <span class="pre">tan(delta)</span> <span class="pre">/</span> <span class="pre">sin(nu)</span></code>):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectorConstraint</span>
 
 <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>     <span class="c1"># nu fixed at 0°</span>
 <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># gamma fixed at 0°</span>
+<span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;qaz&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>   <span class="c1"># Q confined to the vertical plane</span>
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">qaz</span> <span class="pre">=</span> <span class="pre">90°</span></code> constrains scattering to the vertical plane;
+<code class="docutils literal notranslate"><span class="pre">qaz</span> <span class="pre">=</span> <span class="pre">0°</span></code> to the horizontal plane.
+This is implemented for all geometries with two or more detector stages
+(psic, kappa6c) and used by the <code class="docutils literal notranslate"><span class="pre">lifting_detector_*</span></code> mode family.</p>
 <p><strong>Reference constraint</strong> — expresses a condition between Q and a reference
 vector n̂ (surface normal, polarisation axis, etc.).
-All reference constraints are stubs pending the reference-vector
-infrastructure (see <a class="reference internal" href="surface.html"><span class="doc">Surface Geometry and the Reference Vector</span></a>):</p>
+The incidence/exit-angle constraints (<code class="docutils literal notranslate"><span class="pre">alpha_i</span></code>, <code class="docutils literal notranslate"><span class="pre">beta_out</span></code>,
+<code class="docutils literal notranslate"><span class="pre">a_eq_b</span></code>) are implemented when <code class="docutils literal notranslate"><span class="pre">surface_normal</span></code> is set;
+<code class="docutils literal notranslate"><span class="pre">psi</span></code> and <code class="docutils literal notranslate"><span class="pre">naz</span></code> are not yet implemented as forward constraints.
+See <a class="reference internal" href="surface.html"><span class="doc">Surface Geometry and the Reference Vector</span></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
 
 <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>       <span class="c1"># azimuthal angle of n̂ about Q</span>
@@ -564,6 +573,28 @@ at most one <a class="reference internal" href="../autoapi/ad_hoc_diffractometer
 remainder must be <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a>
 or <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a>.
 Total must equal N − 3.</p>
+</section>
+<section id="design-principles">
+<h2>Design principles<a class="headerlink" href="#design-principles" title="Link to this heading">#</a></h2>
+<p>The constraint system is built on three key decisions from the #122 planning
+discussion:</p>
+<ol class="arabic simple">
+<li><p><strong>Constraints are geometry-agnostic.</strong>  A <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>
+is defined without reference to a specific geometry; validation against
+actual DOF count and stage names happens at solve time
+(<code class="docutils literal notranslate"><span class="pre">is_fully_constrained(g)</span></code> and <code class="docutils literal notranslate"><span class="pre">is_implemented(g)</span></code>).</p></li>
+<li><p><strong>At most one detector constraint and at most one reference constraint.</strong>
+Fixing more than one detector angle over-constrains the scattered beam
+direction.  More than one reference constraint would also over-constrain
+the problem.  Any number of sample constraints (fixed-angle or bisect) are
+allowed, subject to the total equalling N − 3.</p></li>
+<li><p><strong>The bisect condition is relational, not heuristic.</strong>
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a> names both stages
+explicitly (<code class="docutils literal notranslate"><span class="pre">sample_stage</span> <span class="pre">=</span> <span class="pre">detector_stage</span> <span class="pre">/</span> <span class="pre">2</span></code>).  No geometric
+heuristics are used to infer which stage is “co-axial” with which.</p></li>
+</ol>
+<p>These principles make it possible to define valid modes programmatically
+at run time without any knowledge of geometry internals.</p>
 </section>
 <section id="use-a-factory-defined-mode">
 <h2>Use a factory-defined mode<a class="headerlink" href="#use-a-factory-defined-mode" title="Link to this heading">#</a></h2>
@@ -786,6 +817,7 @@ that has <code class="docutils literal notranslate"><span class="pre">is_impleme
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background-degrees-of-freedom">Background: degrees of freedom</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constraint-categories">Constraint categories</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-principles">Design principles</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-a-factory-defined-mode">Use a factory-defined mode</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-a-constraint-value-at-run-time">Set a constraint value at run time</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-a-multi-constraint-mode-six-circle">Build a multi-constraint mode (six-circle)</a></li>
@@ -829,7 +861,7 @@ that has <code class="docutils literal notranslate"><span class="pre">is_impleme
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 04:13 CDT.
+  Last updated on 2026-04-18 04:40 CDT.
   <br/>
 </p></div>
       

@@ -142,15 +142,179 @@ See {doc}`howto/orient`, {doc}`howto/lattice`, {doc}`problem2`, and
 
 ## Diffraction modes
 
-A **diffraction mode** describes how `forward()` will compute the motor
-angles and which ones remain constant.  Modes fix or couple specific stages
-(e.g. bisecting: ω = 2θ/2).  Available modes depend on the geometry.
+A **diffraction mode** is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+that describes how `forward()` resolves the free degrees of freedom: which
+stages are fixed, which are coupled, and which are solved freely.
+Available modes depend on the geometry.
 
 ```python
+# Four-circle geometries use "bisecting"
+g = ahd.fourcv()
 g.mode_name = "bisecting"
+
+# Six-circle psic uses named variants
+g = ahd.psic()
+g.mode_name = "bisecting_vertical"   # vertical scattering plane
+g.mode_name = "bisecting_horizontal" # horizontal scattering plane
 ```
 
-See {doc}`howto/modes` and {mod}`~ad_hoc_diffractometer.mode`.
+Modes can also be added at run time:
+
+```python
+from ad_hoc_diffractometer import ConstraintSet, SampleConstraint
+
+g.modes["my_chi45"] = ConstraintSet([SampleConstraint("chi", 45.0)])
+g.mode_name = "my_chi45"
+```
+
+See {doc}`howto/modes`, {doc}`howto/constraints`, and
+{mod}`~ad_hoc_diffractometer.mode`.
+
+---
+
+## Diffraction constraints
+
+Specifying (h, k, l) provides exactly **3 equations** on the motor angles.
+A geometry with N real axes therefore has **N − 3 free parameters** that must
+each be resolved by a constraint.  Every mode is a
+{class}`~ad_hoc_diffractometer.mode.ConstraintSet` — an ordered list of
+constraints equal in length to N − 3.
+
+Three constraint categories exist:
+
+**Sample constraints** fix one sample motor angle at a declared value, or
+express the bisecting relational condition:
+
+```python
+from ad_hoc_diffractometer import SampleConstraint, BisectConstraint
+
+SampleConstraint("chi", 90.0)       # chi fixed at 90°
+BisectConstraint("eta", "delta")    # eta = delta / 2  (psic bisecting)
+```
+
+**Detector constraints** fix one detector stage at a declared value, or
+constrain the azimuthal angle of Q (the ``"qaz"`` pseudo-angle from You 1999
+eq. 18: ``tan(qaz) = tan(delta) / sin(nu)``):
+
+```python
+from ad_hoc_diffractometer import DetectorConstraint
+
+DetectorConstraint("nu", 0.0)       # nu fixed at 0°
+DetectorConstraint("qaz", 90.0)     # Q in the vertical plane
+```
+
+**Reference constraints** express a condition between Q and an external
+reference vector n̂ (surface normal, polarisation axis, etc.):
+
+```python
+from ad_hoc_diffractometer import ReferenceConstraint
+
+ReferenceConstraint("alpha_i", 5.0)  # incidence angle fixed
+ReferenceConstraint("a_eq_b", True)  # alpha_i = beta_out (symmetric)
+```
+
+Taxonomy rules: at most one {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`,
+at most one {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`.
+
+Two checks distinguish solver availability from prerequisite satisfaction:
+
+- `constraint.is_implemented(geometry)` — returns `True` when a forward
+  solver exists for this constraint on this geometry.
+- `rc.has_reference_vector(geometry)` — returns `True` when the required
+  n̂ vector is set on the geometry (a prerequisite for reference constraints,
+  independent of solver availability).
+
+See {doc}`howto/constraints` and {mod}`~ad_hoc_diffractometer.mode`.
+
+---
+
+## Kappa virtual angles
+
+Kappa geometries (``kappa4cv``, ``kappa4ch``, ``kappa6c``) have **real motor
+angles** (komega, kappa, kphi) and **virtual Eulerian pseudoangles** (omega,
+chi, phi) that are more intuitive to specify.
+
+The conversion follows Walko (2016) eq. [16] with a fixed tilt angle
+α₀ (default 50°):
+
+```python
+from ad_hoc_diffractometer import kappa_to_eulerian, eulerian_to_kappa
+
+# Real kappa angles → virtual Eulerian angles
+omega, chi, phi = kappa_to_eulerian(komega, kappa, kphi, alpha_deg=50.0)
+
+# Virtual Eulerian angles → real kappa angles (two branches)
+komega, kappa, kphi = eulerian_to_kappa(omega, chi, phi, alpha_deg=50.0)
+```
+
+Branch selection: the positive branch (kappa ≥ 0) corresponds to positive
+chi; the negative branch (kappa < 0) to negative chi.
+
+Kappa modes accept virtual angle names directly in
+{class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
+
+```python
+from ad_hoc_diffractometer import ConstraintSet, SampleConstraint, BisectConstraint
+
+g = ahd.kappa4cv()
+# "chi" is a virtual angle — the kappa inversion solver handles it
+g.modes["fixed_chi"] = ConstraintSet([SampleConstraint("chi", 90.0)])
+```
+
+See {func}`~ad_hoc_diffractometer.kappa_to_eulerian`,
+{func}`~ad_hoc_diffractometer.eulerian_to_kappa`, and the
+{doc}`howto/constraints` guide.
+
+---
+
+## Surface geometry and reference vector
+
+Some diffraction modes and pseudo-angle functions require an external
+reference vector supplied as **Miller indices (h, k, l)**.  Two separate
+vectors may be set:
+
+- **`surface_normal`** — direction perpendicular to the sample surface;
+  used by incidence/exit angle functions and surface diffraction modes.
+- **`azimuthal_reference`** — direction defining ψ = 0; used by
+  `psi_angle` and `psi_constant_*` modes.
+
+```python
+g.surface_normal = (0, 0, 1)    # (001)-cut sample
+g.azimuthal_reference = (1, 0, 0)
+```
+
+Vectors are stored as Miller indices and converted to the lab frame
+internally via the UB matrix.
+
+See {doc}`howto/surface` and {mod}`~ad_hoc_diffractometer.reference`.
+
+---
+
+## Custom exceptions
+
+Two exceptions signal specific failure modes of the forward solver:
+
+{exc}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`
+: Raised when |Q| > 4π/λ — the requested reflection cannot be reached at
+  the current wavelength regardless of motor angles.  Carries attributes
+  `q_mag`, `q_max`, and `wavelength`.
+
+{exc}`~ad_hoc_diffractometer.mode.ConstraintViolation`
+: Raised when a solver returns a solution that violates a declared
+  constraint beyond the display-precision tolerance (indicates a solver
+  error or an unimplemented virtual-angle constraint).  Carries attributes
+  `solution_index`, `constraint_repr`, `residual`, and `tolerance`.
+
+```python
+from ad_hoc_diffractometer import EwaldSphereViolation, ConstraintViolation
+
+try:
+    solutions = g.forward(10, 10, 10)   # likely unreachable
+except EwaldSphereViolation as e:
+    print(f"|Q| = {e.q_mag:.3f} Å⁻¹ exceeds Ewald sphere (max {e.q_max:.3f} Å⁻¹)")
+```
+
+See {doc}`howto/forward` and {mod}`~ad_hoc_diffractometer.mode`.
 
 ---
 
