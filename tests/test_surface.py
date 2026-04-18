@@ -33,16 +33,16 @@ import numpy as np
 import pytest
 
 import ad_hoc_diffractometer as ahd
-from ad_hoc_diffractometer import alpha_f
-from ad_hoc_diffractometer import alpha_i
-from ad_hoc_diffractometer import is_evanescent
-from ad_hoc_diffractometer import is_specular
-from ad_hoc_diffractometer import psic
-from ad_hoc_diffractometer import q_components
-from ad_hoc_diffractometer import s2d2
 from ad_hoc_diffractometer import ub_identity
-from ad_hoc_diffractometer import zaxis
+from ad_hoc_diffractometer.presets import psic
+from ad_hoc_diffractometer.presets import s2d2
+from ad_hoc_diffractometer.presets import zaxis
 from ad_hoc_diffractometer.surface import _surface_vectors
+from ad_hoc_diffractometer.surface import alpha_f
+from ad_hoc_diffractometer.surface import alpha_i
+from ad_hoc_diffractometer.surface import is_evanescent
+from ad_hoc_diffractometer.surface import is_specular
+from ad_hoc_diffractometer.surface import q_components
 
 WAVELENGTH = 1.5406  # Cu Kα
 

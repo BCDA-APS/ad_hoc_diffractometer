@@ -349,7 +349,7 @@ def test_sample_repr_shows_no_parent_for_standalone():
 
 def _two_sample_geom():
     """fourcv with 'test' (active) and 's2' samples."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.add_sample("s2", g.sample.lattice)

@@ -179,13 +179,14 @@ diffractometer/                  # project root (git repo)
 │   └── 2020-12-13-fourcc-alignment-7-id-c/  # real alignment session data
 ├── src/
 │   └── ad_hoc_diffractometer/   # package source
-│       ├── __init__.py          # public API
+│       ├── __init__.py          # public API (Tier 1 names only)
+│       ├── presets.py           # 10 pre-built geometry factory functions
+│       ├── factories.py         # geometry registry + shared definitions
 │       ├── constants.py         # XHAT, YHAT, ZHAT
 │       ├── axes.py              # parse_axis(), axis_label(), kappa_axis()
 │       ├── rotation.py          # rotation_matrix() — Rodrigues formula
 │       ├── stage.py             # Stage class
 │       ├── geometry.py          # AdHocDiffractometer class
-│       ├── factories.py         # all geometry factories + registry
 │       ├── lattice.py           # Lattice class, b_matrix(), standalone fns
 │       └── display.py           # get/set_precision(), fmt()
 └── tests/
@@ -234,6 +235,12 @@ way: every new algorithm must be implementable with NumPy alone.
 ## Code style guidelines
 
 - **Import alias**: `import ad_hoc_diffractometer as ahd`
+- **Presets**: `g = ahd.presets.fourcv()` — preset geometry factories live
+  in `ahd.presets`, not in the top-level namespace
+- **Tier 1 (top-level)**: Only ~23 names are exported from `__init__.py`
+  (core classes, orientation, modes, registry).  All other names are
+  accessed via their submodule: `ahd.display.fmt()`,
+  `ahd.radiation.energy_to_wavelength()`, `ahd.conversions.hkl_to_d()`, etc.
 - **Python**: ≥ 3.10 (uses `X | Y` union types)
 - **Dependencies**: `numpy` only; no scipy, no sympy
 - **Style**: ruff (E, W, F, UP, B rules) + ruff-format, line length 88;
@@ -305,10 +312,13 @@ caller-facing interface only.
 
 ---
 
-## Geometry factories
+## Geometry presets
 
-All factory functions are decorated with `@register_geometry` and appear
-in `list_geometries()`.  Naming convention:
+All factory functions live in `presets.py`, are decorated with
+`@register_geometry` (from `factories.py`), and appear in
+`list_geometries()`.  Access them as `ahd.presets.fourcv()`, etc.
+
+Naming convention:
 
 | Suffix | Meaning |
 |---|---|

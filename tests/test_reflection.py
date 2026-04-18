@@ -19,9 +19,9 @@ from contextlib import nullcontext as does_not_raise
 import pytest
 
 from ad_hoc_diffractometer import Reflection
-from ad_hoc_diffractometer import ReflectionList
-from ad_hoc_diffractometer import kappa6c
-from ad_hoc_diffractometer import psic
+from ad_hoc_diffractometer.presets import kappa6c
+from ad_hoc_diffractometer.presets import psic
+from ad_hoc_diffractometer.reflection import ReflectionList
 
 # ---------------------------------------------------------------------------
 # Helpers

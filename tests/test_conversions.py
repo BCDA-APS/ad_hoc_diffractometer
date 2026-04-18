@@ -26,7 +26,6 @@ import pytest
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import Lattice
-from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.conversions import Q_mag_to_two_theta
 from ad_hoc_diffractometer.conversions import Q_to_d
@@ -38,6 +37,7 @@ from ad_hoc_diffractometer.conversions import hkl_to_Q
 from ad_hoc_diffractometer.conversions import hkl_to_two_theta
 from ad_hoc_diffractometer.conversions import two_theta_to_d
 from ad_hoc_diffractometer.conversions import two_theta_to_Q_mag
+from ad_hoc_diffractometer.presets import fourcv
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -428,14 +428,14 @@ class TestTwoThetaQMag:
 
 
 def test_public_api_exports():
-    """All engine functions are importable from the top-level package."""
-    assert ahd.hkl_to_Q is hkl_to_Q
-    assert ahd.Q_to_hkl is Q_to_hkl
-    assert ahd.Q_to_d is Q_to_d
-    assert ahd.d_to_Q_mag is d_to_Q_mag
-    assert ahd.hkl_to_d is hkl_to_d
-    assert ahd.d_to_two_theta is d_to_two_theta
-    assert ahd.two_theta_to_d is two_theta_to_d
-    assert ahd.hkl_to_two_theta is hkl_to_two_theta
-    assert ahd.two_theta_to_Q_mag is two_theta_to_Q_mag
-    assert ahd.Q_mag_to_two_theta is Q_mag_to_two_theta
+    """All engine functions are importable from the conversions submodule."""
+    assert ahd.conversions.hkl_to_Q is hkl_to_Q
+    assert ahd.conversions.Q_to_hkl is Q_to_hkl
+    assert ahd.conversions.Q_to_d is Q_to_d
+    assert ahd.conversions.d_to_Q_mag is d_to_Q_mag
+    assert ahd.conversions.hkl_to_d is hkl_to_d
+    assert ahd.conversions.d_to_two_theta is d_to_two_theta
+    assert ahd.conversions.two_theta_to_d is two_theta_to_d
+    assert ahd.conversions.hkl_to_two_theta is hkl_to_two_theta
+    assert ahd.conversions.two_theta_to_Q_mag is two_theta_to_Q_mag
+    assert ahd.conversions.Q_mag_to_two_theta is Q_mag_to_two_theta

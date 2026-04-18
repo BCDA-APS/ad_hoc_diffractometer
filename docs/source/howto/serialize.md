@@ -28,7 +28,7 @@ loss.
 import ad_hoc_diffractometer as ahd
 
 # Set up a geometry
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 g.wavelength = 1.5406                       # Å  (Cu Kα)
 g.sample.lattice = ahd.Lattice(a=5.431)     # cubic silicon
 ahd.ub_identity(g.sample)
@@ -166,7 +166,7 @@ and cut points:
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.psic()
+g = ahd.presets.psic()
 g.mode_name = "bisecting_vertical"
 
 d = g.to_dict()
@@ -197,7 +197,7 @@ def restore_session():
         return ahd.AdHocDiffractometer.from_dict(json.load(f))
 
 # End of session: save
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 # ... do alignment ...
 save_session(g)
 
@@ -212,5 +212,5 @@ ahd.pa(g)   # verify the restored configuration
 - {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.from_dict`
 - {class}`~ad_hoc_diffractometer.lattice.Lattice`
 - {class}`~ad_hoc_diffractometer.sample.Sample`
-- {func}`~ad_hoc_diffractometer.pa`
+- {func}`~ad_hoc_diffractometer.geometry.pa`
 - {doc}`orient`

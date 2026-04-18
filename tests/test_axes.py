@@ -17,13 +17,13 @@ import numpy as np
 import pytest
 from helpers import STANDARD_BASIS as _STANDARD_BASIS
 
-from ad_hoc_diffractometer import XHAT
-from ad_hoc_diffractometer import YHAT
-from ad_hoc_diffractometer import ZHAT
-from ad_hoc_diffractometer import axis_from_physical
-from ad_hoc_diffractometer import axis_label
-from ad_hoc_diffractometer import kappa_axis
-from ad_hoc_diffractometer import parse_axis
+from ad_hoc_diffractometer.axes import axis_from_physical
+from ad_hoc_diffractometer.axes import axis_label
+from ad_hoc_diffractometer.axes import kappa_axis
+from ad_hoc_diffractometer.axes import parse_axis
+from ad_hoc_diffractometer.constants import XHAT
+from ad_hoc_diffractometer.constants import YHAT
+from ad_hoc_diffractometer.constants import ZHAT
 
 # ---------------------------------------------------------------------------
 # parse_axis()

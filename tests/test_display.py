@@ -17,11 +17,11 @@ from contextlib import nullcontext as does_not_raise
 import pytest
 
 import ad_hoc_diffractometer as ahd
-from ad_hoc_diffractometer import allclose
-from ad_hoc_diffractometer import fmt
-from ad_hoc_diffractometer import get_precision
-from ad_hoc_diffractometer import precision_atol
-from ad_hoc_diffractometer import set_precision
+from ad_hoc_diffractometer.display import allclose
+from ad_hoc_diffractometer.display import fmt
+from ad_hoc_diffractometer.display import get_precision
+from ad_hoc_diffractometer.display import precision_atol
+from ad_hoc_diffractometer.display import set_precision
 
 _DEFAULT = 6  # matches conftest._DISPLAY_DEFAULT
 
@@ -72,8 +72,8 @@ def test_set_precision(digits, context):
 
 def test_set_precision_affects_package():
     """set_precision updates the package-level default seen by ahd.get_precision()."""
-    ahd.set_precision(3)
-    assert ahd.get_precision() == 3
+    ahd.display.set_precision(3)
+    assert ahd.display.get_precision() == 3
 
 
 # ---------------------------------------------------------------------------
