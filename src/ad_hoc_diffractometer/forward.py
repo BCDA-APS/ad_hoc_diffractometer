@@ -223,6 +223,10 @@ def _solve_constraint_set(
     if _is_kappa_virtual_mode(geometry, mode):
         return _solve_kappa_virtual(geometry, Q_phi, ttheta_deg, mode)
 
+    # Surface diffraction mode (ReferenceConstraint with surface_normal).
+    if _is_surface_mode(geometry, mode):
+        return _solve_surface(geometry, Q_phi, ttheta_deg, mode)
+
     # Fixed-angle only (no bisect).
     return _solve_fixed_sample(geometry, Q_phi, ttheta_deg, mode)
 
@@ -693,6 +697,173 @@ def _solve_kappa_virtual(
             solutions.append(angles)
 
     return solutions
+
+
+# ---------------------------------------------------------------------------
+# Surface diffraction solvers (ReferenceConstraint modes)
+# ---------------------------------------------------------------------------
+
+
+def _is_surface_mode(geometry: AdHocDiffractometer, mode) -> bool:
+    """Return True when mode has a ReferenceConstraint and surface_normal is set."""
+    from .mode import ReferenceConstraint
+
+    return geometry.surface_normal is not None and any(
+        isinstance(c, ReferenceConstraint) for c in mode.constraints
+    )
+
+
+def _solve_surface(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+) -> list[dict[str, float]]:
+    """
+    Surface diffraction forward solver.
+
+    Supports ReferenceConstraint modes where the constraint is:
+
+    - ``"alpha_i"`` — incidence angle fixed at target value
+    - ``"beta_out"`` — exit angle fixed at target value
+    - ``"a_eq_b"`` — symmetric reflection: alpha_i = beta_out
+
+    The solver builds a baseline angles dict (applying all fixed sample/detector
+    constraints and setting the detector stage to ttheta_deg), then performs a
+    1D Newton-Raphson root-find over the remaining free stage to satisfy the
+    surface reference constraint.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+    Q_phi : numpy.ndarray, shape (3,)
+    ttheta_deg : float
+    mode : ConstraintSet
+
+    Returns
+    -------
+    list of dict[str, float]
+    """
+
+    from .mode import ReferenceConstraint
+
+    # Extract the reference constraint
+    rc = next(c for c in mode.constraints if isinstance(c, ReferenceConstraint))
+    target_name = rc.name  # "alpha_i", "beta_out", or "a_eq_b"
+    target_value = rc.value  # float or True
+
+    # Build baseline angles dict with all fixed constraints applied
+    angles: dict[str, float] = {
+        s.name: s.angle
+        for s in list(geometry._stages.values())  # noqa: SLF001
+    }
+
+    # Apply fixed sample constraints
+    for c in mode.fixed_sample_constraints:
+        if c.name in geometry._stages:  # noqa: SLF001  # pragma: no branch
+            angles[c.name] = float(c.value)
+
+    # Apply detector constraint if present
+    det_constraint = mode.detector_constraint
+    if det_constraint is not None and not det_constraint.is_qaz:
+        angles[det_constraint.name] = det_constraint.value
+
+    # Set the active detector stage to ttheta_deg
+    det_stage = geometry.detector_stages[-1]
+    angles[det_stage.name] = ttheta_deg
+
+    # Identify the one free sample stage (the one not fixed by any constraint)
+    constrained_names = set(mode.constrained_stages(geometry))
+    constrained_names.add(det_stage.name)
+    if det_constraint is not None and not det_constraint.is_qaz:
+        constrained_names.add(det_constraint.name)
+    free_sample = [s for s in geometry.sample_stages if s.name not in constrained_names]
+
+    if not free_sample:  # pragma: no cover
+        # All stages fixed — evaluate the constraint and return if satisfied
+        if _surface_residual(angles, geometry, target_name, target_value) < 1e-6:
+            _apply_cut_points(angles, mode, geometry)
+            if _check_limits(geometry, angles):
+                return [angles]
+        return []
+
+    if len(free_sample) > 1:  # pragma: no branch
+        # More than one free sample stage — use the first one (rocking stage)
+        # and leave others at current values.  This handles cases where the
+        # reference constraint only restricts one angle.
+        pass
+
+    free_stage = free_sample[0]
+
+    # 1D Newton-Raphson over the free stage angle
+    def residual(angle_val: float) -> float:
+        trial = dict(angles)
+        trial[free_stage.name] = angle_val
+        return _surface_residual(trial, geometry, target_name, target_value)
+
+    solutions = []
+    # Seed from a grid of starting values
+    lim_lo, lim_hi = free_stage.limits
+    step = max(5.0, (lim_hi - lim_lo) / 40.0)
+    seeds = list(np.arange(lim_lo + step / 2, lim_hi, step))
+
+    seen_angles: list[float] = []
+    for seed in seeds:
+        x = float(seed)
+        r0 = residual(x)
+        for _ in range(60):
+            h = 1e-4
+            dr = (residual(x + h) - residual(x - h)) / (2 * h)
+            if abs(dr) < 1e-12:
+                break
+            dx = -r0 / dr
+            dx = float(np.clip(dx, -10.0, 10.0))
+            x += dx
+            r0 = residual(x)
+            if abs(r0) < 1e-8:
+                break
+        if abs(r0) > 1e-5:
+            continue
+        # Check it's within limits
+        if not (lim_lo <= x <= lim_hi):
+            continue
+        # Deduplicate
+        if any(abs(x - xs) < 1e-3 for xs in seen_angles):
+            continue
+        seen_angles.append(x)
+        sol = dict(angles)
+        sol[free_stage.name] = x
+        _apply_cut_points(sol, mode, geometry)
+        if _check_limits(geometry, sol):  # pragma: no branch
+            solutions.append(sol)
+
+    return solutions
+
+
+def _surface_residual(
+    angles: dict[str, float],
+    geometry: AdHocDiffractometer,
+    target_name: str,
+    target_value,
+) -> float:
+    """
+    Compute the surface constraint residual for the given angles.
+
+    Returns a float residual in degrees (zero = constraint satisfied).
+    """
+    from .reference import exit_angle as _beta_out
+    from .reference import incidence_angle as _alpha_i
+
+    if target_name == "alpha_i":
+        ai = _alpha_i(geometry, angles=angles)
+        return ai - float(target_value)
+    if target_name == "beta_out":
+        bo = _beta_out(geometry, angles=angles)
+        return bo - float(target_value)
+    # a_eq_b: alpha_i = beta_out
+    ai = _alpha_i(geometry, angles=angles)
+    bo = _beta_out(geometry, angles=angles)
+    return ai - bo
 
 
 def _solve_fixed_sample(

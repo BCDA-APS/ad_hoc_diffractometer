@@ -87,10 +87,10 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 | **Computed** | omega, chi, phi, delta, gamma |
 | **Constant during** `forward()` | alpha, gamma = 0 |
 
-### `fixed_alpha_zaxis` *(stub)*
+### `fixed_alpha_zaxis`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2 + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
-Z-axis mode with fixed incidence angle. Set ``g.surface_normal = (h, k, l)`` to supply n̂; the forward solver is not yet implemented.
+Z-axis mode with fixed incidence angle. Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
 
 | | |
 |---|---|
@@ -99,10 +99,10 @@ Z-axis mode with fixed incidence angle. Set ``g.surface_normal = (h, k, l)`` to 
 | **Extras (input)** | n̂ (surface normal) |
 | **Extras (output)** | alpha_i (incidence angle), beta_out (exit angle) |
 
-### `fixed_beta_zaxis` *(stub)*
+### `fixed_beta_zaxis`
 
 {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
-Z-axis mode with fixed exit angle. Set ``g.surface_normal = (h, k, l)`` to supply n̂; the forward solver is not yet implemented.
+Z-axis mode with fixed exit angle. Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
 
 | | |
 |---|---|
@@ -111,10 +111,10 @@ Z-axis mode with fixed exit angle. Set ``g.surface_normal = (h, k, l)`` to suppl
 | **Extras (input)** | n̂ |
 | **Extras (output)** | alpha_i, beta_out |
 
-### `alpha_eq_beta_zaxis` *(stub)*
+### `alpha_eq_beta_zaxis`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2 + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
-Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Set ``g.surface_normal = (h, k, l)`` to supply n̂; the forward solver is not yet implemented.
+Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
 
 | | |
 |---|---|

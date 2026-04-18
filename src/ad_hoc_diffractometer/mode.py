@@ -709,14 +709,25 @@ class ReferenceConstraint:
 
     def is_implemented(self, geometry: AdHocDiffractometer) -> bool:
         """
-        Return False — reference constraint solvers are not yet implemented.
+        Return True when the required reference vector is set on the geometry
+        and a forward solver is available for this constraint name.
 
-        Will return True once the forward solvers for reference-constraint
-        modes are registered (Issue J).  The reference vector infrastructure
-        is available (``has_reference_vector``), but the solver that uses
-        it to compute motor angles has not been written yet.
+        Implemented constraints (surface normal / incidence / exit angle):
+
+        - ``"alpha_i"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+        - ``"beta_out"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+        - ``"a_eq_b"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+
+        Not yet implemented (psi / azimuthal reference):
+
+        - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`
+          and a psi-constant forward solver (Issue #176)
+        - ``"naz"`` — not yet implemented
         """
-        return False
+        if self._name in {"psi", "naz"}:
+            return False
+        # alpha_i, beta_out, a_eq_b — implemented when surface_normal is set
+        return geometry.surface_normal is not None
 
     def to_dict(self) -> dict:
         """Return a JSON-serialisable dict."""
