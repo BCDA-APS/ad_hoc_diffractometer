@@ -5,7 +5,7 @@ Four-circle kappa diffractometer, horizontal scattering plane. Kappa axis tilted
 
 **Walko (2016) designation:** S3D1 (kappa)
 
-**Coordinate basis:** Busing & Levy (`BASIS_BL`): lateral=+x, longitudinal=+y, vertical=+z.
+**Coordinate basis:** Busing & Levy ({data}`~ad_hoc_diffractometer.factories.BASIS_BL`): lateral=+x, longitudinal=+y, vertical=+z.
 
 ## Quick start
 
@@ -19,8 +19,8 @@ print(g.summary())
 
 ## Pre-built geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.kappa4ch` factory
-function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L733) for the complete stage
+This geometry is defined by the {func}`~ad_hoc_diffractometer.factories.kappa4ch` factory
+function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L964) for the complete stage
 and mode configuration.
 
 ## Stage layout
@@ -39,32 +39,75 @@ and mode configuration.
 |---|---|---|
 | ``ttheta`` | −vertical (−z BL) | left-handed |
 
+**Virtual Eulerian angles** (computed from real kappa angles via Walko 2016 eq. [16]):
+omega, chi, phi.  Used as constraint names for stub modes; converted back to
+komega, kappa, kphi by the kappa inversion solver (Issue I / #153).
+
 ## Diffraction modes
 
-Set the active mode with `g.mode_name = "<mode>"`. Preset any fixed-stage angles with `g.set_angle(name, value)` before calling `forward()`. See {doc}`../howto/modes` for usage details and {class}`~ad_hoc_diffractometer.mode.DiffractionMode` for the base class.
+Each mode is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` of 1 constraint
+(N − 3 = 1 for N = 4 DOF).
+Identical mode set to {doc}`kappa4cv`.
+See {doc}`../howto/modes` for usage and {doc}`../howto/constraints` for
+changing constraint values at run time.
 
-### `bisecting`
+### `bisecting` *(default)*
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.BisectingMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L227))
+{class}`~ad_hoc_diffractometer.mode.BisectConstraint`:
+`komega = ttheta / 2` (approximates the bisecting condition).
 
-`komega` is constrained to `ttheta` / 2, placing the sample symmetrically between the incident and diffracted beams (the bisecting condition).
+> **Note:** The correct bisecting condition is virtual `omega_euler = 0`.
+> Corrected in Issue I / #153.
+
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, ttheta |
+| **Constant during** `forward()` | — |
 
 ### `fixed_kphi`
 
-**Class:** {class}`~ad_hoc_diffractometer.mode.FixedAngleMode` ([source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/mode.py#L156))
+{class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
+`kphi` held at declared value (default 0°) — real stage, no kappa inversion needed.
 
-Holds `kphi` fixed at its **current angle** during `forward()`. Preset the angle with `g.set_angle("kphi", value)` before calling `forward()`.
+| | |
+|---|---|
+| **Computed** | komega, kappa, ttheta |
+| **Constant during** `forward()` | kphi |
 
+### `constant_omega` *(stub)*
+
+Fix virtual Eulerian omega (default 0°). Requires Issue I / #153.
+
+### `constant_chi` *(stub)*
+
+Fix virtual Eulerian chi (default 90°). Requires Issue I / #153.
+
+### `constant_phi` *(stub)*
+
+Fix virtual Eulerian phi (default 0°). Requires Issue I / #153.
+
+### `psi_constant` *(stub)*
+
+Fix azimuthal angle ψ of n̂ about Q.
+Requires kappa inversion (Issue I) and reference infrastructure (Issue J / #157).
+
+| | |
+|---|---|
+| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (output)** | psi (computed azimuth) |
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.kappa4ch`
+- {func}`~ad_hoc_diffractometer.factories.kappa4ch`
 - {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
-- {class}`~ad_hoc_diffractometer.mode.DiffractionMode`
-- {class}`~ad_hoc_diffractometer.mode.BisectingMode`
-- {class}`~ad_hoc_diffractometer.mode.FixedAngleMode`
+- {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+- {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
+- {class}`~ad_hoc_diffractometer.mode.SampleConstraint`
+- {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`
+- {class}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`
+- {class}`~ad_hoc_diffractometer.mode.ConstraintViolation`
 
 ## References
 
 - ITC Vol. C §2.2.6 (2006). DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577)
-- Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016).
+- Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016), eq. [16].
