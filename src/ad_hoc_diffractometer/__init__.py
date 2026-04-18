@@ -50,6 +50,8 @@ from .forward import compute_forward
 from .geometry import AdHocDiffractometer
 from .geometry import pa
 from .geometry import wh
+from .kappa import eulerian_to_kappa
+from .kappa import kappa_to_eulerian
 from .lattice import CRYSTAL_SYSTEMS
 from .lattice import Lattice
 from .lattice import b_matrix
@@ -162,6 +164,9 @@ __all__ = [
     "Q_mag_to_two_theta",
     # forward calculation
     "compute_forward",
+    # kappa conversion
+    "kappa_to_eulerian",
+    "eulerian_to_kappa",
     # radiation — constants, X-ray and neutron conversions
     "HC_KEV_ANGSTROM",
     "HC_KEV_ANGSTROM_UNCERTAINTY",
