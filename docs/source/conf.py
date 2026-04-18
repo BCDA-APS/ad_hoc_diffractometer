@@ -3,11 +3,13 @@
 # For the full list of built-in configuration values, see:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import datetime
 import os
 import pathlib
 import re
 import sys
 import tomllib
+import zoneinfo
 from importlib.metadata import version as _version
 
 # -- Path setup --------------------------------------------------------------
@@ -33,6 +35,14 @@ version = ".".join(release.split(".")[:2])
 # Set DOC_VERSION in CI to "latest" (main branch) or the tag (e.g. "0.3.0").
 # Falls back to release so local builds still work.
 switcher_version_match = os.environ.get("DOC_VERSION", release)
+
+# Timestamp displayed in the page footer.
+# Uses Chicago local time (America/Chicago — CDT/CST depending on season)
+# regardless of the timezone of the build environment (e.g. UTC in CI).
+html_last_updated_fmt = (
+    datetime.datetime.now(tz=zoneinfo.ZoneInfo("America/Chicago"))
+    .strftime("%Y-%m-%d %H:%M %Z")
+)
 
 # -- General configuration ---------------------------------------------------
 
@@ -194,6 +204,9 @@ html_theme_options = {
         "version_match": switcher_version_match,
     },
     "show_version_warning_banner": True,
+    "footer_start": ["last-updated"],
+    "footer_center": ["copyright"],
+    "footer_end": ["sphinx-version"],
 }
 
 html_title = f"{project} {version}"
