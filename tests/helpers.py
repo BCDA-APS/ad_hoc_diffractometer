@@ -10,9 +10,9 @@ Import explicitly in any test file that needs them:
 
 import numpy as np
 
-from ad_hoc_diffractometer import XHAT
-from ad_hoc_diffractometer import YHAT
-from ad_hoc_diffractometer import ZHAT
+from ad_hoc_diffractometer.constants import XHAT
+from ad_hoc_diffractometer.constants import YHAT
+from ad_hoc_diffractometer.constants import ZHAT
 
 # ---------------------------------------------------------------------------
 # Reference rotation matrices (right-handed, about the standard axes)

@@ -26,10 +26,10 @@ import pytest
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import Lattice
-from ad_hoc_diffractometer import fourcv
-from ad_hoc_diffractometer import kappa4cv
-from ad_hoc_diffractometer import psic
 from ad_hoc_diffractometer import ub_identity
+from ad_hoc_diffractometer.presets import fourcv
+from ad_hoc_diffractometer.presets import kappa4cv
+from ad_hoc_diffractometer.presets import psic
 from ad_hoc_diffractometer.scan import NEAREST_ANGLES
 from ad_hoc_diffractometer.scan import _euler_from_Z_standard
 from ad_hoc_diffractometer.scan import _hkl_points
@@ -766,10 +766,10 @@ class TestTrajectoryPlan:
 
 def test_public_api_exports():
     """All scan symbols are importable from the top-level package."""
-    assert ahd.NEAREST_ANGLES is NEAREST_ANGLES
-    assert ahd.hkl_trajectory is hkl_trajectory
-    assert ahd.psi_trajectory is psi_trajectory
-    assert ahd.trajectory_plan is trajectory_plan
+    assert ahd.scan.NEAREST_ANGLES is NEAREST_ANGLES
+    assert ahd.scan.hkl_trajectory is hkl_trajectory
+    assert ahd.scan.psi_trajectory is psi_trajectory
+    assert ahd.scan.trajectory_plan is trajectory_plan
 
 
 # ---------------------------------------------------------------------------
@@ -864,9 +864,9 @@ def test_psi_trajectory_fewer_than_3_sample_stages():
     from ad_hoc_diffractometer import AdHocDiffractometer
     from ad_hoc_diffractometer import BisectConstraint
     from ad_hoc_diffractometer import ConstraintSet
-    from ad_hoc_diffractometer import Stage
     from ad_hoc_diffractometer.constants import YHAT
     from ad_hoc_diffractometer.constants import ZHAT
+    from ad_hoc_diffractometer.stage import Stage
 
     # Construct a minimal geometry with only 2 sample stages
     stages = [

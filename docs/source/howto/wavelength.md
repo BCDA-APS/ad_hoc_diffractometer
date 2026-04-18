@@ -9,7 +9,7 @@ convert between wavelength, energy, d-spacing, and Q-vector magnitude.
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.psic()
+g = ahd.presets.psic()
 g.wavelength = 1.0  # Å
 print(g.wavelength)  # 1.0
 ```
@@ -33,7 +33,7 @@ lam = ahd.energy_to_wavelength(12.398)  # → 1.0 Å
 ## Convert wavelength ↔ wavenumber
 
 ```python
-k = ahd.wavelength_to_wavenumber(1.0)   # → 2π Å⁻¹
+k = ahd.radiation.wavelength_to_wavenumber(1.0)   # → 2π Å⁻¹
 lam = ahd.wavenumber_to_wavelength(k)   # → 1.0 Å
 ```
 
@@ -74,9 +74,9 @@ print(ahd.XRAY_LINES["Mo Ka1"])   # 0.7093 Å
 
 ## See also
 
-- {func}`~ad_hoc_diffractometer.wavelength_to_energy`
-- {func}`~ad_hoc_diffractometer.energy_to_wavelength`
-- {func}`~ad_hoc_diffractometer.d_to_Q_mag`
-- {func}`~ad_hoc_diffractometer.Q_to_d`
+- {func}`~ad_hoc_diffractometer.radiation.wavelength_to_energy`
+- {func}`~ad_hoc_diffractometer.radiation.energy_to_wavelength`
+- {func}`~ad_hoc_diffractometer.conversions.d_to_Q_mag`
+- {func}`~ad_hoc_diffractometer.conversions.Q_to_d`
 - {mod}`~ad_hoc_diffractometer.radiation`
 - {mod}`~ad_hoc_diffractometer.conversions`

@@ -28,22 +28,22 @@ from ad_hoc_diffractometer import BisectConstraint
 from ad_hoc_diffractometer import ConstraintSet
 from ad_hoc_diffractometer import DetectorConstraint
 from ad_hoc_diffractometer import SampleConstraint
-from ad_hoc_diffractometer import Stage
-from ad_hoc_diffractometer import compute_forward
-from ad_hoc_diffractometer import fivec
-from ad_hoc_diffractometer import fourch
-from ad_hoc_diffractometer import fourcv
-from ad_hoc_diffractometer import kappa4ch
-from ad_hoc_diffractometer import kappa4cv
-from ad_hoc_diffractometer import kappa6c
-from ad_hoc_diffractometer import psic
-from ad_hoc_diffractometer import sixc
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
 from ad_hoc_diffractometer.forward import _apply_cut_points
 from ad_hoc_diffractometer.forward import _check_limits
+from ad_hoc_diffractometer.forward import compute_forward
+from ad_hoc_diffractometer.presets import fivec
+from ad_hoc_diffractometer.presets import fourch
+from ad_hoc_diffractometer.presets import fourcv
+from ad_hoc_diffractometer.presets import kappa4ch
+from ad_hoc_diffractometer.presets import kappa4cv
+from ad_hoc_diffractometer.presets import kappa6c
+from ad_hoc_diffractometer.presets import psic
+from ad_hoc_diffractometer.presets import sixc
+from ad_hoc_diffractometer.stage import Stage
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -407,7 +407,7 @@ def test_kappa4_virtual_angle_constraint_satisfied(
     l,  # noqa: E741
 ):
     """Virtual angle constraint is satisfied in all returned solutions."""
-    from ad_hoc_diffractometer import kappa_to_eulerian
+    from ad_hoc_diffractometer.kappa import kappa_to_eulerian
 
     g = _setup_cubic(factory, a=4.0)
     g.mode_name = mode_name
@@ -438,7 +438,7 @@ def test_fourcv_fixed_chi_round_trip():
 
 def test_psic_fixed_chi_uses_constraint_value():
     """fixed_chi on psic: chi=90°, mu=0, nu=0 from constraint values."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = _setup_cubic(psic, a=4.0)
     g.mode_name = "fixed_chi"
@@ -707,8 +707,8 @@ def test_all_stages_constrained_out_of_limits():
 
 def test_solver_none_when_no_convergence():
     """_solve_two_angles returns None when starting point does not converge."""
-    from ad_hoc_diffractometer import angles_to_phi_vector
     from ad_hoc_diffractometer.forward import _solve_two_angles
+    from ad_hoc_diffractometer.orientation import angles_to_phi_vector
 
     g = _setup_cubic(fourcv, a=4.0)
     Q_phi_target = g.sample.UB @ np.array([1.0, 0.0, 0.0])
@@ -741,8 +741,8 @@ def test_solver_none_when_no_convergence():
 
 def test_solver_1d_none_when_no_convergence():
     """_solve_one_free_angle's internal call with max_iter=0 returns None."""
-    from ad_hoc_diffractometer import angles_to_phi_vector
     from ad_hoc_diffractometer.forward import _solve_two_angles
+    from ad_hoc_diffractometer.orientation import angles_to_phi_vector
 
     g = _setup_cubic(fourcv, a=4.0)
     Q_phi_target = g.sample.UB @ np.array([1.0, 0.0, 0.0])
@@ -1183,8 +1183,8 @@ def test_fixed_sample_one_free():
 
 def test_fixed_sample_with_detector_constraint():
     """_solve_fixed_sample: DetectorConstraint branch (line 617-624) is exercised."""
-    from ad_hoc_diffractometer import psic
     from ad_hoc_diffractometer.forward import _solve_fixed_sample
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.wavelength = WAVELENGTH
@@ -1701,11 +1701,11 @@ def test_qaz_residual_two_detector_stages_required():
 
     # Build a geometry with only 1 detector stage
     from ad_hoc_diffractometer import AdHocDiffractometer
-    from ad_hoc_diffractometer import Stage
     from ad_hoc_diffractometer.constants import XHAT
     from ad_hoc_diffractometer.constants import YHAT
     from ad_hoc_diffractometer.constants import ZHAT
     from ad_hoc_diffractometer.mode import _qaz_residual
+    from ad_hoc_diffractometer.stage import Stage
 
     stages = [
         Stage("omega", -ZHAT, parent=None, role="sample"),

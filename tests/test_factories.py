@@ -24,23 +24,23 @@ from contextlib import nullcontext as does_not_raise
 import numpy as np
 import pytest
 
-from ad_hoc_diffractometer import XHAT
-from ad_hoc_diffractometer import YHAT
-from ad_hoc_diffractometer import ZHAT
 from ad_hoc_diffractometer import AdHocDiffractometer
-from ad_hoc_diffractometer import fivec
-from ad_hoc_diffractometer import fourch
-from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer import get_geometry
-from ad_hoc_diffractometer import kappa4ch
-from ad_hoc_diffractometer import kappa4cv
-from ad_hoc_diffractometer import kappa6c
 from ad_hoc_diffractometer import list_geometries
 from ad_hoc_diffractometer import make_geometry
-from ad_hoc_diffractometer import psic
-from ad_hoc_diffractometer import s2d2
-from ad_hoc_diffractometer import sixc
-from ad_hoc_diffractometer import zaxis
+from ad_hoc_diffractometer.constants import XHAT
+from ad_hoc_diffractometer.constants import YHAT
+from ad_hoc_diffractometer.constants import ZHAT
+from ad_hoc_diffractometer.presets import fivec
+from ad_hoc_diffractometer.presets import fourch
+from ad_hoc_diffractometer.presets import fourcv
+from ad_hoc_diffractometer.presets import kappa4ch
+from ad_hoc_diffractometer.presets import kappa4cv
+from ad_hoc_diffractometer.presets import kappa6c
+from ad_hoc_diffractometer.presets import psic
+from ad_hoc_diffractometer.presets import s2d2
+from ad_hoc_diffractometer.presets import sixc
+from ad_hoc_diffractometer.presets import zaxis
 
 # ---------------------------------------------------------------------------
 # list_geometries()
@@ -707,7 +707,7 @@ def test_kappa_alpha_deg_stored(factory, alpha_deg, context):
 )
 def test_kappa_alpha_deg_matches_axis_vector(factory, alpha_deg, context):
     """kappa_alpha_deg is consistent with the kappa stage axis vector."""
-    from ad_hoc_diffractometer import kappa_axis
+    from ad_hoc_diffractometer.axes import kappa_axis
     from ad_hoc_diffractometer.factories import _BASIS_BL
     from ad_hoc_diffractometer.factories import _BASIS_YOU
 
@@ -748,15 +748,15 @@ class TestEntryPointExtensibility:
 
     def test_entry_point_group_constant_value(self):
         """GEOMETRY_ENTRY_POINT_GROUP must be the expected string."""
-        from ad_hoc_diffractometer import GEOMETRY_ENTRY_POINT_GROUP
+        from ad_hoc_diffractometer.factories import GEOMETRY_ENTRY_POINT_GROUP
 
         assert GEOMETRY_ENTRY_POINT_GROUP == "ad_hoc_diffractometer.geometries"
 
     def test_entry_point_group_exported(self):
-        """GEOMETRY_ENTRY_POINT_GROUP must be in __all__."""
-        import ad_hoc_diffractometer as ahd
+        """GEOMETRY_ENTRY_POINT_GROUP must be accessible from ad_hoc_diffractometer.factories."""
+        import ad_hoc_diffractometer.factories as fac
 
-        assert "GEOMETRY_ENTRY_POINT_GROUP" in ahd.__all__
+        assert hasattr(fac, "GEOMETRY_ENTRY_POINT_GROUP")
 
     # --- Built-in factories declared as entry points -----------------------
 
@@ -764,7 +764,7 @@ class TestEntryPointExtensibility:
         """All 10 built-in factories must appear in the installed entry points."""
         from importlib.metadata import entry_points
 
-        from ad_hoc_diffractometer import GEOMETRY_ENTRY_POINT_GROUP
+        from ad_hoc_diffractometer.factories import GEOMETRY_ENTRY_POINT_GROUP
 
         eps = entry_points(group=GEOMETRY_ENTRY_POINT_GROUP)
         names = {ep.name for ep in eps}
@@ -776,16 +776,16 @@ class TestEntryPointExtensibility:
         """Each built-in entry point must load to the same callable as the module."""
         from importlib.metadata import entry_points
 
-        import ad_hoc_diffractometer.factories as fac
-        from ad_hoc_diffractometer import GEOMETRY_ENTRY_POINT_GROUP
+        import ad_hoc_diffractometer.presets as presets
+        from ad_hoc_diffractometer.factories import GEOMETRY_ENTRY_POINT_GROUP
 
         eps = {ep.name: ep for ep in entry_points(group=GEOMETRY_ENTRY_POINT_GROUP)}
         for name in _BUILTIN_NAMES:
             assert name in eps
             loaded = eps[name].load()
-            assert loaded is getattr(fac, name), (
+            assert loaded is getattr(presets, name), (
                 f"Entry point '{name}' loaded {loaded!r}, "
-                f"expected {getattr(fac, name)!r}"
+                f"expected {getattr(presets, name)!r}"
             )
 
     # --- list_geometries() discovers entry points --------------------------
@@ -806,7 +806,7 @@ class TestEntryPointExtensibility:
         from unittest.mock import patch
 
         import ad_hoc_diffractometer.factories as fac
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         # Build a fake entry point that loads a trivial factory
         fake_factory = fourcv  # reuse an existing factory as the "plugin"
@@ -886,7 +886,7 @@ class TestEntryPointExtensibility:
         from unittest.mock import patch
 
         import ad_hoc_diffractometer.factories as fac
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         impostor_ep = MagicMock()
         impostor_ep.name = "psic"  # same name as built-in
@@ -922,8 +922,8 @@ class TestEntryPointExtensibility:
         from unittest.mock import patch
 
         import ad_hoc_diffractometer.factories as fac
-        from ad_hoc_diffractometer import fourch
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourch
+        from ad_hoc_diffractometer.presets import fourcv
 
         ep1 = MagicMock()
         ep1.name = "my_custom_geom"

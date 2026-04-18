@@ -4,12 +4,12 @@
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://prjemian.github.io/ad_hoc_diffractometer/latest/)
 [![License: CC-BY-4.0](https://img.shields.io/badge/License-CC--BY--4.0-brightgreen)](https://creativecommons.org/licenses/by/4.0/)
 
-`ad_hoc_diffractometer` is a **pure-Python** package for operating
-multi-circle diffractometers in reciprocal space for X-ray and neutron
-crystallography.  It is built around a key design principle: **any
-multi-circle diffractometer geometry can be fully described by the caller**
-— no geometry is hard-coded, and new geometries require no changes to the
-package itself.
+`ad_hoc_diffractometer` is a **pure-Python** package for calculating
+multi-circle diffractometer operations in reciprocal space for X-ray and
+neutron crystallography.  It is built around a key design principle: **any
+multi-circle diffractometer geometry can be fully described by the caller** — no
+geometry is hard-coded, and new geometries require no changes to the package
+itself.
 
 Its only runtime dependency beyond the Python Standard Library is
 [NumPy](https://numpy.org) — no scipy, sympy, or other scientific

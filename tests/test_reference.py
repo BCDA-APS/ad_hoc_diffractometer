@@ -20,12 +20,12 @@ import pytest
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer import ReferenceConstraint
-from ad_hoc_diffractometer import exit_angle
-from ad_hoc_diffractometer import incidence_angle
-from ad_hoc_diffractometer import naz_angle
-from ad_hoc_diffractometer import psi_angle
-from ad_hoc_diffractometer import psic
 from ad_hoc_diffractometer import ub_identity
+from ad_hoc_diffractometer.presets import psic
+from ad_hoc_diffractometer.reference import exit_angle
+from ad_hoc_diffractometer.reference import incidence_angle
+from ad_hoc_diffractometer.reference import naz_angle
+from ad_hoc_diffractometer.reference import psi_angle
 
 WAVELENGTH = 1.5406
 
@@ -400,12 +400,16 @@ def _setup_surface(factory, surface_normal=(0, 0, 1)):
 @pytest.mark.parametrize(
     "factory, mode_name",
     [
-        pytest.param(ahd.zaxis, "zaxis", id="zaxis-zaxis"),
-        pytest.param(ahd.zaxis, "reflectivity", id="zaxis-reflectivity"),
-        pytest.param(ahd.s2d2, "reflectivity", id="s2d2-reflectivity"),
-        pytest.param(ahd.sixc, "fixed_alpha_zaxis", id="sixc-fixed_alpha_zaxis"),
-        pytest.param(ahd.sixc, "fixed_beta_zaxis", id="sixc-fixed_beta_zaxis"),
-        pytest.param(ahd.sixc, "alpha_eq_beta_zaxis", id="sixc-alpha_eq_beta_zaxis"),
+        pytest.param(ahd.presets.zaxis, "zaxis", id="zaxis-zaxis"),
+        pytest.param(ahd.presets.zaxis, "reflectivity", id="zaxis-reflectivity"),
+        pytest.param(ahd.presets.s2d2, "reflectivity", id="s2d2-reflectivity"),
+        pytest.param(
+            ahd.presets.sixc, "fixed_alpha_zaxis", id="sixc-fixed_alpha_zaxis"
+        ),
+        pytest.param(ahd.presets.sixc, "fixed_beta_zaxis", id="sixc-fixed_beta_zaxis"),
+        pytest.param(
+            ahd.presets.sixc, "alpha_eq_beta_zaxis", id="sixc-alpha_eq_beta_zaxis"
+        ),
     ],
 )
 def test_surface_mode_is_implemented_with_surface_normal(factory, mode_name):
@@ -417,12 +421,16 @@ def test_surface_mode_is_implemented_with_surface_normal(factory, mode_name):
 @pytest.mark.parametrize(
     "factory, mode_name",
     [
-        pytest.param(ahd.zaxis, "zaxis", id="zaxis-zaxis"),
-        pytest.param(ahd.zaxis, "reflectivity", id="zaxis-reflectivity"),
-        pytest.param(ahd.s2d2, "reflectivity", id="s2d2-reflectivity"),
-        pytest.param(ahd.sixc, "fixed_alpha_zaxis", id="sixc-fixed_alpha_zaxis"),
-        pytest.param(ahd.sixc, "fixed_beta_zaxis", id="sixc-fixed_beta_zaxis"),
-        pytest.param(ahd.sixc, "alpha_eq_beta_zaxis", id="sixc-alpha_eq_beta_zaxis"),
+        pytest.param(ahd.presets.zaxis, "zaxis", id="zaxis-zaxis"),
+        pytest.param(ahd.presets.zaxis, "reflectivity", id="zaxis-reflectivity"),
+        pytest.param(ahd.presets.s2d2, "reflectivity", id="s2d2-reflectivity"),
+        pytest.param(
+            ahd.presets.sixc, "fixed_alpha_zaxis", id="sixc-fixed_alpha_zaxis"
+        ),
+        pytest.param(ahd.presets.sixc, "fixed_beta_zaxis", id="sixc-fixed_beta_zaxis"),
+        pytest.param(
+            ahd.presets.sixc, "alpha_eq_beta_zaxis", id="sixc-alpha_eq_beta_zaxis"
+        ),
     ],
 )
 def test_surface_mode_not_implemented_without_surface_normal(factory, mode_name):
@@ -434,15 +442,24 @@ def test_surface_mode_not_implemented_without_surface_normal(factory, mode_name)
 @pytest.mark.parametrize(
     "factory, mode_name, h, k, l",
     [
-        pytest.param(ahd.zaxis, "zaxis", 0, 1, 0, id="zaxis-zaxis"),
-        pytest.param(ahd.zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"),
-        pytest.param(ahd.s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
+        pytest.param(ahd.presets.zaxis, "zaxis", 0, 1, 0, id="zaxis-zaxis"),
         pytest.param(
-            ahd.sixc, "fixed_alpha_zaxis", 0, 1, 0, id="sixc-fixed_alpha_zaxis"
+            ahd.presets.zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"
         ),
-        pytest.param(ahd.sixc, "fixed_beta_zaxis", 0, 1, 0, id="sixc-fixed_beta_zaxis"),
+        pytest.param(ahd.presets.s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
         pytest.param(
-            ahd.sixc, "alpha_eq_beta_zaxis", 0, 1, 0, id="sixc-alpha_eq_beta_zaxis"
+            ahd.presets.sixc, "fixed_alpha_zaxis", 0, 1, 0, id="sixc-fixed_alpha_zaxis"
+        ),
+        pytest.param(
+            ahd.presets.sixc, "fixed_beta_zaxis", 0, 1, 0, id="sixc-fixed_beta_zaxis"
+        ),
+        pytest.param(
+            ahd.presets.sixc,
+            "alpha_eq_beta_zaxis",
+            0,
+            1,
+            0,
+            id="sixc-alpha_eq_beta_zaxis",
         ),
     ],
 )
@@ -457,9 +474,14 @@ def test_surface_mode_returns_solutions(factory, mode_name, h, k, l):  # noqa: E
 @pytest.mark.parametrize(
     "factory, mode_name, h, k, l",
     [
-        pytest.param(ahd.zaxis, "zaxis", 0, 1, 0, id="zaxis-zaxis-alpha_i=0"),
+        pytest.param(ahd.presets.zaxis, "zaxis", 0, 1, 0, id="zaxis-zaxis-alpha_i=0"),
         pytest.param(
-            ahd.sixc, "fixed_alpha_zaxis", 0, 1, 0, id="sixc-fixed_alpha-alpha_i=0"
+            ahd.presets.sixc,
+            "fixed_alpha_zaxis",
+            0,
+            1,
+            0,
+            id="sixc-fixed_alpha-alpha_i=0",
         ),
     ],
 )
@@ -478,7 +500,12 @@ def test_surface_alpha_i_fixed_constraint_satisfied(factory, mode_name, h, k, l)
     "factory, mode_name, h, k, l",
     [
         pytest.param(
-            ahd.sixc, "fixed_beta_zaxis", 0, 1, 0, id="sixc-fixed_beta-beta_out=0"
+            ahd.presets.sixc,
+            "fixed_beta_zaxis",
+            0,
+            1,
+            0,
+            id="sixc-fixed_beta-beta_out=0",
         ),
     ],
 )
@@ -496,9 +523,13 @@ def test_surface_beta_out_fixed_constraint_satisfied(factory, mode_name, h, k, l
 @pytest.mark.parametrize(
     "factory, mode_name, h, k, l",
     [
-        pytest.param(ahd.zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"),
-        pytest.param(ahd.s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
-        pytest.param(ahd.sixc, "alpha_eq_beta_zaxis", 0, 1, 0, id="sixc-alpha_eq_beta"),
+        pytest.param(
+            ahd.presets.zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"
+        ),
+        pytest.param(ahd.presets.s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
+        pytest.param(
+            ahd.presets.sixc, "alpha_eq_beta_zaxis", 0, 1, 0, id="sixc-alpha_eq_beta"
+        ),
     ],
 )
 def test_surface_a_eq_b_constraint_satisfied(factory, mode_name, h, k, l):  # noqa: E741
@@ -515,7 +546,7 @@ def test_surface_a_eq_b_constraint_satisfied(factory, mode_name, h, k, l):  # no
 
 def test_surface_mode_not_implemented_raises():
     """Surface modes without surface_normal raise NotImplementedError on forward()."""
-    g = ahd.zaxis()
+    g = ahd.presets.zaxis()
     g.wavelength = WAVELENGTH
     g.sample.lattice = ahd.Lattice(a=4.0)
     ub_identity(g.sample)

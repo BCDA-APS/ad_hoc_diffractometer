@@ -27,13 +27,13 @@ import numpy as np
 import pytest
 
 from ad_hoc_diffractometer import Lattice
-from ad_hoc_diffractometer import angles_to_phi_vector
-from ad_hoc_diffractometer import fourcv
-from ad_hoc_diffractometer import psic
 from ad_hoc_diffractometer import ub_from_one_reflection
 from ad_hoc_diffractometer import ub_from_three_reflections_bl1967
 from ad_hoc_diffractometer import ub_from_two_reflections_bl1967
 from ad_hoc_diffractometer import ub_identity
+from ad_hoc_diffractometer.orientation import angles_to_phi_vector
+from ad_hoc_diffractometer.presets import fourcv
+from ad_hoc_diffractometer.presets import psic
 from ad_hoc_diffractometer.reflection import ReflectionList
 from ad_hoc_diffractometer.sample import Sample
 
@@ -1037,10 +1037,10 @@ def test_three_refl_left_handed_H_warns(psic_geom):
 )
 def test_angles_to_phi_vector_stage_role_errors(role, stage_name, kwarg, match):
     """angles_to_phi_vector raises when the geometry lacks sample or detector stages."""
-    from ad_hoc_diffractometer import ZHAT
     from ad_hoc_diffractometer import AdHocDiffractometer
-    from ad_hoc_diffractometer import Stage
+    from ad_hoc_diffractometer.constants import ZHAT
     from ad_hoc_diffractometer.orientation import angles_to_phi_vector
+    from ad_hoc_diffractometer.stage import Stage
 
     g = AdHocDiffractometer(
         "partial",
@@ -1075,9 +1075,9 @@ def test_angles_to_phi_vector_stage_role_errors(role, stage_name, kwarg, match):
 )
 def test_ub_from_one_reflection_error_branches(reference_stage, reference_hkl, match):
     """ub_from_one_reflection raises when reference_stage or B@hkl is zero."""
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
     from ad_hoc_diffractometer.orientation import ub_from_one_reflection
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
@@ -1120,9 +1120,9 @@ def test_ub_from_one_reflection_error_branches(reference_stage, reference_hkl, m
 )
 def test_ub_from_one_reflection_antiparallel_Bh_and_r(hkl, reference_stage, desc):
     """ub_from_one_reflection handles anti-parallel Bh and r_hat (180° rotation)."""
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
     from ad_hoc_diffractometer.orientation import ub_from_one_reflection
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
@@ -1144,9 +1144,9 @@ def test_ub_from_one_reflection_antiparallel_Bh_and_r(hkl, reference_stage, desc
 
 def test_ub_from_one_reflection_normal_rotation():
     """ub_from_one_reflection with angle strictly between 0° and 180° (normal rotation)."""
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
     from ad_hoc_diffractometer.orientation import ub_from_one_reflection
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
@@ -1182,9 +1182,9 @@ def test_ub_from_three_linalg_error_on_H_inv_raises():
     from unittest.mock import patch
 
     from ad_hoc_diffractometer import Lattice
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
     from ad_hoc_diffractometer.orientation import ub_from_three_reflections_bl1967
+    from ad_hoc_diffractometer.presets import fourcv
 
     TWO_PI = 2 * math.pi
     g = fourcv()
@@ -1209,8 +1209,8 @@ def test_ub_from_three_singular_B_inv_sets_U_none():
     from unittest.mock import patch
 
     from ad_hoc_diffractometer import Lattice
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer.orientation import ub_from_three_reflections_bl1967
+    from ad_hoc_diffractometer.presets import fourcv
 
     TWO_PI = 2 * math.pi
     g = fourcv()
@@ -1245,9 +1245,9 @@ def test_ub_from_three_left_handed_H_logs_warning(caplog):
     import math
 
     from ad_hoc_diffractometer import Lattice
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
     from ad_hoc_diffractometer.orientation import ub_from_three_reflections_bl1967
+    from ad_hoc_diffractometer.presets import fourcv
 
     TWO_PI = 2 * math.pi
     g = fourcv()
@@ -1290,8 +1290,8 @@ def test_inverse_real_wavelength_fourcv_sapphire():
     """
 
     from ad_hoc_diffractometer import Lattice
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_from_two_reflections_bl1967
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5498
@@ -1332,8 +1332,8 @@ def test_inverse_real_wavelength_psic_silicon():
     import math
 
     from ad_hoc_diffractometer import Lattice
-    from ad_hoc_diffractometer import psic
     from ad_hoc_diffractometer import ub_from_two_reflections_bl1967
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.wavelength = 1.5406  # Cu Kα

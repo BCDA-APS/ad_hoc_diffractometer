@@ -18,7 +18,7 @@ Crystal orientation requires:
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 g.wavelength = 1.5406   # Å  (Cu Kα)
 g.sample.lattice = ahd.Lattice(a=5.431)  # cubic silicon
 ```
@@ -100,7 +100,7 @@ import numpy as np
 
 def direction_check(geometry, name):
     r = geometry.sample.reflections[name]
-    q_phi = ahd.angles_to_phi_vector(geometry, **r.angles)
+    q_phi = ahd.orientation.angles_to_phi_vector(geometry, **r.angles)
     ub_h  = geometry.sample.UB @ r.hkl
     cos_theta = np.dot(q_phi, ub_h) / (np.linalg.norm(q_phi) * np.linalg.norm(ub_h))
     angle_deg = np.degrees(np.arccos(np.clip(cos_theta, -1, 1)))
@@ -119,9 +119,9 @@ step-by-step crystal alignment on a real instrument.
 
 ## See also
 
-- {func}`~ad_hoc_diffractometer.ub_from_two_reflections_bl1967`
-- {func}`~ad_hoc_diffractometer.ub_from_one_reflection`
-- {func}`~ad_hoc_diffractometer.ub_from_three_reflections_bl1967`
-- {func}`~ad_hoc_diffractometer.ub_identity`
-- {func}`~ad_hoc_diffractometer.angles_to_phi_vector`
+- {func}`~ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967`
+- {func}`~ad_hoc_diffractometer.orientation.ub_from_one_reflection`
+- {func}`~ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967`
+- {func}`~ad_hoc_diffractometer.orientation.ub_identity`
+- {func}`~ad_hoc_diffractometer.orientation.angles_to_phi_vector`
 - {class}`~ad_hoc_diffractometer.reflection.ReflectionList`

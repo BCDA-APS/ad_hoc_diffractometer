@@ -31,12 +31,12 @@ from helpers import Rx
 from helpers import Ry
 from helpers import Rz
 
-from ad_hoc_diffractometer import XHAT
-from ad_hoc_diffractometer import YHAT
-from ad_hoc_diffractometer import ZHAT
 from ad_hoc_diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer import Lattice
-from ad_hoc_diffractometer import Stage
+from ad_hoc_diffractometer.constants import XHAT
+from ad_hoc_diffractometer.constants import YHAT
+from ad_hoc_diffractometer.constants import ZHAT
+from ad_hoc_diffractometer.stage import Stage
 
 _VALID_STAGES = [Stage("a", XHAT, parent=None, role="sample")]
 
@@ -474,7 +474,7 @@ def test_wavelength_assignment(value, context, psic_geom):
 
 def test_wavelength_constructor():
     """wavelength can be supplied at construction time."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     # default
@@ -486,8 +486,8 @@ def test_wavelength_constructor():
 
 def test_wavelength_invalid_at_construction():
     """Supplying an invalid wavelength at construction raises ValueError."""
-    from ad_hoc_diffractometer import XHAT
-    from ad_hoc_diffractometer import Stage
+    from ad_hoc_diffractometer.constants import XHAT
+    from ad_hoc_diffractometer.stage import Stage
 
     stages = [Stage("a", XHAT, role="sample")]
     with pytest.raises(ValueError, match=re.escape("must be > 0")):
@@ -525,8 +525,8 @@ def test_kappa_alpha_deg_default_is_none(psic_geom):
 
 def test_kappa_alpha_deg_settable():
     """kappa_alpha_deg can be set on a bare AdHocDiffractometer."""
-    from ad_hoc_diffractometer import XHAT
-    from ad_hoc_diffractometer import Stage
+    from ad_hoc_diffractometer.constants import XHAT
+    from ad_hoc_diffractometer.stage import Stage
 
     stages = [Stage("a", XHAT, role="sample")]
     g = AdHocDiffractometer("test", stages, kappa_alpha_deg=50.0)
@@ -535,13 +535,13 @@ def test_kappa_alpha_deg_settable():
 
 def test_kappa_alpha_deg_none_for_non_kappa():
     """All non-kappa factories return None for kappa_alpha_deg."""
-    from ad_hoc_diffractometer import fivec
-    from ad_hoc_diffractometer import fourch
-    from ad_hoc_diffractometer import fourcv
-    from ad_hoc_diffractometer import psic
-    from ad_hoc_diffractometer import s2d2
-    from ad_hoc_diffractometer import sixc
-    from ad_hoc_diffractometer import zaxis
+    from ad_hoc_diffractometer.presets import fivec
+    from ad_hoc_diffractometer.presets import fourch
+    from ad_hoc_diffractometer.presets import fourcv
+    from ad_hoc_diffractometer.presets import psic
+    from ad_hoc_diffractometer.presets import s2d2
+    from ad_hoc_diffractometer.presets import sixc
+    from ad_hoc_diffractometer.presets import zaxis
 
     for factory in (psic, fourcv, fourch, sixc, zaxis, s2d2, fivec):
         g = factory()
@@ -567,8 +567,8 @@ _PSIC_ANGLES = {
 
 def _psic_with_identity_UB(wavelength=_LAMBDA_CU_KA):
     """Return a psic geometry with wavelength set and UB = I."""
-    from ad_hoc_diffractometer import psic
     from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.wavelength = wavelength
@@ -598,8 +598,8 @@ def test_inverse_UB_identity_equals_Q_phi():
 
     UB = I implies hkl = UB⁻¹ @ Q_phi = I @ Q_phi = Q_phi.
     """
-    from ad_hoc_diffractometer import angles_to_phi_vector
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.orientation import angles_to_phi_vector
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.wavelength = _LAMBDA_CU_KA
@@ -617,8 +617,8 @@ def test_inverse_UB_scaled_identity():
 
     Scaling UB by a scalar s means hkl = (1/s)·Q_phi.
     """
-    from ad_hoc_diffractometer import angles_to_phi_vector
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.orientation import angles_to_phi_vector
+    from ad_hoc_diffractometer.presets import psic
 
     s = 2.5
     g = psic()
@@ -638,9 +638,9 @@ def test_inverse_round_trip_ub_identity():
     Whatever hkl inverse() returns, plugging it back into UB @ hkl
     must recover Q_phi.
     """
-    from ad_hoc_diffractometer import angles_to_phi_vector
-    from ad_hoc_diffractometer import psic
     from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.orientation import angles_to_phi_vector
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.wavelength = _LAMBDA_CU_KA
@@ -660,9 +660,9 @@ def test_inverse_round_trip_ub_from_one_reflection():
     same angles must satisfy UB @ hkl == Q_phi.
     """
     from ad_hoc_diffractometer import Lattice
-    from ad_hoc_diffractometer import angles_to_phi_vector
-    from ad_hoc_diffractometer import psic
     from ad_hoc_diffractometer import ub_from_one_reflection
+    from ad_hoc_diffractometer.orientation import angles_to_phi_vector
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.wavelength = _LAMBDA_CU_KA
@@ -684,7 +684,7 @@ def test_inverse_round_trip_ub_from_one_reflection():
 
 def test_inverse_partial_angles_uses_current():
     """Stages not in the dict keep their current angle."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.wavelength = _LAMBDA_CU_KA
@@ -715,8 +715,8 @@ def test_inverse_restores_stage_angles():
 
 def test_inverse_no_wavelength_raises():
     """Raises ValueError when wavelength is not set."""
-    from ad_hoc_diffractometer import psic
     from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     ub_identity(g.sample)
@@ -749,14 +749,14 @@ def test_inverse_unknown_stage_raises():
 
 def test_azimuthal_reference_default_is_none():
     """azimuthal_reference is None by default."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     assert fourcv().azimuthal_reference is None
 
 
 def test_azimuthal_reference_set_tuple():
     """Setting to a 3-tuple stores it as (float, float, float)."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.azimuthal_reference = (0, 0, 1)
@@ -765,7 +765,7 @@ def test_azimuthal_reference_set_tuple():
 
 def test_azimuthal_reference_set_list():
     """Setting to a list of 3 numbers works (converts to tuple of floats)."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.azimuthal_reference = [1, 1, 0]
@@ -774,7 +774,7 @@ def test_azimuthal_reference_set_list():
 
 def test_azimuthal_reference_clear_with_none():
     """Setting to None clears the reference."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.azimuthal_reference = (0, 0, 1)
@@ -784,7 +784,7 @@ def test_azimuthal_reference_clear_with_none():
 
 def test_azimuthal_reference_constructor():
     """azimuthal_reference can be set at construction via keyword argument."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     # Use fourcv factory result and check the property works after setting
     g = fourcv()
@@ -794,7 +794,7 @@ def test_azimuthal_reference_constructor():
 
 def test_azimuthal_reference_zero_vector_raises():
     """Setting to (0, 0, 0) raises ValueError."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     with pytest.raises(ValueError, match=re.escape("non-zero")):
@@ -803,7 +803,7 @@ def test_azimuthal_reference_zero_vector_raises():
 
 def test_azimuthal_reference_bad_type_raises():
     """Setting to a non-sequence raises ValueError."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     with pytest.raises(ValueError, match=re.escape("length-3 sequence")):
@@ -812,7 +812,7 @@ def test_azimuthal_reference_bad_type_raises():
 
 def test_azimuthal_reference_wrong_length_raises():
     """Setting to a 2-element tuple raises ValueError."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     with pytest.raises(ValueError):
@@ -840,8 +840,8 @@ def _fourcv_identity():
     to Q and to the scattering plane.
     """
     from ad_hoc_diffractometer import Lattice
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 2 * _math.pi
@@ -949,7 +949,7 @@ def test_psi_n_parallel_to_q_raises():
 
 def test_psi_pa_shows_azimuthal_reference():
     """pa property output includes the azimuthal reference hkl when set."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
@@ -960,7 +960,7 @@ def test_psi_pa_shows_azimuthal_reference():
 
 def test_psi_pa_shows_not_set_when_none():
     """pa method shows 'not set' for azimuthal reference when not configured."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
@@ -980,8 +980,8 @@ def test_psi_wh_shows_psi_when_available():
 def test_psi_wh_shows_not_available_when_no_reference():
     """wh method shows 'not available' for Psi when reference is not set."""
     from ad_hoc_diffractometer import Lattice
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 2 * _math.pi
@@ -1025,33 +1025,33 @@ class TestWhMethod:
     """Tests for AdHocDiffractometer.wh(print=False) — capture mode."""
 
     def test_wh_is_callable(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         assert callable(fourcv().wh)
 
     def test_wh_returns_str(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
         assert isinstance(g.wh(print=False), str)
 
     def test_wh_contains_hkl(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
         assert "H K L" in g.wh(print=False)
 
     def test_wh_contains_lambda(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
         assert "1.5406" in g.wh(print=False)
 
     def test_wh_contains_motor_table(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
@@ -1060,14 +1060,14 @@ class TestWhMethod:
         assert "Theta" in out
 
     def test_wh_graceful_no_ub(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
         assert "not available" in g.wh(print=False)
 
     def test_wh_graceful_no_wavelength(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         out = g.wh(print=False)
@@ -1076,7 +1076,7 @@ class TestWhMethod:
 
     def test_wh_print_true_prints(self, capsys):
         """Default print=True writes to stdout."""
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
@@ -1086,7 +1086,7 @@ class TestWhMethod:
 
     def test_wh_print_false_no_stdout(self, capsys):
         """print=False produces no stdout output."""
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
@@ -1094,7 +1094,7 @@ class TestWhMethod:
         assert capsys.readouterr().out == ""
 
     def test_wh_psic_stage_names(self):
-        from ad_hoc_diffractometer import psic
+        from ad_hoc_diffractometer.presets import psic
 
         g = psic()
         g.wavelength = 1.5406
@@ -1109,47 +1109,47 @@ class TestPaMethod:
     """Tests for AdHocDiffractometer.pa(print=False) — capture mode."""
 
     def test_pa_is_callable(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         assert callable(fourcv().pa)
 
     def test_pa_returns_str(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
         assert isinstance(g.pa(print=False), str)
 
     def test_pa_contains_geometry_name(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
         assert "fourcv" in g.pa(print=False)
 
     def test_pa_contains_lattice_section(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
         assert "Lattice" in g.pa(print=False)
 
     def test_pa_contains_wavelength(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
         assert "1.5406" in g.pa(print=False)
 
     def test_pa_no_reflections_shows_not_set(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
         assert "not set" in g.pa(print=False)
 
     def test_pa_graceful_no_wavelength(self):
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         out = g.pa(print=False)
@@ -1158,7 +1158,7 @@ class TestPaMethod:
 
     def test_pa_print_true_prints(self, capsys):
         """Default print=True writes to stdout."""
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
@@ -1168,7 +1168,7 @@ class TestPaMethod:
 
     def test_pa_print_false_no_stdout(self, capsys):
         """print=False produces no stdout output."""
-        from ad_hoc_diffractometer import fourcv
+        from ad_hoc_diffractometer.presets import fourcv
 
         g = fourcv()
         g.wavelength = 1.5406
@@ -1176,7 +1176,7 @@ class TestPaMethod:
         assert capsys.readouterr().out == ""
 
     def test_pa_psic_geometry_name(self):
-        from ad_hoc_diffractometer import psic
+        from ad_hoc_diffractometer.presets import psic
 
         g = psic()
         g.wavelength = 1.5406
@@ -1198,44 +1198,50 @@ class TestWhPaTopLevel:
 
     def test_wh_function_matches_method(self):
         import ad_hoc_diffractometer as ahd
+        from ad_hoc_diffractometer.presets import fourcv
 
-        g = ahd.fourcv()
+        g = fourcv()
         g.wavelength = 1.5406
         assert ahd.wh(g, print=False) == g.wh(print=False)
 
     def test_pa_function_matches_method(self):
         import ad_hoc_diffractometer as ahd
+        from ad_hoc_diffractometer.presets import fourcv
 
-        g = ahd.fourcv()
+        g = fourcv()
         g.wavelength = 1.5406
         assert ahd.pa(g, print=False) == g.pa(print=False)
 
     def test_wh_function_returns_str(self):
         import ad_hoc_diffractometer as ahd
+        from ad_hoc_diffractometer.presets import fourcv
 
-        g = ahd.fourcv()
+        g = fourcv()
         g.wavelength = 1.5406
         assert isinstance(ahd.wh(g, print=False), str)
 
     def test_pa_function_returns_str(self):
         import ad_hoc_diffractometer as ahd
+        from ad_hoc_diffractometer.presets import fourcv
 
-        g = ahd.fourcv()
+        g = fourcv()
         g.wavelength = 1.5406
         assert isinstance(ahd.pa(g, print=False), str)
 
     def test_wh_function_prints(self, capsys):
         import ad_hoc_diffractometer as ahd
+        from ad_hoc_diffractometer.presets import fourcv
 
-        g = ahd.fourcv()
+        g = fourcv()
         g.wavelength = 1.5406
         ahd.wh(g)
         assert "Lambda" in capsys.readouterr().out
 
     def test_pa_function_prints(self, capsys):
         import ad_hoc_diffractometer as ahd
+        from ad_hoc_diffractometer.presets import fourcv
 
-        g = ahd.fourcv()
+        g = fourcv()
         g.wavelength = 1.5406
         ahd.pa(g)
         assert "Geometry" in capsys.readouterr().out
@@ -1248,7 +1254,7 @@ class TestWhPaTopLevel:
 
 def test_geometry_repr():
     """AdHocDiffractometer.__repr__ includes the geometry name and stage names."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     r = repr(g)
@@ -1273,8 +1279,8 @@ def test_stages_by_role_custom():
     """stages_by_role() returns stages with any arbitrary role string."""
     import numpy as np
 
-    from ad_hoc_diffractometer import Stage
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
+    from ad_hoc_diffractometer.stage import Stage
 
     g = fourcv()
     analyser = Stage("analyser", np.array([1.0, 0.0, 0.0]), role="analyser")
@@ -1287,7 +1293,7 @@ def test_stages_by_role_custom():
 
 def test_stages_by_role_unknown_returns_empty():
     """stages_by_role() returns [] for a role that no stage has."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     assert g.stages_by_role("polariser") == []
@@ -1295,7 +1301,7 @@ def test_stages_by_role_unknown_returns_empty():
 
 def test_stages_by_role_sample_matches_sample_stages():
     """stages_by_role('sample') returns the same list as sample_stages."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     assert [s.name for s in g.stages_by_role("sample")] == [
@@ -1315,7 +1321,7 @@ def test_geometry_cycle_in_parent_chain_raises():
 
 def test_geometry_samples_property_is_read_only():
     """g._samples is a read-only property; direct assignment raises AttributeError."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     with pytest.raises(AttributeError):
@@ -1334,8 +1340,8 @@ def test_geometry_samples_property_is_read_only():
 )
 def test_psi_q_zero_raises(angles, match):
     """psi() raises when the motor angles produce Q=0."""
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 2 * _math.pi
@@ -1348,7 +1354,7 @@ def test_psi_q_zero_raises(angles, match):
 def test_psi_n_maps_to_zero_raises():
     """psi() raises when UB @ n_hkl is zero."""
     from ad_hoc_diffractometer import Lattice
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 2 * _math.pi
@@ -1362,7 +1368,7 @@ def test_psi_n_maps_to_zero_raises():
 
 def test_pa_reflection_wavelength_none_falls_back_to_geometry_wavelength():
     """pa() uses the geometry wavelength when a reflection has wavelength=None."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
     from ad_hoc_diffractometer.reflection import Reflection
 
     g = fourcv()
@@ -1380,7 +1386,7 @@ def test_pa_reflection_wavelength_none_falls_back_to_geometry_wavelength():
 
 def test_geometry_summary_with_wavelength(capsys):
     """summary() prints the geometry name and wavelength."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
@@ -1392,7 +1398,7 @@ def test_geometry_summary_with_wavelength(capsys):
 
 def test_geometry_summary_no_wavelength(capsys):
     """summary() reports 'not set' when wavelength is unset."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.summary()
@@ -1408,7 +1414,7 @@ def test_wh_logs_debug_when_hkl_unavailable(caplog):
     """wh() emits a DEBUG log when HKL cannot be computed (no UB set)."""
     import logging
 
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
@@ -1423,8 +1429,8 @@ def test_wh_logs_debug_when_psi_unavailable(caplog):
     """wh() emits a DEBUG log when psi cannot be computed (no azimuthal reference)."""
     import logging
 
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
@@ -1443,28 +1449,28 @@ def test_wh_logs_debug_when_psi_unavailable(caplog):
 
 def test_detector_distance_default_none():
     """detector_distance is None by default."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     assert psic().detector_distance is None
 
 
 def test_detector_tilt_default_none():
     """detector_tilt is None by default."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     assert psic().detector_tilt is None
 
 
 def test_detector_offset_default_none():
     """detector_offset is None by default."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     assert psic().detector_offset is None
 
 
 def test_detector_distance_set_and_clear():
     """detector_distance accepts a positive float and can be cleared to None."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.detector_distance = 500.0
@@ -1475,7 +1481,7 @@ def test_detector_distance_set_and_clear():
 
 def test_detector_distance_coerces_to_float():
     """detector_distance coerces integer input to float."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.detector_distance = 300
@@ -1487,7 +1493,7 @@ def test_detector_distance_zero_raises():
     """detector_distance = 0 raises ValueError."""
     import re
 
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     with pytest.raises(ValueError, match=re.escape("must be positive")):
@@ -1498,7 +1504,7 @@ def test_detector_distance_negative_raises():
     """detector_distance < 0 raises ValueError."""
     import re
 
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     with pytest.raises(ValueError, match=re.escape("must be positive")):
@@ -1507,7 +1513,7 @@ def test_detector_distance_negative_raises():
 
 def test_detector_tilt_set_and_clear():
     """detector_tilt accepts any real number and can be cleared to None."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.detector_tilt = 0.3
@@ -1520,7 +1526,7 @@ def test_detector_tilt_set_and_clear():
 
 def test_detector_tilt_coerces_to_float():
     """detector_tilt coerces integer input to float."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.detector_tilt = 1
@@ -1529,7 +1535,7 @@ def test_detector_tilt_coerces_to_float():
 
 def test_detector_offset_set_and_clear():
     """detector_offset accepts a 2-tuple and can be cleared to None."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.detector_offset = (2.5, -1.0)
@@ -1540,7 +1546,7 @@ def test_detector_offset_set_and_clear():
 
 def test_detector_offset_coerces_to_float():
     """detector_offset values are coerced to float."""
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.detector_offset = (1, 2)
@@ -1552,7 +1558,7 @@ def test_detector_offset_invalid_length_raises():
     """detector_offset with wrong length raises ValueError."""
     import re
 
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     with pytest.raises(ValueError, match=re.escape("length-2 sequence")):
@@ -1563,7 +1569,7 @@ def test_detector_offset_invalid_type_raises():
     """detector_offset with non-numeric values raises ValueError."""
     import re
 
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     with pytest.raises(ValueError, match=re.escape("length-2 sequence")):
@@ -1575,7 +1581,7 @@ def test_detector_distance_round_trip():
     import json
 
     from ad_hoc_diffractometer import AdHocDiffractometer
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.detector_distance = 750.0
@@ -1591,7 +1597,7 @@ def test_detector_tilt_round_trip():
     import json
 
     from ad_hoc_diffractometer import AdHocDiffractometer
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.detector_tilt = -0.7
@@ -1607,7 +1613,7 @@ def test_detector_offset_round_trip():
     import json
 
     from ad_hoc_diffractometer import AdHocDiffractometer
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.detector_offset = (3.0, -2.5)
@@ -1623,7 +1629,7 @@ def test_detector_none_round_trip():
     import json
 
     from ad_hoc_diffractometer import AdHocDiffractometer
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     d = g.to_dict()
@@ -1646,7 +1652,7 @@ def test_inclination_matrix_default_identity():
     """inclination_matrix is the 3×3 identity by default."""
     import numpy as np
 
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     np.testing.assert_array_equal(g.inclination_matrix, np.eye(3))
@@ -1656,8 +1662,8 @@ def test_inclination_matrix_set_valid():
     """A valid rotation matrix can be assigned to inclination_matrix."""
     import numpy as np
 
-    from ad_hoc_diffractometer import psic
-    from ad_hoc_diffractometer import rotation_matrix
+    from ad_hoc_diffractometer.presets import psic
+    from ad_hoc_diffractometer.rotation import rotation_matrix
 
     g = psic()
     R = rotation_matrix(np.array([0.0, 0.0, 1.0]), 5.0)
@@ -1671,7 +1677,7 @@ def test_inclination_matrix_wrong_shape_raises():
 
     import numpy as np
 
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     with pytest.raises(ValueError, match=re.escape("(3, 3)")):
@@ -1684,7 +1690,7 @@ def test_inclination_matrix_not_orthonormal_raises():
 
     import numpy as np
 
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     bad = np.array([[2.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
@@ -1698,7 +1704,7 @@ def test_inclination_matrix_improper_rotation_raises():
 
     import numpy as np
 
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     # Reflection matrix: det = -1
@@ -1711,7 +1717,7 @@ def test_set_inclination_from_axis_angle():
     """set_inclination() builds a rotation matrix from axis and angle."""
     import numpy as np
 
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.set_inclination(axis=[0, 0, 1], angle_deg=0.0)
@@ -1725,7 +1731,7 @@ def test_set_inclination_zero_axis_raises():
     """set_inclination() raises for a zero axis vector."""
     import re
 
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     with pytest.raises(ValueError, match=re.escape("non-zero vector")):
@@ -1737,9 +1743,9 @@ def test_zero_inclination_reproduces_standard_q():
     import numpy as np
 
     from ad_hoc_diffractometer import Lattice
-    from ad_hoc_diffractometer import angles_to_phi_vector
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.orientation import angles_to_phi_vector
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
@@ -1757,9 +1763,9 @@ def test_nonzero_inclination_changes_q():
     import numpy as np
 
     from ad_hoc_diffractometer import Lattice
-    from ad_hoc_diffractometer import angles_to_phi_vector
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_identity
+    from ad_hoc_diffractometer.orientation import angles_to_phi_vector
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
@@ -1779,7 +1785,7 @@ def test_inclination_matrix_round_trip():
     import numpy as np
 
     from ad_hoc_diffractometer import AdHocDiffractometer
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.set_inclination(axis=[0, 1, 0], angle_deg=3.0)
@@ -1796,7 +1802,7 @@ def test_identity_inclination_round_trip():
     import numpy as np
 
     from ad_hoc_diffractometer import AdHocDiffractometer
-    from ad_hoc_diffractometer import psic
+    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     d = g.to_dict()
@@ -1812,8 +1818,8 @@ def test_identity_inclination_round_trip():
 
 def _sapphire_fourcv():
     """fourcv with sapphire lattice, two reflections, UB set."""
-    from ad_hoc_diffractometer import fourcv
     from ad_hoc_diffractometer import ub_from_two_reflections_bl1967
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.549802558
@@ -1992,7 +1998,9 @@ def test_geometry_json_roundtrip():
     [
         pytest.param(
             "psic-roundtrip",
-            lambda: __import__("ad_hoc_diffractometer", fromlist=["psic"]).psic(),
+            lambda: __import__(
+                "ad_hoc_diffractometer.presets", fromlist=["psic"]
+            ).psic(),
             lambda o, r: (
                 r.name == "psic" and set(r._stages.keys()) == set(o._stages.keys())
             ),
@@ -2024,7 +2032,7 @@ def test_geometry_from_dict_edge_cases(desc, build_fn, check, context):
 
 
 def _no_azref_fourcv():
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
@@ -2032,7 +2040,7 @@ def _no_azref_fourcv():
 
 
 def _kappa_fourcv():
-    from ad_hoc_diffractometer import kappa4cv
+    from ad_hoc_diffractometer.presets import kappa4cv
 
     return kappa4cv(alpha_deg=50.0)
 
@@ -2055,7 +2063,7 @@ def _kappa_fourcv():
 )
 def test_geometry_from_dict_sample_integrity(desc, context):
     """from_dict() restores exactly the saved samples with correct active pointer."""
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     with context:
         g = fourcv()
@@ -2081,7 +2089,7 @@ def test_geometry_to_dict_version_unknown_on_metadata_error():
     import importlib.metadata
     from unittest.mock import MagicMock
 
-    from ad_hoc_diffractometer import fourcv
+    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406

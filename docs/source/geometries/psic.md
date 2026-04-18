@@ -10,14 +10,14 @@ You (1999) 4S+2D six-circle diffractometer. Four sample stages (mu, eta, chi, an
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.psic()
+g = ahd.presets.psic()
 g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
 ## Pre-built geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.factories.psic` factory
+This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.psic` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L454) for the complete stage
 and mode configuration.
 
@@ -184,7 +184,7 @@ Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.factories.psic`
+- {func}`~ad_hoc_diffractometer.presets.psic`
 - {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`

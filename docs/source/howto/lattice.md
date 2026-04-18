@@ -56,7 +56,7 @@ print(sapphire.crystal_system) # 'hexagonal'
 ## Assign the lattice to a sample
 
 ```python
-g = ahd.fourcv()
+g = ahd.presets.fourcv()
 g.sample.lattice = silicon
 ```
 
@@ -90,13 +90,13 @@ print(f"b1 = {b1}")
 ```python
 d   = ahd.hkl_to_d(g, 1, 1, 0)
 Q   = ahd.hkl_to_Q(g, 1, 1, 0)
-tth = ahd.hkl_to_two_theta(g, 1, 1, 0)
+tth = ahd.conversions.hkl_to_two_theta(g, 1, 1, 0)
 print(f"d(110) = {d:.4f} Å, 2θ = {tth:.3f}°")
 ```
 
 ## See also
 
 - {class}`~ad_hoc_diffractometer.lattice.Lattice`
-- {func}`~ad_hoc_diffractometer.hkl_to_d`
-- {func}`~ad_hoc_diffractometer.hkl_to_Q`
-- {func}`~ad_hoc_diffractometer.hkl_to_two_theta`
+- {func}`~ad_hoc_diffractometer.conversions.hkl_to_d`
+- {func}`~ad_hoc_diffractometer.conversions.hkl_to_Q`
+- {func}`~ad_hoc_diffractometer.conversions.hkl_to_two_theta`
