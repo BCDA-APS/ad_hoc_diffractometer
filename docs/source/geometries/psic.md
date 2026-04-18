@@ -113,14 +113,25 @@ Horizontal scattering plane bisecting condition (You 1999, §5.1).
 
 ### `double_diffraction_vertical`
 
-{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`
-with secondary-reflection extras.
-Bisecting solver runs; simultaneous diffraction logic not yet implemented.
+Full 4D simultaneous solver in the vertical scattering plane: finds motor
+angles where both the primary (h₁,k₁,l₁) and secondary (h₂,k₂,l₂)
+reflections satisfy the Ewald sphere condition.  Set
+``mode.extras['h2']``, ``['k2']``, ``['l2']`` before calling ``forward()``.
 
 | | |
 |---|---|
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
+
+### `double_diffraction_horizontal`
+
+Full 4D simultaneous solver in the horizontal scattering plane.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
 | **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
 
 ### `lifting_detector_mu`

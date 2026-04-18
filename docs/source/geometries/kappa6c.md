@@ -167,6 +167,28 @@ Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
 | **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
 | **Extras (output)** | psi (computed azimuth) |
 
+### `double_diffraction_vertical`
+
+Full 4D simultaneous solver in the vertical scattering plane: finds motor
+angles where both the primary (h₁,k₁,l₁) and secondary (h₂,k₂,l₂)
+reflections satisfy the Ewald sphere condition.
+
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
+
+### `double_diffraction_horizontal`
+
+Full 4D simultaneous solver in the horizontal scattering plane.
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | komega = 0, delta = 0 |
+| **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
+
 ## API reference
 
 - {func}`~ad_hoc_diffractometer.factories.kappa6c`

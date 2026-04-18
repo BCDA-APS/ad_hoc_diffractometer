@@ -540,14 +540,20 @@ def psic(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
         ),
         "double_diffraction_vertical": ConstraintSet(
             [
-                BisectConstraint("eta", "delta"),
                 SampleConstraint("mu", 0.0),
                 DetectorConstraint("nu", 0.0),
             ],
             computed=["eta", "chi", "phi", "delta"],
             extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
         ),
-        # ── Stubs: solver not yet implemented ───────────────────────────────
+        "double_diffraction_horizontal": ConstraintSet(
+            [
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
+        ),
         "lifting_detector_mu": ConstraintSet(
             [
                 SampleConstraint("mu", 0.0),
@@ -655,7 +661,7 @@ def fourcv(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
             extras={"n_hat": REQUIRED, "psi": None},
         ),
         "double_diffraction": ConstraintSet(
-            [BisectConstraint("omega", "ttheta")],
+            [],
             computed=["omega", "chi", "phi", "ttheta"],
             extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
         ),
@@ -731,7 +737,7 @@ def fourch(basis: dict = _BASIS_BL) -> AdHocDiffractometer:
             extras={"n_hat": REQUIRED, "psi": None},
         ),
         "double_diffraction": ConstraintSet(
-            [BisectConstraint("omega", "ttheta")],
+            [],
             computed=["omega", "chi", "phi", "ttheta"],
             extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
         ),
@@ -944,6 +950,11 @@ def kappa4cv(
             [ReferenceConstraint("psi", 0.0)],
             computed=["komega", "kappa", "kphi", "ttheta"],
             extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "double_diffraction": ConstraintSet(
+            [],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
         ),
     }
     return AdHocDiffractometer(
@@ -1182,6 +1193,22 @@ def kappa6c(
             ],
             computed=["mu", "kappa", "kphi", "nu"],
             extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "double_diffraction_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
+        ),
+        "double_diffraction_horizontal": ConstraintSet(
+            [
+                SampleConstraint("komega", 0.0),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "kappa", "kphi", "nu"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
         ),
     }
     return AdHocDiffractometer(

@@ -122,6 +122,18 @@ the stored target.  See {doc}`../howto/surface`.
 | **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
 | **Extras (output)** | psi (computed azimuth) |
 
+### `double_diffraction`
+
+Full 4D simultaneous solver: finds motor angles where both the primary
+(h₁,k₁,l₁) and secondary (h₂,k₂,l₂) reflections satisfy the Ewald
+sphere condition.  Set ``mode.extras['h2']``, ``['k2']``, ``['l2']``
+before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, ttheta |
+| **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
+
 ## API reference
 
 - {func}`~ad_hoc_diffractometer.factories.kappa4cv`

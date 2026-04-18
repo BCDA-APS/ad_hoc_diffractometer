@@ -290,7 +290,7 @@ def test_kappa4cv_bisecting_round_trip():
 # Issue #151 — kappa4cv and kappa4ch: mode counts, stubs, fixed_kphi
 # ---------------------------------------------------------------------------
 
-_KAPPA4_ALL_MODES = {
+_KAPPA4_BASE_MODES = {
     "bisecting",
     "fixed_kphi",
     "constant_omega",
@@ -298,16 +298,19 @@ _KAPPA4_ALL_MODES = {
     "constant_phi",
     "psi_constant",
 }
+_KAPPA4CV_ALL_MODES = _KAPPA4_BASE_MODES | {"double_diffraction"}
+_KAPPA4CH_ALL_MODES = _KAPPA4_BASE_MODES
 _KAPPA4_STUB_MODES = {"psi_constant"}
 
 
-@pytest.mark.parametrize(
-    "factory",
-    [pytest.param(kappa4cv, id="kappa4cv"), pytest.param(kappa4ch, id="kappa4ch")],
-)
-def test_kappa4_has_all_six_modes(factory):
-    """kappa4cv and kappa4ch both expose all 6 declared modes."""
-    assert set(factory().modes.keys()) == _KAPPA4_ALL_MODES
+def test_kappa4cv_has_all_modes():
+    """kappa4cv exposes all declared modes including double_diffraction."""
+    assert set(kappa4cv().modes.keys()) == _KAPPA4CV_ALL_MODES
+
+
+def test_kappa4ch_has_all_modes():
+    """kappa4ch exposes all declared modes (no double_diffraction)."""
+    assert set(kappa4ch().modes.keys()) == _KAPPA4CH_ALL_MODES
 
 
 @pytest.mark.parametrize(
@@ -1356,6 +1359,7 @@ _PSIC_MODES_ALL = {
     "bisecting_horizontal",
     "fixed_nu",
     "double_diffraction_vertical",
+    "double_diffraction_horizontal",
     "lifting_detector_mu",
     "lifting_detector_phi",
     "psi_constant_vertical",
@@ -1370,6 +1374,7 @@ _PSIC_MODES_IMPLEMENTED = {
     "bisecting_horizontal",
     "fixed_nu",
     "double_diffraction_vertical",
+    "double_diffraction_horizontal",
     "lifting_detector_mu",
     "lifting_detector_phi",
 }
@@ -1377,8 +1382,8 @@ _PSIC_MODES_IMPLEMENTED = {
 _PSIC_MODES_STUBS = _PSIC_MODES_ALL - _PSIC_MODES_IMPLEMENTED
 
 
-def test_psic_has_all_eleven_modes():
-    """psic exposes exactly 11 declared modes."""
+def test_psic_has_all_twelve_modes():
+    """psic exposes exactly 12 declared modes."""
     assert set(psic().modes.keys()) == _PSIC_MODES_ALL
 
 
@@ -1410,7 +1415,7 @@ def test_psic_mode_is_implemented(mode_name, expected_implemented):
         pytest.param("bisecting_horizontal", 1, 0, 1, id="bisecting_horiz-101"),
         pytest.param("fixed_nu", 1, 0, 0, id="fixed_nu-100"),
         pytest.param("fixed_nu", 1, 1, 1, id="fixed_nu-111"),
-        pytest.param("double_diffraction_vertical", 1, 0, 0, id="double_diff-100"),
+        # double_diffraction_vertical tested separately (requires extras h2/k2/l2)
         # lifting_detector_* modes: qaz=90 out-of-plane constraint
         pytest.param("lifting_detector_mu", 1, 0, 0, id="lifting_detector_mu-100"),
         pytest.param("lifting_detector_mu", 0, 0, 1, id="lifting_detector_mu-001"),
@@ -1540,6 +1545,8 @@ _KAPPA6C_ALL_MODES = {
     "lifting_detector_kphi",
     "psi_constant_vertical",
     "psi_constant_horizontal",
+    "double_diffraction_vertical",
+    "double_diffraction_horizontal",
 }
 _KAPPA6C_STUB_MODES = {
     "psi_constant_vertical",
@@ -2120,3 +2127,152 @@ def test_psi_constant_wraparound_tolerance():
     solutions = g.forward(1, 1, 0)
     # wrapped and natural differ by 360° — should still match
     assert len(solutions) > 0
+
+
+# ---------------------------------------------------------------------------
+# Issue #176 — double_diffraction forward solver (4D simultaneous)
+# ---------------------------------------------------------------------------
+
+
+def _setup_dd(factory, hkl2=(0, 1, 0), a=4.0, mode_name=None):
+    """Return a geometry with double_diffraction mode and h2/k2/l2 set."""
+    g = _setup_cubic(factory, a=a)
+    if mode_name is None:
+        # Pick the first double_diffraction mode available
+        for m in g.modes:
+            if "double_diffraction" in m:
+                mode_name = m
+                break
+    assert mode_name is not None, f"No double_diffraction mode found in {factory}"
+    g.mode_name = mode_name
+    cs = g.modes[mode_name]
+    cs.extras["h2"] = float(hkl2[0])
+    cs.extras["k2"] = float(hkl2[1])
+    cs.extras["l2"] = float(hkl2[2])
+    return g
+
+
+# --- ValueError when extras not set ---
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name",
+    [
+        pytest.param(fourcv, "double_diffraction", id="fourcv"),
+        pytest.param(fourch, "double_diffraction", id="fourch"),
+        pytest.param(psic, "double_diffraction_vertical", id="psic-vert"),
+        pytest.param(psic, "double_diffraction_horizontal", id="psic-horiz"),
+        pytest.param(kappa4cv, "double_diffraction", id="kappa4cv"),
+        pytest.param(kappa6c, "double_diffraction_vertical", id="kappa6c-vert"),
+        pytest.param(kappa6c, "double_diffraction_horizontal", id="kappa6c-horiz"),
+    ],
+)
+def test_double_diffraction_raises_without_extras(factory, mode_name):
+    """forward() raises ValueError when h2/k2/l2 are REQUIRED sentinels."""
+    g = _setup_cubic(factory, a=4.0)
+    g.mode_name = mode_name
+    with pytest.raises(ValueError, match="h2, k2, l2"):
+        g.forward(1, 0, 0)
+
+
+# --- Round-trip tests ---
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, h, k, l, hkl2",
+    [
+        pytest.param(fourcv, "double_diffraction", 1, 0, 0, (0, 1, 0), id="fourcv-100"),
+        pytest.param(fourcv, "double_diffraction", 1, 1, 0, (0, 0, 1), id="fourcv-110"),
+        pytest.param(fourch, "double_diffraction", 1, 0, 0, (0, 1, 0), id="fourch-100"),
+        pytest.param(
+            psic,
+            "double_diffraction_vertical",
+            1,
+            0,
+            0,
+            (0, 1, 0),
+            id="psic-vert-100",
+        ),
+        pytest.param(
+            psic,
+            "double_diffraction_horizontal",
+            1,
+            0,
+            0,
+            (0, 1, 0),
+            id="psic-horiz-100",
+        ),
+    ],
+)
+def test_double_diffraction_round_trip(
+    factory,
+    mode_name,
+    h,
+    k,
+    l,  # noqa: E741
+    hkl2,
+):
+    """double_diffraction returns solutions that round-trip via inverse()."""
+    g = _setup_dd(factory, hkl2=hkl2, mode_name=mode_name)
+    solutions = g.forward(h, k, l)
+    # May return 0 solutions if no simultaneous diffraction exists
+    for sol in solutions:
+        hkl_back = g.inverse(sol)
+        assert np.allclose(hkl_back, [h, k, l], atol=1e-6), (
+            f"Round-trip failed: {[h, k, l]} -> {sol} -> {hkl_back}"
+        )
+
+
+# --- Ewald sphere verification for secondary reflection ---
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, h, k, l, hkl2",
+    [
+        pytest.param(fourcv, "double_diffraction", 1, 0, 0, (0, 1, 0), id="fourcv-100"),
+        pytest.param(
+            psic,
+            "double_diffraction_vertical",
+            1,
+            0,
+            0,
+            (0, 1, 0),
+            id="psic-vert-100",
+        ),
+    ],
+)
+def test_double_diffraction_secondary_on_ewald_sphere(
+    factory,
+    mode_name,
+    h,
+    k,
+    l,  # noqa: E741
+    hkl2,
+):
+    """In all solutions, the secondary reflection satisfies the Ewald sphere."""
+    import math
+
+    from ad_hoc_diffractometer.rotation import rotation_matrix
+
+    g = _setup_dd(factory, hkl2=hkl2, mode_name=mode_name)
+    solutions = g.forward(h, k, l)
+
+    hkl2_arr = np.array(hkl2, dtype=float)
+    Q2_phi = g.sample.UB @ hkl2_arr
+    k_mag = 2.0 * math.pi / g.wavelength
+    y_raw = np.asarray(g.basis.get("longitudinal", [0, 1, 0]), dtype=float)
+    ki = k_mag * (y_raw / np.linalg.norm(y_raw))
+    ki_sq = float(np.dot(ki, ki))
+
+    for sol in solutions:
+        # Build Z from solution angles
+        Z = np.eye(3)
+        for s in g.sample_stages:
+            Z = Z @ rotation_matrix(s.axis, sol[s.name])
+        Q2_lab = Z @ Q2_phi
+        kf2 = ki + Q2_lab
+        kf2_sq = float(np.dot(kf2, kf2))
+        residual = abs(kf2_sq - ki_sq)
+        assert residual < 1e-3, (  # noqa: PLR2004
+            f"Secondary reflection not on Ewald sphere: |kf2|²-|ki|² = {residual:.6f}"
+        )

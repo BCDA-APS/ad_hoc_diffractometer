@@ -1333,13 +1333,7 @@ def test_four_circle_factory_mode_names(factory, expected_modes):
         pytest.param(
             fourcv, "psi_constant", ReferenceConstraint, False, id="fourcv-psi_constant"
         ),
-        pytest.param(
-            fourcv,
-            "double_diffraction",
-            BisectConstraint,
-            True,
-            id="fourcv-double_diffraction",
-        ),
+        # double_diffraction has no explicit constraints (4D solver uses extras)
         pytest.param(
             fourch, "bisecting", BisectConstraint, True, id="fourch-bisecting"
         ),
@@ -1358,13 +1352,6 @@ def test_four_circle_factory_mode_names(factory, expected_modes):
         ),
         pytest.param(
             fourch, "psi_constant", ReferenceConstraint, False, id="fourch-psi_constant"
-        ),
-        pytest.param(
-            fourch,
-            "double_diffraction",
-            BisectConstraint,
-            True,
-            id="fourch-double_diffraction",
         ),
     ],
 )
@@ -1895,7 +1882,7 @@ def test_zaxis_s2d2_modes_round_trip(factory, expected_modes):
 # Issue #151 — kappa4cv and kappa4ch mode structure
 # ---------------------------------------------------------------------------
 
-_KAPPA4_MODES = {
+_KAPPA4_BASE_MODES = {
     "bisecting",
     "fixed_kphi",
     "constant_omega",
@@ -1903,24 +1890,30 @@ _KAPPA4_MODES = {
     "constant_phi",
     "psi_constant",
 }
+_KAPPA4CV_MODES = _KAPPA4_BASE_MODES | {"double_diffraction"}
+_KAPPA4CH_MODES = _KAPPA4_BASE_MODES
 
-_KAPPA4_IMPLEMENTED = {
+_KAPPA4_BASE_IMPLEMENTED = {
     "bisecting",
     "fixed_kphi",
     "constant_omega",
     "constant_chi",
     "constant_phi",
 }
-_KAPPA4_STUBS = _KAPPA4_MODES - _KAPPA4_IMPLEMENTED
+_KAPPA4CV_IMPLEMENTED = _KAPPA4_BASE_IMPLEMENTED | {"double_diffraction"}
+_KAPPA4CH_IMPLEMENTED = _KAPPA4_BASE_IMPLEMENTED
+_KAPPA4CV_STUBS = _KAPPA4CV_MODES - _KAPPA4CV_IMPLEMENTED
+_KAPPA4CH_STUBS = _KAPPA4CH_MODES - _KAPPA4CH_IMPLEMENTED
 
 
-@pytest.mark.parametrize(
-    "factory",
-    [pytest.param(kappa4cv, id="kappa4cv"), pytest.param(kappa4ch, id="kappa4ch")],
-)
-def test_kappa4_factory_mode_names(factory):
-    """kappa4cv and kappa4ch expose exactly the 6 declared mode names."""
-    assert set(factory().modes.keys()) == _KAPPA4_MODES
+def test_kappa4cv_factory_mode_names():
+    """kappa4cv exposes all declared mode names including double_diffraction."""
+    assert set(kappa4cv().modes.keys()) == _KAPPA4CV_MODES
+
+
+def test_kappa4ch_factory_mode_names():
+    """kappa4ch exposes all declared mode names (no double_diffraction)."""
+    assert set(kappa4ch().modes.keys()) == _KAPPA4CH_MODES
 
 
 @pytest.mark.parametrize(
@@ -1945,19 +1938,19 @@ def test_kappa4_default_mode(factory):
     "factory, mode_name, expected_implemented",
     [
         pytest.param(kappa4cv, m, True, id=f"kappa4cv-{m}-impl")
-        for m in sorted(_KAPPA4_IMPLEMENTED)
+        for m in sorted(_KAPPA4CV_IMPLEMENTED)
     ]
     + [
         pytest.param(kappa4cv, m, False, id=f"kappa4cv-{m}-stub")
-        for m in sorted(_KAPPA4_STUBS)
+        for m in sorted(_KAPPA4CV_STUBS)
     ]
     + [
         pytest.param(kappa4ch, m, True, id=f"kappa4ch-{m}-impl")
-        for m in sorted(_KAPPA4_IMPLEMENTED)
+        for m in sorted(_KAPPA4CH_IMPLEMENTED)
     ]
     + [
         pytest.param(kappa4ch, m, False, id=f"kappa4ch-{m}-stub")
-        for m in sorted(_KAPPA4_STUBS)
+        for m in sorted(_KAPPA4CH_STUBS)
     ],
 )
 def test_kappa4_mode_is_implemented(factory, mode_name, expected_implemented):
@@ -2030,19 +2023,22 @@ def test_kappa4_computed_stages(factory, mode_name, expected_computed):
 
 
 @pytest.mark.parametrize(
-    "factory",
-    [pytest.param(kappa4cv, id="kappa4cv"), pytest.param(kappa4ch, id="kappa4ch")],
+    "factory, expected_modes",
+    [
+        pytest.param(kappa4cv, _KAPPA4CV_MODES, id="kappa4cv"),
+        pytest.param(kappa4ch, _KAPPA4CH_MODES, id="kappa4ch"),
+    ],
 )
-def test_kappa4_modes_round_trip(factory):
-    """Full to_dict / from_dict round-trip preserves all 6 modes."""
+def test_kappa4_modes_round_trip(factory, expected_modes):
+    """Full to_dict / from_dict round-trip preserves all modes."""
     import json
 
     g = factory()
     d = g.to_dict()
     assert json.dumps(d)
-    assert set(d["modes"].keys()) == _KAPPA4_MODES
+    assert set(d["modes"].keys()) == expected_modes
     g2 = AdHocDiffractometer.from_dict(d)
-    assert set(g2.modes.keys()) == _KAPPA4_MODES
+    assert set(g2.modes.keys()) == expected_modes
     assert g2.mode_name == "bisecting"
 
 
@@ -2061,6 +2057,8 @@ _KAPPA6C_MODES = {
     "lifting_detector_kphi",
     "psi_constant_vertical",
     "psi_constant_horizontal",
+    "double_diffraction_vertical",
+    "double_diffraction_horizontal",
 }
 
 _KAPPA6C_IMPLEMENTED = {
@@ -2072,6 +2070,8 @@ _KAPPA6C_IMPLEMENTED = {
     "fixed_delta",
     "lifting_detector_mu",
     "lifting_detector_kphi",
+    "double_diffraction_vertical",
+    "double_diffraction_horizontal",
 }
 _KAPPA6C_STUBS = _KAPPA6C_MODES - _KAPPA6C_IMPLEMENTED  # psi_constant_*
 

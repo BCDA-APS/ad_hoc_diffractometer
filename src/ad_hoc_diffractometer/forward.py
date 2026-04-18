@@ -222,6 +222,12 @@ def _solve_constraint_set(
     if _is_psi_mode(geometry, mode):
         return _solve_psi_mode(geometry, Q_phi, ttheta_deg, mode)
 
+    # Double-diffraction mode (simultaneous Bragg for two reflections).
+    # Must be checked before has_bisect: double_diffraction modes have a
+    # BisectConstraint but use a 4D solver instead of plain bisecting.
+    if _is_double_diffraction_mode(geometry, mode):
+        return _solve_double_diffraction(geometry, Q_phi, ttheta_deg, mode)
+
     if mode.has_bisect:
         return _solve_bisecting(geometry, Q_phi, ttheta_deg, mode)
 
@@ -877,6 +883,231 @@ def _solve_psi_mode(
     )
 
     return _solve_bisecting(geometry, Q_phi, ttheta_deg, synthetic)
+
+
+# ---------------------------------------------------------------------------
+# Double-diffraction solver (simultaneous Bragg for two reflections)
+# ---------------------------------------------------------------------------
+
+
+def _is_double_diffraction_mode(geometry: AdHocDiffractometer, mode) -> bool:
+    """Return True when mode.extras contains h2, k2, l2 keys."""
+    extras = mode.extras
+    return extras is not None and all(k in extras for k in ("h2", "k2", "l2"))
+
+
+def _solve_double_diffraction(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+) -> list[dict[str, float]]:
+    """
+    Full 4D simultaneous solver for double-diffraction modes.
+
+    Finds motor angles where both the primary reflection (h₁,k₁,l₁) and a
+    secondary reflection (h₂,k₂,l₂) simultaneously satisfy the Ewald sphere
+    condition.  Matches the Hkl library's ``_double_diffraction`` function
+    (``hkl-pseudoaxis-common-hkl.c``).
+
+    Four equations, four unknowns:
+
+    1-3. Bragg condition for primary hkl₁:
+         ``Q_phi_computed - Q_phi_target = 0``  (3 components)
+    4.   Ewald sphere for secondary hkl₂:
+         ``|ki + Z @ UB @ hkl₂|² - |ki|² = 0``
+
+    where ``Z`` is the sample rotation matrix and ``ki = (2π/λ) ŷ``.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+    Q_phi : numpy.ndarray, shape (3,)
+    ttheta_deg : float
+    mode : ConstraintSet
+
+    Returns
+    -------
+    list of dict[str, float]
+
+    Raises
+    ------
+    ValueError
+        If h2, k2, l2 are not set in ``mode.extras`` (still ``REQUIRED``).
+    """
+    from .mode import REQUIRED
+    from .rotation import rotation_matrix
+
+    extras = mode.extras
+
+    # Validate that h2, k2, l2 are set to numeric values
+    hkl2_values = [extras.get("h2"), extras.get("k2"), extras.get("l2")]
+    if any(v is REQUIRED for v in hkl2_values):
+        raise ValueError(
+            "double_diffraction mode requires h2, k2, l2 to be set in "
+            "mode.extras before calling forward(). "
+            "Set them with e.g. "
+            "g.modes['double_diffraction'].extras['h2'] = 1.0"
+        )
+
+    hkl2 = np.array([float(v) for v in hkl2_values], dtype=float)
+    Q2_phi = geometry.sample.UB @ hkl2
+
+    # Incident beam: ki = (2π/λ) * longitudinal_hat
+    wavelength = geometry.wavelength
+    k_mag = 2.0 * math.pi / wavelength
+    y_raw = np.asarray(
+        geometry.basis.get("longitudinal", np.array([0.0, 1.0, 0.0])),
+        dtype=float,
+    )
+    ki = k_mag * (y_raw / np.linalg.norm(y_raw))
+    ki_sq = float(np.dot(ki, ki))
+
+    # Build baseline angles: all stages at their current positions
+    all_stages = list(geometry._stages.values())  # noqa: SLF001
+    angles_base: dict[str, float] = {s.name: s.angle for s in all_stages}
+
+    # Apply fixed sample constraints (mu=0, eta=0, etc.)
+    for sc in mode.fixed_sample_constraints:
+        if sc.name in geometry._stages:  # noqa: SLF001  # pragma: no branch
+            angles_base[sc.name] = float(sc.value)
+
+    # Apply fixed detector constraints (nu=0, delta=0, etc.)
+    det_c = mode.detector_constraint
+    if det_c is not None and not det_c.is_qaz:
+        angles_base[det_c.name] = det_c.value
+
+    # The 4 free stages are taken from the mode's ``computed`` field,
+    # which explicitly lists the writable axes.  The BisectConstraint
+    # stages ARE included (they are seeding hints, not hard constraints
+    # in the 4D solver).
+    free_names = list(mode.computed)
+
+    if len(free_names) != 4:  # pragma: no cover
+        logger.warning(
+            "double_diffraction expects 4 free stages, got %d: %s",
+            len(free_names),
+            free_names,
+        )
+        return []
+
+    # Ordered list of ALL stages (for building the sample rotation matrix Z)
+    sample_stages = geometry.sample_stages
+
+    from .orientation import angles_to_phi_vector as _a2phi
+
+    def _build_Z(angles: dict[str, float]) -> np.ndarray:
+        """Compute sample rotation matrix from angle values (no mutation)."""
+        Z = np.eye(3)
+        for s in sample_stages:
+            Z = Z @ rotation_matrix(s.axis, angles[s.name])
+        return Z
+
+    def _residual_4d(x: np.ndarray) -> np.ndarray:
+        """4-component residual: 3 Bragg + 1 Ewald sphere."""
+        trial = dict(angles_base)
+        for i, name in enumerate(free_names):
+            trial[name] = float(x[i])
+
+        # Bragg residual for primary hkl₁ (3 components)
+        Q_computed = _a2phi(geometry, **trial)
+        bragg_res = Q_computed - Q_phi
+
+        # Ewald sphere residual for secondary hkl₂
+        Z = _build_Z(trial)
+        Q2_lab = Z @ Q2_phi
+        kf2 = ki + Q2_lab
+        ewald_res = float(np.dot(kf2, kf2)) - ki_sq
+
+        return np.array([bragg_res[0], bragg_res[1], bragg_res[2], ewald_res])
+
+    def _jacobian_fd(x: np.ndarray, r0: np.ndarray, h: float = 1e-4) -> np.ndarray:
+        """Finite-difference Jacobian (4 × 4)."""
+        J = np.zeros((4, 4))
+        for i in range(4):
+            xp = x.copy()
+            xp[i] += h
+            J[:, i] = (_residual_4d(xp) - r0) / h
+        return J
+
+    # Seed from bisecting solutions + coarse grid.
+    # The bisecting solution satisfies the primary Bragg condition and is
+    # a good starting point for the Newton-Raphson solver.  We build a
+    # temporary bisecting mode from the first sample and last detector stage
+    # in the computed list, then run _solve_bisecting().
+    seeds: list[np.ndarray] = []
+
+    # Find sample and detector stages among the 4 free stages
+    sample_names = {s.name for s in geometry.sample_stages}
+    det_names = {s.name for s in geometry.detector_stages}
+    free_sample = [n for n in free_names if n in sample_names]
+    free_det = [n for n in free_names if n in det_names]
+
+    if free_sample and free_det:  # pragma: no branch
+        from .mode import BisectConstraint as _BC
+        from .mode import ConstraintSet as _CS
+
+        bisect_sample = free_sample[0]
+        bisect_det = free_det[-1]
+        other_constraints = list(mode.constraints)  # frozen stages
+        synth = _CS(
+            [_BC(bisect_sample, bisect_det)] + other_constraints,
+            computed=mode.computed,
+        )
+        try:
+            bisect_sols = _solve_bisecting(geometry, Q_phi, ttheta_deg, synth)
+            for sol in bisect_sols:
+                seeds.append(np.array([sol[n] for n in free_names], dtype=float))
+        except Exception:  # pragma: no cover
+            pass  # pragma: no cover
+
+    # Coarse grid seeds
+    half_tth = ttheta_deg / 2.0
+    for a0 in (half_tth, -half_tth, 0.0):
+        for a1 in (0.0, 45.0, 90.0, -90.0):
+            for a2 in (0.0, 90.0, 180.0, -90.0):
+                seeds.append(np.array([a0, a1, a2, ttheta_deg], dtype=float))
+
+    # Newton-Raphson over all seeds
+    found_solutions: list[dict[str, float]] = []
+    seen_keys: list[np.ndarray] = []
+
+    for seed in seeds:
+        x = seed.copy()
+        for _ in range(300):  # pragma: no branch
+            r = _residual_4d(x)
+            if np.linalg.norm(r) < 1e-9:
+                break
+            J = _jacobian_fd(x, r)
+            try:
+                dx = np.linalg.solve(J, -r)
+            except np.linalg.LinAlgError:  # pragma: no cover
+                break  # pragma: no cover
+            step = np.linalg.norm(dx)
+            if step > 30.0:
+                dx = dx * (30.0 / step)
+            x = x + dx
+
+        r = _residual_4d(x)
+        if np.linalg.norm(r) > 1e-5:  # pragma: no cover
+            continue  # pragma: no cover
+
+        # De-duplicate
+        duplicate = any(np.allclose(x, sk, atol=1e-3) for sk in seen_keys)
+        if duplicate:
+            continue
+        seen_keys.append(x.copy())
+
+        # Build solution dict
+        sol = dict(angles_base)
+        for i, name in enumerate(free_names):
+            sol[name] = float(x[i])
+
+        _apply_cut_points(sol, mode, geometry)
+        if _check_limits(geometry, sol):
+            found_solutions.append(sol)
+
+    return found_solutions
 
 
 # ---------------------------------------------------------------------------
