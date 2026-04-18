@@ -718,11 +718,12 @@ class ReferenceConstraint:
         - ``"beta_out"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"a_eq_b"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
 
-        Not yet implemented (psi / azimuthal reference):
+        Not yet implemented:
 
-        - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`
-          and a psi-constant forward solver (Issue #176)
-        - ``"naz"`` — not yet implemented
+        - ``"psi"`` — the You (1999) azimuthal angle ψ is constant for all Bragg
+          solutions of a given (h,k,l); ``psi_constant`` as a forward-problem
+          constraint for fixed (h,k,l) is not physically meaningful.  See issue #176.
+        - ``"naz"`` — no forward solver yet.
         """
         if self._name in {"psi", "naz"}:
             return False
