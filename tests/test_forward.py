@@ -1161,9 +1161,9 @@ def test_sixc_round_trip(mode_name, h, k, l):  # noqa: E741
 @pytest.mark.parametrize(
     "mode_name",
     [
-        pytest.param("zaxis_alpha_fixed", id="zaxis_alpha_fixed"),
-        pytest.param("zaxis_beta_fixed", id="zaxis_beta_fixed"),
-        pytest.param("zaxis_alpha_eq_beta", id="zaxis_alpha_eq_beta"),
+        pytest.param("fixed_alpha_zaxis", id="fixed_alpha_zaxis"),
+        pytest.param("fixed_beta_zaxis", id="fixed_beta_zaxis"),
+        pytest.param("alpha_eq_beta_zaxis", id="alpha_eq_beta_zaxis"),
     ],
 )
 def test_sixc_zaxis_stub_not_implemented(mode_name):

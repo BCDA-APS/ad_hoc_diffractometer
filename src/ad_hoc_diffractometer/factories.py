@@ -817,7 +817,7 @@ def sixc(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["omega", "chi", "phi", "delta", "gamma"],
         ),
-        "zaxis_alpha_fixed": ConstraintSet(
+        "fixed_alpha_zaxis": ConstraintSet(
             [
                 SampleConstraint("alpha", 0.0),
                 SampleConstraint("chi", 0.0),
@@ -826,7 +826,7 @@ def sixc(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
             computed=["omega", "delta", "gamma"],
             extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
         ),
-        "zaxis_beta_fixed": ConstraintSet(
+        "fixed_beta_zaxis": ConstraintSet(
             [
                 DetectorConstraint("gamma", 0.0),
                 SampleConstraint("chi", 0.0),
@@ -835,7 +835,7 @@ def sixc(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
             computed=["omega", "delta", "alpha"],
             extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
         ),
-        "zaxis_alpha_eq_beta": ConstraintSet(
+        "alpha_eq_beta_zaxis": ConstraintSet(
             [
                 SampleConstraint("chi", 0.0),
                 SampleConstraint("phi", 0.0),
@@ -1142,6 +1142,20 @@ def zaxis(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
         Stage("delta", -LATERAL, parent="alpha", role="detector"),
         Stage("gamma", +VERTICAL, parent="delta", role="detector"),
     ]
+    # zaxis: 4 DOF, N-3=1 constraint needed per mode.
+    # All modes require reference vector n̂ (Issue J / #157).
+    modes = {
+        "zaxis": ConstraintSet(
+            [ReferenceConstraint("alpha_i", 0.0)],
+            computed=["Z", "delta", "gamma"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "reflectivity": ConstraintSet(
+            [ReferenceConstraint("a_eq_b", True)],
+            computed=["Z", "delta", "alpha", "gamma"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+    }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
@@ -1151,6 +1165,7 @@ def zaxis(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
             "Surface normal parallel to Z-axis. "
             "Sample and detector share the alpha (base) stage."
         ),
+        modes=modes,
     )
 
 
@@ -1195,6 +1210,18 @@ def s2d2(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
         Stage("nu", +VERTICAL, parent=None, role="detector"),
         Stage("delta", -LATERAL, parent="nu", role="detector"),
     ]
+    # s2d2: 4 DOF, N-3=1 constraint needed per mode.
+    modes = {
+        "mu_fixed": ConstraintSet(
+            [SampleConstraint("mu", 0.0)],
+            computed=["Z", "nu", "delta"],
+        ),
+        "reflectivity": ConstraintSet(
+            [ReferenceConstraint("a_eq_b", True)],
+            computed=["mu", "Z", "nu", "delta"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+    }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
         stages=stages,
@@ -1204,6 +1231,7 @@ def s2d2(basis: dict = _BASIS_YOU) -> AdHocDiffractometer:
             "Walko 2016 S2D2). "
             "Fully decoupled sample (mu, Z) and detector (nu, delta) axes."
         ),
+        modes=modes,
     )
 
 
