@@ -45,6 +45,7 @@ from ad_hoc_diffractometer import ModeDict
 from ad_hoc_diffractometer import ReferenceConstraint
 from ad_hoc_diffractometer import SampleConstraint
 from ad_hoc_diffractometer import Stage
+from ad_hoc_diffractometer import fivec
 from ad_hoc_diffractometer import fourch
 from ad_hoc_diffractometer import fourcv
 from ad_hoc_diffractometer.constants import XHAT
@@ -1475,4 +1476,114 @@ def test_four_circle_modes_round_trip_serialisation(factory):
     }
     g2 = AdHocDiffractometer.from_dict(d)
     assert set(g2.modes.keys()) == set(g.modes.keys())
+    assert g2.mode_name == "bisecting"
+
+
+# ---------------------------------------------------------------------------
+# Issue #154 — fivec mode structure
+# ---------------------------------------------------------------------------
+
+_FIVEC_MODES = {
+    "bisecting",
+    "fixed_chi",
+    "fixed_phi",
+    "fixed_mu",
+    "constant_omega_noncoplanar",
+}
+
+
+def test_fivec_factory_mode_names():
+    """fivec exposes exactly the 5 declared mode names."""
+    assert set(fivec().modes.keys()) == _FIVEC_MODES
+
+
+def test_fivec_default_mode_is_bisecting():
+    """Default mode for fivec is 'bisecting'."""
+    assert fivec().mode_name == "bisecting"
+
+
+def test_fivec_free_dof():
+    """fivec has free_dof_after_bragg == 2."""
+    assert fivec().free_dof_after_bragg == 2
+
+
+@pytest.mark.parametrize(
+    "mode_name",
+    [pytest.param(m, id=m) for m in _FIVEC_MODES],
+)
+def test_fivec_mode_is_constraint_set(mode_name):
+    """Every fivec mode is a ConstraintSet with exactly 2 constraints."""
+    g = fivec()
+    cs = g.modes[mode_name]
+    assert isinstance(cs, ConstraintSet)
+    assert len(cs) == 2
+
+
+@pytest.mark.parametrize(
+    "mode_name, expected_implemented",
+    [
+        pytest.param("bisecting", True, id="bisecting-implemented"),
+        pytest.param("fixed_chi", True, id="fixed_chi-implemented"),
+        pytest.param("fixed_phi", True, id="fixed_phi-implemented"),
+        pytest.param("fixed_mu", True, id="fixed_mu-implemented"),
+        pytest.param(
+            "constant_omega_noncoplanar",
+            True,
+            id="constant_omega_noncoplanar-implemented",
+        ),
+    ],
+)
+def test_fivec_mode_is_implemented(mode_name, expected_implemented):
+    """All fivec modes are implemented by the generic solver."""
+    g = fivec()
+    assert g.modes[mode_name].is_implemented(g) == expected_implemented
+
+
+@pytest.mark.parametrize(
+    "mode_name, expected_has_bisect",
+    [
+        pytest.param("bisecting", True, id="bisecting-has-bisect"),
+        pytest.param("fixed_chi", False, id="fixed_chi-no-bisect"),
+        pytest.param("fixed_phi", False, id="fixed_phi-no-bisect"),
+        pytest.param("fixed_mu", True, id="fixed_mu-has-bisect"),
+        pytest.param(
+            "constant_omega_noncoplanar", False, id="constant_omega-no-bisect"
+        ),
+    ],
+)
+def test_fivec_mode_has_bisect(mode_name, expected_has_bisect):
+    """BisectConstraint presence matches expected for each fivec mode."""
+    g = fivec()
+    assert g.modes[mode_name].has_bisect == expected_has_bisect
+
+
+@pytest.mark.parametrize(
+    "mode_name, expected_computed",
+    [
+        pytest.param("bisecting", ["omega", "chi", "phi", "ttheta"], id="bisecting"),
+        pytest.param("fixed_chi", ["omega", "phi", "ttheta"], id="fixed_chi"),
+        pytest.param("fixed_phi", ["omega", "chi", "ttheta"], id="fixed_phi"),
+        pytest.param(
+            "constant_omega_noncoplanar",
+            ["mu", "chi", "phi", "ttheta"],
+            id="constant_omega_noncoplanar",
+        ),
+    ],
+)
+def test_fivec_computed_stages(mode_name, expected_computed):
+    """computed field lists the correct stage names for each fivec mode."""
+    cs = fivec().modes[mode_name]
+    assert cs.computed == expected_computed
+
+
+def test_fivec_modes_round_trip_serialisation():
+    """Full to_dict / from_dict round-trip preserves all 5 fivec modes."""
+    import json
+
+    g = fivec()
+    d = g.to_dict()
+    assert json.dumps(d)
+    assert set(d["modes"].keys()) == _FIVEC_MODES
+    g2 = AdHocDiffractometer.from_dict(d)
+    assert set(g2.modes.keys()) == _FIVEC_MODES
     assert g2.mode_name == "bisecting"
