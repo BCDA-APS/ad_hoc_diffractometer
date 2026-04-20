@@ -1,0 +1,265 @@
+surface
+=======
+
+.. py:module:: ad_hoc_diffractometer.surface
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.surface``
+
+   Provides incidence angle αᵢ, emergence angle αf, and Q-vector decomposition
+   into in-plane (Q‖) and out-of-plane (Q⊥) components relative to the sample
+   surface.
+
+   All functions operate on a geometry instance and a set of motor angles
+   (defaulting to the current stage angles when ``angles`` is ``None``).
+
+   Public API
+   ----------
+   alpha_i(geometry, angles=None)
+       Angle of incidence αᵢ in degrees — angle between the incoming beam
+       and the sample surface.
+
+   alpha_f(geometry, angles=None)
+       Angle of emergence αf in degrees — angle between the diffracted beam
+       and the sample surface.
+
+   q_components(geometry, angles=None)
+       Decompose Q into Q⊥ (perpendicular to sample surface) and Q‖
+       (parallel to sample surface) in Å⁻¹.  Returns a named dict.
+
+   is_specular(geometry, angles=None, atol=0.01)
+       Return True when αᵢ ≈ αf within ``atol`` degrees.
+
+   is_evanescent(geometry, angles=None, critical_angle_deg=None)
+       Return True when αᵢ < critical_angle_deg (evanescent / surface-
+       sensitive regime).
+
+   Physical convention
+   -------------------
+   The sample surface normal is specified as Miller indices ``(h, k, l)``
+   via the geometry's ``surface_normal`` property (added to
+   ``AdHocDiffractometer``).  If ``surface_normal`` is ``None`` the
+   ``azimuthal_reference`` is used as a fallback.
+
+   The surface normal in the lab frame is computed as::
+
+       n_phi = UB @ n_hkl          (phi-frame normal, same units as Q)
+       n_lab = Z @ n_phi            (Z = sample rotation matrix)
+       n̂_lab = n_lab / |n_lab|
+
+   The incident beam direction in the lab frame is the ``'longitudinal'``
+   basis vector (``+ŷ``) — the beam travels along +y.
+
+   The diffracted beam direction in the lab frame is ``D @ ŷ`` where D is
+   the total detector rotation matrix.
+
+   Then::
+
+       sin(αᵢ) = ŷ · n̂_lab    (ŷ is incident direction, n̂_lab is surface normal)
+       sin(αf) = (D @ ŷ) · n̂_lab
+
+   Q decomposition::
+
+       Q_lab = (2π/λ) (D @ ŷ − ŷ)
+       Q_perp_vec = (Q_lab · n̂_lab) n̂_lab
+       Q_par_vec  = Q_lab − Q_perp_vec
+       Q_perp = |Q_perp_vec|   (signed: positive if Q points outward)
+       Q_par  = |Q_par_vec|
+
+   .. rubric:: References
+
+   * Lohmeier & Vlieg, J. Appl. Cryst. 26, 706-716 (1993) §4.2
+   * You, J. Appl. Cryst. 32, 614-623 (1999), eqs. 10-11
+   * Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987)
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.surface.alpha_f
+   ad_hoc_diffractometer.surface.alpha_i
+   ad_hoc_diffractometer.surface.is_evanescent
+   ad_hoc_diffractometer.surface.is_specular
+   ad_hoc_diffractometer.surface.q_components
+
+
+Module Contents
+---------------
+
+.. py:function:: alpha_f(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.surface.alpha_f``
+
+
+   Compute the angle of emergence αf (degrees).
+
+   αf is the angle between the diffracted beam and the sample surface::
+
+       sin(αf) = |k̂f · n̂_lab|
+
+   :param geometry: Must have ``wavelength``, ``sample.UB``, and ``surface_normal``
+                    (or ``azimuthal_reference``) set.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.  If ``None``, current stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns: αf in degrees, in [0°, 90°].
+   :rtype: float
+
+   :raises ValueError: If any required attribute is not set.
+
+   .. rubric:: References
+
+   Lohmeier & Vlieg (1993), §4.2, eq. 16.
+
+
+.. py:function:: alpha_i(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.surface.alpha_i``
+
+
+   Compute the angle of incidence αᵢ (degrees).
+
+   αᵢ is the angle between the incoming beam and the sample surface
+   (complement of the angle between the beam and the surface normal)::
+
+       sin(αᵢ) = |ŷ · n̂_lab|
+
+   :param geometry: Must have ``wavelength``, ``sample.UB``, and ``surface_normal``
+                    (or ``azimuthal_reference``) set.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.  If ``None``, current stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns: αᵢ in degrees, in [0°, 90°].
+   :rtype: float
+
+   :raises ValueError: If any required attribute is not set.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.zaxis()
+   >>> g.wavelength = 1.5406
+   >>> g.surface_normal = (0, 0, 1)
+   >>> ahd.ub_identity(g.sample)
+   >>> ai = g.alpha_i({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})
+   >>> round(ai, 4)
+   5.0
+
+   .. rubric:: References
+
+   Lohmeier & Vlieg (1993), §4.2, eq. 15.
+
+
+.. py:function:: is_evanescent(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None, critical_angle_deg: float | None = None) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.surface.is_evanescent``
+
+
+   Return True when αᵢ is below the critical angle (evanescent / surface-sensitive).
+
+   If ``critical_angle_deg`` is ``None`` the function raises ``ValueError``
+   since the critical angle depends on material properties (electron density)
+   that are not stored on the geometry.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.
+   :type angles: dict[str, float] or None
+   :param critical_angle_deg: Critical angle for total external reflection in degrees.  This is
+                              a material property (typically 0.1°–0.5° for hard X-rays) that
+                              must be supplied by the caller.
+   :type critical_angle_deg: float
+
+   :returns: True if αᵢ < critical_angle_deg.
+   :rtype: bool
+
+   :raises ValueError: If ``critical_angle_deg`` is None.
+
+   .. rubric:: Examples
+
+   >>> g.is_evanescent(critical_angle_deg=0.2)
+   True   # if αᵢ < 0.2°
+
+
+.. py:function:: is_specular(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None, atol: float = 0.01) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.surface.is_specular``
+
+
+   Return True when αᵢ ≈ αf within ``atol`` degrees.
+
+   The specular condition (αᵢ = αf) is the constraint used in
+   reflectometry and specular surface diffraction.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.
+   :type angles: dict[str, float] or None
+   :param atol: Tolerance in degrees.  Default is 0.01°.
+   :type atol: float
+
+   :rtype: bool
+
+   :raises ValueError: If any required attribute is not set.
+
+
+.. py:function:: q_components(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> dict[str, float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.surface.q_components``
+
+
+   Decompose Q into components perpendicular and parallel to the sample surface.
+
+   ``Q_perp`` is the component of Q along the surface normal (out-of-plane).
+   ``Q_par`` is the magnitude of the component of Q in the surface plane
+   (in-plane).
+
+   The signed perpendicular component ``Q_perp_signed`` is positive when Q
+   has a component in the same direction as the outward surface normal.
+
+   Units
+   -----
+   The returned values are in the same units as ``angles_to_phi_vector``,
+   i.e. Å⁻¹ using the ``(2π/λ)(kf − ki)`` definition of Q (with full 2π).
+
+   :param geometry: Must have ``wavelength``, ``sample.UB``, and ``surface_normal``
+                    (or ``azimuthal_reference``) set.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.  If ``None``, current stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns:
+
+             ``"Q_perp"`` : float
+                 Magnitude of the out-of-plane component (Å⁻¹), always ≥ 0.
+             ``"Q_par"`` : float
+                 Magnitude of the in-plane component (Å⁻¹), always ≥ 0.
+             ``"Q_perp_signed"`` : float
+                 Signed out-of-plane component (Å⁻¹); positive when Q points
+                 along the outward surface normal.
+             ``"Q_total"`` : float
+                 Total \|Q\| (Å⁻¹).
+   :rtype: dict with keys
+
+   :raises ValueError: If any required attribute is not set.
+
+   .. rubric:: References
+
+   Lohmeier & Vlieg (1993), §4.2, eq. 17.
+
+

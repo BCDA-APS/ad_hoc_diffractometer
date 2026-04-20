@@ -1,0 +1,1521 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ad_hoc_diffractometer.scan &#8212; ad_hoc_diffractometer 0.5</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=090975f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+
+    <script src="../../_static/documentation_options.js?v=1dd76d02"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/scan';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.5.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.5" />
+    <meta name="docbuild:last-update" content="2026-04-20 16:56 CDT"/>
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.5</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer.scan</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ad_hoc_diffractometer.scan</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2026 Pete R. Jemian &lt;prjemian+ad_hoc_diffractometer@gmail.com&gt;</span>
+<span class="c1"># SPDX-License-Identifier: CC-BY-4.0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">scan.py — Reciprocal-space trajectory computation.</span>
+
+<span class="sd">Functions</span>
+<span class="sd">---------</span>
+<span class="sd">:func:`hkl_trajectory` ``(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``</span>
+<span class="sd">    **Generator.** Yield motor-angle dicts along a reciprocal-space path.</span>
+<span class="sd">    Use ``list(hkl_trajectory(...))`` to collect all points at once.</span>
+
+<span class="sd">:func:`psi_trajectory` ``(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``</span>
+<span class="sd">    **Generator.** Yield motor-angle dicts for ψ (psi) rotation about Q.</span>
+
+<span class="sd">:func:`trajectory_plan` ``(geometry, hkl_start, hkl_end, n_points, space=&quot;hkl&quot;, solution_key=NEAREST_ANGLES)``</span>
+<span class="sd">    **Generator.** Yield motor-angle dicts between two reciprocal-space points,</span>
+<span class="sd">    flagging limit violations and inaccessible regions.</span>
+
+<span class="sd">:data:`NEAREST_ANGLES`</span>
+<span class="sd">    Built-in solution-key callable: selects the candidate solution whose</span>
+<span class="sd">    motor angles are closest (in least-squares sense) to the previous point.</span>
+<span class="sd">    Suppresses branch-flip discontinuities across a trajectory.</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+<span class="sd">These functions *compute* trajectories; they do not move motors or</span>
+<span class="sd">communicate with hardware.  A future execution layer (not yet planned)</span>
+<span class="sd">will consume these outputs to drive real diffractometers.</span>
+
+<span class="sd">The ordering instability of :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`</span>
+<span class="sd">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span class="sd">:meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward` returns multiple solutions in seed-discovery order, which is</span>
+<span class="sd">not reproducible and can switch between the positive-chi and negative-chi</span>
+<span class="sd">branches at adjacent trajectory points.  All three trajectory functions</span>
+<span class="sd">accept a ``solution_key`` parameter — a callable that scores each candidate</span>
+<span class="sd">solution against the previous point&#39;s chosen angles.  Passing</span>
+<span class="sd">``NEAREST_ANGLES`` (the module default) prevents branch flips by always</span>
+<span class="sd">preferring the candidate closest in motor space to the previous point.</span>
+
+<span class="sd">ψ-scan algorithm</span>
+<span class="sd">~~~~~~~~~~~~~~~~</span>
+<span class="sd">Two distinct definitions of ψ exist in the literature.</span>
+
+<span class="sd">``geometry.psi()`` implements You (1999) eqs. 10-11: ψ is the azimuthal</span>
+<span class="sd">angle of the reference vector **n** about **Q** measured from the projection</span>
+<span class="sd">of the fixed lab beam direction y_hat onto the phi-frame Q-perp plane.  For</span>
+<span class="sd">a given (hkl, UB, n_hkl) this value is *constant* across all motor-angle</span>
+<span class="sd">solutions that satisfy the Bragg condition — it is a crystal-orientation</span>
+<span class="sd">diagnostic, not a motor-angle observable.</span>
+
+<span class="sd">``psi_trajectory()`` implements the Busing &amp; Levy (1967) *operational* ψ:</span>
+<span class="sd">the angle through which the sample has been rotated about the scattering</span>
+<span class="sd">vector Q relative to a chosen reference orientation.  This is the quantity</span>
+<span class="sd">physically varied during a ψ scan on a real diffractometer.</span>
+
+<span class="sd">Algorithm (Busing &amp; Levy 1967, Section &quot;Angle settings&quot;):</span>
+
+<span class="sd">1. Obtain Z₀ — the sample rotation matrix at the base forward() solution.</span>
+<span class="sd">2. Compute Q̂_lab from the fixed detector position (ttheta unchanged).</span>
+<span class="sd">3. For each ψ_target build Z(ψ) = R(Q̂_lab, −ψ_target) · Z₀.</span>
+<span class="sd">   Left-multiplying by R(Q̂_lab, −ψ) rotates the sample about Q in the lab</span>
+<span class="sd">   frame while the Bragg condition Z · q̂_phi = Q̂_lab is preserved.</span>
+<span class="sd">4. Remove the contribution of any fixed outer stages and decompose the</span>
+<span class="sd">   inner-three-stage part of Z(ψ) into motor angles analytically:</span>
+
+<span class="sd">   * **Eulerian** (fourcv, fourch, psic-style, fivec-style):</span>
+<span class="sd">     n_phi · Z · n_om = cos(χ) isolates χ; then ω and φ follow from</span>
+<span class="sd">     projections of Z · n_om and Z^T · n_phi onto the plane perpendicular</span>
+<span class="sd">     to their shared rotation axis.  Two χ branches are returned.</span>
+
+<span class="sd">   * **Kappa** (kappa4cv, kappa4ch, kappa6c):</span>
+<span class="sd">     n_kphi · Z · n_komega = cos(κ)·cos²(α) + sin²(α) isolates κ (where</span>
+<span class="sd">     α = kappa_alpha_deg); komega and kphi follow by the same projection</span>
+<span class="sd">     method.  Two κ branches (positive and negative) are returned.</span>
+
+<span class="sd">5. All candidate solutions are filtered through stage limits; the</span>
+<span class="sd">   ``solution_key`` (default: ``NEAREST_ANGLES``) selects the one closest</span>
+<span class="sd">   in motor space to the previous ψ point, keeping motion continuous.</span>
+
+<span class="sd">The BL1967 ψ is measured as the angle between the beam direction projected</span>
+<span class="sd">perpendicular to Q in the phi frame at Z₀ versus at Z(ψ), rotating about</span>
+<span class="sd">q̂_phi.  ψ = 0 by definition at the base forward() solution.</span>
+
+<span class="sd">Trajectory dict specification for hkl_trajectory</span>
+<span class="sd">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span class="sd">The ``trajectory`` argument is a dict whose ``&quot;type&quot;`` key selects the</span>
+<span class="sd">scan shape.  Supported types:</span>
+
+<span class="sd">``&quot;line&quot;``</span>
+<span class="sd">    Linear interpolation between two hkl points.</span>
+<span class="sd">    Required keys: ``&quot;start&quot;: (h, k, l)``, ``&quot;end&quot;: (h, k, l)``.</span>
+
+<span class="sd">``&quot;radial&quot;``</span>
+<span class="sd">    Scan ±extent from center along a reciprocal-space direction.</span>
+<span class="sd">    Required keys: ``&quot;center&quot;: (h, k, l)``, ``&quot;direction&quot;: (dh, dk, dl)``,</span>
+<span class="sd">    ``&quot;extent&quot;: delta``.  The direction is normalised; extent is in r.l.u.</span>
+
+<span class="sd">``&quot;transverse&quot;``</span>
+<span class="sd">    Scan ±extent from center perpendicular to a reference Q direction.</span>
+<span class="sd">    Required keys: ``&quot;center&quot;: (h, k, l)``, ``&quot;Q_ref&quot;: (dh, dk, dl)``,</span>
+<span class="sd">    ``&quot;extent&quot;: delta``.  The transverse direction is the component of the</span>
+<span class="sd">    first non-collinear standard basis vector perpendicular to ``Q_ref``</span>
+<span class="sd">    (Gram-Schmidt).</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">* Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967) —</span>
+<span class="sd">  Four-circle geometry, ψ scan formulation, angle-setting equations.</span>
+<span class="sd">* You, J. Appl. Cryst. 32, 614-623 (1999) —</span>
+<span class="sd">  psic geometry, azimuthal angle definition (eqs. 10-11).</span>
+<span class="sd">* ITC Vol. C, Sec. 2.2.6 (2006) —</span>
+<span class="sd">  Kappa geometry, ψ scan via ω, χ, φ.</span>
+<span class="sd">* D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) —</span>
+<span class="sd">  Kappa conversion formulae.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdHocDiffractometer</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Solution-key callables</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="NEAREST_ANGLES">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.NEAREST_ANGLES">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">NEAREST_ANGLES</span><span class="p">(</span>
+    <span class="n">candidate</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">previous</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Score a candidate motor-angle solution by its distance from the previous point.</span>
+
+<span class="sd">    Returns the sum of squared angular differences between ``candidate`` and</span>
+<span class="sd">    ``previous`` over all stages present in ``candidate``.  Lower score means</span>
+<span class="sd">    closer to the previous point.</span>
+
+<span class="sd">    When ``previous`` is ``None`` (first trajectory point) every candidate</span>
+<span class="sd">    scores 0.0, so the first solution returned by ``forward()`` is used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    candidate : dict[str, float]</span>
+<span class="sd">        Motor angles for one solution candidate.</span>
+<span class="sd">    previous : dict[str, float] or None</span>
+<span class="sd">        Motor angles chosen at the immediately preceding trajectory point.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Non-negative score; lower is preferred.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">previous</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">candidate</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">previous</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">candidate</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Internal helpers — solution selection</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pick_solution</span><span class="p">(</span>
+    <span class="n">solutions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">previous</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">solution_key</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the best solution scored by ``solution_key``, or None if empty.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">solutions</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">solution_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">solutions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">solution_key</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">previous</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_limits</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return True if all supplied angles are within their stage limits.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">angles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">stage</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">stage</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">in_limits</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Internal helpers — hkl point generation</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_hkl_points</span><span class="p">(</span><span class="n">trajectory</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate ``n_points`` evenly-spaced (h, k, l) tuples from a trajectory dict.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``n_points &lt; 2``, type is unknown, or a direction/Q_ref is zero.</span>
+<span class="sd">    KeyError</span>
+<span class="sd">        If a required trajectory key is missing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n_points</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_points must be at least 2; got </span><span class="si">{</span><span class="n">n_points</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">ttype</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ttype</span> <span class="o">==</span> <span class="s2">&quot;line&quot;</span><span class="p">:</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)))</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">ttype</span> <span class="o">==</span> <span class="s2">&quot;radial&quot;</span><span class="p">:</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="s2">&quot;direction&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="s2">&quot;extent&quot;</span><span class="p">])</span>
+        <span class="n">d_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">direction</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">d_norm</span> <span class="o">&lt;</span> <span class="mf">1e-14</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;hkl_trajectory: radial trajectory &#39;direction&#39; must be non-zero.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">d_hat</span> <span class="o">=</span> <span class="n">direction</span> <span class="o">/</span> <span class="n">d_norm</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">center</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">d_hat</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">extent</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">ttype</span> <span class="o">==</span> <span class="s2">&quot;transverse&quot;</span><span class="p">:</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">q_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="s2">&quot;Q_ref&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="s2">&quot;extent&quot;</span><span class="p">])</span>
+        <span class="n">q_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_ref</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">q_norm</span> <span class="o">&lt;</span> <span class="mf">1e-14</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;hkl_trajectory: transverse trajectory &#39;Q_ref&#39; must be non-zero.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">q_hat</span> <span class="o">=</span> <span class="n">q_ref</span> <span class="o">/</span> <span class="n">q_norm</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span>  <span class="c1"># pragma: no branch</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span>
+        <span class="p">):</span>
+            <span class="n">perp</span> <span class="o">=</span> <span class="n">c</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">q_hat</span><span class="p">)</span> <span class="o">*</span> <span class="n">q_hat</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">perp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+                <span class="n">perp</span> <span class="o">=</span> <span class="n">perp</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">perp</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">center</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">perp</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">extent</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;hkl_trajectory: unknown trajectory type </span><span class="si">{</span><span class="n">ttype</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+        <span class="s2">&quot;Supported types: &#39;line&#39;, &#39;radial&#39;, &#39;transverse&#39;.&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Internal helpers — Euler decomposition  (BL1967, generalised)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_perp_ref</span><span class="p">(</span><span class="n">axis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a unit vector perpendicular to ``axis``.</span>
+
+<span class="sd">    Picks the first of [y, x, z] that is not nearly parallel to ``axis``,</span>
+<span class="sd">    then Gram-Schmidt-orthogonalises it.  This avoids the conditional</span>
+<span class="sd">    ``if abs(dot(ref, axis)) &gt; 0.9`` scattered across the decomposition steps.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span>
+    <span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">candidate</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">*</span> <span class="n">axis</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">norm</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">v</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="c1"># Unreachable for any valid unit axis vector, but satisfies type checker.</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Cannot find a reference perpendicular to </span><span class="si">{</span><span class="n">axis</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_euler_from_Z_standard</span><span class="p">(</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">omega_stage</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="n">chi_stage</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="n">phi_stage</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decompose Z = R(n_φ, φ) · R(n_χ, χ) · R(n_ω, ω) into (ω, χ, φ) in degrees.</span>
+
+<span class="sd">    This is the innermost-first product order used by</span>
+<span class="sd">    ``geometry.sample_rotation_matrix()``: the outermost stage (omega/eta)</span>
+<span class="sd">    is applied first (rightmost), the innermost (phi) last (leftmost).</span>
+
+<span class="sd">    The decomposition generalises Busing &amp; Levy (1967) eqs. 14-17 to</span>
+<span class="sd">    arbitrary signed stage axes.  Two χ branches are returned</span>
+<span class="sd">    (χ ∈ [0°, 180°] and χ ∈ [-180°, 0°]).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Chi** is extracted from the element n_φ · Z · n_ω, which equals</span>
+<span class="sd">    n_φ · R_χ · n_ω (since R_φ fixes n_φ and R_ω fixes n_ω).</span>
+<span class="sd">    For the standard case n_ω ∥ n_φ this equals cos(χ).</span>
+
+<span class="sd">    **Phi** is extracted from Z · n_ω = R_φ · (R_χ · n_ω): the angle in the</span>
+<span class="sd">    plane ⊥ n_φ between (R_χ · n_ω) and (Z · n_ω).</span>
+
+<span class="sd">    **Omega** is extracted from Z^T · n_φ = R_χ^T · n_φ: the angle in the</span>
+<span class="sd">    plane ⊥ n_ω between (R_χ^T · n_φ) and (Z^T · n_φ), with sign reversed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Z : ndarray, shape (3, 3)</span>
+<span class="sd">        Sample rotation matrix to decompose.</span>
+<span class="sd">    omega_stage, chi_stage, phi_stage : Stage</span>
+<span class="sd">        The three innermost sample stages in stacking order (floor → sample).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of (omega_deg, chi_deg, phi_deg)</span>
+<span class="sd">        One or two solutions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">rotation_matrix</span> <span class="k">as</span> <span class="n">_Rmat</span>
+
+    <span class="n">n_om</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">omega_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">n_chi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">chi_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">n_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phi_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">n_om_hat</span> <span class="o">=</span> <span class="n">n_om</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_om</span><span class="p">)</span>
+    <span class="n">n_chi_hat</span> <span class="o">=</span> <span class="n">n_chi</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_chi</span><span class="p">)</span>
+    <span class="n">n_phi_hat</span> <span class="o">=</span> <span class="n">n_phi</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_phi</span><span class="p">)</span>
+
+    <span class="c1"># --- Step 1: chi from n_phi · Z · n_om ----------------------------------</span>
+    <span class="n">elem</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi_hat</span><span class="p">,</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_om_hat</span><span class="p">))</span>
+    <span class="n">elem</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">elem</span><span class="p">))</span>
+    <span class="n">chi_pos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">elem</span><span class="p">))</span>
+    <span class="n">chi_neg</span> <span class="o">=</span> <span class="o">-</span><span class="n">chi_pos</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">chi_deg</span> <span class="ow">in</span> <span class="p">(</span><span class="n">chi_pos</span><span class="p">,</span> <span class="n">chi_neg</span><span class="p">):</span>
+        <span class="n">R_chi</span> <span class="o">=</span> <span class="n">_Rmat</span><span class="p">(</span><span class="n">n_chi_hat</span><span class="p">,</span> <span class="n">chi_deg</span><span class="p">)</span>
+
+        <span class="c1"># --- Step 2: phi from Z · n_om = R_phi · (R_chi · n_om) -------------</span>
+        <span class="n">Rchi_nom</span> <span class="o">=</span> <span class="n">R_chi</span> <span class="o">@</span> <span class="n">n_om_hat</span>
+        <span class="n">Z_nom</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_om_hat</span>
+        <span class="n">e1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_phi_hat</span><span class="p">)</span>
+        <span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_phi_hat</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span>
+        <span class="n">phi_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nom</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nom</span><span class="p">,</span> <span class="n">e1</span><span class="p">))</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_nom</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_nom</span><span class="p">,</span> <span class="n">e1</span><span class="p">)))</span>
+        <span class="n">phi_rad</span> <span class="o">=</span> <span class="p">((</span><span class="n">phi_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">phi_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+
+        <span class="c1"># --- Step 3: omega from Z^T · n_phi = R_chi^T · n_phi ---------------</span>
+        <span class="n">Rchi_T_nphi</span> <span class="o">=</span> <span class="n">R_chi</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_phi_hat</span>
+        <span class="n">ZT_nphi</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_phi_hat</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_om_hat</span><span class="p">)</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_om_hat</span><span class="p">,</span> <span class="n">f1</span><span class="p">)</span>
+        <span class="n">omega_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_T_nphi</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_T_nphi</span><span class="p">,</span> <span class="n">f1</span><span class="p">))</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nphi</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nphi</span><span class="p">,</span> <span class="n">f1</span><span class="p">)))</span>
+        <span class="n">omega_rad</span> <span class="o">=</span> <span class="p">((</span><span class="n">omega_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">omega_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">omega_rad</span><span class="p">)</span>
+
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">omega_deg</span><span class="p">,</span> <span class="n">chi_deg</span><span class="p">,</span> <span class="n">phi_deg</span><span class="p">))</span>
+
+    <span class="c1"># De-duplicate degenerate case (chi = 0): both branches produce identical</span>
+    <span class="c1"># chi — return only the first.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-8</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">results</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_kappa_from_Z</span><span class="p">(</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">komega_stage</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="n">kappa_stage</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="n">kphi_stage</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decompose Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω) into (kω, κ, kφ).</span>
+
+<span class="sd">    Uses the kappa-specific chi element formula derived from the Rodrigues</span>
+<span class="sd">    expansion (ITC Vol. C Sec. 2.2.6 / Walko 2016):</span>
+
+<span class="sd">        n_kφ · Z · n_kω = cos(κ)·cos²(α) + sin²(α)</span>
+
+<span class="sd">    where α is ``alpha_deg`` (the kappa tilt angle).  This isolates κ;</span>
+<span class="sd">    komega and kphi are then extracted by the same projection method as</span>
+<span class="sd">    ``_euler_from_Z_standard``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Z : ndarray, shape (3, 3)</span>
+<span class="sd">    komega_stage, kappa_stage, kphi_stage : Stage</span>
+<span class="sd">    alpha_deg : float</span>
+<span class="sd">        Kappa tilt angle in degrees.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of (komega_deg, kappa_deg, kphi_deg)</span>
+<span class="sd">        Two solutions (positive and negative κ branches), or one if degenerate.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">rotation_matrix</span> <span class="k">as</span> <span class="n">_Rmat</span>
+
+    <span class="n">alpha_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">)</span>
+    <span class="n">sin2a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha_rad</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">cos2a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha_rad</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="n">n_km</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">komega_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+        <span class="n">komega_stage</span><span class="o">.</span><span class="n">axis</span>
+    <span class="p">)</span>
+    <span class="n">n_kap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kappa_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">kappa_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
+    <span class="n">n_kph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kphi_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">kphi_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
+
+    <span class="c1"># --- Step 1: kappa from n_kphi · Z · n_komega ---------------------------</span>
+    <span class="n">elem</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_km</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">cos_kap</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="n">elem</span> <span class="o">-</span> <span class="n">sin2a</span><span class="p">)</span> <span class="o">/</span> <span class="n">cos2a</span><span class="p">))</span>
+    <span class="n">kap_pos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cos_kap</span><span class="p">))</span>
+    <span class="n">kap_neg</span> <span class="o">=</span> <span class="o">-</span><span class="n">kap_pos</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">kap_deg</span> <span class="ow">in</span> <span class="p">(</span><span class="n">kap_pos</span><span class="p">,</span> <span class="n">kap_neg</span><span class="p">):</span>
+        <span class="n">R_kap</span> <span class="o">=</span> <span class="n">_Rmat</span><span class="p">(</span><span class="n">n_kap</span><span class="p">,</span> <span class="n">kap_deg</span><span class="p">)</span>
+
+        <span class="c1"># --- Step 2: kphi from Z · n_km = R_kphi · (R_kap · n_km) ----------</span>
+        <span class="n">Rk_nom</span> <span class="o">=</span> <span class="n">R_kap</span> <span class="o">@</span> <span class="n">n_km</span>
+        <span class="n">Z_nom</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_km</span>
+        <span class="n">e1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_kph</span><span class="p">)</span>
+        <span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span>
+        <span class="n">kphi_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nom</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nom</span><span class="p">,</span> <span class="n">e1</span><span class="p">))</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_nom</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_nom</span><span class="p">,</span> <span class="n">e1</span><span class="p">)))</span>
+        <span class="n">kphi_rad</span> <span class="o">=</span> <span class="p">((</span><span class="n">kphi_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">kphi_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">kphi_rad</span><span class="p">)</span>
+
+        <span class="c1"># --- Step 3: komega from Z^T · n_kphi = R_kap^T · n_kphi ------------</span>
+        <span class="n">Rk_T_nkph</span> <span class="o">=</span> <span class="n">R_kap</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_kph</span>
+        <span class="n">ZT_nkph</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_kph</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_km</span><span class="p">)</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_km</span><span class="p">,</span> <span class="n">f1</span><span class="p">)</span>
+        <span class="n">kom_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_T_nkph</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_T_nkph</span><span class="p">,</span> <span class="n">f1</span><span class="p">))</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nkph</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nkph</span><span class="p">,</span> <span class="n">f1</span><span class="p">)))</span>
+        <span class="n">kom_rad</span> <span class="o">=</span> <span class="p">((</span><span class="n">kom_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">kom_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">kom_rad</span><span class="p">)</span>
+
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">kom_deg</span><span class="p">,</span> <span class="n">kap_deg</span><span class="p">,</span> <span class="n">kphi_deg</span><span class="p">))</span>
+
+    <span class="c1"># De-duplicate (kappa = 0): both branches produce identical kappa values.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-8</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">results</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Internal helpers — psi-scan core</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_psi_candidates</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">Z0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">Q_lab_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">y_eff</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">psi_target</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">base</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute all in-limits motor-angle candidates for ``psi_target``.</span>
+
+<span class="sd">    Implements BL1967 step 3-4: builds Z(ψ) = R(Q̂_lab, −ψ) · Z₀ then</span>
+<span class="sd">    decomposes the inner three stages analytically.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">    Z0 : ndarray (3, 3)</span>
+<span class="sd">        Sample rotation matrix at the base forward() solution.</span>
+<span class="sd">    Q_lab_hat : ndarray (3,)</span>
+<span class="sd">        Unit scattering vector in the lab frame (from detector position).</span>
+<span class="sd">    y_eff : ndarray (3,)</span>
+<span class="sd">        Effective incident-beam direction (accounts for inclination).</span>
+<span class="sd">    psi_target : float</span>
+<span class="sd">        Target ψ in degrees.</span>
+<span class="sd">    base : dict[str, float]</span>
+<span class="sd">        Base motor angles (Bragg solution); used for outer stages and ttheta.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">        All limit-passing candidate motor-angle dicts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">rotation_matrix</span> <span class="k">as</span> <span class="n">_Rmat</span>
+
+    <span class="c1"># Identify stage groups</span>
+    <span class="n">sample_stages</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_stages</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="n">outer_stages</span> <span class="o">=</span> <span class="n">sample_stages</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">omega_s</span><span class="p">,</span> <span class="n">chi_s</span><span class="p">,</span> <span class="n">phi_s</span> <span class="o">=</span> <span class="n">sample_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">],</span> <span class="n">sample_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sample_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Build R_outer from the base angles of any fixed outer stages</span>
+    <span class="n">R_outer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">outer_stages</span><span class="p">:</span>
+        <span class="n">R_outer</span> <span class="o">=</span> <span class="n">_Rmat</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">))</span> <span class="o">@</span> <span class="n">R_outer</span>
+
+    <span class="c1"># Rotate Z0 about Q_lab by -psi_target (negative because the convention</span>
+    <span class="c1"># is that increasing psi rotates the sample such that the beam-perpendicular</span>
+    <span class="c1"># direction in the phi frame rotates by +psi relative to Z0)</span>
+    <span class="n">Z_new</span> <span class="o">=</span> <span class="n">_Rmat</span><span class="p">(</span><span class="n">Q_lab_hat</span><span class="p">,</span> <span class="o">-</span><span class="n">psi_target</span><span class="p">)</span> <span class="o">@</span> <span class="n">Z0</span>
+    <span class="n">Z_inner</span> <span class="o">=</span> <span class="n">R_outer</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Z_new</span>
+
+    <span class="c1"># Decompose the inner three stages</span>
+    <span class="n">is_kappa</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">is_kappa</span><span class="p">:</span>
+        <span class="n">sols</span> <span class="o">=</span> <span class="n">_kappa_from_Z</span><span class="p">(</span><span class="n">Z_inner</span><span class="p">,</span> <span class="n">omega_s</span><span class="p">,</span> <span class="n">chi_s</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">,</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sols</span> <span class="o">=</span> <span class="n">_euler_from_Z_standard</span><span class="p">(</span><span class="n">Z_inner</span><span class="p">,</span> <span class="n">omega_s</span><span class="p">,</span> <span class="n">chi_s</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">)</span>
+
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span> <span class="ow">in</span> <span class="n">sols</span><span class="p">:</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+        <span class="n">angles</span><span class="p">[</span><span class="n">omega_s</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">a0</span>
+        <span class="n">angles</span><span class="p">[</span><span class="n">chi_s</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">a1</span>
+        <span class="n">angles</span><span class="p">[</span><span class="n">phi_s</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">a2</span>
+        <span class="k">if</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">):</span>
+            <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">candidates</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_measure_psi</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">Q_lab_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">y_eff</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">q_hat_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ref_dir</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measure the BL1967 operational ψ for ``angles`` relative to ``ref_dir``.</span>
+
+<span class="sd">    ψ is the angle from ``ref_dir`` to (Z^T · y_eff)_⊥ about q̂_phi,</span>
+<span class="sd">    where the perpendicular projection removes the Q component.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">saved</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">angles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">saved</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">stage</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">angle</span>
+            <span class="n">geometry</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span>
+        <span class="n">Z_act</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_rotation_matrix</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">saved</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">geometry</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+
+    <span class="n">y_phi</span> <span class="o">=</span> <span class="n">Z_act</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">y_eff</span>
+    <span class="n">y_perp</span> <span class="o">=</span> <span class="n">y_phi</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y_phi</span><span class="p">,</span> <span class="n">q_hat_phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">q_hat_phi</span>
+    <span class="n">new_dir</span> <span class="o">=</span> <span class="n">y_perp</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y_perp</span><span class="p">)</span>
+    <span class="n">cos_a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ref_dir</span><span class="p">,</span> <span class="n">new_dir</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">sin_a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q_hat_phi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">ref_dir</span><span class="p">,</span> <span class="n">new_dir</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_a</span><span class="p">,</span> <span class="n">cos_a</span><span class="p">))</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Public functions</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="hkl_trajectory">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.hkl_trajectory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hkl_trajectory</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">trajectory</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">solution_key</span><span class="o">=</span><span class="n">NEAREST_ANGLES</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Yield motor-angle dicts along a reciprocal-space trajectory.</span>
+
+<span class="sd">    For each of the ``n_points`` equally-spaced hkl positions along the</span>
+<span class="sd">    trajectory, calls ``geometry.forward()`` to find all valid motor-angle</span>
+<span class="sd">    solutions, then uses ``solution_key`` to select one.  Points with no</span>
+<span class="sd">    valid solution are yielded with ``angles=None``.</span>
+
+<span class="sd">    This function is a **generator**: it yields one dict per trajectory point</span>
+<span class="sd">    and computes each point on demand.  To get all points at once use</span>
+<span class="sd">    ``list(hkl_trajectory(...))``.</span>
+
+<span class="sd">    The ``NEAREST_ANGLES`` solution key (the default) prevents branch-flip</span>
+<span class="sd">    discontinuities: at each point it selects the candidate whose motor</span>
+<span class="sd">    angles are closest to those of the previous point.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        Must have ``wavelength`` and ``sample.UB`` set and an active mode.</span>
+<span class="sd">    trajectory : dict</span>
+<span class="sd">        Trajectory specification.  The ``&quot;type&quot;`` key selects the scan</span>
+<span class="sd">        shape; see module docstring for supported types and required keys.</span>
+<span class="sd">    n_points : int</span>
+<span class="sd">        Number of evenly-spaced points to compute (≥ 2).</span>
+<span class="sd">    solution_key : callable or None, optional</span>
+<span class="sd">        Scoring function ``(candidate, previous) -&gt; float``; lower wins.</span>
+<span class="sd">        Default: ``NEAREST_ANGLES``.  Pass ``None`` to use ``forward()``&#39;s</span>
+<span class="sd">        raw ordering.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict</span>
+<span class="sd">        One entry per trajectory point with keys:</span>
+
+<span class="sd">        ``&quot;hkl&quot;`` : tuple of float</span>
+<span class="sd">            The requested Miller indices (h, k, l).</span>
+<span class="sd">        ``&quot;angles&quot;`` : dict[str, float] or None</span>
+<span class="sd">            Motor angles in degrees, or ``None`` if no valid solution.</span>
+<span class="sd">        ``&quot;warning&quot;`` : str or None</span>
+<span class="sd">            Descriptive warning when ``angles`` is ``None``, else ``None``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``n_points &lt; 2``, trajectory type is unknown, or a required</span>
+<span class="sd">        trajectory key is missing.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``geometry.wavelength`` is None or ``geometry.sample.UB`` is None.</span>
+<span class="sd">    NotImplementedError</span>
+<span class="sd">        If no active diffraction mode is set.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; g = ahd.fourcv()</span>
+<span class="sd">    &gt;&gt;&gt; g.wavelength = 1.5406</span>
+<span class="sd">    &gt;&gt;&gt; g.sample.lattice = ahd.Lattice(a=4.0)</span>
+<span class="sd">    &gt;&gt;&gt; ahd.ub_identity(g.sample)</span>
+<span class="sd">    &gt;&gt;&gt; g.mode_name = &quot;bisecting&quot;</span>
+<span class="sd">    &gt;&gt;&gt; for pt in ahd.hkl_trajectory(</span>
+<span class="sd">    ...     g,</span>
+<span class="sd">    ...     {&quot;type&quot;: &quot;line&quot;, &quot;start&quot;: (1, 0, 0), &quot;end&quot;: (3, 0, 0)},</span>
+<span class="sd">    ...     n_points=5,</span>
+<span class="sd">    ... ):</span>
+<span class="sd">    ...     print(pt[&quot;hkl&quot;], pt[&quot;angles&quot;])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">_hkl_points</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+    <span class="n">previous</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">hkl</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">hkl</span>  <span class="c1"># noqa: E741</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">solutions</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">NotImplementedError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">{</span><span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span> <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)}</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">solutions</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">{</span>
+                <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
+                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="s2">&quot;no valid motor solution (all candidates outside limits)&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">continue</span>
+
+        <span class="n">chosen</span> <span class="o">=</span> <span class="n">_pick_solution</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">previous</span><span class="p">,</span> <span class="n">solution_key</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="p">{</span><span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span> <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="n">chosen</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="n">chosen</span></div>
+
+
+
+<div class="viewcode-block" id="psi_trajectory">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.psi_trajectory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">psi_trajectory</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">l</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="c1"># noqa: E741</span>
+    <span class="n">psi_values</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">solution_key</span><span class="o">=</span><span class="n">NEAREST_ANGLES</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Yield motor-angle dicts for ψ rotation about the scattering vector Q.</span>
+
+<span class="sd">    For the fixed reflection (h, k, l) and each target ψ in ``psi_values``,</span>
+<span class="sd">    finds motor angles that simultaneously satisfy the Bragg condition and</span>
+<span class="sd">    produce the requested BL1967 operational ψ.</span>
+
+<span class="sd">    ψ Definition (Busing &amp; Levy 1967)</span>
+<span class="sd">    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span class="sd">    ψ is the angle through which the sample has rotated about Q relative to</span>
+<span class="sd">    the base ``forward()`` solution.  ψ = 0 at the base solution by definition.</span>
+<span class="sd">    Physically, ψ is varied by rotating the sample about Q (changing ω, χ, φ</span>
+<span class="sd">    or their kappa equivalents) while keeping 2θ fixed.</span>
+
+<span class="sd">    This differs from ``geometry.psi()``, which implements the You (1999)</span>
+<span class="sd">    definition and is constant for all Bragg solutions of a given hkl.  See</span>
+<span class="sd">    the module docstring for the full discussion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        Must have ``wavelength`` and ``sample.UB`` set, and an active</span>
+<span class="sd">        diffraction mode.  ``kappa_alpha_deg`` must be set for kappa</span>
+<span class="sd">        geometries (it is set automatically by the factory functions).</span>
+<span class="sd">    h, k, l : float</span>
+<span class="sd">        Miller indices of the fixed reflection.</span>
+<span class="sd">    psi_values : iterable of float</span>
+<span class="sd">        Target ψ angles in degrees relative to the base forward() solution.</span>
+<span class="sd">    solution_key : callable or None, optional</span>
+<span class="sd">        Scoring function ``(candidate, previous) -&gt; float``; lower wins.</span>
+<span class="sd">        Default: ``NEAREST_ANGLES``.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict</span>
+<span class="sd">        One entry per ψ value with keys:</span>
+
+<span class="sd">        ``&quot;psi_target&quot;`` : float</span>
+<span class="sd">            The requested ψ (degrees).</span>
+<span class="sd">        ``&quot;psi_actual&quot;`` : float or None</span>
+<span class="sd">            Achieved ψ verified by internal measurement, or ``None``.</span>
+<span class="sd">        ``&quot;angles&quot;`` : dict[str, float] or None</span>
+<span class="sd">            Motor angles in degrees, or ``None``.</span>
+<span class="sd">        ``&quot;warning&quot;`` : str or None</span>
+<span class="sd">            Descriptive warning when ``angles`` is ``None``, else ``None``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``geometry.wavelength`` is None or ``geometry.sample.UB`` is None.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``(h, k, l) == (0, 0, 0)``.</span>
+<span class="sd">    NotImplementedError</span>
+<span class="sd">        If no active diffraction mode is set.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The geometry must have at least three sample stages (omega/eta, chi/kappa,</span>
+<span class="sd">    phi/kphi).  Geometries with fewer sample stages are not supported.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967), angle-setting equations.</span>
+<span class="sd">    ITC Vol. C, Sec. 2.2.6 (2006), kappa ψ scan.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; g = ahd.fourcv()</span>
+<span class="sd">    &gt;&gt;&gt; g.wavelength = 1.5406</span>
+<span class="sd">    &gt;&gt;&gt; g.sample.lattice = ahd.Lattice(a=4.0)</span>
+<span class="sd">    &gt;&gt;&gt; ahd.ub_identity(g.sample)</span>
+<span class="sd">    &gt;&gt;&gt; g.mode_name = &quot;bisecting&quot;</span>
+<span class="sd">    &gt;&gt;&gt; for pt in ahd.psi_trajectory(g, 1, 1, 0, range(-90, 91, 30)):</span>
+<span class="sd">    ...     print(pt[&quot;psi_target&quot;], pt[&quot;psi_actual&quot;])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Obtain the Bragg base solutions (raises ValueError/NotImplementedError</span>
+    <span class="c1"># for bad preconditions — wavelength, UB, hkl=0, mode).</span>
+    <span class="n">base_solutions</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">base_solutions</span><span class="p">:</span>
+        <span class="n">no_bragg_msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;no valid Bragg solution for this reflection &quot;</span>
+            <span class="s2">&quot;(all candidates outside limits)&quot;</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">psi_values</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">{</span>
+                <span class="s2">&quot;psi_target&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+                <span class="s2">&quot;psi_actual&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="n">no_bragg_msg</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Pick the base solution (used to compute Z0 and as the psi=0 reference)</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">base_solutions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Compute Z0 and Q_lab_hat from base (temporarily apply motor angles)</span>
+    <span class="n">saved</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">base</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">saved</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">stage</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">angle</span>
+            <span class="n">geometry</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span>
+        <span class="n">Z0</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_rotation_matrix</span><span class="p">()</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_rotation_matrix</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">saved</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">geometry</span><span class="o">.</span><span class="n">set_angle</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+
+    <span class="n">y_lab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">y_lab</span> <span class="o">=</span> <span class="n">y_lab</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y_lab</span><span class="p">)</span>
+    <span class="n">y_eff</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">inclination_matrix</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">y_lab</span>
+    <span class="n">Q_lab_vec</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">geometry</span><span class="o">.</span><span class="n">wavelength</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">D</span> <span class="o">@</span> <span class="n">y_eff</span> <span class="o">-</span> <span class="n">y_eff</span><span class="p">)</span>
+    <span class="n">Q_lab_hat</span> <span class="o">=</span> <span class="n">Q_lab_vec</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Q_lab_vec</span><span class="p">)</span>
+
+    <span class="n">q_hat_phi</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">l</span><span class="p">)])</span>
+    <span class="n">q_hat_phi</span> <span class="o">=</span> <span class="n">q_hat_phi</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_hat_phi</span><span class="p">)</span>
+
+    <span class="c1"># Build reference direction: y_eff projected perp to Q in phi frame at Z0</span>
+    <span class="n">y_phi_0</span> <span class="o">=</span> <span class="n">Z0</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">y_eff</span>
+    <span class="n">y_perp_0</span> <span class="o">=</span> <span class="n">y_phi_0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y_phi_0</span><span class="p">,</span> <span class="n">q_hat_phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">q_hat_phi</span>
+    <span class="n">ref_dir</span> <span class="o">=</span> <span class="n">y_perp_0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y_perp_0</span><span class="p">)</span>
+
+    <span class="n">previous</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">psi_target</span> <span class="ow">in</span> <span class="n">psi_values</span><span class="p">:</span>
+        <span class="n">psi_target</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">psi_target</span><span class="p">)</span>
+
+        <span class="n">candidates</span> <span class="o">=</span> <span class="n">_psi_candidates</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Z0</span><span class="p">,</span> <span class="n">Q_lab_hat</span><span class="p">,</span> <span class="n">y_eff</span><span class="p">,</span> <span class="n">psi_target</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">{</span>
+                <span class="s2">&quot;psi_target&quot;</span><span class="p">:</span> <span class="n">psi_target</span><span class="p">,</span>
+                <span class="s2">&quot;psi_actual&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;no motor solution achieves psi = </span><span class="si">{</span><span class="n">psi_target</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">° &quot;</span>
+                    <span class="s2">&quot;within stage limits&quot;</span>
+                <span class="p">),</span>
+            <span class="p">}</span>
+            <span class="k">continue</span>
+
+        <span class="n">chosen</span> <span class="o">=</span> <span class="n">_pick_solution</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">previous</span><span class="p">,</span> <span class="n">solution_key</span><span class="p">)</span>
+        <span class="n">psi_actual</span> <span class="o">=</span> <span class="n">_measure_psi</span><span class="p">(</span>
+            <span class="n">geometry</span><span class="p">,</span> <span class="n">chosen</span><span class="p">,</span> <span class="n">Q_lab_hat</span><span class="p">,</span> <span class="n">y_eff</span><span class="p">,</span> <span class="n">q_hat_phi</span><span class="p">,</span> <span class="n">ref_dir</span>
+        <span class="p">)</span>
+
+        <span class="k">yield</span> <span class="p">{</span>
+            <span class="s2">&quot;psi_target&quot;</span><span class="p">:</span> <span class="n">psi_target</span><span class="p">,</span>
+            <span class="s2">&quot;psi_actual&quot;</span><span class="p">:</span> <span class="n">psi_actual</span><span class="p">,</span>
+            <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="n">chosen</span><span class="p">,</span>
+            <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="n">chosen</span></div>
+
+
+
+<div class="viewcode-block" id="trajectory_plan">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.trajectory_plan">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">trajectory_plan</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">hkl_start</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">hkl_end</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">space</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hkl&quot;</span><span class="p">,</span>
+    <span class="n">solution_key</span><span class="o">=</span><span class="n">NEAREST_ANGLES</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Yield motor-angle dicts for a planned path between two reciprocal-space points.</span>
+
+<span class="sd">    Interpolates between ``hkl_start`` and ``hkl_end`` in ``n_points``</span>
+<span class="sd">    equally-spaced steps, calls ``geometry.forward()`` at each point, and</span>
+<span class="sd">    flags portions that are inaccessible (no valid motor solution) or that</span>
+<span class="sd">    exceed stage limits.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        Must have ``wavelength`` and ``sample.UB`` set and an active mode.</span>
+<span class="sd">    hkl_start, hkl_end : tuple of float</span>
+<span class="sd">        Start and end Miller indices (h, k, l).</span>
+<span class="sd">    n_points : int</span>
+<span class="sd">        Number of evenly-spaced points including endpoints (≥ 2).</span>
+<span class="sd">    space : {&quot;hkl&quot;, &quot;Q&quot;}, optional</span>
+<span class="sd">        Interpolation space.</span>
+
+<span class="sd">        ``&quot;hkl&quot;`` (default)</span>
+<span class="sd">            Linearly interpolate Miller indices.  Natural for L-scans,</span>
+<span class="sd">            H-scans, and crystal-axis-aligned trajectories.  Equal steps in</span>
+<span class="sd">            hkl are *not* equal steps in \|Q\| for non-cubic lattices.</span>
+
+<span class="sd">        ``&quot;Q&quot;``</span>
+<span class="sd">            Linearly interpolate in reciprocal Cartesian coordinates</span>
+<span class="sd">            (Qx, Qy, Qz = UB @ hkl).  Equal steps in Q regardless of</span>
+<span class="sd">            lattice distortion; intermediate hkl values are generally</span>
+<span class="sd">            non-integer.  Endpoints are exact by construction.</span>
+
+<span class="sd">    solution_key : callable or None, optional</span>
+<span class="sd">        Scoring function ``(candidate, previous) -&gt; float``; lower wins.</span>
+<span class="sd">        Default: ``NEAREST_ANGLES``.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict</span>
+<span class="sd">        One entry per trajectory point with keys:</span>
+
+<span class="sd">        ``&quot;hkl&quot;`` : tuple of float</span>
+<span class="sd">            The (h, k, l) point.</span>
+<span class="sd">        ``&quot;angles&quot;`` : dict[str, float] or None</span>
+<span class="sd">            Motor angles, or ``None`` if inaccessible.</span>
+<span class="sd">        ``&quot;accessible&quot;`` : bool</span>
+<span class="sd">            ``True`` if a valid in-limits solution was found.</span>
+<span class="sd">        ``&quot;warnings&quot;`` : list of str</span>
+<span class="sd">            Empty when accessible; otherwise one or more warning strings.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``n_points &lt; 2``.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``space`` is not ``&quot;hkl&quot;`` or ``&quot;Q&quot;``.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``space=&quot;Q&quot;`` and ``geometry.sample.UB`` is None or singular.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``geometry.wavelength`` is None or ``geometry.sample.UB`` is None.</span>
+<span class="sd">    NotImplementedError</span>
+<span class="sd">        If no active diffraction mode is set.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; g = ahd.fourcv()</span>
+<span class="sd">    &gt;&gt;&gt; g.wavelength = 1.5406</span>
+<span class="sd">    &gt;&gt;&gt; g.sample.lattice = ahd.Lattice(a=4.0)</span>
+<span class="sd">    &gt;&gt;&gt; ahd.ub_identity(g.sample)</span>
+<span class="sd">    &gt;&gt;&gt; g.mode_name = &quot;bisecting&quot;</span>
+<span class="sd">    &gt;&gt;&gt; plan = list(ahd.trajectory_plan(g, (1, 0, 0), (3, 0, 0), n_points=11))</span>
+<span class="sd">    &gt;&gt;&gt; accessible = [pt for pt in plan if pt[&quot;accessible&quot;]]</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;{len(accessible)}/{len(plan)} points accessible&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n_points</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_points must be at least 2; got </span><span class="si">{</span><span class="n">n_points</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">space</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;hkl&quot;</span><span class="p">,</span> <span class="s2">&quot;Q&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trajectory_plan: space must be &#39;hkl&#39; or &#39;Q&#39;; got </span><span class="si">{</span><span class="n">space</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">hkl_start_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hkl_start</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">hkl_end_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hkl_end</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">space</span> <span class="o">==</span> <span class="s2">&quot;hkl&quot;</span><span class="p">:</span>
+        <span class="n">hkl_points</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">hkl_start_arr</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="n">hkl_end_arr</span> <span class="o">-</span> <span class="n">hkl_start_arr</span><span class="p">)))</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># space == &quot;Q&quot;</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span>
+        <span class="k">if</span> <span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;trajectory_plan(space=&#39;Q&#39;) requires geometry.sample.UB to be set.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">UB_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;trajectory_plan(space=&#39;Q&#39;): UB matrix is singular.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="n">Q_start</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">hkl_start_arr</span>
+        <span class="n">Q_end</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">hkl_end_arr</span>
+        <span class="n">hkl_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">n_points</span><span class="p">):</span>
+            <span class="n">Q_interp</span> <span class="o">=</span> <span class="n">Q_start</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="n">Q_end</span> <span class="o">-</span> <span class="n">Q_start</span><span class="p">)</span>
+            <span class="n">hkl_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">UB_inv</span> <span class="o">@</span> <span class="n">Q_interp</span><span class="p">)))</span>
+        <span class="c1"># Force exact endpoints</span>
+        <span class="n">hkl_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">hkl_start_arr</span><span class="p">)</span>
+        <span class="n">hkl_points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">hkl_end_arr</span><span class="p">)</span>
+
+    <span class="n">previous</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">hkl</span> <span class="ow">in</span> <span class="n">hkl_points</span><span class="p">:</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">hkl</span>  <span class="c1"># noqa: E741</span>
+        <span class="n">warnings_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">solutions</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">NotImplementedError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">{</span>
+                <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
+                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;accessible&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)],</span>
+            <span class="p">}</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">solutions</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">{</span>
+                <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
+                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;accessible&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;no valid motor solution (all candidates outside limits)&quot;</span><span class="p">],</span>
+            <span class="p">}</span>
+            <span class="k">continue</span>
+
+        <span class="n">chosen</span> <span class="o">=</span> <span class="n">_pick_solution</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">previous</span><span class="p">,</span> <span class="n">solution_key</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">geometry</span><span class="o">.</span><span class="n">check_limits</span><span class="p">(</span><span class="o">**</span><span class="n">chosen</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">warnings_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+
+        <span class="k">yield</span> <span class="p">{</span>
+            <span class="s2">&quot;hkl&quot;</span><span class="p">:</span> <span class="n">hkl</span><span class="p">,</span>
+            <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="n">chosen</span><span class="p">,</span>
+            <span class="s2">&quot;accessible&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">warnings_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="n">warnings_list</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">warnings_list</span><span class="p">:</span>
+            <span class="n">previous</span> <span class="o">=</span> <span class="n">chosen</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-04-20 16:56 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Pete Jemian.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

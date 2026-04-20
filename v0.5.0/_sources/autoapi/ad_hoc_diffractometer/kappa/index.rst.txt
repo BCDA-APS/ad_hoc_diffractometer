@@ -1,0 +1,199 @@
+kappa
+=====
+
+.. py:module:: ad_hoc_diffractometer.kappa
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.kappa``
+
+   Kappa diffractometers replace the Eulerian chi circle with a kappa arm
+   tilted at angle alpha_0 from the omega axis.  The real kappa motor angles
+   (komega, kappa, kphi) map to virtual Eulerian pseudoangles (omega, chi, phi)
+   via the relations in Walko (2016), eq. [16]:
+
+       chi   = 2 arcsin[sin(kappa/2) · sin(alpha_0)]
+       offset = arccos[cos(kappa/2) / cos(chi/2)]
+       omega = komega − offset
+       phi   = kphi   − offset
+
+   Both directions are implemented here as pure-NumPy functions.
+
+   Functions
+   ---------
+   :func:`kappa_to_eulerian`
+       Forward direction: real (komega, kappa, kphi) → virtual (omega, chi, phi).
+
+   :func:`eulerian_to_kappa`
+       Inverse direction: virtual (omega, chi, phi) → real (komega, kappa, kphi).
+
+   .. rubric:: Notes
+
+   The default kappa tilt angle is 50° (Walko 2016; Enraf-Nonius convention;
+   ITC Vol. C §2.2.6).
+
+   The inverse has two solutions distinguished by the sign of kappa (the *branch*
+   parameter).  The positive branch (kappa ≥ 0) is the default; the negative
+   branch gives kappa ≤ 0.  The caller should choose the branch that keeps all
+   angles within the hardware limits.
+
+   Singularity: when ``|chi|`` approaches ±2·alpha_0, ``|kappa|`` approaches 180° and
+   the offset formula becomes numerically ill-conditioned.  A :class:`ValueError`
+   is raised when ``|chi|`` ≥ 2·alpha_0 − epsilon.
+
+   .. rubric:: References
+
+   * Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016), eq. [16].
+   * ITC Vol. C §2.2.6 (2006).
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.kappa.KAPPA_VIRTUAL_ANGLES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.kappa.eulerian_to_kappa
+   ad_hoc_diffractometer.kappa.is_kappa_virtual_mode
+   ad_hoc_diffractometer.kappa.kappa_to_eulerian
+   ad_hoc_diffractometer.kappa.solve_kappa_virtual
+
+
+Module Contents
+---------------
+
+.. py:data:: KAPPA_VIRTUAL_ANGLES
+   :type:  frozenset[str]
+
+.. py:function:: eulerian_to_kappa(omega: float, chi: float, phi: float, alpha_deg: float = 50.0, branch: int = +1) -> tuple[float, float, float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.eulerian_to_kappa``
+
+
+   Convert virtual Eulerian pseudoangles to real kappa angles.
+
+   Inverse of Walko (2016), eq. [16].
+
+   :param omega: Virtual Eulerian omega in degrees.
+   :type omega: float
+   :param chi: Virtual Eulerian chi in degrees.
+   :type chi: float
+   :param phi: Virtual Eulerian phi in degrees.
+   :type phi: float
+   :param alpha_deg: Kappa tilt angle in degrees.  Default 50°.
+   :type alpha_deg: float, optional
+   :param branch: Branch selection.  ``+1`` gives kappa ≥ 0 (default);
+                  ``-1`` gives kappa ≤ 0.
+   :type branch: {+1, -1}, optional
+
+   :returns: **komega, kappa, kphi** -- Real kappa motor angles in degrees.
+   :rtype: tuple of float
+
+   :raises ValueError: If ``|chi|`` ≥ 2·alpha_deg (chi outside the reachable range).
+   :raises ValueError: If branch is not +1 or -1.
+
+   .. rubric:: Examples
+
+   >>> eulerian_to_kappa(0.0, 90.0, 0.0, alpha_deg=50.0)
+   (57.04519..., 134.75594..., 57.04519...)
+   >>> eulerian_to_kappa(0.0, 90.0, 0.0, alpha_deg=50.0, branch=-1)
+   (-57.04519..., -134.75594..., -57.04519...)
+
+
+.. py:function:: is_kappa_virtual_mode(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.is_kappa_virtual_mode``
+
+
+   Return True when *mode* contains a virtual Eulerian angle constraint
+   (omega, chi, or phi) and *geometry* is a kappa diffractometer.
+
+   Used by :func:`~forward._solve_constraint_set` to detect when the
+   kappa virtual-angle solver should be dispatched.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param mode:
+   :type mode: ConstraintSet
+
+   :rtype: bool
+
+
+.. py:function:: kappa_to_eulerian(komega: float, kappa: float, kphi: float, alpha_deg: float = 50.0) -> tuple[float, float, float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.kappa_to_eulerian``
+
+
+   Convert real kappa angles to virtual Eulerian pseudoangles.
+
+   Implements Walko (2016), eq. [16] — forward direction.
+
+   :param komega: Real kappa-omega angle in degrees.
+   :type komega: float
+   :param kappa: Real kappa angle in degrees.
+   :type kappa: float
+   :param kphi: Real kappa-phi angle in degrees.
+   :type kphi: float
+   :param alpha_deg: Kappa tilt angle in degrees.  Default 50°.
+   :type alpha_deg: float, optional
+
+   :returns: **omega, chi, phi** -- Virtual Eulerian pseudoangles in degrees.
+   :rtype: tuple of float
+
+   :raises ValueError: If the combination of kappa and alpha_deg places chi outside
+       the reachable range (``|kappa/2|`` · sin(alpha_0) > 1).
+
+   .. rubric:: Examples
+
+   >>> kappa_to_eulerian(57.045, 134.756, 57.045, alpha_deg=50.0)
+   (-0.0, 90.0, -0.0)
+
+
+.. py:function:: solve_kappa_virtual(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, Q_phi, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.solve_kappa_virtual``
+
+
+   Solve a kappa virtual-angle mode: find real kappa motor angles satisfying
+   the virtual Eulerian angle constraints and the Bragg condition.
+
+   The solver works in virtual Eulerian space by using the sample rotation
+   Newton-Raphson numeric solver (2D free virtual angles):
+
+   1. Reads the fixed virtual Eulerian angles (omega, chi, phi) from the mode.
+   2. Applies fixed-angle rotations to reduce Q to the remaining free-angle
+      subspace, then decomposes to find the free angles.
+   3. Converts each Eulerian solution to real kappa motor angles via
+      :func:`eulerian_to_kappa` (both branches ±1).
+
+   :param geometry: A kappa geometry with ``kappa_alpha_deg`` set.
+   :type geometry: AdHocDiffractometer
+   :param Q_phi: Scattering vector in the phi frame (Å⁻¹).
+   :type Q_phi: array-like, shape (3,)
+   :param ttheta_deg: Detector angle (2θ) in degrees.
+   :type ttheta_deg: float
+   :param mode: Must contain at least one ``SampleConstraint`` naming a virtual
+                Eulerian angle.
+   :type mode: ConstraintSet
+
+   :returns: One angles dict per solution, keyed by real stage names.
+             Cut-points, limits, and deduplication are applied by the caller
+             (:func:`~forward._solve_kappa_virtual`).
+   :rtype: list of dict[str, float]
+
+

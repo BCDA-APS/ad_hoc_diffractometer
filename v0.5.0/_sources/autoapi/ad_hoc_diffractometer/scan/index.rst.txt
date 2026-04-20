@@ -1,0 +1,369 @@
+scan
+====
+
+.. py:module:: ad_hoc_diffractometer.scan
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.scan``
+
+   Functions
+   ---------
+   :func:`hkl_trajectory` ``(geometry, trajectory, n_points, solution_key=NEAREST_ANGLES)``
+       **Generator.** Yield motor-angle dicts along a reciprocal-space path.
+       Use ``list(hkl_trajectory(...))`` to collect all points at once.
+
+   :func:`psi_trajectory` ``(geometry, h, k, l, psi_values, solution_key=NEAREST_ANGLES)``
+       **Generator.** Yield motor-angle dicts for ψ (psi) rotation about Q.
+
+   :func:`trajectory_plan` ``(geometry, hkl_start, hkl_end, n_points, space="hkl", solution_key=NEAREST_ANGLES)``
+       **Generator.** Yield motor-angle dicts between two reciprocal-space points,
+       flagging limit violations and inaccessible regions.
+
+   :data:`NEAREST_ANGLES`
+       Built-in solution-key callable: selects the candidate solution whose
+       motor angles are closest (in least-squares sense) to the previous point.
+       Suppresses branch-flip discontinuities across a trajectory.
+
+   .. rubric:: Notes
+
+   These functions *compute* trajectories; they do not move motors or
+   communicate with hardware.  A future execution layer (not yet planned)
+   will consume these outputs to drive real diffractometers.
+
+   The ordering instability of :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward` returns multiple solutions in seed-discovery order, which is
+   not reproducible and can switch between the positive-chi and negative-chi
+   branches at adjacent trajectory points.  All three trajectory functions
+   accept a ``solution_key`` parameter — a callable that scores each candidate
+   solution against the previous point's chosen angles.  Passing
+   ``NEAREST_ANGLES`` (the module default) prevents branch flips by always
+   preferring the candidate closest in motor space to the previous point.
+
+   ψ-scan algorithm
+   ~~~~~~~~~~~~~~~~
+   Two distinct definitions of ψ exist in the literature.
+
+   ``geometry.psi()`` implements You (1999) eqs. 10-11: ψ is the azimuthal
+   angle of the reference vector **n** about **Q** measured from the projection
+   of the fixed lab beam direction y_hat onto the phi-frame Q-perp plane.  For
+   a given (hkl, UB, n_hkl) this value is *constant* across all motor-angle
+   solutions that satisfy the Bragg condition — it is a crystal-orientation
+   diagnostic, not a motor-angle observable.
+
+   ``psi_trajectory()`` implements the Busing & Levy (1967) *operational* ψ:
+   the angle through which the sample has been rotated about the scattering
+   vector Q relative to a chosen reference orientation.  This is the quantity
+   physically varied during a ψ scan on a real diffractometer.
+
+   Algorithm (Busing & Levy 1967, Section "Angle settings"):
+
+   1. Obtain Z₀ — the sample rotation matrix at the base forward() solution.
+   2. Compute Q̂_lab from the fixed detector position (ttheta unchanged).
+   3. For each ψ_target build Z(ψ) = R(Q̂_lab, −ψ_target) · Z₀.
+      Left-multiplying by R(Q̂_lab, −ψ) rotates the sample about Q in the lab
+      frame while the Bragg condition Z · q̂_phi = Q̂_lab is preserved.
+   4. Remove the contribution of any fixed outer stages and decompose the
+      inner-three-stage part of Z(ψ) into motor angles analytically:
+
+      * **Eulerian** (fourcv, fourch, psic-style, fivec-style):
+        n_phi · Z · n_om = cos(χ) isolates χ; then ω and φ follow from
+        projections of Z · n_om and Z^T · n_phi onto the plane perpendicular
+        to their shared rotation axis.  Two χ branches are returned.
+
+      * **Kappa** (kappa4cv, kappa4ch, kappa6c):
+        n_kphi · Z · n_komega = cos(κ)·cos²(α) + sin²(α) isolates κ (where
+        α = kappa_alpha_deg); komega and kphi follow by the same projection
+        method.  Two κ branches (positive and negative) are returned.
+
+   5. All candidate solutions are filtered through stage limits; the
+      ``solution_key`` (default: ``NEAREST_ANGLES``) selects the one closest
+      in motor space to the previous ψ point, keeping motion continuous.
+
+   The BL1967 ψ is measured as the angle between the beam direction projected
+   perpendicular to Q in the phi frame at Z₀ versus at Z(ψ), rotating about
+   q̂_phi.  ψ = 0 by definition at the base forward() solution.
+
+   Trajectory dict specification for hkl_trajectory
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   The ``trajectory`` argument is a dict whose ``"type"`` key selects the
+   scan shape.  Supported types:
+
+   ``"line"``
+       Linear interpolation between two hkl points.
+       Required keys: ``"start": (h, k, l)``, ``"end": (h, k, l)``.
+
+   ``"radial"``
+       Scan ±extent from center along a reciprocal-space direction.
+       Required keys: ``"center": (h, k, l)``, ``"direction": (dh, dk, dl)``,
+       ``"extent": delta``.  The direction is normalised; extent is in r.l.u.
+
+   ``"transverse"``
+       Scan ±extent from center perpendicular to a reference Q direction.
+       Required keys: ``"center": (h, k, l)``, ``"Q_ref": (dh, dk, dl)``,
+       ``"extent": delta``.  The transverse direction is the component of the
+       first non-collinear standard basis vector perpendicular to ``Q_ref``
+       (Gram-Schmidt).
+
+   .. rubric:: References
+
+   * Busing & Levy, Acta Cryst. 22, 457-464 (1967) —
+     Four-circle geometry, ψ scan formulation, angle-setting equations.
+   * You, J. Appl. Cryst. 32, 614-623 (1999) —
+     psic geometry, azimuthal angle definition (eqs. 10-11).
+   * ITC Vol. C, Sec. 2.2.6 (2006) —
+     Kappa geometry, ψ scan via ω, χ, φ.
+   * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) —
+     Kappa conversion formulae.
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.scan.NEAREST_ANGLES
+   ad_hoc_diffractometer.scan.hkl_trajectory
+   ad_hoc_diffractometer.scan.psi_trajectory
+   ad_hoc_diffractometer.scan.trajectory_plan
+
+
+Module Contents
+---------------
+
+.. py:function:: NEAREST_ANGLES(candidate: dict[str, float], previous: dict[str, float] | None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan.NEAREST_ANGLES``
+
+
+   Score a candidate motor-angle solution by its distance from the previous point.
+
+   Returns the sum of squared angular differences between ``candidate`` and
+   ``previous`` over all stages present in ``candidate``.  Lower score means
+   closer to the previous point.
+
+   When ``previous`` is ``None`` (first trajectory point) every candidate
+   scores 0.0, so the first solution returned by ``forward()`` is used.
+
+   :param candidate: Motor angles for one solution candidate.
+   :type candidate: dict[str, float]
+   :param previous: Motor angles chosen at the immediately preceding trajectory point.
+   :type previous: dict[str, float] or None
+
+   :returns: Non-negative score; lower is preferred.
+   :rtype: float
+
+
+.. py:function:: hkl_trajectory(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, trajectory: dict, n_points: int, *, solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan.hkl_trajectory``
+
+
+   Yield motor-angle dicts along a reciprocal-space trajectory.
+
+   For each of the ``n_points`` equally-spaced hkl positions along the
+   trajectory, calls ``geometry.forward()`` to find all valid motor-angle
+   solutions, then uses ``solution_key`` to select one.  Points with no
+   valid solution are yielded with ``angles=None``.
+
+   This function is a **generator**: it yields one dict per trajectory point
+   and computes each point on demand.  To get all points at once use
+   ``list(hkl_trajectory(...))``.
+
+   The ``NEAREST_ANGLES`` solution key (the default) prevents branch-flip
+   discontinuities: at each point it selects the candidate whose motor
+   angles are closest to those of the previous point.
+
+   :param geometry: Must have ``wavelength`` and ``sample.UB`` set and an active mode.
+   :type geometry: AdHocDiffractometer
+   :param trajectory: Trajectory specification.  The ``"type"`` key selects the scan
+                      shape; see module docstring for supported types and required keys.
+   :type trajectory: dict
+   :param n_points: Number of evenly-spaced points to compute (≥ 2).
+   :type n_points: int
+   :param solution_key: Scoring function ``(candidate, previous) -> float``; lower wins.
+                        Default: ``NEAREST_ANGLES``.  Pass ``None`` to use ``forward()``'s
+                        raw ordering.
+   :type solution_key: callable or None, optional
+
+   :Yields: *dict* -- One entry per trajectory point with keys:
+
+            ``"hkl"`` : tuple of float
+                The requested Miller indices (h, k, l).
+            ``"angles"`` : dict[str, float] or None
+                Motor angles in degrees, or ``None`` if no valid solution.
+            ``"warning"`` : str or None
+                Descriptive warning when ``angles`` is ``None``, else ``None``.
+
+   :raises ValueError: If ``n_points < 2``, trajectory type is unknown, or a required
+       trajectory key is missing.
+   :raises ValueError: If ``geometry.wavelength`` is None or ``geometry.sample.UB`` is None.
+   :raises NotImplementedError: If no active diffraction mode is set.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.fourcv()
+   >>> g.wavelength = 1.5406
+   >>> g.sample.lattice = ahd.Lattice(a=4.0)
+   >>> ahd.ub_identity(g.sample)
+   >>> g.mode_name = "bisecting"
+   >>> for pt in ahd.hkl_trajectory(
+   ...     g,
+   ...     {"type": "line", "start": (1, 0, 0), "end": (3, 0, 0)},
+   ...     n_points=5,
+   ... ):
+   ...     print(pt["hkl"], pt["angles"])
+
+
+.. py:function:: psi_trajectory(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, h: float, k: float, l: float, psi_values, *, solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan.psi_trajectory``
+
+
+   Yield motor-angle dicts for ψ rotation about the scattering vector Q.
+
+   For the fixed reflection (h, k, l) and each target ψ in ``psi_values``,
+   finds motor angles that simultaneously satisfy the Bragg condition and
+   produce the requested BL1967 operational ψ.
+
+   ψ Definition (Busing & Levy 1967)
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   ψ is the angle through which the sample has rotated about Q relative to
+   the base ``forward()`` solution.  ψ = 0 at the base solution by definition.
+   Physically, ψ is varied by rotating the sample about Q (changing ω, χ, φ
+   or their kappa equivalents) while keeping 2θ fixed.
+
+   This differs from ``geometry.psi()``, which implements the You (1999)
+   definition and is constant for all Bragg solutions of a given hkl.  See
+   the module docstring for the full discussion.
+
+   :param geometry: Must have ``wavelength`` and ``sample.UB`` set, and an active
+                    diffraction mode.  ``kappa_alpha_deg`` must be set for kappa
+                    geometries (it is set automatically by the factory functions).
+   :type geometry: AdHocDiffractometer
+   :param h: Miller indices of the fixed reflection.
+   :type h: float
+   :param k: Miller indices of the fixed reflection.
+   :type k: float
+   :param l: Miller indices of the fixed reflection.
+   :type l: float
+   :param psi_values: Target ψ angles in degrees relative to the base forward() solution.
+   :type psi_values: iterable of float
+   :param solution_key: Scoring function ``(candidate, previous) -> float``; lower wins.
+                        Default: ``NEAREST_ANGLES``.
+   :type solution_key: callable or None, optional
+
+   :Yields: *dict* -- One entry per ψ value with keys:
+
+            ``"psi_target"`` : float
+                The requested ψ (degrees).
+            ``"psi_actual"`` : float or None
+                Achieved ψ verified by internal measurement, or ``None``.
+            ``"angles"`` : dict[str, float] or None
+                Motor angles in degrees, or ``None``.
+            ``"warning"`` : str or None
+                Descriptive warning when ``angles`` is ``None``, else ``None``.
+
+   :raises ValueError: If ``geometry.wavelength`` is None or ``geometry.sample.UB`` is None.
+   :raises ValueError: If ``(h, k, l) == (0, 0, 0)``.
+   :raises NotImplementedError: If no active diffraction mode is set.
+
+   .. rubric:: Notes
+
+   The geometry must have at least three sample stages (omega/eta, chi/kappa,
+   phi/kphi).  Geometries with fewer sample stages are not supported.
+
+   .. rubric:: References
+
+   Busing & Levy, Acta Cryst. 22, 457-464 (1967), angle-setting equations.
+   ITC Vol. C, Sec. 2.2.6 (2006), kappa ψ scan.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.fourcv()
+   >>> g.wavelength = 1.5406
+   >>> g.sample.lattice = ahd.Lattice(a=4.0)
+   >>> ahd.ub_identity(g.sample)
+   >>> g.mode_name = "bisecting"
+   >>> for pt in ahd.psi_trajectory(g, 1, 1, 0, range(-90, 91, 30)):
+   ...     print(pt["psi_target"], pt["psi_actual"])
+
+
+.. py:function:: trajectory_plan(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, hkl_start: tuple[float, float, float], hkl_end: tuple[float, float, float], n_points: int, *, space: str = 'hkl', solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan.trajectory_plan``
+
+
+   Yield motor-angle dicts for a planned path between two reciprocal-space points.
+
+   Interpolates between ``hkl_start`` and ``hkl_end`` in ``n_points``
+   equally-spaced steps, calls ``geometry.forward()`` at each point, and
+   flags portions that are inaccessible (no valid motor solution) or that
+   exceed stage limits.
+
+   :param geometry: Must have ``wavelength`` and ``sample.UB`` set and an active mode.
+   :type geometry: AdHocDiffractometer
+   :param hkl_start: Start and end Miller indices (h, k, l).
+   :type hkl_start: tuple of float
+   :param hkl_end: Start and end Miller indices (h, k, l).
+   :type hkl_end: tuple of float
+   :param n_points: Number of evenly-spaced points including endpoints (≥ 2).
+   :type n_points: int
+   :param space: Interpolation space.
+
+                 ``"hkl"`` (default)
+                     Linearly interpolate Miller indices.  Natural for L-scans,
+                     H-scans, and crystal-axis-aligned trajectories.  Equal steps in
+                     hkl are *not* equal steps in \|Q\| for non-cubic lattices.
+
+                 ``"Q"``
+                     Linearly interpolate in reciprocal Cartesian coordinates
+                     (Qx, Qy, Qz = UB @ hkl).  Equal steps in Q regardless of
+                     lattice distortion; intermediate hkl values are generally
+                     non-integer.  Endpoints are exact by construction.
+   :type space: {"hkl", "Q"}, optional
+   :param solution_key: Scoring function ``(candidate, previous) -> float``; lower wins.
+                        Default: ``NEAREST_ANGLES``.
+   :type solution_key: callable or None, optional
+
+   :Yields: *dict* -- One entry per trajectory point with keys:
+
+            ``"hkl"`` : tuple of float
+                The (h, k, l) point.
+            ``"angles"`` : dict[str, float] or None
+                Motor angles, or ``None`` if inaccessible.
+            ``"accessible"`` : bool
+                ``True`` if a valid in-limits solution was found.
+            ``"warnings"`` : list of str
+                Empty when accessible; otherwise one or more warning strings.
+
+   :raises ValueError: If ``n_points < 2``.
+   :raises ValueError: If ``space`` is not ``"hkl"`` or ``"Q"``.
+   :raises ValueError: If ``space="Q"`` and ``geometry.sample.UB`` is None or singular.
+   :raises ValueError: If ``geometry.wavelength`` is None or ``geometry.sample.UB`` is None.
+   :raises NotImplementedError: If no active diffraction mode is set.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.fourcv()
+   >>> g.wavelength = 1.5406
+   >>> g.sample.lattice = ahd.Lattice(a=4.0)
+   >>> ahd.ub_identity(g.sample)
+   >>> g.mode_name = "bisecting"
+   >>> plan = list(ahd.trajectory_plan(g, (1, 0, 0), (3, 0, 0), n_points=11))
+   >>> accessible = [pt for pt in plan if pt["accessible"]]
+   >>> print(f"{len(accessible)}/{len(plan)} points accessible")
+
+

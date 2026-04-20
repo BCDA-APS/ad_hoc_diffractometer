@@ -1,0 +1,57 @@
+ad_hoc_diffractometer
+=====================
+
+.. py:module:: ad_hoc_diffractometer
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer``
+
+   ad_hoc_diffractometer — Multi-circle diffractometer geometry and related calculations.
+
+   Tier 1 (routine) names are imported directly into this namespace.
+   All other names are accessible via their submodules::
+
+       import ad_hoc_diffractometer as ahd
+
+       # Tier 1 — always available as ahd.<name>
+       g = ahd.presets.fourcv()
+       lat = ahd.Lattice(a=5.43)
+       ahd.ub_identity(g.sample)
+
+       # Tier 2/3 — access via submodule
+       ahd.display.set_precision(4)
+       ahd.radiation.energy_to_wavelength(12.0)
+       ahd.conversions.hkl_to_d(lat.B, 1, 1, 1)
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/ad_hoc_diffractometer/axes/index
+   /autoapi/ad_hoc_diffractometer/constants/index
+   /autoapi/ad_hoc_diffractometer/conversions/index
+   /autoapi/ad_hoc_diffractometer/display/index
+   /autoapi/ad_hoc_diffractometer/drawing/index
+   /autoapi/ad_hoc_diffractometer/factories/index
+   /autoapi/ad_hoc_diffractometer/forward/index
+   /autoapi/ad_hoc_diffractometer/geometry/index
+   /autoapi/ad_hoc_diffractometer/kappa/index
+   /autoapi/ad_hoc_diffractometer/lattice/index
+   /autoapi/ad_hoc_diffractometer/mode/index
+   /autoapi/ad_hoc_diffractometer/orientation/index
+   /autoapi/ad_hoc_diffractometer/presets/index
+   /autoapi/ad_hoc_diffractometer/radiation/index
+   /autoapi/ad_hoc_diffractometer/reference/index
+   /autoapi/ad_hoc_diffractometer/refinement/index
+   /autoapi/ad_hoc_diffractometer/reflection/index
+   /autoapi/ad_hoc_diffractometer/rotation/index
+   /autoapi/ad_hoc_diffractometer/sample/index
+   /autoapi/ad_hoc_diffractometer/scan/index
+   /autoapi/ad_hoc_diffractometer/stage/index
+   /autoapi/ad_hoc_diffractometer/surface/index
+
+

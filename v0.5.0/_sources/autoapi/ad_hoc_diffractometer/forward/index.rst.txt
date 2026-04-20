@@ -1,0 +1,104 @@
+forward
+=======
+
+.. py:module:: ad_hoc_diffractometer.forward
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.forward``
+
+   The forward calculation is the inverse of ``inverse()``: given a reciprocal-
+   lattice point (h, k, l) and a diffraction mode, compute all valid sets of
+   motor angles that satisfy the Bragg condition.
+
+   Entry point
+   -----------
+   ``AdHocDiffractometer.forward(h, k, l)`` calls ``compute_forward(geometry,
+   h, k, l)`` which dispatches to the appropriate solver based on the active
+   mode type.
+
+   Supported modes
+   ---------------
+   Bisecting (ConstraintSet with BisectConstraint)
+       Classic Eulerian four-circle bisecting solution (Busing & Levy 1967,
+       section "Angle settings").  Valid for psic (eta/delta bisecting),
+       fourcv, fourch (omega/ttheta bisecting), and analogous geometries.
+       Stage names are read directly from the BisectConstraint — no
+       axis-geometry heuristic is used.
+
+       Algorithm:
+           1. Q_phi = UB @ (h, k, l)             — target in phi frame
+           2. \|Q\| → ttheta via Bragg's law
+           3. fixed sample stages set from SampleConstraint values
+           4. detector_stage = ttheta            (from BisectConstraint.detector_stage)
+           5. sample_stage   = ttheta / 2        (from BisectConstraint.sample_stage)
+           6. Remaining free sample stages (chi, phi or kchi, kphi) solved
+              from the direction of Q_phi, choosing among the standard
+              solution branches (two solutions: chi in [0°,180°] and
+              chi in [-180°, 0°]).
+
+   Fixed sample angle (ConstraintSet without BisectConstraint)
+       One or more sample stages are frozen at declared values.  The
+       remaining free stages are solved numerically from the direction
+       of Q_phi.
+
+   :raises NotImplementedError: If the active mode is None or is not a supported type for this geometry.
+   :raises ValueError: If wavelength or UB matrix is not set.
+   :raises ValueError: If (h, k, l) = (0, 0, 0).
+   :raises EwaldSphereViolation: If the requested ``|Q|`` exceeds the Ewald sphere (wavelength too long).
+   :raises ConstraintViolation: If a returned solution violates a declared constraint beyond tolerance.
+
+   .. rubric:: References
+
+   * Busing & Levy, Acta Cryst. 22, 457-464 (1967) — angle-setting equations
+   * You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.forward.compute_forward
+
+
+Module Contents
+---------------
+
+.. py:function:: compute_forward(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, h: float, k: float, l: float) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward.compute_forward``
+
+
+   Compute all valid motor-angle solutions for the reciprocal-lattice point
+   (h, k, l) in the geometry's active diffraction mode.
+
+   :param geometry: The diffractometer.  Must have ``wavelength`` and ``sample.UB`` set,
+                    and an active ``mode_name``.
+   :type geometry: AdHocDiffractometer
+   :param h: Miller indices of the target reflection.
+   :type h: float
+   :param k: Miller indices of the target reflection.
+   :type k: float
+   :param l: Miller indices of the target reflection.
+   :type l: float
+
+   :returns: Each element is a complete set of motor angles (all stage names as
+             keys, values in degrees) that satisfies the Bragg condition under
+             the active mode constraints.  May contain zero, one, or multiple
+             solutions depending on the geometry and mode.
+   :rtype: list of dict[str, float]
+
+   :raises ValueError: If ``geometry.wavelength`` is None.
+   :raises ValueError: If ``geometry.sample.UB`` is None.
+   :raises ValueError: If (h, k, l) == (0, 0, 0).
+   :raises EwaldSphereViolation: If the scattering vector magnitude exceeds the Ewald sphere
+       (``|Q|`` > 4π/λ, i.e. Bragg condition cannot be satisfied).
+   :raises ConstraintViolation: If a solution returned by the solver violates a declared constraint
+       beyond the display-precision tolerance.
+   :raises NotImplementedError: If no active mode is set or the active mode type is not supported
+       for this geometry.
+
+
