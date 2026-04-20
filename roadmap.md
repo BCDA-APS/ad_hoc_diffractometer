@@ -18,7 +18,7 @@ as they are completed.
 
 The following must be resolved before a v1.0 tag is applied:
 
-- [~] **#122** — Review and expand diffraction modes for psic, sixc, fivec,
+- [x] **#122** — Review and expand diffraction modes for psic, sixc, fivec,
   and kappa6c (horizontal scattering plane variants, fixed_nu, grazing
   incidence, azimuthal ψ scan mode).
   [Issue #122](https://github.com/prjemian/ad_hoc_diffractometer/issues/122)
@@ -525,7 +525,7 @@ angle calculations.  Depends on #1 (wavelength on `AdHocDiffractometer`).
 - [x] Named constants for common laboratory lines:
       Cu Kα ≈ 1.5406 Å, Mo Kα ≈ 0.7107 Å, Ag Kα ≈ 0.5594 Å, Co Kα ≈ 1.7902 Å
 - [x] Tests covering conversions, lazy recomputation, and named constant values
-- [ ] Related to: #8 (neutron source — independent, different formula)
+- [x] Related to: #8 (neutron source — independent, different formula)
 
 ### 3.8b Dynamic versioning with hatch-vcs ([#59](https://github.com/prjemian/ad_hoc_diffractometer/issues/59))
 
@@ -617,7 +617,7 @@ this issue is independent of the X-ray energy conversion issue (#21).
 - [x] `summary()` reports the correct energy units for each source type
 - [x] Validate that energy/wavelength conversions are not mixed across source types
 - [x] Tests covering both source types, unit correctness, and invalid cross-type usage
-- [ ] Related to: #21 (X-ray energy conversion — independent, different formula)
+- [x] Related to: #21 (X-ray energy conversion — independent, different formula)
 
 ---
 
