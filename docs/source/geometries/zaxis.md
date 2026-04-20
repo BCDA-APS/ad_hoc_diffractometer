@@ -25,6 +25,59 @@ and mode configuration.
 
 ## Stage layout
 
+### Stage coupling
+
+```{graphviz}
+digraph zaxis {
+    rankdir=BT;
+    label="zaxis";
+    labelloc=t;
+    fontsize=14;
+    node [shape=box, style=filled, fontsize=11];
+
+    alpha [label="alpha\naxis: +vertical\nRH", fillcolor="#a8d8ea"];
+    Z [label="Z\naxis: +longitudinal\nRH", fillcolor="#a8d8ea"];
+    delta [label="delta\naxis: -lateral\nLH", fillcolor="#f8a5a5"];
+    gamma [label="gamma\naxis: +vertical\nRH", fillcolor="#f8a5a5"];
+
+    Z -> alpha;
+    delta -> alpha;
+    gamma -> delta;
+
+    // Legend
+    subgraph cluster_legend {
+        label="Legend";
+        fontsize=8;
+        style=dashed;
+        color=gray;
+        sample_legend [label="sample", fillcolor="#a8d8ea", shape=box, style=filled, fontsize=7];
+        detector_legend [label="detector", fillcolor="#f8a5a5", shape=box, style=filled, fontsize=7];
+        sample_legend -> detector_legend [style=invis];
+    }
+}
+```
+
+### Axis overview
+
+![zaxis stage axes](../_static/geometries/zaxis/zaxis_all.svg)
+
+### Per-stage axis diagrams
+
+::::{tab-set}
+:::{tab-item} alpha
+![alpha axis](../_static/geometries/zaxis/alpha.svg)
+:::
+:::{tab-item} Z
+![Z axis](../_static/geometries/zaxis/Z.svg)
+:::
+:::{tab-item} delta
+![delta axis](../_static/geometries/zaxis/delta.svg)
+:::
+:::{tab-item} gamma
+![gamma axis](../_static/geometries/zaxis/gamma.svg)
+:::
+::::
+
 **Sample stages (base first):**
 
 | Stage | Axis | Handedness |
