@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=09ee6608"></script>
+    <script src="../_static/documentation_options.js?v=d09041c2"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 16:18 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-20 16:45 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -509,6 +509,79 @@ and mode configuration.</p>
 </section>
 <section id="stage-layout">
 <h2>Stage layout<a class="headerlink" href="#stage-layout" title="Link to this heading">#</a></h2>
+<section id="stage-coupling">
+<h3>Stage coupling<a class="headerlink" href="#stage-coupling" title="Link to this heading">#</a></h3>
+<div class="graphviz"><img src="../_images/graphviz-08c63f9fd201419ba60d9b8651a7578f0ccba09d.png" alt="digraph kappa6c {
+    rankdir=BT;
+    label=&quot;kappa6c&quot;;
+    labelloc=t;
+    fontsize=14;
+    node [shape=box, style=filled, fontsize=11];
+
+    mu [label=&quot;mu\naxis: +vertical\nRH&quot;, fillcolor=&quot;#a8d8ea&quot;];
+    komega [label=&quot;komega\naxis: -lateral\nLH&quot;, fillcolor=&quot;#a8d8ea&quot;];
+    kappa [label=&quot;kappa\naxis: [0.6428, 0, 0.766]\nRH&quot;, fillcolor=&quot;#a8d8ea&quot;];
+    kphi [label=&quot;kphi\naxis: -lateral\nLH&quot;, fillcolor=&quot;#a8d8ea&quot;];
+    nu [label=&quot;nu\naxis: +vertical\nRH&quot;, fillcolor=&quot;#f8a5a5&quot;];
+    delta [label=&quot;delta\naxis: -lateral\nLH&quot;, fillcolor=&quot;#f8a5a5&quot;];
+
+    { rank=same; mu; nu; }
+
+    komega -&gt; mu;
+    kappa -&gt; komega;
+    kphi -&gt; kappa;
+    delta -&gt; nu;
+
+    // Legend
+    subgraph cluster_legend {
+        label=&quot;Legend&quot;;
+        fontsize=8;
+        style=dashed;
+        color=gray;
+        sample_legend [label=&quot;sample&quot;, fillcolor=&quot;#a8d8ea&quot;, shape=box, style=filled, fontsize=7];
+        detector_legend [label=&quot;detector&quot;, fillcolor=&quot;#f8a5a5&quot;, shape=box, style=filled, fontsize=7];
+        sample_legend -&gt; detector_legend [style=invis];
+    }
+}" class="graphviz" /></div>
+</section>
+<section id="axis-overview">
+<h3>Axis overview<a class="headerlink" href="#axis-overview" title="Link to this heading">#</a></h3>
+<p><img alt="kappa6c stage axes" src="../_images/kappa6c_all.svg" /></p>
+</section>
+<section id="per-stage-axis-diagrams">
+<h3>Per-stage axis diagrams<a class="headerlink" href="#per-stage-axis-diagrams" title="Link to this heading">#</a></h3>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+mu</label><div class="sd-tab-content docutils">
+<p><img alt="mu axis" src="../_images/mu1.svg" /></p>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+komega</label><div class="sd-tab-content docutils">
+<p><img alt="komega axis" src="../_images/komega2.svg" /></p>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+kappa</label><div class="sd-tab-content docutils">
+<p><img alt="kappa axis" src="../_images/kappa2.svg" /></p>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+kphi</label><div class="sd-tab-content docutils">
+<p><img alt="kphi axis" src="../_images/kphi2.svg" /></p>
+</div>
+<input id="sd-tab-item-4" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-4">
+nu</label><div class="sd-tab-content docutils">
+<p><img alt="nu axis" src="../_images/nu.svg" /></p>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-5">
+delta</label><div class="sd-tab-content docutils">
+<p><img alt="delta axis" src="../_images/delta.svg" /></p>
+</div>
+</div>
 <p><strong>Sample stages (base first):</strong></p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -564,6 +637,7 @@ omega, chi, phi.  Used in stub mode descriptions; kappa inversion required (Issu
 <li><p>Vertical: komega (lateral) ↔ delta (lateral) → <code class="docutils literal notranslate"><span class="pre">komega</span> <span class="pre">=</span> <span class="pre">delta/2</span></code></p></li>
 <li><p>Horizontal: mu (vertical) ↔ nu (vertical) → <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">nu/2</span></code></p></li>
 </ul>
+</section>
 </section>
 <section id="diffraction-modes">
 <h2>Diffraction modes<a class="headerlink" href="#diffraction-modes" title="Link to this heading">#</a></h2>
@@ -924,7 +998,12 @@ reflections satisfy the Ewald sphere condition.</p>
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick start</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-built-geometry-definition">Pre-built geometry definition</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-layout">Stage layout</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-layout">Stage layout</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-coupling">Stage coupling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axis-overview">Axis overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#per-stage-axis-diagrams">Per-stage axis diagrams</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-modes">Diffraction modes</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting-vertical-default"><code class="docutils literal notranslate"><span class="pre">bisecting_vertical</span></code> <em>(default)</em></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting-horizontal"><code class="docutils literal notranslate"><span class="pre">bisecting_horizontal</span></code></a></li>
@@ -976,7 +1055,7 @@ reflections satisfy the Ewald sphere condition.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 16:18 CDT.
+  Last updated on 2026-04-20 16:45 CDT.
   <br/>
 </p></div>
       

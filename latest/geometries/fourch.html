@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../_static/documentation_options.js?v=09ee6608"></script>
+    <script src="../_static/documentation_options.js?v=d09041c2"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-18 16:18 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-20 16:45 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -510,6 +510,65 @@ and mode configuration.</p>
 </section>
 <section id="stage-layout">
 <h2>Stage layout<a class="headerlink" href="#stage-layout" title="Link to this heading">#</a></h2>
+<section id="stage-coupling">
+<h3>Stage coupling<a class="headerlink" href="#stage-coupling" title="Link to this heading">#</a></h3>
+<div class="graphviz"><img src="../_images/graphviz-e221c779047f7c0c6d0f67d3bc350bd95e98d422.png" alt="digraph fourch {
+    rankdir=BT;
+    label=&quot;fourch&quot;;
+    labelloc=t;
+    fontsize=14;
+    node [shape=box, style=filled, fontsize=11];
+
+    omega [label=&quot;omega\naxis: -vertical\nLH&quot;, fillcolor=&quot;#a8d8ea&quot;];
+    chi [label=&quot;chi\naxis: +longitudinal\nRH&quot;, fillcolor=&quot;#a8d8ea&quot;];
+    phi [label=&quot;phi\naxis: -vertical\nLH&quot;, fillcolor=&quot;#a8d8ea&quot;];
+    ttheta [label=&quot;ttheta\naxis: -vertical\nLH&quot;, fillcolor=&quot;#f8a5a5&quot;];
+
+    { rank=same; omega; ttheta; }
+
+    chi -&gt; omega;
+    phi -&gt; chi;
+
+    // Legend
+    subgraph cluster_legend {
+        label=&quot;Legend&quot;;
+        fontsize=8;
+        style=dashed;
+        color=gray;
+        sample_legend [label=&quot;sample&quot;, fillcolor=&quot;#a8d8ea&quot;, shape=box, style=filled, fontsize=7];
+        detector_legend [label=&quot;detector&quot;, fillcolor=&quot;#f8a5a5&quot;, shape=box, style=filled, fontsize=7];
+        sample_legend -&gt; detector_legend [style=invis];
+    }
+}" class="graphviz" /></div>
+</section>
+<section id="axis-overview">
+<h3>Axis overview<a class="headerlink" href="#axis-overview" title="Link to this heading">#</a></h3>
+<p><img alt="fourch stage axes" src="../_images/fourch_all.svg" /></p>
+</section>
+<section id="per-stage-axis-diagrams">
+<h3>Per-stage axis diagrams<a class="headerlink" href="#per-stage-axis-diagrams" title="Link to this heading">#</a></h3>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+omega</label><div class="sd-tab-content docutils">
+<p><img alt="omega axis" src="../_images/omega1.svg" /></p>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+chi</label><div class="sd-tab-content docutils">
+<p><img alt="chi axis" src="../_images/chi1.svg" /></p>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+phi</label><div class="sd-tab-content docutils">
+<p><img alt="phi axis" src="../_images/phi1.svg" /></p>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+ttheta</label><div class="sd-tab-content docutils">
+<p><img alt="ttheta axis" src="../_images/ttheta1.svg" /></p>
+</div>
+</div>
 <p><strong>Sample stages (base first):</strong></p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -550,6 +609,7 @@ and mode configuration.</p>
 </tbody>
 </table>
 </div>
+</section>
 </section>
 <section id="diffraction-modes">
 <h2>Diffraction modes<a class="headerlink" href="#diffraction-modes" title="Link to this heading">#</a></h2>
@@ -767,7 +827,12 @@ before calling <code class="docutils literal notranslate"><span class="pre">forw
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick start</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-built-geometry-definition">Pre-built geometry definition</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-layout">Stage layout</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-layout">Stage layout</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-coupling">Stage coupling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axis-overview">Axis overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#per-stage-axis-diagrams">Per-stage axis diagrams</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-modes">Diffraction modes</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting-default"><code class="docutils literal notranslate"><span class="pre">bisecting</span></code> <em>(default)</em></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-chi"><code class="docutils literal notranslate"><span class="pre">fixed_chi</span></code></a></li>
@@ -813,7 +878,7 @@ before calling <code class="docutils literal notranslate"><span class="pre">forw
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-18 16:18 CDT.
+  Last updated on 2026-04-20 16:45 CDT.
   <br/>
 </p></div>
       

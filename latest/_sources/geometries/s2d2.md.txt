@@ -25,6 +25,60 @@ and mode configuration.
 
 ## Stage layout
 
+### Stage coupling
+
+```{graphviz}
+digraph s2d2 {
+    rankdir=BT;
+    label="s2d2";
+    labelloc=t;
+    fontsize=14;
+    node [shape=box, style=filled, fontsize=11];
+
+    mu [label="mu\naxis: +vertical\nRH", fillcolor="#a8d8ea"];
+    Z [label="Z\naxis: +longitudinal\nRH", fillcolor="#a8d8ea"];
+    nu [label="nu\naxis: +vertical\nRH", fillcolor="#f8a5a5"];
+    delta [label="delta\naxis: -lateral\nLH", fillcolor="#f8a5a5"];
+
+    { rank=same; mu; nu; }
+
+    Z -> mu;
+    delta -> nu;
+
+    // Legend
+    subgraph cluster_legend {
+        label="Legend";
+        fontsize=8;
+        style=dashed;
+        color=gray;
+        sample_legend [label="sample", fillcolor="#a8d8ea", shape=box, style=filled, fontsize=7];
+        detector_legend [label="detector", fillcolor="#f8a5a5", shape=box, style=filled, fontsize=7];
+        sample_legend -> detector_legend [style=invis];
+    }
+}
+```
+
+### Axis overview
+
+![s2d2 stage axes](../_static/geometries/s2d2/s2d2_all.svg)
+
+### Per-stage axis diagrams
+
+::::{tab-set}
+:::{tab-item} mu
+![mu axis](../_static/geometries/s2d2/mu.svg)
+:::
+:::{tab-item} Z
+![Z axis](../_static/geometries/s2d2/Z.svg)
+:::
+:::{tab-item} nu
+![nu axis](../_static/geometries/s2d2/nu.svg)
+:::
+:::{tab-item} delta
+![delta axis](../_static/geometries/s2d2/delta.svg)
+:::
+::::
+
 **Sample stages (base first):**
 
 | Stage | Axis | Handedness |

@@ -25,6 +25,60 @@ and mode configuration.
 
 ## Stage layout
 
+### Stage coupling
+
+```{graphviz}
+digraph fourcv {
+    rankdir=BT;
+    label="fourcv";
+    labelloc=t;
+    fontsize=14;
+    node [shape=box, style=filled, fontsize=11];
+
+    omega [label="omega\naxis: -lateral\nLH", fillcolor="#a8d8ea"];
+    chi [label="chi\naxis: +longitudinal\nRH", fillcolor="#a8d8ea"];
+    phi [label="phi\naxis: -lateral\nLH", fillcolor="#a8d8ea"];
+    ttheta [label="ttheta\naxis: -lateral\nLH", fillcolor="#f8a5a5"];
+
+    { rank=same; omega; ttheta; }
+
+    chi -> omega;
+    phi -> chi;
+
+    // Legend
+    subgraph cluster_legend {
+        label="Legend";
+        fontsize=8;
+        style=dashed;
+        color=gray;
+        sample_legend [label="sample", fillcolor="#a8d8ea", shape=box, style=filled, fontsize=7];
+        detector_legend [label="detector", fillcolor="#f8a5a5", shape=box, style=filled, fontsize=7];
+        sample_legend -> detector_legend [style=invis];
+    }
+}
+```
+
+### Axis overview
+
+![fourcv stage axes](../_static/geometries/fourcv/fourcv_all.svg)
+
+### Per-stage axis diagrams
+
+::::{tab-set}
+:::{tab-item} omega
+![omega axis](../_static/geometries/fourcv/omega.svg)
+:::
+:::{tab-item} chi
+![chi axis](../_static/geometries/fourcv/chi.svg)
+:::
+:::{tab-item} phi
+![phi axis](../_static/geometries/fourcv/phi.svg)
+:::
+:::{tab-item} ttheta
+![ttheta axis](../_static/geometries/fourcv/ttheta.svg)
+:::
+::::
+
 **Sample stages (base first):**
 
 | Stage | Axis | Handedness |
