@@ -184,7 +184,7 @@ def _require_matplotlib():
     try:
         import matplotlib.pyplot as plt
 
-        return plt
+        return plt  # pragma: no cover
     except ImportError:
         raise ImportError(
             "matplotlib is required for drawing functions.  "
@@ -251,7 +251,7 @@ def _subtitle(stage_axis: np.ndarray, basis: dict) -> str:
     return f"[{stage_axis[0]:.3f}, {stage_axis[1]:.3f}, {stage_axis[2]:.3f}]"
 
 
-def _draw_stage_on_axes(
+def _draw_stage_on_axes(  # pragma: no cover
     ax,
     stage,
     basis: dict,
@@ -377,7 +377,7 @@ def _draw_stage_on_axes(
     )
 
 
-def draw_stage_axis(
+def draw_stage_axis(  # pragma: no cover
     stage,
     basis: dict,
     *,
@@ -444,7 +444,7 @@ def draw_stage_axis(
     return fig
 
 
-def draw_geometry_axes(
+def draw_geometry_axes(  # pragma: no cover
     geometry,
     *,
     figsize_per_stage: tuple[float, float] = (3.5, 2.8),

@@ -324,7 +324,7 @@ def test_subtitle_kappa_axis():
 
 def test_draw_stage_axis_returns_figure():
     """draw_stage_axis returns a matplotlib Figure."""
-    import matplotlib
+    matplotlib = pytest.importorskip("matplotlib")
 
     matplotlib.use("Agg")
     from ad_hoc_diffractometer.drawing import draw_stage_axis
@@ -339,7 +339,7 @@ def test_draw_stage_axis_returns_figure():
 
 def test_draw_stage_axis_kappa():
     """draw_stage_axis works for a tilted kappa axis (no arc offset)."""
-    import matplotlib
+    matplotlib = pytest.importorskip("matplotlib")
 
     matplotlib.use("Agg")
     from ad_hoc_diffractometer.drawing import draw_stage_axis
@@ -355,7 +355,7 @@ def test_draw_stage_axis_kappa():
 
 def test_draw_stage_axis_you_basis():
     """draw_stage_axis works with YOU basis (psic)."""
-    import matplotlib
+    matplotlib = pytest.importorskip("matplotlib")
 
     matplotlib.use("Agg")
     from ad_hoc_diffractometer.drawing import draw_stage_axis
@@ -370,7 +370,7 @@ def test_draw_stage_axis_you_basis():
 
 def test_draw_geometry_axes_returns_figure():
     """draw_geometry_axes returns a matplotlib Figure with correct subplot count."""
-    import matplotlib
+    matplotlib = pytest.importorskip("matplotlib")
 
     matplotlib.use("Agg")
     from ad_hoc_diffractometer.drawing import draw_geometry_axes
