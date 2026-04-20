@@ -6,7 +6,51 @@ for planned future work and
 [GitHub Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues)
 for the full issue tracker.
 
-## Unreleased
+## Release v0.5.0
+
+Released 2026-04-20.
+
+### Breaking changes
+
+- `__init__.py` trimmed to ~23 Tier 1 exports; preset factories moved
+  to `ahd.presets.*` (#185)
+- `BisectingMode` / `FixedAngleMode` replaced by `ConstraintSet` with
+  `BisectConstraint`, `SampleConstraint`, `DetectorConstraint`,
+  `ReferenceConstraint` (#148)
+
+### Added
+
+- 57 SVG axis diagrams and graphviz stage coupling diagrams (#163)
+- Constraint system: `ConstraintSet`, `BisectConstraint`,
+  `SampleConstraint`, `DetectorConstraint`, `ReferenceConstraint`;
+  `EwaldSphereViolation`, `ConstraintViolation` exceptions (#148)
+- Diffraction modes for all 10 geometries
+  (#149, #150, #151, #152, #154, #155, #156)
+- Double-diffraction 4D simultaneous solver for 4 geometries (#184)
+- `drawing.py`: `geometry_dot()`, `draw_stage_axis()`,
+  `draw_geometry_axes()` (#163)
+- HOWTO: diffractometer inclination (#164)
+- Kappa virtual-angle dispatcher: `constant_omega`/`chi`/`phi` modes;
+  `kappa.py` module (#174)
+- Psi-constant validation filter for 6 geometries (#184)
+- Qaz detector constraint: `lifting_detector_*` modes for psic,
+  kappa6c (#177)
+- Quick Start guide; Diátaxis User Guide restructure (#146)
+- Surface diffraction forward solvers for sixc, zaxis, s2d2 (#175)
+- `tools/generate_geometry_drawings.py` with `list_geometries()`
+  auto-discovery (#163)
+
+### Changed
+
+- Constraint/mode docs overhauled across all geometry pages (#173)
+- Doc build timestamp in Chicago local time (#165)
+- Geometry diagrams use SVG instead of PNG (#163)
+- `presets.py` split from `factories.py` (#185)
+
+### Fixed
+
+- `references.md` broken links (#152)
+- Unused variable and formatting cleanups (#172, #178)
 
 ## Release v0.4.1
 
