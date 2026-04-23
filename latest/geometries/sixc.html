@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993) &#8212; ad_hoc_diffractometer 0.4</title>
+    <title>sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993) &#8212; ad_hoc_diffractometer 0.5</title>
   
   
   
@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -38,12 +38,12 @@
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=090975f3" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=e432a293"></script>
+    <script src="../_static/documentation_options.js?v=0fc176a4"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -51,7 +51,7 @@
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'geometries/sixc';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -64,8 +64,8 @@
     <link rel="prev" title="psic — Eulerian Six-Circle, 4S+2D (You 1999)" href="psic.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-20 16:55 CDT"/>
+  <meta name="docsearch:version" content="0.5" />
+    <meta name="docbuild:last-update" content="2026-04-23 08:33 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -83,7 +83,9 @@
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -131,7 +133,7 @@
   
   
   
-    <p class="title logo__title">ad_hoc_diffractometer 0.4</p>
+    <p class="title logo__title">ad_hoc_diffractometer 0.5</p>
   
 </a></div>
     
@@ -510,79 +512,16 @@ and mode configuration.</p>
 </section>
 <section id="stage-layout">
 <h2>Stage layout<a class="headerlink" href="#stage-layout" title="Link to this heading">#</a></h2>
-<section id="stage-coupling">
-<h3>Stage coupling<a class="headerlink" href="#stage-coupling" title="Link to this heading">#</a></h3>
-<div class="graphviz"><img src="../_images/graphviz-cac71659d3d960d1ff5edaf0ce0cdcc18254ef1e.png" alt="digraph sixc {
-    rankdir=BT;
-    label=&quot;sixc&quot;;
-    labelloc=t;
-    fontsize=14;
-    node [shape=box, style=filled, fontsize=11];
-
-    alpha [label=&quot;alpha\naxis: +vertical\nRH&quot;, fillcolor=&quot;#a8d8ea&quot;];
-    omega [label=&quot;omega\naxis: -lateral\nLH&quot;, fillcolor=&quot;#a8d8ea&quot;];
-    chi [label=&quot;chi\naxis: +longitudinal\nRH&quot;, fillcolor=&quot;#a8d8ea&quot;];
-    phi [label=&quot;phi\naxis: -lateral\nLH&quot;, fillcolor=&quot;#a8d8ea&quot;];
-    delta [label=&quot;delta\naxis: -lateral\nLH&quot;, fillcolor=&quot;#f8a5a5&quot;];
-    gamma [label=&quot;gamma\naxis: +vertical\nRH&quot;, fillcolor=&quot;#f8a5a5&quot;];
-
-    omega -&gt; alpha;
-    chi -&gt; omega;
-    phi -&gt; chi;
-    delta -&gt; alpha;
-    gamma -&gt; delta;
-
-    // Legend
-    subgraph cluster_legend {
-        label=&quot;Legend&quot;;
-        fontsize=8;
-        style=dashed;
-        color=gray;
-        sample_legend [label=&quot;sample&quot;, fillcolor=&quot;#a8d8ea&quot;, shape=box, style=filled, fontsize=7];
-        detector_legend [label=&quot;detector&quot;, fillcolor=&quot;#f8a5a5&quot;, shape=box, style=filled, fontsize=7];
-        sample_legend -&gt; detector_legend [style=invis];
-    }
-}" class="graphviz" /></div>
-</section>
-<section id="axis-overview">
-<h3>Axis overview<a class="headerlink" href="#axis-overview" title="Link to this heading">#</a></h3>
-<p><img alt="sixc stage axes" src="../_images/sixc_all.svg" /></p>
-</section>
-<section id="per-stage-axis-diagrams">
-<h3>Per-stage axis diagrams<a class="headerlink" href="#per-stage-axis-diagrams" title="Link to this heading">#</a></h3>
-<div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-0">
-alpha</label><div class="sd-tab-content docutils">
-<p><img alt="alpha axis" src="../_images/alpha.svg" /></p>
-</div>
-<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-1">
-omega</label><div class="sd-tab-content docutils">
-<p><img alt="omega axis" src="../_images/omega3.svg" /></p>
-</div>
-<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-2">
-chi</label><div class="sd-tab-content docutils">
-<p><img alt="chi axis" src="../_images/chi4.svg" /></p>
-</div>
-<input id="sd-tab-item-3" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-3">
-phi</label><div class="sd-tab-content docutils">
-<p><img alt="phi axis" src="../_images/phi4.svg" /></p>
-</div>
-<input id="sd-tab-item-4" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-4">
-delta</label><div class="sd-tab-content docutils">
-<p><img alt="delta axis" src="../_images/delta3.svg" /></p>
-</div>
-<input id="sd-tab-item-5" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-5">
-gamma</label><div class="sd-tab-content docutils">
-<p><img alt="gamma axis" src="../_images/gamma.svg" /></p>
-</div>
-</div>
-<p><strong>Sample stages (base first):</strong></p>
+<iframe
+  src="../_static/geometries/sixc/sixc.html"
+  width="100%"
+  height="1630px"
+  style="border:none;"
+  loading="lazy">
+</iframe>
+<details>
+<summary>Static fallback (click to expand if the interactive figure above is blank)</summary><p><img alt="sixc stage layout" src="../_images/sixc.svg" /></p>
+</details><p><strong>Sample stages (base first):</strong></p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Stage</p></th>
@@ -631,7 +570,6 @@ gamma</label><div class="sd-tab-content docutils">
 </table>
 </div>
 <p><strong>Shared stage:</strong> alpha (rotary table base shared between sample and detector stacks)</p>
-</section>
 </section>
 <section id="diffraction-modes">
 <h2>Diffraction modes<a class="headerlink" href="#diffraction-modes" title="Link to this heading">#</a></h2>
@@ -863,12 +801,7 @@ Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Requires <code clas
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick start</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-built-geometry-definition">Pre-built geometry definition</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-layout">Stage layout</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-coupling">Stage coupling</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axis-overview">Axis overview</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#per-stage-axis-diagrams">Per-stage axis diagrams</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-layout">Stage layout</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-modes">Diffraction modes</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting-4c-default"><code class="docutils literal notranslate"><span class="pre">bisecting_4c</span></code> <em>(default)</em></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-gamma-5c"><code class="docutils literal notranslate"><span class="pre">fixed_gamma_5c</span></code></a></li>
@@ -905,8 +838,8 @@ Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Requires <code clas
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -914,7 +847,7 @@ Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Requires <code clas
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-20 16:55 CDT.
+  Last updated on 2026-04-23 08:33 CDT.
   <br/>
 </p></div>
       

@@ -25,68 +25,24 @@ and mode configuration.
 
 ## Stage layout
 
-### Stage coupling
+<iframe
+  src="../_static/geometries/sixc/sixc.html"
+  width="100%"
+  height="1630px"
+  style="border:none;"
+  loading="lazy">
+</iframe>
 
-```{graphviz}
-digraph sixc {
-    rankdir=BT;
-    label="sixc";
-    labelloc=t;
-    fontsize=14;
-    node [shape=box, style=filled, fontsize=11];
-
-    alpha [label="alpha\naxis: +vertical\nRH", fillcolor="#a8d8ea"];
-    omega [label="omega\naxis: -lateral\nLH", fillcolor="#a8d8ea"];
-    chi [label="chi\naxis: +longitudinal\nRH", fillcolor="#a8d8ea"];
-    phi [label="phi\naxis: -lateral\nLH", fillcolor="#a8d8ea"];
-    delta [label="delta\naxis: -lateral\nLH", fillcolor="#f8a5a5"];
-    gamma [label="gamma\naxis: +vertical\nRH", fillcolor="#f8a5a5"];
-
-    omega -> alpha;
-    chi -> omega;
-    phi -> chi;
-    delta -> alpha;
-    gamma -> delta;
-
-    // Legend
-    subgraph cluster_legend {
-        label="Legend";
-        fontsize=8;
-        style=dashed;
-        color=gray;
-        sample_legend [label="sample", fillcolor="#a8d8ea", shape=box, style=filled, fontsize=7];
-        detector_legend [label="detector", fillcolor="#f8a5a5", shape=box, style=filled, fontsize=7];
-        sample_legend -> detector_legend [style=invis];
-    }
-}
+```{raw} html
+<details>
+<summary>Static fallback (click to expand if the interactive figure above is blank)</summary>
 ```
 
-### Axis overview
+![sixc stage layout](../_static/geometries/sixc/sixc.svg)
 
-![sixc stage axes](../_static/geometries/sixc/sixc_all.svg)
-
-### Per-stage axis diagrams
-
-::::{tab-set}
-:::{tab-item} alpha
-![alpha axis](../_static/geometries/sixc/alpha.svg)
-:::
-:::{tab-item} omega
-![omega axis](../_static/geometries/sixc/omega.svg)
-:::
-:::{tab-item} chi
-![chi axis](../_static/geometries/sixc/chi.svg)
-:::
-:::{tab-item} phi
-![phi axis](../_static/geometries/sixc/phi.svg)
-:::
-:::{tab-item} delta
-![delta axis](../_static/geometries/sixc/delta.svg)
-:::
-:::{tab-item} gamma
-![gamma axis](../_static/geometries/sixc/gamma.svg)
-:::
-::::
+```{raw} html
+</details>
+```
 
 **Sample stages (base first):**
 

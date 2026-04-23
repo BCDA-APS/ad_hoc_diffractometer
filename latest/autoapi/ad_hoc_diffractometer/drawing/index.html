@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>drawing &#8212; ad_hoc_diffractometer 0.4</title>
+    <title>drawing &#8212; ad_hoc_diffractometer 0.5</title>
   
   
   
@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -38,12 +38,12 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=090975f3" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=e432a293"></script>
+    <script src="../../../_static/documentation_options.js?v=0fc176a4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -51,7 +51,7 @@
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/ad_hoc_diffractometer/drawing/index';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -64,8 +64,8 @@
     <link rel="prev" title="display" href="../display/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.4" />
-    <meta name="docbuild:last-update" content="2026-04-20 16:55 CDT"/>
+  <meta name="docsearch:version" content="0.5" />
+    <meta name="docbuild:last-update" content="2026-04-23 08:33 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -83,7 +83,9 @@
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -131,7 +133,7 @@
   
   
   
-    <p class="title logo__title">ad_hoc_diffractometer 0.4</p>
+    <p class="title logo__title">ad_hoc_diffractometer 0.5</p>
   
 </a></div>
     
@@ -480,12 +482,35 @@ axis labels.</p></li>
 highlighted.</p></li>
 <li><p><strong>Matplotlib composite diagram</strong> (<a class="reference internal" href="#ad_hoc_diffractometer.drawing.draw_geometry_axes" title="ad_hoc_diffractometer.drawing.draw_geometry_axes"><code class="xref py py-func docutils literal notranslate"><span class="pre">draw_geometry_axes()</span></code></a>) — all
 stages of a geometry in a single figure.</p></li>
+<li><p><strong>Interactive Plotly figures</strong> (<a class="reference internal" href="#ad_hoc_diffractometer.drawing.StageAxisFigure" title="ad_hoc_diffractometer.drawing.StageAxisFigure"><code class="xref py py-class docutils literal notranslate"><span class="pre">StageAxisFigure</span></code></a>,
+<a class="reference internal" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure" title="ad_hoc_diffractometer.drawing.GeometryAxisFigure"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryAxisFigure</span></code></a>) — 3D interactive diagrams for a single
+stage or an entire geometry, arranged in a directed-graph layout.
+These are the preferred output for documentation; pre-generate them
+with <code class="docutils literal notranslate"><span class="pre">tools/generate_geometry_drawings.py</span></code> and embed the resulting
+HTML files as <code class="docutils literal notranslate"><span class="pre">&lt;iframe&gt;</span></code> elements in the Sphinx pages.</p></li>
 </ol>
 <p>The DOT source is designed to be pasted into a Sphinx <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">graphviz::</span></code>
 directive in the geometry documentation pages.</p>
 <p>Matplotlib is an optional dependency (listed in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>
 <code class="docutils literal notranslate"><span class="pre">[project.optional-dependencies]</span> <span class="pre">doc</span></code>).  Functions that require it
 raise <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ImportError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImportError</span></code></a> with a helpful message if it is not installed.</p>
+<p>Plotly is an optional dependency.  <a class="reference internal" href="#ad_hoc_diffractometer.drawing.StageAxisFigure" title="ad_hoc_diffractometer.drawing.StageAxisFigure"><code class="xref py py-class docutils literal notranslate"><span class="pre">StageAxisFigure</span></code></a> and
+<a class="reference internal" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure" title="ad_hoc_diffractometer.drawing.GeometryAxisFigure"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryAxisFigure</span></code></a> raise <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ImportError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImportError</span></code></a> with a helpful
+message if it is not installed.</p>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure" title="ad_hoc_diffractometer.drawing.GeometryAxisFigure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeometryAxisFigure</span></code></a></p></td>
+<td><p>Interactive Plotly figure showing all stages of a geometry.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.drawing.StageAxisFigure" title="ad_hoc_diffractometer.drawing.StageAxisFigure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StageAxisFigure</span></code></a></p></td>
+<td><p>Interactive Plotly figure for a single stage rotation-axis diagram.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
@@ -505,6 +530,188 @@ raise <a class="reference external" href="https://docs.python.org/3/library/exce
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.GeometryAxisFigure">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.drawing.</span></span><span class="sig-name descname"><span class="pre">GeometryAxisFigure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/drawing.html#GeometryAxisFigure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.drawing.GeometryAxisFigure</span></code></p>
+</div>
+<p>Interactive Plotly figure showing all stages of a geometry.</p>
+<p>Stages are arranged as a directed graph following parent relationships.
+The graph flows bottom-to-top: root stages (<code class="docutils literal notranslate"><span class="pre">parent=None</span></code>) are at the
+bottom; each child is one row above its parent.  Leaf nodes are assigned
+integer column slots; parents are centred over their children.</p>
+<p>Role is indicated by scene background colour:</p>
+<ul class="simple">
+<li><p>sample   → aliceblue</p></li>
+<li><p>detector → seashell</p></li>
+<li><p>other    → honeydew</p></li>
+</ul>
+<p>Parent-child relationships are drawn as arrows on the figure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of a preset geometry (e.g. <code class="docutils literal notranslate"><span class="pre">'zaxis'</span></code>, <code class="docutils literal notranslate"><span class="pre">'kappa6c'</span></code>).</p></li>
+<li><p><strong>axis_labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, label the basis vectors on each sub-plot.</p></li>
+<li><p><strong>**kwargs</strong> – Forwarded to <code class="xref py py-class docutils literal notranslate"><span class="pre">plotly.graph_objects.Figure</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.drawing</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryAxisFigure</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">GeometryAxisFigure</span><span class="p">(</span><span class="s2">&quot;fourcv&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">write_html</span><span class="p">(</span><span class="s2">&quot;fourcv.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.GeometryAxisFigure.data">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure.data" title="Link to this definition">#</a></dt>
+<dd><p>Plotly traces (delegated to the internal Figure).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.GeometryAxisFigure.layout">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">layout</span></span><a class="headerlink" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure.layout" title="Link to this definition">#</a></dt>
+<dd><p>Plotly layout (delegated to the internal Figure).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.GeometryAxisFigure.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/drawing.html#GeometryAxisFigure.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure.show" title="Link to this definition">#</a></dt>
+<dd><p>Display the figure (delegates to the internal Figure).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.GeometryAxisFigure.write_html">
+<span class="sig-name descname"><span class="pre">write_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/drawing.html#GeometryAxisFigure.write_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure.write_html" title="Link to this definition">#</a></dt>
+<dd><p>Write the figure to an HTML file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a>)</p></li>
+<li><p><strong>**kwargs</strong> – Forwarded to <code class="xref py py-meth docutils literal notranslate"><span class="pre">plotly.graph_objects.Figure.write_html()</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.GeometryAxisFigure.write_image">
+<span class="sig-name descname"><span class="pre">write_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/drawing.html#GeometryAxisFigure.write_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure.write_image" title="Link to this definition">#</a></dt>
+<dd><p>Write the figure to a static image file (SVG, PNG, etc.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a>)</p></li>
+<li><p><strong>**kwargs</strong> – Forwarded to <code class="xref py py-meth docutils literal notranslate"><span class="pre">plotly.graph_objects.Figure.write_image()</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.StageAxisFigure">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.drawing.</span></span><span class="sig-name descname"><span class="pre">StageAxisFigure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/drawing.html#StageAxisFigure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.drawing.StageAxisFigure" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.drawing.StageAxisFigure</span></code></p>
+</div>
+<p>Interactive Plotly figure for a single stage rotation-axis diagram.</p>
+<p>Draws the geometry’s basis vectors (grey, semi-transparent) and the
+stage’s rotation axis (red) with a direction arc, in a 3-D interactive
+Plotly scene.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of a preset geometry (e.g. <code class="docutils literal notranslate"><span class="pre">'kappa6c'</span></code>, <code class="docutils literal notranslate"><span class="pre">'zaxis'</span></code>).</p></li>
+<li><p><strong>axis_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of a stage in that geometry (e.g. <code class="docutils literal notranslate"><span class="pre">'komega'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Z'</span></code>).</p></li>
+<li><p><strong>axis_labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, label the basis vectors (V, L, T) in the figure.</p></li>
+<li><p><strong>**kwargs</strong> – Forwarded to <code class="xref py py-class docutils literal notranslate"><span class="pre">plotly.graph_objects.Figure</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.drawing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StageAxisFigure</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">StageAxisFigure</span><span class="p">(</span><span class="s2">&quot;fourcv&quot;</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">write_html</span><span class="p">(</span><span class="s2">&quot;omega.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.StageAxisFigure.R">
+<span class="sig-name descname"><span class="pre">R</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.R" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.StageAxisFigure.add_trace">
+<span class="sig-name descname"><span class="pre">add_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/drawing.html#StageAxisFigure.add_trace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.add_trace" title="Link to this definition">#</a></dt>
+<dd><p>Add a trace to the internal figure.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.StageAxisFigure.data">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.data" title="Link to this definition">#</a></dt>
+<dd><p>Plotly traces (delegated to the internal Figure).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.StageAxisFigure.geometry">
+<span class="sig-name descname"><span class="pre">geometry</span></span><a class="headerlink" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.geometry" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.StageAxisFigure.layout">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">layout</span></span><a class="headerlink" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.layout" title="Link to this definition">#</a></dt>
+<dd><p>Plotly layout (delegated to the internal Figure).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.StageAxisFigure.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/drawing.html#StageAxisFigure.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.show" title="Link to this definition">#</a></dt>
+<dd><p>Display the figure (delegates to the internal Figure).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.StageAxisFigure.stage">
+<span class="sig-name descname"><span class="pre">stage</span></span><a class="headerlink" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.stage" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.StageAxisFigure.update_layout">
+<span class="sig-name descname"><span class="pre">update_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/drawing.html#StageAxisFigure.update_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.update_layout" title="Link to this definition">#</a></dt>
+<dd><p>Update layout on the internal figure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.StageAxisFigure.write_html">
+<span class="sig-name descname"><span class="pre">write_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/drawing.html#StageAxisFigure.write_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.write_html" title="Link to this definition">#</a></dt>
+<dd><p>Write the figure to an HTML file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a>)</p></li>
+<li><p><strong>**kwargs</strong> – Forwarded to <code class="xref py py-meth docutils literal notranslate"><span class="pre">plotly.graph_objects.Figure.write_html()</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.StageAxisFigure.write_image">
+<span class="sig-name descname"><span class="pre">write_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/drawing.html#StageAxisFigure.write_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.write_image" title="Link to this definition">#</a></dt>
+<dd><p>Write the figure to a static image file (SVG, PNG, etc.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a>)</p></li>
+<li><p><strong>**kwargs</strong> – Forwarded to <code class="xref py py-meth docutils literal notranslate"><span class="pre">plotly.graph_objects.Figure.write_image()</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.drawing.draw_geometry_axes">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.drawing.</span></span><span class="sig-name descname"><span class="pre">draw_geometry_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize_per_stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(3.5,</span> <span class="pre">2.8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/drawing.html#draw_geometry_axes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.drawing.draw_geometry_axes" title="Link to this definition">#</a></dt>
@@ -640,8 +847,30 @@ or <code class="docutils literal notranslate"><span class="pre">graphviz.Source(
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure"><code class="docutils literal notranslate"><span class="pre">GeometryAxisFigure</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure.data"><code class="docutils literal notranslate"><span class="pre">GeometryAxisFigure.data</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure.layout"><code class="docutils literal notranslate"><span class="pre">GeometryAxisFigure.layout</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure.show"><code class="docutils literal notranslate"><span class="pre">GeometryAxisFigure.show()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure.write_html"><code class="docutils literal notranslate"><span class="pre">GeometryAxisFigure.write_html()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.GeometryAxisFigure.write_image"><code class="docutils literal notranslate"><span class="pre">GeometryAxisFigure.write_image()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.StageAxisFigure"><code class="docutils literal notranslate"><span class="pre">StageAxisFigure</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.R"><code class="docutils literal notranslate"><span class="pre">StageAxisFigure.R</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.add_trace"><code class="docutils literal notranslate"><span class="pre">StageAxisFigure.add_trace()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.data"><code class="docutils literal notranslate"><span class="pre">StageAxisFigure.data</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.geometry"><code class="docutils literal notranslate"><span class="pre">StageAxisFigure.geometry</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.layout"><code class="docutils literal notranslate"><span class="pre">StageAxisFigure.layout</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.show"><code class="docutils literal notranslate"><span class="pre">StageAxisFigure.show()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.stage"><code class="docutils literal notranslate"><span class="pre">StageAxisFigure.stage</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.update_layout"><code class="docutils literal notranslate"><span class="pre">StageAxisFigure.update_layout()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.write_html"><code class="docutils literal notranslate"><span class="pre">StageAxisFigure.write_html()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.StageAxisFigure.write_image"><code class="docutils literal notranslate"><span class="pre">StageAxisFigure.write_image()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.draw_geometry_axes"><code class="docutils literal notranslate"><span class="pre">draw_geometry_axes()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.draw_stage_axis"><code class="docutils literal notranslate"><span class="pre">draw_stage_axis()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.drawing.geometry_dot"><code class="docutils literal notranslate"><span class="pre">geometry_dot()</span></code></a></li>
@@ -672,8 +901,8 @@ or <code class="docutils literal notranslate"><span class="pre">graphviz.Source(
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -681,7 +910,7 @@ or <code class="docutils literal notranslate"><span class="pre">graphviz.Source(
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-20 16:55 CDT.
+  Last updated on 2026-04-23 08:33 CDT.
   <br/>
 </p></div>
       
