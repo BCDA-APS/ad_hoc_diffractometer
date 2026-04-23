@@ -303,15 +303,29 @@ class TestBenchmarkGeometry:
 # ---------------------------------------------------------------------------
 
 
-class TestBenchmarkAll:
-    """Tests for the benchmark_all function."""
+class TestBenchmarkAllFast:
+    """Fast tests for benchmark_all using a single monkeypatched geometry.
 
-    def test_covers_all_geometries(self):
-        """Results include every registered geometry."""
+    These exercise 100 % of benchmark_all()'s code paths (loop, extend,
+    verbose branch) in ~1 second by limiting the geometry registry to a
+    single entry.  Full-sweep tests are in TestBenchmarkAll (marked
+    slow_benchmark).
+    """
+
+    @pytest.fixture(autouse=True)
+    def _one_geometry(self, monkeypatch):
+        """Restrict list_geometries() to a single entry."""
+        full = list_geometries()
+        monkeypatch.setattr(
+            "ad_hoc_diffractometer.benchmark.list_geometries",
+            lambda: {"fourcv": full["fourcv"]},
+        )
+
+    def test_covers_requested_geometries(self):
+        """Result geometry names match the (monkeypatched) registry."""
         results = benchmark_all(reflections=[(1, 0, 0)], n_iter=1, verbose=False)
         geometry_names = {r["geometry"] for r in results}
-        registered = set(list_geometries().keys())
-        assert geometry_names == registered
+        assert geometry_names == {"fourcv"}
 
     def test_all_results_valid(self):
         """Every result has valid keys and status."""
@@ -320,6 +334,44 @@ class TestBenchmarkAll:
             assert set(r.keys()) == REQUIRED_KEYS
             assert r["status"] in VALID_STATUSES
 
+    def test_verbose_prints_table(self, capsys):
+        """verbose=True prints a formatted table to stdout."""
+        results = benchmark_all(reflections=[(1, 0, 0)], n_iter=1, verbose=True)
+        captured = capsys.readouterr()
+        assert "fwd ops/s" in captured.out
+        assert "fourcv" in captured.out
+        assert len(results) > 0
+
+
+# ---------------------------------------------------------------------------
+# benchmark_all — full sweep (slow)
+# ---------------------------------------------------------------------------
+
+
+class TestBenchmarkAll:
+    """Full-sweep tests for benchmark_all across all registered geometries.
+
+    These are marked slow_benchmark and excluded from the default pytest
+    run.  Run on demand with: ``pytest -m slow_benchmark``
+    """
+
+    @pytest.mark.slow_benchmark
+    def test_covers_all_geometries(self):
+        """Results include every registered geometry."""
+        results = benchmark_all(reflections=[(1, 0, 0)], n_iter=1, verbose=False)
+        geometry_names = {r["geometry"] for r in results}
+        registered = set(list_geometries().keys())
+        assert geometry_names == registered
+
+    @pytest.mark.slow_benchmark
+    def test_all_results_valid(self):
+        """Every result has valid keys and status."""
+        results = benchmark_all(reflections=[(1, 0, 0)], n_iter=1, verbose=False)
+        for r in results:
+            assert set(r.keys()) == REQUIRED_KEYS
+            assert r["status"] in VALID_STATUSES
+
+    @pytest.mark.slow_benchmark
     def test_verbose_prints_table(self, capsys):
         results = benchmark_all(reflections=[(1, 0, 0)], n_iter=1, verbose=True)
         captured = capsys.readouterr()

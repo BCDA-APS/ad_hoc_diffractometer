@@ -1,0 +1,63 @@
+name: Benchmark Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/ad_hoc_diffractometer/forward.py"
+      - "src/ad_hoc_diffractometer/kappa.py"
+      - "src/ad_hoc_diffractometer/mode.py"
+      - "src/ad_hoc_diffractometer/orientation.py"
+      - "src/ad_hoc_diffractometer/rotation.py"
+      - "src/ad_hoc_diffractometer/reference.py"
+      - "src/ad_hoc_diffractometer/presets.py"
+      - "src/ad_hoc_diffractometer/factories.py"
+      - "src/ad_hoc_diffractometer/geometry.py"
+      - "src/ad_hoc_diffractometer/stage.py"
+      - "src/ad_hoc_diffractometer/axes.py"
+      - "src/ad_hoc_diffractometer/constants.py"
+      - "src/ad_hoc_diffractometer/benchmark.py"
+      - "tests/test_benchmark.py"
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/ad_hoc_diffractometer/forward.py"
+      - "src/ad_hoc_diffractometer/kappa.py"
+      - "src/ad_hoc_diffractometer/mode.py"
+      - "src/ad_hoc_diffractometer/orientation.py"
+      - "src/ad_hoc_diffractometer/rotation.py"
+      - "src/ad_hoc_diffractometer/reference.py"
+      - "src/ad_hoc_diffractometer/presets.py"
+      - "src/ad_hoc_diffractometer/factories.py"
+      - "src/ad_hoc_diffractometer/geometry.py"
+      - "src/ad_hoc_diffractometer/stage.py"
+      - "src/ad_hoc_diffractometer/axes.py"
+      - "src/ad_hoc_diffractometer/constants.py"
+      - "src/ad_hoc_diffractometer/benchmark.py"
+      - "tests/test_benchmark.py"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    name: Full benchmark sweep
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install package with dev dependencies
+        run: pip install -e .[dev]
+
+      - name: Run slow benchmark tests
+        run: python -m pytest -m slow_benchmark --no-cov -v
