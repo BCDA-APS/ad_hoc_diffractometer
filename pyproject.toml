@@ -87,7 +87,10 @@ known_first_party = ["ad_hoc_diffractometer"]
 pythonpath = ["tests"]
 testpaths = ["tests"]
 norecursedirs = ["references", "docs", ".git", ".tox", "dist", "build"]
-addopts = "--cov=ad_hoc_diffractometer --cov-report=term-missing"
+addopts = "--cov=ad_hoc_diffractometer --cov-report=term-missing -m 'not slow_benchmark'"
+markers = [
+    "slow_benchmark: full benchmark sweep across all geometries (run with: pytest -m slow_benchmark)",
+]
 
 [tool.ruff]
 line-length = 88

@@ -21,6 +21,7 @@ installed the package and are familiar with the
    refine_lattice
    serialize
    inclination
+   performance
    fourcv_alignment_howto
 
 .. icons: https://fonts.google.com/icons
@@ -104,6 +105,13 @@ installed the package and are familiar with the
 
       Account for a diffractometer mounted at a non-zero angle relative
       to the incident beam.
+
+   .. grid-item-card:: :material-outlined:`speed;3em` Measure Performance
+      :link: performance
+      :link-type: doc
+
+      Benchmark forward/inverse throughput and round-trip accuracy
+      across all geometries and modes.
 
    .. grid-item-card:: :material-outlined:`align_horizontal_center;3em` Align a Crystal
       :link: fourcv_alignment_howto
