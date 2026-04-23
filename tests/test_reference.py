@@ -100,14 +100,14 @@ def test_exit_angle_with_surface_normal():
 def test_specular_condition_alpha_i_equals_alpha_f():
     """At bisecting with surface normal ⊥ to scattering plane, alpha_i ≈ alpha_f."""
     g = _setup_psic()
-    # Surface normal along lateral axis — perpendicular to the scattering plane
+    # Surface normal along transverse axis — perpendicular to the scattering plane
     g.surface_normal = (0, 0, 1)
     g.mode_name = "bisecting_vertical"
     sols = g.forward(1, 0, 0)
     for s in sols:
         ai = incidence_angle(g, angles=s)
         af = exit_angle(g, angles=s)
-        # At bisecting in vertical plane with lateral surface normal, ai ≈ af
+        # At bisecting in vertical plane with transverse surface normal, ai ≈ af
         assert ai == pytest.approx(af, abs=1e-6)
 
 

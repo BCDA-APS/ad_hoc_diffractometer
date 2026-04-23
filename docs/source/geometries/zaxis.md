@@ -5,7 +5,7 @@ Z-axis four-circle diffractometer for surface diffraction. The sample surface no
 
 **Walko (2016) designation:** (S1D2)1
 
-**Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
+**Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, transverse=+z.
 
 ## Quick start
 
@@ -55,7 +55,7 @@ and mode configuration.
 
 | Stage | Axis | Handedness |
 |---|---|---|
-| ``delta`` | −lateral (−z) | left-handed |
+| ``delta`` | −transverse (−z) | left-handed |
 | ``gamma`` | +vertical (+x) | right-handed |
 
 **Shared stage:** alpha (base stage shared between sample and detector stacks)

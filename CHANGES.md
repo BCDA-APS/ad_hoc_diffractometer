@@ -141,10 +141,10 @@ References), AutoAPI fixes, and a set of API quality improvements.
 
 - `Stage.role` is now documented as an **open string** — any value is
   accepted, not just `"sample"` and `"detector"`. (#129)
-- Physical direction definitions (vertical, longitudinal, lateral)
+- Physical direction definitions (vertical, longitudinal, transverse)
   throughout the docs and docstrings now use unambiguous, observer-free
   language: vertical = opposite to gravity; longitudinal = chosen direction
-  in the plane perpendicular to vertical; lateral = completes the
+  in the plane perpendicular to vertical; transverse = completes the
   right-handed system. (#128)
 - `engines.py` renamed to `conversions.py` (see Breaking changes). (#108)
 - Coordinate convention section in `concepts.md` reframed: observable
@@ -208,7 +208,7 @@ Released 2026-04-11.
 
 - All factory functions accept `basis` as an optional argument; `BASIS_YOU`
   and `BASIS_BL` exported publicly; stage axes expressed as
-  `VERTICAL`/`LATERAL`/`LONGITUDINAL` local aliases (#67)
+  `VERTICAL`/`TRANSVERSE`/`LONGITUDINAL` local aliases (#67)
 - `logging.getLogger(__name__)` in all modules; silent by default (#61)
 - 100% line and branch coverage enforced via `pytest-cov` (#60)
 - Dynamic versioning via `hatch-vcs`; `ahd.__version__` exposed (#59)

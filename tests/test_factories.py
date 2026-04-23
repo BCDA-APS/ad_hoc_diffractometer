@@ -402,7 +402,7 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             psic, "mu", +XHAT, does_not_raise(), id="psic-mu-vertical-right-handed"
         ),
         pytest.param(
-            psic, "eta", -ZHAT, does_not_raise(), id="psic-eta-lateral-left-handed"
+            psic, "eta", -ZHAT, does_not_raise(), id="psic-eta-transverse-left-handed"
         ),
         pytest.param(
             psic,
@@ -412,21 +412,25 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             id="psic-chi-longitudinal-right-handed",
         ),
         pytest.param(
-            psic, "phi", -ZHAT, does_not_raise(), id="psic-phi-lateral-left-handed"
+            psic, "phi", -ZHAT, does_not_raise(), id="psic-phi-transverse-left-handed"
         ),
         pytest.param(
             psic, "nu", +XHAT, does_not_raise(), id="psic-nu-vertical-right-handed"
         ),
         pytest.param(
-            psic, "delta", -ZHAT, does_not_raise(), id="psic-delta-lateral-left-handed"
+            psic,
+            "delta",
+            -ZHAT,
+            does_not_raise(),
+            id="psic-delta-transverse-left-handed",
         ),
-        # fourcv — BL1967, vertical scattering plane; basis: lateral=+x, long=+y, vert=+z
+        # fourcv — BL1967, vertical scattering plane; basis: transverse=+x, long=+y, vert=+z
         pytest.param(
             fourcv,
             "omega",
             -XHAT,
             does_not_raise(),
-            id="fourcv-omega-lateral-left-handed",
+            id="fourcv-omega-transverse-left-handed",
         ),
         pytest.param(
             fourcv,
@@ -436,16 +440,20 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             id="fourcv-chi-longitudinal-right-handed",
         ),
         pytest.param(
-            fourcv, "phi", -XHAT, does_not_raise(), id="fourcv-phi-lateral-left-handed"
+            fourcv,
+            "phi",
+            -XHAT,
+            does_not_raise(),
+            id="fourcv-phi-transverse-left-handed",
         ),
         pytest.param(
             fourcv,
             "ttheta",
             -XHAT,
             does_not_raise(),
-            id="fourcv-ttheta-lateral-left-handed",
+            id="fourcv-ttheta-transverse-left-handed",
         ),
-        # fourch — BL1967, horizontal scattering plane; basis: lateral=+x, long=+y, vert=+z
+        # fourch — BL1967, horizontal scattering plane; basis: transverse=+x, long=+y, vert=+z
         pytest.param(
             fourch,
             "omega",
@@ -472,7 +480,7 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
         ),
         # sixc — LV1993 Fig. 1 and §2.1:
         #   alpha, gamma: vertical (+x), right-handed
-        #   omega, phi, delta: lateral (-z), left-handed
+        #   omega, phi, delta: transverse (-z), left-handed
         #   chi: longitudinal (+y), right-handed
         pytest.param(
             sixc,
@@ -482,7 +490,11 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             id="sixc-alpha-vertical-right-handed",
         ),
         pytest.param(
-            sixc, "omega", -ZHAT, does_not_raise(), id="sixc-omega-lateral-left-handed"
+            sixc,
+            "omega",
+            -ZHAT,
+            does_not_raise(),
+            id="sixc-omega-transverse-left-handed",
         ),
         pytest.param(
             sixc,
@@ -492,10 +504,14 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             id="sixc-chi-longitudinal-right-handed",
         ),
         pytest.param(
-            sixc, "phi", -ZHAT, does_not_raise(), id="sixc-phi-lateral-left-handed"
+            sixc, "phi", -ZHAT, does_not_raise(), id="sixc-phi-transverse-left-handed"
         ),
         pytest.param(
-            sixc, "delta", -ZHAT, does_not_raise(), id="sixc-delta-lateral-left-handed"
+            sixc,
+            "delta",
+            -ZHAT,
+            does_not_raise(),
+            id="sixc-delta-transverse-left-handed",
         ),
         pytest.param(
             sixc,
@@ -504,27 +520,27 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             does_not_raise(),
             id="sixc-gamma-vertical-right-handed",
         ),
-        # kappa4cv — BL1967 basis: lateral=+x, long=+y, vert=+z; vertical scattering plane
+        # kappa4cv — BL1967 basis: transverse=+x, long=+y, vert=+z; vertical scattering plane
         pytest.param(
             kappa4cv,
             "komega",
             -XHAT,
             does_not_raise(),
-            id="kappa4cv-komega-lateral-left-handed",
+            id="kappa4cv-komega-transverse-left-handed",
         ),
         pytest.param(
             kappa4cv,
             "kphi",
             -XHAT,
             does_not_raise(),
-            id="kappa4cv-kphi-lateral-left-handed",
+            id="kappa4cv-kphi-transverse-left-handed",
         ),
         pytest.param(
             kappa4cv,
             "ttheta",
             -XHAT,
             does_not_raise(),
-            id="kappa4cv-ttheta-lateral-left-handed",
+            id="kappa4cv-ttheta-transverse-left-handed",
         ),
         pytest.param(
             kappa4cv,
@@ -569,14 +585,14 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             "komega",
             -ZHAT,
             does_not_raise(),
-            id="kappa6c-komega-lateral-left-handed",
+            id="kappa6c-komega-transverse-left-handed",
         ),
         pytest.param(
             kappa6c,
             "kphi",
             -ZHAT,
             does_not_raise(),
-            id="kappa6c-kphi-lateral-left-handed",
+            id="kappa6c-kphi-transverse-left-handed",
         ),
         pytest.param(
             kappa6c,
@@ -590,7 +606,7 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             "delta",
             -ZHAT,
             does_not_raise(),
-            id="kappa6c-delta-lateral-left-handed",
+            id="kappa6c-delta-transverse-left-handed",
         ),
         # zaxis — You basis: vert=+x, long=+y, lat=+z
         pytest.param(
@@ -612,7 +628,7 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             "delta",
             -ZHAT,
             does_not_raise(),
-            id="zaxis-delta-lateral-left-handed",
+            id="zaxis-delta-transverse-left-handed",
         ),
         pytest.param(
             zaxis,
@@ -636,7 +652,7 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             "delta",
             -ZHAT,
             does_not_raise(),
-            id="s2d2-delta-lateral-left-handed",
+            id="s2d2-delta-transverse-left-handed",
         ),
         # fivec — You basis: vert=+x, long=+y, lat=+z; fourcv on vertical base
         pytest.param(
@@ -647,7 +663,7 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             "omega",
             -ZHAT,
             does_not_raise(),
-            id="fivec-omega-lateral-left-handed",
+            id="fivec-omega-transverse-left-handed",
         ),
         pytest.param(
             fivec,
@@ -657,14 +673,14 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
             id="fivec-chi-longitudinal-right-handed",
         ),
         pytest.param(
-            fivec, "phi", -ZHAT, does_not_raise(), id="fivec-phi-lateral-left-handed"
+            fivec, "phi", -ZHAT, does_not_raise(), id="fivec-phi-transverse-left-handed"
         ),
         pytest.param(
             fivec,
             "ttheta",
             -ZHAT,
             does_not_raise(),
-            id="fivec-ttheta-lateral-left-handed",
+            id="fivec-ttheta-transverse-left-handed",
         ),
     ],
 )

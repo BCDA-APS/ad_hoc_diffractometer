@@ -10,7 +10,7 @@ Default coordinate convention (You 1999):
 
 - XHAT (+x) — vertical (opposite to gravitational acceleration)
 - YHAT (+y) — longitudinal (a chosen direction in the plane perpendicular to vertical, conventionally along the nominal beam)
-- ZHAT (+z) — lateral (completes the right-handed system: vertical × longitudinal)
+- ZHAT (+z) — transverse (completes the right-handed system: vertical × longitudinal)
 """
 
 import logging
@@ -24,7 +24,7 @@ XHAT = np.array([1.0, 0.0, 0.0])
 
 In the You (1999) convention this is the **vertical** direction
 (opposite to gravitational acceleration).
-In the Busing & Levy (1967) convention this is the **lateral** direction.
+In the Busing & Levy (1967) convention this is the **transverse** direction.
 """
 
 YHAT = np.array([0.0, 1.0, 0.0])
@@ -38,7 +38,7 @@ Consistent across both the You (1999) and Busing & Levy (1967) conventions.
 ZHAT = np.array([0.0, 0.0, 1.0])
 """Unit vector along the +z axis.
 
-In the You (1999) convention this is the **lateral** direction
+In the You (1999) convention this is the **transverse** direction
 (completes the right-handed system: vertical × longitudinal).
 In the Busing & Levy (1967) convention this is the **vertical** direction.
 """

@@ -44,16 +44,16 @@ from ad_hoc_diffractometer.presets import zaxis
         pytest.param(
             np.array([1.0, 0.0, 0.0]),
             BASIS_BL,
-            "+lateral",
+            "+transverse",
             does_not_raise(),
-            id="positive-lateral-BL",
+            id="positive-transverse-BL",
         ),
         pytest.param(
             np.array([-1.0, 0.0, 0.0]),
             BASIS_BL,
-            "-lateral",
+            "-transverse",
             does_not_raise(),
-            id="negative-lateral-BL",
+            id="negative-transverse-BL",
         ),
         pytest.param(
             np.array([0.0, 0.0, 1.0]),
@@ -290,7 +290,7 @@ def test_stage_draw_direction_negative():
     axis = np.array([-1.0, 0.0, 0.0])  # -lat in BL1967
     draw_dir, axis_type, is_neg = _stage_draw_direction(axis, BASIS_BL)
     np.testing.assert_allclose(draw_dir, [1, 0, 0], atol=1e-12)
-    assert axis_type == "lateral"
+    assert axis_type == "transverse"
     assert is_neg is True
 
 

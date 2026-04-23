@@ -1,11 +1,11 @@
 (geometry-kappa4cv)=
 # kappa4cv — Kappa Four-Circle (Synchrotron)
 
-Four-circle kappa diffractometer, vertical scattering plane. The chi circle is replaced by a kappa axis tilted at α = 50° from the vertical toward the lateral axis.
+Four-circle kappa diffractometer, vertical scattering plane. The chi circle is replaced by a kappa axis tilted at α = 50° from the vertical toward the transverse axis.
 
 **Walko (2016) designation:** S3D1 (kappa)
 
-**Coordinate basis:** Busing & Levy ({data}`~ad_hoc_diffractometer.factories.BASIS_BL`): lateral=+x, longitudinal=+y, vertical=+z.
+**Coordinate basis:** Busing & Levy ({data}`~ad_hoc_diffractometer.factories.BASIS_BL`): transverse=+x, longitudinal=+y, vertical=+z.
 
 ## Quick start
 
@@ -48,15 +48,15 @@ and mode configuration.
 
 | Stage | Axis | Handedness |
 |---|---|---|
-| ``komega`` | −lateral (−x BL) | left-handed |
+| ``komega`` | −transverse (−x BL) | left-handed |
 | ``kappa`` | tilted axis, α=50° | right-handed |
-| ``kphi`` | −lateral (−x BL) | left-handed |
+| ``kphi`` | −transverse (−x BL) | left-handed |
 
 **Detector stages (base first):**
 
 | Stage | Axis | Handedness |
 |---|---|---|
-| ``ttheta`` | −lateral (−x BL) | left-handed |
+| ``ttheta`` | −transverse (−x BL) | left-handed |
 
 **Virtual Eulerian angles** (computed from real kappa angles via Walko 2016 eq. [16]):
 omega, chi, phi.  Used as constraint names for stub modes; converted back to

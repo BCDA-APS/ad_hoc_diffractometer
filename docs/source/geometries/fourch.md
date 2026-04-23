@@ -5,7 +5,7 @@ Busing & Levy (1967) four-circle Eulerian diffractometer, horizontal scattering 
 
 **Walko (2016) designation:** S3D1
 
-**Coordinate basis:** Busing & Levy ({data}`~ad_hoc_diffractometer.factories.BASIS_BL`): lateral=+x, longitudinal=+y, vertical=+z.
+**Coordinate basis:** Busing & Levy ({data}`~ad_hoc_diffractometer.factories.BASIS_BL`): transverse=+x, longitudinal=+y, vertical=+z.
 
 ## Quick start
 

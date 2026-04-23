@@ -15,7 +15,7 @@ The You (1999) convention assigns:
 
 - **xHat**: vertical (along the mu and nu rotation axes)
 - **yHat**: longitudinal (along the incoming beam direction)
-- **zHat**: lateral
+- **zHat**: transverse
 
 This is a valid right-handed system: xHat × yHat = zHat.
 From You (1999) §2: *"the x axis is defined along the vertical mu and nu
@@ -32,7 +32,7 @@ by a 1 on the diagonal:
 
 - **R xHat**: 1 at position [1,1] — rotation about the vertical axis
 - **R yHat**: 1 at position [2,2] — rotation about the longitudinal axis
-- **R zHat**: 1 at position [3,3] — rotation about the lateral axis
+- **R zHat**: 1 at position [3,3] — rotation about the transverse axis
 
 Right-handed rotation places +sin below the diagonal; left-handed rotation
 (equivalently, right-handed rotation about the negated axis) places +sin
@@ -41,17 +41,17 @@ above the diagonal.
 | You angle | You matrix | Stage | Physical axis | Axis vector |
 |-----------|------------|-------|---------------|-------------|
 | mu        | U          | S2-1  | vertical      | +xHat       |
-| eta       | X          | S2-2  | lateral       | −zHat       |
+| eta       | X          | S2-2  | transverse       | −zHat       |
 | chi       | H          | S2-3  | longitudinal  | +yHat       |
-| phi       | M          | S2-4  | lateral       | −zHat       |
+| phi       | M          | S2-4  | transverse       | −zHat       |
 | nu        | P          | S1-1  | vertical      | +xHat       |
-| delta     | D          | S1-2  | lateral       | −zHat       |
+| delta     | D          | S1-2  | transverse       | −zHat       |
 
 Notes:
 
 - mu and nu share a colinear vertical axis (+xHat) with the same
   right-handed sense of rotation; the stages are mechanically independent.
-- eta, phi, and delta share the lateral axis (−zHat) with left-handed
+- eta, phi, and delta share the transverse axis (−zHat) with left-handed
   rotation.
 - chi is the only stage with a longitudinal axis (+yHat), right-handed.
 

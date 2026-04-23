@@ -47,5 +47,5 @@ def Rz(deg: float) -> np.ndarray:
 STANDARD_BASIS = {
     "vertical": XHAT,
     "longitudinal": YHAT,
-    "lateral": ZHAT,
+    "transverse": ZHAT,
 }

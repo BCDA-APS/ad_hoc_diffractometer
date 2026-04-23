@@ -1,11 +1,11 @@
 (geometry-fourcv)=
 # fourcv — Eulerian Four-Circle (Synchrotron)
 
-Busing & Levy (1967) four-circle Eulerian diffractometer, vertical scattering plane. ω and 2θ rotate about the lateral axis. Standard synchrotron convention.
+Busing & Levy (1967) four-circle Eulerian diffractometer, vertical scattering plane. ω and 2θ rotate about the transverse axis. Standard synchrotron convention.
 
 **Walko (2016) designation:** S3D1
 
-**Coordinate basis:** Busing & Levy ({data}`~ad_hoc_diffractometer.factories.BASIS_BL`): lateral=+x, longitudinal=+y, vertical=+z.
+**Coordinate basis:** Busing & Levy ({data}`~ad_hoc_diffractometer.factories.BASIS_BL`): transverse=+x, longitudinal=+y, vertical=+z.
 
 ## Quick start
 
@@ -48,15 +48,15 @@ and mode configuration.
 
 | Stage | Axis | Handedness |
 |---|---|---|
-| ``omega`` | −lateral (−x BL) | left-handed |
+| ``omega`` | −transverse (−x BL) | left-handed |
 | ``chi`` | +longitudinal (+y BL) | right-handed |
-| ``phi`` | −lateral (−x BL) | left-handed |
+| ``phi`` | −transverse (−x BL) | left-handed |
 
 **Detector stages (base first):**
 
 | Stage | Axis | Handedness |
 |---|---|---|
-| ``ttheta`` | −lateral (−x BL) | left-handed |
+| ``ttheta`` | −transverse (−x BL) | left-handed |
 
 ## Diffraction modes
 

@@ -1,9 +1,9 @@
 (geometry-psic)=
 # psic — Eulerian Six-Circle, 4S+2D (You 1999)
 
-You (1999) 4S+2D six-circle diffractometer. Four sample stages (mu, eta, chi, and phi) and two detector stages (nu, delta). Lateral detector, vertical scattering plane. Standard synchrotron six-circle.
+You (1999) 4S+2D six-circle diffractometer. Four sample stages (mu, eta, chi, and phi) and two detector stages (nu, delta). Transverse detector, vertical scattering plane. Standard synchrotron six-circle.
 
-**Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
+**Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, transverse=+z.
 
 ## Quick start
 
@@ -47,16 +47,16 @@ and mode configuration.
 | Stage | Axis | Handedness |
 |---|---|---|
 | ``mu`` | +vertical (+x) | right-handed |
-| ``eta`` | −lateral (−z) | left-handed |
+| ``eta`` | −transverse (−z) | left-handed |
 | ``chi`` | +longitudinal (+y) | right-handed |
-| ``phi`` | −lateral (−z) | left-handed |
+| ``phi`` | −transverse (−z) | left-handed |
 
 **Detector stages (base first):**
 
 | Stage | Axis | Handedness |
 |---|---|---|
 | ``nu`` | +vertical (+x) | right-handed |
-| ``delta`` | −lateral (−z) | left-handed |
+| ``delta`` | −transverse (−z) | left-handed |
 
 ## Diffraction modes
 
@@ -68,7 +68,7 @@ changing constraint values at run time.
 
 **Bisect pairs:**
 
-- Vertical plane: eta (lateral) ↔ delta (lateral) → `eta = delta/2`
+- Vertical plane: eta (transverse) ↔ delta (transverse) → `eta = delta/2`
 - Horizontal plane: mu (vertical) ↔ nu (vertical) → `mu = nu/2`
 
 ### `bisecting_vertical` *(default)*

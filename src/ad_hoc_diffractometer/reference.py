@@ -256,7 +256,7 @@ def naz_angle(
     )
     vertical_hat = vertical / np.linalg.norm(vertical)
 
-    # Lateral axis = longitudinal × vertical (right-handed)
+    # Transverse axis = longitudinal × vertical (right-handed)
     longitudinal = np.asarray(
         geometry.basis.get("longitudinal", np.array([0.0, 1.0, 0.0])),
         dtype=float,
