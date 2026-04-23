@@ -5,7 +5,7 @@ Four-circle kappa diffractometer, horizontal scattering plane. Kappa axis tilted
 
 **Walko (2016) designation:** S3D1 (kappa)
 
-**Coordinate basis:** Busing & Levy ({data}`~ad_hoc_diffractometer.factories.BASIS_BL`): lateral=+x, longitudinal=+y, vertical=+z.
+**Coordinate basis:** Busing & Levy ({data}`~ad_hoc_diffractometer.factories.BASIS_BL`): transverse=+x, longitudinal=+y, vertical=+z.
 
 ## Quick start
 

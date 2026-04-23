@@ -59,13 +59,13 @@ physical-direction aliases locally::
     @register_geometry
     def my_geometry(basis=BASIS_YOU):
         VERTICAL     = basis["vertical"]
-        LATERAL      = basis["lateral"]
+        TRANSVERSE   = basis["transverse"]
         LONGITUDINAL = basis["longitudinal"]
         stages = [
-            Stage("omega", -LATERAL,      role="sample"),
+            Stage("omega", -TRANSVERSE,      role="sample"),
             Stage("chi",   +LONGITUDINAL, parent="omega", role="sample"),
-            Stage("phi",   -LATERAL,      parent="chi",   role="sample"),
-            Stage("ttheta", -LATERAL,     role="detector"),
+            Stage("phi",   -TRANSVERSE,      parent="chi",   role="sample"),
+            Stage("ttheta", -TRANSVERSE,     role="detector"),
         ]
         return AdHocDiffractometer(
             name="my_geometry", stages=stages, basis=basis,
@@ -333,7 +333,7 @@ def make_geometry(name: str, **kwargs):
 BASIS_YOU = {
     "vertical": XHAT,
     "longitudinal": YHAT,
-    "lateral": ZHAT,
+    "transverse": ZHAT,
 }
 """Basis vector dictionary for the You (1999) coordinate convention.
 
@@ -341,7 +341,7 @@ Maps physical direction names to Cartesian unit vectors:
 
 - ``"vertical"`` → ``XHAT`` (+x, opposite to gravitational acceleration)
 - ``"longitudinal"`` → ``YHAT`` (+y, along the beam)
-- ``"lateral"`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)
+- ``"transverse"`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)
 
 Default basis used by ``psic``, ``sixc``, ``kappa6c``,
 ``zaxis``, ``s2d2``, and ``fivec`` (in :mod:`ad_hoc_diffractometer.presets`).
@@ -353,13 +353,13 @@ _BASIS_YOU = BASIS_YOU
 BASIS_BL = {
     "vertical": ZHAT,
     "longitudinal": YHAT,
-    "lateral": XHAT,
+    "transverse": XHAT,
 }
 """Basis vector dictionary for the Busing & Levy (1967) coordinate convention.
 
 Maps physical direction names to Cartesian unit vectors:
 
-- ``"lateral"`` → +x
+- ``"transverse"`` → +x
 - ``"longitudinal"`` → +y (along the beam)
 - ``"vertical"`` → +z (opposite to gravitational acceleration)
 

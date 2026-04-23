@@ -15,7 +15,7 @@ The concise factory-function equivalent appears at the end.
 The package supports two standard coordinate conventions.  Each maps the
 physical directions of the instrument to Cartesian unit vectors:
 
-| Basis | vertical | longitudinal | lateral | Used by |
+| Basis | vertical | longitudinal | transverse | Used by |
 |---|---|---|---|---|
 | {data}`~ad_hoc_diffractometer.factories.BASIS_YOU` | +x | +y | +z | {func}`~ad_hoc_diffractometer.presets.psic`, {func}`~ad_hoc_diffractometer.presets.sixc`, {func}`~ad_hoc_diffractometer.presets.kappa6c`, {func}`~ad_hoc_diffractometer.presets.zaxis`, {func}`~ad_hoc_diffractometer.presets.s2d2`, {func}`~ad_hoc_diffractometer.presets.fivec` |
 | {data}`~ad_hoc_diffractometer.factories.BASIS_BL` | +z | +y | +x | {func}`~ad_hoc_diffractometer.presets.fourcv`, {func}`~ad_hoc_diffractometer.presets.fourch`, {func}`~ad_hoc_diffractometer.presets.kappa4cv`, {func}`~ad_hoc_diffractometer.presets.kappa4ch` |
@@ -28,7 +28,7 @@ import numpy as np
 import ad_hoc_diffractometer as ahd
 
 BASIS = ahd.BASIS_BL
-LATERAL      = BASIS["lateral"]       # +x
+TRANSVERSE      = BASIS["transverse"]       # +x
 LONGITUDINAL = BASIS["longitudinal"]  # +y
 VERTICAL     = BASIS["vertical"]      # +z
 ```
@@ -50,18 +50,18 @@ The fourcv (vertical scattering plane, synchrotron) stack is:
 ```python
 stages = [
     # Sample stack — base stage first
-    ahd.Stage("omega",  -LATERAL,      parent=None,    role="sample"),
+    ahd.Stage("omega",  -TRANSVERSE,      parent=None,    role="sample"),
     ahd.Stage("chi",    +LONGITUDINAL, parent="omega", role="sample"),
-    ahd.Stage("phi",    -LATERAL,      parent="chi",   role="sample"),
+    ahd.Stage("phi",    -TRANSVERSE,      parent="chi",   role="sample"),
     # Detector — independent of the sample stack
-    ahd.Stage("ttheta", -LATERAL,      parent=None,    role="detector"),
+    ahd.Stage("ttheta", -TRANSVERSE,      parent=None,    role="detector"),
 ]
 ```
 
-`omega` and `ttheta` both rotate about the lateral axis, so their scattering
+`omega` and `ttheta` both rotate about the transverse axis, so their scattering
 plane is **vertical** (the synchrotron convention).  For the laboratory
-(horizontal scattering plane) convention swap every `LATERAL` for `VERTICAL`
-and every `LONGITUDINAL` for `LATERAL` — that is the {func}`~ad_hoc_diffractometer.presets.fourch` geometry.
+(horizontal scattering plane) convention swap every `TRANSVERSE` for `VERTICAL`
+and every `LONGITUDINAL` for `TRANSVERSE` — that is the {func}`~ad_hoc_diffractometer.presets.fourch` geometry.
 
 ---
 
@@ -140,12 +140,12 @@ Geometry: my_fourcv
   Mode: bisecting
 
   Sample stages:
-    omega   axis=-lateral    angle=  0.000°  limits=(-180.0, 180.0)
+    omega   axis=-transverse    angle=  0.000°  limits=(-180.0, 180.0)
     chi     axis=+longitudinal  angle=  0.000°  limits=(-180.0, 180.0)
-    phi     axis=-lateral    angle=  0.000°  limits=(-180.0, 180.0)
+    phi     axis=-transverse    angle=  0.000°  limits=(-180.0, 180.0)
 
   Detector stages:
-    ttheta  axis=-lateral    angle=  0.000°  limits=(-180.0, 180.0)
+    ttheta  axis=-transverse    angle=  0.000°  limits=(-180.0, 180.0)
 ```
 
 ---

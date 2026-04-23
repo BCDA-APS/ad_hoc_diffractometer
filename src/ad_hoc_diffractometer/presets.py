@@ -73,7 +73,7 @@ Naming convention:
 
 Scattering-plane suffix convention (``v`` / ``h``):
 
-- ``v`` — vertical scattering plane (synchrotron): ttheta rotates about the lateral axis
+- ``v`` — vertical scattering plane (synchrotron): ttheta rotates about the transverse axis
 - ``h`` — horizontal scattering plane (laboratory): ttheta rotates about the vertical axis
 
 Where no suffix is given, the detector convention is unambiguous (psic, sixc)
@@ -84,8 +84,8 @@ or the geometry uses a non-standard detector arrangement (zaxis, s2d2, fivec).
     kappa4ch and kappa4cv follow the same convention as fourch and fourcv.
 
 Kappa angle (alpha) convention (Walko 2016; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):
-    The kappa axis lies in the vertical-lateral plane, tilted alpha degrees
-    from the vertical axis toward the lateral axis.  Typical value: 50 deg.
+    The kappa axis lies in the vertical-transverse plane, tilted alpha degrees
+    from the vertical axis toward the transverse axis.  Typical value: 50 deg.
 
 Walko (2016) designations:
     S3D1      fourcv, fourch, kappa4cv, kappa4ch
@@ -151,18 +151,18 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
     You (1999) '4S+2D' six-circle diffractometer (psic geometry).
 
     Walko (2016) designation: S4D2.
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.
-    Detector axis: lateral.  Vertical scattering plane.
+    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
+    Detector axis: transverse.  Vertical scattering plane.
 
     Sample stack (floor first):
         mu  : vertical,     right-handed
-        eta : lateral,      left-handed
+        eta : transverse,   left-handed
         chi : longitudinal, right-handed
-        phi : lateral,      left-handed
+        phi : transverse,   left-handed
 
     Detector stack (floor first):
-        nu    : vertical, right-handed
-        delta : lateral,  left-handed
+        nu    : vertical,   right-handed
+        delta : transverse, left-handed
 
     mu and nu share the same vertical rotation axis; mechanically independent.
 
@@ -170,18 +170,18 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
                DOI: 10.1107/S0021889899001223
     """
     VERTICAL = basis["vertical"]
-    LATERAL = basis["lateral"]
+    TRANSVERSE = basis["transverse"]
     LONGITUDINAL = basis["longitudinal"]
     stages = [
         Stage("mu", +VERTICAL, parent=None, role="sample"),
-        Stage("eta", -LATERAL, parent="mu", role="sample"),
+        Stage("eta", -TRANSVERSE, parent="mu", role="sample"),
         Stage("chi", +LONGITUDINAL, parent="eta", role="sample"),
-        Stage("phi", -LATERAL, parent="chi", role="sample"),
+        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
         Stage("nu", +VERTICAL, parent=None, role="detector"),
-        Stage("delta", -LATERAL, parent="nu", role="detector"),
+        Stage("delta", -TRANSVERSE, parent="nu", role="detector"),
     ]
     # psic: 6 DOF, N-3=3 constraints needed per mode (You 1999, S4D2).
-    # Vertical bisect pair: eta(lateral) <-> delta(lateral)  => eta = delta/2
+    # Vertical bisect pair: eta(transverse) <-> delta(transverse)  => eta = delta/2
     # Horizontal bisect pair: mu(vertical) <-> nu(vertical)  => mu = nu/2
     modes = {
         # ── Implemented analytic modes ──────────────────────────────────────
@@ -292,7 +292,7 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
         basis=BASIS_YOU,
         description=(
             "You (1999) 4S+2D six-circle diffractometer "
-            "(lateral detector, vertical scattering plane, synchrotron)"
+            "(transverse detector, vertical scattering plane, synchrotron)"
         ),
         modes=modes,
         default_mode="bisecting_vertical",
@@ -307,32 +307,32 @@ def fourcv(basis: dict = BASIS_BL) -> AdHocDiffractometer:
     Walko (2016) designation: S3D1.
 
     Synchrotron configuration: omega and ttheta both rotate about the
-    lateral axis, so the scattering plane is vertical.  This exploits the
+    transverse axis, so the scattering plane is vertical.  This exploits the
     s-polarisation and tighter vertical collimation of synchrotron radiation
     (Walko 2016).
 
-    Default basis: Busing & Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.
+    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
 
     Sample stack (floor first):
-        omega  : lateral,      left-handed
+        omega  : transverse,   left-handed
         chi    : longitudinal, right-handed
-        phi    : lateral,      left-handed
+        phi    : transverse,   left-handed
 
     Detector (floor, mechanically independent of sample stack):
-        ttheta : lateral,      left-handed
+        ttheta : transverse,   left-handed
 
-    omega and ttheta share the same lateral axis; mechanically independent.
+    omega and ttheta share the same transverse axis; mechanically independent.
 
     References: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
                 D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
     """
-    LATERAL = basis["lateral"]
+    TRANSVERSE = basis["transverse"]
     LONGITUDINAL = basis["longitudinal"]
     stages = [
-        Stage("omega", -LATERAL, parent=None, role="sample"),
+        Stage("omega", -TRANSVERSE, parent=None, role="sample"),
         Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
-        Stage("phi", -LATERAL, parent="chi", role="sample"),
-        Stage("ttheta", -LATERAL, parent=None, role="detector"),
+        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
+        Stage("ttheta", -TRANSVERSE, parent=None, role="detector"),
     ]
     # fourcv: 4 DOF, N-3=1 constraint needed per mode.
     modes = {
@@ -369,7 +369,7 @@ def fourcv(basis: dict = BASIS_BL) -> AdHocDiffractometer:
         basis=BASIS_BL,
         description=(
             "Busing & Levy (1967) four-circle Eulerian diffractometer "
-            "(vertical scattering plane, lateral ttheta, synchrotron)"
+            "(vertical scattering plane, transverse ttheta, synchrotron)"
         ),
         modes=modes,
         default_mode="bisecting",
@@ -387,12 +387,12 @@ def fourch(basis: dict = BASIS_BL) -> AdHocDiffractometer:
     the vertical axis, so the scattering plane is horizontal.  This is the
     geometry described in Busing & Levy (1967), Fig. 1b.
 
-    Default basis: Busing & Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.
+    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
 
     Sample stack (floor first):
-        omega  : vertical, left-handed
-        chi    : lateral,  right-handed
-        phi    : vertical, left-handed
+        omega  : vertical,   left-handed
+        chi    : transverse, right-handed
+        phi    : vertical,   left-handed
 
     Detector (floor, mechanically independent):
         ttheta : vertical, left-handed
@@ -459,36 +459,36 @@ def sixc(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
 
     Also known as the IUCr six-circle diffractometer.
     Walko (2016) designation: (S3D2)1.
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.
+    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
 
     Sample and detector stacks share the alpha (rotary table) base stage,
     making this a coupled geometry.  Useful for surface diffraction.
 
     From Fig. 1 and §2.1 of Lohmeier & Vlieg (1993):
     alpha and gamma rotate about the vertical axis (x in LV convention).
-    omega, phi, and delta all rotate about the lateral axis (z in LV).
+    omega, phi, and delta all rotate about the transverse axis (z in LV).
     chi rotates about the longitudinal axis (y in LV).
 
     Stack (floor first)::
 
         alpha (shared base): vertical,     right-handed  [rotary table]
-          --> omega (sample):  lateral,      left-handed
+          --> omega (sample):  transverse,   left-handed
                 --> chi:       longitudinal, right-handed
-                      --> phi: lateral,      left-handed
-          --> delta (detector): lateral,     left-handed
+                      --> phi: transverse,   left-handed
+          --> delta (detector): transverse,  left-handed
                 --> gamma:      vertical,    right-handed
 
     Reference: M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993).
     """
     VERTICAL = basis["vertical"]
-    LATERAL = basis["lateral"]
+    TRANSVERSE = basis["transverse"]
     LONGITUDINAL = basis["longitudinal"]
     stages = [
         Stage("alpha", +VERTICAL, parent=None, role="sample"),
-        Stage("omega", -LATERAL, parent="alpha", role="sample"),
+        Stage("omega", -TRANSVERSE, parent="alpha", role="sample"),
         Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
-        Stage("phi", -LATERAL, parent="chi", role="sample"),
-        Stage("delta", -LATERAL, parent="alpha", role="detector"),
+        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
+        Stage("delta", -TRANSVERSE, parent="alpha", role="detector"),
         Stage("gamma", +VERTICAL, parent="delta", role="detector"),
     ]
     # sixc: 6 DOF, N-3=3 constraints needed per mode.
@@ -578,23 +578,23 @@ def kappa4cv(
     Walko (2016) designation: S3D1.
 
     The chi circle of a standard Eulerian fourcv is replaced by a kappa arm.
-    The kappa axis lies in the vertical-lateral plane, tilted alpha degrees
-    from the vertical toward the lateral axis.
+    The kappa axis lies in the vertical-transverse plane, tilted alpha degrees
+    from the vertical toward the transverse axis.
 
-    komega and ttheta both rotate about the lateral axis; the scattering
+    komega and ttheta both rotate about the transverse axis; the scattering
     plane is vertical (synchrotron convention).
 
-    Default basis: Busing & Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.
+    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
 
     Sample stack (floor first):
-        komega : lateral, left-handed
-        kappa  : tilted,  kappa_axis(alpha), right-handed
-        kphi   : lateral, left-handed
+        komega : transverse, left-handed
+        kappa  : tilted,     kappa_axis(alpha), right-handed
+        kphi   : transverse, left-handed
 
     Detector (floor, mechanically independent):
-        ttheta : lateral, left-handed
+        ttheta : transverse, left-handed
 
-    komega and ttheta share the same lateral axis; mechanically independent.
+    komega and ttheta share the same transverse axis; mechanically independent.
 
     Parameters
     ----------
@@ -605,13 +605,13 @@ def kappa4cv(
                 W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
                 ITC Vol. C, Sec. 2.2.6 (2006).
     """
-    LATERAL = basis["lateral"]
+    TRANSVERSE = basis["transverse"]
     kax = kappa_axis(alpha_deg, basis=basis)
     stages = [
-        Stage("komega", -LATERAL, parent=None, role="sample"),
+        Stage("komega", -TRANSVERSE, parent=None, role="sample"),
         Stage("kappa", kax, parent="komega", role="sample"),
-        Stage("kphi", -LATERAL, parent="kappa", role="sample"),
-        Stage("ttheta", -LATERAL, parent=None, role="detector"),
+        Stage("kphi", -TRANSVERSE, parent="kappa", role="sample"),
+        Stage("ttheta", -TRANSVERSE, parent=None, role="detector"),
     ]
     # kappa4cv: 4 DOF, N-3=1 constraint needed per mode.
     # Virtual Eulerian angles (omega, chi, phi) are computed from real kappa
@@ -678,7 +678,7 @@ def kappa4ch(
     Identical to kappa4cv() but komega and ttheta rotate about the vertical
     axis, giving a horizontal scattering plane (laboratory convention).
 
-    Default basis: Busing & Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.
+    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
 
     Sample stack (floor first):
         komega : vertical, left-handed
@@ -762,19 +762,19 @@ def kappa6c(
 
     Extends the kappa4cv geometry with two additional axes (mu, nu) in
     the style of the psic geometry (You 1999), giving full orientation freedom.
-    This is the synchrotron configuration with a lateral detector.
+    This is the synchrotron configuration with a transverse detector.
 
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.
+    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
 
     Sample stack (floor first):
         mu     : vertical,     right-handed   [outermost]
-        komega : lateral,      left-handed
+        komega : transverse,   left-handed
         kappa  : tilted,       kappa_axis(alpha), right-handed
-        kphi   : lateral,      left-handed
+        kphi   : transverse,   left-handed
 
     Detector stack (floor first):
         nu     : vertical,     right-handed
-        delta  : lateral,      left-handed
+        delta  : transverse,   left-handed
 
     mu and nu share the same vertical axis; mechanically independent.
 
@@ -788,18 +788,18 @@ def kappa6c(
                 ITC Vol. C, Sec. 2.2.6 (2006).
     """
     VERTICAL = basis["vertical"]
-    LATERAL = basis["lateral"]
+    TRANSVERSE = basis["transverse"]
     kax = kappa_axis(alpha_deg, basis=basis)
     stages = [
         Stage("mu", +VERTICAL, parent=None, role="sample"),
-        Stage("komega", -LATERAL, parent="mu", role="sample"),
+        Stage("komega", -TRANSVERSE, parent="mu", role="sample"),
         Stage("kappa", kax, parent="komega", role="sample"),
-        Stage("kphi", -LATERAL, parent="kappa", role="sample"),
+        Stage("kphi", -TRANSVERSE, parent="kappa", role="sample"),
         Stage("nu", +VERTICAL, parent=None, role="detector"),
-        Stage("delta", -LATERAL, parent="nu", role="detector"),
+        Stage("delta", -TRANSVERSE, parent="nu", role="detector"),
     ]
     # kappa6c: 6 DOF, N-3=3 constraints needed per mode.
-    # Vertical bisect pair: komega(lateral) <-> delta(lateral) => komega = delta/2
+    # Vertical bisect pair: komega(transverse) <-> delta(transverse) => komega = delta/2
     #   (approximates virtual omega_euler = delta/2; corrected by Issue I / #153)
     # Horizontal bisect pair: mu(vertical) <-> nu(vertical) => mu = nu/2
     # Virtual Eulerian angles (omega, chi, phi) via Walko (2016) eq. [16].
@@ -911,7 +911,7 @@ def kappa6c(
         basis=basis,
         description=(
             f"Six-circle kappa diffractometer, psic-style outer axes "
-            f"(lateral detector, synchrotron). "
+            f"(transverse detector, synchrotron). "
             f"Kappa alpha = {alpha_deg} deg."
         ),
         kappa_alpha_deg=alpha_deg,
@@ -931,7 +931,7 @@ def zaxis(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
     Z-axis four-circle diffractometer (general-inclination geometry).
 
     Walko (2016) designation: (S1D2)1.
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.
+    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
 
     Designed for surface diffraction.  The sample surface normal is aligned
     parallel to the Z-axis, so the angle of incidence equals the alpha angle.
@@ -941,7 +941,7 @@ def zaxis(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
 
         alpha (shared base): vertical,     right-handed
           --> Z     (sample)  : longitudinal, right-handed
-          --> delta (detector): lateral,      left-handed
+          --> delta (detector): transverse,   left-handed
                 --> gamma :     vertical,     right-handed
 
     The total scattering angle is a compound of gamma, delta, and alpha
@@ -954,12 +954,12 @@ def zaxis(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
     D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.
     """
     VERTICAL = basis["vertical"]
-    LATERAL = basis["lateral"]
+    TRANSVERSE = basis["transverse"]
     LONGITUDINAL = basis["longitudinal"]
     stages = [
         Stage("alpha", +VERTICAL, parent=None, role="sample"),
         Stage("Z", +LONGITUDINAL, parent="alpha", role="sample"),
-        Stage("delta", -LATERAL, parent="alpha", role="detector"),
+        Stage("delta", -TRANSVERSE, parent="alpha", role="detector"),
         Stage("gamma", +VERTICAL, parent="delta", role="detector"),
     ]
     # zaxis: 4 DOF, N-3=1 constraint needed per mode.
@@ -995,7 +995,7 @@ def s2d2(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
     S2D2 four-circle diffractometer (general-inclination geometry).
 
     Walko (2016) designation: S2D2.
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.
+    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
 
     Two independent sample axes (mu, Z) and two independent detector axes
     (nu, delta), all mechanically decoupled.  The angle of incidence is the
@@ -1009,7 +1009,7 @@ def s2d2(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
     Detector stack (floor first)::
 
         nu    : vertical,     right-handed
-          --> delta : lateral, left-handed
+          --> delta : transverse, left-handed
 
     mu and nu share the same vertical axis; mechanically independent.
 
@@ -1022,13 +1022,13 @@ def s2d2(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
     D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.
     """
     VERTICAL = basis["vertical"]
-    LATERAL = basis["lateral"]
+    TRANSVERSE = basis["transverse"]
     LONGITUDINAL = basis["longitudinal"]
     stages = [
         Stage("mu", +VERTICAL, parent=None, role="sample"),
         Stage("Z", +LONGITUDINAL, parent="mu", role="sample"),
         Stage("nu", +VERTICAL, parent=None, role="detector"),
-        Stage("delta", -LATERAL, parent="nu", role="detector"),
+        Stage("delta", -TRANSVERSE, parent="nu", role="detector"),
     ]
     # s2d2: 4 DOF, N-3=1 constraint needed per mode.
     modes = {
@@ -1061,7 +1061,7 @@ def fivec(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
     Five-circle diffractometer (fourcv mounted on a vertical base).
 
     Walko (2016) designation: (S3D1)1.
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.
+    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
 
     A standard Eulerian four-circle (fourcv) is mounted on a fifth vertical
     rotation stage (mu) as a base.  The sample and detector motions are coupled
@@ -1071,24 +1071,24 @@ def fivec(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
     Stack (floor first)::
 
         mu (shared base): vertical,     right-handed
-          --> omega (sample): lateral,      left-handed
+          --> omega (sample): transverse,   left-handed
                 --> chi:      longitudinal, right-handed
-                      --> phi: lateral,     left-handed
-          --> ttheta (detector): lateral,   left-handed
+                      --> phi: transverse,  left-handed
+          --> ttheta (detector): transverse, left-handed
 
     References:
     E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
     D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
     """
     VERTICAL = basis["vertical"]
-    LATERAL = basis["lateral"]
+    TRANSVERSE = basis["transverse"]
     LONGITUDINAL = basis["longitudinal"]
     stages = [
         Stage("mu", +VERTICAL, parent=None, role="sample"),
-        Stage("omega", -LATERAL, parent="mu", role="sample"),
+        Stage("omega", -TRANSVERSE, parent="mu", role="sample"),
         Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
-        Stage("phi", -LATERAL, parent="chi", role="sample"),
-        Stage("ttheta", -LATERAL, parent="mu", role="detector"),
+        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
+        Stage("ttheta", -TRANSVERSE, parent="mu", role="detector"),
     ]
     # fivec: 5 DOF, N-3=2 constraints needed per mode.
     # With mu=0 the geometry reduces to fourcv; the bisecting solver

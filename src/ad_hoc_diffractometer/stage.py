@@ -25,7 +25,7 @@ class Stage:
       - a name (e.g. 'mu', 'eta', 'chi')
       - a rotation axis expressed as a signed Cartesian vector in the lab
         frame (e.g. +XHAT for right-handed vertical, -ZHAT for left-handed
-        lateral).  Use axes.parse_axis() to construct this from the
+        transverse).  Use axes.parse_axis() to construct this from the
         caller-facing notation.
       - a parent stage name (the stage on which this one sits), or None if
         it sits on the floor / fixed lab frame.

@@ -71,7 +71,7 @@ def _simple_geometry(**kwargs):
     return AdHocDiffractometer(
         name="test_geom",
         stages=stages,
-        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+        basis={"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT},
         **kwargs,
     )
 
@@ -87,7 +87,7 @@ def _fourcv_like(**kwargs):
     return AdHocDiffractometer(
         name="fourcv_like",
         stages=stages,
-        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+        basis={"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT},
         **kwargs,
     )
 
@@ -105,7 +105,7 @@ def _psic_like(**kwargs):
     return AdHocDiffractometer(
         name="psic_like",
         stages=stages,
-        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+        basis={"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT},
         **kwargs,
     )
 
@@ -750,7 +750,7 @@ def test_bisect_constraint_explicit_stages_no_axis_heuristic():
     g = AdHocDiffractometer(
         name="antipar",
         stages=stages,
-        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+        basis={"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT},
     )
     bc = BisectConstraint("omega", "ttheta")
     assert bc.is_implemented(g) is True
@@ -2245,7 +2245,7 @@ def test_qaz_residual_few_detector_stages_raises():
     g_1det = AdHocDiffractometer(
         name="one_det",
         stages=stages,
-        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+        basis={"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT},
     )
     angles = {"omega": 0.0, "ttheta": 20.0}
     with pytest.raises(ValueError, match=re.escape("at least 2 detector stages")):

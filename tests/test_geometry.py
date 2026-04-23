@@ -50,28 +50,28 @@ _VALID_STAGES = [Stage("a", XHAT, parent=None, role="sample")]
     "basis, context",
     [
         pytest.param(
-            {"lateral": XHAT, "longitudinal": YHAT, "vertical": ZHAT},
+            {"transverse": XHAT, "longitudinal": YHAT, "vertical": ZHAT},
             does_not_raise(),
             id="valid-orthogonal-three-vectors",
         ),
         pytest.param(
-            {"longitudinal": YHAT, "lateral": XHAT, "vertical": ZHAT},
+            {"longitudinal": YHAT, "transverse": XHAT, "vertical": ZHAT},
             does_not_raise(),
             id="valid-orthogonal-different-dict-order",
         ),
         pytest.param(
-            {"lateral": XHAT, "longitudinal": YHAT, "vertical": -ZHAT},
+            {"transverse": XHAT, "longitudinal": YHAT, "vertical": -ZHAT},
             does_not_raise(),
             id="valid-orthogonal-negated-vector",
         ),
         pytest.param(
-            {"lateral": -XHAT, "longitudinal": YHAT, "vertical": ZHAT},
+            {"transverse": -XHAT, "longitudinal": YHAT, "vertical": ZHAT},
             does_not_raise(),
             id="valid-orthogonal-negated-first-vector",
         ),
         pytest.param(
             {
-                "lateral": np.array([0.0, 0.0, 1.0]),
+                "transverse": np.array([0.0, 0.0, 1.0]),
                 "longitudinal": np.array([0.0, 1.0, 0.0]),
                 "vertical": np.array([0.0, 0.0, 1.0]),
             },
@@ -80,7 +80,7 @@ _VALID_STAGES = [Stage("a", XHAT, parent=None, role="sample")]
         ),
         pytest.param(
             {
-                "lateral": XHAT,
+                "transverse": XHAT,
                 "longitudinal": np.array([0.5, 0.5, 0.0]),
                 "vertical": ZHAT,
             },
@@ -89,7 +89,7 @@ _VALID_STAGES = [Stage("a", XHAT, parent=None, role="sample")]
         ),
         pytest.param(
             {
-                "lateral": XHAT,
+                "transverse": XHAT,
                 "longitudinal": np.array([0.0, 1.0, 1.0]) / np.sqrt(2),
                 "vertical": ZHAT,
             },
@@ -97,7 +97,7 @@ _VALID_STAGES = [Stage("a", XHAT, parent=None, role="sample")]
             id="invalid-third-pair-not-orthogonal",
         ),
         pytest.param(
-            {"lateral": XHAT, "longitudinal": YHAT},
+            {"transverse": XHAT, "longitudinal": YHAT},
             pytest.raises(ValueError, match=re.escape("exactly 3 vectors")),
             id="invalid-only-two-basis-vectors",
         ),
@@ -108,7 +108,7 @@ _VALID_STAGES = [Stage("a", XHAT, parent=None, role="sample")]
         ),
         pytest.param(
             {
-                "lateral": np.array([0.0, 0.0, 0.0]),
+                "transverse": np.array([0.0, 0.0, 0.0]),
                 "longitudinal": YHAT,
                 "vertical": ZHAT,
             },
@@ -116,13 +116,17 @@ _VALID_STAGES = [Stage("a", XHAT, parent=None, role="sample")]
             id="invalid-zero-basis-vector",
         ),
         pytest.param(
-            {"lateral": np.array([1.0, 0.0]), "longitudinal": YHAT, "vertical": ZHAT},
+            {
+                "transverse": np.array([1.0, 0.0]),
+                "longitudinal": YHAT,
+                "vertical": ZHAT,
+            },
             pytest.raises(ValueError, match=re.escape("3-dimensional")),
             id="invalid-2d-basis-vector",
         ),
         pytest.param(
             {
-                "lateral": np.array([1.0, 0.0, 0.0, 0.0]),
+                "transverse": np.array([1.0, 0.0, 0.0, 0.0]),
                 "longitudinal": YHAT,
                 "vertical": ZHAT,
             },
@@ -824,8 +828,8 @@ def test_azimuthal_reference_wrong_length_raises():
 # ---------------------------------------------------------------------------
 #
 # Setup: fourcv, cubic a=1 (B=I), lambda=2*pi, UB=I.
-# At chi=0, phi=0, Q = XHAT (lateral in BL convention).
-# Scattering plane = span(YHAT_BL, XHAT_BL) = lateral-longitudinal plane.
+# At chi=0, phi=0, Q = XHAT (transverse in BL convention).
+# Scattering plane = span(YHAT_BL, XHAT_BL) = transverse-longitudinal plane.
 #
 # n=(0,1,0)=YHAT_BL: lies in scattering plane → psi=0.
 # n=(0,0,1)=ZHAT_BL: perpendicular to scattering plane → psi=90.
@@ -835,8 +839,8 @@ def _fourcv_identity():
     """fourcv with B=I (a=1), lambda=2pi, UB=I, azimuthal_reference=(1,0,0).
 
     With the corrected fourcv (vertical scattering plane), omega and ttheta
-    rotate about the lateral (-x) axis.  At chi=0, phi=0, omega=30, ttheta=60
-    Q points along -z (vertical).  XHAT_BL = (1,0,0) = lateral is perpendicular
+    rotate about the transverse (-x) axis.  At chi=0, phi=0, omega=30, ttheta=60
+    Q points along -z (vertical).  XHAT_BL = (1,0,0) = transverse is perpendicular
     to Q and to the scattering plane.
     """
     from ad_hoc_diffractometer import Lattice
@@ -847,7 +851,11 @@ def _fourcv_identity():
     g.wavelength = 2 * _math.pi
     g.sample.lattice = Lattice(a=1.0)
     ub_identity(g.sample)
-    g.azimuthal_reference = (1, 0, 0)  # XHAT_BL = lateral ⊥ scattering plane at chi=0
+    g.azimuthal_reference = (
+        1,
+        0,
+        0,
+    )  # XHAT_BL = transverse ⊥ scattering plane at chi=0
     return g
 
 
@@ -861,9 +869,13 @@ def test_psi_returns_float():
 
 
 def test_psi_n_perpendicular_to_scattering_plane_is_90():
-    """n=(1,0,0) = XHAT_BL (lateral) ⊥ vertical scattering plane at chi=0 → psi=90."""
+    """n=(1,0,0) = XHAT_BL (transverse) ⊥ vertical scattering plane at chi=0 → psi=90."""
     g = _fourcv_identity()
-    g.azimuthal_reference = (1, 0, 0)  # XHAT_BL = lateral ⊥ vertical scattering plane
+    g.azimuthal_reference = (
+        1,
+        0,
+        0,
+    )  # XHAT_BL = transverse ⊥ vertical scattering plane
     angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0}
     psi = g.psi(angles)
     assert abs(psi - 90.0) < 1e-8
@@ -889,7 +901,7 @@ def test_psi_uses_current_angles_when_none_passed():
     g.set_angle("chi", 0.0)
     g.set_angle("phi", 0.0)
     g.set_angle("ttheta", 60.0)
-    g.azimuthal_reference = (1, 0, 0)  # lateral — perpendicular to Q at these angles
+    g.azimuthal_reference = (1, 0, 0)  # transverse — perpendicular to Q at these angles
     psi_implicit = g.psi()
     psi_explicit = g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
     assert abs(psi_implicit - psi_explicit) < 1e-10

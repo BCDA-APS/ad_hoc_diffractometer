@@ -27,7 +27,7 @@ We define a right-handed coordinate system with basis vectors assigned as follow
 
 \begin{align*}
 \hat{x} &= \text{longitudinal (toward equipment, our line of sight)} \\
-\hat{y} &= \text{lateral (to our left)} \\
+\hat{y} &= \text{transverse (to our left)} \\
 \hat{z} &= \text{vertical (normal to the floor, pointing upward)}
 \end{align*}
 
@@ -43,7 +43,7 @@ orientation (all angles at $0^\circ$), the stacks are described as follows.
 \begin{itemize}
   \item \textbf{S1-1}: rotation axis in the vertical direction ($+\hat{z}$).
     Sign of rotation consistent with the coordinate system (right-hand rule about $+\hat{z}$).
-  \item \textbf{S1-2}: sits on S1-1. Rotation axis in the lateral direction ($+\hat{y}$).
+  \item \textbf{S1-2}: sits on S1-1. Rotation axis in the transverse direction ($+\hat{y}$).
     Positive rotation takes $+\hat{x}$ toward $+\hat{z}$.
     The detector is mounted on a radial arm on S1-2, directed toward the point of intersection.
 \end{itemize}
@@ -54,7 +54,7 @@ orientation (all angles at $0^\circ$), the stacks are described as follows.
   \item \textbf{S2-1}: rotation axis in the vertical direction ($+\hat{z}$).
     Axis is colinear with S1-1; the two stages are mechanically independent.
     Sign of rotation consistent with the coordinate system.
-  \item \textbf{S2-2}: sits on S2-1. Rotation axis in the lateral direction ($+\hat{y}$).
+  \item \textbf{S2-2}: sits on S2-1. Rotation axis in the transverse direction ($+\hat{y}$).
     Same sign of rotation as S1-2.
   \item \textbf{S2-3}: sits on S2-2. Rotation axis in the longitudinal direction ($+\hat{x}$).
     Sign of rotation consistent with the coordinate system (right-hand rule about $+\hat{x}$).
@@ -71,7 +71,7 @@ We assign basis vectors to the reference frame as follows:
 
 \begin{align*}
 \hat{x} &= \text{longitudinal} \\
-\hat{y} &= \text{lateral} \\
+\hat{y} &= \text{transverse} \\
 \hat{z} &= \text{vertical}
 \end{align*}
 
@@ -90,7 +90,7 @@ positive axis vector and the fingers curl in the direction of positive rotation.
 Stage & Physical Axis & Axis Vector & Positive Rotation \\
 \midrule
 S1-1 & vertical & $+\hat{z}$ & CCW viewed from $+\hat{z}$ \\
-S1-2 & lateral  & $+\hat{y}$ & $+\hat{x}$ toward $+\hat{z}$ \\
+S1-2 & transverse  & $+\hat{y}$ & $+\hat{x}$ toward $+\hat{z}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -105,7 +105,7 @@ The detector is mounted on a radial arm on S1-2, directed inward toward the samp
 Stage & Physical Axis & Axis Vector & Positive Rotation \\
 \midrule
 S2-1 & vertical     & $+\hat{z}$ & CCW viewed from $+\hat{z}$ \\
-S2-2 & lateral      & $+\hat{y}$ & $+\hat{x}$ toward $+\hat{z}$ \\
+S2-2 & transverse      & $+\hat{y}$ & $+\hat{x}$ toward $+\hat{z}$ \\
 S2-3 & longitudinal & $+\hat{x}$ & $+\hat{y}$ toward $+\hat{z}$ \\
 S2-4 & vertical     & $+\hat{z}$ & CCW viewed from $+\hat{z}$ \\
 \bottomrule
@@ -191,17 +191,17 @@ directions there are \textbf{6 possible right-handed assignments}:
 \toprule
 Assignment & $\hat{x}$ & $\hat{y}$ & $\hat{z}$ \\
 \midrule
-1 (chosen) & longitudinal & lateral      & vertical     \\
-2          & lateral      & vertical     & longitudinal \\
-3          & vertical     & longitudinal & lateral      \\
-4          & lateral      & longitudinal & vertical     \\
-5          & longitudinal & vertical     & lateral      \\
-6          & vertical     & lateral      & longitudinal \\
+1 (chosen) & longitudinal & transverse      & vertical     \\
+2          & transverse      & vertical     & longitudinal \\
+3          & vertical     & longitudinal & transverse      \\
+4          & transverse      & longitudinal & vertical     \\
+5          & longitudinal & vertical     & transverse      \\
+6          & vertical     & transverse      & longitudinal \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Assignments 1--3 are cyclic (even) permutations of (longitudinal, lateral, vertical);
+Assignments 1--3 are cyclic (even) permutations of (longitudinal, transverse, vertical);
 assignments 4--6 are anti-cyclic (odd) permutations. Both sets are right-handed.
 
 \subsection*{Stage Axis Vectors Under Each Assignment}
@@ -214,9 +214,9 @@ The physical rotation axes are unchanged; only their coordinate expression varie
 Stage & Physical Axis & A1 & A2 & A3 & A4 & A5 & A6 \\
 \midrule
 S1-1 & vertical     & $+\hat{z}$ & $+\hat{x}$ & $+\hat{y}$ & $+\hat{z}$ & $+\hat{y}$ & $+\hat{x}$ \\
-S1-2 & lateral      & $+\hat{y}$ & $+\hat{z}$ & $+\hat{x}$ & $+\hat{x}$ & $+\hat{z}$ & $+\hat{y}$ \\
+S1-2 & transverse      & $+\hat{y}$ & $+\hat{z}$ & $+\hat{x}$ & $+\hat{x}$ & $+\hat{z}$ & $+\hat{y}$ \\
 S2-1 & vertical     & $+\hat{z}$ & $+\hat{x}$ & $+\hat{y}$ & $+\hat{z}$ & $+\hat{y}$ & $+\hat{x}$ \\
-S2-2 & lateral      & $+\hat{y}$ & $+\hat{z}$ & $+\hat{x}$ & $+\hat{x}$ & $+\hat{z}$ & $+\hat{y}$ \\
+S2-2 & transverse      & $+\hat{y}$ & $+\hat{z}$ & $+\hat{x}$ & $+\hat{x}$ & $+\hat{z}$ & $+\hat{y}$ \\
 S2-3 & longitudinal & $+\hat{x}$ & $+\hat{y}$ & $+\hat{z}$ & $+\hat{y}$ & $+\hat{x}$ & $+\hat{z}$ \\
 S2-4 & vertical     & $+\hat{z}$ & $+\hat{x}$ & $+\hat{y}$ & $+\hat{z}$ & $+\hat{y}$ & $+\hat{x}$ \\
 \bottomrule

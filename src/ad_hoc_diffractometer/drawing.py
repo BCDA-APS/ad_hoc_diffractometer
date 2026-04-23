@@ -45,7 +45,7 @@ from .axes import axis_label
 def _physical_label(axis_vec: np.ndarray, basis: dict | None) -> str:
     """Return a human-readable axis label with physical direction if possible.
 
-    For standard signed basis vectors, returns e.g. ``"-lateral"`` or
+    For standard signed basis vectors, returns e.g. ``"-transverse"`` or
     ``"+vertical"``.  For tilted axes (kappa), returns the numeric label.
     """
     if basis is None:
@@ -183,11 +183,11 @@ _VIEW_AZIM = 110
 # Per-direction arc start offsets (radians) so the arc is not edge-on.
 _ARC_START_OFFSETS = {
     "vertical": np.radians(90),
-    "lateral": np.radians(130),
+    "transverse": np.radians(130),
     "longitudinal": np.radians(90),
 }
 
-_BASIS_COLORS = {"vertical": "green", "longitudinal": "blue", "lateral": "red"}
+_BASIS_COLORS = {"vertical": "green", "longitudinal": "blue", "transverse": "red"}
 
 
 def _require_matplotlib():
@@ -214,7 +214,7 @@ def _display_rotation(basis: dict) -> np.ndarray:
     ----------
     basis : dict
         Basis dictionary with ``"vertical"``, ``"longitudinal"``,
-        ``"lateral"`` keys.
+        ``"transverse"`` keys.
 
     Returns
     -------
@@ -222,7 +222,7 @@ def _display_rotation(basis: dict) -> np.ndarray:
         Rotation matrix R such that ``R @ v`` maps a vector from the
         Cartesian frame into display coordinates.
     """
-    lat = np.asarray(basis["lateral"], dtype=float)
+    lat = np.asarray(basis["transverse"], dtype=float)
     lon = np.asarray(basis["longitudinal"], dtype=float)
     ver = np.asarray(basis["vertical"], dtype=float)
     return np.array([lat, lon, ver])
@@ -231,7 +231,7 @@ def _display_rotation(basis: dict) -> np.ndarray:
 def _stage_draw_direction(stage_axis: np.ndarray, basis: dict) -> tuple:
     """Determine the drawing direction for a stage axis.
 
-    Negative-signed axes (e.g. -lateral) are drawn in the positive basis
+    Negative-signed axes (e.g. -transverse) are drawn in the positive basis
     direction for visibility; the sign is conveyed by the subtitle and
     arc labels.
 
@@ -239,7 +239,7 @@ def _stage_draw_direction(stage_axis: np.ndarray, basis: dict) -> tuple:
     -------
     tuple of (draw_direction, axis_type, is_negated)
         draw_direction : np.ndarray — unit vector for drawing
-        axis_type : str or None — "vertical", "lateral", "longitudinal", or None
+        axis_type : str or None — "vertical", "transverse", "longitudinal", or None
         is_negated : bool — True if the stage axis is the negation of a basis vector
     """
     atol = 1e-8
@@ -399,7 +399,7 @@ def draw_stage_axis(  # pragma: no cover
 
     The view is oriented so that the vertical basis vector points up,
     the longitudinal vector points away (into the screen), and the
-    lateral vector points to the left.  This convention is independent
+    transverse vector points to the left.  This convention is independent
     of the Cartesian-axis mapping used by the geometry's basis.
 
     Parameters
@@ -464,7 +464,7 @@ def draw_geometry_axes(  # pragma: no cover
     """Draw a composite figure with all stages of a geometry.
 
     Each subplot uses the same physical view convention as
-    :func:`draw_stage_axis`: vertical up, longitudinal away, lateral left.
+    :func:`draw_stage_axis`: vertical up, longitudinal away, transverse left.
 
     Parameters
     ----------
@@ -745,7 +745,7 @@ class StageAxisFigure:  # pragma: no cover
         go = self._go
         ver = np.asarray(self.geometry.basis["vertical"], dtype=float)
         lon = np.asarray(self.geometry.basis["longitudinal"], dtype=float)
-        lat = np.asarray(self.geometry.basis["lateral"], dtype=float)
+        lat = np.asarray(self.geometry.basis["transverse"], dtype=float)
 
         # R maps basis vectors to display coordinates:
         #   lat  -> +x; lon -> -y; ver -> +z (up on screen)
@@ -809,10 +809,10 @@ class StageAxisFigure:  # pragma: no cover
 
         stage_axis = np.asarray(self.stage.axis, dtype=float)
         stage_norm = stage_axis / np.linalg.norm(stage_axis)
-        lat_norm = np.asarray(self.geometry.basis["lateral"], dtype=float)
+        lat_norm = np.asarray(self.geometry.basis["transverse"], dtype=float)
         lat_norm = lat_norm / np.linalg.norm(lat_norm)
-        is_lateral = np.isclose(abs(np.dot(stage_norm, lat_norm)), 1.0, atol=1e-6)
-        direction = -1 if is_lateral else 1
+        is_transverse = np.isclose(abs(np.dot(stage_norm, lat_norm)), 1.0, atol=1e-6)
+        direction = -1 if is_transverse else 1
 
         self._draw_axis_arc(axis_norm, direction=direction)
 
