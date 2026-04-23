@@ -25,58 +25,24 @@ and mode configuration.
 
 ## Stage layout
 
-### Stage coupling
+<iframe
+  src="../_static/geometries/zaxis/zaxis.html"
+  width="100%"
+  height="1230px"
+  style="border:none;"
+  loading="lazy">
+</iframe>
 
-```{graphviz}
-digraph zaxis {
-    rankdir=BT;
-    label="zaxis";
-    labelloc=t;
-    fontsize=14;
-    node [shape=box, style=filled, fontsize=11];
-
-    alpha [label="alpha\naxis: +vertical\nRH", fillcolor="#a8d8ea"];
-    Z [label="Z\naxis: +longitudinal\nRH", fillcolor="#a8d8ea"];
-    delta [label="delta\naxis: -lateral\nLH", fillcolor="#f8a5a5"];
-    gamma [label="gamma\naxis: +vertical\nRH", fillcolor="#f8a5a5"];
-
-    Z -> alpha;
-    delta -> alpha;
-    gamma -> delta;
-
-    // Legend
-    subgraph cluster_legend {
-        label="Legend";
-        fontsize=8;
-        style=dashed;
-        color=gray;
-        sample_legend [label="sample", fillcolor="#a8d8ea", shape=box, style=filled, fontsize=7];
-        detector_legend [label="detector", fillcolor="#f8a5a5", shape=box, style=filled, fontsize=7];
-        sample_legend -> detector_legend [style=invis];
-    }
-}
+```{raw} html
+<details>
+<summary>Static fallback (click to expand if the interactive figure above is blank)</summary>
 ```
 
-### Axis overview
+![zaxis stage layout](../_static/geometries/zaxis/zaxis.svg)
 
-![zaxis stage axes](../_static/geometries/zaxis/zaxis_all.svg)
-
-### Per-stage axis diagrams
-
-::::{tab-set}
-:::{tab-item} alpha
-![alpha axis](../_static/geometries/zaxis/alpha.svg)
-:::
-:::{tab-item} Z
-![Z axis](../_static/geometries/zaxis/Z.svg)
-:::
-:::{tab-item} delta
-![delta axis](../_static/geometries/zaxis/delta.svg)
-:::
-:::{tab-item} gamma
-![gamma axis](../_static/geometries/zaxis/gamma.svg)
-:::
-::::
+```{raw} html
+</details>
+```
 
 **Sample stages (base first):**
 
