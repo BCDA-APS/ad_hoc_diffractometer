@@ -23,69 +23,24 @@ and mode configuration.
 
 ## Stage layout
 
-### Stage coupling
+<iframe
+  src="../_static/geometries/kappa6c/kappa6c.html"
+  width="100%"
+  height="1630px"
+  style="border:none;"
+  loading="lazy">
+</iframe>
 
-```{graphviz}
-digraph kappa6c {
-    rankdir=BT;
-    label="kappa6c";
-    labelloc=t;
-    fontsize=14;
-    node [shape=box, style=filled, fontsize=11];
-
-    mu [label="mu\naxis: +vertical\nRH", fillcolor="#a8d8ea"];
-    komega [label="komega\naxis: -lateral\nLH", fillcolor="#a8d8ea"];
-    kappa [label="kappa\naxis: [0.6428, 0, 0.766]\nRH", fillcolor="#a8d8ea"];
-    kphi [label="kphi\naxis: -lateral\nLH", fillcolor="#a8d8ea"];
-    nu [label="nu\naxis: +vertical\nRH", fillcolor="#f8a5a5"];
-    delta [label="delta\naxis: -lateral\nLH", fillcolor="#f8a5a5"];
-
-    { rank=same; mu; nu; }
-
-    komega -> mu;
-    kappa -> komega;
-    kphi -> kappa;
-    delta -> nu;
-
-    // Legend
-    subgraph cluster_legend {
-        label="Legend";
-        fontsize=8;
-        style=dashed;
-        color=gray;
-        sample_legend [label="sample", fillcolor="#a8d8ea", shape=box, style=filled, fontsize=7];
-        detector_legend [label="detector", fillcolor="#f8a5a5", shape=box, style=filled, fontsize=7];
-        sample_legend -> detector_legend [style=invis];
-    }
-}
+```{raw} html
+<details>
+<summary>Static fallback (click to expand if the interactive figure above is blank)</summary>
 ```
 
-### Axis overview
+![kappa6c stage layout](../_static/geometries/kappa6c/kappa6c.svg)
 
-![kappa6c stage axes](../_static/geometries/kappa6c/kappa6c_all.svg)
-
-### Per-stage axis diagrams
-
-::::{tab-set}
-:::{tab-item} mu
-![mu axis](../_static/geometries/kappa6c/mu.svg)
-:::
-:::{tab-item} komega
-![komega axis](../_static/geometries/kappa6c/komega.svg)
-:::
-:::{tab-item} kappa
-![kappa axis](../_static/geometries/kappa6c/kappa.svg)
-:::
-:::{tab-item} kphi
-![kphi axis](../_static/geometries/kappa6c/kphi.svg)
-:::
-:::{tab-item} nu
-![nu axis](../_static/geometries/kappa6c/nu.svg)
-:::
-:::{tab-item} delta
-![delta axis](../_static/geometries/kappa6c/delta.svg)
-:::
-::::
+```{raw} html
+</details>
+```
 
 **Sample stages (base first):**
 
