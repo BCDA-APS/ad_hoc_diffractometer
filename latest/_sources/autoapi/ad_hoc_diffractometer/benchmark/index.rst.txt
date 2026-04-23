@@ -1,0 +1,158 @@
+benchmark
+=========
+
+.. py:module:: ad_hoc_diffractometer.benchmark
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.benchmark``
+
+   Measures the throughput (operations per second) and round-trip accuracy
+   of :meth:`~geometry.AdHocDiffractometer.forward` and
+   :meth:`~geometry.AdHocDiffractometer.inverse` across all preset
+   geometries and their declared diffraction modes.
+
+   Usage from the command line::
+
+       python -m ad_hoc_diffractometer.benchmark
+
+   Usage from Python::
+
+       from ad_hoc_diffractometer.benchmark import benchmark_all, benchmark_geometry
+
+       results = benchmark_all()
+       results = benchmark_geometry("fourcv")
+
+   Each result is a dict with keys:
+
+   - ``geometry`` (str): geometry name
+   - ``mode`` (str): mode name
+   - ``status`` (str): one of ``"ok"``, ``"no_solutions"``,
+     ``"not_implemented"``, ``"error"``
+   - ``forward_ops_per_sec`` (float or None)
+   - ``inverse_ops_per_sec`` (float or None)
+   - ``round_trip_max_error`` (float or None)
+   - ``n_reflections`` (int): number of reflections attempted
+   - ``n_solutions`` (int): total solutions returned
+   - ``error_message`` (str or None): exception text when status is ``"error"``
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.benchmark.DEFAULT_LATTICE_A
+   ad_hoc_diffractometer.benchmark.DEFAULT_N_ITER
+   ad_hoc_diffractometer.benchmark.DEFAULT_REFLECTIONS
+   ad_hoc_diffractometer.benchmark.DEFAULT_WAVELENGTH
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.benchmark.benchmark_all
+   ad_hoc_diffractometer.benchmark.benchmark_geometry
+   ad_hoc_diffractometer.benchmark.benchmark_mode
+
+
+Module Contents
+---------------
+
+.. py:data:: DEFAULT_LATTICE_A
+   :type:  float
+   :value: 4.0
+
+
+   Cubic lattice parameter in Å.
+
+.. py:data:: DEFAULT_N_ITER
+   :type:  int
+   :value: 100
+
+
+   Number of timing iterations per operation.
+
+.. py:data:: DEFAULT_REFLECTIONS
+   :type:  list[tuple[float, float, float]]
+   :value: [(1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 1, 0), (1, 1, 1)]
+
+
+   Reflections to benchmark.  All reachable with a=4 Å at Cu Kα.
+
+.. py:data:: DEFAULT_WAVELENGTH
+   :type:  float
+   :value: 1.5406
+
+
+   Cu Kα wavelength in Å.
+
+.. py:function:: benchmark_all(*, reflections: list[tuple[float, float, float]] | None = None, n_iter: int = DEFAULT_N_ITER, verbose: bool = True) -> list[dict]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.benchmark.benchmark_all``
+
+
+   Benchmark all modes of all registered geometries.
+
+   :param reflections: Reflections to use.  Defaults to :data:`DEFAULT_REFLECTIONS`.
+   :type reflections: list of (h, k, l) or None
+   :param n_iter: Number of timing iterations.
+   :type n_iter: int
+   :param verbose: If True, print a results table to stdout.
+   :type verbose: bool
+
+   :returns: One result dict per geometry+mode combination.
+   :rtype: list of dict
+
+
+.. py:function:: benchmark_geometry(name: str, *, reflections: list[tuple[float, float, float]] | None = None, n_iter: int = DEFAULT_N_ITER, verbose: bool = True) -> list[dict]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.benchmark.benchmark_geometry``
+
+
+   Benchmark all modes of a single geometry.
+
+   :param name: Name of a registered geometry (e.g. ``"fourcv"``).
+   :type name: str
+   :param reflections: Reflections to use.  Defaults to :data:`DEFAULT_REFLECTIONS`.
+   :type reflections: list of (h, k, l) or None
+   :param n_iter: Number of timing iterations.
+   :type n_iter: int
+   :param verbose: If True, print a results table to stdout.
+   :type verbose: bool
+
+   :returns: One result dict per mode.
+   :rtype: list of dict
+
+
+.. py:function:: benchmark_mode(geometry_name: str, mode_name: str, *, reflections: list[tuple[float, float, float]] | None = None, n_iter: int = DEFAULT_N_ITER) -> dict
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.benchmark.benchmark_mode``
+
+
+   Benchmark a single geometry + mode combination.
+
+   :param geometry_name: Name of a registered geometry (e.g. ``"fourcv"``).
+   :type geometry_name: str
+   :param mode_name: Name of a mode declared on the geometry.
+   :type mode_name: str
+   :param reflections: Reflections to use.  Defaults to :data:`DEFAULT_REFLECTIONS`.
+   :type reflections: list of (h, k, l) or None
+   :param n_iter: Number of timing iterations.  Defaults to :data:`DEFAULT_N_ITER`.
+   :type n_iter: int
+
+   :returns: Result dict with keys: ``geometry``, ``mode``, ``status``,
+             ``forward_ops_per_sec``, ``inverse_ops_per_sec``,
+             ``round_trip_max_error``, ``n_reflections``, ``n_solutions``,
+             ``error_message``.
+   :rtype: dict
+
+

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plan a Trajectory &#8212; ad_hoc_diffractometer 0.5</title>
+    <title>Measure Forward/Inverse Performance &#8212; ad_hoc_diffractometer 0.5</title>
   
   
   
@@ -49,7 +49,7 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=fd10adb8"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'howto/trajectory';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'howto/performance';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
@@ -60,8 +60,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Refine the Lattice Constants" href="refine_lattice.html" />
-    <link rel="prev" title="Surface Geometry and the Reference Vector" href="surface.html" />
+    <link rel="next" title="Align a Four-Circle Diffractometer (fourcv)" href="fourcv_alignment_howto.html" />
+    <link rel="prev" title="Set Diffractometer Inclination" href="inclination.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
@@ -394,11 +394,11 @@
 <li class="toctree-l2"><a class="reference internal" href="modes.html">Switch Diffraction Modes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="constraints.html">Work with Constraints and Diffraction Modes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="surface.html">Surface Geometry and the Reference Vector</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Plan a Trajectory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trajectory.html">Plan a Trajectory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="refine_lattice.html">Refine the Lattice Constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="serialize.html">Save and Restore a Diffractometer Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="inclination.html">Set Diffractometer Inclination</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance.html">Measure Forward/Inverse Performance</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Measure Forward/Inverse Performance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fourcv_alignment_howto.html">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</a></li>
 </ul>
 </details></li>
@@ -473,7 +473,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How-to Guides</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Plan a Trajectory</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Measure Forward/Inverse Performance</span></li>
   </ul>
 </nav>
 </div>
@@ -490,95 +490,144 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="plan-a-trajectory">
-<span id="howto-trajectory"></span><h1>Plan a Trajectory<a class="headerlink" href="#plan-a-trajectory" title="Link to this heading">#</a></h1>
-<p>This guide shows how to compute motor-angle sequences along paths through
-reciprocal space and for ψ scans.</p>
-<p>All three trajectory functions are <strong>generators</strong> — they yield one point dict
-at a time and compute each point lazily.  Use a <code class="docutils literal notranslate"><span class="pre">for</span></code> loop to process points
-one by one, or <code class="docutils literal notranslate"><span class="pre">list(func(...))</span></code> to collect all points at once.</p>
-<section id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+  <section class="tex2jax_ignore mathjax_ignore" id="measure-forward-inverse-performance">
+<span id="howto-performance"></span><h1>Measure Forward/Inverse Performance<a class="headerlink" href="#measure-forward-inverse-performance" title="Link to this heading">#</a></h1>
+<p>The <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/benchmark/index.html#module-ad_hoc_diffractometer.benchmark" title="ad_hoc_diffractometer.benchmark"><code class="xref py py-mod docutils literal notranslate"><span class="pre">benchmark</span></code></a> module measures the throughput
+(operations per second) and round-trip accuracy of
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a> and
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">inverse()</span></code></a> across
+all preset geometries and their declared diffraction modes.</p>
+<section id="run-the-benchmark">
+<h2>Run the benchmark<a class="headerlink" href="#run-the-benchmark" title="Link to this heading">#</a></h2>
+<p>From the command line:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>ad_hoc_diffractometer.benchmark
+</pre></div>
+</div>
+<p>From Python:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.benchmark</span><span class="w"> </span><span class="kn">import</span> <span class="n">benchmark_all</span><span class="p">,</span> <span class="n">benchmark_geometry</span>
+
+<span class="c1"># All geometries, all modes</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">benchmark_all</span><span class="p">()</span>
+
+<span class="c1"># Single geometry</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">benchmark_geometry</span><span class="p">(</span><span class="s2">&quot;fourcv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output is a formatted table:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>geometry   mode                     status       fwd ops/s  inv ops/s  round-trip err  solns
+fourcv     bisecting                ok               3,241     18,502        4.70e-13     11
+fourcv     fixed_chi                ok               2,890     18,102        3.40e-14     21
+fourcv     psi_constant             no_solutions      8,780          -               -      0
+</pre></div>
+</div>
+</section>
+<section id="output-columns">
+<h2>Output columns<a class="headerlink" href="#output-columns" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>geometry</strong></p></td>
+<td><p>Preset geometry name</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>mode</strong></p></td>
+<td><p>Diffraction mode name</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>status</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ok</span></code>, <code class="docutils literal notranslate"><span class="pre">no_solutions</span></code>, <code class="docutils literal notranslate"><span class="pre">not_implemented</span></code>, or <code class="docutils literal notranslate"><span class="pre">error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>fwd ops/s</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">forward()</span></code> operations per second</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>inv ops/s</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">inverse()</span></code> operations per second</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>round-trip err</strong></p></td>
+<td><p>Maximum ‖hkl − inverse(forward(hkl))‖∞</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>solns</strong></p></td>
+<td><p>Total solutions returned across all test reflections</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="status-values">
+<h2>Status values<a class="headerlink" href="#status-values" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>A geometry with wavelength and UB matrix set (see <a class="reference internal" href="orient.html"><span class="doc">Orient a Crystal</span></a>)</p></li>
-<li><p>A diffraction mode set on the geometry (see <a class="reference internal" href="modes.html"><span class="doc">Switch Diffraction Modes</span></a>) — the mode
-determines which motor angles are computed at each point along the
-trajectory</p></li>
+<li><p><strong>ok</strong> — <code class="docutils literal notranslate"><span class="pre">forward()</span></code> returned at least one solution; <code class="docutils literal notranslate"><span class="pre">inverse()</span></code> round-tripped
+successfully.</p></li>
+<li><p><strong>no_solutions</strong> — <code class="docutils literal notranslate"><span class="pre">forward()</span></code> returned no solutions for any of the test
+reflections.  This is expected for some geometry+mode+reflection combinations
+(e.g. psi-constant modes where the target ψ does not match the natural value).</p></li>
+<li><p><strong>not_implemented</strong> — the mode’s solver is not yet implemented for this
+geometry.  <code class="docutils literal notranslate"><span class="pre">forward()</span></code> raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p></li>
+<li><p><strong>error</strong> — an unexpected exception occurred during setup or computation.
+The error message is included in the result dict.</p></li>
 </ul>
 </section>
-<section id="hkl-trajectory-path-between-two-reflections">
-<h2>hkl trajectory — path between two reflections<a class="headerlink" href="#hkl-trajectory-path-between-two-reflections" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<section id="controlling-the-benchmark">
+<h2>Controlling the benchmark<a class="headerlink" href="#controlling-the-benchmark" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.benchmark</span><span class="w"> </span><span class="kn">import</span> <span class="n">benchmark_all</span>
 
-<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
-<span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
-<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.431</span><span class="p">)</span>
-<span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;bisecting&quot;</span>
+<span class="c1"># Fewer iterations (faster, noisier timing)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">benchmark_all</span><span class="p">(</span><span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
-<span class="c1"># Define a path in reciprocal space</span>
-<span class="n">trajectory</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;hkl_start&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;hkl_end&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)},</span>
-<span class="p">]</span>
+<span class="c1"># Custom reflections</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">benchmark_all</span><span class="p">(</span><span class="n">reflections</span><span class="o">=</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
 
-<span class="n">points</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">hkl_trajectory</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Each point is a dict with keys <code class="docutils literal notranslate"><span class="pre">h</span></code>, <code class="docutils literal notranslate"><span class="pre">k</span></code>, <code class="docutils literal notranslate"><span class="pre">l</span></code>, and one key per motor stage.</p>
-</section>
-<section id="scan-rotate-about-the-scattering-vector">
-<h2>ψ scan — rotate about the scattering vector<a class="headerlink" href="#scan-rotate-about-the-scattering-vector" title="Link to this heading">#</a></h2>
-<p>A ψ scan rotates the sample about Q while keeping the Bragg condition
-satisfied.  This is used to probe azimuthal anisotropy.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-
-<span class="n">psi_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">37</span><span class="p">)</span>  <span class="c1"># degrees</span>
-<span class="n">points</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">scan</span><span class="o">.</span><span class="n">psi_trajectory</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">psi_values</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;psi&quot;</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">])</span>
+<span class="c1"># Suppress table output</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">benchmark_all</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="trajectory-plan-with-limit-checking">
-<h2>Trajectory plan — with limit checking<a class="headerlink" href="#trajectory-plan-with-limit-checking" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">trajectory_plan()</span></code> flags points that violate motor limits or are
-inaccessible (Q exceeds the Ewald sphere):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plan</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">trajectory_plan</span><span class="p">(</span>
-    <span class="n">g</span><span class="p">,</span>
-    <span class="n">hkl_start</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="n">hkl_end</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="n">n_points</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">plan</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reachable&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OK &quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">])</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LIMIT VIOLATION at&quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-</pre></div>
-</div>
+<section id="factors-that-affect-performance">
+<h2>Factors that affect performance<a class="headerlink" href="#factors-that-affect-performance" title="Link to this heading">#</a></h2>
+<p><strong>Number of solutions.</strong>
+Some geometry+mode combinations produce many valid solutions (e.g.
+<code class="docutils literal notranslate"><span class="pre">double_diffraction</span></code> on a six-circle geometry can return dozens).  Each
+solution requires inverse verification, so modes with more solutions are
+slower per <code class="docutils literal notranslate"><span class="pre">forward()</span></code> call.</p>
+<p><strong>Geometry complexity.</strong>
+Six-circle geometries have three free degrees of freedom after the Bragg
+condition, requiring a three-dimensional search.  Four-circle geometries
+have one free DOF and are correspondingly faster.</p>
+<p><strong>Kappa geometries.</strong>
+The virtual-angle solver for kappa geometries uses a Newton–Raphson
+iteration that adds overhead compared to direct Eulerian solutions.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">inverse()</span></code> is fast.</strong>
+<code class="docutils literal notranslate"><span class="pre">inverse()</span></code> performs a single matrix solve (<code class="docutils literal notranslate"><span class="pre">UB⁻¹</span> <span class="pre">&#64;</span> <span class="pre">Q_phi</span></code>) regardless
+of geometry complexity — it does not enumerate solutions.  Typical
+throughput is 5,000–20,000 ops/sec.</p>
 </section>
-<section id="solution-selection-avoiding-branch-flips">
-<h2>Solution selection — avoiding branch flips<a class="headerlink" href="#solution-selection-avoiding-branch-flips" title="Link to this heading">#</a></h2>
-<p>All three functions accept a <code class="docutils literal notranslate"><span class="pre">solution_key</span></code> parameter that scores
-candidates against the previous point, preventing discontinuous jumps
-between chi branches:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">points</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">hkl_trajectory</span><span class="p">(</span>
-    <span class="n">g</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">51</span><span class="p">,</span>
-    <span class="n">solution_key</span><span class="o">=</span><span class="n">ahd</span><span class="o">.</span><span class="n">NEAREST_ANGLES</span><span class="p">,</span>   <span class="c1"># default; minimises motor travel</span>
-<span class="p">)</span>
+<section id="result-dict-structure">
+<h2>Result dict structure<a class="headerlink" href="#result-dict-structure" title="Link to this heading">#</a></h2>
+<p>Each result is a Python dict with the following keys:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;geometry&quot;</span><span class="p">:</span> <span class="s2">&quot;fourcv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;bisecting&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;forward_ops_per_sec&quot;</span><span class="p">:</span> <span class="mf">3241.0</span><span class="p">,</span>
+    <span class="s2">&quot;inverse_ops_per_sec&quot;</span><span class="p">:</span> <span class="mf">18502.0</span><span class="p">,</span>
+    <span class="s2">&quot;round_trip_max_error&quot;</span><span class="p">:</span> <span class="mf">4.7e-13</span><span class="p">,</span>
+    <span class="s2">&quot;n_reflections&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;n_solutions&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;error_message&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>
 <section id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.hkl_trajectory" title="ad_hoc_diffractometer.scan.hkl_trajectory"><code class="xref py py-func docutils literal notranslate"><span class="pre">hkl_trajectory()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.psi_trajectory" title="ad_hoc_diffractometer.scan.psi_trajectory"><code class="xref py py-func docutils literal notranslate"><span class="pre">psi_trajectory()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.trajectory_plan" title="ad_hoc_diffractometer.scan.trajectory_plan"><code class="xref py py-func docutils literal notranslate"><span class="pre">trajectory_plan()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.NEAREST_ANGLES" title="ad_hoc_diffractometer.scan.NEAREST_ANGLES"><code class="xref py py-data docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">psi()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/benchmark/index.html#ad_hoc_diffractometer.benchmark.benchmark_all" title="ad_hoc_diffractometer.benchmark.benchmark_all"><code class="xref py py-func docutils literal notranslate"><span class="pre">benchmark_all()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/benchmark/index.html#ad_hoc_diffractometer.benchmark.benchmark_geometry" title="ad_hoc_diffractometer.benchmark.benchmark_geometry"><code class="xref py py-func docutils literal notranslate"><span class="pre">benchmark_geometry()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/benchmark/index.html#ad_hoc_diffractometer.benchmark.benchmark_mode" title="ad_hoc_diffractometer.benchmark.benchmark_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">benchmark_mode()</span></code></a></p></li>
+<li><p><a class="reference internal" href="forward.html"><span class="doc">Forward and Inverse Computations</span></a> — how forward calculations work</p></li>
+<li><p><a class="reference internal" href="modes.html"><span class="doc">Switch Diffraction Modes</span></a> — how to switch diffraction modes</p></li>
 </ul>
 </section>
 </section>
@@ -594,20 +643,20 @@ between chi branches:</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="surface.html"
+       href="inclination.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Surface Geometry and the Reference Vector</p>
+        <p class="prev-next-title">Set Diffractometer Inclination</p>
       </div>
     </a>
     <a class="right-next"
-       href="refine_lattice.html"
+       href="fourcv_alignment_howto.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Refine the Lattice Constants</p>
+        <p class="prev-next-title">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -630,11 +679,12 @@ between chi branches:</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hkl-trajectory-path-between-two-reflections">hkl trajectory — path between two reflections</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scan-rotate-about-the-scattering-vector">ψ scan — rotate about the scattering vector</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trajectory-plan-with-limit-checking">Trajectory plan — with limit checking</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-selection-avoiding-branch-flips">Solution selection — avoiding branch flips</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-benchmark">Run the benchmark</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#output-columns">Output columns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#status-values">Status values</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#controlling-the-benchmark">Controlling the benchmark</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factors-that-affect-performance">Factors that affect performance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#result-dict-structure">Result dict structure</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
 </ul>
   </nav></div>
@@ -642,7 +692,7 @@ between chi branches:</p>
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../_sources/howto/trajectory.md.txt">
+    <a href="../_sources/howto/performance.md.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>
