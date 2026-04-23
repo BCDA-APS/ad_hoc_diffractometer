@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=0fc176a4"></script>
+    <script src="../../_static/documentation_options.js?v=bced3d05"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-23 08:33 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-23 08:37 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -616,6 +616,7 @@
             <span class="p">],</span>
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
         <span class="p">),</span>
+        <span class="c1"># TODO: #190 These fixed modes are for vertical scattering plane; add for horizontal plane.</span>
         <span class="s2">&quot;fixed_chi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
@@ -706,6 +707,7 @@
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
             <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
         <span class="p">),</span>
+        <span class="c1"># TODO: incident angle fixed modes, reference vector choices: hkl_2, xyz</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
@@ -1630,7 +1632,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-23 08:33 CDT.
+  Last updated on 2026-04-23 08:37 CDT.
   <br/>
 </p></div>
       
