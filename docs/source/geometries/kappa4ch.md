@@ -25,59 +25,24 @@ and mode configuration.
 
 ## Stage layout
 
-### Stage coupling
+<iframe
+  src="../_static/geometries/kappa4ch/kappa4ch.html"
+  width="100%"
+  height="1230px"
+  style="border:none;"
+  loading="lazy">
+</iframe>
 
-```{graphviz}
-digraph kappa4ch {
-    rankdir=BT;
-    label="kappa4ch";
-    labelloc=t;
-    fontsize=14;
-    node [shape=box, style=filled, fontsize=11];
-
-    komega [label="komega\naxis: -vertical\nLH", fillcolor="#a8d8ea"];
-    kappa [label="kappa\naxis: [0.766, 0, 0.6428]\nRH", fillcolor="#a8d8ea"];
-    kphi [label="kphi\naxis: -vertical\nLH", fillcolor="#a8d8ea"];
-    ttheta [label="ttheta\naxis: -vertical\nLH", fillcolor="#f8a5a5"];
-
-    { rank=same; komega; ttheta; }
-
-    kappa -> komega;
-    kphi -> kappa;
-
-    // Legend
-    subgraph cluster_legend {
-        label="Legend";
-        fontsize=8;
-        style=dashed;
-        color=gray;
-        sample_legend [label="sample", fillcolor="#a8d8ea", shape=box, style=filled, fontsize=7];
-        detector_legend [label="detector", fillcolor="#f8a5a5", shape=box, style=filled, fontsize=7];
-        sample_legend -> detector_legend [style=invis];
-    }
-}
+```{raw} html
+<details>
+<summary>Static fallback (click to expand if the interactive figure above is blank)</summary>
 ```
 
-### Axis overview
+![kappa4ch stage layout](../_static/geometries/kappa4ch/kappa4ch.svg)
 
-![kappa4ch stage axes](../_static/geometries/kappa4ch/kappa4ch_all.svg)
-
-### Per-stage axis diagrams
-
-::::{tab-set}
-:::{tab-item} komega
-![komega axis](../_static/geometries/kappa4ch/komega.svg)
-:::
-:::{tab-item} kappa
-![kappa axis](../_static/geometries/kappa4ch/kappa.svg)
-:::
-:::{tab-item} kphi
-![kphi axis](../_static/geometries/kappa4ch/kphi.svg)
-:::
-:::{tab-item} ttheta
-![ttheta axis](../_static/geometries/kappa4ch/ttheta.svg)
-:::
-::::
+```{raw} html
+</details>
+```
 
 **Sample stages (base first):**
 

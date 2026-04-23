@@ -23,69 +23,24 @@ and mode configuration.
 
 ## Stage layout
 
-### Stage coupling
+<iframe
+  src="../_static/geometries/psic/psic.html"
+  width="100%"
+  height="1630px"
+  style="border:none;"
+  loading="lazy">
+</iframe>
 
-```{graphviz}
-digraph psic {
-    rankdir=BT;
-    label="psic";
-    labelloc=t;
-    fontsize=14;
-    node [shape=box, style=filled, fontsize=11];
-
-    mu [label="mu\naxis: +vertical\nRH", fillcolor="#a8d8ea"];
-    eta [label="eta\naxis: -lateral\nLH", fillcolor="#a8d8ea"];
-    chi [label="chi\naxis: +longitudinal\nRH", fillcolor="#a8d8ea"];
-    phi [label="phi\naxis: -lateral\nLH", fillcolor="#a8d8ea"];
-    nu [label="nu\naxis: +vertical\nRH", fillcolor="#f8a5a5"];
-    delta [label="delta\naxis: -lateral\nLH", fillcolor="#f8a5a5"];
-
-    { rank=same; mu; nu; }
-
-    eta -> mu;
-    chi -> eta;
-    phi -> chi;
-    delta -> nu;
-
-    // Legend
-    subgraph cluster_legend {
-        label="Legend";
-        fontsize=8;
-        style=dashed;
-        color=gray;
-        sample_legend [label="sample", fillcolor="#a8d8ea", shape=box, style=filled, fontsize=7];
-        detector_legend [label="detector", fillcolor="#f8a5a5", shape=box, style=filled, fontsize=7];
-        sample_legend -> detector_legend [style=invis];
-    }
-}
+```{raw} html
+<details>
+<summary>Static fallback (click to expand if the interactive figure above is blank)</summary>
 ```
 
-### Axis overview
+![psic stage layout](../_static/geometries/psic/psic.svg)
 
-![psic stage axes](../_static/geometries/psic/psic_all.svg)
-
-### Per-stage axis diagrams
-
-::::{tab-set}
-:::{tab-item} mu
-![mu axis](../_static/geometries/psic/mu.svg)
-:::
-:::{tab-item} eta
-![eta axis](../_static/geometries/psic/eta.svg)
-:::
-:::{tab-item} chi
-![chi axis](../_static/geometries/psic/chi.svg)
-:::
-:::{tab-item} phi
-![phi axis](../_static/geometries/psic/phi.svg)
-:::
-:::{tab-item} nu
-![nu axis](../_static/geometries/psic/nu.svg)
-:::
-:::{tab-item} delta
-![delta axis](../_static/geometries/psic/delta.svg)
-:::
-::::
+```{raw} html
+</details>
+```
 
 **Sample stages (base first):**
 

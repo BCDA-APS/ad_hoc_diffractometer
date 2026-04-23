@@ -25,63 +25,24 @@ and mode configuration.
 
 ## Stage layout
 
-### Stage coupling
+<iframe
+  src="../_static/geometries/fivec/fivec.html"
+  width="100%"
+  height="1630px"
+  style="border:none;"
+  loading="lazy">
+</iframe>
 
-```{graphviz}
-digraph fivec {
-    rankdir=BT;
-    label="fivec";
-    labelloc=t;
-    fontsize=14;
-    node [shape=box, style=filled, fontsize=11];
-
-    mu [label="mu\naxis: +vertical\nRH", fillcolor="#a8d8ea"];
-    omega [label="omega\naxis: -lateral\nLH", fillcolor="#a8d8ea"];
-    chi [label="chi\naxis: +longitudinal\nRH", fillcolor="#a8d8ea"];
-    phi [label="phi\naxis: -lateral\nLH", fillcolor="#a8d8ea"];
-    ttheta [label="ttheta\naxis: -lateral\nLH", fillcolor="#f8a5a5"];
-
-    omega -> mu;
-    chi -> omega;
-    phi -> chi;
-    ttheta -> mu;
-
-    // Legend
-    subgraph cluster_legend {
-        label="Legend";
-        fontsize=8;
-        style=dashed;
-        color=gray;
-        sample_legend [label="sample", fillcolor="#a8d8ea", shape=box, style=filled, fontsize=7];
-        detector_legend [label="detector", fillcolor="#f8a5a5", shape=box, style=filled, fontsize=7];
-        sample_legend -> detector_legend [style=invis];
-    }
-}
+```{raw} html
+<details>
+<summary>Static fallback (click to expand if the interactive figure above is blank)</summary>
 ```
 
-### Axis overview
+![fivec stage layout](../_static/geometries/fivec/fivec.svg)
 
-![fivec stage axes](../_static/geometries/fivec/fivec_all.svg)
-
-### Per-stage axis diagrams
-
-::::{tab-set}
-:::{tab-item} mu
-![mu axis](../_static/geometries/fivec/mu.svg)
-:::
-:::{tab-item} omega
-![omega axis](../_static/geometries/fivec/omega.svg)
-:::
-:::{tab-item} chi
-![chi axis](../_static/geometries/fivec/chi.svg)
-:::
-:::{tab-item} phi
-![phi axis](../_static/geometries/fivec/phi.svg)
-:::
-:::{tab-item} ttheta
-![ttheta axis](../_static/geometries/fivec/ttheta.svg)
-:::
-::::
+```{raw} html
+</details>
+```
 
 **Sample stages (base first):**
 
