@@ -90,8 +90,6 @@ from __future__ import annotations
 import logging
 from importlib.metadata import entry_points
 
-import numpy as np
-
 from .constants import XHAT
 from .constants import YHAT
 from .constants import ZHAT
@@ -353,9 +351,9 @@ _BASIS_YOU = BASIS_YOU
 """Alias for :data:`BASIS_YOU` (backward compatibility)."""
 
 BASIS_BL = {
-    "lateral": np.array([1.0, 0.0, 0.0]),
-    "longitudinal": np.array([0.0, 1.0, 0.0]),
-    "vertical": np.array([0.0, 0.0, 1.0]),
+    "vertical": ZHAT,
+    "longitudinal": YHAT,
+    "lateral": XHAT,
 }
 """Basis vector dictionary for the Busing & Levy (1967) coordinate convention.
 
