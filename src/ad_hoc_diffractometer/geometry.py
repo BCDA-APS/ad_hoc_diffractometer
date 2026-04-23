@@ -57,7 +57,7 @@ class AdHocDiffractometer:
     basis : dict, optional
         Mapping from physical direction names to Cartesian basis vectors.
         Default is the You (1999) convention
-        ``{'vertical': XHAT, 'longitudinal': YHAT, 'lateral': ZHAT}``.
+        ``{'vertical': XHAT, 'longitudinal': YHAT, 'transverse': ZHAT}``.
     description : str, optional
         Free-text description of the geometry.
     wavelength : float or None, optional
@@ -92,7 +92,7 @@ class AdHocDiffractometer:
     DEFAULT_BASIS = {
         "vertical": XHAT,
         "longitudinal": YHAT,
-        "lateral": ZHAT,
+        "transverse": ZHAT,
     }
 
     def __init__(
@@ -491,7 +491,7 @@ class AdHocDiffractometer:
         Kappa tilt angle in degrees, or None for non-kappa geometries.
 
         This is the angle between the kappa rotation axis and the vertical
-        axis (toward the lateral axis).  Typical value: 50 deg.
+        axis (toward the transverse axis).  Typical value: 50 deg.
         Set by kappa factory functions (kappa4cv, kappa4ch, kappa6c).
         """
         return self._kappa_alpha_deg

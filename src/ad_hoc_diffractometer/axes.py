@@ -16,7 +16,7 @@ The standard Cartesian basis vectors are:
 - :data:`~ad_hoc_diffractometer.constants.YHAT` (+y)
 - :data:`~ad_hoc_diffractometer.constants.ZHAT` (+z)
 
-Physical direction names (``"vertical"``, ``"longitudinal"``, ``"lateral"``)
+Physical direction names (``"vertical"``, ``"longitudinal"``, ``"transverse"``)
 are also accepted and resolved against a caller-supplied basis dict that maps
 each name to one of the three signed axis vectors.
 
@@ -75,7 +75,7 @@ def parse_axis(label: str, basis: dict | None = None) -> np.ndarray:
     2. Physical direction name with optional sign prefix:
        "vertical", "+vertical", "-vertical",
        "longitudinal", "+longitudinal", "-longitudinal",
-       "lateral", "+lateral", "-lateral"
+       "transverse", "+transverse", "-transverse"
        These are resolved against the supplied basis dict.
 
     Parameters
@@ -105,10 +105,10 @@ def parse_axis(label: str, basis: dict | None = None) -> np.ndarray:
     array([1., 0., 0.])
     >>> parse_axis("-z")
     array([ 0.,  0., -1.])
-    >>> basis = {"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT}
+    >>> basis = {"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT}
     >>> parse_axis("vertical", basis)
     array([1., 0., 0.])
-    >>> parse_axis("-lateral", basis)
+    >>> parse_axis("-transverse", basis)
     array([ 0.,  0., -1.])
     """
     label = label.strip().lower()
@@ -178,7 +178,7 @@ def axis_from_physical(direction: str, sign: str, basis: dict) -> np.ndarray:
     Parameters
     ----------
     direction : str
-        Physical direction name, e.g. "vertical", "lateral", "longitudinal".
+        Physical direction name, e.g. "vertical", "transverse", "longitudinal".
     sign : str
         "+" for right-handed, "-" for left-handed rotation.
     basis : dict
@@ -190,8 +190,8 @@ def axis_from_physical(direction: str, sign: str, basis: dict) -> np.ndarray:
 
     Examples
     --------
-    >>> basis = {"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT}
-    >>> axis_from_physical("lateral", "-", basis)
+    >>> basis = {"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT}
+    >>> axis_from_physical("transverse", "-", basis)
     array([ 0.,  0., -1.])
     """
     return parse_axis(f"{sign}{direction}", basis=basis)
@@ -201,18 +201,18 @@ def kappa_axis(alpha_deg: float, basis: dict | None = None) -> np.ndarray:
     """
     Compute the kappa rotation axis vector for a kappa-geometry diffractometer.
 
-    The kappa axis lies in the vertical-lateral plane, tilted at angle alpha
-    from the vertical axis toward the lateral axis:
+    The kappa axis lies in the vertical-transverse plane, tilted at angle alpha
+    from the vertical axis toward the transverse axis:
 
 
-        kappa_axis = vertical * cos(alpha) + lateral * sin(alpha)
+        kappa_axis = vertical * cos(alpha) + transverse * sin(alpha)
 
-    In the You (1999) / default basis (xHat=vertical, zHat=lateral):
+    In the You (1999) / default basis (xHat=vertical, zHat=transverse):
 
         kappa_axis = XHAT * cos(alpha) + ZHAT * sin(alpha)
 
     At alpha=0  the axis is purely vertical (degenerate with komega).
-    At alpha=90 the axis is purely lateral.
+    At alpha=90 the axis is purely transverse.
     Typical value: alpha=50 degrees (Walko 2016; ITC Vol. C Sec. 2.2.6;
     originally Enraf-Nonius).
 
@@ -222,11 +222,11 @@ def kappa_axis(alpha_deg: float, basis: dict | None = None) -> np.ndarray:
     ----------
     alpha_deg : float
         Kappa tilt angle in degrees, measured from the vertical axis toward
-        the lateral axis in the vertical-lateral plane.  Must be in (0, 90).
+        the transverse axis in the vertical-transverse plane.  Must be in (0, 90).
     basis : dict or None
         Mapping from physical direction names to numpy arrays.  If None,
         the default You (1999) basis is used
-        (vertical -> XHAT, lateral -> ZHAT).
+        (vertical -> XHAT, transverse -> ZHAT).
 
     Returns
     -------
@@ -237,7 +237,7 @@ def kappa_axis(alpha_deg: float, basis: dict | None = None) -> np.ndarray:
     ------
     ValueError
         If alpha_deg is not in the open interval (0, 90) degrees, or if
-        the basis dict is missing 'vertical' or 'lateral' keys.
+        the basis dict is missing 'vertical' or 'transverse' keys.
 
     Examples
     --------
@@ -248,21 +248,21 @@ def kappa_axis(alpha_deg: float, basis: dict | None = None) -> np.ndarray:
         raise ValueError(
             f"kappa alpha must be in (0, 90) degrees; got {alpha_deg}. "
             f"At 0 the kappa axis is degenerate with komega (vertical); "
-            f"at 90 it is purely lateral."
+            f"at 90 it is purely transverse."
         )
 
     if basis is None:
         vertical = XHAT
-        lateral = ZHAT
+        transverse = ZHAT
     else:
-        for key in ("vertical", "lateral"):
+        for key in ("vertical", "transverse"):
             if key not in basis:
                 raise ValueError(
-                    f"basis dict must contain 'vertical' and 'lateral' keys; "
+                    f"basis dict must contain 'vertical' and 'transverse' keys; "
                     f"missing: {key!r}.  Available: {list(basis.keys())}."
                 )
         vertical = np.asarray(basis["vertical"], dtype=float)
-        lateral = np.asarray(basis["lateral"], dtype=float)
+        transverse = np.asarray(basis["transverse"], dtype=float)
 
     alpha_r = np.deg2rad(alpha_deg)
-    return np.cos(alpha_r) * vertical + np.sin(alpha_r) * lateral
+    return np.cos(alpha_r) * vertical + np.sin(alpha_r) * transverse

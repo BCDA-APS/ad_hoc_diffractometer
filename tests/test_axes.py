@@ -63,10 +63,10 @@ from ad_hoc_diffractometer.constants import ZHAT
             id="physical-minus-vertical",
         ),
         pytest.param(
-            "-lateral",
+            "-transverse",
             -ZHAT,
             does_not_raise(),
-            id="physical-minus-lateral",
+            id="physical-minus-transverse",
         ),
         pytest.param(
             "+longitudinal",
@@ -115,7 +115,7 @@ def test_parse_axis(label, expected, context):
             id="physical-with-basis",
         ),
         pytest.param(
-            "-lateral",
+            "-transverse",
             _STANDARD_BASIS,
             -ZHAT,
             does_not_raise(),
@@ -173,7 +173,7 @@ def test_axis_label(vector, expected_label, context):
     [
         pytest.param("vertical", "+", +XHAT, does_not_raise(), id="plus-vertical"),
         pytest.param("vertical", "-", -XHAT, does_not_raise(), id="minus-vertical"),
-        pytest.param("lateral", "-", -ZHAT, does_not_raise(), id="minus-lateral"),
+        pytest.param("transverse", "-", -ZHAT, does_not_raise(), id="minus-transverse"),
         pytest.param(
             "longitudinal", "+", +YHAT, does_not_raise(), id="plus-longitudinal"
         ),
@@ -234,7 +234,7 @@ def test_axis_from_physical(direction, sign, expected, context):
             89.0,
             np.cos(np.deg2rad(89)) * XHAT + np.sin(np.deg2rad(89)) * ZHAT,
             does_not_raise(),
-            id="alpha-89-near-lateral",
+            id="alpha-89-near-transverse",
         ),
         pytest.param(
             45.0,
@@ -265,5 +265,5 @@ def test_kappa_axis_is_unit_vector(alpha_deg, context):
 
 
 def test_kappa_axis_bad_basis():
-    with pytest.raises(ValueError, match=re.escape("missing: 'lateral'")):
+    with pytest.raises(ValueError, match=re.escape("missing: 'transverse'")):
         kappa_axis(50.0, basis={"vertical": XHAT, "longitudinal": YHAT})

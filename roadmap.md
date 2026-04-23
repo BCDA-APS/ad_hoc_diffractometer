@@ -34,7 +34,7 @@ The following are **not** required for v1.0:
 ## Already implemented
 
 - [x] Rotation axis description: signed basis vector notation (+x, -z, etc.)
-- [x] Physical direction names (vertical, lateral, longitudinal) resolved
+- [x] Physical direction names (vertical, transverse, longitudinal) resolved
       against a caller-supplied basis dict
 - [x] `kappa_axis(alpha_deg, basis)` for tilted kappa axes
 - [x] `Stage` class: name, axis, parent, role, angle
@@ -575,14 +575,14 @@ Current coverage: 93% (119 uncovered lines).  ``pytest-cov`` is installed.
 
 - [x] The ``v``/``h`` suffix describes the **scattering plane**, not the
       detector axis: ``v`` = vertical scattering plane (synchrotron, ttheta on
-      lateral axis); ``h`` = horizontal scattering plane (laboratory, ttheta on
-      vertical axis)
+   transverse axis); ``h`` = horizontal scattering plane (laboratory, ttheta on
+   vertical axis)
 - [x] ``fourcv``: corrected — omega, chi (longitudinal), phi, ttheta all on
-      lateral axis giving vertical scattering plane (BL1967 Fig. 1b is ``fourch``)
-- [x] ``fourch``: corrected — omega, chi (lateral), phi, ttheta all on vertical
+       transverse axis giving vertical scattering plane (BL1967 Fig. 1b is ``fourch``)
+- [x] ``fourch``: corrected — omega, chi (transverse), phi, ttheta all on vertical
       axis giving horizontal scattering plane, matching BL1967 Fig. 1b
 - [x] ``kappa4cv`` / ``kappa4ch``: same corrections applied
-- [x] Stage axis expressions use ``_BASIS_BL["lateral"]`` / ``["vertical"]`` /
+- [x] Stage axis expressions use ``_BASIS_BL["transverse"]`` / ``["vertical"]`` /
       ``["longitudinal"]`` for self-documenting physical-direction assignments
 - [x] ``two_theta`` stage name renamed to ``ttheta`` throughout
 - [x] AGENTS.md suffix table corrected; 860 tests pass, 100% coverage
@@ -590,7 +590,7 @@ Current coverage: 93% (119 uncovered lines).  ``pytest-cov`` is installed.
 ### 3.8g Refactor factory functions to accept basis as argument ([#67](https://github.com/prjemian/ad_hoc_diffractometer/issues/67))
 
 - [x] Pass basis dict as optional argument to each factory; resolve
-      ``_LATERAL``/``_VERTICAL``/``_LONGITUDINAL`` locally
+      ``_TRANSVERSE``/``_VERTICAL``/``_LONGITUDINAL`` locally
 - [x] Unify ``_BASIS_BL`` and ``_BASIS_YOU`` stage axis expressions into a
       single physical-direction notation
 - [x] Backward-compatible (basis defaults to current value per factory)
@@ -627,7 +627,7 @@ this issue is independent of the X-ray energy conversion issue (#21).
   number = count, parentheses = shared base.  All implemented geometries
   are catalogued in factories.py.
 - The ``v``/``h`` suffix describes the scattering plane: ``v`` = vertical
-  scattering plane (synchrotron, ttheta on lateral axis); ``h`` = horizontal
+  scattering plane (synchrotron, ttheta on transverse axis); ``h`` = horizontal
   scattering plane (laboratory, ttheta on vertical axis).  This matches
   Busing & Levy (1967) Fig. 1b for ``fourch`` (horizontal scattering plane).
 - The SPEC #G line format is documented in

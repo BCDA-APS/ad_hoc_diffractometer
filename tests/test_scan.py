@@ -881,7 +881,7 @@ def test_psi_trajectory_fewer_than_3_sample_stages():
         basis={
             "vertical": ZHAT,
             "longitudinal": YHAT,
-            "lateral": np.array([1.0, 0.0, 0.0]),
+            "transverse": np.array([1.0, 0.0, 0.0]),
         },
         modes=modes,
         default_mode="bisecting",

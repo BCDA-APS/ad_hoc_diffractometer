@@ -1,9 +1,9 @@
 (geometry-kappa6c)=
 # kappa6c — Kappa Six-Circle
 
-Six-circle kappa diffractometer with psic-style outer axes (mu, nu). The inner sample axes (komega, kappa, and kphi) replace the Eulerian chi circle. Lateral detector, vertical scattering plane.
+Six-circle kappa diffractometer with psic-style outer axes (mu, nu). The inner sample axes (komega, kappa, and kphi) replace the Eulerian chi circle. Transverse detector, vertical scattering plane.
 
-**Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
+**Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, transverse=+z.
 
 ## Quick start
 
@@ -47,23 +47,23 @@ and mode configuration.
 | Stage | Axis | Handedness |
 |---|---|---|
 | ``mu`` | +vertical (+x) | right-handed |
-| ``komega`` | −lateral (−z) | left-handed |
+| ``komega`` | −transverse (−z) | left-handed |
 | ``kappa`` | tilted axis, α=50° | right-handed |
-| ``kphi`` | −lateral (−z) | left-handed |
+| ``kphi`` | −transverse (−z) | left-handed |
 
 **Detector stages (base first):**
 
 | Stage | Axis | Handedness |
 |---|---|---|
 | ``nu`` | +vertical (+x) | right-handed |
-| ``delta`` | −lateral (−z) | left-handed |
+| ``delta`` | −transverse (−z) | left-handed |
 
 **Virtual Eulerian angles** (computed from komega, kappa, kphi via Walko 2016 eq. [16]):
 omega, chi, phi.  Used in stub mode descriptions; kappa inversion required (Issue I / #153).
 
 **Bisect pairs:**
 
-- Vertical: komega (lateral) ↔ delta (lateral) → `komega = delta/2`
+- Vertical: komega (transverse) ↔ delta (transverse) → `komega = delta/2`
 - Horizontal: mu (vertical) ↔ nu (vertical) → `mu = nu/2`
 
 ## Diffraction modes

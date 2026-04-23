@@ -280,7 +280,7 @@ def test_psic_bisecting_eta_equals_delta_half():
 
 
 def test_kappa4cv_bisecting_round_trip():
-    """kappa4cv round-trip: use (0,1,0) which is reachable in BL lateral basis."""
+    """kappa4cv round-trip: use (0,1,0) which is reachable in BL transverse basis."""
     g = _setup_cubic(kappa4cv, a=4.0)
     assert g.mode_name == "bisecting"
     assert _round_trip_ok(g, 0, 1, 0)
@@ -364,7 +364,7 @@ def test_kappa4_fixed_kphi_value_in_solution(factory):
 @pytest.mark.parametrize(
     "factory, mode_name, h, k, l",
     [
-        # kappa4cv (BL basis: lateral=x, longitudinal=y, vertical=z)
+        # kappa4cv (BL basis: transverse=x, longitudinal=y, vertical=z)
         pytest.param(kappa4cv, "constant_omega", 0, 1, 0, id="kappa4cv-constant_omega"),
         pytest.param(kappa4cv, "constant_chi", 0, 0, 1, id="kappa4cv-constant_chi"),
         pytest.param(kappa4cv, "constant_phi", 0, 1, 0, id="kappa4cv-constant_phi"),
@@ -782,7 +782,7 @@ def test_not_implemented_mode_raises():
     g = ahd.AdHocDiffractometer(
         name="minimal",
         stages=stages,
-        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+        basis={"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT},
         modes={"psi_mode": ConstraintSet([ReferenceConstraint("psi", 90.0)])},
         default_mode="psi_mode",
     )
@@ -1007,7 +1007,7 @@ def test_bisecting_det_constraint_names_only_detector_stage():
     g = ahd.AdHocDiffractometer(
         name="twocircle",
         stages=stages,
-        basis={"vertical": _XHAT, "longitudinal": _YHAT, "lateral": _ZHAT},
+        basis={"vertical": _XHAT, "longitudinal": _YHAT, "transverse": _ZHAT},
     )
     g.wavelength = WAVELENGTH
     g.sample.lattice = ahd.Lattice(a=5.0)
@@ -1073,7 +1073,7 @@ def test_fixed_sample_det_constraint_names_only_detector():
     g = ahd.AdHocDiffractometer(
         name="fourcv_test",
         stages=stages,
-        basis={"vertical": _XHAT, "longitudinal": _YHAT, "lateral": _ZHAT},
+        basis={"vertical": _XHAT, "longitudinal": _YHAT, "transverse": _ZHAT},
     )
     g.wavelength = WAVELENGTH
     g.sample.lattice = ahd.Lattice(a=5.0)
@@ -1714,7 +1714,7 @@ def test_qaz_residual_two_detector_stages_required():
     g_1det = AdHocDiffractometer(
         name="one_det",
         stages=stages,
-        basis={"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT},
+        basis={"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT},
     )
     angles = {"omega": 0.0, "ttheta": 20.0}
     with pytest.raises(ValueError, match="at least 2 detector stages"):

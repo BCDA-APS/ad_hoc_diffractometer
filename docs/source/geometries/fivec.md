@@ -5,7 +5,7 @@ Five-circle diffractometer: a standard {func}`~ad_hoc_diffractometer.presets.fou
 
 **Walko (2016) designation:** (S3D1)1
 
-**Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, lateral=+z.
+**Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, transverse=+z.
 
 ## Quick start
 
@@ -49,15 +49,15 @@ and mode configuration.
 | Stage | Axis | Handedness |
 |---|---|---|
 | ``mu`` | +vertical (+x) | right-handed, shared base |
-| ``omega`` | −lateral (−z) | left-handed |
+| ``omega`` | −transverse (−z) | left-handed |
 | ``chi`` | +longitudinal (+y) | right-handed |
-| ``phi`` | −lateral (−z) | left-handed |
+| ``phi`` | −transverse (−z) | left-handed |
 
 **Detector stages (base first):**
 
 | Stage | Axis | Handedness |
 |---|---|---|
-| ``ttheta`` | −lateral (−z) | left-handed |
+| ``ttheta`` | −transverse (−z) | left-handed |
 
 **Shared stage:** mu (base stage shared between sample and detector stacks)
 

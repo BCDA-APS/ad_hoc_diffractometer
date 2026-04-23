@@ -199,7 +199,7 @@ QAZ: str = "qaz"
 
 When used as the ``name`` argument to :class:`DetectorConstraint`, this
 constrains the azimuthal angle of Q in the plane spanned by the vertical
-and lateral axes:  ``tan(qaz) = tan(delta) / sin(nu)``.
+and transverse axes:  ``tan(qaz) = tan(delta) / sin(nu)``.
 Setting ``qaz = 0`` constrains scattering to the horizontal plane;
 ``qaz = 90°`` constrains it to the vertical plane.
 """
@@ -1250,12 +1250,12 @@ def _qaz_residual(
     Compute the residual for a qaz detector constraint (You 1999, eq. 18).
 
     ``qaz`` is the azimuthal angle of Q in the plane spanned by the
-    vertical and lateral axes::
+    vertical and transverse axes::
 
         tan(qaz) = tan(delta) / sin(nu)
 
     where ``nu`` is the outer (vertical-axis) detector stage angle and
-    ``delta`` is the inner (lateral-axis) detector stage angle.  The
+    ``delta`` is the inner (transverse-axis) detector stage angle.  The
     two detector stages are identified from ``geometry.detector_stages``
     by position: the outermost stage (index 0) plays the role of ``nu``
     and the innermost stage (index -1) plays the role of ``delta``.
