@@ -193,6 +193,7 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["eta", "chi", "phi", "delta"],
         ),
+        # TODO: #190 These fixed modes are for vertical scattering plane; add for horizontal plane.
         "fixed_chi": ConstraintSet(
             [
                 SampleConstraint("chi", 90.0),
@@ -283,6 +284,7 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             computed=["mu", "chi", "phi", "nu"],
             extras={"n_hat": REQUIRED, "psi": None},
         ),
+        # TODO: incident angle fixed modes, reference vector choices: hkl_2, xyz
     }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
