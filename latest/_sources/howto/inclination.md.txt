@@ -31,9 +31,9 @@ import ad_hoc_diffractometer as ahd
 
 g = ahd.presets.fourcv()
 
-# Tilt 2° about the lateral axis (+x in the BL1967 basis)
-LATERAL = g.basis["lateral"]
-g.set_inclination(axis=LATERAL, angle_deg=2.0)
+# Tilt 2° about the transverse axis (+x in the BL1967 basis)
+TRANSVERSE = g.basis["transverse"]
+g.set_inclination(axis=TRANSVERSE, angle_deg=2.0)
 ```
 
 {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_inclination`
@@ -63,7 +63,7 @@ property returns the current 3×3 matrix.  The default is the identity
 Pass any non-zero axis with `angle_deg=0`:
 
 ```python
-g.set_inclination(axis=LATERAL, angle_deg=0.0)
+g.set_inclination(axis=TRANSVERSE, angle_deg=0.0)
 
 np.array_equal(g.inclination_matrix, np.eye(3))  # True
 ```
@@ -117,8 +117,8 @@ ahd.ub_identity(g.sample)
 sol_std = g.forward(0, 0, 4)
 print("Standard:", sol_std[0])
 
-# Tilt 2° about the lateral axis
-g.set_inclination(axis=g.basis["lateral"], angle_deg=2.0)
+# Tilt 2° about the transverse axis
+g.set_inclination(axis=g.basis["transverse"], angle_deg=2.0)
 sol_tilt = g.forward(0, 0, 4)
 print("Tilted:  ", sol_tilt[0])
 ```

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=bced3d05"></script>
+    <script src="_static/documentation_options.js?v=08987bed"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-23 08:37 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-23 09:40 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -503,7 +503,7 @@ physical directions of the instrument to Cartesian unit vectors:</p>
 <tr class="row-odd"><th class="head"><p>Basis</p></th>
 <th class="head"><p>vertical</p></th>
 <th class="head"><p>longitudinal</p></th>
-<th class="head"><p>lateral</p></th>
+<th class="head"><p>transverse</p></th>
 <th class="head"><p>Used by</p></th>
 </tr>
 </thead>
@@ -529,7 +529,7 @@ physical directions of the instrument to Cartesian unit vectors:</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
 
 <span class="n">BASIS</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">BASIS_BL</span>
-<span class="n">LATERAL</span>      <span class="o">=</span> <span class="n">BASIS</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>       <span class="c1"># +x</span>
+<span class="n">TRANSVERSE</span>      <span class="o">=</span> <span class="n">BASIS</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>       <span class="c1"># +x</span>
 <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">BASIS</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>  <span class="c1"># +y</span>
 <span class="n">VERTICAL</span>     <span class="o">=</span> <span class="n">BASIS</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>      <span class="c1"># +z</span>
 </pre></div>
@@ -549,18 +549,18 @@ Each <a class="reference internal" href="autoapi/ad_hoc_diffractometer/stage/ind
 <p>The fourcv (vertical scattering plane, synchrotron) stack is:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
     <span class="c1"># Sample stack — base stage first</span>
-    <span class="n">ahd</span><span class="o">.</span><span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span>  <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+    <span class="n">ahd</span><span class="o">.</span><span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span>  <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
     <span class="n">ahd</span><span class="o">.</span><span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>    <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-    <span class="n">ahd</span><span class="o">.</span><span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span>    <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>   <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+    <span class="n">ahd</span><span class="o">.</span><span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span>    <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>   <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
     <span class="c1"># Detector — independent of the sample stack</span>
-    <span class="n">ahd</span><span class="o">.</span><span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+    <span class="n">ahd</span><span class="o">.</span><span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
 <span class="p">]</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">omega</span></code> and <code class="docutils literal notranslate"><span class="pre">ttheta</span></code> both rotate about the lateral axis, so their scattering
+<p><code class="docutils literal notranslate"><span class="pre">omega</span></code> and <code class="docutils literal notranslate"><span class="pre">ttheta</span></code> both rotate about the transverse axis, so their scattering
 plane is <strong>vertical</strong> (the synchrotron convention).  For the laboratory
-(horizontal scattering plane) convention swap every <code class="docutils literal notranslate"><span class="pre">LATERAL</span></code> for <code class="docutils literal notranslate"><span class="pre">VERTICAL</span></code>
-and every <code class="docutils literal notranslate"><span class="pre">LONGITUDINAL</span></code> for <code class="docutils literal notranslate"><span class="pre">LATERAL</span></code> — that is the <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.fourch" title="ad_hoc_diffractometer.presets.fourch"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourch()</span></code></a> geometry.</p>
+(horizontal scattering plane) convention swap every <code class="docutils literal notranslate"><span class="pre">TRANSVERSE</span></code> for <code class="docutils literal notranslate"><span class="pre">VERTICAL</span></code>
+and every <code class="docutils literal notranslate"><span class="pre">LONGITUDINAL</span></code> for <code class="docutils literal notranslate"><span class="pre">TRANSVERSE</span></code> — that is the <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.fourch" title="ad_hoc_diffractometer.presets.fourch"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourch()</span></code></a> geometry.</p>
 </section>
 <hr class="docutils" />
 <section id="define-diffraction-modes">
@@ -630,12 +630,12 @@ stage at a fixed angle.</p></li>
   Mode: bisecting
 
   Sample stages:
-    omega   axis=-lateral    angle=  0.000°  limits=(-180.0, 180.0)
+    omega   axis=-transverse    angle=  0.000°  limits=(-180.0, 180.0)
     chi     axis=+longitudinal  angle=  0.000°  limits=(-180.0, 180.0)
-    phi     axis=-lateral    angle=  0.000°  limits=(-180.0, 180.0)
+    phi     axis=-transverse    angle=  0.000°  limits=(-180.0, 180.0)
 
   Detector stages:
-    ttheta  axis=-lateral    angle=  0.000°  limits=(-180.0, 180.0)
+    ttheta  axis=-transverse    angle=  0.000°  limits=(-180.0, 180.0)
 </pre></div>
 </div>
 </section>
@@ -779,7 +779,7 @@ If you do not need to customise anything, use it directly:</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-23 08:37 CDT.
+  Last updated on 2026-04-23 09:40 CDT.
   <br/>
 </p></div>
       

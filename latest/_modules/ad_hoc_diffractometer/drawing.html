@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=bced3d05"></script>
+    <script src="../../_static/documentation_options.js?v=08987bed"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-23 08:37 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-23 09:40 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -466,7 +466,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_physical_label</span><span class="p">(</span><span class="n">axis_vec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a human-readable axis label with physical direction if possible.</span>
 
-<span class="sd">    For standard signed basis vectors, returns e.g. ``&quot;-lateral&quot;`` or</span>
+<span class="sd">    For standard signed basis vectors, returns e.g. ``&quot;-transverse&quot;`` or</span>
 <span class="sd">    ``&quot;+vertical&quot;``.  For tilted axes (kappa), returns the numeric label.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">basis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -607,11 +607,11 @@
 <span class="c1"># Per-direction arc start offsets (radians) so the arc is not edge-on.</span>
 <span class="n">_ARC_START_OFFSETS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;vertical&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">90</span><span class="p">),</span>
-    <span class="s2">&quot;lateral&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">130</span><span class="p">),</span>
+    <span class="s2">&quot;transverse&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">130</span><span class="p">),</span>
     <span class="s2">&quot;longitudinal&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">90</span><span class="p">),</span>
 <span class="p">}</span>
 
-<span class="n">_BASIS_COLORS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;vertical&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s2">&quot;longitudinal&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="s2">&quot;lateral&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">}</span>
+<span class="n">_BASIS_COLORS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;vertical&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s2">&quot;longitudinal&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="s2">&quot;transverse&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">}</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_require_matplotlib</span><span class="p">():</span>
@@ -638,7 +638,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    basis : dict</span>
 <span class="sd">        Basis dictionary with ``&quot;vertical&quot;``, ``&quot;longitudinal&quot;``,</span>
-<span class="sd">        ``&quot;lateral&quot;`` keys.</span>
+<span class="sd">        ``&quot;transverse&quot;`` keys.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -646,7 +646,7 @@
 <span class="sd">        Rotation matrix R such that ``R @ v`` maps a vector from the</span>
 <span class="sd">        Cartesian frame into display coordinates.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">ver</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">ver</span><span class="p">])</span>
@@ -655,7 +655,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_stage_draw_direction</span><span class="p">(</span><span class="n">stage_axis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine the drawing direction for a stage axis.</span>
 
-<span class="sd">    Negative-signed axes (e.g. -lateral) are drawn in the positive basis</span>
+<span class="sd">    Negative-signed axes (e.g. -transverse) are drawn in the positive basis</span>
 <span class="sd">    direction for visibility; the sign is conveyed by the subtitle and</span>
 <span class="sd">    arc labels.</span>
 
@@ -663,7 +663,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    tuple of (draw_direction, axis_type, is_negated)</span>
 <span class="sd">        draw_direction : np.ndarray — unit vector for drawing</span>
-<span class="sd">        axis_type : str or None — &quot;vertical&quot;, &quot;lateral&quot;, &quot;longitudinal&quot;, or None</span>
+<span class="sd">        axis_type : str or None — &quot;vertical&quot;, &quot;transverse&quot;, &quot;longitudinal&quot;, or None</span>
 <span class="sd">        is_negated : bool — True if the stage axis is the negation of a basis vector</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">atol</span> <span class="o">=</span> <span class="mf">1e-8</span>
@@ -825,7 +825,7 @@
 
 <span class="sd">    The view is oriented so that the vertical basis vector points up,</span>
 <span class="sd">    the longitudinal vector points away (into the screen), and the</span>
-<span class="sd">    lateral vector points to the left.  This convention is independent</span>
+<span class="sd">    transverse vector points to the left.  This convention is independent</span>
 <span class="sd">    of the Cartesian-axis mapping used by the geometry&#39;s basis.</span>
 
 <span class="sd">    Parameters</span>
@@ -893,7 +893,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Draw a composite figure with all stages of a geometry.</span>
 
 <span class="sd">    Each subplot uses the same physical view convention as</span>
-<span class="sd">    :func:`draw_stage_axis`: vertical up, longitudinal away, lateral left.</span>
+<span class="sd">    :func:`draw_stage_axis`: vertical up, longitudinal away, transverse left.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1192,7 +1192,7 @@
         <span class="n">go</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_go</span>
         <span class="n">ver</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
         <span class="c1"># R maps basis vectors to display coordinates:</span>
         <span class="c1">#   lat  -&gt; +x; lon -&gt; -y; ver -&gt; +z (up on screen)</span>
@@ -1256,10 +1256,10 @@
 
         <span class="n">stage_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">stage_norm</span> <span class="o">=</span> <span class="n">stage_axis</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">stage_axis</span><span class="p">)</span>
-        <span class="n">lat_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">lat_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">lat_norm</span> <span class="o">=</span> <span class="n">lat_norm</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">lat_norm</span><span class="p">)</span>
-        <span class="n">is_lateral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">stage_norm</span><span class="p">,</span> <span class="n">lat_norm</span><span class="p">)),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
-        <span class="n">direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">is_lateral</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="n">is_transverse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">stage_norm</span><span class="p">,</span> <span class="n">lat_norm</span><span class="p">)),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">is_transverse</span> <span class="k">else</span> <span class="mi">1</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_draw_axis_arc</span><span class="p">(</span><span class="n">axis_norm</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">)</span>
 
@@ -1666,7 +1666,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-23 08:37 CDT.
+  Last updated on 2026-04-23 09:40 CDT.
   <br/>
 </p></div>
       

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=bced3d05"></script>
+    <script src="../../../_static/documentation_options.js?v=08987bed"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-23 08:37 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-23 09:40 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -524,13 +524,13 @@ physical-direction aliases locally:</p>
 <span class="nd">@register_geometry</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">my_geometry</span><span class="p">(</span><span class="n">basis</span><span class="o">=</span><span class="n">BASIS_YOU</span><span class="p">):</span>
     <span class="n">VERTICAL</span>     <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span>      <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
+    <span class="n">TRANSVERSE</span>   <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
     <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>      <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span>      <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>   <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span>   <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>   <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span>     <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span>   <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span>      <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>   <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span>     <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_geometry&quot;</span><span class="p">,</span> <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
@@ -598,7 +598,7 @@ DOI:10.1107/97809553602060000577</p></li>
 <dd><p>Basis vector dictionary for the Busing &amp; Levy (1967) coordinate convention.</p>
 <p>Maps physical direction names to Cartesian unit vectors:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;lateral&quot;</span></code> → +x</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;transverse&quot;</span></code> → +x</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;longitudinal&quot;</span></code> → +y (along the beam)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;vertical&quot;</span></code> → +z (opposite to gravitational acceleration)</p></li>
 </ul>
@@ -614,7 +614,7 @@ DOI:10.1107/97809553602060000577</p></li>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;vertical&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">XHAT</span></code> (+x, opposite to gravitational acceleration)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;longitudinal&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">YHAT</span></code> (+y, along the beam)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;lateral&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">ZHAT</span></code> (+z, completes the right-handed system: vertical × longitudinal)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;transverse&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">ZHAT</span></code> (+z, completes the right-handed system: vertical × longitudinal)</p></li>
 </ul>
 <p>Default basis used by <code class="docutils literal notranslate"><span class="pre">psic</span></code>, <code class="docutils literal notranslate"><span class="pre">sixc</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code>,
 <code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">s2d2</span></code>, and <code class="docutils literal notranslate"><span class="pre">fivec</span></code> (in <a class="reference internal" href="../presets/index.html#module-ad_hoc_diffractometer.presets" title="ad_hoc_diffractometer.presets"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.presets</span></code></a>).</p>
@@ -864,7 +864,7 @@ can instead declare an entry point in the
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-23 08:37 CDT.
+  Last updated on 2026-04-23 09:40 CDT.
   <br/>
 </p></div>
       

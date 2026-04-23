@@ -62,7 +62,7 @@ Module Contents
    :type stages: list of Stage
    :param basis: Mapping from physical direction names to Cartesian basis vectors.
                  Default is the You (1999) convention
-                 ``{'vertical': XHAT, 'longitudinal': YHAT, 'lateral': ZHAT}``.
+                 ``{'vertical': XHAT, 'longitudinal': YHAT, 'transverse': ZHAT}``.
    :type basis: dict, optional
    :param description: Free-text description of the geometry.
    :type description: str, optional
@@ -613,7 +613,7 @@ Module Contents
       Kappa tilt angle in degrees, or None for non-kappa geometries.
 
       This is the angle between the kappa rotation axis and the vertical
-      axis (toward the lateral axis).  Typical value: 50 deg.
+      axis (toward the transverse axis).  Typical value: 50 deg.
       Set by kappa factory functions (kappa4cv, kappa4ch, kappa6c).
 
 

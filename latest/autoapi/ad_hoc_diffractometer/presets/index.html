@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=bced3d05"></script>
+    <script src="../../../_static/documentation_options.js?v=08987bed"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-23 08:37 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-23 09:40 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -557,7 +557,7 @@ registered geometries as a <code class="docutils literal notranslate"><span clas
 </ul>
 <p>Scattering-plane suffix convention (<code class="docutils literal notranslate"><span class="pre">v</span></code> / <code class="docutils literal notranslate"><span class="pre">h</span></code>):</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">v</span></code> — vertical scattering plane (synchrotron): ttheta rotates about the lateral axis</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">v</span></code> — vertical scattering plane (synchrotron): ttheta rotates about the transverse axis</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">h</span></code> — horizontal scattering plane (laboratory): ttheta rotates about the vertical axis</p></li>
 </ul>
 <p>Where no suffix is given, the detector convention is unambiguous (psic, sixc)
@@ -568,8 +568,8 @@ fourcv  (vertical   scattering plane) is the synchrotron convention.
 kappa4ch and kappa4cv follow the same convention as fourch and fourcv.</p>
 </div></blockquote>
 <dl class="simple">
-<dt>Kappa angle (alpha) convention (Walko 2016; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):</dt><dd><p>The kappa axis lies in the vertical-lateral plane, tilted alpha degrees
-from the vertical axis toward the lateral axis.  Typical value: 50 deg.</p>
+<dt>Kappa angle (alpha) convention (Walko 2016; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):</dt><dd><p>The kappa axis lies in the vertical-transverse plane, tilted alpha degrees
+from the vertical axis toward the transverse axis.  Typical value: 50 deg.</p>
 </dd>
 <dt>Walko (2016) designations:</dt><dd><p>S3D1      fourcv, fourch, kappa4cv, kappa4ch
 S4D2      psic, kappa6c
@@ -647,17 +647,17 @@ DOI:10.1107/97809553602060000577 — kappa</p></li>
 </div>
 <p>Five-circle diffractometer (fourcv mounted on a vertical base).</p>
 <p>Walko (2016) designation: (S3D1)1.
-Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</p>
+Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</p>
 <p>A standard Eulerian four-circle (fourcv) is mounted on a fifth vertical
 rotation stage (mu) as a base.  The sample and detector motions are coupled
 through mu.  This provides an additional degree of freedom for accessing
 wider regions of reciprocal space, particularly at synchrotron sources.</p>
 <p>Stack (floor first):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mu</span> <span class="p">(</span><span class="n">shared</span> <span class="n">base</span><span class="p">):</span> <span class="n">vertical</span><span class="p">,</span>     <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
-  <span class="o">--&gt;</span> <span class="n">omega</span> <span class="p">(</span><span class="n">sample</span><span class="p">):</span> <span class="n">lateral</span><span class="p">,</span>      <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">omega</span> <span class="p">(</span><span class="n">sample</span><span class="p">):</span> <span class="n">transverse</span><span class="p">,</span>   <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
         <span class="o">--&gt;</span> <span class="n">chi</span><span class="p">:</span>      <span class="n">longitudinal</span><span class="p">,</span> <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
-              <span class="o">--&gt;</span> <span class="n">phi</span><span class="p">:</span> <span class="n">lateral</span><span class="p">,</span>     <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
-  <span class="o">--&gt;</span> <span class="n">ttheta</span> <span class="p">(</span><span class="n">detector</span><span class="p">):</span> <span class="n">lateral</span><span class="p">,</span>   <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+              <span class="o">--&gt;</span> <span class="n">phi</span><span class="p">:</span> <span class="n">transverse</span><span class="p">,</span>  <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">ttheta</span> <span class="p">(</span><span class="n">detector</span><span class="p">):</span> <span class="n">transverse</span><span class="p">,</span> <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
 </pre></div>
 </div>
 <p>References:
@@ -676,11 +676,11 @@ D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</p>
 <p>Laboratory / default configuration: omega and ttheta both rotate about
 the vertical axis, so the scattering plane is horizontal.  This is the
 geometry described in Busing &amp; Levy (1967), Fig. 1b.</p>
-<p>Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</p>
+<p>Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</p>
 <dl class="simple">
-<dt>Sample stack (floor first):</dt><dd><p>omega  : vertical, left-handed
-chi    : lateral,  right-handed
-phi    : vertical, left-handed</p>
+<dt>Sample stack (floor first):</dt><dd><p>omega  : vertical,   left-handed
+chi    : transverse, right-handed
+phi    : vertical,   left-handed</p>
 </dd>
 <dt>Detector (floor, mechanically independent):</dt><dd><p>ttheta : vertical, left-handed</p>
 </dd>
@@ -701,19 +701,19 @@ phi    : vertical, left-handed</p>
 <p>Four-circle Eulerian diffractometer, vertical scattering plane (synchrotron).</p>
 <p>Walko (2016) designation: S3D1.</p>
 <p>Synchrotron configuration: omega and ttheta both rotate about the
-lateral axis, so the scattering plane is vertical.  This exploits the
+transverse axis, so the scattering plane is vertical.  This exploits the
 s-polarisation and tighter vertical collimation of synchrotron radiation
 (Walko 2016).</p>
-<p>Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</p>
+<p>Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</p>
 <dl class="simple">
-<dt>Sample stack (floor first):</dt><dd><p>omega  : lateral,      left-handed
+<dt>Sample stack (floor first):</dt><dd><p>omega  : transverse,   left-handed
 chi    : longitudinal, right-handed
-phi    : lateral,      left-handed</p>
+phi    : transverse,   left-handed</p>
 </dd>
-<dt>Detector (floor, mechanically independent of sample stack):</dt><dd><p>ttheta : lateral,      left-handed</p>
+<dt>Detector (floor, mechanically independent of sample stack):</dt><dd><p>ttheta : transverse,   left-handed</p>
 </dd>
 </dl>
-<p>omega and ttheta share the same lateral axis; mechanically independent.</p>
+<p>omega and ttheta share the same transverse axis; mechanically independent.</p>
 <dl class="simple">
 <dt>References: W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).</dt><dd><p>D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</p>
 </dd>
@@ -730,7 +730,7 @@ phi    : lateral,      left-handed</p>
 <p>Walko (2016) designation: S3D1.</p>
 <p>Identical to kappa4cv() but komega and ttheta rotate about the vertical
 axis, giving a horizontal scattering plane (laboratory convention).</p>
-<p>Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</p>
+<p>Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</p>
 <dl class="simple">
 <dt>Sample stack (floor first):</dt><dd><p>komega : vertical, left-handed
 kappa  : tilted,   kappa_axis(alpha), right-handed
@@ -760,20 +760,20 @@ ITC Vol. C, Sec. 2.2.6 (2006).</p></li>
 <p>Four-circle kappa diffractometer, vertical scattering plane (synchrotron).</p>
 <p>Walko (2016) designation: S3D1.</p>
 <p>The chi circle of a standard Eulerian fourcv is replaced by a kappa arm.
-The kappa axis lies in the vertical-lateral plane, tilted alpha degrees
-from the vertical toward the lateral axis.</p>
-<p>komega and ttheta both rotate about the lateral axis; the scattering
+The kappa axis lies in the vertical-transverse plane, tilted alpha degrees
+from the vertical toward the transverse axis.</p>
+<p>komega and ttheta both rotate about the transverse axis; the scattering
 plane is vertical (synchrotron convention).</p>
-<p>Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</p>
+<p>Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</p>
 <dl class="simple">
-<dt>Sample stack (floor first):</dt><dd><p>komega : lateral, left-handed
-kappa  : tilted,  kappa_axis(alpha), right-handed
-kphi   : lateral, left-handed</p>
+<dt>Sample stack (floor first):</dt><dd><p>komega : transverse, left-handed
+kappa  : tilted,     kappa_axis(alpha), right-handed
+kphi   : transverse, left-handed</p>
 </dd>
-<dt>Detector (floor, mechanically independent):</dt><dd><p>ttheta : lateral, left-handed</p>
+<dt>Detector (floor, mechanically independent):</dt><dd><p>ttheta : transverse, left-handed</p>
 </dd>
 </dl>
-<p>komega and ttheta share the same lateral axis; mechanically independent.</p>
+<p>komega and ttheta share the same transverse axis; mechanically independent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -795,16 +795,16 @@ ITC Vol. C, Sec. 2.2.6 (2006).</p></li>
 <p>Walko (2016) designation: S4D2.</p>
 <p>Extends the kappa4cv geometry with two additional axes (mu, nu) in
 the style of the psic geometry (You 1999), giving full orientation freedom.
-This is the synchrotron configuration with a lateral detector.</p>
-<p>Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</p>
+This is the synchrotron configuration with a transverse detector.</p>
+<p>Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</p>
 <dl class="simple">
 <dt>Sample stack (floor first):</dt><dd><p>mu     : vertical,     right-handed   [outermost]
-komega : lateral,      left-handed
+komega : transverse,   left-handed
 kappa  : tilted,       kappa_axis(alpha), right-handed
-kphi   : lateral,      left-handed</p>
+kphi   : transverse,   left-handed</p>
 </dd>
 <dt>Detector stack (floor first):</dt><dd><p>nu     : vertical,     right-handed
-delta  : lateral,      left-handed</p>
+delta  : transverse,   left-handed</p>
 </dd>
 </dl>
 <p>mu and nu share the same vertical axis; mechanically independent.</p>
@@ -827,16 +827,16 @@ ITC Vol. C, Sec. 2.2.6 (2006).</p></li>
 </div>
 <p>You (1999) ‘4S+2D’ six-circle diffractometer (psic geometry).</p>
 <p>Walko (2016) designation: S4D2.
-Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.
-Detector axis: lateral.  Vertical scattering plane.</p>
+Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
+Detector axis: transverse.  Vertical scattering plane.</p>
 <dl class="simple">
 <dt>Sample stack (floor first):</dt><dd><p>mu  : vertical,     right-handed
-eta : lateral,      left-handed
+eta : transverse,   left-handed
 chi : longitudinal, right-handed
-phi : lateral,      left-handed</p>
+phi : transverse,   left-handed</p>
 </dd>
-<dt>Detector stack (floor first):</dt><dd><p>nu    : vertical, right-handed
-delta : lateral,  left-handed</p>
+<dt>Detector stack (floor first):</dt><dd><p>nu    : vertical,   right-handed
+delta : transverse, left-handed</p>
 </dd>
 </dl>
 <p>mu and nu share the same vertical rotation axis; mechanically independent.</p>
@@ -854,7 +854,7 @@ delta : lateral,  left-handed</p>
 </div>
 <p>S2D2 four-circle diffractometer (general-inclination geometry).</p>
 <p>Walko (2016) designation: S2D2.
-Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</p>
+Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</p>
 <p>Two independent sample axes (mu, Z) and two independent detector axes
 (nu, delta), all mechanically decoupled.  The angle of incidence is the
 mu angle; the surface normal is parallel to Z.</p>
@@ -865,7 +865,7 @@ mu angle; the surface normal is parallel to Z.</p>
 </div>
 <p>Detector stack (floor first):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nu</span>    <span class="p">:</span> <span class="n">vertical</span><span class="p">,</span>     <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
-  <span class="o">--&gt;</span> <span class="n">delta</span> <span class="p">:</span> <span class="n">lateral</span><span class="p">,</span> <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">delta</span> <span class="p">:</span> <span class="n">transverse</span><span class="p">,</span> <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
 </pre></div>
 </div>
 <p>mu and nu share the same vertical axis; mechanically independent.</p>
@@ -887,19 +887,19 @@ D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.</p>
 <p>Lohmeier &amp; Vlieg (1993) six-circle surface diffractometer (sixc geometry).</p>
 <p>Also known as the IUCr six-circle diffractometer.
 Walko (2016) designation: (S3D2)1.
-Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</p>
+Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</p>
 <p>Sample and detector stacks share the alpha (rotary table) base stage,
 making this a coupled geometry.  Useful for surface diffraction.</p>
 <p>From Fig. 1 and §2.1 of Lohmeier &amp; Vlieg (1993):
 alpha and gamma rotate about the vertical axis (x in LV convention).
-omega, phi, and delta all rotate about the lateral axis (z in LV).
+omega, phi, and delta all rotate about the transverse axis (z in LV).
 chi rotates about the longitudinal axis (y in LV).</p>
 <p>Stack (floor first):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span> <span class="p">(</span><span class="n">shared</span> <span class="n">base</span><span class="p">):</span> <span class="n">vertical</span><span class="p">,</span>     <span class="n">right</span><span class="o">-</span><span class="n">handed</span>  <span class="p">[</span><span class="n">rotary</span> <span class="n">table</span><span class="p">]</span>
-  <span class="o">--&gt;</span> <span class="n">omega</span> <span class="p">(</span><span class="n">sample</span><span class="p">):</span>  <span class="n">lateral</span><span class="p">,</span>      <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">omega</span> <span class="p">(</span><span class="n">sample</span><span class="p">):</span>  <span class="n">transverse</span><span class="p">,</span>   <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
         <span class="o">--&gt;</span> <span class="n">chi</span><span class="p">:</span>       <span class="n">longitudinal</span><span class="p">,</span> <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
-              <span class="o">--&gt;</span> <span class="n">phi</span><span class="p">:</span> <span class="n">lateral</span><span class="p">,</span>      <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
-  <span class="o">--&gt;</span> <span class="n">delta</span> <span class="p">(</span><span class="n">detector</span><span class="p">):</span> <span class="n">lateral</span><span class="p">,</span>     <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+              <span class="o">--&gt;</span> <span class="n">phi</span><span class="p">:</span> <span class="n">transverse</span><span class="p">,</span>   <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">delta</span> <span class="p">(</span><span class="n">detector</span><span class="p">):</span> <span class="n">transverse</span><span class="p">,</span>  <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
         <span class="o">--&gt;</span> <span class="n">gamma</span><span class="p">:</span>      <span class="n">vertical</span><span class="p">,</span>    <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
 </pre></div>
 </div>
@@ -914,14 +914,14 @@ chi rotates about the longitudinal axis (y in LV).</p>
 </div>
 <p>Z-axis four-circle diffractometer (general-inclination geometry).</p>
 <p>Walko (2016) designation: (S1D2)1.
-Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</p>
+Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</p>
 <p>Designed for surface diffraction.  The sample surface normal is aligned
 parallel to the Z-axis, so the angle of incidence equals the alpha angle.
 The detector and sample both rotate about the shared alpha (base) axis.</p>
 <p>Stack (floor first):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span> <span class="p">(</span><span class="n">shared</span> <span class="n">base</span><span class="p">):</span> <span class="n">vertical</span><span class="p">,</span>     <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
   <span class="o">--&gt;</span> <span class="n">Z</span>     <span class="p">(</span><span class="n">sample</span><span class="p">)</span>  <span class="p">:</span> <span class="n">longitudinal</span><span class="p">,</span> <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
-  <span class="o">--&gt;</span> <span class="n">delta</span> <span class="p">(</span><span class="n">detector</span><span class="p">):</span> <span class="n">lateral</span><span class="p">,</span>      <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
+  <span class="o">--&gt;</span> <span class="n">delta</span> <span class="p">(</span><span class="n">detector</span><span class="p">):</span> <span class="n">transverse</span><span class="p">,</span>   <span class="n">left</span><span class="o">-</span><span class="n">handed</span>
         <span class="o">--&gt;</span> <span class="n">gamma</span> <span class="p">:</span>     <span class="n">vertical</span><span class="p">,</span>     <span class="n">right</span><span class="o">-</span><span class="n">handed</span>
 </pre></div>
 </div>
@@ -1035,7 +1035,7 @@ D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-23 08:37 CDT.
+  Last updated on 2026-04-23 09:40 CDT.
   <br/>
 </p></div>
       

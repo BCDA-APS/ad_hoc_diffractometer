@@ -4,7 +4,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "```{note}\nThis page was generated from a Jupyter notebook.  [Download the notebook](fourcv_alignment_howto.ipynb) to run it locally — it requires only `ad_hoc_diffractometer`, NumPy, and Matplotlib.\n```\n\n# Align a Four-Circle Diffractometer (`fourcv`)\n\nThis notebook is a **how-to guide** for aligning a crystal on a four-circle\nEulerian diffractometer in the **vertical scattering plane**\n([`ahd.presets.fourcv`](../geometries/fourcv.md)),\nthe synchrotron convention where ω and 2θ rotate about the lateral axis.\n\nThe example uses **sapphire (α-Al₂O₃)** with the (001) axis pre-aligned\nalong the φ-axis — a common starting configuration at synchrotron beamlines.\nThe motor-angle values are drawn from a real alignment session at APS\n7-ID-C (December 2020, private communication, D.A. Walko).\n\n## Alignment steps\n\n1. Create the geometry and set the wavelength\n2. Set the sample lattice constants\n3. Predict Bragg peak positions\n4. Enter the primary orienting reflection (calculated position)\n5. Enter the secondary orienting reflection (geometric placeholder)\n6. Compute the orientation matrix\n7. Verify the orientation — direction check\n8. Scan to find the peak; update the primary reflection with the measured position\n9. Re-compute and display the refined orientation\n\n---\n\n## Before you begin\n\nThis guide uses `ahd.presets.fourcv()` — the synchrotron four-circle with ω and 2θ\nboth rotating about the lateral axis (vertical scattering plane).\nUsers familiar with SPEC will recognise the workflow: the steps parallel\nSPEC's `setor0`/`setor0`, `pa`, `ca`, and `wh` commands,\nbut everything runs in pure Python with no hardware connection.\n\n---\n\n## References\n\n- W.R. Busing & H.A. Levy, *Acta Cryst.* **22**, 457–464 (1967)\n- D.A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016)\n- D.A. Walko, private communication (December 2020) —\n  APS 7-ID-C sapphire alignment session\n"
+    "```{note}\nThis page was generated from a Jupyter notebook.  [Download the notebook](fourcv_alignment_howto.ipynb) to run it locally — it requires only `ad_hoc_diffractometer`, NumPy, and Matplotlib.\n```\n\n# Align a Four-Circle Diffractometer (`fourcv`)\n\nThis notebook is a **how-to guide** for aligning a crystal on a four-circle\nEulerian diffractometer in the **vertical scattering plane**\n([`ahd.presets.fourcv`](../geometries/fourcv.md)),\nthe synchrotron convention where ω and 2θ rotate about the transverse axis.\n\nThe example uses **sapphire (α-Al₂O₃)** with the (001) axis pre-aligned\nalong the φ-axis — a common starting configuration at synchrotron beamlines.\nThe motor-angle values are drawn from a real alignment session at APS\n7-ID-C (December 2020, private communication, D.A. Walko).\n\n## Alignment steps\n\n1. Create the geometry and set the wavelength\n2. Set the sample lattice constants\n3. Predict Bragg peak positions\n4. Enter the primary orienting reflection (calculated position)\n5. Enter the secondary orienting reflection (geometric placeholder)\n6. Compute the orientation matrix\n7. Verify the orientation — direction check\n8. Scan to find the peak; update the primary reflection with the measured position\n9. Re-compute and display the refined orientation\n\n---\n\n## Before you begin\n\nThis guide uses `ahd.presets.fourcv()` — the synchrotron four-circle with ω and 2θ\nboth rotating about the transverse axis (vertical scattering plane).\nUsers familiar with SPEC will recognise the workflow: the steps parallel\nSPEC's `setor0`/`setor0`, `pa`, `ca`, and `wh` commands,\nbut everything runs in pure Python with no hardware connection.\n\n---\n\n## References\n\n- W.R. Busing & H.A. Levy, *Acta Cryst.* **22**, 457–464 (1967)\n- D.A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016)\n- D.A. Walko, private communication (December 2020) —\n  APS 7-ID-C sapphire alignment session\n"
    ]
   },
   {
@@ -41,18 +41,18 @@
     "\n",
     "`ahd.presets.fourcv()` creates a four-circle Eulerian diffractometer in the\n",
     "**vertical scattering plane** (synchrotron convention).  ω and 2θ both\n",
-    "rotate about the **lateral** axis (−x in the Busing & Levy coordinate\n",
+    "rotate about the **transverse** axis (−x in the Busing & Levy coordinate\n",
     "system), so the scattering plane is vertical.\n",
     "\n",
     "The four stages and their rotation axes in the BL1967 basis\n",
-    "(lateral = +x, longitudinal = +y, vertical = +z):\n",
+    "(transverse = +x, longitudinal = +y, vertical = +z):\n",
     "\n",
     "| Stage | Axis | Handedness | Role |\n",
     "|-------|------|------------|------|\n",
-    "| `omega` | lateral | left-handed (−x) | sample |\n",
+    "| `omega` | transverse | left-handed (−x) | sample |\n",
     "| `chi` | longitudinal | right-handed (+y) | sample |\n",
-    "| `phi` | lateral | left-handed (−x) | sample |\n",
-    "| `ttheta` | lateral | left-handed (−x) | detector |"
+    "| `phi` | transverse | left-handed (−x) | sample |\n",
+    "| `ttheta` | transverse | left-handed (−x) | detector |"
    ]
   },
   {

@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=bced3d05"></script>
+    <script src="../../_static/documentation_options.js?v=08987bed"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-23 08:37 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-23 09:40 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -494,7 +494,7 @@
 
 <span class="sd">Scattering-plane suffix convention (``v`` / ``h``):</span>
 
-<span class="sd">- ``v`` — vertical scattering plane (synchrotron): ttheta rotates about the lateral axis</span>
+<span class="sd">- ``v`` — vertical scattering plane (synchrotron): ttheta rotates about the transverse axis</span>
 <span class="sd">- ``h`` — horizontal scattering plane (laboratory): ttheta rotates about the vertical axis</span>
 
 <span class="sd">Where no suffix is given, the detector convention is unambiguous (psic, sixc)</span>
@@ -505,8 +505,8 @@
 <span class="sd">    kappa4ch and kappa4cv follow the same convention as fourch and fourcv.</span>
 
 <span class="sd">Kappa angle (alpha) convention (Walko 2016; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):</span>
-<span class="sd">    The kappa axis lies in the vertical-lateral plane, tilted alpha degrees</span>
-<span class="sd">    from the vertical axis toward the lateral axis.  Typical value: 50 deg.</span>
+<span class="sd">    The kappa axis lies in the vertical-transverse plane, tilted alpha degrees</span>
+<span class="sd">    from the vertical axis toward the transverse axis.  Typical value: 50 deg.</span>
 
 <span class="sd">Walko (2016) designations:</span>
 <span class="sd">    S3D1      fourcv, fourch, kappa4cv, kappa4ch</span>
@@ -574,18 +574,18 @@
 <span class="sd">    You (1999) &#39;4S+2D&#39; six-circle diffractometer (psic geometry).</span>
 
 <span class="sd">    Walko (2016) designation: S4D2.</span>
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
-<span class="sd">    Detector axis: lateral.  Vertical scattering plane.</span>
+<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</span>
+<span class="sd">    Detector axis: transverse.  Vertical scattering plane.</span>
 
 <span class="sd">    Sample stack (floor first):</span>
 <span class="sd">        mu  : vertical,     right-handed</span>
-<span class="sd">        eta : lateral,      left-handed</span>
+<span class="sd">        eta : transverse,   left-handed</span>
 <span class="sd">        chi : longitudinal, right-handed</span>
-<span class="sd">        phi : lateral,      left-handed</span>
+<span class="sd">        phi : transverse,   left-handed</span>
 
 <span class="sd">    Detector stack (floor first):</span>
-<span class="sd">        nu    : vertical, right-handed</span>
-<span class="sd">        delta : lateral,  left-handed</span>
+<span class="sd">        nu    : vertical,   right-handed</span>
+<span class="sd">        delta : transverse, left-handed</span>
 
 <span class="sd">    mu and nu share the same vertical rotation axis; mechanically independent.</span>
 
@@ -593,18 +593,18 @@
 <span class="sd">               DOI: 10.1107/S0021889899001223</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
+    <span class="n">TRANSVERSE</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
     <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="c1"># psic: 6 DOF, N-3=3 constraints needed per mode (You 1999, S4D2).</span>
-    <span class="c1"># Vertical bisect pair: eta(lateral) &lt;-&gt; delta(lateral)  =&gt; eta = delta/2</span>
+    <span class="c1"># Vertical bisect pair: eta(transverse) &lt;-&gt; delta(transverse)  =&gt; eta = delta/2</span>
     <span class="c1"># Horizontal bisect pair: mu(vertical) &lt;-&gt; nu(vertical)  =&gt; mu = nu/2</span>
     <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
         <span class="c1"># ── Implemented analytic modes ──────────────────────────────────────</span>
@@ -715,7 +715,7 @@
         <span class="n">basis</span><span class="o">=</span><span class="n">BASIS_YOU</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
             <span class="s2">&quot;You (1999) 4S+2D six-circle diffractometer &quot;</span>
-            <span class="s2">&quot;(lateral detector, vertical scattering plane, synchrotron)&quot;</span>
+            <span class="s2">&quot;(transverse detector, vertical scattering plane, synchrotron)&quot;</span>
         <span class="p">),</span>
         <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
         <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting_vertical&quot;</span><span class="p">,</span>
@@ -733,32 +733,32 @@
 <span class="sd">    Walko (2016) designation: S3D1.</span>
 
 <span class="sd">    Synchrotron configuration: omega and ttheta both rotate about the</span>
-<span class="sd">    lateral axis, so the scattering plane is vertical.  This exploits the</span>
+<span class="sd">    transverse axis, so the scattering plane is vertical.  This exploits the</span>
 <span class="sd">    s-polarisation and tighter vertical collimation of synchrotron radiation</span>
 <span class="sd">    (Walko 2016).</span>
 
-<span class="sd">    Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</span>
+<span class="sd">    Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</span>
 
 <span class="sd">    Sample stack (floor first):</span>
-<span class="sd">        omega  : lateral,      left-handed</span>
+<span class="sd">        omega  : transverse,   left-handed</span>
 <span class="sd">        chi    : longitudinal, right-handed</span>
-<span class="sd">        phi    : lateral,      left-handed</span>
+<span class="sd">        phi    : transverse,   left-handed</span>
 
 <span class="sd">    Detector (floor, mechanically independent of sample stack):</span>
-<span class="sd">        ttheta : lateral,      left-handed</span>
+<span class="sd">        ttheta : transverse,   left-handed</span>
 
-<span class="sd">    omega and ttheta share the same lateral axis; mechanically independent.</span>
+<span class="sd">    omega and ttheta share the same transverse axis; mechanically independent.</span>
 
 <span class="sd">    References: W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).</span>
 <span class="sd">                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
+    <span class="n">TRANSVERSE</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
     <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="c1"># fourcv: 4 DOF, N-3=1 constraint needed per mode.</span>
     <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
@@ -795,7 +795,7 @@
         <span class="n">basis</span><span class="o">=</span><span class="n">BASIS_BL</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
             <span class="s2">&quot;Busing &amp; Levy (1967) four-circle Eulerian diffractometer &quot;</span>
-            <span class="s2">&quot;(vertical scattering plane, lateral ttheta, synchrotron)&quot;</span>
+            <span class="s2">&quot;(vertical scattering plane, transverse ttheta, synchrotron)&quot;</span>
         <span class="p">),</span>
         <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
         <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting&quot;</span><span class="p">,</span>
@@ -816,12 +816,12 @@
 <span class="sd">    the vertical axis, so the scattering plane is horizontal.  This is the</span>
 <span class="sd">    geometry described in Busing &amp; Levy (1967), Fig. 1b.</span>
 
-<span class="sd">    Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</span>
+<span class="sd">    Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</span>
 
 <span class="sd">    Sample stack (floor first):</span>
-<span class="sd">        omega  : vertical, left-handed</span>
-<span class="sd">        chi    : lateral,  right-handed</span>
-<span class="sd">        phi    : vertical, left-handed</span>
+<span class="sd">        omega  : vertical,   left-handed</span>
+<span class="sd">        chi    : transverse, right-handed</span>
+<span class="sd">        phi    : vertical,   left-handed</span>
 
 <span class="sd">    Detector (floor, mechanically independent):</span>
 <span class="sd">        ttheta : vertical, left-handed</span>
@@ -891,36 +891,36 @@
 
 <span class="sd">    Also known as the IUCr six-circle diffractometer.</span>
 <span class="sd">    Walko (2016) designation: (S3D2)1.</span>
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
+<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</span>
 
 <span class="sd">    Sample and detector stacks share the alpha (rotary table) base stage,</span>
 <span class="sd">    making this a coupled geometry.  Useful for surface diffraction.</span>
 
 <span class="sd">    From Fig. 1 and §2.1 of Lohmeier &amp; Vlieg (1993):</span>
 <span class="sd">    alpha and gamma rotate about the vertical axis (x in LV convention).</span>
-<span class="sd">    omega, phi, and delta all rotate about the lateral axis (z in LV).</span>
+<span class="sd">    omega, phi, and delta all rotate about the transverse axis (z in LV).</span>
 <span class="sd">    chi rotates about the longitudinal axis (y in LV).</span>
 
 <span class="sd">    Stack (floor first)::</span>
 
 <span class="sd">        alpha (shared base): vertical,     right-handed  [rotary table]</span>
-<span class="sd">          --&gt; omega (sample):  lateral,      left-handed</span>
+<span class="sd">          --&gt; omega (sample):  transverse,   left-handed</span>
 <span class="sd">                --&gt; chi:       longitudinal, right-handed</span>
-<span class="sd">                      --&gt; phi: lateral,      left-handed</span>
-<span class="sd">          --&gt; delta (detector): lateral,     left-handed</span>
+<span class="sd">                      --&gt; phi: transverse,   left-handed</span>
+<span class="sd">          --&gt; delta (detector): transverse,  left-handed</span>
 <span class="sd">                --&gt; gamma:      vertical,    right-handed</span>
 
 <span class="sd">    Reference: M. Lohmeier &amp; E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
+    <span class="n">TRANSVERSE</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
     <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="c1"># sixc: 6 DOF, N-3=3 constraints needed per mode.</span>
@@ -1013,23 +1013,23 @@
 <span class="sd">    Walko (2016) designation: S3D1.</span>
 
 <span class="sd">    The chi circle of a standard Eulerian fourcv is replaced by a kappa arm.</span>
-<span class="sd">    The kappa axis lies in the vertical-lateral plane, tilted alpha degrees</span>
-<span class="sd">    from the vertical toward the lateral axis.</span>
+<span class="sd">    The kappa axis lies in the vertical-transverse plane, tilted alpha degrees</span>
+<span class="sd">    from the vertical toward the transverse axis.</span>
 
-<span class="sd">    komega and ttheta both rotate about the lateral axis; the scattering</span>
+<span class="sd">    komega and ttheta both rotate about the transverse axis; the scattering</span>
 <span class="sd">    plane is vertical (synchrotron convention).</span>
 
-<span class="sd">    Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</span>
+<span class="sd">    Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</span>
 
 <span class="sd">    Sample stack (floor first):</span>
-<span class="sd">        komega : lateral, left-handed</span>
-<span class="sd">        kappa  : tilted,  kappa_axis(alpha), right-handed</span>
-<span class="sd">        kphi   : lateral, left-handed</span>
+<span class="sd">        komega : transverse, left-handed</span>
+<span class="sd">        kappa  : tilted,     kappa_axis(alpha), right-handed</span>
+<span class="sd">        kphi   : transverse, left-handed</span>
 
 <span class="sd">    Detector (floor, mechanically independent):</span>
-<span class="sd">        ttheta : lateral, left-handed</span>
+<span class="sd">        ttheta : transverse, left-handed</span>
 
-<span class="sd">    komega and ttheta share the same lateral axis; mechanically independent.</span>
+<span class="sd">    komega and ttheta share the same transverse axis; mechanically independent.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1040,13 +1040,13 @@
 <span class="sd">                W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).</span>
 <span class="sd">                ITC Vol. C, Sec. 2.2.6 (2006).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
+    <span class="n">TRANSVERSE</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
     <span class="n">kax</span> <span class="o">=</span> <span class="n">kappa_axis</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">kax</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="c1"># kappa4cv: 4 DOF, N-3=1 constraint needed per mode.</span>
     <span class="c1"># Virtual Eulerian angles (omega, chi, phi) are computed from real kappa</span>
@@ -1116,7 +1116,7 @@
 <span class="sd">    Identical to kappa4cv() but komega and ttheta rotate about the vertical</span>
 <span class="sd">    axis, giving a horizontal scattering plane (laboratory convention).</span>
 
-<span class="sd">    Default basis: Busing &amp; Levy (1967) — lateral=+x, longitudinal=+y, vertical=+z.</span>
+<span class="sd">    Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</span>
 
 <span class="sd">    Sample stack (floor first):</span>
 <span class="sd">        komega : vertical, left-handed</span>
@@ -1203,19 +1203,19 @@
 
 <span class="sd">    Extends the kappa4cv geometry with two additional axes (mu, nu) in</span>
 <span class="sd">    the style of the psic geometry (You 1999), giving full orientation freedom.</span>
-<span class="sd">    This is the synchrotron configuration with a lateral detector.</span>
+<span class="sd">    This is the synchrotron configuration with a transverse detector.</span>
 
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
+<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</span>
 
 <span class="sd">    Sample stack (floor first):</span>
 <span class="sd">        mu     : vertical,     right-handed   [outermost]</span>
-<span class="sd">        komega : lateral,      left-handed</span>
+<span class="sd">        komega : transverse,   left-handed</span>
 <span class="sd">        kappa  : tilted,       kappa_axis(alpha), right-handed</span>
-<span class="sd">        kphi   : lateral,      left-handed</span>
+<span class="sd">        kphi   : transverse,   left-handed</span>
 
 <span class="sd">    Detector stack (floor first):</span>
 <span class="sd">        nu     : vertical,     right-handed</span>
-<span class="sd">        delta  : lateral,      left-handed</span>
+<span class="sd">        delta  : transverse,   left-handed</span>
 
 <span class="sd">    mu and nu share the same vertical axis; mechanically independent.</span>
 
@@ -1229,18 +1229,18 @@
 <span class="sd">                ITC Vol. C, Sec. 2.2.6 (2006).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
+    <span class="n">TRANSVERSE</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
     <span class="n">kax</span> <span class="o">=</span> <span class="n">kappa_axis</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">kax</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="c1"># kappa6c: 6 DOF, N-3=3 constraints needed per mode.</span>
-    <span class="c1"># Vertical bisect pair: komega(lateral) &lt;-&gt; delta(lateral) =&gt; komega = delta/2</span>
+    <span class="c1"># Vertical bisect pair: komega(transverse) &lt;-&gt; delta(transverse) =&gt; komega = delta/2</span>
     <span class="c1">#   (approximates virtual omega_euler = delta/2; corrected by Issue I / #153)</span>
     <span class="c1"># Horizontal bisect pair: mu(vertical) &lt;-&gt; nu(vertical) =&gt; mu = nu/2</span>
     <span class="c1"># Virtual Eulerian angles (omega, chi, phi) via Walko (2016) eq. [16].</span>
@@ -1352,7 +1352,7 @@
         <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Six-circle kappa diffractometer, psic-style outer axes &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;(lateral detector, synchrotron). &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(transverse detector, synchrotron). &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Kappa alpha = </span><span class="si">{</span><span class="n">alpha_deg</span><span class="si">}</span><span class="s2"> deg.&quot;</span>
         <span class="p">),</span>
         <span class="n">kappa_alpha_deg</span><span class="o">=</span><span class="n">alpha_deg</span><span class="p">,</span>
@@ -1375,7 +1375,7 @@
 <span class="sd">    Z-axis four-circle diffractometer (general-inclination geometry).</span>
 
 <span class="sd">    Walko (2016) designation: (S1D2)1.</span>
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
+<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</span>
 
 <span class="sd">    Designed for surface diffraction.  The sample surface normal is aligned</span>
 <span class="sd">    parallel to the Z-axis, so the angle of incidence equals the alpha angle.</span>
@@ -1385,7 +1385,7 @@
 
 <span class="sd">        alpha (shared base): vertical,     right-handed</span>
 <span class="sd">          --&gt; Z     (sample)  : longitudinal, right-handed</span>
-<span class="sd">          --&gt; delta (detector): lateral,      left-handed</span>
+<span class="sd">          --&gt; delta (detector): transverse,   left-handed</span>
 <span class="sd">                --&gt; gamma :     vertical,     right-handed</span>
 
 <span class="sd">    The total scattering angle is a compound of gamma, delta, and alpha</span>
@@ -1398,12 +1398,12 @@
 <span class="sd">    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
+    <span class="n">TRANSVERSE</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
     <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="c1"># zaxis: 4 DOF, N-3=1 constraint needed per mode.</span>
@@ -1442,7 +1442,7 @@
 <span class="sd">    S2D2 four-circle diffractometer (general-inclination geometry).</span>
 
 <span class="sd">    Walko (2016) designation: S2D2.</span>
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
+<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</span>
 
 <span class="sd">    Two independent sample axes (mu, Z) and two independent detector axes</span>
 <span class="sd">    (nu, delta), all mechanically decoupled.  The angle of incidence is the</span>
@@ -1456,7 +1456,7 @@
 <span class="sd">    Detector stack (floor first)::</span>
 
 <span class="sd">        nu    : vertical,     right-handed</span>
-<span class="sd">          --&gt; delta : lateral, left-handed</span>
+<span class="sd">          --&gt; delta : transverse, left-handed</span>
 
 <span class="sd">    mu and nu share the same vertical axis; mechanically independent.</span>
 
@@ -1469,13 +1469,13 @@
 <span class="sd">    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
+    <span class="n">TRANSVERSE</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
     <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="c1"># s2d2: 4 DOF, N-3=1 constraint needed per mode.</span>
     <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
@@ -1511,7 +1511,7 @@
 <span class="sd">    Five-circle diffractometer (fourcv mounted on a vertical base).</span>
 
 <span class="sd">    Walko (2016) designation: (S3D1)1.</span>
-<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, lateral=+z.</span>
+<span class="sd">    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</span>
 
 <span class="sd">    A standard Eulerian four-circle (fourcv) is mounted on a fifth vertical</span>
 <span class="sd">    rotation stage (mu) as a base.  The sample and detector motions are coupled</span>
@@ -1521,24 +1521,24 @@
 <span class="sd">    Stack (floor first)::</span>
 
 <span class="sd">        mu (shared base): vertical,     right-handed</span>
-<span class="sd">          --&gt; omega (sample): lateral,      left-handed</span>
+<span class="sd">          --&gt; omega (sample): transverse,   left-handed</span>
 <span class="sd">                --&gt; chi:      longitudinal, right-handed</span>
-<span class="sd">                      --&gt; phi: lateral,     left-handed</span>
-<span class="sd">          --&gt; ttheta (detector): lateral,   left-handed</span>
+<span class="sd">                      --&gt; phi: transverse,  left-handed</span>
+<span class="sd">          --&gt; ttheta (detector): transverse, left-handed</span>
 
 <span class="sd">    References:</span>
 <span class="sd">    E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).</span>
 <span class="sd">    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">LATERAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;lateral&quot;</span><span class="p">]</span>
+    <span class="n">TRANSVERSE</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
     <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
-        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">LATERAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="c1"># fivec: 5 DOF, N-3=2 constraints needed per mode.</span>
     <span class="c1"># With mu=0 the geometry reduces to fourcv; the bisecting solver</span>
@@ -1632,7 +1632,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-23 08:37 CDT.
+  Last updated on 2026-04-23 09:40 CDT.
   <br/>
 </p></div>
       

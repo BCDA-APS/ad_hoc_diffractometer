@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=bced3d05"></script>
+    <script src="../_static/documentation_options.js?v=08987bed"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-23 08:37 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-23 09:40 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -500,7 +500,7 @@
 <p>This notebook is a <strong>how-to guide</strong> for aligning a crystal on a four-circle
 Eulerian diffractometer in the <strong>vertical scattering plane</strong>
 (<a class="reference internal" href="../geometries/fourcv.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">ahd.presets.fourcv</span></code></span></a>),
-the synchrotron convention where ω and 2θ rotate about the lateral axis.</p>
+the synchrotron convention where ω and 2θ rotate about the transverse axis.</p>
 <p>The example uses <strong>sapphire (α-Al₂O₃)</strong> with the (001) axis pre-aligned
 along the φ-axis — a common starting configuration at synchrotron beamlines.
 The motor-angle values are drawn from a real alignment session at APS
@@ -523,7 +523,7 @@ The motor-angle values are drawn from a real alignment session at APS
 <section id="before-you-begin">
 <h2>Before you begin<a class="headerlink" href="#before-you-begin" title="Link to this heading">#</a></h2>
 <p>This guide uses <code class="docutils literal notranslate"><span class="pre">ahd.presets.fourcv()</span></code> — the synchrotron four-circle with ω and 2θ
-both rotating about the lateral axis (vertical scattering plane).
+both rotating about the transverse axis (vertical scattering plane).
 Users familiar with SPEC will recognise the workflow: the steps parallel
 SPEC’s <code class="docutils literal notranslate"><span class="pre">setor0</span></code>/<code class="docutils literal notranslate"><span class="pre">setor0</span></code>, <code class="docutils literal notranslate"><span class="pre">pa</span></code>, <code class="docutils literal notranslate"><span class="pre">ca</span></code>, and <code class="docutils literal notranslate"><span class="pre">wh</span></code> commands,
 but everything runs in pure Python with no hardware connection.</p>
@@ -561,10 +561,10 @@ APS 7-ID-C sapphire alignment session</p></li>
 <h2>Step 1 — Create the geometry and set the wavelength<a class="headerlink" href="#step-1-create-the-geometry-and-set-the-wavelength" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">ahd.presets.fourcv()</span></code> creates a four-circle Eulerian diffractometer in the
 <strong>vertical scattering plane</strong> (synchrotron convention).  ω and 2θ both
-rotate about the <strong>lateral</strong> axis (−x in the Busing &amp; Levy coordinate
+rotate about the <strong>transverse</strong> axis (−x in the Busing &amp; Levy coordinate
 system), so the scattering plane is vertical.</p>
 <p>The four stages and their rotation axes in the BL1967 basis
-(lateral = +x, longitudinal = +y, vertical = +z):</p>
+(transverse = +x, longitudinal = +y, vertical = +z):</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Stage</p></th>
@@ -575,7 +575,7 @@ system), so the scattering plane is vertical.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">omega</span></code></p></td>
-<td><p>lateral</p></td>
+<td><p>transverse</p></td>
 <td><p>left-handed (−x)</p></td>
 <td><p>sample</p></td>
 </tr>
@@ -585,12 +585,12 @@ system), so the scattering plane is vertical.</p>
 <td><p>sample</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">phi</span></code></p></td>
-<td><p>lateral</p></td>
+<td><p>transverse</p></td>
 <td><p>left-handed (−x)</p></td>
 <td><p>sample</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ttheta</span></code></p></td>
-<td><p>lateral</p></td>
+<td><p>transverse</p></td>
 <td><p>left-handed (−x)</p></td>
 <td><p>detector</p></td>
 </tr>
@@ -620,7 +620,7 @@ system), so the scattering plane is vertical.</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Geometry  : fourcv
 Wavelength: 1.5498 Å
-Description: Busing &amp; Levy (1967) four-circle Eulerian diffractometer (vertical scattering plane, lateral ttheta, synchrotron)
+Description: Busing &amp; Levy (1967) four-circle Eulerian diffractometer (vertical scattering plane, transverse ttheta, synchrotron)
 
 Sample stages:
   omega     axis = -x
@@ -1499,7 +1499,7 @@ The saved state can be restored later with:
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-23 08:37 CDT.
+  Last updated on 2026-04-23 09:40 CDT.
   <br/>
 </p></div>
       

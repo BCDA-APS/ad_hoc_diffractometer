@@ -16,7 +16,7 @@ directions** that can be identified directly in the laboratory:
 |---|---|
 | **vertical** | opposite to gravitational acceleration |
 | **longitudinal** | a chosen direction in the plane perpendicular to vertical, conventionally aligned with the nominal incident beam; a property of the instrument installation |
-| **lateral** | orthogonal to both; positive sense completes a right-handed system (vertical × longitudinal) |
+| **transverse** | orthogonal to both; positive sense completes a right-handed system (vertical × longitudinal) |
 
 The package uses a right-handed Cartesian frame internally.  Different authors
 assigned different Cartesian letters (x, y, z) to these physical directions —
@@ -31,7 +31,7 @@ factory.
 |---|---|---|
 | vertical | +x | `XHAT` |
 | longitudinal | +y | `YHAT` |
-| lateral | +z | `ZHAT` |
+| transverse | +z | `ZHAT` |
 
 Used by: `psic`, `sixc`, `kappa6c`, `zaxis`, `s2d2`, `fivec`
 
@@ -43,7 +43,7 @@ Pass `basis=BASIS_YOU` (the default for these geometries).
 |---|---|---|
 | vertical | +z | `ZHAT` |
 | longitudinal | +y | `YHAT` |
-| lateral | +x | `XHAT` |
+| transverse | +x | `XHAT` |
 
 Convention of Busing & Levy.
 
@@ -60,7 +60,7 @@ Pass `basis=BASIS_BL` (the default for these geometries).
 |---|---|---|
 | vertical | +y | `YHAT` |
 | longitudinal | +z | `ZHAT` |
-| lateral | +x | `XHAT` |
+| transverse | +x | `XHAT` |
 
 Used by: [NeXus](https://manual.nexusformat.org/design.html#the-nexus-coordinate-system)
 
@@ -73,7 +73,7 @@ Also used by:
 |---|---|---|
 | vertical | +z | `ZHAT` |
 | longitudinal | +x | `XHAT` |
-| lateral | +y | `YHAT` |
+| transverse | +y | `YHAT` |
 
 Used by: [Hkl](https://people.debian.org/~picca/hkl/hkl.html#org4569ec8)
 :::
@@ -89,7 +89,7 @@ The `BASIS_YOU` and `BASIS_BL` constants are exported from the package.
 Each stage's rotation axis is a **signed unit vector**: `+nHat` means
 right-handed rotation, `-nHat` means left-handed (equivalent to
 right-handed about the negated axis).  Physical direction names
-(`"vertical"`, `"lateral"`, `"longitudinal"`) are resolved against
+(`"vertical"`, `"transverse"`, `"longitudinal"`) are resolved against
 the geometry's basis dict.
 
 See {func}`~ad_hoc_diffractometer.axes.parse_axis`.

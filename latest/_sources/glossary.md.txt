@@ -115,7 +115,7 @@ UB matrix
 Vertical / horizontal scattering plane
    The plane containing the incident beam, the sample, and the diffracted
    beam.  *Vertical* — the scattering plane is vertical, the two-theta arm
-   rotates about the lateral (horizontal) axis; typical for synchrotrons.
+   rotates about the transverse (horizontal) axis; typical for synchrotrons.
    *Horizontal* — the scattering plane is horizontal, two-theta rotates
    about the vertical axis; typical for laboratory instruments.
 

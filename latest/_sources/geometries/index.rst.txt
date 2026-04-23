@@ -35,7 +35,7 @@ rotation axis.
       :link: fourcv
       :link-type: doc
 
-      Vertical scattering plane — ω and 2θ rotate about the lateral axis.
+      Vertical scattering plane — ω and 2θ rotate about the transverse axis.
 
    .. grid-item-card:: :material-outlined:`rotate_right;3em` Laboratory
       :link: fourch

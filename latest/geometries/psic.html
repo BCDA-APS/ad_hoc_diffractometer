@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=bced3d05"></script>
+    <script src="../_static/documentation_options.js?v=08987bed"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-23 08:37 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-23 09:40 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -491,8 +491,8 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="psic-eulerian-six-circle-4s-2d-you-1999">
 <span id="geometry-psic"></span><h1>psic — Eulerian Six-Circle, 4S+2D (You 1999)<a class="headerlink" href="#psic-eulerian-six-circle-4s-2d-you-1999" title="Link to this heading">#</a></h1>
-<p>You (1999) 4S+2D six-circle diffractometer. Four sample stages (mu, eta, chi, and phi) and two detector stages (nu, delta). Lateral detector, vertical scattering plane. Standard synchrotron six-circle.</p>
-<p><strong>Coordinate basis:</strong> You (1999) (<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a>): vertical=+x, longitudinal=+y, lateral=+z.</p>
+<p>You (1999) 4S+2D six-circle diffractometer. Four sample stages (mu, eta, chi, and phi) and two detector stages (nu, delta). Transverse detector, vertical scattering plane. Standard synchrotron six-circle.</p>
+<p><strong>Coordinate basis:</strong> You (1999) (<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a>): vertical=+x, longitudinal=+y, transverse=+z.</p>
 <section id="quick-start">
 <h2>Quick start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
@@ -534,7 +534,7 @@ and mode configuration.</p>
 <td><p>right-handed</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">eta</span></code></p></td>
-<td><p>−lateral (−z)</p></td>
+<td><p>−transverse (−z)</p></td>
 <td><p>left-handed</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">chi</span></code></p></td>
@@ -542,7 +542,7 @@ and mode configuration.</p>
 <td><p>right-handed</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">phi</span></code></p></td>
-<td><p>−lateral (−z)</p></td>
+<td><p>−transverse (−z)</p></td>
 <td><p>left-handed</p></td>
 </tr>
 </tbody>
@@ -562,7 +562,7 @@ and mode configuration.</p>
 <td><p>right-handed</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">delta</span></code></p></td>
-<td><p>−lateral (−z)</p></td>
+<td><p>−transverse (−z)</p></td>
 <td><p>left-handed</p></td>
 </tr>
 </tbody>
@@ -578,7 +578,7 @@ See <a class="reference internal" href="../howto/modes.html"><span class="doc">S
 changing constraint values at run time.</p>
 <p><strong>Bisect pairs:</strong></p>
 <ul class="simple">
-<li><p>Vertical plane: eta (lateral) ↔ delta (lateral) → <code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">delta/2</span></code></p></li>
+<li><p>Vertical plane: eta (transverse) ↔ delta (transverse) → <code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">delta/2</span></code></p></li>
 <li><p>Horizontal plane: mu (vertical) ↔ nu (vertical) → <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">nu/2</span></code></p></li>
 </ul>
 <section id="bisecting-vertical-default">
@@ -980,7 +980,7 @@ Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_ref
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-23 08:37 CDT.
+  Last updated on 2026-04-23 09:40 CDT.
   <br/>
 </p></div>
       

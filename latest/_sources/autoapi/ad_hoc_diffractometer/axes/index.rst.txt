@@ -20,7 +20,7 @@ axes
    - :data:`~ad_hoc_diffractometer.constants.YHAT` (+y)
    - :data:`~ad_hoc_diffractometer.constants.ZHAT` (+z)
 
-   Physical direction names (``"vertical"``, ``"longitudinal"``, ``"lateral"``)
+   Physical direction names (``"vertical"``, ``"longitudinal"``, ``"transverse"``)
    are also accepted and resolved against a caller-supplied basis dict that maps
    each name to one of the three signed axis vectors.
 
@@ -61,7 +61,7 @@ Module Contents
 
    Convenience wrapper: resolve a physical direction and sign to an axis vector.
 
-   :param direction: Physical direction name, e.g. "vertical", "lateral", "longitudinal".
+   :param direction: Physical direction name, e.g. "vertical", "transverse", "longitudinal".
    :type direction: str
    :param sign: "+" for right-handed, "-" for left-handed rotation.
    :type sign: str
@@ -73,8 +73,8 @@ Module Contents
 
    .. rubric:: Examples
 
-   >>> basis = {"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT}
-   >>> axis_from_physical("lateral", "-", basis)
+   >>> basis = {"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT}
+   >>> axis_from_physical("transverse", "-", basis)
    array([ 0.,  0., -1.])
 
 
@@ -114,36 +114,36 @@ Module Contents
 
    Compute the kappa rotation axis vector for a kappa-geometry diffractometer.
 
-   The kappa axis lies in the vertical-lateral plane, tilted at angle alpha
-   from the vertical axis toward the lateral axis:
+   The kappa axis lies in the vertical-transverse plane, tilted at angle alpha
+   from the vertical axis toward the transverse axis:
 
 
-       kappa_axis = vertical * cos(alpha) + lateral * sin(alpha)
+       kappa_axis = vertical * cos(alpha) + transverse * sin(alpha)
 
-   In the You (1999) / default basis (xHat=vertical, zHat=lateral):
+   In the You (1999) / default basis (xHat=vertical, zHat=transverse):
 
        kappa_axis = XHAT * cos(alpha) + ZHAT * sin(alpha)
 
    At alpha=0  the axis is purely vertical (degenerate with komega).
-   At alpha=90 the axis is purely lateral.
+   At alpha=90 the axis is purely transverse.
    Typical value: alpha=50 degrees (Walko 2016; ITC Vol. C Sec. 2.2.6;
    originally Enraf-Nonius).
 
    The axis is a unit vector by construction (cos²α + sin²α = 1).
 
    :param alpha_deg: Kappa tilt angle in degrees, measured from the vertical axis toward
-                     the lateral axis in the vertical-lateral plane.  Must be in (0, 90).
+                     the transverse axis in the vertical-transverse plane.  Must be in (0, 90).
    :type alpha_deg: float
    :param basis: Mapping from physical direction names to numpy arrays.  If None,
                  the default You (1999) basis is used
-                 (vertical -> XHAT, lateral -> ZHAT).
+                 (vertical -> XHAT, transverse -> ZHAT).
    :type basis: dict or None
 
    :returns: **axis** -- Unit vector of the kappa rotation axis in the lab frame.
    :rtype: numpy.ndarray, shape (3,)
 
    :raises ValueError: If alpha_deg is not in the open interval (0, 90) degrees, or if
-       the basis dict is missing 'vertical' or 'lateral' keys.
+       the basis dict is missing 'vertical' or 'transverse' keys.
 
    .. rubric:: Examples
 
@@ -169,7 +169,7 @@ Module Contents
    2. Physical direction name with optional sign prefix:
       "vertical", "+vertical", "-vertical",
       "longitudinal", "+longitudinal", "-longitudinal",
-      "lateral", "+lateral", "-lateral"
+      "transverse", "+transverse", "-transverse"
       These are resolved against the supplied basis dict.
 
    :param label: Axis label in one of the forms above.  Case-insensitive.
@@ -192,10 +192,10 @@ Module Contents
    array([1., 0., 0.])
    >>> parse_axis("-z")
    array([ 0.,  0., -1.])
-   >>> basis = {"vertical": XHAT, "longitudinal": YHAT, "lateral": ZHAT}
+   >>> basis = {"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT}
    >>> parse_axis("vertical", basis)
    array([1., 0., 0.])
-   >>> parse_axis("-lateral", basis)
+   >>> parse_axis("-transverse", basis)
    array([ 0.,  0., -1.])
 
 
