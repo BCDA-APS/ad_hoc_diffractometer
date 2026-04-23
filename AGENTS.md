@@ -226,6 +226,35 @@ python3 -m pre_commit run --all-files
 
 ---
 
+## Benchmark tests
+
+The benchmark test suite (`tests/test_benchmark.py`) includes slow tests
+that run `forward()`/`inverse()` across **all** registered geometries and
+modes.  These are marked `@pytest.mark.slow_benchmark` and are **excluded
+by default** from `pytest` via `addopts` in `pyproject.toml`.
+
+Fast replacement tests (using a single monkeypatched geometry) maintain
+100 % code coverage on `benchmark.py` during normal development.
+
+**When to run full benchmarks locally.**  If your changes touch any module
+in the hot path or geometry construction layer, run the full benchmark
+suite before committing:
+
+```bash
+python3 -m pytest -m slow_benchmark --no-cov -q
+```
+
+Hot path: `forward.py`, `kappa.py`, `mode.py`, `orientation.py`,
+`rotation.py`, `reference.py`
+
+Geometry construction: `presets.py`, `factories.py`, `geometry.py`,
+`stage.py`, `axes.py`, `constants.py`
+
+CI runs these automatically (via `.github/workflows/benchmark.yml`)
+when any of these files change on `main` or in a pull request.
+
+---
+
 ## Generated artefacts
 
 Several documentation files are **generated from source code or other
