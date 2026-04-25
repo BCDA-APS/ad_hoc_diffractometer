@@ -51,6 +51,17 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    Status field IDs are the same across all project boards:
    - Field ID: `PVTSSF_lAHOACLKMM4BULjAzhBVdT0` (P3), `PVTSSF_lAHOACLKMM4BUWg2zhBfRCE` (Documentation)
    - In Progress option ID: `47fc9ee4` (same on every board)
+   - In Review option ID: `df73e18b` (on boards that support it)
+
+   **Match the issue's boards.**  Before creating the PR, query the
+   issue's `projectItems` to discover every board it belongs to.  Add the
+   PR to **all** of those boards — not just the one implied by the domain
+   table above.
+
+   **Set "In review" when code is complete.**  Once the PR is pushed and
+   no further code changes are anticipated, set its project board status
+   to **"In review"** (on boards that have that status; leave "In
+   Progress" where only Todo / In Progress / Done exist).
 
    ```bash
    # Set milestone when creating the PR
