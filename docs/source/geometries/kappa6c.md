@@ -44,19 +44,19 @@ and mode configuration.
 
 **Sample stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``mu`` | +vertical (+x) | right-handed |
-| ``komega`` | −transverse (−z) | left-handed |
-| ``kappa`` | tilted axis, α=50° | right-handed |
-| ``kphi`` | −transverse (−z) | left-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``mu`` | +vertical (+x) | right-handed | base |
+| ``komega`` | −transverse (−z) | left-handed | ``mu`` |
+| ``kappa`` | tilted axis, α=50° | right-handed | ``komega`` |
+| ``kphi`` | −transverse (−z) | left-handed | ``kappa`` |
 
 **Detector stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``nu`` | +vertical (+x) | right-handed |
-| ``delta`` | −transverse (−z) | left-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``nu`` | +vertical (+x) | right-handed | base |
+| ``delta`` | −transverse (−z) | left-handed | ``nu`` |
 
 **Virtual Eulerian angles** (computed from komega, kappa, kphi via Walko 2016 eq. [16]):
 omega, chi, phi.  Used in stub mode descriptions; kappa inversion required (Issue I / #153).

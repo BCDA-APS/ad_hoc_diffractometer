@@ -46,19 +46,19 @@ and mode configuration.
 
 **Sample stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``alpha`` | +vertical (+x) | right-handed, shared base |
-| ``omega`` | −transverse (−z) | left-handed |
-| ``chi`` | +longitudinal (+y) | right-handed |
-| ``phi`` | −transverse (−z) | left-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``alpha`` | +vertical (+x) | right-handed, shared base | base |
+| ``omega`` | −transverse (−z) | left-handed | ``alpha`` |
+| ``chi`` | +longitudinal (+y) | right-handed | ``omega`` |
+| ``phi`` | −transverse (−z) | left-handed | ``chi`` |
 
 **Detector stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``delta`` | −transverse (−z) | left-handed |
-| ``gamma`` | +vertical (+x) | right-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``delta`` | −transverse (−z) | left-handed | ``alpha`` |
+| ``gamma`` | +vertical (+x) | right-handed | ``delta`` |
 
 **Shared stage:** alpha (rotary table base shared between sample and detector stacks)
 

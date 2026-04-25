@@ -93,7 +93,7 @@ scan shape.  Supported types:
 ``"radial"``
     Scan ±extent from center along a reciprocal-space direction.
     Required keys: ``"center": (h, k, l)``, ``"direction": (dh, dk, dl)``,
-    ``"extent": delta``.  The direction is normalised; extent is in r.l.u.
+    ``"extent": delta``.  The direction is normalized; extent is in r.l.u.
 
 ``"transverse"``
     Scan ±extent from center perpendicular to a reference Q direction.
@@ -272,7 +272,7 @@ def _hkl_points(trajectory: dict, n_points: int) -> list[tuple[float, float, flo
 
 
 # ---------------------------------------------------------------------------
-# Internal helpers — Euler decomposition  (BL1967, generalised)
+# Internal helpers — Euler decomposition  (BL1967, generalized)
 # ---------------------------------------------------------------------------
 
 
@@ -312,7 +312,7 @@ def _euler_from_Z_standard(
     ``geometry.sample_rotation_matrix()``: the outermost stage (omega/eta)
     is applied first (rightmost), the innermost (phi) last (leftmost).
 
-    The decomposition generalises Busing & Levy (1967) eqs. 14-17 to
+    The decomposition generalizes Busing & Levy (1967) eqs. 14-17 to
     arbitrary signed stage axes.  Two χ branches are returned
     (χ ∈ [0°, 180°] and χ ∈ [-180°, 0°]).
 

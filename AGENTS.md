@@ -51,6 +51,17 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    Status field IDs are the same across all project boards:
    - Field ID: `PVTSSF_lAHOACLKMM4BULjAzhBVdT0` (P3), `PVTSSF_lAHOACLKMM4BUWg2zhBfRCE` (Documentation)
    - In Progress option ID: `47fc9ee4` (same on every board)
+   - In Review option ID: `df73e18b` (on boards that support it)
+
+   **Match the issue's boards.**  Before creating the PR, query the
+   issue's `projectItems` to discover every board it belongs to.  Add the
+   PR to **all** of those boards — not just the one implied by the domain
+   table above.
+
+   **Set "In review" when code is complete.**  Once the PR is pushed and
+   no further code changes are anticipated, set its project board status
+   to **"In review"** (on boards that have that status; leave "In
+   Progress" where only Todo / In Progress / Done exist).
 
    ```bash
    # Set milestone when creating the PR
@@ -82,13 +93,15 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    layout type.  This cannot currently be set via the `gh` CLI; it must be
    done in the GitHub web UI immediately after the project is created.
 
-4. **Create a feature branch before writing any code.**  All code changes
-   must be made on a feature branch, never directly on `main` — the only
-   exception is truly trivial changes (e.g. a one-word typo fix in a doc
-   comment).  The branch must be created **before** any files are modified
-   so that `main` is never left in a dirty state.  Branch names must start
-   with the issue number followed by a short, hyphen-separated description
-   of the topic:
+4. **Create a feature branch before making any file changes.**  This is the
+   very first step after reading the issue — create the branch **before**
+   editing, creating, or deleting any file.  All changes must be made on a
+   feature branch, never directly on `main` — the only exception is truly
+   trivial changes (e.g. a one-word typo fix in a doc comment).  If you
+   have already modified files on `main` by mistake, stash the changes,
+   create the branch, then pop the stash.  Branch names must start with the
+   issue number followed by a short, hyphen-separated description of the
+   topic:
    ```
    git checkout -b <issue-number>-<concise-topic>
    ```
@@ -343,6 +356,13 @@ way: every new algorithm must be implementable with NumPy alone.
 - **No `geometry_` prefix** on factory functions
 - **`display.fmt(value, digits)`** for all floating-point display;
   never use f-strings with hardcoded precision for user-facing output
+- **US English spellings** in all code, comments, docstrings, and
+  documentation.  Use American spellings such as `analyzer`, `polarizer`,
+  `color`, `center`, `normalized`, `minimize`, `optimize`, `generalize`,
+  `recognize`, `characterized`, `millimeters`, `honor` — not their British
+  equivalents (`analyser`, `polariser`, `colour`, `centre`, `normalised`,
+  `minimise`, `optimise`, `generalise`, `recognise`, `characterised`,
+  `millimetres`, `honour`)
 
 ---
 

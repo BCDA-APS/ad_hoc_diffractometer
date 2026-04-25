@@ -1295,12 +1295,12 @@ def test_stages_by_role_custom():
     from ad_hoc_diffractometer.stage import Stage
 
     g = fourcv()
-    analyser = Stage("analyser", np.array([1.0, 0.0, 0.0]), role="analyser")
-    g._stages["analyser"] = analyser
+    analyzer = Stage("analyzer", np.array([1.0, 0.0, 0.0]), role="analyzer")
+    g._stages["analyzer"] = analyzer
 
-    result = g.stages_by_role("analyser")
+    result = g.stages_by_role("analyzer")
     assert len(result) == 1
-    assert result[0].name == "analyser"
+    assert result[0].name == "analyzer"
 
 
 def test_stages_by_role_unknown_returns_empty():
@@ -1308,7 +1308,7 @@ def test_stages_by_role_unknown_returns_empty():
     from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
-    assert g.stages_by_role("polariser") == []
+    assert g.stages_by_role("polarizer") == []
 
 
 def test_stages_by_role_sample_matches_sample_stages():

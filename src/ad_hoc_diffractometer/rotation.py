@@ -37,7 +37,7 @@ def rotation_matrix(axis: np.ndarray, angle_deg: float) -> np.ndarray:
     Parameters
     ----------
     axis : numpy.ndarray, shape (3,)
-        Rotation axis vector.  Need not be normalised; it will be normalised
+        Rotation axis vector.  Need not be normalized; it will be normalized
         internally.
     angle_deg : float
         Rotation angle in degrees (right-handed sense about the given axis).

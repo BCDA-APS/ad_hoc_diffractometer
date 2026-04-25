@@ -204,7 +204,7 @@ class AdHocDiffractometer:
         ValueError
             If the basis does not have exactly three entries, if any vector
             is not 3-dimensional or is zero, or if any two vectors are not
-            mutually orthogonal (normalised dot product exceeds tolerance).
+            mutually orthogonal (normalized dot product exceeds tolerance).
         """
         vecs = list(self.basis.values())
         names = list(self.basis.keys())
@@ -230,7 +230,7 @@ class AdHocDiffractometer:
                 if abs(dot) > atol:
                     raise ValueError(
                         f"Basis vectors {n1!r} and {n2!r} are not orthogonal "
-                        f"(normalised dot product = {dot:.6g}, tolerance {atol})."
+                        f"(normalized dot product = {dot:.6g}, tolerance {atol})."
                     )
 
     def _check_no_cycles(self) -> None:
@@ -282,7 +282,7 @@ class AdHocDiffractometer:
         which are also available as the :attr:`sample_stages` and
         :attr:`detector_stages` attributes.  This method accepts any
         arbitrary role string, making it useful for non-standard components
-        such as analysers, polarisers, slits, or azimuthal spinners.
+        such as analyzers, polarizers, slits, or azimuthal spinners.
 
         Parameters
         ----------
@@ -301,10 +301,10 @@ class AdHocDiffractometer:
         >>> import numpy as np
         >>> from ad_hoc_diffractometer import Stage
         >>> g = ahd.fourcv()
-        >>> analyser = Stage("analyser", np.array([1., 0., 0.]), role="analyser")
-        >>> g._stages["analyser"] = analyser
-        >>> [s.name for s in g.stages_by_role("analyser")]
-        ['analyser']
+        >>> analyzer = Stage("analyzer", np.array([1., 0., 0.]), role="analyzer")
+        >>> g._stages["analyzer"] = analyzer
+        >>> [s.name for s in g.stages_by_role("analyzer")]
+        ['analyzer']
         >>> g.stages_by_role("unknown")
         []
         """
@@ -1167,7 +1167,7 @@ class AdHocDiffractometer:
     @property
     def detector_distance(self) -> float | None:
         """
-        Sample-to-detector distance in millimetres, or ``None`` if not set.
+        Sample-to-detector distance in millimeters, or ``None`` if not set.
 
         Relevant primarily for area detectors, where the distance is needed
         to convert pixel positions to scattering angles (and thence to Q).
@@ -1234,12 +1234,12 @@ class AdHocDiffractometer:
     @property
     def detector_offset(self) -> tuple[float, float] | None:
         """
-        In-plane detector offset (dx, dy) in millimetres, or ``None`` if not set.
+        In-plane detector offset (dx, dy) in millimeters, or ``None`` if not set.
 
-        Describes the displacement of the beam centre from the detector
-        centre in the detector plane.  ``dx`` is the horizontal offset and
-        ``dy`` is the vertical offset, both in millimetres.  A zero offset
-        means the beam strikes the geometric centre of the detector.
+        Describes the displacement of the beam center from the detector
+        center in the detector plane.  ``dx`` is the horizontal offset and
+        ``dy`` is the vertical offset, both in millimeters.  A zero offset
+        means the beam strikes the geometric center of the detector.
 
         Must be a two-element sequence of real numbers.
 
@@ -1498,7 +1498,7 @@ class AdHocDiffractometer:
         Parameters
         ----------
         axis : array-like, shape (3,)
-            Rotation axis (need not be a unit vector; it is normalised
+            Rotation axis (need not be a unit vector; it is normalized
             internally).
         angle_deg : float
             Rotation angle in degrees.

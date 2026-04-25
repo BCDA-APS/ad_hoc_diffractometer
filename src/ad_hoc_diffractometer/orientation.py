@@ -169,7 +169,7 @@ def angles_to_phi_vector(geometry, **motor_angles: float) -> np.ndarray:
         for name, angle in saved.items():
             geometry.set_angle(name, angle)
 
-    # Incident-beam direction: longitudinal basis vector (normalised)
+    # Incident-beam direction: longitudinal basis vector (normalized)
     y_hat = np.asarray(geometry.basis["longitudinal"], dtype=float)
     y_norm = np.linalg.norm(y_hat)
     y_hat = y_hat / y_norm
@@ -208,8 +208,8 @@ def ub_from_one_reflection(
     The algorithm:
 
     1. Compute the crystal-frame direction: ``Bh = B @ reference_hkl``
-       (normalised to ``Bh_hat``).
-    2. Extract the lab-frame direction from ``reference_stage`` (normalised
+       (normalized to ``Bh_hat``).
+    2. Extract the lab-frame direction from ``reference_stage`` (normalized
        to ``r_hat``).
     3. Find the minimal rotation (Rodrigues) that takes ``Bh_hat`` to
        ``r_hat``:

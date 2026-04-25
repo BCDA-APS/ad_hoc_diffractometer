@@ -823,7 +823,7 @@ class ConstraintSet:
     ValueError
         If more than one ``ReferenceConstraint`` is supplied.
     ValueError
-        If any constraint is not a recognised constraint type.
+        If any constraint is not a recognized constraint type.
 
     Examples
     --------
