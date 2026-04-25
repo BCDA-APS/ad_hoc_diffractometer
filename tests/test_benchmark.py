@@ -28,6 +28,7 @@ REQUIRED_KEYS = {
     "status",
     "forward_ops_per_sec",
     "inverse_ops_per_sec",
+    "forward_inverse_ratio",
     "round_trip_max_error",
     "n_reflections",
     "n_solutions",
@@ -195,6 +196,8 @@ class TestBenchmarkMode:
         assert r["forward_ops_per_sec"] > 0
         assert r["inverse_ops_per_sec"] is not None
         assert r["inverse_ops_per_sec"] > 0
+        assert r["forward_inverse_ratio"] is not None
+        assert r["forward_inverse_ratio"] > 0
         assert r["round_trip_max_error"] is not None
         assert r["round_trip_max_error"] < 1e-8
         assert r["n_solutions"] > 0

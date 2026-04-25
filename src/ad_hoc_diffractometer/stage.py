@@ -76,6 +76,11 @@ class Stage:
     ):
         self.name = name
         self.axis = np.asarray(axis, dtype=float)
+        # Pre-normalized axis for fast rotation computation (avoids repeated
+        # normalization in the inner loop of the forward solver).
+        ax = self.axis
+        ax_norm = np.linalg.norm(ax)
+        self._axis_hat: np.ndarray = ax / ax_norm if ax_norm > 0 else ax.copy()
         self.parent = parent
         self.role = role
         self.angle = angle

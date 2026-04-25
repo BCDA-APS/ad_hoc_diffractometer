@@ -27,6 +27,14 @@ Each result is a dict with keys:
   ``"not_implemented"``, ``"error"``
 - ``forward_ops_per_sec`` (float or None)
 - ``inverse_ops_per_sec`` (float or None)
+- ``forward_inverse_ratio`` (float or None): dimensionless ratio
+  ``forward_ops/sec / inverse_ops/sec``.  This workstation-independent
+  metric measures how fast ``forward()`` is relative to ``inverse()``
+  on the same machine.  **Higher is better.**  A value of 1.0 means
+  they are equally fast; lower values indicate ``forward()`` is slower.
+  Since ``inverse()`` is a single direct computation (no iteration),
+  its speed characterizes the machine; the ratio captures pure
+  algorithmic efficiency of the forward solver.
 - ``round_trip_max_error`` (float or None)
 - ``n_reflections`` (int): number of reflections attempted
 - ``n_solutions`` (int): total solutions returned
@@ -215,6 +223,7 @@ def benchmark_mode(
         "status": "ok",
         "forward_ops_per_sec": None,
         "inverse_ops_per_sec": None,
+        "forward_inverse_ratio": None,
         "round_trip_max_error": None,
         "n_reflections": len(reflections),
         "n_solutions": 0,
@@ -238,6 +247,14 @@ def benchmark_mode(
         inv_ops, max_err = _time_inverse(g, solutions_by_hkl, n_iter)
         result["inverse_ops_per_sec"] = inv_ops
         result["round_trip_max_error"] = max_err
+
+        # Workstation-independent ratio: forward speed as a fraction of
+        # inverse speed.  Higher is better.  Since inverse() is a single
+        # direct computation (no iteration), its speed characterizes the
+        # machine; the ratio captures pure algorithmic efficiency of the
+        # forward solver.
+        if fwd_ops > 0 and inv_ops > 0:
+            result["forward_inverse_ratio"] = fwd_ops / inv_ops
 
     except NotImplementedError as exc:
         result["status"] = "not_implemented"
@@ -338,6 +355,7 @@ def _print_results(results: list[dict]) -> None:
     header = (
         f"{'geometry':<12s}  {'mode':<32s}  {'status':<{_STATUS_WIDTH}s}"
         f"  {'fwd ops/s':>{_OPS_WIDTH}s}  {'inv ops/s':>{_OPS_WIDTH}s}"
+        f"  {'fwd/inv':>7s}"
         f"  {'round-trip err':>14s}  {'solns':>5s}"
     )
     separator = "-" * len(header)
@@ -357,6 +375,11 @@ def _print_results(results: list[dict]) -> None:
             if r["inverse_ops_per_sec"] is not None
             else f"{'-':>{_OPS_WIDTH}s}"
         )
+        ratio = (
+            f"{r['forward_inverse_ratio']:>7.4f}"
+            if r.get("forward_inverse_ratio") is not None
+            else f"{'-':>7s}"
+        )
         err = (
             f"{r['round_trip_max_error']:>14.2e}"
             if r["round_trip_max_error"] is not None
@@ -364,7 +387,7 @@ def _print_results(results: list[dict]) -> None:
         )
         builtins.print(
             f"{r['geometry']:<12s}  {r['mode']:<32s}  {r['status']:<{_STATUS_WIDTH}s}"
-            f"  {fwd}  {inv}  {err}  {r['n_solutions']:>5d}"
+            f"  {fwd}  {inv}  {ratio}  {err}  {r['n_solutions']:>5d}"
         )
 
     builtins.print(separator)
