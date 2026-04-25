@@ -10,6 +10,7 @@ installed the package and are familiar with the
 .. toctree::
    :hidden:
 
+   basis_vectors
    wavelength
    lattice
    orient
@@ -27,6 +28,13 @@ installed the package and are familiar with the
 .. icons: https://fonts.google.com/icons
 
 .. grid:: 2
+
+   .. grid-item-card:: :material-outlined:`straighten;3em` Choose a Coordinate Basis
+      :link: basis_vectors
+      :link-type: doc
+
+      Understand how basis vectors map physical directions to Cartesian
+      axes, and how to define a custom basis.
 
    .. grid-item-card:: :material-outlined:`settings_input_antenna;3em` Set Wavelength / Energy
       :link: wavelength

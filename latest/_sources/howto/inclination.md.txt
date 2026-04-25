@@ -37,7 +37,7 @@ g.set_inclination(axis=TRANSVERSE, angle_deg=2.0)
 ```
 
 {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_inclination`
-takes a rotation axis (any non-zero vector; it is normalised internally)
+takes a rotation axis (any non-zero vector; it is normalized internally)
 and an angle in degrees.  Internally it builds the rotation matrix using
 the Rodrigues formula
 ({func}`~ad_hoc_diffractometer.rotation.rotation_matrix`).

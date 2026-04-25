@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Orient a Crystal &#8212; ad_hoc_diffractometer 0.5</title>
+    <title>Choose and Understand Basis Vectors &#8212; ad_hoc_diffractometer 0.5</title>
   
   
   
@@ -49,7 +49,7 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=fd10adb8"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'howto/orient';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'howto/basis_vectors';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
@@ -60,8 +60,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Forward and Inverse Computations" href="forward.html" />
-    <link rel="prev" title="Define the Sample Lattice" href="lattice.html" />
+    <link rel="next" title="Set Wavelength / Energy" href="wavelength.html" />
+    <link rel="prev" title="How-to Guides" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
@@ -387,10 +387,10 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">How-to Guides</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="basis_vectors.html">Choose and Understand Basis Vectors</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Choose and Understand Basis Vectors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wavelength.html">Set Wavelength / Energy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lattice.html">Define the Sample Lattice</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Orient a Crystal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orient.html">Orient a Crystal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="forward.html">Forward and Inverse Computations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modes.html">Switch Diffraction Modes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="constraints.html">Work with Constraints and Diffraction Modes</a></li>
@@ -474,7 +474,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How-to Guides</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Orient a Crystal</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Choose and Understand Basis Vectors</span></li>
   </ul>
 </nav>
 </div>
@@ -491,127 +491,212 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="orient-a-crystal">
-<span id="howto-orient"></span><h1>Orient a Crystal<a class="headerlink" href="#orient-a-crystal" title="Link to this heading">#</a></h1>
-<p>This guide shows how to compute the U and UB matrices from orienting
-reflections.  See <a class="reference internal" href="../concepts.html"><span class="std std-doc">Concepts</span></a> for background on what
-B, U, and UB mean.</p>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
-<p>Crystal orientation requires:</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="choose-and-understand-basis-vectors">
+<span id="howto-basis-vectors"></span><h1>Choose and Understand Basis Vectors<a class="headerlink" href="#choose-and-understand-basis-vectors" title="Link to this heading">#</a></h1>
+<p>A <strong>basis</strong> maps the three observable physical directions of the
+diffractometer — vertical, longitudinal, and transverse — to Cartesian
+unit vectors (x, y, z).  The physics does not depend on which mapping
+you choose; the basis is purely a <strong>notational convention</strong> that
+determines the numerical representation of axis vectors, rotation
+matrices, and the UB matrix.</p>
+<p>This page explains what a basis is, why it matters, how to choose one,
+and how to define a custom basis.</p>
+<hr class="docutils" />
+<section id="the-three-physical-directions">
+<h2>The three physical directions<a class="headerlink" href="#the-three-physical-directions" title="Link to this heading">#</a></h2>
+<p>Every diffractometer has three mutually perpendicular directions that
+can be identified by looking at the instrument:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Direction</p></th>
+<th class="head"><p>Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>vertical</strong></p></td>
+<td><p>opposite to gravitational acceleration (upward)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>longitudinal</strong></p></td>
+<td><p>in the horizontal plane, conventionally along the incident beam toward the equipment</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>transverse</strong></p></td>
+<td><p>orthogonal to both; positive sense completes a right-handed system (vertical x longitudinal)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>These directions are physical observables — they do not depend on any
+coordinate convention.  See <a class="reference internal" href="../problem1.html"><span class="doc">Case Study: Describing a Diffractometer</span></a> for the full derivation.</p>
+</section>
+<hr class="docutils" />
+<section id="what-a-basis-does">
+<h2>What a basis does<a class="headerlink" href="#what-a-basis-does" title="Link to this heading">#</a></h2>
+<p>A basis assigns each physical direction to a Cartesian axis.  For
+example, the You (1999) convention assigns:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vertical</span>     <span class="o">-&gt;</span> <span class="o">+</span><span class="n">x</span>   <span class="p">(</span><span class="n">XHAT</span><span class="p">)</span>
+<span class="n">longitudinal</span> <span class="o">-&gt;</span> <span class="o">+</span><span class="n">y</span>   <span class="p">(</span><span class="n">YHAT</span><span class="p">)</span>
+<span class="n">transverse</span>   <span class="o">-&gt;</span> <span class="o">+</span><span class="n">z</span>   <span class="p">(</span><span class="n">ZHAT</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The Busing &amp; Levy (1967) convention makes a different choice:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vertical</span>     <span class="o">-&gt;</span> <span class="o">+</span><span class="n">z</span>   <span class="p">(</span><span class="n">ZHAT</span><span class="p">)</span>
+<span class="n">longitudinal</span> <span class="o">-&gt;</span> <span class="o">+</span><span class="n">y</span>   <span class="p">(</span><span class="n">YHAT</span><span class="p">)</span>
+<span class="n">transverse</span>   <span class="o">-&gt;</span> <span class="o">+</span><span class="n">x</span>   <span class="p">(</span><span class="n">XHAT</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The NeXus <a class="reference external" href="https://manual.nexusformat.org/design.html#the-nexus-coordinate-system">convention</a> makes a different choice:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vertical</span>     <span class="o">-&gt;</span> <span class="o">+</span><span class="n">z</span>   <span class="p">(</span><span class="n">YHAT</span><span class="p">)</span>
+<span class="n">longitudinal</span> <span class="o">-&gt;</span> <span class="o">+</span><span class="n">y</span>   <span class="p">(</span><span class="n">ZHAT</span><span class="p">)</span>
+<span class="n">transverse</span>   <span class="o">-&gt;</span> <span class="o">+</span><span class="n">x</span>   <span class="p">(</span><span class="n">XHAT</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All are valid right-handed systems.  The same physical rotation (e.g.
+“right-handed about the vertical axis”) has different matrix
+representations in each basis, but the diffraction calculation gives the
+same motor angles regardless.</p>
+</section>
+<hr class="docutils" />
+<section id="requirements-for-a-valid-basis">
+<h2>Requirements for a valid basis<a class="headerlink" href="#requirements-for-a-valid-basis" title="Link to this heading">#</a></h2>
+<p>The package validates the basis at geometry construction time.  A valid
+basis must satisfy:</p>
 <ol class="arabic simple">
-<li><p>A geometry with a wavelength set</p></li>
-<li><p>A sample with a lattice defined</p></li>
-<li><p>One, two, or three measured reflections with known (hkl) and motor angles</p></li>
+<li><p><strong>Exactly three vectors</strong> — one for each physical direction.</p></li>
+<li><p><strong>Each vector is 3-dimensional</strong> and non-zero.</p></li>
+<li><p><strong>Mutually orthogonal</strong> — every pair of vectors has zero dot product
+(within a tolerance of 1e-10).</p></li>
 </ol>
-</section>
-<section id="set-up-the-geometry-and-sample">
-<h2>Set up the geometry and sample<a class="headerlink" href="#set-up-the-geometry-and-sample" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
-
-<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
-<span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>   <span class="c1"># Å  (Cu Kα)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.431</span><span class="p">)</span>  <span class="c1"># cubic silicon</span>
-</pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The package does <strong>not</strong> check right-handedness.  It is the caller’s
+responsibility to ensure that <code class="docutils literal notranslate"><span class="pre">vertical</span> <span class="pre">x</span> <span class="pre">longitudinal</span> <span class="pre">=</span> <span class="pre">transverse</span></code>
+(i.e. the three vectors form a right-handed system).  All pre-built
+geometries satisfy this constraint; custom geometries should verify it
+explicitly.</p>
 </div>
 </section>
-<section id="add-orienting-reflections">
-<h2>Add orienting reflections<a class="headerlink" href="#add-orienting-reflections" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add the primary reflection at its measured motor angles</span>
-<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-                          <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">69.13</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">34.56</span><span class="p">,</span>
-                                  <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
-
-<span class="c1"># Add a second reflection 90° away in phi</span>
-<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or2&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-                          <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">47.30</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">23.65</span><span class="p">,</span>
-                                  <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">35.26</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">})</span>
-
-<span class="c1"># Designate which reflections to use for the UB calculation</span>
-<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;or1&quot;</span><span class="p">)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor1</span><span class="p">(</span><span class="s2">&quot;or2&quot;</span><span class="p">)</span>
-</pre></div>
+<hr class="docutils" />
+<section id="pre-built-conventions">
+<h2>Pre-built conventions<a class="headerlink" href="#pre-built-conventions" title="Link to this heading">#</a></h2>
+<p>The package exports two basis constants used by the preset geometries:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Basis</p></th>
+<th class="head"><p>vertical</p></th>
+<th class="head"><p>longitudinal</p></th>
+<th class="head"><p>transverse</p></th>
+<th class="head"><p>Presets</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a></p></td>
+<td><p>+x</p></td>
+<td><p>+y</p></td>
+<td><p>+z</p></td>
+<td><p>psic, sixc, kappa6c, zaxis, s2d2, fivec</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a></p></td>
+<td><p>+z</p></td>
+<td><p>+y</p></td>
+<td><p>+x</p></td>
+<td><p>fourcv, fourch, kappa4cv, kappa4ch</p></td>
+</tr>
+</tbody>
+</table>
 </div>
+<p>Other conventions exist in the broader community (e.g. NeXus, Hkl) —
+see <a class="reference internal" href="../concepts.html#concepts"><span class="std std-ref">Concepts</span></a> for a tabulated comparison.</p>
 </section>
-<section id="compute-ub-from-two-reflections-busing-levy-1967">
-<h2>Compute UB from two reflections (Busing &amp; Levy 1967)<a class="headerlink" href="#compute-ub-from-two-reflections-busing-levy-1967" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">UB</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">ub_from_two_reflections_bl1967</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UB =</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">UB</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This is the standard method for most beamline work.</p>
-</section>
-<section id="compute-ub-from-one-reflection">
-<h2>Compute UB from one reflection<a class="headerlink" href="#compute-ub-from-one-reflection" title="Link to this heading">#</a></h2>
-<p>When only one reflection is available, a provisional UB can be computed
-by specifying a reference crystal direction and a reference stage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">UB</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">ub_from_one_reflection</span><span class="p">(</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
-    <span class="n">reflection</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or1&quot;</span><span class="p">],</span>
-    <span class="n">reference_hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>   <span class="c1"># crystal direction to align</span>
-    <span class="n">reference_stage</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>      <span class="c1"># stage axis to align it along</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="compute-ub-from-three-reflections-direct-method">
-<h2>Compute UB from three reflections (direct method)<a class="headerlink" href="#compute-ub-from-three-reflections-direct-method" title="Link to this heading">#</a></h2>
-<p>For unknown lattices, UB can be determined directly from three reflections
-without prior knowledge of the unit cell:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;or3&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-                          <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ttheta&quot;</span><span class="p">:</span> <span class="mf">56.12</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="mf">28.06</span><span class="p">,</span>
-                                  <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">58.0</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mf">45.0</span><span class="p">})</span>
-
-<span class="n">UB</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">ub_from_three_reflections_bl1967</span><span class="p">(</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or1&quot;</span><span class="p">],</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or2&quot;</span><span class="p">],</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;or3&quot;</span><span class="p">],</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="use-an-identity-u-matrix">
-<h2>Use an identity U matrix<a class="headerlink" href="#use-an-identity-u-matrix" title="Link to this heading">#</a></h2>
-<p>For a perfectly aligned crystal (crystal axes parallel to diffractometer
-axes), use the identity orientation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="verify-the-orientation-direction-check">
-<h2>Verify the orientation — direction check<a class="headerlink" href="#verify-the-orientation-direction-check" title="Link to this heading">#</a></h2>
-<p>Check that <code class="docutils literal notranslate"><span class="pre">UB</span> <span class="pre">&#64;</span> <span class="pre">h</span></code> points in the same direction as the observed Q:</p>
+<hr class="docutils" />
+<section id="defining-a-custom-basis">
+<h2>Defining a custom basis<a class="headerlink" href="#defining-a-custom-basis" title="Link to this heading">#</a></h2>
+<p>You may pass any valid basis dict to
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a>.  The keys
+must be <code class="docutils literal notranslate"><span class="pre">&quot;vertical&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;longitudinal&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;transverse&quot;</span></code>; the values
+are 3-element array-like objects:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.stage</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stage</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">direction_check</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-    <span class="n">q_phi</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">angles_to_phi_vector</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span>
-    <span class="n">ub_h</span>  <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">r</span><span class="o">.</span><span class="n">hkl</span>
-    <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q_phi</span><span class="p">,</span> <span class="n">ub_h</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">ub_h</span><span class="p">))</span>
-    <span class="n">angle_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cos_theta</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">angle_deg</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">° discrepancy&quot;</span><span class="p">)</span>
+<span class="c1"># NeXus convention: vertical=+y, longitudinal=+z, transverse=+x</span>
+<span class="n">nexus_basis</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;vertical&quot;</span><span class="p">:</span>     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+    <span class="s2">&quot;longitudinal&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span>
+    <span class="s2">&quot;transverse&quot;</span><span class="p">:</span>   <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+<span class="p">}</span>
 
-<span class="n">direction_check</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s2">&quot;or1&quot;</span><span class="p">)</span>
-<span class="n">direction_check</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s2">&quot;or2&quot;</span><span class="p">)</span>
+<span class="c1"># Use this basis with a custom geometry</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">AdHocDiffractometer</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_geometry&quot;</span><span class="p">,</span>
+    <span class="n">stages</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
+        <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">basis</span><span class="o">=</span><span class="n">nexus_basis</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Minimal two-circle with NeXus basis&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">0.0°</span></code> means perfect agreement.</p>
+<p>The axis vectors on each <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stage</span></code></a>
+are expressed in the same Cartesian frame as the basis — so when you
+change the basis, the Stage axis vectors must change accordingly.</p>
 </section>
-<section id="full-worked-example">
-<h2>Full worked example<a class="headerlink" href="#full-worked-example" title="Link to this heading">#</a></h2>
-<p>See the <a class="reference internal" href="fourcv_alignment_howto.html"><span class="doc">Align a Four-Circle Diffractometer (fourcv)</span></a> notebook for a complete
-step-by-step crystal alignment on a real instrument.</p>
+<hr class="docutils" />
+<section id="what-changes-when-you-change-the-basis">
+<h2>What changes when you change the basis<a class="headerlink" href="#what-changes-when-you-change-the-basis" title="Link to this heading">#</a></h2>
+<p>Changing the basis changes the <strong>numerical representation</strong> of every
+vector quantity in the geometry:</p>
+<ul class="simple">
+<li><p>Stage axis vectors (e.g. <code class="docutils literal notranslate"><span class="pre">+XHAT</span></code> vs <code class="docutils literal notranslate"><span class="pre">+ZHAT</span></code> for the vertical axis)</p></li>
+<li><p>Rotation matrices</p></li>
+<li><p>The B, U, and UB matrices</p></li>
+<li><p>Q-vectors computed by <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.angles_to_phi_vector" title="ad_hoc_diffractometer.orientation.angles_to_phi_vector"><code class="xref py py-func docutils literal notranslate"><span class="pre">angles_to_phi_vector()</span></code></a></p></li>
+</ul>
+<p>What does <strong>not</strong> change:</p>
+<ul class="simple">
+<li><p>Motor angles returned by <code class="docutils literal notranslate"><span class="pre">forward()</span></code> and accepted by <code class="docutils literal notranslate"><span class="pre">inverse()</span></code></p></li>
+<li><p>Bragg angles and d-spacings</p></li>
+<li><p>Physical rotation directions (right-handed vs left-handed)</p></li>
+<li><p>The number and type of solutions</p></li>
+</ul>
+<p>The basis is a bookkeeping convention.  Two geometries that describe the
+same physical diffractometer with different bases will produce identical
+motor angles for the same reflection.</p>
 </section>
+<hr class="docutils" />
+<section id="common-mistakes">
+<h2>Common mistakes<a class="headerlink" href="#common-mistakes" title="Link to this heading">#</a></h2>
+<p><strong>Swapping vertical and transverse.</strong>
+If you accidentally assign <code class="docutils literal notranslate"><span class="pre">vertical</span> <span class="pre">-&gt;</span> <span class="pre">+z</span></code> and <code class="docutils literal notranslate"><span class="pre">transverse</span> <span class="pre">-&gt;</span> <span class="pre">+z</span></code> (or
+repeat any axis), the constructor will raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> because the
+vectors are not mutually orthogonal.</p>
+<p><strong>Left-handed system.</strong>
+If <code class="docutils literal notranslate"><span class="pre">vertical</span> <span class="pre">x</span> <span class="pre">longitudinal</span></code> points in the opposite direction from your
+<code class="docutils literal notranslate"><span class="pre">transverse</span></code> vector, the system is left-handed.  The package does not
+detect this automatically — it will produce incorrect results silently.
+Always verify: <code class="docutils literal notranslate"><span class="pre">np.cross(vertical,</span> <span class="pre">longitudinal)</span></code> should equal
+<code class="docutils literal notranslate"><span class="pre">transverse</span></code> (not <code class="docutils literal notranslate"><span class="pre">-transverse</span></code>).</p>
+<p><strong>Mixing conventions.</strong>
+If you define stages using axis vectors from one convention but pass a
+basis dict from another, the geometry description will be internally
+inconsistent.  The axis vectors and basis must use the same Cartesian
+frame.</p>
+</section>
+<hr class="docutils" />
 <section id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.ub_from_one_reflection" title="ad_hoc_diffractometer.orientation.ub_from_one_reflection"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_one_reflection()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.ub_identity" title="ad_hoc_diffractometer.orientation.ub_identity"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_identity()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.angles_to_phi_vector" title="ad_hoc_diffractometer.orientation.angles_to_phi_vector"><code class="xref py py-func docutils literal notranslate"><span class="pre">angles_to_phi_vector()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/reflection/index.html#ad_hoc_diffractometer.reflection.ReflectionList" title="ad_hoc_diffractometer.reflection.ReflectionList"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReflectionList</span></code></a></p></li>
+<li><p><a class="reference internal" href="../concepts.html#concepts"><span class="std std-ref">Concepts</span></a> — coordinate conventions, axis signs, and four
+tabulated basis mappings</p></li>
+<li><p><a class="reference internal" href="../problem1.html"><span class="doc">Case Study: Describing a Diffractometer</span></a> — the case study that defines the physical
+reference frame</p></li>
+<li><p><a class="reference internal" href="../problem2.html"><span class="doc">Case Study — Coordinate Convention and UB Matrix</span></a> — worked example deriving B/U/UB from a basis
+assignment</p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a> — the
+<code class="docutils literal notranslate"><span class="pre">basis</span></code> constructor argument</p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a>,
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a> — pre-built basis
+constants</p></li>
 </ul>
 </section>
 </section>
@@ -627,20 +712,20 @@ step-by-step crystal alignment on a real instrument.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="lattice.html"
+       href="index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Define the Sample Lattice</p>
+        <p class="prev-next-title">How-to Guides</p>
       </div>
     </a>
     <a class="right-next"
-       href="forward.html"
+       href="wavelength.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Forward and Inverse Computations</p>
+        <p class="prev-next-title">Set Wavelength / Energy</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -663,15 +748,13 @@ step-by-step crystal alignment on a real instrument.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-geometry-and-sample">Set up the geometry and sample</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#add-orienting-reflections">Add orienting reflections</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-ub-from-two-reflections-busing-levy-1967">Compute UB from two reflections (Busing &amp; Levy 1967)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-ub-from-one-reflection">Compute UB from one reflection</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-ub-from-three-reflections-direct-method">Compute UB from three reflections (direct method)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-an-identity-u-matrix">Use an identity U matrix</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verify-the-orientation-direction-check">Verify the orientation — direction check</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-worked-example">Full worked example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-three-physical-directions">The three physical directions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-a-basis-does">What a basis does</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#requirements-for-a-valid-basis">Requirements for a valid basis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-built-conventions">Pre-built conventions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-a-custom-basis">Defining a custom basis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-changes-when-you-change-the-basis">What changes when you change the basis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-mistakes">Common mistakes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
 </ul>
   </nav></div>
@@ -679,7 +762,7 @@ step-by-step crystal alignment on a real instrument.</p>
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../_sources/howto/orient.md.txt">
+    <a href="../_sources/howto/basis_vectors.md.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

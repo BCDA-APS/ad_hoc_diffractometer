@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=f9ba8f63"></script>
+    <script src="../_static/documentation_options.js?v=8ffbe7f8"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-25 14:25 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-25 15:16 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -389,6 +389,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">How-to Guides</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basis_vectors.html">Choose and Understand Basis Vectors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wavelength.html">Set Wavelength / Energy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lattice.html">Define the Sample Lattice</a></li>
 <li class="toctree-l2"><a class="reference internal" href="orient.html">Orient a Crystal</a></li>
@@ -428,7 +429,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../concepts.html">Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../direct-lattice.html">Direct Lattice in Crystallography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../problem1.html">Case Study: Describing a Diffractometer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../problem2.html">You (1999) Geometry — Coordinate Convention and UB Matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem2.html">Case Study — Coordinate Convention and UB Matrix</a></li>
 </ul>
 </div>
 </nav></div>
@@ -841,7 +842,7 @@ orientation.</p>
 <div><p><strong>Accommodation</strong>: <code class="docutils literal notranslate"><span class="pre">2θ</span> <span class="pre">=</span> <span class="pre">60°</span></code> is <strong>not</strong> the Bragg angle for (1, 0, 0)
 of sapphire at λ = 1.5498 Å.  The true Bragg angle is 2θ ≈ 18.64°.
 SPEC accepts this geometric placeholder because the UB algorithm uses
-only the <strong>direction</strong> of the scattering vector (normalised), not its
+only the <strong>direction</strong> of the scattering vector (normalized), not its
 magnitude, to build the orientation matrix.</p>
 <p><code class="docutils literal notranslate"><span class="pre">ahd.ub_from_two_reflections_bl1967</span></code> follows the same Busing &amp; Levy
 algorithm and therefore also accepts this placeholder.  The consequence
@@ -949,13 +950,13 @@ max |U^T U - I| = 2.22e-16  (must be ~0 for orthonormality)
 <p>The orientation matrix is correct when <strong>UB</strong> &#64; <strong>h</strong> points in the same
 <strong>direction</strong> as the scattering vector Q_φ computed from the measured
 motor angles.  We check the cosine of the angle between the two vectors
-(both normalised to unit length):</p>
+(both normalized to unit length):</p>
 <div class="math notranslate nohighlight">
 \[\cos\theta = \frac{(\mathbf{UB}\,\mathbf{h}) \cdot \mathbf{Q}_\phi}
 {|\mathbf{UB}\,\mathbf{h}|\;|\mathbf{Q}_\phi|}\]</div>
 <p>cos θ = 1 means perfect alignment; θ = 0° means no angular discrepancy.</p>
 <blockquote>
-<div><p><strong>Expected behaviour with a geometric placeholder</strong>:<br />
+<div><p><strong>Expected behavior with a geometric placeholder</strong>:<br />
 The primary reflection (or1) is exact by construction — cos θ = 1.<br />
 The secondary reflection (or2) has a ~7° discrepancy because its
 motor angles (2θ = 60°) are not at the true Bragg condition for (1,0,0).
@@ -1500,7 +1501,7 @@ The saved state can be restored later with:
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-25 14:25 CDT.
+  Last updated on 2026-04-25 15:16 CDT.
   <br/>
 </p></div>
       

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=f9ba8f63"></script>
+    <script src="_static/documentation_options.js?v=8ffbe7f8"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-25 14:25 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-25 15:16 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -389,6 +389,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="howto/index.html">How-to Guides</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/basis_vectors.html">Choose and Understand Basis Vectors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/wavelength.html">Set Wavelength / Energy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/lattice.html">Define the Sample Lattice</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/orient.html">Orient a Crystal</a></li>
@@ -428,7 +429,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="direct-lattice.html">Direct Lattice in Crystallography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="problem1.html">Case Study: Describing a Diffractometer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="problem2.html">You (1999) Geometry — Coordinate Convention and UB Matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problem2.html">Case Study — Coordinate Convention and UB Matrix</a></li>
 </ul>
 </div>
 </nav></div>
@@ -521,8 +522,8 @@ directions</strong> that can be identified directly in the laboratory:</p>
 <p>The package uses a right-handed Cartesian frame internally.  Different authors
 assigned different Cartesian letters (x, y, z) to these physical directions —
 historically a source of confusion when diffractometer geometries are compared.
-The package supports both major conventions via the <code class="docutils literal notranslate"><span class="pre">basis</span></code> argument to each
-factory.</p>
+The package accepts any right-handed orthogonal basis via the <code class="docutils literal notranslate"><span class="pre">basis</span></code> argument
+to <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a>.</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-0">
@@ -710,7 +711,7 @@ are related by <span class="math notranslate nohighlight">\(hc = 12.3984\,\text{
 <p>The B matrix is constructed from unit-cell parameters <span class="math notranslate nohighlight">\((a, b, c, \alpha,
 \beta, \gamma)\)</span>.  U is determined by measuring two or more Bragg reflections.
 UB = U × B maps Miller indices directly to the lab frame.</p>
-<p>See <a class="reference internal" href="howto/orient.html"><span class="doc">Orient a Crystal</span></a>, <a class="reference internal" href="howto/lattice.html"><span class="doc">Define the Sample Lattice</span></a>, <a class="reference internal" href="problem2.html"><span class="doc">You (1999) Geometry — Coordinate Convention and UB Matrix</span></a>, and
+<p>See <a class="reference internal" href="howto/orient.html"><span class="doc">Orient a Crystal</span></a>, <a class="reference internal" href="howto/lattice.html"><span class="doc">Define the Sample Lattice</span></a>, <a class="reference internal" href="problem2.html"><span class="doc">Case Study — Coordinate Convention and UB Matrix</span></a>, and
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/lattice/index.html#ad_hoc_diffractometer.lattice.Lattice" title="ad_hoc_diffractometer.lattice.Lattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lattice</span></code></a>.</p>
 </section>
 <hr class="docutils" />
@@ -994,7 +995,7 @@ The dict contains only JSON-compatible types; save to JSON (stdlib) or YAML
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-25 14:25 CDT.
+  Last updated on 2026-04-25 15:16 CDT.
   <br/>
 </p></div>
       

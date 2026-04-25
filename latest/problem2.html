@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>You (1999) Geometry — Coordinate Convention and UB Matrix &#8212; ad_hoc_diffractometer 0.5</title>
+    <title>Case Study — Coordinate Convention and UB Matrix &#8212; ad_hoc_diffractometer 0.5</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=f9ba8f63"></script>
+    <script src="_static/documentation_options.js?v=8ffbe7f8"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-25 14:25 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-25 15:16 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -387,6 +387,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="howto/index.html">How-to Guides</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/basis_vectors.html">Choose and Understand Basis Vectors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/wavelength.html">Set Wavelength / Energy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/lattice.html">Define the Sample Lattice</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/orient.html">Orient a Crystal</a></li>
@@ -426,7 +427,7 @@
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="direct-lattice.html">Direct Lattice in Crystallography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="problem1.html">Case Study: Describing a Diffractometer</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">You (1999) Geometry — Coordinate Convention and UB Matrix</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Case Study — Coordinate Convention and UB Matrix</a></li>
 </ul>
 </div>
 </nav></div>
@@ -470,7 +471,7 @@
     
     <li class="breadcrumb-item"><a href="user_guide.html" class="nav-link">User Guide</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">You (1999) Geometry — Coordinate Convention and UB Matrix</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Case Study — Coordinate Convention and UB Matrix</span></li>
   </ul>
 </nav>
 </div>
@@ -487,17 +488,23 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="you-1999-geometry-coordinate-convention-and-ub-matrix">
-<h1>You (1999) Geometry — Coordinate Convention and UB Matrix<a class="headerlink" href="#you-1999-geometry-coordinate-convention-and-ub-matrix" title="Link to this heading">#</a></h1>
-<p>This page analyses the <a class="reference internal" href="problem1.html"><span class="std std-doc">case study diffractometer</span></a> using the
-You (1999) coordinate convention and derives the B, U, and UB matrices used
-throughout <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code>.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="case-study-coordinate-convention-and-ub-matrix">
+<h1>Case Study — Coordinate Convention and UB Matrix<a class="headerlink" href="#case-study-coordinate-convention-and-ub-matrix" title="Link to this heading">#</a></h1>
+<p>This page analyzes the <a class="reference internal" href="problem1.html"><span class="std std-doc">case study diffractometer</span></a> to show
+how a <strong>basis vector assignment</strong> (the mapping of physical directions to
+Cartesian axes) leads to the B, U, and UB matrices used throughout
+<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code>.</p>
+<p>The worked example below uses the You (1999) convention, but the
+procedure is identical for any right-handed orthogonal basis — only the
+numerical values of the axis vectors change.  See
+<a class="reference internal" href="howto/basis_vectors.html"><span class="doc">Choose and Understand Basis Vectors</span></a> for a tutorial on choosing a basis.</p>
 <p><strong>Reference:</strong> H. You, <em>J. Appl. Cryst.</em> <strong>32</strong>, 614–623 (1999).
 DOI: <a class="reference external" href="https://doi.org/10.1107/S0021889899001223">10.1107/S0021889899001223</a></p>
 <hr class="docutils" />
 <section id="basis-vector-assignment">
 <h2>Basis vector assignment<a class="headerlink" href="#basis-vector-assignment" title="Link to this heading">#</a></h2>
-<p>The You (1999) convention assigns:</p>
+<p>Any right-handed orthogonal mapping of the three physical directions to
+Cartesian unit vectors is valid.  The You (1999) convention assigns:</p>
 <ul class="simple">
 <li><p><strong>xHat</strong>: vertical (along the mu and nu rotation axes)</p></li>
 <li><p><strong>yHat</strong>: longitudinal (along the incoming beam direction)</p></li>
@@ -784,7 +791,7 @@ Engineering</em>, Elsevier (2016).</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-25 14:25 CDT.
+  Last updated on 2026-04-25 15:16 CDT.
   <br/>
 </p></div>
       
