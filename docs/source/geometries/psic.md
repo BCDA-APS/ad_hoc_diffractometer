@@ -44,19 +44,19 @@ and mode configuration.
 
 **Sample stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``mu`` | +vertical (+x) | right-handed |
-| ``eta`` | −transverse (−z) | left-handed |
-| ``chi`` | +longitudinal (+y) | right-handed |
-| ``phi`` | −transverse (−z) | left-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``mu`` | +vertical (+x) | right-handed | base |
+| ``eta`` | −transverse (−z) | left-handed | ``mu`` |
+| ``chi`` | +longitudinal (+y) | right-handed | ``eta`` |
+| ``phi`` | −transverse (−z) | left-handed | ``chi`` |
 
 **Detector stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``nu`` | +vertical (+x) | right-handed |
-| ``delta`` | −transverse (−z) | left-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``nu`` | +vertical (+x) | right-handed | base |
+| ``delta`` | −transverse (−z) | left-handed | ``nu`` |
 
 ## Diffraction modes
 
