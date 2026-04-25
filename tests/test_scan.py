@@ -4,7 +4,7 @@
 Unit tests for ad_hoc_diffractometer.scan.
 
 Covers:
-  - NEAREST_ANGLES: scoring, previous=None, minimises distance
+  - NEAREST_ANGLES: scoring, previous=None, minimizes distance
   - _hkl_points: line, radial, transverse; n_points<2; unknown type; zero direction
   - _pick_solution: None key, custom key, empty list
   - _euler_from_Z_standard: round-trip decomposition for fourcv and psic

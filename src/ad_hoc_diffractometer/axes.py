@@ -95,7 +95,7 @@ def parse_axis(label: str, basis: dict | None = None) -> np.ndarray:
     Raises
     ------
     ValueError
-        If the label is not recognised, or if a physical direction name is
+        If the label is not recognized, or if a physical direction name is
         given but no basis dict is supplied, or if the direction name is
         not in the basis dict.
 
@@ -144,7 +144,7 @@ def axis_label(vector: np.ndarray) -> str:
     """
     Convert an internal axis numpy array to its caller-facing string label.
 
-    Only the six standard signed basis vectors are recognised.  For other
+    Only the six standard signed basis vectors are recognized.  For other
     vectors (e.g. a kappa-style tilted axis) the array is formatted
     numerically.
 

@@ -64,7 +64,7 @@ from ad_hoc_diffractometer.rotation import rotation_matrix
             id="negated-x-axis-equals-negated-angle",
         ),
         pytest.param(
-            2 * XHAT, 90.0, Rx(90), does_not_raise(), id="non-unit-axis-is-normalised"
+            2 * XHAT, 90.0, Rx(90), does_not_raise(), id="non-unit-axis-is-normalized"
         ),
         pytest.param(YHAT, 360.0, np.eye(3), does_not_raise(), id="360deg-is-identity"),
     ],

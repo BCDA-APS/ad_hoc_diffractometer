@@ -101,7 +101,7 @@ def test_reflection_name_stored():
     assert r.name == "Si_111"
 
 
-def test_reflection_hkl_normalised_to_float():
+def test_reflection_hkl_normalized_to_float():
     r = Reflection(name="r1", hkl=(1, 2, 3), angles={})
     assert r.hkl == (1.0, 2.0, 3.0)
 
