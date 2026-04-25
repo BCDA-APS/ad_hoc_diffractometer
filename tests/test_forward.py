@@ -7,7 +7,7 @@ Covers:
   - Precondition errors: no wavelength, no UB, hkl=(0,0,0), Q > Ewald sphere,
     no active mode, unimplemented mode
   - ConstraintSet bisecting solver: fourcv, fourch, psic (bisecting)
-  - ConstraintSet fixed-angle solver: fourcv fixed_chi, psic fixed_chi
+  - ConstraintSet fixed-angle solver: fourcv fixed_chi, psic fixed_chi_vertical
   - Round-trip invariant: inverse(forward(hkl)) == hkl for every solution
   - Stage limits: solutions outside limits are filtered out
   - Cut-point application: mode and geometry-level
@@ -437,11 +437,11 @@ def test_fourcv_fixed_chi_round_trip():
 
 
 def test_psic_fixed_chi_uses_constraint_value():
-    """fixed_chi on psic: chi=90°, mu=0, nu=0 from constraint values."""
+    """fixed_chi_vertical on psic: chi=90°, mu=0, nu=0 from constraint values."""
     from ad_hoc_diffractometer.presets import psic
 
     g = _setup_cubic(psic, a=4.0)
-    g.mode_name = "fixed_chi"
+    g.mode_name = "fixed_chi_vertical"
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
         assert sol["chi"] == pytest.approx(90.0, abs=1e-6)
@@ -1353,26 +1353,40 @@ def test_sixc_four_circle_omega_equals_delta_half():
 
 _PSIC_MODES_ALL = {
     "bisecting_vertical",
-    "fixed_chi",
-    "fixed_phi",
-    "fixed_mu",
+    "fixed_chi_vertical",
+    "fixed_phi_vertical",
+    "fixed_mu_vertical",
+    "fixed_nu_vertical",
     "bisecting_horizontal",
-    "fixed_nu",
+    "fixed_chi_horizontal",
+    "fixed_phi_horizontal",
+    "fixed_eta_horizontal",
+    "fixed_delta_horizontal",
     "double_diffraction_vertical",
     "double_diffraction_horizontal",
     "lifting_detector_mu",
     "lifting_detector_phi",
     "psi_constant_vertical",
     "psi_constant_horizontal",
+    "fixed_alpha_i_vertical",
+    "fixed_beta_out_vertical",
+    "alpha_eq_beta_vertical",
+    "fixed_alpha_i_horizontal",
+    "fixed_beta_out_horizontal",
+    "alpha_eq_beta_horizontal",
 }
 
 _PSIC_MODES_IMPLEMENTED = {
     "bisecting_vertical",
-    "fixed_chi",
-    "fixed_phi",
-    "fixed_mu",
+    "fixed_chi_vertical",
+    "fixed_phi_vertical",
+    "fixed_mu_vertical",
+    "fixed_nu_vertical",
     "bisecting_horizontal",
-    "fixed_nu",
+    "fixed_chi_horizontal",
+    "fixed_phi_horizontal",
+    "fixed_eta_horizontal",
+    "fixed_delta_horizontal",
     "double_diffraction_vertical",
     "double_diffraction_horizontal",
     "lifting_detector_mu",
@@ -1382,8 +1396,8 @@ _PSIC_MODES_IMPLEMENTED = {
 _PSIC_MODES_STUBS = _PSIC_MODES_ALL - _PSIC_MODES_IMPLEMENTED
 
 
-def test_psic_has_all_twelve_modes():
-    """psic exposes exactly 12 declared modes."""
+def test_psic_has_all_modes():
+    """psic exposes exactly the expected number of declared modes."""
     assert set(psic().modes.keys()) == _PSIC_MODES_ALL
 
 
@@ -1403,18 +1417,23 @@ def test_psic_mode_is_implemented(mode_name, expected_implemented):
     [
         pytest.param("bisecting_vertical", 1, 0, 0, id="bisecting_vertical-100"),
         pytest.param("bisecting_vertical", 1, 1, 1, id="bisecting_vertical-111"),
-        pytest.param("fixed_chi", 0, 0, 1, id="fixed_chi-001"),
-        pytest.param("fixed_chi", 0, 1, 0, id="fixed_chi-010"),
-        pytest.param("fixed_phi", 0, 1, 0, id="fixed_phi-010"),
-        pytest.param("fixed_phi", 1, 1, 1, id="fixed_phi-111"),
-        pytest.param("fixed_mu", 1, 0, 0, id="fixed_mu-100"),
-        pytest.param("fixed_mu", 0, 1, 0, id="fixed_mu-010"),
+        pytest.param("fixed_chi_vertical", 0, 0, 1, id="fixed_chi_vertical-001"),
+        pytest.param("fixed_chi_vertical", 0, 1, 0, id="fixed_chi_vertical-010"),
+        pytest.param("fixed_phi_vertical", 0, 1, 0, id="fixed_phi_vertical-010"),
+        pytest.param("fixed_phi_vertical", 1, 1, 1, id="fixed_phi_vertical-111"),
+        pytest.param("fixed_mu_vertical", 1, 0, 0, id="fixed_mu_vertical-100"),
+        pytest.param("fixed_mu_vertical", 0, 1, 0, id="fixed_mu_vertical-010"),
+        pytest.param("fixed_nu_vertical", 1, 0, 0, id="fixed_nu_vertical-100"),
+        pytest.param("fixed_nu_vertical", 1, 1, 1, id="fixed_nu_vertical-111"),
         # bisecting_horizontal: Q must lie in the horizontal plane (no longitudinal component)
         pytest.param("bisecting_horizontal", 1, 0, 0, id="bisecting_horiz-100"),
         pytest.param("bisecting_horizontal", 0, 0, 1, id="bisecting_horiz-001"),
         pytest.param("bisecting_horizontal", 1, 0, 1, id="bisecting_horiz-101"),
-        pytest.param("fixed_nu", 1, 0, 0, id="fixed_nu-100"),
-        pytest.param("fixed_nu", 1, 1, 1, id="fixed_nu-111"),
+        # horizontal fixed-angle modes
+        pytest.param("fixed_chi_horizontal", 1, 0, 0, id="fixed_chi_horiz-100"),
+        pytest.param("fixed_phi_horizontal", 1, 0, 0, id="fixed_phi_horiz-100"),
+        pytest.param("fixed_eta_horizontal", 1, 0, 0, id="fixed_eta_horiz-100"),
+        pytest.param("fixed_delta_horizontal", 1, 0, 0, id="fixed_delta_horiz-100"),
         # double_diffraction_vertical tested separately (requires extras h2/k2/l2)
         # lifting_detector_* modes: qaz=90 out-of-plane constraint
         pytest.param("lifting_detector_mu", 1, 0, 0, id="lifting_detector_mu-100"),
@@ -1471,11 +1490,26 @@ def test_psic_bisecting_horizontal_eta_delta_frozen():
         pytest.param(
             "bisecting_vertical", "nu", 0.0, 1, 0, 0, id="bisecting_vertical-nu=0"
         ),
-        pytest.param("fixed_phi", "phi", 0.0, 0, 1, 0, id="fixed_phi-phi=0"),
-        pytest.param("fixed_mu", "mu", 0.0, 1, 0, 0, id="fixed_mu-mu=0"),
-        pytest.param("fixed_nu", "nu", 0.0, 1, 0, 0, id="fixed_nu-nu=0"),
-        # fixed_chi: (0,0,1) gives mu=0; chi=90 is the only declared constraint
-        pytest.param("fixed_chi", "chi", 90.0, 0, 0, 1, id="fixed_chi-chi=90"),
+        pytest.param("fixed_phi_vertical", "phi", 0.0, 0, 1, 0, id="fixed_phi_v-phi=0"),
+        pytest.param("fixed_mu_vertical", "mu", 0.0, 1, 0, 0, id="fixed_mu_v-mu=0"),
+        pytest.param("fixed_nu_vertical", "nu", 0.0, 1, 0, 0, id="fixed_nu_v-nu=0"),
+        # fixed_chi_vertical: (0,0,1) gives mu=0; chi=90 is the declared constraint
+        pytest.param(
+            "fixed_chi_vertical", "chi", 90.0, 0, 0, 1, id="fixed_chi_v-chi=90"
+        ),
+        # horizontal counterparts
+        pytest.param(
+            "fixed_chi_horizontal", "chi", 90.0, 1, 0, 0, id="fixed_chi_h-chi=90"
+        ),
+        pytest.param(
+            "fixed_phi_horizontal", "phi", 0.0, 1, 0, 0, id="fixed_phi_h-phi=0"
+        ),
+        pytest.param(
+            "fixed_eta_horizontal", "eta", 0.0, 1, 0, 0, id="fixed_eta_h-eta=0"
+        ),
+        pytest.param(
+            "fixed_delta_horizontal", "delta", 0.0, 1, 0, 0, id="fixed_delta_h-delta=0"
+        ),
         # bisecting_horizontal: Q must lie in horizontal plane; (1,0,0) works
         pytest.param(
             "bisecting_horizontal", "eta", 0.0, 1, 0, 0, id="bisecting_horiz-eta=0"
@@ -1516,7 +1550,7 @@ def test_psic_double_diffraction_extras_declared():
 
 
 def test_psic_modes_serialisation_round_trip():
-    """All 11 psic modes survive to_dict / from_dict round-trip."""
+    """All psic modes survive to_dict / from_dict round-trip."""
     import json
 
     from ad_hoc_diffractometer import AdHocDiffractometer

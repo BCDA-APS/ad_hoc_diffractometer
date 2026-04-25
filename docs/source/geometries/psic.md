@@ -82,7 +82,7 @@ Vertical scattering plane bisecting condition (You 1999, §5.3).
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 
-### `fixed_chi`
+### `fixed_chi_vertical`
 
 `chi` held at declared value (default 90°), `eta = delta/2`, `nu = 0`.
 The caller chooses the chi value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` — see {doc}`../howto/constraints`.
@@ -92,7 +92,7 @@ The caller chooses the chi value by constructing a {class}`~ad_hoc_diffractomete
 | **Computed** | eta, phi, delta |
 | **Constant during** `forward()` | chi, mu = 0, nu = 0 |
 
-### `fixed_phi`
+### `fixed_phi_vertical`
 
 `phi` held at declared value (default 0°), `eta = delta/2`, `nu = 0`.
 
@@ -101,7 +101,7 @@ The caller chooses the chi value by constructing a {class}`~ad_hoc_diffractomete
 | **Computed** | eta, chi, delta |
 | **Constant during** `forward()` | phi, mu = 0, nu = 0 |
 
-### `fixed_mu`
+### `fixed_mu_vertical`
 
 `mu` held at declared value (default 0°), `eta = delta/2`, `nu = 0`.
 
@@ -109,6 +109,15 @@ The caller chooses the chi value by constructing a {class}`~ad_hoc_diffractomete
 |---|---|
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu, nu = 0 |
+
+### `fixed_nu_vertical`
+
+`nu` held at declared value (default 0°), `eta = delta/2`, `mu = 0`.
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | nu, mu = 0 |
 
 ### `bisecting_horizontal`
 
@@ -121,14 +130,41 @@ Horizontal scattering plane bisecting condition (You 1999, §5.1).
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | eta = 0, delta = 0 |
 
-### `fixed_nu`
+### `fixed_chi_horizontal`
 
-`nu` held at declared value (default 0°), `eta = delta/2`, `mu = 0`.
+`chi` held at declared value (default 90°), `mu = nu/2`, `delta = 0`.
 
 | | |
 |---|---|
-| **Computed** | eta, chi, phi, delta |
-| **Constant during** `forward()` | nu, mu = 0 |
+| **Computed** | mu, phi, nu |
+| **Constant during** `forward()` | chi, eta = 0, delta = 0 |
+
+### `fixed_phi_horizontal`
+
+`phi` held at declared value (default 0°), `mu = nu/2`, `delta = 0`.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, nu |
+| **Constant during** `forward()` | phi, eta = 0, delta = 0 |
+
+### `fixed_eta_horizontal`
+
+`eta` held at declared value (default 0°), `mu = nu/2`, `delta = 0`.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta, delta = 0 |
+
+### `fixed_delta_horizontal`
+
+`delta` held at declared value (default 0°), `mu = nu/2`, `eta = 0`.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | delta, eta = 0 |
 
 ### `double_diffraction_vertical`
 
@@ -200,6 +236,76 @@ Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
 | **Constant during** `forward()` | eta = 0, delta = 0 |
 | **Extras (input)** | n̂, ψ |
 | **Extras (output)** | psi |
+
+### `fixed_alpha_i_vertical`
+
+Incidence angle α_i fixed at declared value (default 0°) in the
+vertical scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `fixed_beta_out_vertical`
+
+Exit angle β_out fixed at declared value (default 0°) in the
+vertical scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `alpha_eq_beta_vertical`
+
+Symmetric reflection: α_i = β_out in the vertical scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `fixed_alpha_i_horizontal`
+
+Incidence angle α_i fixed at declared value (default 0°) in the
+horizontal scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `fixed_beta_out_horizontal`
+
+Exit angle β_out fixed at declared value (default 0°) in the
+horizontal scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `alpha_eq_beta_horizontal`
+
+Symmetric reflection: α_i = β_out in the horizontal scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
+| **Extras (input)** | n̂ (surface normal) |
 
 ## API reference
 

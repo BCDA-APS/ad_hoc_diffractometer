@@ -193,8 +193,8 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["eta", "chi", "phi", "delta"],
         ),
-        # TODO: #190 These fixed modes are for vertical scattering plane; add for horizontal plane.
-        "fixed_chi": ConstraintSet(
+        # ── Fixed-angle modes, vertical scattering plane ──────────────────
+        "fixed_chi_vertical": ConstraintSet(
             [
                 SampleConstraint("chi", 90.0),
                 BisectConstraint("eta", "delta"),
@@ -202,7 +202,7 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["eta", "phi", "delta"],
         ),
-        "fixed_phi": ConstraintSet(
+        "fixed_phi_vertical": ConstraintSet(
             [
                 SampleConstraint("phi", 0.0),
                 BisectConstraint("eta", "delta"),
@@ -210,7 +210,7 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["eta", "chi", "delta"],
         ),
-        "fixed_mu": ConstraintSet(
+        "fixed_mu_vertical": ConstraintSet(
             [
                 SampleConstraint("mu", 0.0),
                 BisectConstraint("eta", "delta"),
@@ -218,6 +218,15 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["eta", "chi", "phi", "delta"],
         ),
+        "fixed_nu_vertical": ConstraintSet(
+            [
+                DetectorConstraint("nu", 0.0),
+                BisectConstraint("eta", "delta"),
+                SampleConstraint("mu", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+        ),
+        # ── Bisecting + fixed-angle modes, horizontal scattering plane ──
         "bisecting_horizontal": ConstraintSet(
             [
                 BisectConstraint("mu", "nu"),
@@ -226,13 +235,37 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["mu", "chi", "phi", "nu"],
         ),
-        "fixed_nu": ConstraintSet(
+        "fixed_chi_horizontal": ConstraintSet(
             [
-                DetectorConstraint("nu", 0.0),
-                BisectConstraint("eta", "delta"),
-                SampleConstraint("mu", 0.0),
+                SampleConstraint("chi", 90.0),
+                BisectConstraint("mu", "nu"),
+                DetectorConstraint("delta", 0.0),
             ],
-            computed=["eta", "chi", "phi", "delta"],
+            computed=["mu", "phi", "nu"],
+        ),
+        "fixed_phi_horizontal": ConstraintSet(
+            [
+                SampleConstraint("phi", 0.0),
+                BisectConstraint("mu", "nu"),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "chi", "nu"],
+        ),
+        "fixed_eta_horizontal": ConstraintSet(
+            [
+                SampleConstraint("eta", 0.0),
+                BisectConstraint("mu", "nu"),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+        ),
+        "fixed_delta_horizontal": ConstraintSet(
+            [
+                DetectorConstraint("delta", 0.0),
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("eta", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
         ),
         "double_diffraction_vertical": ConstraintSet(
             [
@@ -284,7 +317,62 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             computed=["mu", "chi", "phi", "nu"],
             extras={"n_hat": REQUIRED, "psi": None},
         ),
-        # TODO: incident angle fixed modes, reference vector choices: hkl_2, xyz
+        # ── Surface / incident-angle modes, vertical scattering plane ────
+        "fixed_alpha_i_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+                ReferenceConstraint("alpha_i", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "fixed_beta_out_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+                ReferenceConstraint("beta_out", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "alpha_eq_beta_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+                ReferenceConstraint("a_eq_b", True),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        # ── Surface / incident-angle modes, horizontal scattering plane ─
+        "fixed_alpha_i_horizontal": ConstraintSet(
+            [
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("delta", 0.0),
+                ReferenceConstraint("alpha_i", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "fixed_beta_out_horizontal": ConstraintSet(
+            [
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("delta", 0.0),
+                ReferenceConstraint("beta_out", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "alpha_eq_beta_horizontal": ConstraintSet(
+            [
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("delta", 0.0),
+                ReferenceConstraint("a_eq_b", True),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
     }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
