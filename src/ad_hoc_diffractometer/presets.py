@@ -184,7 +184,7 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
     # Vertical bisect pair: eta(transverse) <-> delta(transverse)  => eta = delta/2
     # Horizontal bisect pair: mu(vertical) <-> nu(vertical)  => mu = nu/2
     modes = {
-        # ── Implemented analytic modes ──────────────────────────────────────
+        # ── Vertical scattering plane ───────────────────────────────────────
         "bisecting_vertical": ConstraintSet(
             [
                 BisectConstraint("eta", "delta"),
@@ -193,16 +193,7 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["eta", "chi", "phi", "delta"],
         ),
-        # TODO: #190 These fixed modes are for vertical scattering plane; add for horizontal plane.
-        "fixed_chi": ConstraintSet(
-            [
-                SampleConstraint("chi", 90.0),
-                BisectConstraint("eta", "delta"),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["eta", "phi", "delta"],
-        ),
-        "fixed_phi": ConstraintSet(
+        "fixed_phi_vertical": ConstraintSet(
             [
                 SampleConstraint("phi", 0.0),
                 BisectConstraint("eta", "delta"),
@@ -210,7 +201,15 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["eta", "chi", "delta"],
         ),
-        "fixed_mu": ConstraintSet(
+        "fixed_chi_vertical": ConstraintSet(
+            [
+                SampleConstraint("chi", 90.0),
+                BisectConstraint("eta", "delta"),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["eta", "phi", "delta"],
+        ),
+        "fixed_mu_vertical": ConstraintSet(
             [
                 SampleConstraint("mu", 0.0),
                 BisectConstraint("eta", "delta"),
@@ -218,21 +217,49 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["eta", "chi", "phi", "delta"],
         ),
-        "bisecting_horizontal": ConstraintSet(
-            [
-                BisectConstraint("mu", "nu"),
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-        ),
-        "fixed_nu": ConstraintSet(
+        "fixed_nu_vertical": ConstraintSet(
             [
                 DetectorConstraint("nu", 0.0),
                 BisectConstraint("eta", "delta"),
                 SampleConstraint("mu", 0.0),
             ],
             computed=["eta", "chi", "phi", "delta"],
+        ),
+        "fixed_alpha_i_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+                ReferenceConstraint("alpha_i", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "fixed_beta_out_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+                ReferenceConstraint("beta_out", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "alpha_eq_beta_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+                ReferenceConstraint("a_eq_b", True),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "fixed_psi_vertical": ConstraintSet(
+            [
+                BisectConstraint("eta", "delta"),
+                SampleConstraint("mu", 0.0),
+                ReferenceConstraint("psi", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+            extras={"n_hat": REQUIRED, "psi": None},
         ),
         "double_diffraction_vertical": ConstraintSet(
             [
@@ -242,6 +269,83 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             computed=["eta", "chi", "phi", "delta"],
             extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
         ),
+        # ── Horizontal scattering plane ─────────────────────────────────────
+        "bisecting_horizontal": ConstraintSet(
+            [
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+        ),
+        "fixed_phi_horizontal": ConstraintSet(
+            [
+                SampleConstraint("phi", 0.0),
+                BisectConstraint("mu", "nu"),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "chi", "nu"],
+        ),
+        "fixed_chi_horizontal": ConstraintSet(
+            [
+                SampleConstraint("chi", 90.0),
+                BisectConstraint("mu", "nu"),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "phi", "nu"],
+        ),
+        "fixed_eta_horizontal": ConstraintSet(
+            [
+                SampleConstraint("eta", 0.0),
+                BisectConstraint("mu", "nu"),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+        ),
+        "fixed_delta_horizontal": ConstraintSet(
+            [
+                DetectorConstraint("delta", 0.0),
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("eta", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+        ),
+        "fixed_alpha_i_horizontal": ConstraintSet(
+            [
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("delta", 0.0),
+                ReferenceConstraint("alpha_i", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "fixed_beta_out_horizontal": ConstraintSet(
+            [
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("delta", 0.0),
+                ReferenceConstraint("beta_out", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "alpha_eq_beta_horizontal": ConstraintSet(
+            [
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("delta", 0.0),
+                ReferenceConstraint("a_eq_b", True),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "fixed_psi_horizontal": ConstraintSet(
+            [
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("eta", 0.0),
+                ReferenceConstraint("psi", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
         "double_diffraction_horizontal": ConstraintSet(
             [
                 SampleConstraint("eta", 0.0),
@@ -249,6 +353,15 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["mu", "chi", "phi", "nu"],
             extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
+        ),
+        # ── Lifting detector (out-of-plane) ─────────────────────────────────
+        "lifting_detector_phi": ConstraintSet(
+            [
+                SampleConstraint("phi", 0.0),
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("qaz", 90.0),
+            ],
+            computed=["phi", "nu", "delta"],
         ),
         "lifting_detector_mu": ConstraintSet(
             [
@@ -258,33 +371,6 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["mu", "nu", "delta"],
         ),
-        "lifting_detector_phi": ConstraintSet(
-            [
-                SampleConstraint("phi", 0.0),
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("qaz", 90.0),
-            ],
-            computed=["phi", "nu", "delta"],
-        ),
-        "psi_constant_vertical": ConstraintSet(
-            [
-                BisectConstraint("eta", "delta"),
-                SampleConstraint("mu", 0.0),
-                ReferenceConstraint("psi", 0.0),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-        "psi_constant_horizontal": ConstraintSet(
-            [
-                BisectConstraint("mu", "nu"),
-                SampleConstraint("eta", 0.0),
-                ReferenceConstraint("psi", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-        # TODO: incident angle fixed modes, reference vector choices: hkl_2, xyz
     }
     return AdHocDiffractometer(
         name=inspect.currentframe().f_code.co_name,
@@ -870,7 +956,7 @@ def kappa6c(
             ],
             computed=["kphi", "nu", "delta"],
         ),
-        "psi_constant_vertical": ConstraintSet(
+        "fixed_psi_vertical": ConstraintSet(
             [
                 BisectConstraint("komega", "delta"),
                 SampleConstraint("mu", 0.0),
@@ -879,7 +965,7 @@ def kappa6c(
             computed=["komega", "kappa", "kphi", "delta"],
             extras={"n_hat": REQUIRED, "psi": None},
         ),
-        "psi_constant_horizontal": ConstraintSet(
+        "fixed_psi_horizontal": ConstraintSet(
             [
                 BisectConstraint("mu", "nu"),
                 SampleConstraint("komega", 0.0),

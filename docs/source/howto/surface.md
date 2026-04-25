@@ -7,7 +7,7 @@ resulting reference pseudo-angles (α_i, β_out, ψ, naz).
 
 ## Background
 
-Several diffraction modes — `psi_constant_vertical`, `zaxis`, `reflectivity`,
+Several diffraction modes — `fixed_psi_vertical`, `zaxis`, `reflectivity`,
 and others — require an external reference vector to complete their constraint.
 In this package the reference vector is supplied as **Miller indices (h, k, l)**,
 not as a lab-frame Cartesian vector.  The package converts to the lab frame
@@ -167,9 +167,9 @@ vector to be set on the geometry.  ``psi_constant_*`` modes require
 
 ```python
 g.azimuthal_reference = (0, 0, 1)
-g.mode_name = "psi_constant_vertical"
+g.mode_name = "fixed_psi_vertical"
 
-cs = g.modes["psi_constant_vertical"]
+cs = g.modes["fixed_psi_vertical"]
 rc = cs.reference_constraint
 
 print(rc.has_reference_vector(g))   # True  — vector is set
