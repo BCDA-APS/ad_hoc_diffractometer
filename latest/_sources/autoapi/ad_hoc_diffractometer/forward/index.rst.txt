@@ -54,6 +54,14 @@ forward
    * You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry
 
 
+Classes
+-------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.forward.ForwardContext
+
+
 Functions
 ---------
 
@@ -64,6 +72,80 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:class:: ForwardContext(geometry)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward.ForwardContext``
+
+
+   Pre-computed intermediates for the forward solver's inner loops.
+
+   Created once per ``compute_forward()`` call, this bundles all constant
+   quantities needed by the Newton-Raphson residual evaluations so they
+   are not recomputed on every call to ``angles_to_phi_vector``.
+
+   .. attribute:: sample_stages
+
+
+
+      :type: list of Stage
+
+   .. attribute:: detector_stages
+
+
+
+      :type: list of Stage
+
+   .. attribute:: two_pi_over_lambda
+
+
+
+      :type: float
+
+   .. attribute:: y_eff
+
+      Effective beam direction (R_inc.T @ y_hat).
+
+      :type: numpy.ndarray, shape (3,)
+
+
+   .. py:attribute:: detector_stages
+
+
+   .. py:method:: prepare_caching(fixed_angles: dict[str, float], free_stage_names: set[str]) -> None
+
+      Pre-compute rotation matrices for stages whose angles will not
+      change during Newton iteration.
+
+      :param fixed_angles: All angles including fixed ones.
+      :type fixed_angles: dict
+      :param free_stage_names: Names of stages that will vary during iteration.
+      :type free_stage_names: set of str
+
+
+
+   .. py:method:: q_phi(angles: dict[str, float]) -> ~numpy.ndarray
+
+      Compute Q_phi using cached rotation matrices where possible.
+
+
+
+   .. py:method:: q_phi_uncached(angles: dict[str, float]) -> ~numpy.ndarray
+
+      Compute Q_phi without any caching (for validation).
+
+
+
+   .. py:attribute:: sample_stages
+
+
+   .. py:attribute:: two_pi_over_lambda
+
+
+   .. py:attribute:: y_eff
+
 
 .. py:function:: compute_forward(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, h: float, k: float, l: float) -> list[dict[str, float]]
 

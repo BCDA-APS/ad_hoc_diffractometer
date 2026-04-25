@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=162e16c1"></script>
+    <script src="../../../_static/documentation_options.js?v=f9ba8f63"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-25 11:59 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-25 14:25 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -542,10 +542,9 @@ stage — the frame in which crystal reflections are expressed when
 computing the orientation (U) matrix.</p>
 <p>Algorithm (Busing &amp; Levy 1967, section “The phi-axis frame”):</p>
 <ol class="arabic">
-<li><p>Temporarily set the supplied motor angles on their stages (preserving
-the original values so the geometry is restored afterwards).</p></li>
 <li><p>Compute the total sample rotation matrix <code class="docutils literal notranslate"><span class="pre">Z</span></code> (product of all sample
-stage rotation matrices, floor-most first).</p></li>
+stage rotation matrices, floor-most first) from the supplied motor
+angles (stages not supplied keep their current <code class="docutils literal notranslate"><span class="pre">angle</span></code> attribute).</p></li>
 <li><p>Compute the total detector rotation matrix <code class="docutils literal notranslate"><span class="pre">D</span></code>.</p></li>
 <li><p>The incident-beam unit vector in the lab frame is <code class="docutils literal notranslate"><span class="pre">ŷ</span></code> (longitudinal
 direction, <code class="docutils literal notranslate"><span class="pre">geometry.basis[&quot;longitudinal&quot;]</span></code>).</p></li>
@@ -588,10 +587,10 @@ result; other stages (if any) are ignored.</p></li>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>The function modifies stage angles temporarily and restores them
-afterwards, even if an exception is raised.  It is therefore safe to
-call inside a <code class="docutils literal notranslate"><span class="pre">try</span></code> block or from multiple threads as long as each
-call uses a separate geometry instance.</p>
+<p>The function is stateless: it does not modify the geometry’s stage
+angles.  It computes rotation matrices directly from the supplied
+<code class="docutils literal notranslate"><span class="pre">motor_angles</span></code> values, so it is safe to call from multiple threads
+on the same geometry instance.</p>
 <p>The scattering vector Q_phi is independent of which sample stage is
 designated the “phi” axis; it is expressed in the frame of the <em>last</em>
 sample stage in the stacking order (the one closest to the sample).</p>
@@ -999,7 +998,7 @@ is available at all.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-25 11:59 CDT.
+  Last updated on 2026-04-25 14:25 CDT.
   <br/>
 </p></div>
       
