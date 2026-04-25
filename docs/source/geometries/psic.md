@@ -82,7 +82,16 @@ Vertical scattering plane bisecting condition (You 1999, §5.3).
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 
-### `fixed_chi`
+### `fixed_phi_vertical`
+
+`phi` held at declared value (default 0°), `eta = delta/2`, `nu = 0`.
+
+| | |
+|---|---|
+| **Computed** | eta, chi, delta |
+| **Constant during** `forward()` | phi, mu = 0, nu = 0 |
+
+### `fixed_chi_vertical`
 
 `chi` held at declared value (default 90°), `eta = delta/2`, `nu = 0`.
 The caller chooses the chi value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` — see {doc}`../howto/constraints`.
@@ -92,16 +101,7 @@ The caller chooses the chi value by constructing a {class}`~ad_hoc_diffractomete
 | **Computed** | eta, phi, delta |
 | **Constant during** `forward()` | chi, mu = 0, nu = 0 |
 
-### `fixed_phi`
-
-`phi` held at declared value (default 0°), `eta = delta/2`, `nu = 0`.
-
-| | |
-|---|---|
-| **Computed** | eta, chi, delta |
-| **Constant during** `forward()` | phi, mu = 0, nu = 0 |
-
-### `fixed_mu`
+### `fixed_mu_vertical`
 
 `mu` held at declared value (default 0°), `eta = delta/2`, `nu = 0`.
 
@@ -110,18 +110,7 @@ The caller chooses the chi value by constructing a {class}`~ad_hoc_diffractomete
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu, nu = 0 |
 
-### `bisecting_horizontal`
-
-{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
-`mu = nu/2`, `eta = 0`, `delta = 0`.
-Horizontal scattering plane bisecting condition (You 1999, §5.1).
-
-| | |
-|---|---|
-| **Computed** | mu, chi, phi, nu |
-| **Constant during** `forward()` | eta = 0, delta = 0 |
-
-### `fixed_nu`
+### `fixed_nu_vertical`
 
 `nu` held at declared value (default 0°), `eta = delta/2`, `mu = 0`.
 
@@ -129,6 +118,55 @@ Horizontal scattering plane bisecting condition (You 1999, §5.1).
 |---|---|
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | nu, mu = 0 |
+
+### `fixed_alpha_i_vertical`
+
+Incidence angle α_i fixed at declared value (default 0°) in the
+vertical scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `fixed_beta_out_vertical`
+
+Exit angle β_out fixed at declared value (default 0°) in the
+vertical scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `alpha_eq_beta_vertical`
+
+Symmetric reflection: α_i = β_out in the vertical scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `fixed_psi_vertical`
+
+Vertical bisecting with azimuthal angle ψ validation.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+The solver returns bisecting solutions only when the natural ψ for the
+requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (output)** | psi (computed azimuth) |
 
 ### `double_diffraction_vertical`
 
@@ -143,6 +181,100 @@ reflections satisfy the Ewald sphere condition.  Set
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 | **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
 
+### `bisecting_horizontal`
+
+{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+`mu = nu/2`, `eta = 0`, `delta = 0`.
+Horizontal scattering plane bisecting condition (You 1999, §5.1).
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
+
+### `fixed_phi_horizontal`
+
+`phi` held at declared value (default 0°), `mu = nu/2`, `delta = 0`.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, nu |
+| **Constant during** `forward()` | phi, eta = 0, delta = 0 |
+
+### `fixed_chi_horizontal`
+
+`chi` held at declared value (default 90°), `mu = nu/2`, `delta = 0`.
+
+| | |
+|---|---|
+| **Computed** | mu, phi, nu |
+| **Constant during** `forward()` | chi, eta = 0, delta = 0 |
+
+### `fixed_eta_horizontal`
+
+`eta` held at declared value (default 0°), `mu = nu/2`, `delta = 0`.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta, delta = 0 |
+
+### `fixed_delta_horizontal`
+
+`delta` held at declared value (default 0°), `mu = nu/2`, `eta = 0`.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | delta, eta = 0 |
+
+### `fixed_alpha_i_horizontal`
+
+Incidence angle α_i fixed at declared value (default 0°) in the
+horizontal scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `fixed_beta_out_horizontal`
+
+Exit angle β_out fixed at declared value (default 0°) in the
+horizontal scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `alpha_eq_beta_horizontal`
+
+Symmetric reflection: α_i = β_out in the horizontal scattering plane.
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `fixed_psi_horizontal`
+
+Horizontal bisecting with azimuthal angle ψ validation.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
+| **Extras (input)** | n̂, ψ |
+| **Extras (output)** | psi |
+
 ### `double_diffraction_horizontal`
 
 Full 4D simultaneous solver in the horizontal scattering plane.
@@ -152,17 +284,6 @@ Full 4D simultaneous solver in the horizontal scattering plane.
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | eta = 0, delta = 0 |
 | **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
-
-### `lifting_detector_mu`
-
-Out-of-plane mode: mu and eta frozen, nu and delta solved via the qaz
-constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
-``qaz = 90°`` constrains the scattering to the vertical plane.
-
-| | |
-|---|---|
-| **Computed** | mu, nu, delta |
-| **Constant during** `forward()` | mu = 0, eta = 0 |
 
 ### `lifting_detector_phi`
 
@@ -175,31 +296,16 @@ constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
 | **Computed** | phi, nu, delta |
 | **Constant during** `forward()` | phi = 0, mu = 0 |
 
-### `psi_constant_vertical`
+### `lifting_detector_mu`
 
-Vertical bisecting with azimuthal angle ψ validation.
-Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
-The solver returns bisecting solutions only when the natural ψ for the
-requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
-
-| | |
-|---|---|
-| **Computed** | eta, chi, phi, delta |
-| **Constant during** `forward()` | mu = 0, nu = 0 |
-| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
-| **Extras (output)** | psi (computed azimuth) |
-
-### `psi_constant_horizontal`
-
-Horizontal bisecting with azimuthal angle ψ validation.
-Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+Out-of-plane mode: mu and eta frozen, nu and delta solved via the qaz
+constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
+``qaz = 90°`` constrains the scattering to the vertical plane.
 
 | | |
 |---|---|
-| **Computed** | mu, chi, phi, nu |
-| **Constant during** `forward()` | eta = 0, delta = 0 |
-| **Extras (input)** | n̂, ψ |
-| **Extras (output)** | psi |
+| **Computed** | mu, nu, delta |
+| **Constant during** `forward()` | mu = 0, eta = 0 |
 
 ## API reference
 

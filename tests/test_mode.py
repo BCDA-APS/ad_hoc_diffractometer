@@ -2055,8 +2055,8 @@ _KAPPA6C_MODES = {
     "fixed_delta",
     "lifting_detector_mu",
     "lifting_detector_kphi",
-    "psi_constant_vertical",
-    "psi_constant_horizontal",
+    "fixed_psi_vertical",
+    "fixed_psi_horizontal",
     "double_diffraction_vertical",
     "double_diffraction_horizontal",
 }
@@ -2073,7 +2073,7 @@ _KAPPA6C_IMPLEMENTED = {
     "double_diffraction_vertical",
     "double_diffraction_horizontal",
 }
-_KAPPA6C_STUBS = _KAPPA6C_MODES - _KAPPA6C_IMPLEMENTED  # psi_constant_*
+_KAPPA6C_STUBS = _KAPPA6C_MODES - _KAPPA6C_IMPLEMENTED  # fixed_psi_*
 
 
 def test_kappa6c_factory_mode_names():
@@ -2114,11 +2114,9 @@ def test_kappa6c_mode_is_implemented(mode_name, expected_implemented):
         pytest.param("fixed_nu", True, id="fixed_nu-has-bisect"),
         pytest.param("fixed_delta", True, id="fixed_delta-has-bisect"),
         pytest.param("lifting_detector_mu", False, id="lifting_detector_mu-no-bisect"),
+        pytest.param("fixed_psi_vertical", True, id="fixed_psi_vertical-has-bisect"),
         pytest.param(
-            "psi_constant_vertical", True, id="psi_constant_vertical-has-bisect"
-        ),
-        pytest.param(
-            "psi_constant_horizontal", True, id="psi_constant_horizontal-has-bisect"
+            "fixed_psi_horizontal", True, id="fixed_psi_horizontal-has-bisect"
         ),
     ],
 )
@@ -2130,12 +2128,12 @@ def test_kappa6c_mode_has_bisect(mode_name, expected_has_bisect):
 @pytest.mark.parametrize(
     "mode_name",
     [
-        pytest.param("psi_constant_vertical", id="psi_constant_vertical"),
-        pytest.param("psi_constant_horizontal", id="psi_constant_horizontal"),
+        pytest.param("fixed_psi_vertical", id="fixed_psi_vertical"),
+        pytest.param("fixed_psi_horizontal", id="fixed_psi_horizontal"),
     ],
 )
-def test_kappa6c_psi_constant_extras(mode_name):
-    """Both psi_constant modes carry REQUIRED n_hat and None psi output."""
+def test_kappa6c_fixed_psi_extras(mode_name):
+    """Both fixed_psi modes carry REQUIRED n_hat and None psi output."""
     cs = kappa6c().modes[mode_name]
     assert cs.extras.get("n_hat") is REQUIRED
     assert cs.extras.get("psi") is None
