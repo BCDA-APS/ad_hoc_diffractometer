@@ -1366,8 +1366,8 @@ _PSIC_MODES_ALL = {
     "double_diffraction_horizontal",
     "lifting_detector_mu",
     "lifting_detector_phi",
-    "psi_constant_vertical",
-    "psi_constant_horizontal",
+    "fixed_psi_vertical",
+    "fixed_psi_horizontal",
     "fixed_alpha_i_vertical",
     "fixed_beta_out_vertical",
     "alpha_eq_beta_vertical",
@@ -1529,11 +1529,11 @@ def test_psic_constraint_value_in_solution(mode_name, stage, expected_value, h, 
         assert sol[stage] == pytest.approx(expected_value, abs=1e-8)
 
 
-def test_psic_psi_constant_extras_declared():
-    """psi_constant modes carry REQUIRED n_hat and None psi output extras."""
+def test_psic_fixed_psi_extras_declared():
+    """fixed_psi modes carry REQUIRED n_hat and None psi output extras."""
     from ad_hoc_diffractometer import REQUIRED
 
-    for mode_name in ("psi_constant_vertical", "psi_constant_horizontal"):
+    for mode_name in ("fixed_psi_vertical", "fixed_psi_horizontal"):
         cs = psic().modes[mode_name]
         assert cs.extras.get("n_hat") is REQUIRED
         assert cs.extras.get("psi") is None
@@ -1577,14 +1577,14 @@ _KAPPA6C_ALL_MODES = {
     "fixed_delta",
     "lifting_detector_mu",
     "lifting_detector_kphi",
-    "psi_constant_vertical",
-    "psi_constant_horizontal",
+    "fixed_psi_vertical",
+    "fixed_psi_horizontal",
     "double_diffraction_vertical",
     "double_diffraction_horizontal",
 }
 _KAPPA6C_STUB_MODES = {
-    "psi_constant_vertical",
-    "psi_constant_horizontal",
+    "fixed_psi_vertical",
+    "fixed_psi_horizontal",
 }
 
 
@@ -1920,28 +1920,22 @@ def test_four_circle_psi_constant_wrong_target_returns_empty(factory):
     assert solutions == []
 
 
-# --- psic psi_constant_vertical / horizontal round-trip tests (bisecting path) ---
+# --- psic fixed_psi_vertical / horizontal round-trip tests (bisecting path) ---
 
 
 @pytest.mark.parametrize(
     "mode_name, h, k, l, ref",
     [
+        pytest.param("fixed_psi_vertical", 1, 0, 0, (0, 0, 1), id="psic-psi_vert-100"),
+        pytest.param("fixed_psi_vertical", 1, 0, 1, (0, 0, 1), id="psic-psi_vert-101"),
+        pytest.param("fixed_psi_vertical", 1, 1, 1, (0, 0, 1), id="psic-psi_vert-111"),
         pytest.param(
-            "psi_constant_vertical", 1, 0, 0, (0, 0, 1), id="psic-psi_vert-100"
-        ),
-        pytest.param(
-            "psi_constant_vertical", 1, 0, 1, (0, 0, 1), id="psic-psi_vert-101"
-        ),
-        pytest.param(
-            "psi_constant_vertical", 1, 1, 1, (0, 0, 1), id="psic-psi_vert-111"
-        ),
-        pytest.param(
-            "psi_constant_horizontal", 1, 0, 0, (0, 0, 1), id="psic-psi_horiz-100"
+            "fixed_psi_horizontal", 1, 0, 0, (0, 0, 1), id="psic-psi_horiz-100"
         ),
     ],
 )
-def test_psic_psi_constant_round_trip(mode_name, h, k, l, ref):  # noqa: E741
-    """psic psi_constant modes return bisecting solutions when psi matches."""
+def test_psic_fixed_psi_round_trip(mode_name, h, k, l, ref):  # noqa: E741
+    """psic fixed_psi modes return bisecting solutions when psi matches."""
     g = _setup_psi(psic, ref=ref)
     natural = _natural_psi(g, h, k, l)
     assert natural is not None
@@ -1966,8 +1960,8 @@ def test_psic_psi_constant_round_trip(mode_name, h, k, l, ref):  # noqa: E741
     assert _round_trip_ok(g, h, k, l)
 
 
-def test_psic_psi_constant_wrong_target_returns_empty():
-    """psic psi_constant_vertical returns [] when psi target is wrong."""
+def test_psic_fixed_psi_wrong_target_returns_empty():
+    """psic fixed_psi_vertical returns [] when psi target is wrong."""
     g = _setup_psi(psic, ref=(0, 0, 1))
     natural = _natural_psi(g, 1, 0, 0)
     assert natural is not None
@@ -1978,7 +1972,7 @@ def test_psic_psi_constant_wrong_target_returns_empty():
     from ad_hoc_diffractometer import ReferenceConstraint
     from ad_hoc_diffractometer import SampleConstraint
 
-    g.modes["psi_constant_vertical"] = ConstraintSet(
+    g.modes["fixed_psi_vertical"] = ConstraintSet(
         [
             BisectConstraint("eta", "delta"),
             SampleConstraint("mu", 0.0),
@@ -1987,7 +1981,7 @@ def test_psic_psi_constant_wrong_target_returns_empty():
         computed=["eta", "chi", "phi", "delta"],
         extras={"n_hat": REQUIRED, "psi": None},
     )
-    g.mode_name = "psi_constant_vertical"
+    g.mode_name = "fixed_psi_vertical"
     solutions = g.forward(1, 0, 0)
     assert solutions == []
 
@@ -2001,13 +1995,13 @@ def test_psic_psi_constant_wrong_target_returns_empty():
         pytest.param(fourcv, "psi_constant", 1, 0, 0, (0, 0, 1), id="fourcv-100"),
         pytest.param(fourcv, "psi_constant", 1, 1, 1, (0, 0, 1), id="fourcv-111"),
         pytest.param(
-            psic, "psi_constant_vertical", 1, 0, 0, (0, 0, 1), id="psic-vert-100"
+            psic, "fixed_psi_vertical", 1, 0, 0, (0, 0, 1), id="psic-vert-100"
         ),
         pytest.param(
-            psic, "psi_constant_vertical", 1, 1, 1, (0, 0, 1), id="psic-vert-111"
+            psic, "fixed_psi_vertical", 1, 1, 1, (0, 0, 1), id="psic-vert-111"
         ),
         pytest.param(
-            psic, "psi_constant_horizontal", 1, 0, 0, (0, 0, 1), id="psic-horiz-100"
+            psic, "fixed_psi_horizontal", 1, 0, 0, (0, 0, 1), id="psic-horiz-100"
         ),
     ],
 )
@@ -2057,15 +2051,15 @@ def test_psi_constant_psi_verified_in_solutions(
     "mode_name, h, k, l, ref",
     [
         pytest.param(
-            "psi_constant_vertical", 1, 0, 0, (0, 0, 1), id="kappa6c-psi_vert-100"
+            "fixed_psi_vertical", 1, 0, 0, (0, 0, 1), id="kappa6c-psi_vert-100"
         ),
         pytest.param(
-            "psi_constant_vertical", 1, 1, 0, (0, 0, 1), id="kappa6c-psi_vert-110"
+            "fixed_psi_vertical", 1, 1, 0, (0, 0, 1), id="kappa6c-psi_vert-110"
         ),
     ],
 )
-def test_kappa6c_psi_constant_round_trip(mode_name, h, k, l, ref):  # noqa: E741
-    """kappa6c psi_constant modes return bisecting solutions when psi matches."""
+def test_kappa6c_fixed_psi_round_trip(mode_name, h, k, l, ref):  # noqa: E741
+    """kappa6c fixed_psi modes return bisecting solutions when psi matches."""
     g = _setup_psi(kappa6c, ref=ref)
     natural = _natural_psi(g, h, k, l)
     assert natural is not None

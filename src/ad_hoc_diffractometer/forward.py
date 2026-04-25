@@ -335,7 +335,7 @@ def _solve_constraint_set(
     """
 
     # Psi-constant mode (ReferenceConstraint("psi") validation filter).
-    # Must be checked FIRST: psic/kappa6c psi_constant_vertical has a
+    # Must be checked FIRST: psic/kappa6c fixed_psi_vertical has a
     # BisectConstraint but needs psi validation before bisecting.
     if _is_psi_mode(geometry, mode):
         return _solve_psi_mode(geometry, Q_phi, ttheta_deg, mode)
@@ -965,7 +965,7 @@ def _solve_psi_mode(
     mode,
 ) -> list[dict[str, float]]:
     """
-    Forward solver for ``psi_constant`` modes (validation filter).
+    Forward solver for psi-constant modes (validation filter).
 
     For a given (h,k,l) and UB, the azimuthal angle ψ is a pure phi-frame
     quantity — the same for every Bragg solution.  This solver:
