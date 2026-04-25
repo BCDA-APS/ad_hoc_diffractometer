@@ -161,7 +161,7 @@ def _surface_vectors(
         for name, val in saved.items():
             geometry.set_angle(name, val)
 
-    # Incident-beam direction: longitudinal basis vector (normalised)
+    # Incident-beam direction: longitudinal basis vector (normalized)
     y_raw = np.asarray(geometry.basis["longitudinal"], dtype=float)
     y_hat = y_raw / np.linalg.norm(y_raw)
 

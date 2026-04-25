@@ -5,7 +5,7 @@ Unit tests for ad_hoc_diffractometer.drawing.
 
 Covers:
   - geometry_dot() produces valid DOT source for all preset geometries
-  - DOT source contains expected node names, edges, and role colours
+  - DOT source contains expected node names, edges, and role colors
   - _physical_label() and _handedness() helper functions
   - draw_stage_axis() returns a matplotlib Figure (if matplotlib available)
   - draw_geometry_axes() returns a matplotlib Figure (if matplotlib available)
@@ -188,12 +188,12 @@ def test_geometry_dot_contains_edges(factory):
 
 
 @pytest.mark.parametrize("factory", ALL_PRESETS)
-def test_geometry_dot_contains_role_colours(factory):
+def test_geometry_dot_contains_role_colors(factory):
     """Sample nodes are blue, detector nodes are red."""
     g = factory()
     dot = geometry_dot(g)
-    assert "#a8d8ea" in dot  # sample colour
-    assert "#f8a5a5" in dot  # detector colour
+    assert "#a8d8ea" in dot  # sample color
+    assert "#f8a5a5" in dot  # detector color
 
 
 def test_geometry_dot_sixc_shared_base():

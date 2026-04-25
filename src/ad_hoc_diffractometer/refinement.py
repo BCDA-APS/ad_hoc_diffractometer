@@ -92,7 +92,7 @@ def _full_params_from_free(free_vals: dict, system: str) -> dict:
 
     Constructs a temporary ``Lattice`` from the free values plus any
     system-specific hint parameters (e.g. ``gamma=120`` for hexagonal)
-    needed for the ``Lattice`` class to recognise the correct system, then
+    needed for the ``Lattice`` class to recognize the correct system, then
     reads back all six parameters.
 
     Parameters
@@ -378,8 +378,8 @@ def refine_lattice_bl1967(
 
     Uses the Busing & Levy (1967) least-squares approach (§"Refinement of
     lattice and orientation parameters").  Starting from the current
-    ``sample.UB`` and ``sample.lattice``, iteratively solves the linearised
-    normal equations to minimise the sum of squared residuals between
+    ``sample.UB`` and ``sample.lattice``, iteratively solves the linearized
+    normal equations to minimize the sum of squared residuals between
     observed and calculated phi-frame scattering vectors.
 
     Observed vector for reflection i:
@@ -689,7 +689,7 @@ def refine_lattice_simplex(
     Notes
     -----
     The default ``refine_orientation=False`` leaves U fixed; only the
-    cell parameters (and thus B, and thus UB = U @ B) are optimised.
+    cell parameters (and thus B, and thus UB = U @ B) are optimized.
     This is the typical use case: use ``ub_from_two_reflections_bl1967``
     to get U, then use the simplex to find the best cell parameters.
 

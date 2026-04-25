@@ -5,7 +5,7 @@ display.py — display precision settings and numeric comparison helper.
 
 Provides a package-level default number of decimal places for displaying
 floating-point values.  Any class or function that formats numbers for
-display should use get_precision() to honour the current setting.
+display should use get_precision() to honor the current setting.
 
 The default precision can be changed at the package level:
 

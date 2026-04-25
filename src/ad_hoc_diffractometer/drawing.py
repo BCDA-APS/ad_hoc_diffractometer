@@ -568,7 +568,7 @@ def _tree_layout(stages):  # pragma: no cover
         0 for roots (bottom), increasing toward leaves (top).
     x_pos : dict  stage_name -> float
         Leaf nodes get integer slots 0, 1, 2, …
-        Parent nodes are centred over their children (may be half-integer).
+        Parent nodes are centered over their children (may be half-integer).
     children : dict  stage_name -> list[str]
     roots : list[str]
     """
@@ -604,7 +604,7 @@ def _tree_layout(stages):  # pragma: no cover
     for r in roots:
         leaves.extend(subtree_leaves(r))
 
-    # x position: leaf nodes get integer slots; parents centre over children
+    # x position: leaf nodes get integer slots; parents center over children
     x_pos = {}
 
     def assign_x(name):
@@ -967,9 +967,9 @@ class GeometryAxisFigure:  # pragma: no cover
     Stages are arranged as a directed graph following parent relationships.
     The graph flows bottom-to-top: root stages (``parent=None``) are at the
     bottom; each child is one row above its parent.  Leaf nodes are assigned
-    integer column slots; parents are centred over their children.
+    integer column slots; parents are centered over their children.
 
-    Role is indicated by scene background colour:
+    Role is indicated by scene background color:
 
     - sample   → aliceblue
     - detector → seashell

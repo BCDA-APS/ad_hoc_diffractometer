@@ -46,17 +46,17 @@ and mode configuration.
 
 **Sample stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``komega`` | −vertical (−z BL) | left-handed |
-| ``kappa`` | tilted axis, α=50° | right-handed |
-| ``kphi`` | −vertical (−z BL) | left-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``komega`` | −vertical (−z BL) | left-handed | base |
+| ``kappa`` | tilted axis, α=50° | right-handed | ``komega`` |
+| ``kphi`` | −vertical (−z BL) | left-handed | ``kappa`` |
 
 **Detector stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``ttheta`` | −vertical (−z BL) | left-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``ttheta`` | −vertical (−z BL) | left-handed | base |
 
 **Virtual Eulerian angles** (computed from real kappa angles via Walko 2016 eq. [16]):
 omega, chi, phi.  Used as constraint names for stub modes; converted back to

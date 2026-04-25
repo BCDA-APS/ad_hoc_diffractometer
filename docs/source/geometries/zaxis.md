@@ -46,17 +46,17 @@ and mode configuration.
 
 **Sample stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``alpha`` | +vertical (+x) | right-handed, shared base |
-| ``Z`` | +longitudinal (+y) | right-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``alpha`` | +vertical (+x) | right-handed, shared base | base |
+| ``Z`` | +longitudinal (+y) | right-handed | ``alpha`` |
 
 **Detector stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``delta`` | −transverse (−z) | left-handed |
-| ``gamma`` | +vertical (+x) | right-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``delta`` | −transverse (−z) | left-handed | ``alpha`` |
+| ``gamma`` | +vertical (+x) | right-handed | ``delta`` |
 
 **Shared stage:** alpha (base stage shared between sample and detector stacks)
 
