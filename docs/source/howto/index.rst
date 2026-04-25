@@ -11,6 +11,7 @@ installed the package and are familiar with the
    :hidden:
 
    basis_vectors
+   custom_geometry
    wavelength
    lattice
    orient
@@ -35,6 +36,13 @@ installed the package and are familiar with the
 
       Understand how basis vectors map physical directions to Cartesian
       axes, and how to define a custom basis.
+
+   .. grid-item-card:: :material-outlined:`build;3em` Build a Custom Geometry
+      :link: custom_geometry
+      :link-type: doc
+
+      Define a diffractometer that is not one of the 10 presets: axis
+      signs, parent chains, roles, modes, and verification.
 
    .. grid-item-card:: :material-outlined:`settings_input_antenna;3em` Set Wavelength / Energy
       :link: wavelength
