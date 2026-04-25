@@ -1,4 +1,4 @@
-# Case Study — Coordinate Convention and UB Matrix
+# Case Study: Coordinate Convention and UB Matrix
 
 This page analyzes the [case study diffractometer](problem1.md) to show
 how a **basis vector assignment** (the mapping of physical directions to
