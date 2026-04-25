@@ -193,6 +193,9 @@ See {doc}`geometries/fourcv` for the full geometry reference, or
 
 ## See also
 
+- {doc}`howto/custom_geometry` — how to build a geometry that is not one
+  of the presets
+- {doc}`howto/basis_vectors` — choosing and understanding basis vectors
 - {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.stage.Stage`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`

@@ -7,7 +7,7 @@ directly to the {mod}`~ad_hoc_diffractometer.factories` factory functions and
 the {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer` class.
 
 For a full analysis of how this geometry maps to the convention described by H.
-You (1999), see [Case Study — Coordinate Convention and UB Matrix](problem2.md).
+You (1999), see [Case Study: Coordinate Convention and UB Matrix](problem2.md).
 
 ---
 
@@ -84,5 +84,5 @@ axis at their base.
 2. Is it possible to make different assignments of the basis vectors?  What
    are the resulting stage orientation vectors?  How does the U matrix differ?
 
-The answers to both questions are worked out in [Case Study — Coordinate Convention and UB Matrix](problem2.md),
+The answers to both questions are worked out in [Case Study: Coordinate Convention and UB Matrix](problem2.md),
 which shows how this equipment maps exactly to the six-circle psic geometry.
