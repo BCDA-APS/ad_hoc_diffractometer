@@ -1,8 +1,14 @@
-# You (1999) Geometry — Coordinate Convention and UB Matrix
+# Case Study — Coordinate Convention and UB Matrix
 
-This page analyses the [case study diffractometer](problem1.md) using the
-You (1999) coordinate convention and derives the B, U, and UB matrices used
-throughout `ad_hoc_diffractometer`.
+This page analyzes the [case study diffractometer](problem1.md) to show
+how a **basis vector assignment** (the mapping of physical directions to
+Cartesian axes) leads to the B, U, and UB matrices used throughout
+`ad_hoc_diffractometer`.
+
+The worked example below uses the You (1999) convention, but the
+procedure is identical for any right-handed orthogonal basis — only the
+numerical values of the axis vectors change.  See
+{doc}`howto/basis_vectors` for a tutorial on choosing a basis.
 
 **Reference:** H. You, *J. Appl. Cryst.* **32**, 614–623 (1999).
 DOI: [10.1107/S0021889899001223](https://doi.org/10.1107/S0021889899001223)
@@ -11,7 +17,8 @@ DOI: [10.1107/S0021889899001223](https://doi.org/10.1107/S0021889899001223)
 
 ## Basis vector assignment
 
-The You (1999) convention assigns:
+Any right-handed orthogonal mapping of the three physical directions to
+Cartesian unit vectors is valid.  The You (1999) convention assigns:
 
 - **xHat**: vertical (along the mu and nu rotation axes)
 - **yHat**: longitudinal (along the incoming beam direction)

@@ -12,13 +12,18 @@ The concise factory-function equivalent appears at the end.
 
 ## 1. Choose a coordinate basis
 
-The package supports two standard coordinate conventions.  Each maps the
-physical directions of the instrument to Cartesian unit vectors:
+Any right-handed orthogonal mapping of the three physical directions
+(vertical, longitudinal, transverse) to Cartesian unit vectors (x, y, z)
+is a valid basis.  The pre-built geometries use two common conventions,
+but you may supply any basis dict that satisfies those constraints:
 
-| Basis | vertical | longitudinal | transverse | Used by |
+| Basis | vertical | longitudinal | transverse | Used by presets |
 |---|---|---|---|---|
 | {data}`~ad_hoc_diffractometer.factories.BASIS_YOU` | +x | +y | +z | {func}`~ad_hoc_diffractometer.presets.psic`, {func}`~ad_hoc_diffractometer.presets.sixc`, {func}`~ad_hoc_diffractometer.presets.kappa6c`, {func}`~ad_hoc_diffractometer.presets.zaxis`, {func}`~ad_hoc_diffractometer.presets.s2d2`, {func}`~ad_hoc_diffractometer.presets.fivec` |
 | {data}`~ad_hoc_diffractometer.factories.BASIS_BL` | +z | +y | +x | {func}`~ad_hoc_diffractometer.presets.fourcv`, {func}`~ad_hoc_diffractometer.presets.fourch`, {func}`~ad_hoc_diffractometer.presets.kappa4cv`, {func}`~ad_hoc_diffractometer.presets.kappa4ch` |
+
+See {doc}`howto/basis_vectors` for a full tutorial on choosing and
+understanding basis vectors.
 
 For a standard four-circle diffractometer (Busing & Levy 1967) choose
 {data}`~ad_hoc_diffractometer.factories.BASIS_BL`:
