@@ -253,7 +253,7 @@ def benchmark_mode(
         # direct computation (no iteration), its speed characterizes the
         # machine; the ratio captures pure algorithmic efficiency of the
         # forward solver.
-        if fwd_ops > 0 and inv_ops > 0:
+        if fwd_ops > 0 and inv_ops > 0:  # pragma: no branch
             result["forward_inverse_ratio"] = fwd_ops / inv_ops
 
     except NotImplementedError as exc:

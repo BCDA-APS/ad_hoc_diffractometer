@@ -258,7 +258,7 @@ python3 -m pytest -m slow_benchmark --no-cov -q
 ```
 
 Hot path: `forward.py`, `kappa.py`, `mode.py`, `orientation.py`,
-`rotation.py`, `reference.py`
+`rotation.py`, `reference.py`, `surface.py`
 
 Geometry construction: `presets.py`, `factories.py`, `geometry.py`,
 `stage.py`, `axes.py`, `constants.py`

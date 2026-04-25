@@ -211,6 +211,7 @@ class TestBenchmarkMode:
         # For psi_constant the likely outcome is no_solutions or not_implemented
         if r["status"] == "no_solutions":
             assert r["inverse_ops_per_sec"] is None
+            assert r["forward_inverse_ratio"] is None
             assert r["n_solutions"] == 0
 
     @pytest.mark.parametrize(

@@ -191,19 +191,18 @@ def angles_to_phi_vector(geometry, **motor_angles: float) -> np.ndarray:
 
     Algorithm (Busing & Levy 1967, section "The phi-axis frame"):
 
-    1. Temporarily set the supplied motor angles on their stages (preserving
-       the original values so the geometry is restored afterwards).
-    2. Compute the total sample rotation matrix ``Z`` (product of all sample
-       stage rotation matrices, floor-most first).
-    3. Compute the total detector rotation matrix ``D``.
-    4. The incident-beam unit vector in the lab frame is ``ŷ`` (longitudinal
+    1. Compute the total sample rotation matrix ``Z`` (product of all sample
+       stage rotation matrices, floor-most first) from the supplied motor
+       angles (stages not supplied keep their current ``angle`` attribute).
+    2. Compute the total detector rotation matrix ``D``.
+    3. The incident-beam unit vector in the lab frame is ``ŷ`` (longitudinal
        direction, ``geometry.basis["longitudinal"]``).
-    5. The scattered-beam unit vector in the lab frame is ``D @ ŷ``.
-    6. The scattering vector in the lab frame is::
+    4. The scattered-beam unit vector in the lab frame is ``D @ ŷ``.
+    5. The scattering vector in the lab frame is::
 
            Q_lab = (2π / λ) * (D @ ŷ - ŷ)
 
-    7. Rotate Q_lab back through the sample stack::
+    6. Rotate Q_lab back through the sample stack::
 
            Q_phi = Z⁻¹ @ Q_lab = Zᵀ @ Q_lab
 
@@ -237,10 +236,10 @@ def angles_to_phi_vector(geometry, **motor_angles: float) -> np.ndarray:
 
     Notes
     -----
-    The function modifies stage angles temporarily and restores them
-    afterwards, even if an exception is raised.  It is therefore safe to
-    call inside a ``try`` block or from multiple threads as long as each
-    call uses a separate geometry instance.
+    The function is stateless: it does not modify the geometry's stage
+    angles.  It computes rotation matrices directly from the supplied
+    ``motor_angles`` values, so it is safe to call from multiple threads
+    on the same geometry instance.
 
     The scattering vector Q_phi is independent of which sample stage is
     designated the "phi" axis; it is expressed in the frame of the *last*

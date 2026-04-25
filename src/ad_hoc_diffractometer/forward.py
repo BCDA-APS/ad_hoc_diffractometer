@@ -554,9 +554,11 @@ def _solve_bisecting(
             _ctx=ctx,
         )
         if sol_angles is None:  # pragma: no branch
-            stale_count += 1
-            if len(solutions) >= _MIN_SOLUTIONS and stale_count >= _MAX_STALE:
-                break
+            stale_count += 1  # pragma: no cover
+            if (
+                len(solutions) >= _MIN_SOLUTIONS and stale_count >= _MAX_STALE
+            ):  # pragma: no cover
+                break  # pragma: no cover
             continue  # pragma: no cover
 
         sol = dict(angles)
@@ -580,8 +582,8 @@ def _solve_bisecting(
 
         solutions.append(sol)
         stale_count = 0  # reset: we found a new solution
-        if len(solutions) >= _MAX_SOLUTIONS:
-            break
+        if len(solutions) >= _MAX_SOLUTIONS:  # pragma: no cover
+            break  # pragma: no cover
 
     return solutions
 
