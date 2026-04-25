@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=b5190079"></script>
+    <script src="../../_static/documentation_options.js?v=9a79299f"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-25 17:14 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-25 18:32 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -771,7 +771,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Psi-constant mode (ReferenceConstraint(&quot;psi&quot;) validation filter).</span>
-    <span class="c1"># Must be checked FIRST: psic/kappa6c psi_constant_vertical has a</span>
+    <span class="c1"># Must be checked FIRST: psic/kappa6c fixed_psi_vertical has a</span>
     <span class="c1"># BisectConstraint but needs psi validation before bisecting.</span>
     <span class="k">if</span> <span class="n">_is_psi_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_solve_psi_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
@@ -1401,7 +1401,7 @@
     <span class="n">mode</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Forward solver for ``psi_constant`` modes (validation filter).</span>
+<span class="sd">    Forward solver for psi-constant modes (validation filter).</span>
 
 <span class="sd">    For a given (h,k,l) and UB, the azimuthal angle ψ is a pure phi-frame</span>
 <span class="sd">    quantity — the same for every Bragg solution.  This solver:</span>
@@ -2406,7 +2406,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-25 17:14 CDT.
+  Last updated on 2026-04-25 18:32 CDT.
   <br/>
 </p></div>
       

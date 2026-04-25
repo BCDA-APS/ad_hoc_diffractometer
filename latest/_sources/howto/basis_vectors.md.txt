@@ -51,8 +51,8 @@ transverse   -> +x   (XHAT)
 The NeXus [convention](https://manual.nexusformat.org/design.html#the-nexus-coordinate-system) makes a different choice:
 
 ```
-vertical     -> +z   (YHAT)
-longitudinal -> +y   (ZHAT)
+vertical     -> +y   (YHAT)
+longitudinal -> +z   (ZHAT)
 transverse   -> +x   (XHAT)
 ```
 

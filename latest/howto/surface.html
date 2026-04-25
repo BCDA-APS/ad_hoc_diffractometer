@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=b5190079"></script>
+    <script src="../_static/documentation_options.js?v=9a79299f"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-25 17:14 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-25 18:32 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -499,7 +499,7 @@ reference vector to modes that require them, and how to compute the
 resulting reference pseudo-angles (α_i, β_out, ψ, naz).</p>
 <section id="background">
 <h2>Background<a class="headerlink" href="#background" title="Link to this heading">#</a></h2>
-<p>Several diffraction modes — <code class="docutils literal notranslate"><span class="pre">psi_constant_vertical</span></code>, <code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">reflectivity</span></code>,
+<p>Several diffraction modes — <code class="docutils literal notranslate"><span class="pre">fixed_psi_vertical</span></code>, <code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">reflectivity</span></code>,
 and others — require an external reference vector to complete their constraint.
 In this package the reference vector is supplied as <strong>Miller indices (h, k, l)</strong>,
 not as a lab-frame Cartesian vector.  The package converts to the lab frame
@@ -648,9 +648,9 @@ vector to be set on the geometry.  <code class="docutils literal notranslate"><s
 <code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code>; surface modes (<code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">reflectivity</span></code>) require
 <code class="docutils literal notranslate"><span class="pre">surface_normal</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;psi_constant_vertical&quot;</span>
+<span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;fixed_psi_vertical&quot;</span>
 
-<span class="n">cs</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;psi_constant_vertical&quot;</span><span class="p">]</span>
+<span class="n">cs</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_psi_vertical&quot;</span><span class="p">]</span>
 <span class="n">rc</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">reference_constraint</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">has_reference_vector</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>   <span class="c1"># True  — vector is set</span>
@@ -769,7 +769,7 @@ only if it matches the stored target — otherwise it returns an empty list.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-25 17:14 CDT.
+  Last updated on 2026-04-25 18:32 CDT.
   <br/>
 </p></div>
       

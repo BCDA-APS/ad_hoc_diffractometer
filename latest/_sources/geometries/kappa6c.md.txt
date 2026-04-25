@@ -159,7 +159,7 @@ constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
 | **Computed** | kphi, nu, delta |
 | **Constant during** `forward()` | kphi = 0, mu = 0 |
 
-### `psi_constant_vertical`
+### `fixed_psi_vertical`
 
 Vertical bisecting with azimuthal angle ψ validation.
 Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
@@ -173,10 +173,10 @@ requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
 | **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
 | **Extras (output)** | psi (computed azimuth) |
 
-### `psi_constant_horizontal`
+### `fixed_psi_horizontal`
 
 Horizontal bisecting with azimuthal angle ψ validation.
-Symmetric with `psi_constant_vertical` in the horizontal plane.
+Symmetric with `fixed_psi_vertical` in the horizontal plane.
 Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
 
 | | |

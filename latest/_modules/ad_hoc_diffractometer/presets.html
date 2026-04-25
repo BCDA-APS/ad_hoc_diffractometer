@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=b5190079"></script>
+    <script src="../../_static/documentation_options.js?v=9a79299f"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-25 17:14 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-25 18:32 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -607,7 +607,7 @@
     <span class="c1"># Vertical bisect pair: eta(transverse) &lt;-&gt; delta(transverse)  =&gt; eta = delta/2</span>
     <span class="c1"># Horizontal bisect pair: mu(vertical) &lt;-&gt; nu(vertical)  =&gt; mu = nu/2</span>
     <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="c1"># ── Implemented analytic modes ──────────────────────────────────────</span>
+        <span class="c1"># ── Vertical scattering plane ───────────────────────────────────────</span>
         <span class="s2">&quot;bisecting_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
@@ -616,16 +616,7 @@
             <span class="p">],</span>
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
         <span class="p">),</span>
-        <span class="c1"># TODO: #190 These fixed modes are for vertical scattering plane; add for horizontal plane.</span>
-        <span class="s2">&quot;fixed_chi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+        <span class="s2">&quot;fixed_phi_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                 <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
@@ -633,7 +624,15 @@
             <span class="p">],</span>
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;fixed_mu&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+        <span class="s2">&quot;fixed_chi_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
+                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_mu_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                 <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
@@ -641,21 +640,49 @@
             <span class="p">],</span>
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;bisecting_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;fixed_nu&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+        <span class="s2">&quot;fixed_nu_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
                 <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
                 <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
             <span class="p">],</span>
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_alpha_i_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;alpha_i&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_beta_out_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;beta_out&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;alpha_eq_beta_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;a_eq_b&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_psi_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
         <span class="p">),</span>
         <span class="s2">&quot;double_diffraction_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span>
@@ -665,6 +692,83 @@
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
             <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">},</span>
         <span class="p">),</span>
+        <span class="c1"># ── Horizontal scattering plane ─────────────────────────────────────</span>
+        <span class="s2">&quot;bisecting_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_phi_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_chi_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
+                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_eta_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_delta_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_alpha_i_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;alpha_i&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_beta_out_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;beta_out&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;alpha_eq_beta_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;a_eq_b&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;fixed_psi_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
+            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+        <span class="p">),</span>
         <span class="s2">&quot;double_diffraction_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
@@ -672,6 +776,15 @@
             <span class="p">],</span>
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
             <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="c1"># ── Lifting detector (out-of-plane) ─────────────────────────────────</span>
+        <span class="s2">&quot;lifting_detector_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;qaz&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
         <span class="p">),</span>
         <span class="s2">&quot;lifting_detector_mu&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span>
@@ -681,33 +794,6 @@
             <span class="p">],</span>
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;lifting_detector_phi&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;qaz&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;psi_constant_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="s2">&quot;psi_constant_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
-                <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">],</span>
-            <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-        <span class="p">),</span>
-        <span class="c1"># TODO: incident angle fixed modes, reference vector choices: hkl_2, xyz</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
@@ -1311,7 +1397,7 @@
             <span class="p">],</span>
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;psi_constant_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+        <span class="s2">&quot;fixed_psi_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
                 <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
@@ -1320,7 +1406,7 @@
             <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
             <span class="n">extras</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_hat&quot;</span><span class="p">:</span> <span class="n">REQUIRED</span><span class="p">,</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
         <span class="p">),</span>
-        <span class="s2">&quot;psi_constant_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+        <span class="s2">&quot;fixed_psi_horizontal&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">),</span>
                 <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
@@ -1632,7 +1718,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-25 17:14 CDT.
+  Last updated on 2026-04-25 18:32 CDT.
   <br/>
 </p></div>
       
