@@ -21,8 +21,8 @@ directions** that can be identified directly in the laboratory:
 The package uses a right-handed Cartesian frame internally.  Different authors
 assigned different Cartesian letters (x, y, z) to these physical directions —
 historically a source of confusion when diffractometer geometries are compared.
-The package supports both major conventions via the `basis` argument to each
-factory.
+The package accepts any right-handed orthogonal basis via the `basis` argument
+to {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`.
 
 ::::{tab-set}
 

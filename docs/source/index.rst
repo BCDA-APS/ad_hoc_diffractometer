@@ -119,12 +119,12 @@ Background
 
       The diffractometer problem that started this project.
 
-   .. grid-item-card:: :material-outlined:`calculate;3em` You (1999) Geometry
+   .. grid-item-card:: :material-outlined:`calculate;3em` Coordinate Convention & UB Matrix
       :link: problem2.html
       :link-type: url
 
-      Coordinate conventions and B/U/UB matrix derivation following
-      You (1999) and Busing & Levy (1967).
+      How a basis vector assignment leads to the B, U, and UB matrices, with a
+      worked example using the convention described by H. You (1999.
 
 About
 -----

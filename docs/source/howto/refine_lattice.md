@@ -55,7 +55,7 @@ rlist = [g.reflections[name] for name, *_ in measured]
 
 ## Method 1 — Busing & Levy least-squares
 
-Iteratively solves the linearised normal equations to minimise the RMS
+Iteratively solves the linearized normal equations to minimize the RMS
 misfit between observed and calculated phi-frame scattering vectors.
 Can refine cell parameters and orientation (U matrix) simultaneously.
 
