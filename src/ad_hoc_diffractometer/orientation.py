@@ -45,10 +45,140 @@ import logging
 
 import numpy as np
 
+from .rotation import _rotation_matrix_normalized
 from .rotation import rotation_matrix
 from .stage import Stage
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Performance-critical stateless helpers
+# ---------------------------------------------------------------------------
+
+
+def _compute_q_phi(
+    sample_stages: list,
+    detector_stages: list,
+    angles: dict[str, float],
+    two_pi_over_lambda: float,
+    y_eff: np.ndarray,
+) -> np.ndarray:
+    """
+    Compute Q_phi from angle values without mutating any geometry state.
+
+    This is the inner hot-path function called hundreds of times per
+    forward() invocation.  It avoids all attribute mutation, dict copying,
+    and save/restore overhead.
+
+    Parameters
+    ----------
+    sample_stages : list of Stage
+        Sample stages in stacking order (floor-most first).
+    detector_stages : list of Stage
+        Detector stages in stacking order (floor-most first).
+    angles : dict[str, float]
+        Motor angles in degrees, keyed by stage name.  Stages not present
+        in the dict use the stage's current ``angle`` attribute.
+    two_pi_over_lambda : float
+        Pre-computed ``2 * pi / wavelength``.
+    y_eff : numpy.ndarray, shape (3,)
+        Pre-computed effective beam direction ``R_inc.T @ y_hat``.
+
+    Returns
+    -------
+    Q_phi : numpy.ndarray, shape (3,)
+        Scattering vector in the phi frame, in Å⁻¹.
+    """
+    # Sample rotation matrix Z (floor-most first, so Z = R_n @ ... @ R_1)
+    Z = np.eye(3)
+    for s in sample_stages:
+        angle = angles.get(s.name, s.angle)
+        Z = _rotation_matrix_normalized(s._axis_hat, angle) @ Z  # noqa: SLF001
+
+    # Detector rotation matrix D
+    D = np.eye(3)
+    for s in detector_stages:
+        angle = angles.get(s.name, s.angle)
+        D = _rotation_matrix_normalized(s._axis_hat, angle) @ D  # noqa: SLF001
+
+    # Q_lab = (2pi/lambda) * (D @ y_eff - y_eff)
+    Q_lab = two_pi_over_lambda * (D @ y_eff - y_eff)
+
+    # Q_phi = Z^T @ Q_lab  (Z is orthogonal)
+    return Z.T @ Q_lab
+
+
+def _compute_q_phi_cached(
+    sample_stages: list,
+    detector_stages: list,
+    angles: dict[str, float],
+    two_pi_over_lambda: float,
+    y_eff: np.ndarray,
+    cached_Z_prefix: np.ndarray | None,
+    free_sample_indices: list[int] | None,
+    cached_D: np.ndarray | None,
+) -> np.ndarray:
+    """
+    Compute Q_phi using cached rotation matrices for fixed stages.
+
+    When some stages have fixed angles across all Newton iterations, their
+    rotation matrices are constant and can be pre-computed.  This function
+    uses the cached prefix product for the fixed portion and only computes
+    rotation matrices for the free stages.
+
+    Parameters
+    ----------
+    sample_stages : list of Stage
+        All sample stages in stacking order.
+    detector_stages : list of Stage
+        All detector stages in stacking order.
+    angles : dict[str, float]
+        Motor angles in degrees.
+    two_pi_over_lambda : float
+    y_eff : numpy.ndarray, shape (3,)
+    cached_Z_prefix : numpy.ndarray or None
+        Pre-computed product of rotation matrices for all sample stages
+        **before** the first free stage.  None means no caching (compute all).
+    free_sample_indices : list of int or None
+        Indices into sample_stages of the free (varying) stages.  None means
+        all stages are free (no caching).
+    cached_D : numpy.ndarray or None
+        Pre-computed detector rotation matrix.  None means compute it.
+
+    Returns
+    -------
+    Q_phi : numpy.ndarray, shape (3,)
+    """
+    # Detector rotation matrix — use cached version if available
+    if cached_D is not None:
+        D = cached_D
+    else:
+        D = np.eye(3)
+        for s in detector_stages:
+            angle = angles.get(s.name, s.angle)
+            D = _rotation_matrix_normalized(s._axis_hat, angle) @ D  # noqa: SLF001
+
+    # Sample rotation matrix Z — use partial caching
+    if cached_Z_prefix is not None and free_sample_indices is not None:
+        # Start with the cached prefix for stages 0..first_free-1
+        Z = cached_Z_prefix.copy()
+        # Multiply in the free stages and any stages after them
+        first_free = (
+            free_sample_indices[0] if free_sample_indices else len(sample_stages)
+        )
+        for i in range(first_free, len(sample_stages)):
+            s = sample_stages[i]
+            angle = angles.get(s.name, s.angle)
+            Z = _rotation_matrix_normalized(s._axis_hat, angle) @ Z  # noqa: SLF001
+    else:
+        Z = np.eye(3)
+        for s in sample_stages:
+            angle = angles.get(s.name, s.angle)
+            Z = _rotation_matrix_normalized(s._axis_hat, angle) @ Z  # noqa: SLF001
+
+    Q_lab = two_pi_over_lambda * (D @ y_eff - y_eff)
+    return Z.T @ Q_lab
 
 
 def angles_to_phi_vector(geometry, **motor_angles: float) -> np.ndarray:
@@ -61,19 +191,18 @@ def angles_to_phi_vector(geometry, **motor_angles: float) -> np.ndarray:
 
     Algorithm (Busing & Levy 1967, section "The phi-axis frame"):
 
-    1. Temporarily set the supplied motor angles on their stages (preserving
-       the original values so the geometry is restored afterwards).
-    2. Compute the total sample rotation matrix ``Z`` (product of all sample
-       stage rotation matrices, floor-most first).
-    3. Compute the total detector rotation matrix ``D``.
-    4. The incident-beam unit vector in the lab frame is ``ŷ`` (longitudinal
+    1. Compute the total sample rotation matrix ``Z`` (product of all sample
+       stage rotation matrices, floor-most first) from the supplied motor
+       angles (stages not supplied keep their current ``angle`` attribute).
+    2. Compute the total detector rotation matrix ``D``.
+    3. The incident-beam unit vector in the lab frame is ``ŷ`` (longitudinal
        direction, ``geometry.basis["longitudinal"]``).
-    5. The scattered-beam unit vector in the lab frame is ``D @ ŷ``.
-    6. The scattering vector in the lab frame is::
+    4. The scattered-beam unit vector in the lab frame is ``D @ ŷ``.
+    5. The scattering vector in the lab frame is::
 
            Q_lab = (2π / λ) * (D @ ŷ - ŷ)
 
-    7. Rotate Q_lab back through the sample stack::
+    6. Rotate Q_lab back through the sample stack::
 
            Q_phi = Z⁻¹ @ Q_lab = Zᵀ @ Q_lab
 
@@ -107,10 +236,10 @@ def angles_to_phi_vector(geometry, **motor_angles: float) -> np.ndarray:
 
     Notes
     -----
-    The function modifies stage angles temporarily and restores them
-    afterwards, even if an exception is raised.  It is therefore safe to
-    call inside a ``try`` block or from multiple threads as long as each
-    call uses a separate geometry instance.
+    The function is stateless: it does not modify the geometry's stage
+    angles.  It computes rotation matrices directly from the supplied
+    ``motor_angles`` values, so it is safe to call from multiple threads
+    on the same geometry instance.
 
     The scattering vector Q_phi is independent of which sample stage is
     designated the "phi" axis; it is expressed in the frame of the *last*
@@ -153,42 +282,25 @@ def angles_to_phi_vector(geometry, **motor_angles: float) -> np.ndarray:
     for name in motor_angles:
         geometry.stage(name)  # raises KeyError if not found
 
-    # Save current angles and apply the requested ones
-    saved: dict[str, float] = {}
-    try:
-        for name, angle in motor_angles.items():
-            saved[name] = geometry.stage(name).angle
-            geometry.set_angle(name, float(angle))
-
-        # Sample rotation matrix Z and detector rotation matrix D
-        Z = geometry.sample_rotation_matrix()
-        D = geometry.detector_rotation_matrix()
-
-    finally:
-        # Restore original angles unconditionally
-        for name, angle in saved.items():
-            geometry.set_angle(name, angle)
-
     # Incident-beam direction: longitudinal basis vector (normalized)
     y_hat = np.asarray(geometry.basis["longitudinal"], dtype=float)
     y_norm = np.linalg.norm(y_hat)
     y_hat = y_hat / y_norm
 
-    # Apply diffractometer inclination: when the instrument is mounted at a
-    # non-zero angle relative to the beam, the effective beam direction in the
-    # diffractometer frame is R_inc.T @ ŷ.  For a zero inclination (R_inc = I)
-    # this reduces to the standard y_hat.
+    # Apply diffractometer inclination
     R_inc = geometry.inclination_matrix
     y_eff = R_inc.T @ y_hat
 
-    # Scattering vector in lab frame: Q_lab = (2π/λ) * (D @ ŷ_eff - ŷ_eff)
     two_pi_over_lambda = 2.0 * np.pi / geometry.wavelength
-    Q_lab = two_pi_over_lambda * (D @ y_eff - y_eff)
 
-    # Rotate into phi frame: Q_phi = Z^T @ Q_lab  (Z is orthogonal)
-    Q_phi = Z.T @ Q_lab
-
-    return Q_phi
+    # Delegate to the stateless fast-path computation
+    return _compute_q_phi(
+        geometry.sample_stages,
+        geometry.detector_stages,
+        motor_angles,
+        two_pi_over_lambda,
+        y_eff,
+    )
 
 
 def ub_from_one_reflection(

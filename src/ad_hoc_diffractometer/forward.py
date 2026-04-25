@@ -70,6 +70,124 @@ if TYPE_CHECKING:  # pragma: no cover
 
 logger = logging.getLogger(__name__)
 
+
+# ---------------------------------------------------------------------------
+# ForwardContext — pre-computed intermediates for the inner Newton loop
+# ---------------------------------------------------------------------------
+
+
+class ForwardContext:
+    """
+    Pre-computed intermediates for the forward solver's inner loops.
+
+    Created once per ``compute_forward()`` call, this bundles all constant
+    quantities needed by the Newton-Raphson residual evaluations so they
+    are not recomputed on every call to ``angles_to_phi_vector``.
+
+    Attributes
+    ----------
+    sample_stages : list of Stage
+    detector_stages : list of Stage
+    two_pi_over_lambda : float
+    y_eff : numpy.ndarray, shape (3,)
+        Effective beam direction (R_inc.T @ y_hat).
+    """
+
+    def __init__(self, geometry):
+        self.sample_stages = geometry.sample_stages
+        self.detector_stages = geometry.detector_stages
+        self.two_pi_over_lambda = 2.0 * math.pi / geometry.wavelength
+
+        y_hat = np.asarray(geometry.basis["longitudinal"], dtype=float)
+        y_norm = float(np.linalg.norm(y_hat))
+        y_hat = y_hat / y_norm
+        R_inc = geometry.inclination_matrix
+        self.y_eff = R_inc.T @ y_hat
+
+        # Cached rotation matrices (populated by prepare_bisecting)
+        self._cached_Z_prefix: np.ndarray | None = None
+        self._free_sample_indices: list[int] | None = None
+        self._cached_D: np.ndarray | None = None
+
+    def prepare_caching(
+        self,
+        fixed_angles: dict[str, float],
+        free_stage_names: set[str],
+    ) -> None:
+        """
+        Pre-compute rotation matrices for stages whose angles will not
+        change during Newton iteration.
+
+        Parameters
+        ----------
+        fixed_angles : dict
+            All angles including fixed ones.
+        free_stage_names : set of str
+            Names of stages that will vary during iteration.
+        """
+        from .rotation import _rotation_matrix_normalized
+
+        # Detector: if no detector stage is free, cache D entirely
+        det_free = any(s.name in free_stage_names for s in self.detector_stages)
+        if not det_free:
+            D = np.eye(3)
+            for s in self.detector_stages:
+                angle = fixed_angles.get(s.name, s.angle)
+                D = _rotation_matrix_normalized(s._axis_hat, angle) @ D  # noqa: SLF001
+            self._cached_D = D
+        else:
+            self._cached_D = None
+
+        # Sample: find the first free stage index and cache the prefix product
+        self._free_sample_indices = []
+        for i, s in enumerate(self.sample_stages):
+            if s.name in free_stage_names:
+                self._free_sample_indices.append(i)
+
+        if self._free_sample_indices:
+            first_free = self._free_sample_indices[0]
+            if first_free > 0:
+                Z_prefix = np.eye(3)
+                for i in range(first_free):
+                    s = self.sample_stages[i]
+                    angle = fixed_angles.get(s.name, s.angle)
+                    Z_prefix = (
+                        _rotation_matrix_normalized(s._axis_hat, angle) @ Z_prefix
+                    )  # noqa: SLF001
+                self._cached_Z_prefix = Z_prefix
+            else:
+                self._cached_Z_prefix = np.eye(3)
+        else:
+            self._cached_Z_prefix = None
+
+    def q_phi(self, angles: dict[str, float]) -> np.ndarray:
+        """Compute Q_phi using cached rotation matrices where possible."""
+        from .orientation import _compute_q_phi_cached
+
+        return _compute_q_phi_cached(
+            self.sample_stages,
+            self.detector_stages,
+            angles,
+            self.two_pi_over_lambda,
+            self.y_eff,
+            self._cached_Z_prefix,
+            self._free_sample_indices,
+            self._cached_D,
+        )
+
+    def q_phi_uncached(self, angles: dict[str, float]) -> np.ndarray:
+        """Compute Q_phi without any caching (for validation)."""
+        from .orientation import _compute_q_phi
+
+        return _compute_q_phi(
+            self.sample_stages,
+            self.detector_stages,
+            angles,
+            self.two_pi_over_lambda,
+            self.y_eff,
+        )
+
+
 # ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
@@ -361,11 +479,16 @@ def _solve_bisecting(
 
     from .orientation import angles_to_phi_vector as _a2phi
 
+    # Create ForwardContext and cache fixed-stage rotation matrices
+    ctx = ForwardContext(geometry)
+    free_names = {chi_stage.name, phi_stage.name}
+    ctx.prepare_caching(angles, free_names)
+
     Q_norm = float(np.linalg.norm(Q_phi))
     q_hat = Q_phi / Q_norm
 
-    # Normalised chi axis vector
-    chi_ax = chi_stage.axis / np.linalg.norm(chi_stage.axis)
+    # Normalised chi axis vector (use pre-normalized from stage)
+    chi_ax = chi_stage._axis_hat  # noqa: SLF001
 
     # Component of q_hat along the chi axis direction
     q_along_chi = float(np.dot(q_hat, chi_ax))
@@ -384,9 +507,9 @@ def _solve_bisecting(
     else:
         phi_seed_deg = 0.0
 
-    # Seed (chi, phi) pairs.  Use a combination of analytically motivated
-    # seeds and a coarse grid to ensure both solution branches are found even
-    # in degenerate cases (Q along chi axis, or chi ≈ 0 / 90 / 180°).
+    # Seed (chi, phi) pairs.  Analytic seeds are tried first (most likely
+    # to converge quickly).  Grid seeds are appended as fallback.
+    # Early termination: stop after finding enough unique solutions.
     analytic_seeds = []
     for chi_seed in [
         chi_abs_deg,
@@ -404,27 +527,43 @@ def _solve_bisecting(
         for phi_s in (0.0, 90.0, 180.0, 270.0)
     ]
 
+    chi_name = chi_stage.name
+    phi_name = phi_stage.name
+
     seed_pairs = analytic_seeds + grid_seeds
 
     solutions = []
+    _MAX_SOLUTIONS = 4
+    # Early termination: after we've found at least 2 solutions, stop
+    # after _MAX_STALE consecutive stale seeds.  Before 2 solutions, we
+    # try all seeds to ensure both branches are found.
+    _MIN_SOLUTIONS = 2
+    _MAX_STALE = 6
+    stale_count = 0
 
     for chi_start, phi_start in seed_pairs:
         sol_angles = _solve_two_angles(
             geometry=geometry,
             fixed_angles=angles,
-            free_stage_1=chi_stage.name,
-            free_stage_2=phi_stage.name,
+            free_stage_1=chi_name,
+            free_stage_2=phi_name,
             start_1=chi_start,
             start_2=phi_start,
             Q_phi_target=Q_phi,
             a2phi_fn=_a2phi,
+            _ctx=ctx,
         )
         if sol_angles is None:  # pragma: no branch
+            stale_count += 1  # pragma: no cover
+            if (
+                len(solutions) >= _MIN_SOLUTIONS and stale_count >= _MAX_STALE
+            ):  # pragma: no cover
+                break  # pragma: no cover
             continue  # pragma: no cover
 
         sol = dict(angles)
-        sol[chi_stage.name] = sol_angles[0]
-        sol[phi_stage.name] = sol_angles[1]
+        sol[chi_name] = sol_angles[0]
+        sol[phi_name] = sol_angles[1]
 
         _apply_cut_points(sol, mode, geometry)
 
@@ -435,8 +574,16 @@ def _solve_bisecting(
                 duplicate = True
                 break
 
-        if not duplicate and _check_limits(geometry, sol):
-            solutions.append(sol)
+        if duplicate or not _check_limits(geometry, sol):
+            stale_count += 1
+            if len(solutions) >= _MIN_SOLUTIONS and stale_count >= _MAX_STALE:
+                break
+            continue
+
+        solutions.append(sol)
+        stale_count = 0  # reset: we found a new solution
+        if len(solutions) >= _MAX_SOLUTIONS:  # pragma: no cover
+            break  # pragma: no cover
 
     return solutions
 
@@ -471,6 +618,10 @@ def _solve_one_free_angle(
     """
     from .orientation import angles_to_phi_vector as _a2phi
 
+    # Create ForwardContext and cache fixed-stage rotation matrices
+    ctx = ForwardContext(geometry)
+    ctx.prepare_caching(fixed_angles, {free_stage.name})
+
     solutions = []
     for start in [0.0, 90.0, -90.0, 180.0]:
         result = _solve_two_angles(
@@ -483,6 +634,7 @@ def _solve_one_free_angle(
             Q_phi_target=Q_phi_target,
             a2phi_fn=_a2phi,
             _one_dimensional=True,
+            _ctx=ctx,
         )
         if result is None:  # pragma: no branch
             continue  # pragma: no cover
@@ -510,6 +662,7 @@ def _solve_two_angles(
     max_iter: int = 200,
     tol: float = 1e-10,
     _one_dimensional: bool = False,
+    _ctx: ForwardContext | None = None,
 ) -> tuple[float, float] | None:
     """
     Numerically solve for one or two free stage angles such that
@@ -533,11 +686,15 @@ def _solve_two_angles(
         Starting guess in degrees.
     Q_phi_target : numpy.ndarray, shape (3,)
     a2phi_fn : callable
-        ``angles_to_phi_vector`` function.
+        ``angles_to_phi_vector`` function (used as fallback if no context).
     max_iter, tol : int, float
         Convergence parameters.
     _one_dimensional : bool
         If True, solve for only ``free_stage_1`` (1D problem).
+    _ctx : ForwardContext or None
+        Pre-computed context for fast Q_phi evaluation.  When provided,
+        bypasses the stateful ``a2phi_fn`` and uses cached rotation
+        matrices instead.
 
     Returns
     -------
@@ -547,13 +704,25 @@ def _solve_two_angles(
     n_free = 1 if _one_dimensional else 2
     x = np.array([start_1, start_2][:n_free], dtype=float)
 
-    def residual(x):
-        trial = dict(fixed_angles)
-        trial[free_stage_1] = float(x[0])
-        if not _one_dimensional:
-            trial[free_stage_2] = float(x[1])
-        Q = a2phi_fn(geometry, **trial)
-        return Q - Q_phi_target
+    # Use a mutable trial dict that is reused across iterations to avoid
+    # allocating a new dict on every residual call.
+    trial = dict(fixed_angles)
+
+    if _ctx is not None:
+
+        def residual(x):
+            trial[free_stage_1] = float(x[0])
+            if not _one_dimensional:
+                trial[free_stage_2] = float(x[1])
+            return _ctx.q_phi(trial) - Q_phi_target
+    else:
+
+        def residual(x):
+            trial[free_stage_1] = float(x[0])
+            if not _one_dimensional:
+                trial[free_stage_2] = float(x[1])
+            Q = a2phi_fn(geometry, **trial)
+            return Q - Q_phi_target
 
     def jacobian_fd(x, r0, h=1e-4):
         """Finite-difference Jacobian (3 × n_free)."""
@@ -692,9 +861,8 @@ def _solve_kappa_virtual(
                 continue
 
         # Verify geometric consistency: Q_computed must match Q_target
-        from .orientation import angles_to_phi_vector as _a2phi
-
-        Q_computed = _a2phi(geometry, **angles)
+        kv_ctx = ForwardContext(geometry)
+        Q_computed = kv_ctx.q_phi_uncached(angles)
         if not np.allclose(Q_computed, Q_phi, atol=1e-3):
             continue
 
@@ -994,7 +1162,11 @@ def _solve_double_diffraction(
     # Ordered list of ALL stages (for building the sample rotation matrix Z)
     sample_stages = geometry.sample_stages
 
-    from .orientation import angles_to_phi_vector as _a2phi
+    # Create ForwardContext for fast Q_phi computation
+    ctx = ForwardContext(geometry)
+    # For double-diffraction, all 4 free stages vary, so caching is limited.
+    # But the stateless computation path still avoids save/restore overhead.
+    ctx.prepare_caching(angles_base, set(free_names))
 
     def _build_Z(angles: dict[str, float]) -> np.ndarray:
         """Compute sample rotation matrix from angle values (no mutation)."""
@@ -1010,7 +1182,7 @@ def _solve_double_diffraction(
             trial[name] = float(x[i])
 
         # Bragg residual for primary hkl₁ (3 components)
-        Q_computed = _a2phi(geometry, **trial)
+        Q_computed = ctx.q_phi(trial)
         bragg_res = Q_computed - Q_phi
 
         # Ewald sphere residual for secondary hkl₂
@@ -1472,9 +1644,14 @@ def _solve_qaz_mode(
 
             chi_stage = free_sample[-2]
             phi_stage = free_sample[-1]
+
+            # Create ForwardContext for this detector angle pair
+            qaz_ctx = ForwardContext(geometry)
+            qaz_ctx.prepare_caching(angles, {chi_stage.name, phi_stage.name})
+
             Q_norm = float(np.linalg.norm(Q_phi))
             q_hat = Q_phi / Q_norm
-            chi_ax = chi_stage.axis / np.linalg.norm(chi_stage.axis)
+            chi_ax = chi_stage._axis_hat  # noqa: SLF001
             q_along_chi = float(np.dot(q_hat, chi_ax))
             q_along_chi = max(-1.0, min(1.0, q_along_chi))
             chi_abs_deg = math.degrees(math.asin(abs(q_along_chi)))
@@ -1504,6 +1681,7 @@ def _solve_qaz_mode(
                     start_2=phi_start_i,
                     Q_phi_target=Q_phi,
                     a2phi_fn=_a2phi,
+                    _ctx=qaz_ctx,
                 )
                 if sol_angles is None:
                     continue
@@ -1595,12 +1773,18 @@ def _solve_fixed_sample(
 
     from .orientation import angles_to_phi_vector as _a2phi
 
+    # Create ForwardContext and cache fixed-stage rotation matrices
+    ctx = ForwardContext(geometry)
+    free_names = {chi_stage.name, phi_stage.name}
+    ctx.prepare_caching(angles, free_names)
+
     grid_seeds = [
         (chi_s, phi_s)
         for chi_s in (0.0, 45.0, 90.0, -90.0, 135.0, 180.0)
         for phi_s in (0.0, 90.0, 180.0, 270.0)
     ]
     solutions = []
+    _MAX_SOLUTIONS = 4
     for chi_start, phi_start in grid_seeds:
         sol_angles = _solve_two_angles(
             geometry=geometry,
@@ -1611,6 +1795,7 @@ def _solve_fixed_sample(
             start_2=phi_start,
             Q_phi_target=Q_phi,
             a2phi_fn=_a2phi,
+            _ctx=ctx,
         )
         if sol_angles is None:  # pragma: no branch
             continue  # pragma: no cover
@@ -1625,6 +1810,8 @@ def _solve_fixed_sample(
                 break
         if not duplicate and _check_limits(geometry, sol):
             solutions.append(sol)
+            if len(solutions) >= _MAX_SOLUTIONS:
+                break
     return solutions
 
 

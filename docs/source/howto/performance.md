@@ -30,10 +30,10 @@ results = benchmark_geometry("fourcv")
 The output is a formatted table:
 
 ```text
-geometry   mode                     status       fwd ops/s  inv ops/s  round-trip err  solns
-fourcv     bisecting                ok               3,241     18,502        4.70e-13     11
-fourcv     fixed_chi                ok               2,890     18,102        3.40e-14     21
-fourcv     psi_constant             no_solutions      8,780          -               -      0
+geometry   mode                     status       fwd ops/s  inv ops/s  fwd/inv  round-trip err  solns
+fourcv     bisecting                ok               3,241     18,502   0.1752        4.70e-13     11
+fourcv     fixed_chi                ok               2,890     18,102   0.1596        3.40e-14     21
+fourcv     psi_constant             no_solutions      8,780          -       -               -      0
 ```
 
 ## Output columns
@@ -45,6 +45,7 @@ fourcv     psi_constant             no_solutions      8,780          -          
 | **status** | `ok`, `no_solutions`, `not_implemented`, or `error` |
 | **fwd ops/s** | `forward()` operations per second |
 | **inv ops/s** | `inverse()` operations per second |
+| **fwd/inv** | `forward_ops / inverse_ops` — workstation-independent efficiency ratio. **Higher is better.** Since `inverse()` is a single direct computation, its speed characterizes the machine; the ratio measures algorithmic efficiency of the forward solver. |
 | **round-trip err** | Maximum ‖hkl − inverse(forward(hkl))‖∞ |
 | **solns** | Total solutions returned across all test reflections |
 
@@ -108,6 +109,7 @@ Each result is a Python dict with the following keys:
     "status": "ok",
     "forward_ops_per_sec": 3241.0,
     "inverse_ops_per_sec": 18502.0,
+    "forward_inverse_ratio": 0.1752,
     "round_trip_max_error": 4.7e-13,
     "n_reflections": 5,
     "n_solutions": 11,

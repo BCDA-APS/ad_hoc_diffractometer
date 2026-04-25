@@ -706,7 +706,7 @@ def test_inverse_partial_angles_uses_current():
 
 
 def test_inverse_restores_stage_angles():
-    """Motor angles are restored to their original values after inverse()."""
+    """Motor angles are not modified by inverse() (stateless computation)."""
     g = _psic_with_identity_UB()
     g.set_angle("eta", 99.9)
     g.set_angle("phi", 45.0)
