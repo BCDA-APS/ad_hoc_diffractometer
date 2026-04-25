@@ -996,7 +996,7 @@ class GeometryAxisFigure:  # pragma: no cover
     def __init__(
         self,
         geometry_name: str,
-        axis_labels: bool = False,
+        axis_labels: bool = True,
         **kwargs,
     ):
         go = _require_plotly()
