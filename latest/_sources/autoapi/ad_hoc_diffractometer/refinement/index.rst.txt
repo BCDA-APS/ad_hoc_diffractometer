@@ -70,8 +70,8 @@ Module Contents
 
    Uses the Busing & Levy (1967) least-squares approach (§"Refinement of
    lattice and orientation parameters").  Starting from the current
-   ``sample.UB`` and ``sample.lattice``, iteratively solves the linearised
-   normal equations to minimise the sum of squared residuals between
+   ``sample.UB`` and ``sample.lattice``, iteratively solves the linearized
+   normal equations to minimize the sum of squared residuals between
    observed and calculated phi-frame scattering vectors.
 
    Observed vector for reflection i:
@@ -225,7 +225,7 @@ Module Contents
    .. rubric:: Notes
 
    The default ``refine_orientation=False`` leaves U fixed; only the
-   cell parameters (and thus B, and thus UB = U @ B) are optimised.
+   cell parameters (and thus B, and thus UB = U @ B) are optimized.
    This is the typical use case: use ``ub_from_two_reflections_bl1967``
    to get U, then use the simplex to find the best cell parameters.
 

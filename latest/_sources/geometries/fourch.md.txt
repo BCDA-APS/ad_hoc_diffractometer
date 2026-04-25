@@ -46,17 +46,17 @@ and mode configuration.
 
 **Sample stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``omega`` | −vertical (−z BL) | left-handed |
-| ``chi`` | +longitudinal (+y BL) | right-handed |
-| ``phi`` | −vertical (−z BL) | left-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``omega`` | −vertical (−z BL) | left-handed | base |
+| ``chi`` | +longitudinal (+y BL) | right-handed | ``omega`` |
+| ``phi`` | −vertical (−z BL) | left-handed | ``chi`` |
 
 **Detector stages (base first):**
 
-| Stage | Axis | Handedness |
-|---|---|---|
-| ``ttheta`` | −vertical (−z BL) | left-handed |
+| Stage | Axis | Handedness | Parent |
+|---|---|---|---|
+| ``ttheta`` | −vertical (−z BL) | left-handed | base |
 
 ## Diffraction modes
 

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=35eb7af4"></script>
+    <script src="../../../_static/documentation_options.js?v=162e16c1"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-23 12:52 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-25 11:59 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -537,8 +537,8 @@ and <code class="docutils literal notranslate"><span class="pre">refine_lattice_
 <p>Refine lattice parameters and/or orientation from N≥3 reflections.</p>
 <p>Uses the Busing &amp; Levy (1967) least-squares approach (§”Refinement of
 lattice and orientation parameters”).  Starting from the current
-<code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.lattice</span></code>, iteratively solves the linearised
-normal equations to minimise the sum of squared residuals between
+<code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.lattice</span></code>, iteratively solves the linearized
+normal equations to minimize the sum of squared residuals between
 observed and calculated phi-frame scattering vectors.</p>
 <dl class="simple">
 <dt>Observed vector for reflection i:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">hiφ_obs</span> <span class="pre">=</span> <span class="pre">angles_to_phi_vector(geometry,</span> <span class="pre">**ri.angles)</span></code></p>
@@ -694,7 +694,7 @@ If None, defaults to 1e-12.</p></li>
 </dl>
 <p class="rubric">Notes</p>
 <p>The default <code class="docutils literal notranslate"><span class="pre">refine_orientation=False</span></code> leaves U fixed; only the
-cell parameters (and thus B, and thus UB = U &#64; B) are optimised.
+cell parameters (and thus B, and thus UB = U &#64; B) are optimized.
 This is the typical use case: use <code class="docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967</span></code>
 to get U, then use the simplex to find the best cell parameters.</p>
 <p>When scipy is not available, a minimal pure-numpy Nelder-Mead
@@ -804,7 +804,7 @@ implementation is used.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-23 12:52 CDT.
+  Last updated on 2026-04-25 11:59 CDT.
   <br/>
 </p></div>
       

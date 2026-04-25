@@ -247,7 +247,7 @@ Module Contents
       :type: float | None
 
 
-      Sample-to-detector distance in millimetres, or ``None`` if not set.
+      Sample-to-detector distance in millimeters, or ``None`` if not set.
 
       Relevant primarily for area detectors, where the distance is needed
       to convert pixel positions to scattering angles (and thence to Q).
@@ -270,12 +270,12 @@ Module Contents
       :type: tuple[float, float] | None
 
 
-      In-plane detector offset (dx, dy) in millimetres, or ``None`` if not set.
+      In-plane detector offset (dx, dy) in millimeters, or ``None`` if not set.
 
-      Describes the displacement of the beam centre from the detector
-      centre in the detector plane.  ``dx`` is the horizontal offset and
-      ``dy`` is the vertical offset, both in millimetres.  A zero offset
-      means the beam strikes the geometric centre of the detector.
+      Describes the displacement of the beam center from the detector
+      center in the detector plane.  ``dx`` is the horizontal offset and
+      ``dy`` is the vertical offset, both in millimeters.  A zero offset
+      means the beam strikes the geometric center of the detector.
 
       Must be a two-element sequence of real numbers.
 
@@ -836,7 +836,7 @@ Module Contents
 
       A zero angle resets the inclination to the identity matrix.
 
-      :param axis: Rotation axis (need not be a unit vector; it is normalised
+      :param axis: Rotation axis (need not be a unit vector; it is normalized
                    internally).
       :type axis: array-like, shape (3,)
       :param angle_deg: Rotation angle in degrees.
@@ -898,7 +898,7 @@ Module Contents
       which are also available as the :attr:`sample_stages` and
       :attr:`detector_stages` attributes.  This method accepts any
       arbitrary role string, making it useful for non-standard components
-      such as analysers, polarisers, slits, or azimuthal spinners.
+      such as analyzers, polarizers, slits, or azimuthal spinners.
 
       :param role: The role string to filter on (case-sensitive).
       :type role: str
@@ -913,10 +913,10 @@ Module Contents
       >>> import numpy as np
       >>> from ad_hoc_diffractometer import Stage
       >>> g = ahd.fourcv()
-      >>> analyser = Stage("analyser", np.array([1., 0., 0.]), role="analyser")
-      >>> g._stages["analyser"] = analyser
-      >>> [s.name for s in g.stages_by_role("analyser")]
-      ['analyser']
+      >>> analyzer = Stage("analyzer", np.array([1., 0., 0.]), role="analyzer")
+      >>> g._stages["analyzer"] = analyzer
+      >>> [s.name for s in g.stages_by_role("analyzer")]
+      ['analyzer']
       >>> g.stages_by_role("unknown")
       []
 
