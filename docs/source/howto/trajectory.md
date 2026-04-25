@@ -80,7 +80,7 @@ between chi branches:
 ```python
 points = ahd.hkl_trajectory(
     g, trajectory, n_points=51,
-    solution_key=ahd.NEAREST_ANGLES,   # default; minimises motor travel
+    solution_key=ahd.NEAREST_ANGLES,   # default; minimizes motor travel
 )
 ```
 
