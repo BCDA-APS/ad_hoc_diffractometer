@@ -344,7 +344,16 @@ def solve_kappa_virtual(
     # system is consistent when a solution exists.  We solve the 2D sub-system
     # (2 of the 3 components) and verify the third.
 
-    from .orientation import angles_to_phi_vector as _a2phi
+    from .forward import ForwardContext
+
+    # Create ForwardContext for fast Q_phi computation
+    _ctx = ForwardContext(geometry)
+    # For kappa virtual, the free stages are komega, kappa, kphi, and the
+    # detector stage (ttheta) — prepare caching for any remaining fixed stages
+    _ctx.prepare_caching(
+        {s.name: s.angle for s in list(geometry._stages.values())},  # noqa: SLF001
+        {komega_name, "kappa", kphi_name, det_stage.name},
+    )
 
     def _newton_solve(x0: np.ndarray, branch: int = +1) -> np.ndarray | None:
         """Newton-Raphson solver for the 2D free virtual angle problem."""
@@ -388,7 +397,7 @@ def solve_kappa_virtual(
         trial["kappa"] = k
         trial[kphi_name] = kp
         trial[det_stage.name] = ttheta_deg
-        return _a2phi(geometry, **trial) - Q_phi_arr
+        return _ctx.q_phi(trial) - Q_phi_arr
 
     # Build seed points from Q geometry — chi_abs is a natural seed
     chi_ax = np.asarray(chi_stage_eq.axis, dtype=float)

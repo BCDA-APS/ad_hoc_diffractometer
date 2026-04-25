@@ -147,19 +147,22 @@ def _surface_vectors(
     if angles is None:
         angles = {s.name: s.angle for s in geometry._stages.values()}  # noqa: SLF001
 
-    # Temporarily apply angles and compute rotation matrices
-    saved: dict[str, float] = {}
-    try:
-        for name, val in angles.items():
-            geometry.stage(name)  # raises KeyError for unknown
-            saved[name] = geometry.stage(name).angle
-            geometry.set_angle(name, float(val))
+    # Validate stage names up-front (raises KeyError for unknown names)
+    for name in angles:
+        geometry.stage(name)  # raises KeyError if not found
 
-        Z = geometry.sample_rotation_matrix()
-        D = geometry.detector_rotation_matrix()
-    finally:
-        for name, val in saved.items():
-            geometry.set_angle(name, val)
+    # Compute rotation matrices statelessly (no save/restore needed)
+    from .rotation import _rotation_matrix_normalized
+
+    Z = np.eye(3)
+    for s in geometry.sample_stages:
+        angle = angles.get(s.name, s.angle)
+        Z = _rotation_matrix_normalized(s._axis_hat, angle) @ Z  # noqa: SLF001
+
+    D = np.eye(3)
+    for s in geometry.detector_stages:
+        angle = angles.get(s.name, s.angle)
+        D = _rotation_matrix_normalized(s._axis_hat, angle) @ D  # noqa: SLF001
 
     # Incident-beam direction: longitudinal basis vector (normalized)
     y_raw = np.asarray(geometry.basis["longitudinal"], dtype=float)

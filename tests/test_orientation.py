@@ -485,7 +485,7 @@ def test_angles_to_phi_vector_fourcv_bisecting_magnitude():
 
 
 def test_angles_to_phi_vector_restores_stage_angles(psic_geom):
-    """Motor angles are restored to their original values after the call."""
+    """Motor angles are not modified by the call (stateless computation)."""
     psic_geom.wavelength = _LAMBDA_CU_KA
     psic_geom.set_angle("eta", 99.9)
     psic_geom.set_angle("phi", 45.0)
@@ -499,7 +499,7 @@ def test_angles_to_phi_vector_restores_stage_angles(psic_geom):
 
 
 def test_angles_to_phi_vector_restores_angles_on_error(psic_geom):
-    """Stage angles are restored even when an exception is raised mid-call."""
+    """Stage angles are not modified even when an exception is raised."""
     psic_geom.wavelength = _LAMBDA_CU_KA
     psic_geom.set_angle("eta", 55.5)
 
@@ -1376,3 +1376,44 @@ def test_inverse_real_wavelength_psic_silicon():
     hkl2 = g.inverse(r2_angles)
     np.testing.assert_allclose(hkl1, [0.0, 0.0, 2.0], atol=1e-6)
     np.testing.assert_allclose(hkl2, [2.0, 0.0, 0.0], atol=1e-6)
+
+
+# ---------------------------------------------------------------------------
+# _compute_q_phi_cached — uncached fallback path
+# ---------------------------------------------------------------------------
+
+
+def test_compute_q_phi_cached_no_caching_fallback(psic_geom):
+    """_compute_q_phi_cached with no caching produces the same result as _compute_q_phi."""
+    from ad_hoc_diffractometer.orientation import _compute_q_phi
+    from ad_hoc_diffractometer.orientation import _compute_q_phi_cached
+
+    psic_geom.wavelength = _LAMBDA_CU_KA
+    two_pi_over_lambda = 2.0 * np.pi / psic_geom.wavelength
+    y_hat = np.asarray(psic_geom.basis["longitudinal"], dtype=float)
+    y_hat = y_hat / np.linalg.norm(y_hat)
+    y_eff = psic_geom.inclination_matrix.T @ y_hat
+
+    angles = dict(_SAPPHIRE_ANGLES)
+
+    Q_uncached = _compute_q_phi(
+        psic_geom.sample_stages,
+        psic_geom.detector_stages,
+        angles,
+        two_pi_over_lambda,
+        y_eff,
+    )
+
+    # Call with all caching parameters set to None (fallback path)
+    Q_fallback = _compute_q_phi_cached(
+        psic_geom.sample_stages,
+        psic_geom.detector_stages,
+        angles,
+        two_pi_over_lambda,
+        y_eff,
+        cached_Z_prefix=None,
+        free_sample_indices=None,
+        cached_D=None,
+    )
+
+    np.testing.assert_allclose(Q_fallback, Q_uncached, atol=1e-14)

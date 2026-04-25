@@ -56,6 +56,29 @@ def rotation_matrix(axis: np.ndarray, angle_deg: float) -> np.ndarray:
     """
     n = np.asarray(axis, dtype=float)
     n = n / np.linalg.norm(n)
+    return _rotation_matrix_normalized(n, angle_deg)
+
+
+def _rotation_matrix_normalized(n: np.ndarray, angle_deg: float) -> np.ndarray:
+    """
+    Compute a rotation matrix from a pre-normalized axis vector.
+
+    Fast path: skips the normalization step.  The caller must guarantee
+    that ``n`` is a unit vector (``|n| = 1``).  Produces bit-identical
+    results to :func:`rotation_matrix` when the input axis is already
+    normalized.
+
+    Parameters
+    ----------
+    n : numpy.ndarray, shape (3,)
+        **Unit** rotation axis vector.
+    angle_deg : float
+        Rotation angle in degrees.
+
+    Returns
+    -------
+    R : numpy.ndarray, shape (3, 3)
+    """
     theta = np.deg2rad(angle_deg)
     c = np.cos(theta)
     s = np.sin(theta)

@@ -2276,3 +2276,67 @@ def test_double_diffraction_secondary_on_ewald_sphere(
         assert residual < 1e-3, (  # noqa: PLR2004
             f"Secondary reflection not on Ewald sphere: |kf2|²-|ki|² = {residual:.6f}"
         )
+
+
+# ---------------------------------------------------------------------------
+# ForwardContext coverage — all-sample-stages-constrained caching path
+# ---------------------------------------------------------------------------
+
+
+def test_forward_context_all_stages_constrained():
+    """ForwardContext.prepare_caching with no free sample stages sets Z_prefix to None."""
+    from ad_hoc_diffractometer.forward import ForwardContext
+
+    g = _setup_cubic(fourcv, a=4.0)
+
+    ctx = ForwardContext(g)
+    # Pass empty free set — all stages are constrained
+    angles = {s.name: s.angle for s in g._stages.values()}
+    ctx.prepare_caching(angles, set())
+
+    assert ctx._cached_Z_prefix is None
+    assert ctx._free_sample_indices == []
+    assert ctx._cached_D is not None
+
+    # q_phi_uncached still works
+    Q = ctx.q_phi_uncached(angles)
+    assert Q.shape == (3,)
+
+
+def test_bisecting_early_termination_stale():
+    """Bisecting solver terminates early after enough stale seeds."""
+    # Use a reflection that has exactly 2 solutions so that:
+    # - The first 2 solutions are found from the analytic seeds
+    # - Subsequent seeds are all stale (converge to duplicates)
+    # - The solver breaks after _MAX_STALE consecutive stale seeds
+    # If it didn't early-terminate, it would try all 24 seeds.
+    g = _setup_cubic(fourcv, a=4.0)
+    solutions = g.forward(1, 0, 0)
+    assert len(solutions) == 2  # noqa: PLR2004
+    # Verify round-trip for both solutions
+    for sol in solutions:
+        hkl_back = g.inverse(sol)
+        assert abs(hkl_back[0] - 1.0) < 1e-6
+        assert abs(hkl_back[1]) < 1e-6
+        assert abs(hkl_back[2]) < 1e-6
+
+
+def test_bisecting_max_solutions_termination():
+    """Bisecting solver terminates after finding _MAX_SOLUTIONS unique solutions."""
+    # s2d2 geometry with bisecting_vertical can produce 4 solutions
+    # for some reflections, triggering the _MAX_SOLUTIONS break.
+    g = _setup_cubic(psic, a=4.0)
+
+    # Try several reflections to find one with many solutions
+    max_sols = 0
+    for hkl in [(1, 0, 0), (0, 1, 0), (1, 1, 0), (0, 0, 1), (1, 1, 1)]:
+        solutions = g.forward(*hkl)
+        max_sols = max(max_sols, len(solutions))
+        # All solutions must round-trip correctly
+        for sol in solutions:
+            hkl_back = g.inverse(sol)
+            assert abs(hkl_back[0] - hkl[0]) < 1e-6
+            assert abs(hkl_back[1] - hkl[1]) < 1e-6
+            assert abs(hkl_back[2] - hkl[2]) < 1e-6
+    # Verify we find more than 2 solutions for at least one reflection
+    assert max_sols >= 2  # noqa: PLR2004
