@@ -68,6 +68,24 @@ jobs:
         run: |
           python3 -m sphinx -b html docs/source docs/build/html
 
+      - name: Preserve live switcher.json from gh-pages
+        # On main-push deploys, the build output contains the source-repo
+        # switcher.json which only lists versions known at commit time.
+        # The live gh-pages copy has been updated by tag-push CI to include
+        # all released versions.  Fetch it and overlay it into the build
+        # output so the deploy does not regress the version switcher.
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          set -euo pipefail
+          LIVE_URL="https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json"
+          TARGET="docs/build/html/_static/switcher.json"
+          if curl -fsSL "${LIVE_URL}" -o /tmp/live_switcher.json 2>/dev/null; then
+            cp /tmp/live_switcher.json "${TARGET}"
+            echo "Preserved live switcher.json from gh-pages"
+          else
+            echo "No live switcher.json found; using source-repo version"
+          fi
+
       - name: Upload docs as workflow artifact
         uses: actions/upload-artifact@v7
         with:
