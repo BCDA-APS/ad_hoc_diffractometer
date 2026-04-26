@@ -136,7 +136,7 @@ the stored target.  See {doc}`../howto/surface`.
 ## API reference
 
 - {func}`~ad_hoc_diffractometer.presets.kappa4ch`
-- {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
+- {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
 - {class}`~ad_hoc_diffractometer.mode.SampleConstraint`

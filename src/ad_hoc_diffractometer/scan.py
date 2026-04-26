@@ -27,9 +27,9 @@ These functions *compute* trajectories; they do not move motors or
 communicate with hardware.  A future execution layer (not yet planned)
 will consume these outputs to drive real diffractometers.
 
-The ordering instability of :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`
+The ordering instability of :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-:meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward` returns multiple solutions in seed-discovery order, which is
+:meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward` returns multiple solutions in seed-discovery order, which is
 not reproducible and can switch between the positive-chi and negative-chi
 branches at adjacent trajectory points.  All three trajectory functions
 accept a ``solution_key`` parameter — a callable that scores each candidate
@@ -124,7 +124,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:  # pragma: no cover
-    from .geometry import AdHocDiffractometer
+    from .diffractometer import AdHocDiffractometer
 
 logger = logging.getLogger(__name__)
 

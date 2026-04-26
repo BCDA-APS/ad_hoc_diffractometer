@@ -202,7 +202,7 @@ diffractometer/                  # project root (git repo)
 │       ├── axes.py              # parse_axis(), axis_label(), kappa_axis()
 │       ├── rotation.py          # rotation_matrix() — Rodrigues formula
 │       ├── stage.py             # Stage class
-│       ├── geometry.py          # AdHocDiffractometer class
+│       ├── diffractometer.py    # AdHocDiffractometer class
 │       ├── lattice.py           # Lattice class, b_matrix(), standalone fns
 │       └── display.py           # get/set_precision(), fmt()
 └── tests/
@@ -260,7 +260,7 @@ python3 -m pytest -m slow_benchmark --no-cov -q
 Hot path: `forward.py`, `kappa.py`, `mode.py`, `orientation.py`,
 `rotation.py`, `reference.py`, `surface.py`
 
-Geometry construction: `presets.py`, `factories.py`, `geometry.py`,
+Geometry construction: `presets.py`, `factories.py`, `diffractometer.py`,
 `stage.py`, `axes.py`, `constants.py`
 
 CI runs these automatically (via `.github/workflows/benchmark.yml`)

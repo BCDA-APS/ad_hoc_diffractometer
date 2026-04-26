@@ -46,7 +46,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:  # pragma: no cover
-    from .geometry import AdHocDiffractometer
+    from .diffractometer import AdHocDiffractometer
 
 logger = logging.getLogger(__name__)
 

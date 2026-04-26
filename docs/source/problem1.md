@@ -4,7 +4,7 @@ This case study presents the diffractometer geometry problem that started the
 `ad_hoc_diffractometer` project.  The equipment described here is a six-circle
 diffractometer matching the You (1999) psic geometry; the analysis leads
 directly to the {mod}`~ad_hoc_diffractometer.factories` factory functions and
-the {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer` class.
+the {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer` class.
 
 For a full analysis of how this geometry maps to the convention described by H.
 You (1999), see [Case Study: Coordinate Convention and UB Matrix](problem2.md).

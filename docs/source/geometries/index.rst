@@ -4,7 +4,7 @@ Prebuilt Geometries
 ===================
 
 Each factory function returns a fully configured
-:class:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer` instance.
+:class:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer` instance.
 Geometries are grouped below by their chi-circle mechanism.
 
 .. toctree::

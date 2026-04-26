@@ -49,7 +49,7 @@ import math
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover
-    from .geometry import AdHocDiffractometer
+    from .diffractometer import AdHocDiffractometer
 
 #: Virtual Eulerian pseudoangle names on kappa geometries.
 KAPPA_VIRTUAL_ANGLES: frozenset[str] = frozenset({"omega", "chi", "phi"})

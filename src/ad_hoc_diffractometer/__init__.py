@@ -23,13 +23,13 @@ import logging
 
 from . import presets  # noqa: F401 — triggers @register_geometry for built-ins
 from ._version import __version__
+from .diffractometer import AdHocDiffractometer
+from .diffractometer import pa
+from .diffractometer import wh
 from .factories import get_geometry
 from .factories import list_geometries
 from .factories import make_geometry
 from .factories import register_geometry
-from .geometry import AdHocDiffractometer
-from .geometry import pa
-from .geometry import wh
 from .lattice import Lattice
 from .mode import REQUIRED
 from .mode import BisectConstraint

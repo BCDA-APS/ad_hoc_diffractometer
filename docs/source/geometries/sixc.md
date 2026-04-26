@@ -145,7 +145,7 @@ Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Requires ``g.surfac
 ## API reference
 
 - {func}`~ad_hoc_diffractometer.presets.sixc`
-- {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
+- {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
 - {class}`~ad_hoc_diffractometer.mode.SampleConstraint`
