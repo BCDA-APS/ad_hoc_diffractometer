@@ -26,7 +26,7 @@ d-spacing
 
 Diffraction mode
    A named set of constraints that describes how
-   {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`
+   {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`
    computes motor angles: which stages are free, which are held fixed, and
    which are coupled to other stages.
    See {class}`~ad_hoc_diffractometer.mode.DiffractionMode` and {doc}`howto/modes`.
@@ -35,14 +35,14 @@ Forward problem
    Given Miller indices (h, k, l) and a UB matrix, find the motor angles
    that satisfy the Bragg condition.  Returns a list of 0 to ~12 solutions
    depending on geometry and active diffraction mode.
-   See {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`
+   See {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`
    and {doc}`howto/forward`.
 
 Inverse problem
    Given motor angles and a UB matrix, find the unique Miller indices (h, k, l)
    in the Bragg condition.  Unlike the forward problem, the inverse always
    has a unique solution once UB is established.
-   See {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse`.
+   See {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inverse`.
 
 Miller indices
    Integer (or rational) triplet (h, k, l) that indexes a set of crystal
@@ -125,6 +125,6 @@ Vertical / horizontal scattering plane
    a crystal-orientation diagnostic, constant for a given (hkl, UB).
    (2) **Busing & Levy (1967)**: angle of sample rotation about **Q** relative
    to a reference orientation — the quantity physically varied in a ψ scan.
-   See {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi` and
+   See {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.psi` and
    {func}`~ad_hoc_diffractometer.scan.psi_trajectory`.
 ```

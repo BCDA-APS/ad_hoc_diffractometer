@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
 # SPDX-License-Identifier: CC-BY-4.0
 """
-geometry.py — AdHocDiffractometer class.
+diffractometer.py — AdHocDiffractometer class.
 
 Describes a diffractometer as an ordered collection of rotary stages.
 The stacking order is encoded via the parent attribute of each Stage.

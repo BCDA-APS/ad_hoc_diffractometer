@@ -75,9 +75,9 @@ wave number, and named laboratory lines are out of scope here — see #21.
 
 ### 1.4 Split unit tests into module-specific files ([#17](https://github.com/prjemian/ad_hoc_diffractometer/issues/17))
 
-- [x] Create `tests/test_axes.py`, `test_rotation.py`, `test_stage.py`, `test_geometry.py`, `test_factories.py`, `test_display.py`
-- [x] Migrate all tests from `tests/test_diffractometer.py` into the appropriate new file
-- [x] Remove `tests/test_diffractometer.py` once migration is complete
+- [x] Create `tests/test_axes.py`, `test_rotation.py`, `test_stage.py`, `test_diffractometer.py`, `test_factories.py`, `test_display.py`
+- [x] Migrate all tests from the original `tests/test_diffractometer.py` into the appropriate new file
+- [x] Remove original `tests/test_diffractometer.py` once migration is complete
 - [x] Verify full test suite still passes
 
 ### 1.5 GitHub Actions workflow for unit testing ([#18](https://github.com/prjemian/ad_hoc_diffractometer/issues/18))
@@ -569,7 +569,7 @@ Current coverage: 93% (119 uncovered lines).  ``pytest-cov`` is installed.
 - [x] ``logger.warning()`` alongside ``warnings.warn`` in
       ``orientation.ub_from_three_reflections_bl1967`` for left-handed H
 - [x] 5 tests via ``caplog`` fixture in ``test_factories``,
-      ``test_orientation``, ``test_refinement``, and ``test_geometry``
+      ``test_orientation``, ``test_refinement``, and ``test_diffractometer``
 
 ### 3.8f Clarify v/h suffix and fix fourcv/fourch stage axes ([#66](https://github.com/prjemian/ad_hoc_diffractometer/issues/66))
 

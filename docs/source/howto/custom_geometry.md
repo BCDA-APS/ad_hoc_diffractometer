@@ -228,7 +228,7 @@ via
 ## Step 7 — Assemble the geometry
 
 Pass everything to
-{class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`:
+{class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`:
 
 ```python
 g = ahd.AdHocDiffractometer(
@@ -379,6 +379,6 @@ Use this checklist when defining a new geometry:
 - {doc}`../problem1` — case study defining the physical reference frame
 - {doc}`../problem2` — worked example of basis assignment and UB
   derivation
-- {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
+- {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.stage.Stage`
 - {func}`~ad_hoc_diffractometer.factories.register_geometry`

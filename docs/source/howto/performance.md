@@ -3,8 +3,8 @@
 
 The {mod}`~ad_hoc_diffractometer.benchmark` module measures the throughput
 (operations per second) and round-trip accuracy of
-{meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward` and
-{meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse` across
+{meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward` and
+{meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inverse` across
 all preset geometries and their declared diffraction modes.
 
 ## Run the benchmark

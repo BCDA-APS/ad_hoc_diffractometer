@@ -97,7 +97,7 @@ from typing import TYPE_CHECKING
 from typing import Any
 
 if TYPE_CHECKING:  # pragma: no cover
-    from .geometry import AdHocDiffractometer
+    from .diffractometer import AdHocDiffractometer
 
 logger = logging.getLogger(__name__)
 
@@ -209,7 +209,7 @@ REQUIRED: object = object()
 """Sentinel marking a required extra input in a :class:`ConstraintSet` extras dict.
 
 Place this sentinel as the value for any key in ``ConstraintSet.extras`` that
-*must* be supplied by the caller before :meth:`~.geometry.AdHocDiffractometer.forward`
+*must* be supplied by the caller before :meth:`~.diffractometer.AdHocDiffractometer.forward`
 is called::
 
     cs = ConstraintSet(
