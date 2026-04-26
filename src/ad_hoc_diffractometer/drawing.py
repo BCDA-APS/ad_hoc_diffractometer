@@ -809,10 +809,10 @@ class StageAxisFigure:  # pragma: no cover
 
         stage_axis = np.asarray(self.stage.axis, dtype=float)
         stage_norm = stage_axis / np.linalg.norm(stage_axis)
-        lat_norm = np.asarray(self.geometry.basis["transverse"], dtype=float)
-        lat_norm = lat_norm / np.linalg.norm(lat_norm)
-        is_transverse = np.isclose(abs(np.dot(stage_norm, lat_norm)), 1.0, atol=1e-6)
-        direction = -1 if is_transverse else 1
+        # Arc sweep direction encodes handedness: +1 for right-handed
+        # (stage axis parallel to drawn axis), -1 for left-handed
+        # (stage axis anti-parallel, i.e. negated).
+        direction = +1 if np.dot(stage_norm, axis_norm) > 0 else -1
 
         self._draw_axis_arc(axis_norm, direction=direction)
 
