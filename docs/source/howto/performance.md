@@ -33,7 +33,7 @@ The output is a formatted table:
 geometry   mode                     status       fwd ops/s  inv ops/s  fwd/inv  round-trip err  solns
 fourcv     bisecting                ok               3,241     18,502   0.1752        4.70e-13     11
 fourcv     fixed_chi                ok               2,890     18,102   0.1596        3.40e-14     21
-fourcv     psi_constant             no_solutions      8,780          -       -               -      0
+fourcv     fixed_psi                no_solutions      8,780          -       -               -      0
 ```
 
 ## Output columns

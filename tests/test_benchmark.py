@@ -110,11 +110,11 @@ class TestPrepareMode:
             for key in ("h2", "k2", "l2"):
                 assert isinstance(cs.extras[key], float)
 
-    def test_psi_constant_sets_reference(self):
-        """psi_constant modes get an azimuthal_reference if not set."""
+    def test_fixed_psi_sets_reference(self):
+        """fixed_psi modes get an azimuthal_reference if not set."""
         g = _setup_geometry("fourcv")
         assert g.azimuthal_reference is None
-        _prepare_mode(g, "psi_constant")
+        _prepare_mode(g, "fixed_psi")
         assert g.azimuthal_reference is not None
 
     @pytest.mark.parametrize(
@@ -205,10 +205,10 @@ class TestBenchmarkMode:
 
     def test_no_solutions_status(self):
         """A mode that returns no solutions for the given reflections."""
-        # psi_constant on fourcv with default setup rarely matches
-        r = benchmark_mode("fourcv", "psi_constant", reflections=[(1, 0, 0)], n_iter=1)
+        # fixed_psi on fourcv with default setup rarely matches
+        r = benchmark_mode("fourcv", "fixed_psi", reflections=[(1, 0, 0)], n_iter=1)
         assert r["status"] in ("no_solutions", "not_implemented", "ok")
-        # For psi_constant the likely outcome is no_solutions or not_implemented
+        # For fixed_psi the likely outcome is no_solutions or not_implemented
         if r["status"] == "no_solutions":
             assert r["inverse_ops_per_sec"] is None
             assert r["forward_inverse_ratio"] is None

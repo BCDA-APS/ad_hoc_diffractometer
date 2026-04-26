@@ -276,7 +276,7 @@ vectors may be set:
 - **`surface_normal`** — direction perpendicular to the sample surface;
   used by incidence/exit angle functions and surface diffraction modes.
 - **`azimuthal_reference`** — direction defining ψ = 0; used by
-  `psi_angle` and `psi_constant_*` modes.
+  `psi_angle` and `fixed_psi_*` modes.
 
 ```python
 g.surface_normal = (0, 0, 1)    # (001)-cut sample

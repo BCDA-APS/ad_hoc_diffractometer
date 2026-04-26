@@ -14,8 +14,8 @@ import ad_hoc_diffractometer as ahd
 
 g = ahd.presets.fourcv()
 print(list(g.modes.keys()))
-# ['bisecting', 'fixed_chi', 'fixed_phi', 'constant_omega',
-#  'psi_constant', 'double_diffraction']
+# ['bisecting', 'fixed_chi', 'fixed_phi', 'fixed_omega',
+#  'fixed_psi', 'double_diffraction']
 ```
 
 ## Get and set the active mode
@@ -78,12 +78,12 @@ sols_60 = g.forward(1, 0, 0)   # chi = 60° this call
 
 See {doc}`constraints` for the full run-time pattern.
 
-### constant_omega
+### fixed_omega
 
 Holds `omega` at 0° (any geometry where omega is a sample stage).
 
 ```python
-g.mode_name = "constant_omega"
+g.mode_name = "fixed_omega"
 solutions = g.forward(1, 0, 0)
 # sol["omega"] == 0.0 for every solution
 ```
@@ -113,14 +113,14 @@ print(cs.is_implemented(g))
 ## Check if a mode is implemented
 
 Some modes require a prerequisite on the geometry.  For example,
-`psi_constant` requires ``g.azimuthal_reference`` to be set:
+`fixed_psi` requires ``g.azimuthal_reference`` to be set:
 
 ```python
-g.mode_name = "psi_constant"
-print(g.modes["psi_constant"].is_implemented(g))  # False (no azimuthal_reference)
+g.mode_name = "fixed_psi"
+print(g.modes["fixed_psi"].is_implemented(g))  # False (no azimuthal_reference)
 
 g.azimuthal_reference = (0, 0, 1)
-print(g.modes["psi_constant"].is_implemented(g))  # True
+print(g.modes["fixed_psi"].is_implemented(g))  # True
 
 # forward() raises NotImplementedError for unimplemented modes
 ```

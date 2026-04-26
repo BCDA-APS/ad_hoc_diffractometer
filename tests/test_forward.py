@@ -293,14 +293,14 @@ def test_kappa4cv_bisecting_round_trip():
 _KAPPA4_BASE_MODES = {
     "bisecting",
     "fixed_kphi",
-    "constant_omega",
-    "constant_chi",
-    "constant_phi",
-    "psi_constant",
+    "fixed_omega",
+    "fixed_chi",
+    "fixed_phi",
+    "fixed_psi",
 }
 _KAPPA4CV_ALL_MODES = _KAPPA4_BASE_MODES | {"double_diffraction"}
 _KAPPA4CH_ALL_MODES = _KAPPA4_BASE_MODES
-_KAPPA4_STUB_MODES = {"psi_constant"}
+_KAPPA4_STUB_MODES = {"fixed_psi"}
 
 
 def test_kappa4cv_has_all_modes():
@@ -365,13 +365,13 @@ def test_kappa4_fixed_kphi_value_in_solution(factory):
     "factory, mode_name, h, k, l",
     [
         # kappa4cv (BL basis: transverse=x, longitudinal=y, vertical=z)
-        pytest.param(kappa4cv, "constant_omega", 0, 1, 0, id="kappa4cv-constant_omega"),
-        pytest.param(kappa4cv, "constant_chi", 0, 0, 1, id="kappa4cv-constant_chi"),
-        pytest.param(kappa4cv, "constant_phi", 0, 1, 0, id="kappa4cv-constant_phi"),
+        pytest.param(kappa4cv, "fixed_omega", 0, 1, 0, id="kappa4cv-fixed_omega"),
+        pytest.param(kappa4cv, "fixed_chi", 0, 0, 1, id="kappa4cv-fixed_chi"),
+        pytest.param(kappa4cv, "fixed_phi", 0, 1, 0, id="kappa4cv-fixed_phi"),
         # kappa4ch (horizontal scattering plane — different reachable reflections)
-        pytest.param(kappa4ch, "constant_omega", 0, 0, 1, id="kappa4ch-constant_omega"),
-        pytest.param(kappa4ch, "constant_chi", 0, 0, 1, id="kappa4ch-constant_chi"),
-        pytest.param(kappa4ch, "constant_phi", 0, 1, 0, id="kappa4ch-constant_phi"),
+        pytest.param(kappa4ch, "fixed_omega", 0, 0, 1, id="kappa4ch-fixed_omega"),
+        pytest.param(kappa4ch, "fixed_chi", 0, 0, 1, id="kappa4ch-fixed_chi"),
+        pytest.param(kappa4ch, "fixed_phi", 0, 1, 0, id="kappa4ch-fixed_phi"),
     ],
 )
 def test_kappa4_virtual_angle_round_trip(factory, mode_name, h, k, l):  # noqa: E741
@@ -387,14 +387,10 @@ def test_kappa4_virtual_angle_round_trip(factory, mode_name, h, k, l):  # noqa: 
     "factory, mode_name, virtual_angle, expected_value, h, k, l",
     [
         pytest.param(
-            kappa4cv, "constant_omega", "omega", 0.0, 0, 1, 0, id="kappa4cv-omega=0"
+            kappa4cv, "fixed_omega", "omega", 0.0, 0, 1, 0, id="kappa4cv-omega=0"
         ),
-        pytest.param(
-            kappa4cv, "constant_chi", "chi", 90.0, 0, 0, 1, id="kappa4cv-chi=90"
-        ),
-        pytest.param(
-            kappa4cv, "constant_phi", "phi", 0.0, 0, 1, 0, id="kappa4cv-phi=0"
-        ),
+        pytest.param(kappa4cv, "fixed_chi", "chi", 90.0, 0, 0, 1, id="kappa4cv-chi=90"),
+        pytest.param(kappa4cv, "fixed_phi", "phi", 0.0, 0, 1, 0, id="kappa4cv-phi=0"),
     ],
 )
 def test_kappa4_virtual_angle_constraint_satisfied(
@@ -478,8 +474,8 @@ def test_four_circle_has_all_six_modes(factory):
         "bisecting",
         "fixed_chi",
         "fixed_phi",
-        "constant_omega",
-        "psi_constant",
+        "fixed_omega",
+        "fixed_psi",
         "double_diffraction",
     }
     assert set(g.modes.keys()) == expected
@@ -490,12 +486,12 @@ def test_four_circle_has_all_six_modes(factory):
 @pytest.mark.parametrize(
     "factory, mode_name",
     [
-        pytest.param(fourcv, "psi_constant", id="fourcv-psi_constant"),
-        pytest.param(fourch, "psi_constant", id="fourch-psi_constant"),
+        pytest.param(fourcv, "fixed_psi", id="fourcv-fixed_psi"),
+        pytest.param(fourch, "fixed_psi", id="fourch-fixed_psi"),
     ],
 )
 def test_four_circle_stub_not_implemented(factory, mode_name):
-    """psi_constant requires reference infrastructure (Issue J) — not yet implemented."""
+    """fixed_psi requires reference infrastructure (Issue J) — not yet implemented."""
     g = _setup_cubic(factory, a=4.0)
     g.mode_name = mode_name
     assert not g.modes[mode_name].is_implemented(g)
@@ -513,11 +509,11 @@ def test_four_circle_stub_not_implemented(factory, mode_name):
         pytest.param(fourch, 1, 1, 1, id="fourch-111"),
     ],
 )
-def test_four_circle_constant_omega_round_trip(factory, h, k, l):  # noqa: E741
-    """constant_omega (omega=0) is implemented by the generic solver; round-trips correctly."""
+def test_four_circle_fixed_omega_round_trip(factory, h, k, l):  # noqa: E741
+    """fixed_omega (omega=0) is implemented by the generic solver; round-trips correctly."""
     g = _setup_cubic(factory, a=4.0)
-    g.mode_name = "constant_omega"
-    assert g.modes["constant_omega"].is_implemented(g)
+    g.mode_name = "fixed_omega"
+    assert g.modes["fixed_omega"].is_implemented(g)
     assert _round_trip_ok(g, h, k, l)
 
 
@@ -528,10 +524,10 @@ def test_four_circle_constant_omega_round_trip(factory, h, k, l):  # noqa: E741
         pytest.param(fourch, id="fourch"),
     ],
 )
-def test_four_circle_constant_omega_value_in_solution(factory):
-    """constant_omega: omega=0 in all returned solutions."""
+def test_four_circle_fixed_omega_value_in_solution(factory):
+    """fixed_omega: omega=0 in all returned solutions."""
     g = _setup_cubic(factory, a=4.0)
-    g.mode_name = "constant_omega"
+    g.mode_name = "fixed_omega"
     solutions = g.forward(1, 0, 0)
     assert len(solutions) > 0
     for sol in solutions:
@@ -636,16 +632,16 @@ def test_four_circle_fixed_angle_constraint_value_in_solution(
             id="fourch-double_diffraction-l2",
         ),
         pytest.param(
-            fourcv, "psi_constant", "n_hat", "REQUIRED", id="fourcv-psi_constant-n_hat"
+            fourcv, "fixed_psi", "n_hat", "REQUIRED", id="fourcv-fixed_psi-n_hat"
         ),
         pytest.param(
-            fourcv, "psi_constant", "psi", None, id="fourcv-psi_constant-psi-output"
+            fourcv, "fixed_psi", "psi", None, id="fourcv-fixed_psi-psi-output"
         ),
         pytest.param(
-            fourch, "psi_constant", "n_hat", "REQUIRED", id="fourch-psi_constant-n_hat"
+            fourch, "fixed_psi", "n_hat", "REQUIRED", id="fourch-fixed_psi-n_hat"
         ),
         pytest.param(
-            fourch, "psi_constant", "psi", None, id="fourch-psi_constant-psi-output"
+            fourch, "fixed_psi", "psi", None, id="fourch-fixed_psi-psi-output"
         ),
     ],
 )
@@ -1228,10 +1224,10 @@ def test_fixed_sample_with_detector_constraint():
         pytest.param("fixed_mu", 1, 0, 0, id="fixed_mu-100"),
         pytest.param("fixed_mu", 1, 1, 1, id="fixed_mu-111"),
         pytest.param(
-            "constant_omega_noncoplanar", 1, 0, 0, id="constant_omega_noncoplanar-100"
+            "fixed_omega_noncoplanar", 1, 0, 0, id="fixed_omega_noncoplanar-100"
         ),
         pytest.param(
-            "constant_omega_noncoplanar", 0, 1, 0, id="constant_omega_noncoplanar-010"
+            "fixed_omega_noncoplanar", 0, 1, 0, id="fixed_omega_noncoplanar-010"
         ),
     ],
 )
@@ -1252,7 +1248,7 @@ def test_fivec_round_trip(mode_name, h, k, l):  # noqa: E741
         pytest.param("fixed_phi", "phi", 0.0, id="fixed_phi-phi-value"),
         pytest.param("fixed_mu", "mu", 0.0, id="fixed_mu-mu-zero"),
         pytest.param(
-            "constant_omega_noncoplanar", "omega", 0.0, id="constant_omega-omega-zero"
+            "fixed_omega_noncoplanar", "omega", 0.0, id="fixed_omega-omega-zero"
         ),
     ],
 )
@@ -1806,7 +1802,7 @@ def test_kappa6c_lifting_detector_qaz_satisfied(mode_name, h, k, l):  # noqa: E7
 
 
 # ---------------------------------------------------------------------------
-# Issue #176 — psi_constant forward solver (validation filter)
+# Issue #176 — fixed_psi forward solver (validation filter)
 # ---------------------------------------------------------------------------
 
 
@@ -1860,7 +1856,7 @@ def test_compute_natural_psi_undefined_when_Q_parallel_to_beam():
     assert psi is None
 
 
-# --- fourcv / fourch psi_constant round-trip tests (synthetic bisect path) ---
+# --- fourcv / fourch fixed_psi round-trip tests (synthetic bisect path) ---
 
 
 @pytest.mark.parametrize(
@@ -1873,8 +1869,8 @@ def test_compute_natural_psi_undefined_when_Q_parallel_to_beam():
         pytest.param(fourch, 1, 1, 1, (0, 0, 1), id="fourch-111-ref001"),
     ],
 )
-def test_four_circle_psi_constant_round_trip(factory, h, k, l, ref):  # noqa: E741
-    """psi_constant returns bisecting solutions when natural psi matches target."""
+def test_four_circle_fixed_psi_round_trip(factory, h, k, l, ref):  # noqa: E741
+    """fixed_psi returns bisecting solutions when natural psi matches target."""
     g = _setup_psi(factory, ref=ref)
     natural = _natural_psi(g, h, k, l)
     assert natural is not None
@@ -1883,12 +1879,12 @@ def test_four_circle_psi_constant_round_trip(factory, h, k, l, ref):  # noqa: E7
     from ad_hoc_diffractometer import ConstraintSet
     from ad_hoc_diffractometer import ReferenceConstraint
 
-    g.modes["psi_constant"] = ConstraintSet(
+    g.modes["fixed_psi"] = ConstraintSet(
         [ReferenceConstraint("psi", natural)],
-        computed=g.modes["psi_constant"].computed,
+        computed=g.modes["fixed_psi"].computed,
         extras={"n_hat": REQUIRED, "psi": None},
     )
-    g.mode_name = "psi_constant"
+    g.mode_name = "fixed_psi"
     assert _round_trip_ok(g, h, k, l)
 
 
@@ -1899,8 +1895,8 @@ def test_four_circle_psi_constant_round_trip(factory, h, k, l, ref):  # noqa: E7
         pytest.param(fourch, id="fourch"),
     ],
 )
-def test_four_circle_psi_constant_wrong_target_returns_empty(factory):
-    """psi_constant returns [] when natural psi does not match psi_target."""
+def test_four_circle_fixed_psi_wrong_target_returns_empty(factory):
+    """fixed_psi returns [] when natural psi does not match psi_target."""
     g = _setup_psi(factory, ref=(0, 0, 1))
     natural = _natural_psi(g, 1, 0, 0)
     assert natural is not None
@@ -1910,12 +1906,12 @@ def test_four_circle_psi_constant_wrong_target_returns_empty(factory):
     from ad_hoc_diffractometer import ReferenceConstraint
 
     wrong_target = natural + 45.0
-    g.modes["psi_constant"] = ConstraintSet(
+    g.modes["fixed_psi"] = ConstraintSet(
         [ReferenceConstraint("psi", wrong_target)],
-        computed=g.modes["psi_constant"].computed,
+        computed=g.modes["fixed_psi"].computed,
         extras={"n_hat": REQUIRED, "psi": None},
     )
-    g.mode_name = "psi_constant"
+    g.mode_name = "fixed_psi"
     solutions = g.forward(1, 0, 0)
     assert solutions == []
 
@@ -1986,14 +1982,14 @@ def test_psic_fixed_psi_wrong_target_returns_empty():
     assert solutions == []
 
 
-# --- psi_constant psi verification in solutions ---
+# --- fixed_psi psi verification in solutions ---
 
 
 @pytest.mark.parametrize(
     "factory, mode_name, h, k, l, ref",
     [
-        pytest.param(fourcv, "psi_constant", 1, 0, 0, (0, 0, 1), id="fourcv-100"),
-        pytest.param(fourcv, "psi_constant", 1, 1, 1, (0, 0, 1), id="fourcv-111"),
+        pytest.param(fourcv, "fixed_psi", 1, 0, 0, (0, 0, 1), id="fourcv-100"),
+        pytest.param(fourcv, "fixed_psi", 1, 1, 1, (0, 0, 1), id="fourcv-111"),
         pytest.param(
             psic, "fixed_psi_vertical", 1, 0, 0, (0, 0, 1), id="psic-vert-100"
         ),
@@ -2005,7 +2001,7 @@ def test_psic_fixed_psi_wrong_target_returns_empty():
         ),
     ],
 )
-def test_psi_constant_psi_verified_in_solutions(
+def test_fixed_psi_psi_verified_in_solutions(
     factory,
     mode_name,
     h,
@@ -2013,7 +2009,7 @@ def test_psi_constant_psi_verified_in_solutions(
     l,  # noqa: E741
     ref,
 ):
-    """All psi_constant solutions have psi == natural_psi."""
+    """All fixed_psi solutions have psi == natural_psi."""
     g = _setup_psi(factory, ref=ref)
     natural = _natural_psi(g, h, k, l)
     assert natural is not None
@@ -2044,7 +2040,7 @@ def test_psi_constant_psi_verified_in_solutions(
         )
 
 
-# --- kappa6c psi_constant (bisecting path with kappa stages) ---
+# --- kappa6c fixed_psi (bisecting path with kappa stages) ---
 
 
 @pytest.mark.parametrize(
@@ -2084,11 +2080,11 @@ def test_kappa6c_fixed_psi_round_trip(mode_name, h, k, l, ref):  # noqa: E741
     assert _round_trip_ok(g, h, k, l)
 
 
-# --- kappa4cv psi_constant (synthetic bisect path) ---
+# --- kappa4cv fixed_psi (synthetic bisect path) ---
 
 
-def test_kappa4cv_psi_constant_round_trip():
-    """kappa4cv psi_constant returns bisecting solutions via synthetic bisect."""
+def test_kappa4cv_fixed_psi_round_trip():
+    """kappa4cv fixed_psi returns bisecting solutions via synthetic bisect."""
     g = _setup_psi(kappa4cv, ref=(0, 0, 1))
     natural = _natural_psi(g, 1, 1, 0)
     assert natural is not None
@@ -2097,31 +2093,31 @@ def test_kappa4cv_psi_constant_round_trip():
     from ad_hoc_diffractometer import ConstraintSet
     from ad_hoc_diffractometer import ReferenceConstraint
 
-    g.modes["psi_constant"] = ConstraintSet(
+    g.modes["fixed_psi"] = ConstraintSet(
         [ReferenceConstraint("psi", natural)],
-        computed=g.modes["psi_constant"].computed,
+        computed=g.modes["fixed_psi"].computed,
         extras={"n_hat": REQUIRED, "psi": None},
     )
-    g.mode_name = "psi_constant"
+    g.mode_name = "fixed_psi"
     assert _round_trip_ok(g, 1, 1, 0)
 
 
 # --- psi undefined → empty solutions ---
 
 
-def test_psi_constant_undefined_psi_returns_empty():
-    """psi_constant returns [] when psi is undefined (Q ∥ incident beam)."""
+def test_fixed_psi_undefined_psi_returns_empty():
+    """fixed_psi returns [] when psi is undefined (Q ∥ incident beam)."""
     g = _setup_psi(fourcv, ref=(0, 0, 1))
     from ad_hoc_diffractometer import REQUIRED
     from ad_hoc_diffractometer import ConstraintSet
     from ad_hoc_diffractometer import ReferenceConstraint
 
-    g.modes["psi_constant"] = ConstraintSet(
+    g.modes["fixed_psi"] = ConstraintSet(
         [ReferenceConstraint("psi", 0.0)],
-        computed=g.modes["psi_constant"].computed,
+        computed=g.modes["fixed_psi"].computed,
         extras={"n_hat": REQUIRED, "psi": None},
     )
-    g.mode_name = "psi_constant"
+    g.mode_name = "fixed_psi"
     # (0,1,0) has Q along y (longitudinal = incident beam direction) → psi undefined
     solutions = g.forward(0, 1, 0)
     assert solutions == []
@@ -2130,8 +2126,8 @@ def test_psi_constant_undefined_psi_returns_empty():
 # --- wraparound tolerance test ---
 
 
-def test_psi_constant_wraparound_tolerance():
-    """psi_constant handles ±180° wraparound correctly."""
+def test_fixed_psi_wraparound_tolerance():
+    """fixed_psi handles ±180° wraparound correctly."""
     g = _setup_psi(fourcv, ref=(1, 0, 0))
     natural = _natural_psi(g, 1, 1, 0)
     assert natural is not None
@@ -2146,12 +2142,12 @@ def test_psi_constant_wraparound_tolerance():
     else:
         wrapped = natural + 360.0
 
-    g.modes["psi_constant"] = ConstraintSet(
+    g.modes["fixed_psi"] = ConstraintSet(
         [ReferenceConstraint("psi", wrapped)],
-        computed=g.modes["psi_constant"].computed,
+        computed=g.modes["fixed_psi"].computed,
         extras={"n_hat": REQUIRED, "psi": None},
     )
-    g.mode_name = "psi_constant"
+    g.mode_name = "fixed_psi"
     solutions = g.forward(1, 1, 0)
     # wrapped and natural differ by 360° — should still match
     assert len(solutions) > 0

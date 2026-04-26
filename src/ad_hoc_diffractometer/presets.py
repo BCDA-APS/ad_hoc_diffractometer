@@ -434,11 +434,11 @@ def fourcv(basis: dict = BASIS_BL) -> AdHocDiffractometer:
             [SampleConstraint("phi", 0.0)],
             computed=["omega", "chi", "ttheta"],
         ),
-        "constant_omega": ConstraintSet(
+        "fixed_omega": ConstraintSet(
             [SampleConstraint("omega", 0.0)],
             computed=["chi", "phi", "ttheta"],
         ),
-        "psi_constant": ConstraintSet(
+        "fixed_psi": ConstraintSet(
             [ReferenceConstraint("psi", 0.0)],
             computed=["omega", "chi", "phi", "ttheta"],
             extras={"n_hat": REQUIRED, "psi": None},
@@ -510,11 +510,11 @@ def fourch(basis: dict = BASIS_BL) -> AdHocDiffractometer:
             [SampleConstraint("phi", 0.0)],
             computed=["omega", "chi", "ttheta"],
         ),
-        "constant_omega": ConstraintSet(
+        "fixed_omega": ConstraintSet(
             [SampleConstraint("omega", 0.0)],
             computed=["chi", "phi", "ttheta"],
         ),
-        "psi_constant": ConstraintSet(
+        "fixed_psi": ConstraintSet(
             [ReferenceConstraint("psi", 0.0)],
             computed=["omega", "chi", "phi", "ttheta"],
             extras={"n_hat": REQUIRED, "psi": None},
@@ -714,19 +714,19 @@ def kappa4cv(
             [SampleConstraint("kphi", 0.0)],
             computed=["komega", "kappa", "ttheta"],
         ),
-        "constant_omega": ConstraintSet(
+        "fixed_omega": ConstraintSet(
             [SampleConstraint("omega", 0.0)],
             computed=["komega", "kappa", "kphi", "ttheta"],
         ),
-        "constant_chi": ConstraintSet(
+        "fixed_chi": ConstraintSet(
             [SampleConstraint("chi", 90.0)],
             computed=["komega", "kappa", "kphi", "ttheta"],
         ),
-        "constant_phi": ConstraintSet(
+        "fixed_phi": ConstraintSet(
             [SampleConstraint("phi", 0.0)],
             computed=["komega", "kappa", "kphi", "ttheta"],
         ),
-        "psi_constant": ConstraintSet(
+        "fixed_psi": ConstraintSet(
             [ReferenceConstraint("psi", 0.0)],
             computed=["komega", "kappa", "kphi", "ttheta"],
             extras={"n_hat": REQUIRED, "psi": None},
@@ -804,19 +804,19 @@ def kappa4ch(
             [SampleConstraint("kphi", 0.0)],
             computed=["komega", "kappa", "ttheta"],
         ),
-        "constant_omega": ConstraintSet(
+        "fixed_omega": ConstraintSet(
             [SampleConstraint("omega", 0.0)],
             computed=["komega", "kappa", "kphi", "ttheta"],
         ),
-        "constant_chi": ConstraintSet(
+        "fixed_chi": ConstraintSet(
             [SampleConstraint("chi", 90.0)],
             computed=["komega", "kappa", "kphi", "ttheta"],
         ),
-        "constant_phi": ConstraintSet(
+        "fixed_phi": ConstraintSet(
             [SampleConstraint("phi", 0.0)],
             computed=["komega", "kappa", "kphi", "ttheta"],
         ),
-        "psi_constant": ConstraintSet(
+        "fixed_psi": ConstraintSet(
             [ReferenceConstraint("psi", 0.0)],
             computed=["komega", "kappa", "kphi", "ttheta"],
             extras={"n_hat": REQUIRED, "psi": None},
@@ -1118,7 +1118,7 @@ def s2d2(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
     ]
     # s2d2: 4 DOF, N-3=1 constraint needed per mode.
     modes = {
-        "mu_fixed": ConstraintSet(
+        "fixed_mu": ConstraintSet(
             [SampleConstraint("mu", 0.0)],
             computed=["Z", "nu", "delta"],
         ),
@@ -1209,7 +1209,7 @@ def fivec(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             ],
             computed=["omega", "chi", "phi", "ttheta"],
         ),
-        "constant_omega_noncoplanar": ConstraintSet(
+        "fixed_omega_noncoplanar": ConstraintSet(
             [
                 SampleConstraint("mu", 0.0),
                 SampleConstraint("omega", 0.0),
