@@ -1,0 +1,186 @@
+forward
+=======
+
+.. py:module:: ad_hoc_diffractometer.forward
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.forward``
+
+   The forward calculation is the inverse of ``inverse()``: given a reciprocal-
+   lattice point (h, k, l) and a diffraction mode, compute all valid sets of
+   motor angles that satisfy the Bragg condition.
+
+   Entry point
+   -----------
+   ``AdHocDiffractometer.forward(h, k, l)`` calls ``compute_forward(geometry,
+   h, k, l)`` which dispatches to the appropriate solver based on the active
+   mode type.
+
+   Supported modes
+   ---------------
+   Bisecting (ConstraintSet with BisectConstraint)
+       Classic Eulerian four-circle bisecting solution (Busing & Levy 1967,
+       section "Angle settings").  Valid for psic (eta/delta bisecting),
+       fourcv, fourch (omega/ttheta bisecting), and analogous geometries.
+       Stage names are read directly from the BisectConstraint — no
+       axis-geometry heuristic is used.
+
+       Algorithm:
+           1. Q_phi = UB @ (h, k, l)             — target in phi frame
+           2. \|Q\| → ttheta via Bragg's law
+           3. fixed sample stages set from SampleConstraint values
+           4. detector_stage = ttheta            (from BisectConstraint.detector_stage)
+           5. sample_stage   = ttheta / 2        (from BisectConstraint.sample_stage)
+           6. Remaining free sample stages (chi, phi or kchi, kphi) solved
+              from the direction of Q_phi, choosing among the standard
+              solution branches (two solutions: chi in [0°,180°] and
+              chi in [-180°, 0°]).
+
+   Fixed sample angle (ConstraintSet without BisectConstraint)
+       One or more sample stages are frozen at declared values.  The
+       remaining free stages are solved numerically from the direction
+       of Q_phi.
+
+   :raises NotImplementedError: If the active mode is None or is not a supported type for this geometry.
+   :raises ValueError: If wavelength or UB matrix is not set.
+   :raises ValueError: If (h, k, l) = (0, 0, 0).
+   :raises EwaldSphereViolation: If the requested ``|Q|`` exceeds the Ewald sphere (wavelength too long).
+   :raises ConstraintViolation: If a returned solution violates a declared constraint beyond tolerance.
+
+   .. rubric:: References
+
+   * Busing & Levy, Acta Cryst. 22, 457-464 (1967) — angle-setting equations
+   * You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.forward.ForwardContext
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.forward.compute_forward
+
+
+Module Contents
+---------------
+
+.. py:class:: ForwardContext(geometry)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward.ForwardContext``
+
+
+   Pre-computed intermediates for the forward solver's inner loops.
+
+   Created once per ``compute_forward()`` call, this bundles all constant
+   quantities needed by the Newton-Raphson residual evaluations so they
+   are not recomputed on every call to ``angles_to_phi_vector``.
+
+   .. attribute:: sample_stages
+
+
+
+      :type: list of Stage
+
+   .. attribute:: detector_stages
+
+
+
+      :type: list of Stage
+
+   .. attribute:: two_pi_over_lambda
+
+
+
+      :type: float
+
+   .. attribute:: y_eff
+
+      Effective beam direction (R_inc.T @ y_hat).
+
+      :type: numpy.ndarray, shape (3,)
+
+
+   .. py:attribute:: detector_stages
+
+
+   .. py:method:: prepare_caching(fixed_angles: dict[str, float], free_stage_names: set[str]) -> None
+
+      Pre-compute rotation matrices for stages whose angles will not
+      change during Newton iteration.
+
+      :param fixed_angles: All angles including fixed ones.
+      :type fixed_angles: dict
+      :param free_stage_names: Names of stages that will vary during iteration.
+      :type free_stage_names: set of str
+
+
+
+   .. py:method:: q_phi(angles: dict[str, float]) -> ~numpy.ndarray
+
+      Compute Q_phi using cached rotation matrices where possible.
+
+
+
+   .. py:method:: q_phi_uncached(angles: dict[str, float]) -> ~numpy.ndarray
+
+      Compute Q_phi without any caching (for validation).
+
+
+
+   .. py:attribute:: sample_stages
+
+
+   .. py:attribute:: two_pi_over_lambda
+
+
+   .. py:attribute:: y_eff
+
+
+.. py:function:: compute_forward(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, h: float, k: float, l: float) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward.compute_forward``
+
+
+   Compute all valid motor-angle solutions for the reciprocal-lattice point
+   (h, k, l) in the geometry's active diffraction mode.
+
+   :param geometry: The diffractometer.  Must have ``wavelength`` and ``sample.UB`` set,
+                    and an active ``mode_name``.
+   :type geometry: AdHocDiffractometer
+   :param h: Miller indices of the target reflection.
+   :type h: float
+   :param k: Miller indices of the target reflection.
+   :type k: float
+   :param l: Miller indices of the target reflection.
+   :type l: float
+
+   :returns: Each element is a complete set of motor angles (all stage names as
+             keys, values in degrees) that satisfies the Bragg condition under
+             the active mode constraints.  May contain zero, one, or multiple
+             solutions depending on the geometry and mode.
+   :rtype: list of dict[str, float]
+
+   :raises ValueError: If ``geometry.wavelength`` is None.
+   :raises ValueError: If ``geometry.sample.UB`` is None.
+   :raises ValueError: If (h, k, l) == (0, 0, 0).
+   :raises EwaldSphereViolation: If the scattering vector magnitude exceeds the Ewald sphere
+       (``|Q|`` > 4π/λ, i.e. Bragg condition cannot be satisfied).
+   :raises ConstraintViolation: If a solution returned by the solver violates a declared constraint
+       beyond the display-precision tolerance.
+   :raises NotImplementedError: If no active mode is set or the active mode type is not supported
+       for this geometry.
+
+
