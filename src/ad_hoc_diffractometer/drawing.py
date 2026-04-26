@@ -21,10 +21,14 @@ Plotly is an optional dependency.  Both classes raise
 """
 
 from __future__ import annotations
+import logging
 
 import numpy as np
 
 from .axes import axis_label
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 def _physical_label(axis_vec: np.ndarray, basis: dict | None) -> str:
@@ -321,13 +325,21 @@ class StageAxisFigure:  # pragma: no cover
     def _draw_axis(self) -> None:
         """Draw the axis vector and rotation arc."""
         axis_norm = self._draw_axis_vector()
+        logger.debug("----> _draw_axis: %r", self.stage.name)
+        logger.debug("stage.axis=%s", self.stage.axis)
+        logger.debug("geometry.basis=%s", self.geometry.basis)
+        logger.debug("axis_norm=%s", axis_norm)
 
         stage_axis = np.asarray(self.stage.axis, dtype=float)
         stage_norm = stage_axis / np.linalg.norm(stage_axis)
+        logger.debug("stage_norm=%s", stage_norm)
         # Arc sweep direction encodes handedness: +1 for right-handed
         # (stage axis parallel to drawn axis), -1 for left-handed
         # (stage axis anti-parallel, i.e. negated).
-        direction = +1 if np.dot(stage_norm, axis_norm) > 0 else -1
+        dot = np.dot(stage_norm, axis_norm)
+        logger.debug("dot=%s", dot)
+        direction = +1 if dot > 0 else -1
+        logger.debug("direction=%s", direction)
 
         self._draw_axis_arc(axis_norm, direction=direction)
 
@@ -365,6 +377,9 @@ class StageAxisFigure:  # pragma: no cover
             return
 
         axis_d = self.R @ axis_norm
+        logger.debug("  ->-> _draw_axis_arc:  direction=%s", direction)
+        logger.debug("R @ axis_norm=%s", axis_d)
+        logger.debug("R @ (direction * axis_norm)=%s", self.R @ (direction * axis_norm))
 
         eye = np.array([0.92, 1.18, -0.10])
         view_dir = -eye / np.linalg.norm(eye)
@@ -387,10 +402,17 @@ class StageAxisFigure:  # pragma: no cover
 
         if direction < 0:
             perp2_d = -perp2_d
+        logger.debug("perp1_d=%s", perp1_d)
+        logger.debug("perp2_d=%s", perp2_d)
 
         arc_radius = 0.1
         arc_center_d = axis_d * 0.45
-        arc_angles = np.linspace(-np.pi / 3, np.pi / 3, 60)
+        # FIXME: computed offset correct for all except kappa
+        # kappa direction=1 (correct) arrow expected CCW, drawn CW
+        offset = -direction * np.pi / 3
+        logger.debug("offset=%s", offset)
+        arc_angles = np.linspace(-offset, offset, 60)
+        logger.debug("arc_angles=%s", np.degrees(arc_angles))
         arc_pts_d = np.array(
             [
                 arc_center_d + arc_radius * (np.cos(a) * perp1_d + np.sin(a) * perp2_d)
@@ -519,6 +541,7 @@ class GeometryAxisFigure:  # pragma: no cover
 
         self._go = go
         self._fig = go.Figure(**kwargs)
+        logger.debug("===> geometry: %r", geometry_name)
 
         factory = getattr(_presets, geometry_name)
         geometry = factory()
