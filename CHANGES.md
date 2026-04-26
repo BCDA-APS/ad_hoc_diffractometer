@@ -1,10 +1,38 @@
 # Change History
 
-User-facing changes by release.  See the
-[development roadmap](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/roadmap.md)
-for planned future work and
-[GitHub Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues)
-for the full issue tracker.
+User-facing changes by release.  For future work planning, see [GitHub
+Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues) for the full
+issue tracker.  The initial project development roadmap is documented here:
+[roadmap](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/roadmap.md).
+
+## Release v0.6.0
+
+Released 2026-04-26.
+
+### Breaking changes
+
+- Renamed `LATERAL` to `TRANSVERSE` throughout (#193)
+- Renamed `geometry.py` to `diffractometer.py` (#213)
+- Removed legacy drawing functions; replaced by `StageAxisFigure`
+  and `GeometryAxisFigure` (#209)
+
+### Added
+
+- Benchmark tool (`benchmark.py`) (#194)
+- Complete psic mode set with vertical/horizontal suffixes and
+  surface modes (#208)
+- Interactive Plotly geometry diagrams (#197)
+- HOWTO: custom geometry (#192), basis vectors (#191)
+- Diagnostic logging in `drawing.py` (#207)
+- Arc-direction handedness tests for all preset stages (#207)
+
+### Changed
+
+- `forward()` performance ~3-4x speedup (#195)
+- Parent stage shown in geometry doc tables (#198)
+- V/L/T axis labels in geometry diagrams (#204)
+- Version switcher includes all releases; CI preserves live
+  `switcher.json` on deploy (#216)
 
 ## Release v0.5.0
 
