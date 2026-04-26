@@ -95,7 +95,7 @@ symmetric reflection — alpha_i = beta_out (alpha = gamma).
 ## API reference
 
 - {func}`~ad_hoc_diffractometer.presets.zaxis`
-- {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
+- {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`
 - {class}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`

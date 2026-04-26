@@ -36,7 +36,7 @@ TRANSVERSE = g.basis["transverse"]
 g.set_inclination(axis=TRANSVERSE, angle_deg=2.0)
 ```
 
-{meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_inclination`
+{meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.set_inclination`
 takes a rotation axis (any non-zero vector; it is normalized internally)
 and an angle in degrees.  Internally it builds the rotation matrix using
 the Rodrigues formula
@@ -54,7 +54,7 @@ print(np.round(g.inclination_matrix, 4))
 ```
 
 The
-{attr}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.inclination_matrix`
+{attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inclination_matrix`
 property returns the current 3×3 matrix.  The default is the identity
 (no inclination).
 
@@ -98,8 +98,8 @@ inclination (*R* = *I*), this reduces to the standard formula.
 
 All calculations that depend on
 {func}`~ad_hoc_diffractometer.orientation.angles_to_phi_vector` —
-including {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`,
-{meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse`,
+including {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`,
+{meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inverse`,
 and {func}`~ad_hoc_diffractometer.scan.psi_trajectory` — automatically
 respect the inclination setting.
 
@@ -148,9 +148,9 @@ g.inclination_matrix = -np.eye(3)         # det = -1 → ValueError
 ## Serialisation
 
 The inclination matrix is included in
-{meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.to_dict` as a
+{meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.to_dict` as a
 nested list and restored by
-{meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.from_dict`:
+{meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.from_dict`:
 
 ```python
 import json
@@ -167,8 +167,8 @@ See {doc}`serialize` for the full save/restore workflow.
 
 ## See also
 
-- {attr}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.inclination_matrix`
-- {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_inclination`
+- {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inclination_matrix`
+- {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.set_inclination`
 - {func}`~ad_hoc_diffractometer.rotation.rotation_matrix`
 - {func}`~ad_hoc_diffractometer.orientation.angles_to_phi_vector`
 - {doc}`serialize`

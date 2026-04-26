@@ -211,7 +211,7 @@ Full 4D simultaneous solver in the horizontal scattering plane.
 ## API reference
 
 - {func}`~ad_hoc_diffractometer.presets.kappa6c`
-- {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
+- {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
 - {class}`~ad_hoc_diffractometer.mode.SampleConstraint`

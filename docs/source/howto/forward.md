@@ -183,8 +183,8 @@ except NotImplementedError as e:
 
 ## See also
 
-- {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`
-- {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse`
+- {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`
+- {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inverse`
 - {func}`~ad_hoc_diffractometer.conversions.hkl_to_d`
 - {func}`~ad_hoc_diffractometer.conversions.hkl_to_two_theta`
 - {exc}`~ad_hoc_diffractometer.mode.EwaldSphereViolation`

@@ -51,7 +51,7 @@ class Stage:
         analyzers, polarizers, slits, or azimuthal spinners.
         Geometry methods ``sample_stages`` and ``detector_stages`` filter
         by these conventional values; use
-        :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.stages_by_role`
+        :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.stages_by_role`
         to query stages with any other role.  Default is ``"sample"``.
     angle : float, optional
         Current angle setting in degrees.  Default is 0.0.

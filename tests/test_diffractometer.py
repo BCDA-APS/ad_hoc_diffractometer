@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
 # SPDX-License-Identifier: CC-BY-4.0
 """
-Unit tests for ad_hoc_diffractometer.geometry.
+Unit tests for ad_hoc_diffractometer.diffractometer.
 
 Covers:
   - AdHocDiffractometer construction and validation
@@ -1430,7 +1430,7 @@ def test_wh_logs_debug_when_hkl_unavailable(caplog):
 
     g = fourcv()
     g.wavelength = 1.5406
-    with caplog.at_level(logging.DEBUG, logger="ad_hoc_diffractometer.geometry"):
+    with caplog.at_level(logging.DEBUG, logger="ad_hoc_diffractometer.diffractometer"):
         g.wh(print=False)
 
     assert any("wh" in r.message.lower() for r in caplog.records)
@@ -1448,7 +1448,7 @@ def test_wh_logs_debug_when_psi_unavailable(caplog):
     g.wavelength = 1.5406
     ub_identity(g.sample)
     # No azimuthal_reference → psi() raises → logger.debug fires
-    with caplog.at_level(logging.DEBUG, logger="ad_hoc_diffractometer.geometry"):
+    with caplog.at_level(logging.DEBUG, logger="ad_hoc_diffractometer.diffractometer"):
         g.wh(print=False)
 
     assert any("psi" in r.message.lower() for r in caplog.records)

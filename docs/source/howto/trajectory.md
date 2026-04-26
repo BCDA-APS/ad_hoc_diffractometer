@@ -90,4 +90,4 @@ points = ahd.hkl_trajectory(
 - {func}`~ad_hoc_diffractometer.scan.psi_trajectory`
 - {func}`~ad_hoc_diffractometer.scan.trajectory_plan`
 - {data}`~ad_hoc_diffractometer.scan.NEAREST_ANGLES`
-- {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi`
+- {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.psi`

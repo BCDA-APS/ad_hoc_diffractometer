@@ -4,7 +4,7 @@
 presets.py — pre-built diffractometer geometry functions.
 
 This module provides **pre-built geometries**: factory functions that
-construct fully configured :class:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
+construct fully configured :class:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 instances for the most common multi-circle diffractometer designs used in
 synchrotron and laboratory X-ray / neutron crystallography.  They also
 serve as worked examples for defining custom geometries.
@@ -114,11 +114,11 @@ from __future__ import annotations
 import inspect
 
 from .axes import kappa_axis
+from .diffractometer import AdHocDiffractometer
 from .factories import BASIS_BL
 from .factories import BASIS_YOU
 from .factories import KAPPA_ALPHA_DEFAULT
 from .factories import register_geometry
-from .geometry import AdHocDiffractometer
 from .mode import REQUIRED
 from .mode import BisectConstraint
 from .mode import ConstraintSet

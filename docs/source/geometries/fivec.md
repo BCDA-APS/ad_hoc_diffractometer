@@ -134,7 +134,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 ## API reference
 
 - {func}`~ad_hoc_diffractometer.presets.fivec`
-- {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
+- {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
 - {class}`~ad_hoc_diffractometer.mode.SampleConstraint`

@@ -100,7 +100,7 @@ see {ref}`concepts` for a tabulated comparison.
 ## Defining a custom basis
 
 You may pass any valid basis dict to
-{class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`.  The keys
+{class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`.  The keys
 must be `"vertical"`, `"longitudinal"`, and `"transverse"`; the values
 are 3-element array-like objects:
 
@@ -187,7 +187,7 @@ frame.
   reference frame
 - {doc}`../problem2` — worked example deriving B/U/UB from a basis
   assignment
-- {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer` — the
+- {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer` — the
   `basis` constructor argument
 - {data}`~ad_hoc_diffractometer.factories.BASIS_YOU`,
   {data}`~ad_hoc_diffractometer.factories.BASIS_BL` — pre-built basis
