@@ -97,7 +97,7 @@ def _prepare_mode(geometry, mode_name: str) -> None:
     Sets ``mode_name`` on the geometry and provides the minimum setup
     required for modes that need extra configuration:
 
-    - psi_constant modes: sets ``azimuthal_reference``
+    - fixed_psi modes: sets ``azimuthal_reference``
     - double_diffraction modes: sets h2/k2/l2 extras
     - surface/reference modes (alpha_i, beta_out, a_eq_b):
       sets ``surface_normal``

@@ -1285,8 +1285,8 @@ def test_geometry_from_dict_old_bisecting_mode_raises():
                 "bisecting",
                 "fixed_chi",
                 "fixed_phi",
-                "constant_omega",
-                "psi_constant",
+                "fixed_omega",
+                "fixed_psi",
                 "double_diffraction",
             },
             id="fourcv-six-modes",
@@ -1297,8 +1297,8 @@ def test_geometry_from_dict_old_bisecting_mode_raises():
                 "bisecting",
                 "fixed_chi",
                 "fixed_phi",
-                "constant_omega",
-                "psi_constant",
+                "fixed_omega",
+                "fixed_psi",
                 "double_diffraction",
             },
             id="fourch-six-modes",
@@ -1325,13 +1325,13 @@ def test_four_circle_factory_mode_names(factory, expected_modes):
         ),
         pytest.param(
             fourcv,
-            "constant_omega",
+            "fixed_omega",
             SampleConstraint,
             False,
-            id="fourcv-constant_omega",
+            id="fourcv-fixed_omega",
         ),
         pytest.param(
-            fourcv, "psi_constant", ReferenceConstraint, False, id="fourcv-psi_constant"
+            fourcv, "fixed_psi", ReferenceConstraint, False, id="fourcv-fixed_psi"
         ),
         # double_diffraction has no explicit constraints (4D solver uses extras)
         pytest.param(
@@ -1345,13 +1345,13 @@ def test_four_circle_factory_mode_names(factory, expected_modes):
         ),
         pytest.param(
             fourch,
-            "constant_omega",
+            "fixed_omega",
             SampleConstraint,
             False,
-            id="fourch-constant_omega",
+            id="fourch-fixed_omega",
         ),
         pytest.param(
-            fourch, "psi_constant", ReferenceConstraint, False, id="fourch-psi_constant"
+            fourch, "fixed_psi", ReferenceConstraint, False, id="fourch-fixed_psi"
         ),
     ],
 )
@@ -1372,10 +1372,8 @@ def test_four_circle_mode_constraint_type(
         pytest.param(fourcv, "bisecting", True, id="fourcv-bisecting-implemented"),
         pytest.param(fourcv, "fixed_chi", True, id="fourcv-fixed_chi-implemented"),
         pytest.param(fourcv, "fixed_phi", True, id="fourcv-fixed_phi-implemented"),
-        pytest.param(
-            fourcv, "constant_omega", True, id="fourcv-constant_omega-implemented"
-        ),
-        pytest.param(fourcv, "psi_constant", False, id="fourcv-psi_constant-stub"),
+        pytest.param(fourcv, "fixed_omega", True, id="fourcv-fixed_omega-implemented"),
+        pytest.param(fourcv, "fixed_psi", False, id="fourcv-fixed_psi-stub"),
         pytest.param(
             fourcv,
             "double_diffraction",
@@ -1385,10 +1383,8 @@ def test_four_circle_mode_constraint_type(
         pytest.param(fourch, "bisecting", True, id="fourch-bisecting-implemented"),
         pytest.param(fourch, "fixed_chi", True, id="fourch-fixed_chi-implemented"),
         pytest.param(fourch, "fixed_phi", True, id="fourch-fixed_phi-implemented"),
-        pytest.param(
-            fourch, "constant_omega", True, id="fourch-constant_omega-implemented"
-        ),
-        pytest.param(fourch, "psi_constant", False, id="fourch-psi_constant-stub"),
+        pytest.param(fourch, "fixed_omega", True, id="fourch-fixed_omega-implemented"),
+        pytest.param(fourch, "fixed_psi", False, id="fourch-fixed_psi-stub"),
         pytest.param(
             fourch,
             "double_diffraction",
@@ -1439,9 +1435,9 @@ def test_four_circle_default_mode_is_bisecting(factory):
         ),
         pytest.param(
             fourcv,
-            "constant_omega",
+            "fixed_omega",
             ["chi", "phi", "ttheta"],
-            id="fourcv-constant_omega-computed",
+            id="fourcv-fixed_omega-computed",
         ),
     ],
 )
@@ -1483,8 +1479,8 @@ def test_four_circle_modes_round_trip_serialisation(factory):
         "bisecting",
         "fixed_chi",
         "fixed_phi",
-        "constant_omega",
-        "psi_constant",
+        "fixed_omega",
+        "fixed_psi",
         "double_diffraction",
     }
     g2 = AdHocDiffractometer.from_dict(d)
@@ -1501,7 +1497,7 @@ _FIVEC_MODES = {
     "fixed_chi",
     "fixed_phi",
     "fixed_mu",
-    "constant_omega_noncoplanar",
+    "fixed_omega_noncoplanar",
 }
 
 
@@ -1540,9 +1536,9 @@ def test_fivec_mode_is_constraint_set(mode_name):
         pytest.param("fixed_phi", True, id="fixed_phi-implemented"),
         pytest.param("fixed_mu", True, id="fixed_mu-implemented"),
         pytest.param(
-            "constant_omega_noncoplanar",
+            "fixed_omega_noncoplanar",
             True,
-            id="constant_omega_noncoplanar-implemented",
+            id="fixed_omega_noncoplanar-implemented",
         ),
     ],
 )
@@ -1559,9 +1555,7 @@ def test_fivec_mode_is_implemented(mode_name, expected_implemented):
         pytest.param("fixed_chi", False, id="fixed_chi-no-bisect"),
         pytest.param("fixed_phi", False, id="fixed_phi-no-bisect"),
         pytest.param("fixed_mu", True, id="fixed_mu-has-bisect"),
-        pytest.param(
-            "constant_omega_noncoplanar", False, id="constant_omega-no-bisect"
-        ),
+        pytest.param("fixed_omega_noncoplanar", False, id="fixed_omega-no-bisect"),
     ],
 )
 def test_fivec_mode_has_bisect(mode_name, expected_has_bisect):
@@ -1579,9 +1573,9 @@ def test_fivec_mode_has_bisect(mode_name, expected_has_bisect):
         pytest.param("fixed_chi", ["omega", "phi", "ttheta"], id="fixed_chi"),
         pytest.param("fixed_phi", ["omega", "chi", "ttheta"], id="fixed_phi"),
         pytest.param(
-            "constant_omega_noncoplanar",
+            "fixed_omega_noncoplanar",
             ["mu", "chi", "phi", "ttheta"],
-            id="constant_omega_noncoplanar",
+            id="fixed_omega_noncoplanar",
         ),
     ],
 )
@@ -1741,7 +1735,7 @@ def test_sixc_modes_round_trip_serialisation():
 # ---------------------------------------------------------------------------
 
 _ZAXIS_MODES = {"zaxis", "reflectivity"}
-_S2D2_MODES = {"mu_fixed", "reflectivity"}
+_S2D2_MODES = {"fixed_mu", "reflectivity"}
 
 
 @pytest.mark.parametrize(
@@ -1803,10 +1797,10 @@ def test_zaxis_s2d2_reference_modes_implemented_with_surface_normal(factory, mod
     assert g.modes[mode_name].is_implemented(g) is True
 
 
-def test_s2d2_mu_fixed_is_implemented():
-    """s2d2 mu_fixed uses a SampleConstraint — is_implemented returns True."""
+def test_s2d2_fixed_mu_is_implemented():
+    """s2d2 fixed_mu uses a SampleConstraint — is_implemented returns True."""
     g = s2d2()
-    cs = g.modes["mu_fixed"]
+    cs = g.modes["fixed_mu"]
     assert isinstance(cs, ConstraintSet)
     assert len(cs) == 1
     assert cs.is_implemented(g) is True
@@ -1845,7 +1839,7 @@ def test_zaxis_s2d2_extras_declared(factory, mode_name, extras_key, expected_val
             id="zaxis-refl-computed",
         ),
         pytest.param(
-            s2d2, "mu_fixed", ["Z", "nu", "delta"], id="s2d2-mu_fixed-computed"
+            s2d2, "fixed_mu", ["Z", "nu", "delta"], id="s2d2-fixed_mu-computed"
         ),
         pytest.param(
             s2d2, "reflectivity", ["mu", "Z", "nu", "delta"], id="s2d2-refl-computed"
@@ -1885,10 +1879,10 @@ def test_zaxis_s2d2_modes_round_trip(factory, expected_modes):
 _KAPPA4_BASE_MODES = {
     "bisecting",
     "fixed_kphi",
-    "constant_omega",
-    "constant_chi",
-    "constant_phi",
-    "psi_constant",
+    "fixed_omega",
+    "fixed_chi",
+    "fixed_phi",
+    "fixed_psi",
 }
 _KAPPA4CV_MODES = _KAPPA4_BASE_MODES | {"double_diffraction"}
 _KAPPA4CH_MODES = _KAPPA4_BASE_MODES
@@ -1896,9 +1890,9 @@ _KAPPA4CH_MODES = _KAPPA4_BASE_MODES
 _KAPPA4_BASE_IMPLEMENTED = {
     "bisecting",
     "fixed_kphi",
-    "constant_omega",
-    "constant_chi",
-    "constant_phi",
+    "fixed_omega",
+    "fixed_chi",
+    "fixed_phi",
 }
 _KAPPA4CV_IMPLEMENTED = _KAPPA4_BASE_IMPLEMENTED | {"double_diffraction"}
 _KAPPA4CH_IMPLEMENTED = _KAPPA4_BASE_IMPLEMENTED
@@ -1965,11 +1959,9 @@ def test_kappa4_mode_is_implemented(factory, mode_name, expected_implemented):
         pytest.param(kappa4cv, "bisecting", True, id="kappa4cv-bisecting-has-bisect"),
         pytest.param(kappa4cv, "fixed_kphi", False, id="kappa4cv-fixed_kphi-no-bisect"),
         pytest.param(
-            kappa4cv, "constant_omega", False, id="kappa4cv-constant_omega-no-bisect"
+            kappa4cv, "fixed_omega", False, id="kappa4cv-fixed_omega-no-bisect"
         ),
-        pytest.param(
-            kappa4cv, "psi_constant", False, id="kappa4cv-psi_constant-no-bisect"
-        ),
+        pytest.param(kappa4cv, "fixed_psi", False, id="kappa4cv-fixed_psi-no-bisect"),
     ],
 )
 def test_kappa4_mode_has_bisect(factory, mode_name, expected_has_bisect):
@@ -1980,12 +1972,12 @@ def test_kappa4_mode_has_bisect(factory, mode_name, expected_has_bisect):
 @pytest.mark.parametrize(
     "mode_name, extras_key, expected_value",
     [
-        pytest.param("psi_constant", "n_hat", "REQUIRED", id="psi_constant-n_hat"),
-        pytest.param("psi_constant", "psi", None, id="psi_constant-psi-output"),
+        pytest.param("fixed_psi", "n_hat", "REQUIRED", id="fixed_psi-n_hat"),
+        pytest.param("fixed_psi", "psi", None, id="fixed_psi-psi-output"),
     ],
 )
-def test_kappa4_psi_constant_extras(mode_name, extras_key, expected_value):
-    """psi_constant carries REQUIRED n_hat and None psi output extras."""
+def test_kappa4_fixed_psi_extras(mode_name, extras_key, expected_value):
+    """fixed_psi carries REQUIRED n_hat and None psi output extras."""
     for g in (kappa4cv(), kappa4ch()):
         actual = g.modes[mode_name].extras.get(extras_key)
         if expected_value == "REQUIRED":
@@ -2011,9 +2003,9 @@ def test_kappa4_psi_constant_extras(mode_name, extras_key, expected_value):
         ),
         pytest.param(
             kappa4cv,
-            "constant_chi",
+            "fixed_chi",
             ["komega", "kappa", "kphi", "ttheta"],
-            id="kappa4cv-constant_chi",
+            id="kappa4cv-fixed_chi",
         ),
     ],
 )
