@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Surface Geometry and the Reference Vector &#8212; ad_hoc_diffractometer 0.5</title>
+    <title>Surface Geometry and the Reference Vector &#8212; ad_hoc_diffractometer 0.6</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=69def772"></script>
+    <script src="../_static/documentation_options.js?v=d92f0271"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -64,8 +64,8 @@
     <link rel="prev" title="Work with Constraints and Diffraction Modes" href="constraints.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-26 12:37 CDT"/>
+  <meta name="docsearch:version" content="0.6" />
+    <meta name="docbuild:last-update" content="2026-04-26 18:24 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -133,7 +133,7 @@
   
   
   
-    <p class="title logo__title">ad_hoc_diffractometer 0.5</p>
+    <p class="title logo__title">ad_hoc_diffractometer 0.6</p>
   
 </a></div>
     
@@ -510,7 +510,7 @@ internally using the UB matrix.</p>
 used by <code class="docutils literal notranslate"><span class="pre">alpha_i</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha_f</span></code>, <code class="docutils literal notranslate"><span class="pre">incidence_angle</span></code>, <code class="docutils literal notranslate"><span class="pre">exit_angle</span></code>, and
 surface modes (<code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">reflectivity</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha_eq_beta_zaxis</span></code>).</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code></strong> — the direction used to define ψ = 0, used by
-<code class="docutils literal notranslate"><span class="pre">psi_angle</span></code> and <code class="docutils literal notranslate"><span class="pre">psi_constant_*</span></code> modes.</p></li>
+<code class="docutils literal notranslate"><span class="pre">psi_angle</span></code> and <code class="docutils literal notranslate"><span class="pre">fixed_psi_*</span></code> modes.</p></li>
 </ul>
 <p>They may be the same vector (e.g. the surface normal is also the azimuthal
 reference) or different.</p>
@@ -644,7 +644,7 @@ and restored by <code class="docutils literal notranslate"><span class="pre">fro
 <section id="reference-constraint-modes">
 <h2>Reference constraint modes<a class="headerlink" href="#reference-constraint-modes" title="Link to this heading">#</a></h2>
 <p>Modes that use a <code class="docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code> require the appropriate reference
-vector to be set on the geometry.  <code class="docutils literal notranslate"><span class="pre">psi_constant_*</span></code> modes require
+vector to be set on the geometry.  <code class="docutils literal notranslate"><span class="pre">fixed_psi_*</span></code> modes require
 <code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code>; surface modes (<code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">reflectivity</span></code>) require
 <code class="docutils literal notranslate"><span class="pre">surface_normal</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -660,7 +660,7 @@ vector to be set on the geometry.  <code class="docutils literal notranslate"><s
 <span class="n">solutions</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">psi_constant</span></code> solver acts as a <strong>validation filter</strong>: ψ is a pure
+<p>The <code class="docutils literal notranslate"><span class="pre">fixed_psi</span></code> solver acts as a <strong>validation filter</strong>: ψ is a pure
 phi-frame quantity that is the same for every Bragg solution of a given
 (h,k,l) and UB.  The solver computes the natural ψ and returns solutions
 only if it matches the stored target — otherwise it returns an empty list.</p>
@@ -769,7 +769,7 @@ only if it matches the stored target — otherwise it returns an empty list.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-26 12:37 CDT.
+  Last updated on 2026-04-26 18:24 CDT.
   <br/>
 </p></div>
       

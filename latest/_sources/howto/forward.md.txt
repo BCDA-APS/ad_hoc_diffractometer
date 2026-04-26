@@ -172,8 +172,8 @@ try:
 except NotImplementedError as e:
     print(e)
 
-# psi_constant requires azimuthal_reference to be set
-g.mode_name = "psi_constant"
+# fixed_psi requires azimuthal_reference to be set
+g.mode_name = "fixed_psi"
 g.azimuthal_reference = None
 try:
     g.forward(1, 0, 0)

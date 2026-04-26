@@ -100,7 +100,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 | **Computed** | omega, chi, ttheta |
 | **Constant during** `forward()` | phi |
 
-### `constant_omega`
+### `fixed_omega`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 `omega` is held at the value declared in the constraint (factory default: 0°).
@@ -111,7 +111,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 | **Computed** | chi, phi, ttheta |
 | **Constant during** `forward()` | omega |
 
-### `psi_constant`
+### `fixed_psi`
 
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 azimuthal angle ψ validation filter.

@@ -119,7 +119,7 @@ Intended for non-zero mu once the tilted-plane solver is implemented.
 | **Computed** | omega, chi, phi, ttheta |
 | **Constant during** `forward()` | mu |
 
-### `constant_omega_noncoplanar`
+### `fixed_omega_noncoplanar`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2:
 `mu = 0`.

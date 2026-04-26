@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Switch Diffraction Modes &#8212; ad_hoc_diffractometer 0.5</title>
+    <title>Switch Diffraction Modes &#8212; ad_hoc_diffractometer 0.6</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=69def772"></script>
+    <script src="../_static/documentation_options.js?v=d92f0271"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -64,8 +64,8 @@
     <link rel="prev" title="Forward and Inverse Computations" href="forward.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-26 12:37 CDT"/>
+  <meta name="docsearch:version" content="0.6" />
+    <meta name="docbuild:last-update" content="2026-04-26 18:24 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -133,7 +133,7 @@
   
   
   
-    <p class="title logo__title">ad_hoc_diffractometer 0.5</p>
+    <p class="title logo__title">ad_hoc_diffractometer 0.6</p>
   
 </a></div>
     
@@ -505,8 +505,8 @@ See <a class="reference internal" href="../concepts.html"><span class="std std-d
 
 <span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-<span class="c1"># [&#39;bisecting&#39;, &#39;fixed_chi&#39;, &#39;fixed_phi&#39;, &#39;constant_omega&#39;,</span>
-<span class="c1">#  &#39;psi_constant&#39;, &#39;double_diffraction&#39;]</span>
+<span class="c1"># [&#39;bisecting&#39;, &#39;fixed_chi&#39;, &#39;fixed_phi&#39;, &#39;fixed_omega&#39;,</span>
+<span class="c1">#  &#39;fixed_psi&#39;, &#39;double_diffraction&#39;]</span>
 </pre></div>
 </div>
 </section>
@@ -565,10 +565,10 @@ the value changes:</p>
 </div>
 <p>See <a class="reference internal" href="constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a> for the full run-time pattern.</p>
 </section>
-<section id="constant-omega">
-<h3>constant_omega<a class="headerlink" href="#constant-omega" title="Link to this heading">#</a></h3>
+<section id="fixed-omega">
+<h3>fixed_omega<a class="headerlink" href="#fixed-omega" title="Link to this heading">#</a></h3>
 <p>Holds <code class="docutils literal notranslate"><span class="pre">omega</span></code> at 0° (any geometry where omega is a sample stage).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;constant_omega&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;fixed_omega&quot;</span>
 <span class="n">solutions</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="c1"># sol[&quot;omega&quot;] == 0.0 for every solution</span>
 </pre></div>
@@ -600,12 +600,12 @@ the value changes:</p>
 <section id="check-if-a-mode-is-implemented">
 <h2>Check if a mode is implemented<a class="headerlink" href="#check-if-a-mode-is-implemented" title="Link to this heading">#</a></h2>
 <p>Some modes require a prerequisite on the geometry.  For example,
-<code class="docutils literal notranslate"><span class="pre">psi_constant</span></code> requires <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span></code> to be set:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;psi_constant&quot;</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;psi_constant&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>  <span class="c1"># False (no azimuthal_reference)</span>
+<code class="docutils literal notranslate"><span class="pre">fixed_psi</span></code> requires <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span></code> to be set:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;fixed_psi&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_psi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>  <span class="c1"># False (no azimuthal_reference)</span>
 
 <span class="n">g</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;psi_constant&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>  <span class="c1"># True</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_psi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>  <span class="c1"># True</span>
 
 <span class="c1"># forward() raises NotImplementedError for unimplemented modes</span>
 </pre></div>
@@ -683,7 +683,7 @@ the value changes:</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mode-reference">Mode reference</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting-mode">Bisecting mode</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-angle-modes">Fixed-angle modes</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constant-omega">constant_omega</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-omega">fixed_omega</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-a-mode-s-constraints">Inspect a mode’s constraints</a></li>
@@ -724,7 +724,7 @@ the value changes:</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-26 12:37 CDT.
+  Last updated on 2026-04-26 18:24 CDT.
   <br/>
 </p></div>
       

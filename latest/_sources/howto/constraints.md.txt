@@ -204,8 +204,8 @@ and {data}`~ad_hoc_diffractometer.mode.OPTIONAL` sentinels:
 ```python
 from ad_hoc_diffractometer import REQUIRED, OPTIONAL, ConstraintSet, ReferenceConstraint
 
-# psi_constant mode on fourcv: requires a reference vector n̂
-cs = g.modes["psi_constant"]
+# fixed_psi mode on fourcv: requires a reference vector n̂
+cs = g.modes["fixed_psi"]
 print(cs.extras)
 # {'n_hat': <REQUIRED>, 'psi': None}
 # n_hat must be supplied; psi is an output populated by the solver
@@ -226,14 +226,14 @@ the prerequisite is met:
 
 ```python
 g = ahd.presets.fourcv()
-g.mode_name = "psi_constant"
+g.mode_name = "fixed_psi"
 
 # Without azimuthal_reference: not implemented
-print(g.modes["psi_constant"].is_implemented(g))  # False
+print(g.modes["fixed_psi"].is_implemented(g))  # False
 
 # With azimuthal_reference: implemented
 g.azimuthal_reference = (0, 0, 1)
-print(g.modes["psi_constant"].is_implemented(g))  # True
+print(g.modes["fixed_psi"].is_implemented(g))  # True
 ```
 
 ## Serialisation
