@@ -93,7 +93,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 | **Computed** | komega, kappa, ttheta |
 | **Constant during** `forward()` | kphi |
 
-### `constant_omega`
+### `fixed_omega`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 Fix the virtual Eulerian omega at declared value (default 0°).
@@ -105,7 +105,7 @@ constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
 | **Computed** | komega, kappa, kphi, ttheta |
 | **Constant during** `forward()` | omega (virtual) |
 
-### `constant_chi`
+### `fixed_chi`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 Fix the virtual Eulerian chi at declared value (default 90°).
@@ -116,7 +116,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 | **Computed** | komega, kappa, kphi, ttheta |
 | **Constant during** `forward()` | chi (virtual) |
 
-### `constant_phi`
+### `fixed_phi`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 Fix the virtual Eulerian phi at declared value (default 0°).
@@ -127,7 +127,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 | **Computed** | komega, kappa, kphi, ttheta |
 | **Constant during** `forward()` | phi (virtual) |
 
-### `psi_constant`
+### `fixed_psi`
 
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 azimuthal angle ψ validation filter.
