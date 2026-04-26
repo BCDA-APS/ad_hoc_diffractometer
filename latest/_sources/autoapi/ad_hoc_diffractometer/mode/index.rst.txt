@@ -178,7 +178,7 @@ Module Contents
       Name of the detector stage whose angle is halved.
 
 
-   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer) -> float
+   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> float
 
       Return the constraint residual (zero when satisfied).
 
@@ -211,7 +211,7 @@ Module Contents
       Always ``True`` — identifies this as the bisecting relational constraint.
 
 
-   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer) -> bool
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
 
       Return True when both named stages exist in the geometry.
 
@@ -220,7 +220,7 @@ Module Contents
 
 
 
-   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, tol: float = 1e-06) -> bool
+   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, tol: float = 1e-06) -> bool
 
       Return True when ``|evaluate(angles, geometry)| < tol``.
 
@@ -379,7 +379,7 @@ Module Contents
       :rtype: list of str
 
 
-   .. py:method:: constrained_stages(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer | None = None) -> list[str]
+   .. py:method:: constrained_stages(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer | None = None) -> list[str]
 
       Return the list of stage names that are constrained (fixed or
       relationally determined) by this constraint set.
@@ -438,7 +438,7 @@ Module Contents
       True when a :class:`BisectConstraint` is present.
 
 
-   .. py:method:: is_fully_constrained(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer) -> bool
+   .. py:method:: is_fully_constrained(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
 
       Return True when the number of constraints equals the geometry's
       free DOF count (N − 3).
@@ -451,7 +451,7 @@ Module Contents
 
 
 
-   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer) -> bool
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
 
       Return True when all constraints in this set have solver
       implementations for the given geometry.
@@ -553,7 +553,7 @@ Module Contents
       Constraint category identifier — always ``"detector"``.
 
 
-   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer) -> float
+   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> float
 
       Return the constraint residual (zero when satisfied).
 
@@ -570,7 +570,7 @@ Module Contents
 
 
 
-   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer) -> bool
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
 
       Return True when this constraint has a solver implementation.
 
@@ -590,7 +590,7 @@ Module Contents
       True when this constrains the qaz pseudo-angle.
 
 
-   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, tol: float = 1e-06) -> bool
+   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, tol: float = 1e-06) -> bool
 
       Return True when ``|evaluate(angles, geometry)| < tol``.
 
@@ -746,7 +746,7 @@ Module Contents
    Sentinel marking a required extra input in a :class:`ConstraintSet` extras dict.
 
    Place this sentinel as the value for any key in ``ConstraintSet.extras`` that
-   *must* be supplied by the caller before :meth:`~.geometry.AdHocDiffractometer.forward`
+   *must* be supplied by the caller before :meth:`~.diffractometer.AdHocDiffractometer.forward`
    is called::
 
        cs = ConstraintSet(
@@ -808,7 +808,7 @@ Module Contents
       Constraint category identifier — always ``"reference"``.
 
 
-   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer) -> float
+   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> float
       :abstractmethod:
 
 
@@ -828,7 +828,7 @@ Module Contents
 
 
 
-   .. py:method:: has_reference_vector(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer) -> bool
+   .. py:method:: has_reference_vector(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
 
       Return True when the required reference vector is set on the geometry.
 
@@ -845,7 +845,7 @@ Module Contents
 
 
 
-   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer) -> bool
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
 
       Return True when the required reference vector is set on the geometry
       and a forward solver is available for this constraint name.
@@ -869,7 +869,7 @@ Module Contents
 
 
 
-   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, tol: float = 1e-06) -> bool
+   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, tol: float = 1e-06) -> bool
       :abstractmethod:
 
 
@@ -928,7 +928,7 @@ Module Contents
       Constraint category identifier — always ``"sample"``.
 
 
-   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer) -> float
+   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> float
 
       Return the constraint residual (zero when satisfied).
 
@@ -960,7 +960,7 @@ Module Contents
       Always ``False`` — :class:`SampleConstraint` fixes a stage, does not bisect.
 
 
-   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer) -> bool
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
 
       Return True when the named stage exists in the geometry, or when the
       name is a virtual Eulerian kappa pseudoangle on a kappa geometry.
@@ -973,7 +973,7 @@ Module Contents
 
 
 
-   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, tol: float = 1e-06) -> bool
+   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, tol: float = 1e-06) -> bool
 
       Return True when ``|evaluate(angles, geometry)| < tol``.
 

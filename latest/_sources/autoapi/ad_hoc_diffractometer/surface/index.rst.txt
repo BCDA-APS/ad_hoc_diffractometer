@@ -89,7 +89,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: alpha_f(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+.. py:function:: alpha_f(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
 
    .. container:: import-path
 
@@ -118,7 +118,7 @@ Module Contents
    Lohmeier & Vlieg (1993), §4.2, eq. 16.
 
 
-.. py:function:: alpha_i(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+.. py:function:: alpha_i(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
 
    .. container:: import-path
 
@@ -159,7 +159,7 @@ Module Contents
    Lohmeier & Vlieg (1993), §4.2, eq. 15.
 
 
-.. py:function:: is_evanescent(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None, critical_angle_deg: float | None = None) -> bool
+.. py:function:: is_evanescent(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None, critical_angle_deg: float | None = None) -> bool
 
    .. container:: import-path
 
@@ -192,7 +192,7 @@ Module Contents
    True   # if αᵢ < 0.2°
 
 
-.. py:function:: is_specular(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None, atol: float = 0.01) -> bool
+.. py:function:: is_specular(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None, atol: float = 0.01) -> bool
 
    .. container:: import-path
 
@@ -216,7 +216,7 @@ Module Contents
    :raises ValueError: If any required attribute is not set.
 
 
-.. py:function:: q_components(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, angles: dict[str, float] | None = None) -> dict[str, float]
+.. py:function:: q_components(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> dict[str, float]
 
    .. container:: import-path
 

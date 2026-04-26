@@ -310,7 +310,7 @@ constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
 ## API reference
 
 - {func}`~ad_hoc_diffractometer.presets.psic`
-- {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`
+- {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`
 - {class}`~ad_hoc_diffractometer.mode.SampleConstraint`

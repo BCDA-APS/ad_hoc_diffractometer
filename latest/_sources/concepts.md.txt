@@ -22,7 +22,7 @@ The package uses a right-handed Cartesian frame internally.  Different authors
 assigned different Cartesian letters (x, y, z) to these physical directions —
 historically a source of confusion when diffractometer geometries are compared.
 The package accepts any right-handed orthogonal basis via the `basis` argument
-to {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`.
+to {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`.
 
 ::::{tab-set}
 
@@ -320,10 +320,10 @@ See {doc}`howto/forward` and {mod}`~ad_hoc_diffractometer.mode`.
 
 ## Forward and inverse computations
 
-- **Forward** ({meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`):
+- **Forward** ({meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`):
   given (h, k, l), find the motor angles satisfying the Bragg condition.
   Returns a **list** of 0 to ~12 solutions depending on geometry and mode.
-- **Inverse** ({meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse`):
+- **Inverse** ({meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inverse`):
   given motor angles, find the unique (h, k, l) in the Bragg condition.
   Requires a UB matrix.
 
@@ -337,7 +337,7 @@ Two definitions of ψ appear in the literature:
 
 - **You (1999)**: azimuthal angle of a reference vector about **Q** —
   constant for a given (hkl, UB); a crystal-orientation diagnostic.
-  See {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi`.
+  See {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.psi`.
 - **Busing & Levy (1967)**: angle of sample rotation about **Q** relative
   to a reference orientation — the quantity physically varied in a ψ scan.
   See {func}`~ad_hoc_diffractometer.psi_trajectory`.
@@ -350,7 +350,7 @@ See {doc}`howto/trajectory`.
 
 The complete diffractometer state — geometry, wavelength, lattice, reflections,
 UB matrix, and all parameters — can be saved and restored via
-`to_dict()` / `from_dict()` on {class}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer`.
+`to_dict()` / `from_dict()` on {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`.
 The dict contains only JSON-compatible types; save to JSON (stdlib) or YAML
 (`pyyaml`) without loss.
 

@@ -31,9 +31,9 @@ scan
    communicate with hardware.  A future execution layer (not yet planned)
    will consume these outputs to drive real diffractometers.
 
-   The ordering instability of :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward`
+   The ordering instability of :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   :meth:`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward` returns multiple solutions in seed-discovery order, which is
+   :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward` returns multiple solutions in seed-discovery order, which is
    not reproducible and can switch between the positive-chi and negative-chi
    branches at adjacent trajectory points.  All three trajectory functions
    accept a ``solution_key`` parameter — a callable that scores each candidate
@@ -157,7 +157,7 @@ Module Contents
    :rtype: float
 
 
-.. py:function:: hkl_trajectory(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, trajectory: dict, n_points: int, *, solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
+.. py:function:: hkl_trajectory(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, trajectory: dict, n_points: int, *, solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
 
    .. container:: import-path
 
@@ -221,7 +221,7 @@ Module Contents
    ...     print(pt["hkl"], pt["angles"])
 
 
-.. py:function:: psi_trajectory(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, h: float, k: float, l: float, psi_values, *, solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
+.. py:function:: psi_trajectory(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, h: float, k: float, l: float, psi_values, *, solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
 
    .. container:: import-path
 
@@ -298,7 +298,7 @@ Module Contents
    ...     print(pt["psi_target"], pt["psi_actual"])
 
 
-.. py:function:: trajectory_plan(geometry: ~ad_hoc_diffractometer.geometry.AdHocDiffractometer, hkl_start: tuple[float, float, float], hkl_end: tuple[float, float, float], n_points: int, *, space: str = 'hkl', solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
+.. py:function:: trajectory_plan(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, hkl_start: tuple[float, float, float], hkl_end: tuple[float, float, float], n_points: int, *, space: str = 'hkl', solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]
 
    .. container:: import-path
 

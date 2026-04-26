@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=090975f3" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=0732b5fd"></script>
+    <script src="_static/documentation_options.js?v=fab87848"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-26 11:22 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-26 11:40 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -524,7 +524,7 @@ directions</strong> that can be identified directly in the laboratory:</p>
 assigned different Cartesian letters (x, y, z) to these physical directions —
 historically a source of confusion when diffractometer geometries are compared.
 The package accepts any right-handed orthogonal basis via the <code class="docutils literal notranslate"><span class="pre">basis</span></code> argument
-to <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a>.</p>
+to <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a>.</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-0">
@@ -867,10 +867,10 @@ error or an unimplemented virtual-angle constraint).  Carries attributes
 <section id="forward-and-inverse-computations">
 <h2>Forward and inverse computations<a class="headerlink" href="#forward-and-inverse-computations" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>Forward</strong> (<a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>):
+<li><p><strong>Forward</strong> (<a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>):
 given (h, k, l), find the motor angles satisfying the Bragg condition.
 Returns a <strong>list</strong> of 0 to ~12 solutions depending on geometry and mode.</p></li>
-<li><p><strong>Inverse</strong> (<a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">inverse()</span></code></a>):
+<li><p><strong>Inverse</strong> (<a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inverse" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inverse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">inverse()</span></code></a>):
 given motor angles, find the unique (h, k, l) in the Bragg condition.
 Requires a UB matrix.</p></li>
 </ul>
@@ -883,7 +883,7 @@ Requires a UB matrix.</p></li>
 <ul class="simple">
 <li><p><strong>You (1999)</strong>: azimuthal angle of a reference vector about <strong>Q</strong> —
 constant for a given (hkl, UB); a crystal-orientation diagnostic.
-See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">psi()</span></code></a>.</p></li>
+See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.psi" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.psi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">psi()</span></code></a>.</p></li>
 <li><p><strong>Busing &amp; Levy (1967)</strong>: angle of sample rotation about <strong>Q</strong> relative
 to a reference orientation — the quantity physically varied in a ψ scan.
 See <code class="xref py py-func docutils literal notranslate"><span class="pre">psi_trajectory()</span></code>.</p></li>
@@ -895,7 +895,7 @@ See <code class="xref py py-func docutils literal notranslate"><span class="pre"
 <h2>Serialization<a class="headerlink" href="#serialization" title="Link to this heading">#</a></h2>
 <p>The complete diffractometer state — geometry, wavelength, lattice, reflections,
 UB matrix, and all parameters — can be saved and restored via
-<code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> on <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a>.
+<code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> on <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a>.
 The dict contains only JSON-compatible types; save to JSON (stdlib) or YAML
 (<code class="docutils literal notranslate"><span class="pre">pyyaml</span></code>) without loss.</p>
 <p>See <a class="reference internal" href="howto/serialize.html"><span class="doc">Save and Restore a Diffractometer Configuration</span></a>.</p>
@@ -996,7 +996,7 @@ The dict contains only JSON-compatible types; save to JSON (stdlib) or YAML
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-26 11:22 CDT.
+  Last updated on 2026-04-26 11:40 CDT.
   <br/>
 </p></div>
       

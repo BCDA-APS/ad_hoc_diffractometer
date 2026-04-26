@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=090975f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=0732b5fd"></script>
+    <script src="../_static/documentation_options.js?v=fab87848"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-26 11:22 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-26 11:40 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -529,7 +529,7 @@ before any diffraction calculation.</p>
 <span class="n">g</span><span class="o">.</span><span class="n">set_inclination</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">angle_deg</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_inclination" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_inclination"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_inclination()</span></code></a>
+<p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.set_inclination" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.set_inclination"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_inclination()</span></code></a>
 takes a rotation axis (any non-zero vector; it is normalized internally)
 and an angle in degrees.  Internally it builds the rotation matrix using
 the Rodrigues formula
@@ -546,7 +546,7 @@ the Rodrigues formula
 </pre></div>
 </div>
 <p>The
-<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.inclination_matrix" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.inclination_matrix"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inclination_matrix</span></code></a>
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inclination_matrix" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inclination_matrix"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inclination_matrix</span></code></a>
 property returns the current 3×3 matrix.  The default is the identity
 (no inclination).</p>
 </section>
@@ -584,8 +584,8 @@ direction:</p>
 inclination (<em>R</em> = <em>I</em>), this reduces to the standard formula.</p>
 <p>All calculations that depend on
 <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.angles_to_phi_vector" title="ad_hoc_diffractometer.orientation.angles_to_phi_vector"><code class="xref py py-func docutils literal notranslate"><span class="pre">angles_to_phi_vector()</span></code></a> —
-including <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>,
-<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">inverse()</span></code></a>,
+including <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>,
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inverse" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inverse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">inverse()</span></code></a>,
 and <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.psi_trajectory" title="ad_hoc_diffractometer.scan.psi_trajectory"><code class="xref py py-func docutils literal notranslate"><span class="pre">psi_trajectory()</span></code></a> — automatically
 respect the inclination setting.</p>
 </section>
@@ -632,9 +632,9 @@ longitudinal axis.</p>
 <section id="serialisation">
 <h2>Serialisation<a class="headerlink" href="#serialisation" title="Link to this heading">#</a></h2>
 <p>The inclination matrix is included in
-<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.to_dict" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.to_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_dict()</span></code></a> as a
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.to_dict" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.to_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_dict()</span></code></a> as a
 nested list and restored by
-<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.from_dict" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.from_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_dict()</span></code></a>:</p>
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.from_dict" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.from_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_dict()</span></code></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
 <span class="n">g</span><span class="o">.</span><span class="n">set_inclination</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">angle_deg</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
@@ -650,8 +650,8 @@ nested list and restored by
 <section id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.inclination_matrix" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.inclination_matrix"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inclination_matrix</span></code></a></p></li>
-<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_inclination" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.set_inclination"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_inclination()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inclination_matrix" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inclination_matrix"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inclination_matrix</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.set_inclination" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.set_inclination"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_inclination()</span></code></a></p></li>
 <li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/rotation/index.html#ad_hoc_diffractometer.rotation.rotation_matrix" title="ad_hoc_diffractometer.rotation.rotation_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">rotation_matrix()</span></code></a></p></li>
 <li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html#ad_hoc_diffractometer.orientation.angles_to_phi_vector" title="ad_hoc_diffractometer.orientation.angles_to_phi_vector"><code class="xref py py-func docutils literal notranslate"><span class="pre">angles_to_phi_vector()</span></code></a></p></li>
 <li><p><a class="reference internal" href="serialize.html"><span class="doc">Save and Restore a Diffractometer Configuration</span></a></p></li>
@@ -757,7 +757,7 @@ general-inclination geometries</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-26 11:22 CDT.
+  Last updated on 2026-04-26 11:40 CDT.
   <br/>
 </p></div>
       

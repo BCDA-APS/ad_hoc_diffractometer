@@ -44,12 +44,12 @@ The package is **pure Python** with a single runtime dependency:
       :mod:`~ad_hoc_diffractometer.radiation`
 
    .. grid-item-card:: :material-outlined:`precision_manufacturing;3em` Diffractometer
-      :link: autoapi/ad_hoc_diffractometer/geometry/index
+      :link: autoapi/ad_hoc_diffractometer/diffractometer/index
       :link-type: doc
 
       Geometry class, diffraction modes, and predefined geometry factories.
 
-      :mod:`~ad_hoc_diffractometer.geometry` ·
+      :mod:`~ad_hoc_diffractometer.diffractometer` ·
       :mod:`~ad_hoc_diffractometer.mode` ·
       :mod:`~ad_hoc_diffractometer.factories`
 
@@ -128,7 +128,7 @@ Modules are grouped by layer.
            style=filled fillcolor="#fff3cc" color="#ccaa00"
            fontname="sans-serif" fontsize=11
            mode      [label="mode"      fillcolor="#ffe999"]
-           geometry  [label="geometry"  fillcolor="#ffe999"]
+            diffractometer [label="diffractometer" fillcolor="#ffe999"]
            factories [label="factories" fillcolor="#ffe999"]
        }
 
@@ -157,36 +157,36 @@ Modules are grouped by layer.
        sample     -> reflection
 
        // Diffractometer
-       geometry -> axes         [style=dashed]
-       geometry -> constants
-       geometry -> display      [style=dashed]
-       geometry -> forward      [style=dashed]
-       geometry -> lattice      [style=dashed]
-       geometry -> mode         [style=dashed]
-       geometry -> orientation  [style=dashed]
-       geometry -> radiation    [style=dashed]
-       geometry -> reflection
-       geometry -> rotation     [style=dashed]
-       geometry -> sample       [style=dashed]
-       geometry -> stage        [style=dashed]
-       geometry -> surface      [style=dashed]
-       factories -> axes
-       factories -> constants
-       factories -> geometry
-       factories -> mode
-       factories -> stage
+        diffractometer -> axes         [style=dashed]
+        diffractometer -> constants
+        diffractometer -> display      [style=dashed]
+        diffractometer -> forward      [style=dashed]
+        diffractometer -> lattice      [style=dashed]
+        diffractometer -> mode         [style=dashed]
+        diffractometer -> orientation  [style=dashed]
+        diffractometer -> radiation    [style=dashed]
+        diffractometer -> reflection
+        diffractometer -> rotation     [style=dashed]
+        diffractometer -> sample       [style=dashed]
+        diffractometer -> stage        [style=dashed]
+        diffractometer -> surface      [style=dashed]
+        factories -> axes
+        factories -> constants
+        factories -> diffractometer
+        factories -> mode
+        factories -> stage
 
        // Calculations
        orientation -> reflection
        orientation -> rotation
        orientation -> stage
         forward     -> display    [style=dashed]
-        forward     -> geometry  [style=dashed]
+         forward     -> diffractometer  [style=dashed]
         forward     -> mode
         forward     -> orientation
         conversions -> sample
-       surface     -> geometry  [style=dashed]
-       scan        -> geometry  [style=dashed]
+        surface     -> diffractometer  [style=dashed]
+        scan        -> diffractometer  [style=dashed]
        scan        -> rotation
        refinement  -> lattice
        refinement  -> orientation

@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=090975f3" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=0732b5fd"></script>
+    <script src="_static/documentation_options.js?v=fab87848"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.5" />
-    <meta name="docbuild:last-update" content="2026-04-26 11:22 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-26 11:40 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -510,7 +510,7 @@ the scattering vector magnitude by |<strong>Q</strong>| = 2π / d_{hkl} and to t
 Bragg angle by 2d sin θ = λ.</p>
 </dd>
 <dt id="term-Diffraction-mode">Diffraction mode<a class="headerlink" href="#term-Diffraction-mode" title="Link to this term">#</a></dt><dd><p>A named set of constraints that describes how
-<a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>
 computes motor angles: which stages are free, which are held fixed, and
 which are coupled to other stages.
 See <code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code> and <a class="reference internal" href="howto/modes.html"><span class="doc">Switch Diffraction Modes</span></a>.</p>
@@ -518,13 +518,13 @@ See <code class="xref py py-class docutils literal notranslate"><span class="pre
 <dt id="term-Forward-problem">Forward problem<a class="headerlink" href="#term-Forward-problem" title="Link to this term">#</a></dt><dd><p>Given Miller indices (h, k, l) and a UB matrix, find the motor angles
 that satisfy the Bragg condition.  Returns a list of 0 to ~12 solutions
 depending on geometry and active diffraction mode.
-See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>
+See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>
 and <a class="reference internal" href="howto/forward.html"><span class="doc">Forward and Inverse Computations</span></a>.</p>
 </dd>
 <dt id="term-Inverse-problem">Inverse problem<a class="headerlink" href="#term-Inverse-problem" title="Link to this term">#</a></dt><dd><p>Given motor angles and a UB matrix, find the unique Miller indices (h, k, l)
 in the Bragg condition.  Unlike the forward problem, the inverse always
 has a unique solution once UB is established.
-See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.inverse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">inverse()</span></code></a>.</p>
+See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inverse" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inverse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">inverse()</span></code></a>.</p>
 </dd>
 <dt id="term-Miller-indices">Miller indices<a class="headerlink" href="#term-Miller-indices" title="Link to this term">#</a></dt><dd><p>Integer (or rational) triplet (h, k, l) that indexes a set of crystal
 lattice planes.  Used throughout as the reciprocal-space coordinate of a
@@ -593,7 +593,7 @@ about the vertical axis; typical for laboratory instruments.</p>
 a crystal-orientation diagnostic, constant for a given (hkl, UB).
 (2) <strong>Busing &amp; Levy (1967)</strong>: angle of sample rotation about <strong>Q</strong> relative
 to a reference orientation — the quantity physically varied in a ψ scan.
-See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/index.html#ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi" title="ad_hoc_diffractometer.geometry.AdHocDiffractometer.psi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">psi()</span></code></a> and
+See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.psi" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.psi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">psi()</span></code></a> and
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan.psi_trajectory" title="ad_hoc_diffractometer.scan.psi_trajectory"><code class="xref py py-func docutils literal notranslate"><span class="pre">psi_trajectory()</span></code></a>.</p>
 </dd>
 </dl>
@@ -669,7 +669,7 @@ See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry/i
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-26 11:22 CDT.
+  Last updated on 2026-04-26 11:40 CDT.
   <br/>
 </p></div>
       

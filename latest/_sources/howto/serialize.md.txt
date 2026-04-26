@@ -208,9 +208,9 @@ ahd.pa(g)   # verify the restored configuration
 
 ## See also
 
-- {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.to_dict`
-- {meth}`~ad_hoc_diffractometer.geometry.AdHocDiffractometer.from_dict`
+- {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.to_dict`
+- {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.from_dict`
 - {class}`~ad_hoc_diffractometer.lattice.Lattice`
 - {class}`~ad_hoc_diffractometer.sample.Sample`
-- {func}`~ad_hoc_diffractometer.geometry.pa`
+- {func}`~ad_hoc_diffractometer.diffractometer.pa`
 - {doc}`orient`
