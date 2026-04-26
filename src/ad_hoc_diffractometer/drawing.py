@@ -22,9 +22,13 @@ Plotly is an optional dependency.  Both classes raise
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 
 from .axes import axis_label
+
+logger = logging.getLogger(__name__)
 
 
 def _physical_label(axis_vec: np.ndarray, basis: dict | None) -> str:
@@ -197,6 +201,7 @@ class StageAxisFigure:  # pragma: no cover
         self.geometry = factory()
         self.stage = self.geometry._stages[axis_name]
         self.R = None  # set in _draw_basis_vectors
+        logger.debug("StageAxisFigure: %s / %s", geometry_name, axis_name)
 
         self._draw_basis_vectors(axis_labels=axis_labels)
         self._draw_axis()
@@ -328,6 +333,13 @@ class StageAxisFigure:  # pragma: no cover
         # (stage axis parallel to drawn axis), -1 for left-handed
         # (stage axis anti-parallel, i.e. negated).
         direction = +1 if np.dot(stage_norm, axis_norm) > 0 else -1
+        logger.debug(
+            "%s: stage_axis=%s  axis_norm=%s  direction=%+d",
+            self.stage.name,
+            stage_axis,
+            axis_norm,
+            direction,
+        )
 
         self._draw_axis_arc(axis_norm, direction=direction)
 
@@ -377,16 +389,22 @@ class StageAxisFigure:  # pragma: no cover
         if np.linalg.norm(perp1_d) < 1e-6:
             perp1_d = screen_up - np.dot(screen_up, axis_d) * axis_d
         perp1_d /= np.linalg.norm(perp1_d)
+
+        # Build a right-handed perpendicular frame: cross(axis_d, perp1_d)
+        # guarantees (perp1_d, perp2_d, axis_d) is right-handed, so
+        # sweeping from -π/3 to +π/3 draws a right-handed (CCW) arc.
+        # For left-handed stages (direction=-1), flip perp2_d to reverse
+        # the visual sweep sense.
         perp2_d = np.cross(axis_d, perp1_d)
-
-        r0 = np.array([np.dot(perp1_d, screen_right), np.dot(perp1_d, screen_up)])
-        r1 = np.array([np.dot(perp2_d, screen_right), np.dot(perp2_d, screen_up)])
-        cross_2d = r0[0] * r1[1] - r0[1] * r1[0]
-        if cross_2d > 0:
-            perp2_d = -perp2_d
-
         if direction < 0:
             perp2_d = -perp2_d
+        logger.debug(
+            "_draw_axis_arc: direction=%+d  axis_d=%s  perp1_d=%s  perp2_d=%s",
+            direction,
+            axis_d,
+            perp1_d,
+            perp2_d,
+        )
 
         arc_radius = 0.1
         arc_center_d = axis_d * 0.45
@@ -523,6 +541,11 @@ class GeometryAxisFigure:  # pragma: no cover
         factory = getattr(_presets, geometry_name)
         geometry = factory()
         stages = geometry._stages
+        logger.debug(
+            "GeometryAxisFigure: %s  stages=%s",
+            geometry_name,
+            list(stages),
+        )
 
         depth, x_pos, children, roots = _tree_layout(stages)
         max_depth = max(depth.values())
