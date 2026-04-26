@@ -7,36 +7,21 @@ drawing
 
    Import: ``ad_hoc_diffractometer.drawing``
 
-   Provides functions to generate:
+   Provides interactive Plotly figures for diffractometer geometry diagrams:
 
-   1. **Graphviz DOT source** for stage coupling diagrams
-      (:func:`geometry_dot`) — shows parent-child relationships, roles, and
-      axis labels.
+   :class:`StageAxisFigure`
+       3D interactive diagram for a single stage rotation axis.
 
-   2. **Matplotlib per-stage axis diagrams** (:func:`draw_stage_axis`) —
-      3D view of the lab-frame basis vectors with the stage's rotation axis
-      highlighted.
+   :class:`GeometryAxisFigure`
+       Composite diagram showing all stages of a geometry arranged in a
+       directed-graph layout with parent-child relationships.
 
-   3. **Matplotlib composite diagram** (:func:`draw_geometry_axes`) — all
-      stages of a geometry in a single figure.
+   These are the preferred output for documentation; pre-generate them
+   with ``tools/generate_geometry_drawings.py`` and embed the resulting
+   HTML files as ``<iframe>`` elements in the Sphinx pages.
 
-   4. **Interactive Plotly figures** (:class:`StageAxisFigure`,
-      :class:`GeometryAxisFigure`) — 3D interactive diagrams for a single
-      stage or an entire geometry, arranged in a directed-graph layout.
-      These are the preferred output for documentation; pre-generate them
-      with ``tools/generate_geometry_drawings.py`` and embed the resulting
-      HTML files as ``<iframe>`` elements in the Sphinx pages.
-
-   The DOT source is designed to be pasted into a Sphinx ``.. graphviz::``
-   directive in the geometry documentation pages.
-
-   Matplotlib is an optional dependency (listed in ``pyproject.toml``
-   ``[project.optional-dependencies] doc``).  Functions that require it
-   raise :class:`ImportError` with a helpful message if it is not installed.
-
-   Plotly is an optional dependency.  :class:`StageAxisFigure` and
-   :class:`GeometryAxisFigure` raise :class:`ImportError` with a helpful
-   message if it is not installed.
+   Plotly is an optional dependency.  Both classes raise
+   :class:`ImportError` with a helpful message if it is not installed.
 
 
 Classes
@@ -46,16 +31,6 @@ Classes
 
    ad_hoc_diffractometer.drawing.GeometryAxisFigure
    ad_hoc_diffractometer.drawing.StageAxisFigure
-
-
-Functions
----------
-
-.. autoapisummary::
-
-   ad_hoc_diffractometer.drawing.draw_geometry_axes
-   ad_hoc_diffractometer.drawing.draw_stage_axis
-   ad_hoc_diffractometer.drawing.geometry_dot
 
 
 Module Contents
@@ -217,81 +192,5 @@ Module Contents
       :type path: str or pathlib.Path
       :param \*\*kwargs: Forwarded to :meth:`plotly.graph_objects.Figure.write_image`.
 
-
-
-.. py:function:: draw_geometry_axes(geometry, *, figsize_per_stage: tuple[float, float] = (3.5, 2.8), max_cols: int = 4) -> ~matplotlib.figure.Figure
-
-   .. container:: import-path
-
-      Import: ``ad_hoc_diffractometer.drawing.draw_geometry_axes``
-
-
-   Draw a composite figure with all stages of a geometry.
-
-   Each subplot uses the same physical view convention as
-   :func:`draw_stage_axis`: vertical up, longitudinal away, transverse left.
-
-   :param geometry: The geometry to draw.
-   :type geometry: AdHocDiffractometer
-   :param figsize_per_stage: Size per subplot in inches.
-   :type figsize_per_stage: tuple
-   :param max_cols: Maximum columns in the subplot grid.
-   :type max_cols: int
-
-   :returns: The composite figure.
-   :rtype: matplotlib.figure.Figure
-
-
-.. py:function:: draw_stage_axis(stage, basis: dict, *, geometry_name: str = '', figsize: tuple[float, float] = (3.5, 2.8)) -> ~matplotlib.figure.Figure
-
-   .. container:: import-path
-
-      Import: ``ad_hoc_diffractometer.drawing.draw_stage_axis``
-
-
-   Draw a 3D diagram for a single stage showing its rotation axis.
-
-   The view is oriented so that the vertical basis vector points up,
-   the longitudinal vector points away (into the screen), and the
-   transverse vector points to the left.  This convention is independent
-   of the Cartesian-axis mapping used by the geometry's basis.
-
-   :param stage: The stage to draw.
-   :type stage: Stage
-   :param basis: Basis dictionary mapping physical direction names to unit vectors.
-   :type basis: dict
-   :param geometry_name: Geometry name for the title (e.g. ``"fourcv"``).
-   :type geometry_name: str
-   :param figsize: Figure size in inches.
-   :type figsize: tuple
-
-   :returns: The figure object.  Call ``fig.savefig(path)`` to write an SVG.
-   :rtype: matplotlib.figure.Figure
-
-
-.. py:function:: geometry_dot(geometry) -> str
-
-   .. container:: import-path
-
-      Import: ``ad_hoc_diffractometer.drawing.geometry_dot``
-
-
-   Generate Graphviz DOT source for a stage coupling diagram.
-
-   :param geometry: A fully constructed geometry instance.
-   :type geometry: AdHocDiffractometer
-
-   :returns: DOT source string suitable for a Sphinx ``.. graphviz::`` directive
-             or ``graphviz.Source()`` rendering.
-   :rtype: str
-
-   .. rubric:: Examples
-
-   >>> from ad_hoc_diffractometer.presets import fourcv
-   >>> from ad_hoc_diffractometer.drawing import geometry_dot
-   >>> print(geometry_dot(fourcv()))
-   digraph fourcv {
-       ...
-   }
 
 
