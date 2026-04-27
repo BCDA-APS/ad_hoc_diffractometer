@@ -1910,8 +1910,11 @@ def _solve_qaz_mode(
     1. Bragg: ``cos(nu) * cos(delta) = cos(ttheta)``
     2. qaz:   ``atan2(tan(delta), sin(nu)) = qaz_target``
 
-    The 2D Newton-Raphson solver is seeded from a coarse grid over
-    ``(nu, delta)`` to capture both the ``nu > 0`` and ``nu < 0`` branches.
+    The detector angles are solved analytically (no Newton iteration).
+    For ``qaz = 90°`` (vertical scattering plane, the common case):
+    ``nu = 0``, ``delta = ±ttheta``.  For the general case,
+    ``sin²(nu) = (1 - cos²(ttheta)) / (1 + cos²(ttheta)·tan²(qaz))``
+    and ``delta = atan(sin(nu)·tan(qaz))``.
 
     After finding the detector angles, any remaining free sample stages
     (those not frozen by the fixed sample constraints) are solved
@@ -1954,85 +1957,103 @@ def _solve_qaz_mode(
         if sc.name in geometry._stages:  # noqa: SLF001  # pragma: no branch
             angles_base[sc.name] = float(sc.value)
 
-    # Bragg condition: cos(nu)*cos(delta) = cos(ttheta)
+    # ---- Analytic detector-angle solver (issue #224) ----
+    #
+    # Two equations, two unknowns (nu, delta):
+    #   1. Bragg:  cos(nu) * cos(delta) = cos(ttheta)
+    #   2. qaz:    atan2(tan(delta), sin(nu)) = qaz_target
+    #
+    # From (2): tan(delta) = sin(nu) * tan(qaz).
+    # Substituting into (1) via cos(delta) = 1/sqrt(1 + tan^2(delta)):
+    #   cos(nu) / sqrt(1 + sin^2(nu)*tan^2(qaz)) = cos(ttheta)
+    # which is directly solvable for nu, then delta follows from (2).
+    #
+    # Special case qaz = 90°:  nu = 0, delta = ±ttheta  (trivial).
+
     ttheta_rad = math.radians(ttheta_deg)
-
-    def _bragg_residual(nu_deg: float, delta_deg: float) -> float:
-        """cos(nu)*cos(delta) - cos(ttheta)"""
-        return math.cos(math.radians(nu_deg)) * math.cos(
-            math.radians(delta_deg)
-        ) - math.cos(ttheta_rad)
-
-    def _qaz_res(nu_deg: float, delta_deg: float) -> float:
-        """atan2(tan(delta), sin(nu)) - qaz_target  (in degrees)"""
-        nu_r = math.radians(nu_deg)
-        delta_r = math.radians(delta_deg)
-        return (
-            math.degrees(math.atan2(math.tan(delta_r), math.sin(nu_r))) - target_qaz_deg
-        )
-
-    def _residual_2d(x: np.ndarray) -> np.ndarray:
-        nu_d, delta_d = float(x[0]), float(x[1])
-        return np.array([_bragg_residual(nu_d, delta_d), _qaz_res(nu_d, delta_d)])
-
-    def _jacobian_fd(x: np.ndarray, r0: np.ndarray, h: float = 1e-4) -> np.ndarray:
-        J = np.zeros((2, 2))
-        for i in range(2):
-            xp = x.copy()
-            xp[i] += h
-            J[:, i] = (_residual_2d(xp) - r0) / h
-        return J
-
-    # Build seed grid: scan over nu values and derive delta analytically
-    # from the Bragg condition, then let qaz iteration converge.
-    # Seed nu over ±ttheta range; delta seeded from analytic Bragg inversion.
-    seed_pairs = []
     cos_ttheta = math.cos(ttheta_rad)
-    for nu_seed in np.linspace(-ttheta_deg, ttheta_deg, 13):
-        cos_nu = math.cos(math.radians(nu_seed))
-        if abs(cos_nu) < 1e-12:  # pragma: no cover
-            continue  # pragma: no cover
-        cos_delta = cos_ttheta / cos_nu
-        if abs(cos_delta) > 1.0:  # pragma: no cover
-            continue  # pragma: no cover
-        delta_seed_pos = math.degrees(math.acos(min(1.0, max(-1.0, cos_delta))))
-        delta_seed_neg = -delta_seed_pos
-        seed_pairs.append((nu_seed, delta_seed_pos))
-        seed_pairs.append((nu_seed, delta_seed_neg))
+    qaz_rad = math.radians(target_qaz_deg)
+
+    # Collect all physically valid (nu, delta) pairs analytically.
+    detector_pairs: list[tuple[float, float]] = []
+
+    abs_qaz_mod = abs(target_qaz_deg % 360)
+    _is_qaz_90 = abs(abs_qaz_mod - 90.0) < 1e-9 or abs(abs_qaz_mod - 270.0) < 1e-9
+
+    if _is_qaz_90:
+        # Fast path: qaz = 90° (or 270°) => nu = 0, delta has sign from qaz.
+        # When nu = 0, qaz = atan2(tan(delta), sin(0)) = atan2(tan(delta), 0),
+        # which equals +90° when delta > 0 and -90° when delta < 0.
+        # Only the sign matching the target qaz is physically valid.
+        qaz_sign = 1.0 if abs_qaz_mod < 180.0 else -1.0
+        detector_pairs.append((0.0, qaz_sign * abs(ttheta_deg)))
+    else:  # pragma: no cover — no preset currently uses non-90° qaz
+        # General analytic solution.
+        # From Bragg + qaz combined:
+        #   cos^2(nu) = cos^2(ttheta) * (1 + sin^2(nu)*tan^2(qaz))
+        # Let s = sin(nu), c = cos(nu), T = tan^2(qaz), C = cos^2(ttheta):
+        #   1 - s^2 = C*(1 + s^2*T)  =>  s^2*(1 + C*T) = 1 - C
+        #   s^2 = (1 - C) / (1 + C*T)
+        cos2_ttheta = cos_ttheta * cos_ttheta  # pragma: no cover
+        tan_qaz = math.tan(qaz_rad)  # pragma: no cover
+        tan2_qaz = tan_qaz * tan_qaz  # pragma: no cover
+        denom = 1.0 + cos2_ttheta * tan2_qaz  # pragma: no cover
+        if abs(denom) < 1e-15:  # pragma: no cover
+            sin2_nu = 1.0  # pragma: no cover
+        else:  # pragma: no cover
+            sin2_nu = (1.0 - cos2_ttheta) / denom  # pragma: no cover
+
+        if sin2_nu < -1e-12:  # pragma: no cover
+            sin2_nu = -1.0  # pragma: no cover
+        sin2_nu = min(1.0, sin2_nu)  # pragma: no cover
+
+        if sin2_nu < 0.0:  # pragma: no cover
+            pass  # pragma: no cover
+        else:  # pragma: no cover
+            sin_nu = math.sqrt(sin2_nu)  # pragma: no cover
+            nu_candidates = []  # pragma: no cover
+            if sin_nu < 1e-12:  # pragma: no cover
+                nu_candidates.append(0.0)  # pragma: no cover
+            else:  # pragma: no cover
+                nu_candidates.append(
+                    math.degrees(math.asin(sin_nu))
+                )  # pragma: no cover
+                nu_candidates.append(
+                    math.degrees(math.asin(-sin_nu))
+                )  # pragma: no cover
+
+            for nu_deg in nu_candidates:  # pragma: no cover
+                nu_r = math.radians(nu_deg)  # pragma: no cover
+                cos_nu = math.cos(nu_r)  # pragma: no cover
+                if abs(cos_nu) < 1e-15:  # pragma: no cover
+                    continue  # pragma: no cover
+                cos_delta = cos_ttheta / cos_nu  # pragma: no cover
+                cos_delta = max(-1.0, min(1.0, cos_delta))  # pragma: no cover
+                tan_delta = math.sin(nu_r) * tan_qaz  # pragma: no cover
+                delta_deg = math.degrees(math.atan2(tan_delta, 1.0))  # pragma: no cover
+                actual_cos_delta = math.cos(math.radians(delta_deg))  # pragma: no cover
+                if actual_cos_delta * cos_delta < -1e-6:  # pragma: no cover
+                    delta_abs = math.degrees(math.acos(cos_delta))  # pragma: no cover
+                    delta_deg = math.copysign(delta_abs, tan_delta)  # pragma: no cover
+                detector_pairs.append((nu_deg, delta_deg))  # pragma: no cover
+                if abs(delta_deg) > 1e-10:  # pragma: no cover
+                    neg_cos_delta = math.cos(
+                        math.radians(-delta_deg)
+                    )  # pragma: no cover
+                    if abs(neg_cos_delta - cos_delta) < 1e-6:  # pragma: no cover
+                        detector_pairs.append((nu_deg, -delta_deg))  # pragma: no cover
 
     found_solutions = []
     seen_keys: list[tuple[float, float]] = []
 
-    for nu_start, delta_start in seed_pairs:
-        x = np.array([nu_start, delta_start], dtype=float)
-        for _ in range(200):  # pragma: no branch
-            r = _residual_2d(x)
-            if np.linalg.norm(r) < 1e-10:
-                break
-            J = _jacobian_fd(x, r)
-            try:
-                dx = np.linalg.solve(J, -r)
-            except np.linalg.LinAlgError:  # pragma: no cover
-                break  # pragma: no cover
-            step = np.linalg.norm(dx)
-            if step > 30.0:
-                dx = dx * (30.0 / step)
-            x = x + dx
-
-        r = _residual_2d(x)
-        if np.linalg.norm(r) > 1e-6:  # pragma: no cover
-            continue  # pragma: no cover
-
-        nu_sol = float(x[0])
-        delta_sol = float(x[1])
-
+    for nu_sol, delta_sol in detector_pairs:
         # De-duplicate detector angle pairs
         duplicate = any(
             abs(nu_sol - ks[0]) < 1e-4 and abs(delta_sol - ks[1]) < 1e-4
             for ks in seen_keys
         )
-        if duplicate:
-            continue
+        if duplicate:  # pragma: no cover — analytic solver produces no duplicates
+            continue  # pragma: no cover
         seen_keys.append((nu_sol, delta_sol))
 
         # Build the full angle dict for this detector solution
