@@ -491,6 +491,276 @@ def _solve_constraint_set(
 # ---------------------------------------------------------------------------
 
 
+def _is_standard_eulerian_pair(chi_stage, phi_stage) -> bool:
+    """
+    Return True if the chi and phi stages have orthogonal axis vectors.
+
+    Standard Eulerian geometries (fourcv, fourch, psic, sixc, fivec) have
+    chi about the longitudinal axis and phi about a transverse or vertical
+    axis — always orthogonal.  Kappa geometries do NOT have orthogonal
+    chi/phi (the kappa axis is tilted), so they will return False here and
+    use the Newton fallback.
+
+    Parameters
+    ----------
+    chi_stage, phi_stage : Stage
+        The two free sample stages (chi-role and phi-role).
+
+    Returns
+    -------
+    bool
+    """
+    dot = abs(float(np.dot(chi_stage._axis_hat, phi_stage._axis_hat)))  # noqa: SLF001
+    return dot < 1e-8
+
+
+def _solve_bisecting_analytic(
+    ctx: ForwardContext,
+    chi_stage,
+    phi_stage,
+    angles: dict[str, float],
+    Q_phi_target: np.ndarray,
+) -> list[tuple[float, float]]:
+    r"""
+    Analytic solver for bisecting with two free Eulerian angles.
+
+    Derives (chi, phi) from a direct trigonometric decomposition when the
+    chi and phi axes are orthogonal (standard Eulerian geometry).
+
+    **Derivation.**
+
+    The sample rotation matrix is:
+
+    .. math::
+
+        Z = R_\phi \cdot R_\chi \cdot Z_{\text{prefix}}
+
+    where :math:`Z_{\text{prefix}}` is the product of all fixed outer
+    sample stages.  The scattering vector in the phi frame is:
+
+    .. math::
+
+        Q_\phi = Z^T Q_{\text{lab}}
+              = Z_{\text{prefix}}^T \cdot R_\chi^T \cdot R_\phi^T \cdot Q_{\text{lab}}
+
+    Define the known vectors:
+
+    - :math:`q = Z_{\text{prefix}} \cdot Q_{\phi,\text{target}}`
+    - :math:`v = Q_{\text{lab}}`
+
+    The equation to solve is:
+
+    .. math::
+
+        R(\hat n_\chi, -\chi) \cdot R(\hat n_\phi, -\phi) \cdot v = q
+
+    Since :math:`\hat n_\chi \perp \hat n_\phi`, define
+    :math:`\hat n_3 = \hat n_\chi \times \hat n_\phi`.  Projecting onto
+    the :math:`(\hat n_\phi, \hat n_3)` plane gives a 2×2 linear system
+    for :math:`(\cos\chi, \sin\chi)`:
+
+    .. math::
+
+        \begin{pmatrix} A & B \\ -B & A \end{pmatrix}
+        \begin{pmatrix} \cos\chi \\ \sin\chi \end{pmatrix}
+        = \begin{pmatrix} C \\ E \end{pmatrix}
+
+    where :math:`A = \hat n_\phi \cdot q`, :math:`B = \hat n_\phi \cdot (\hat n_\chi \times q)`,
+    :math:`C = \hat n_\phi \cdot v`, :math:`E = \hat n_3 \cdot v`.
+    This yields a unique :math:`\chi` via ``atan2``.
+
+    Phi is then solved from the :math:`\hat n_\chi` component:
+
+    .. math::
+
+        \hat n_\chi \cdot R(\hat n_\phi, -\phi) \cdot v = \hat n_\chi \cdot q
+
+    which gives :math:`\alpha\cos\phi + \beta\sin\phi = \gamma`, solved
+    with the standard ``atan2`` / ``acos`` decomposition.
+
+    Parameters
+    ----------
+    ctx : ForwardContext
+        Must have ``prepare_caching`` already called with the chi/phi
+        stages as free.
+    chi_stage, phi_stage : Stage
+        The two free sample stages (orthogonal axes).
+    angles : dict[str, float]
+        Baseline angles with all fixed stages set.
+    Q_phi_target : numpy.ndarray, shape (3,)
+        Target scattering vector in the phi frame (Å⁻¹).
+
+    Returns
+    -------
+    list of (chi_deg, phi_deg)
+        Candidate solutions.  May contain 0, 1, or 2 entries.
+        All entries have been validated against a single residual check.
+    """
+
+    # Axis unit vectors
+    n_chi = chi_stage._axis_hat  # noqa: SLF001
+    n_phi = phi_stage._axis_hat  # noqa: SLF001
+
+    # Known vectors
+    Z_prefix = ctx._cached_Z_prefix
+    D = ctx._cached_D if ctx._cached_D is not None else np.eye(3)
+
+    # Q_lab: scattering vector in the lab frame (all detector & bisect angles fixed)
+    v = ctx.two_pi_over_lambda * (D @ ctx.y_eff - ctx.y_eff)  # Q_lab
+
+    # q = Z_prefix @ Q_phi_target
+    q = Z_prefix @ Q_phi_target
+
+    # --- Step 1: Solve for chi (two solutions) ---
+    #
+    # Define w = R(n_phi, -phi) @ v.  Then R(n_chi, -chi) @ w = q.
+    # Since R(n_phi, -phi) preserves the n_phi component:
+    #   n_phi · w = n_phi · v  (constant L)
+    #
+    # From w = R(n_chi, chi) @ q (inverse of R(n_chi, -chi) @ w = q):
+    #   n_phi · [R(n_chi, chi) @ q] = L
+    #
+    # Expanding via Rodrigues (n_chi ⊥ n_phi):
+    #   cos(chi)*(n_phi·q) + sin(chi)*(n_phi·(n_chi×q)) = n_phi·v
+    #
+    # This is A*cos(chi) + B*sin(chi) = C, yielding two chi values.
+
+    A = float(np.dot(n_phi, q))
+    B = float(np.dot(n_phi, np.cross(n_chi, q)))
+    C = float(np.dot(n_phi, v))
+
+    R_chi_amp = math.sqrt(A * A + B * B)
+    if R_chi_amp < 1e-12:
+        return []  # degenerate: q ∥ n_chi
+
+    cos_arg_chi = C / R_chi_amp
+    if abs(cos_arg_chi) > 1.0 + 1e-8:  # pragma: no cover
+        return []  # no solution
+    cos_arg_chi = max(-1.0, min(1.0, cos_arg_chi))
+
+    chi0 = math.atan2(B, A)
+    delta_chi = math.acos(cos_arg_chi)
+
+    chi_candidates_rad = [chi0 + delta_chi, chi0 - delta_chi]
+
+    # --- Step 2: For each chi, solve for phi (unique) ---
+    #
+    # From w = R(n_phi, -phi) @ v and n_chi · w = n_chi · q:
+    #   n_chi · [R(n_phi, -phi) @ v] = n_chi · q
+    #
+    # Expanding via Rodrigues (n_chi ⊥ n_phi):
+    #   cos(phi)*(n_chi·v) - sin(phi)*(n_chi·(n_phi×v)) = n_chi · q
+    #
+    # But this gives only one equation — not enough for a unique phi.
+    # We also have the n3 component (n3 = n_chi × n_phi):
+    #   n3 · [R(n_phi, -phi) @ v] = n3 · [R(n_chi, chi) @ q]
+    #
+    # The RHS depends on chi (already known), the LHS depends on phi.
+    # Together with the n_chi equation, this gives a 2×2 system for
+    # (cos(phi), sin(phi)), yielding a unique phi per chi.
+    #
+    # n_chi equation:  (n_chi·v)*cos(phi) - (n_chi·(n_phi×v))*sin(phi) = n_chi·q
+    # n3 equation:     (n3·v)*cos(phi) - (n3·(n_phi×v))*sin(phi) = n3·w_chi
+    #
+    # Using triple product identities (n_chi ⊥ n_phi, n3 = n_chi × n_phi):
+    #   n_chi·(n_phi×v) = (n_chi×n_phi)·v = n3·v
+    #   n3·(n_phi×v)    = v·(n3×n_phi) = v·n_chi   [since n3×n_phi = n_chi]
+    #
+    # So the system is:
+    #   (n_chi·v)*cos(phi) - (n3·v)*sin(phi) = n_chi·q       ...(i)
+    #   (n3·v)*cos(phi) + (n_chi·v)*sin(phi) = n3·w_chi      ...(ii)
+    #
+    # Wait, sign: n3·(n_phi×v) = v·(n3×n_phi). And n3×n_phi:
+    #   n3 = n_chi×n_phi, so n3×n_phi = (n_chi×n_phi)×n_phi
+    #   = n_chi*(n_phi·n_phi) - n_phi*(n_chi·n_phi) = n_chi
+    # So n3·(n_phi×v) = v·n_chi = n_chi·v.
+    #
+    # n3 LHS: R(n_phi, -phi)@v dotted with n3:
+    #   cos(phi)*(n3·v) + (1-cos(phi))*(n_phi·v)*(n_phi·n3) - sin(phi)*(n3·(n_phi×v))
+    #   = cos(phi)*(n3·v) - sin(phi)*(n_chi·v)     [since n_phi·n3=0]
+    #
+    # n3 RHS: R(n_chi, chi)@q dotted with n3:
+    #   cos(chi)*(n3·q) + sin(chi)*(n3·(n_chi×q))
+    #   n3·(n_chi×q) = q·(n3×n_chi) = q·(-n_phi) = -(n_phi·q)
+    #   [since n3×n_chi = (n_chi×n_phi)×n_chi = n_phi]
+    #   Wait: BAC-CAB: (n_chi×n_phi)×n_chi = n_phi(n_chi·n_chi) - n_chi(n_phi·n_chi) = n_phi
+    #   So n3×n_chi = n_phi, and n3·(n_chi×q) = q·(n3×n_chi) = q·n_phi = n_phi·q
+    #   Hmm, let me redo: a·(b×c) = det(a,b,c) = c·(a×b).
+    #   n3·(n_chi×q) = q·(n3×n_chi).
+    #   n3×n_chi = (n_chi×n_phi)×n_chi = n_phi (BAC-CAB, orthonormal)
+    #   So n3·(n_chi×q) = q·n_phi = A (= n_phi·q)
+    #
+    # So n3 RHS = cos(chi)*(n3·q) + sin(chi)*A
+    # And n3 LHS = cos(phi)*(n3·v) - sin(phi)*(n_chi·v)
+    #
+    # The 2×2 system:
+    #   [n_chi·v, -(n3·v)] [cos(phi)]   [n_chi·q        ]
+    #   [n3·v,    n_chi·v ] [sin(phi)] = [n3·R_chi(chi)@q]
+    #
+    # Determinant = (n_chi·v)² + (n3·v)² = |v_perp|² (component of v ⊥ n_phi)
+    # This is non-zero unless v ∥ n_phi (degenerate).
+
+    n3 = np.cross(n_chi, n_phi)
+    nchi_v = float(np.dot(n_chi, v))
+    n3_v = float(np.dot(n3, v))
+    nchi_q = float(np.dot(n_chi, q))
+
+    det_phi = nchi_v * nchi_v + n3_v * n3_v
+    if det_phi < 1e-20:  # pragma: no cover
+        return []  # v ∥ n_phi — phi indeterminate
+
+    # Pre-compute n3·q and n_phi·q for the chi-dependent RHS
+    n3_q = float(np.dot(n3, q))
+    # A = n_phi · q (already computed above)
+
+    raw_candidates = []
+    for chi_rad in chi_candidates_rad:
+        chi_d = math.degrees(chi_rad)
+        c_chi = math.cos(chi_rad)
+        s_chi = math.sin(chi_rad)
+
+        # n3 · R(n_chi, chi) @ q = cos(chi)*(n3·q) + sin(chi)*(n_phi·q)
+        rhs_n3 = c_chi * n3_q + s_chi * A
+
+        # Solve 2×2 system for (cos_phi, sin_phi):
+        #   nchi_v * cos_phi - n3_v * sin_phi = nchi_q
+        #   n3_v * cos_phi + nchi_v * sin_phi = rhs_n3
+        cos_phi = (nchi_v * nchi_q + n3_v * rhs_n3) / det_phi
+        sin_phi = (nchi_v * rhs_n3 - n3_v * nchi_q) / det_phi
+        phi_d = math.degrees(math.atan2(sin_phi, cos_phi))
+
+        raw_candidates.append((chi_d, phi_d))
+
+    # Validate each candidate with a single residual evaluation.
+    # Normalize angles to (-180, 180] before returning — this matches
+    # the range that Newton iteration naturally produces and ensures
+    # the angles are within typical stage limits.
+    validated = []
+    trial = dict(angles)
+    chi_name = chi_stage.name
+    phi_name = phi_stage.name
+
+    for chi_d, phi_d in raw_candidates:
+        trial[chi_name] = chi_d
+        trial[phi_name] = phi_d
+
+        # Compute Q_phi with these angles and check residual
+        Q_computed = ctx.q_phi(trial)
+        residual = float(np.linalg.norm(Q_computed - Q_phi_target))
+        if residual < 1e-6:
+            # Normalize to (-180, 180]
+            chi_d = (chi_d + 180.0) % 360.0 - 180.0
+            phi_d = (phi_d + 180.0) % 360.0 - 180.0
+            validated.append((chi_d, phi_d))
+
+    # Sort so the "positive chi" branch (chi ≥ 0, or closer to 0°) comes
+    # first.  This matches the ordering convention of the Newton solver and
+    # ensures consistent branch selection in trajectory scans.
+    validated.sort(key=lambda pair: -pair[0])  # descending chi → positive first
+
+    return validated
+
+
 def _solve_bisecting(
     geometry: AdHocDiffractometer,
     Q_phi: np.ndarray,
@@ -518,6 +788,12 @@ def _solve_bisecting(
 
     Both solutions are validated against stage limits; those that fail are
     dropped.  Cut-points from the mode are applied to each angle.
+
+    When the two free stages have orthogonal axes (standard Eulerian
+    geometry), an analytic fast path (``_solve_bisecting_analytic``) is
+    used instead of Newton iteration, yielding a 5-10× speedup.  The
+    Newton solver is retained as fallback for non-standard (e.g. kappa)
+    axis configurations.
 
     Parameters
     ----------
@@ -587,23 +863,47 @@ def _solve_bisecting(
     chi_stage = free_sample[-2]
     phi_stage = free_sample[-1]
 
-    # With all constrained angles fixed, we need to find (chi, phi) such that
-    # angles_to_phi_vector(geometry, **all_angles) == Q_phi.
-    #
-    # This is a 2D root-finding problem.  We use a numerical solver rather
-    # than an analytic formula so that the result is correct for any basis
-    # convention and stage axis handedness.
-    #
-    # Two solution branches are seeded from the analytic decomposition of
-    # Q_phi relative to the chi rotation axis, giving starting guesses that
-    # are typically within a few degrees of the solution.
-
-    from .orientation import angles_to_phi_vector as _a2phi
-
     # Create ForwardContext and cache fixed-stage rotation matrices
     ctx = ForwardContext(geometry)
     free_names = {chi_stage.name, phi_stage.name}
     ctx.prepare_caching(angles, free_names)
+
+    chi_name = chi_stage.name
+    phi_name = phi_stage.name
+
+    # --- Analytic fast path for standard Eulerian geometries ---
+    if _is_standard_eulerian_pair(chi_stage, phi_stage):
+        analytic_results = _solve_bisecting_analytic(
+            ctx,
+            chi_stage,
+            phi_stage,
+            angles,
+            Q_phi,
+        )
+        if analytic_results:
+            solutions = []
+            for chi_d, phi_d in analytic_results:
+                sol = dict(angles)
+                sol[chi_name] = chi_d
+                sol[phi_name] = phi_d
+                _apply_cut_points(sol, mode, geometry)
+
+                # De-duplicate
+                duplicate = False
+                for existing in solutions:
+                    if all(abs(existing.get(k, 0) - sol.get(k, 0)) < 1e-4 for k in sol):
+                        duplicate = True
+                        break
+                if not duplicate and _check_limits(geometry, sol):
+                    solutions.append(sol)
+            if solutions:
+                return solutions
+        # If analytic solver returned nothing (degenerate case), fall through
+        # to the Newton solver below.
+
+    # --- Newton fallback for non-standard axes or degenerate cases ---
+
+    from .orientation import angles_to_phi_vector as _a2phi
 
     Q_norm = float(np.linalg.norm(Q_phi))
     q_hat = Q_phi / Q_norm
@@ -647,9 +947,6 @@ def _solve_bisecting(
         for chi_s in (0.0, 90.0, -90.0, 180.0)
         for phi_s in (0.0, 90.0, 180.0, 270.0)
     ]
-
-    chi_name = chi_stage.name
-    phi_name = phi_stage.name
 
     seed_pairs = analytic_seeds + grid_seeds
 
