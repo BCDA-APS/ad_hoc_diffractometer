@@ -114,6 +114,26 @@ Module Contents
    .. py:attribute:: detector_stages
 
 
+   .. py:method:: jacobian_analytic(angles: dict[str, float], free_names: list[str]) -> ~numpy.ndarray
+
+      Compute the analytic Jacobian of Q_phi with respect to free stage angles.
+
+      Uses the closed-form derivative of the Rodrigues rotation matrix to
+      avoid finite-difference evaluations entirely.  The detector rotation
+      ``D`` must be cached (all detector stages fixed) — this is the case
+      for every call site that passes a ``ForwardContext`` to
+      :func:`_solve_two_angles`.
+
+      :param angles: Current motor angles (degrees) for all stages.
+      :type angles: dict[str, float]
+      :param free_names: Ordered list of free stage names (length 1 or 2).
+      :type free_names: list of str
+
+      :returns: **J** -- ``J[:, k]`` is ``dQ_phi / d(stage_k angle in degrees)``.
+      :rtype: numpy.ndarray, shape (3, n_free)
+
+
+
    .. py:method:: prepare_caching(fixed_angles: dict[str, float], free_stage_names: set[str]) -> None
 
       Pre-compute rotation matrices for stages whose angles will not

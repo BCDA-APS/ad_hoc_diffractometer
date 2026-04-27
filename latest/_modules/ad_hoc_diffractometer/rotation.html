@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=4762f469"></script>
+    <script src="../../_static/documentation_options.js?v=b025c51f"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 11:48 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 12:26 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -515,6 +515,58 @@
         <span class="p">]</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">c</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="n">s</span> <span class="o">*</span> <span class="n">skew</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rotation_matrix_and_derivative_normalized</span><span class="p">(</span>
+    <span class="n">n</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">angle_deg</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute both the rotation matrix and its derivative with respect to angle.</span>
+
+<span class="sd">    Returns ``(R, dR/dtheta)`` where ``theta`` is in **radians** — the</span>
+<span class="sd">    derivative is with respect to the radian-valued angle, not degrees.</span>
+<span class="sd">    The caller is responsible for the deg-to-rad conversion factor</span>
+<span class="sd">    (``pi/180``) when composing chain-rule Jacobians that take degree</span>
+<span class="sd">    inputs.</span>
+
+<span class="sd">    Uses the same Rodrigues decomposition as</span>
+<span class="sd">    :func:`_rotation_matrix_normalized` and shares the trig values, so the</span>
+<span class="sd">    marginal cost of the derivative is negligible.</span>
+
+<span class="sd">    The derivative formula:</span>
+
+<span class="sd">        dR/dtheta = -sin(theta) * (I - n (x) n) + cos(theta) * [n]_x</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : numpy.ndarray, shape (3,)</span>
+<span class="sd">        **Unit** rotation axis vector.</span>
+<span class="sd">    angle_deg : float</span>
+<span class="sd">        Rotation angle in degrees.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    R : numpy.ndarray, shape (3, 3)</span>
+<span class="sd">        Rotation matrix (identical to ``_rotation_matrix_normalized``).</span>
+<span class="sd">    dR_dtheta : numpy.ndarray, shape (3, 3)</span>
+<span class="sd">        Derivative of R with respect to theta (radians).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">angle_deg</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">n</span>
+    <span class="n">skew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">nz</span><span class="p">,</span> <span class="n">ny</span><span class="p">],</span>
+            <span class="p">[</span><span class="n">nz</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">nx</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">nn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="n">nn</span> <span class="o">+</span> <span class="n">s</span> <span class="o">*</span> <span class="n">skew</span>
+    <span class="c1"># dR/dtheta = -sin(theta)(I - n⊗n) + cos(theta)[n]×</span>
+    <span class="n">dR</span> <span class="o">=</span> <span class="o">-</span><span class="n">s</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">nn</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span> <span class="o">*</span> <span class="n">skew</span>
+    <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">dR</span>
 </pre></div>
 
                 </article>
@@ -553,7 +605,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 11:48 CDT.
+  Last updated on 2026-04-27 12:26 CDT.
   <br/>
 </p></div>
       

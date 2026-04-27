@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=4762f469"></script>
+    <script src="../../_static/documentation_options.js?v=b025c51f"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 11:48 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 12:26 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -617,6 +617,130 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">two_pi_over_lambda</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">y_eff</span><span class="p">,</span>
         <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ForwardContext.jacobian_analytic">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/forward/index.html#ad_hoc_diffractometer.forward.ForwardContext.jacobian_analytic">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">jacobian_analytic</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">free_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the analytic Jacobian of Q_phi with respect to free stage angles.</span>
+
+<span class="sd">        Uses the closed-form derivative of the Rodrigues rotation matrix to</span>
+<span class="sd">        avoid finite-difference evaluations entirely.  The detector rotation</span>
+<span class="sd">        ``D`` must be cached (all detector stages fixed) — this is the case</span>
+<span class="sd">        for every call site that passes a ``ForwardContext`` to</span>
+<span class="sd">        :func:`_solve_two_angles`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        angles : dict[str, float]</span>
+<span class="sd">            Current motor angles (degrees) for all stages.</span>
+<span class="sd">        free_names : list of str</span>
+<span class="sd">            Ordered list of free stage names (length 1 or 2).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        J : numpy.ndarray, shape (3, n_free)</span>
+<span class="sd">            ``J[:, k]`` is ``dQ_phi / d(stage_k angle in degrees)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_rotation_matrix_and_derivative_normalized</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_rotation_matrix_normalized</span>
+
+        <span class="n">n_free</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_names</span><span class="p">)</span>
+        <span class="n">free_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">free_names</span><span class="p">)</span>
+
+        <span class="c1"># Q_lab is constant (D and y_eff are fixed).</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_D</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">Q_lab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">two_pi_over_lambda</span> <span class="o">*</span> <span class="p">(</span><span class="n">D</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_eff</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_eff</span><span class="p">)</span>
+
+        <span class="c1"># Build per-stage rotation matrices for all sample stages from the</span>
+        <span class="c1"># first free index onward (stages before that are in cached_Z_prefix).</span>
+        <span class="n">stages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_stages</span>
+        <span class="n">first_free</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_free_sample_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_free_sample_indices</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">stages</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Collect R_i and (for free stages) dR_i for indices &gt;= first_free.</span>
+        <span class="n">n_tail</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stages</span><span class="p">)</span> <span class="o">-</span> <span class="n">first_free</span>
+        <span class="n">R_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))]</span> <span class="o">*</span> <span class="n">n_tail</span>
+        <span class="n">dR_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># absolute index -&gt; dR</span>
+
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">first_free</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stages</span><span class="p">)):</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">stages</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="n">angles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">free_set</span><span class="p">:</span>
+                <span class="n">R_i</span><span class="p">,</span> <span class="n">dR_i</span> <span class="o">=</span> <span class="n">_rotation_matrix_and_derivative_normalized</span><span class="p">(</span>
+                    <span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span>
+                    <span class="n">angle</span><span class="p">,</span>  <span class="c1"># noqa: SLF001</span>
+                <span class="p">)</span>
+                <span class="n">R_list</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="n">first_free</span><span class="p">]</span> <span class="o">=</span> <span class="n">R_i</span>
+                <span class="n">dR_map</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">dR_i</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">R_list</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="n">first_free</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span>
+                    <span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span>
+                    <span class="n">angle</span><span class="p">,</span>  <span class="c1"># noqa: SLF001</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Build suffix products:  suffix[k] = R_{k-1} @ ... @ R_0</span>
+        <span class="c1"># where indices are relative to first_free.</span>
+        <span class="c1"># suffix[0] = cached_Z_prefix (product of stages 0..first_free-1).</span>
+        <span class="c1"># suffix[k] = R_{first_free+k-1} @ suffix[k-1]</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))]</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_tail</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">suffix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cached_Z_prefix</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_Z_prefix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tail</span><span class="p">):</span>
+            <span class="n">suffix</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">R_list</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">suffix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="c1"># Build prefix products:  prefix[k] = R_{N-1} @ ... @ R_{k+1}</span>
+        <span class="c1"># where indices are relative to first_free.</span>
+        <span class="c1"># prefix[n_tail] = I  (nothing after the last stage)</span>
+        <span class="c1"># prefix[k] = prefix[k+1] @ R_{k+1}</span>
+        <span class="c1">#</span>
+        <span class="c1"># Actually we need prefix in absolute terms:</span>
+        <span class="c1"># prefix_abs[j] = R_{N-1} @ ... @ R_{j+1}</span>
+        <span class="c1"># For j = first_free + k:</span>
+        <span class="c1">#   prefix[k] = R_{n_tail-1} @ ... @ R_{k+1}  (relative indices)</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))]</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_tail</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">prefix</span><span class="p">[</span><span class="n">n_tail</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tail</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">prefix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">R_list</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">n_tail</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="c1"># Recalculate more carefully:</span>
+        <span class="c1"># prefix[k] should be the product of R_list[k+1] ... R_list[n_tail-1]</span>
+        <span class="c1"># applied left to right in stacking order (outermost first).</span>
+        <span class="c1"># Actually the Z chain is: Z = R_{N-1} @ R_{N-2} @ ... @ R_0</span>
+        <span class="c1"># So for relative index k, R_list[k] = R_{first_free + k}.</span>
+        <span class="c1"># Z_tail = R_list[n_tail-1] @ R_list[n_tail-2] @ ... @ R_list[0]</span>
+        <span class="c1">#        = suffix[n_tail] (already computed above, without prefix)</span>
+        <span class="c1">#</span>
+        <span class="c1"># dZ/dθ_j for j = first_free + k:</span>
+        <span class="c1">#   = (R_list[n_tail-1] @ ... @ R_list[k+1]) @ dR_list[k] @ (R_list[k-1] @ ... @ R_list[0] @ Z_prefix)</span>
+        <span class="c1">#   = prefix[k] @ dR_list[k] @ suffix[k]</span>
+        <span class="c1">#</span>
+        <span class="c1"># Rebuild prefix properly:</span>
+        <span class="n">prefix</span><span class="p">[</span><span class="n">n_tail</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tail</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">prefix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">R_list</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_tail</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1"># deg2rad factor: dR is w.r.t. radians, but angles are in degrees.</span>
+        <span class="n">deg2rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span>
+
+        <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_free</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">free_names</span><span class="p">):</span>
+            <span class="c1"># Find the absolute stage index for this free name</span>
+            <span class="n">abs_idx</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stages</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">abs_idx</span> <span class="o">-</span> <span class="n">first_free</span>  <span class="c1"># relative index into R_list</span>
+            <span class="n">dR_k</span> <span class="o">=</span> <span class="n">dR_map</span><span class="p">[</span><span class="n">abs_idx</span><span class="p">]</span>
+            <span class="c1"># dZ/dθ = prefix[k] @ dR_k @ suffix[k]</span>
+            <span class="n">dZ</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">dR_k</span> <span class="o">@</span> <span class="n">suffix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="c1"># dQ_phi/dθ = dZ^T @ Q_lab, with deg2rad conversion</span>
+            <span class="n">J</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">deg2rad</span> <span class="o">*</span> <span class="p">(</span><span class="n">dZ</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Q_lab</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">J</span></div>
 </div>
 
 
@@ -1160,14 +1284,21 @@
             <span class="n">Q</span> <span class="o">=</span> <span class="n">a2phi_fn</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">trial</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">Q</span> <span class="o">-</span> <span class="n">Q_phi_target</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">jacobian_fd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finite-difference Jacobian (3 × n_free).&quot;&quot;&quot;</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_free</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_free</span><span class="p">):</span>
-            <span class="n">xp</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">xp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
-            <span class="n">J</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">residual</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span> <span class="o">-</span> <span class="n">r0</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>
-        <span class="k">return</span> <span class="n">J</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">jacobian_fd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finite-difference Jacobian (3 × n_free) — fallback when no ctx.&quot;&quot;&quot;</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_free</span><span class="p">))</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_free</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">xp</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">xp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">J</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">residual</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span> <span class="o">-</span> <span class="n">r0</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">return</span> <span class="n">J</span>  <span class="c1"># pragma: no cover</span>
+
+    <span class="c1"># Build the ordered list of free stage names for the analytic Jacobian.</span>
+    <span class="k">if</span> <span class="n">_ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_one_dimensional</span><span class="p">:</span>
+            <span class="n">_free_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">free_stage_1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_free_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">free_stage_1</span><span class="p">,</span> <span class="n">free_stage_2</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">residual</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -1175,7 +1306,10 @@
             <span class="n">a1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">a2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">_one_dimensional</span> <span class="k">else</span> <span class="n">start_2</span>
             <span class="k">return</span> <span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">)</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian_fd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">_ctx</span><span class="o">.</span><span class="n">jacobian_analytic</span><span class="p">(</span><span class="n">trial</span><span class="p">,</span> <span class="n">_free_names</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian_fd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">dx</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
@@ -2406,7 +2540,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 11:48 CDT.
+  Last updated on 2026-04-27 12:26 CDT.
   <br/>
 </p></div>
       
