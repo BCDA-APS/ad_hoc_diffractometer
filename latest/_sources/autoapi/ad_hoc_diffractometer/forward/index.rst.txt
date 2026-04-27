@@ -69,6 +69,7 @@ Functions
 
    ad_hoc_diffractometer.forward._apply_cut_points
    ad_hoc_diffractometer.forward._check_limits
+   ad_hoc_diffractometer.forward._collect_dd_solution
    ad_hoc_diffractometer.forward._compute_natural_psi
    ad_hoc_diffractometer.forward._is_double_diffraction_mode
    ad_hoc_diffractometer.forward._is_kappa_virtual_mode
@@ -76,6 +77,7 @@ Functions
    ad_hoc_diffractometer.forward._is_qaz_mode
    ad_hoc_diffractometer.forward._is_standard_eulerian_pair
    ad_hoc_diffractometer.forward._is_surface_mode
+   ad_hoc_diffractometer.forward._refine_dd_outer_seeded
    ad_hoc_diffractometer.forward._solve_bisecting
    ad_hoc_diffractometer.forward._solve_bisecting_analytic
    ad_hoc_diffractometer.forward._solve_constraint_set
@@ -213,6 +215,16 @@ Module Contents
    Stages not present in the angles dict are not checked.
 
 
+.. py:function:: _collect_dd_solution(sol: dict[str, float], free_names: list[str], found_solutions: list[dict[str, float]], seen_keys: list[~numpy.ndarray], mode, geometry) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._collect_dd_solution``
+
+
+   De-duplicate, apply cut-points, check limits, and append if valid.
+
+
 .. py:function:: _compute_natural_psi(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray) -> float | None
 
    .. container:: import-path
@@ -314,6 +326,45 @@ Module Contents
 
    The ``"psi"`` ReferenceConstraint is NOT a surface mode — it is handled
    by :func:`_is_psi_mode` / :func:`_solve_psi_mode` instead.
+
+
+.. py:function:: _refine_dd_outer_seeded(outer_deg: float, candidate: dict[str, float], chi_hint: float, phi_hint: float, chi_name: str, phi_name: str, solve_inner_seeded_fn, ewald_fn, max_iter: int = 20, h: float = 0.0001) -> dict[str, float] | None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._refine_dd_outer_seeded``
+
+
+   1D Newton refinement on the outer sample angle to satisfy the Ewald
+   sphere constraint for the secondary reflection.
+
+   Tracks a single (chi, phi) branch using the seeded inner solver, which
+   uses the previous solution as the starting guess.  This avoids the
+   multi-seed overhead of the full inner solver.
+
+   :param outer_deg: Starting value for the outer sample angle.
+   :type outer_deg: float
+   :param candidate: Pre-computed candidate at ``outer_deg``.
+   :type candidate: dict[str, float]
+   :param chi_hint: Initial (chi, phi) hint for branch tracking.
+   :type chi_hint: float
+   :param phi_hint: Initial (chi, phi) hint for branch tracking.
+   :type phi_hint: float
+   :param chi_name: Stage names for chi and phi.
+   :type chi_name: str
+   :param phi_name: Stage names for chi and phi.
+   :type phi_name: str
+   :param solve_inner_seeded_fn: ``(outer_deg, chi_hint, phi_hint) -> dict | None``
+   :type solve_inner_seeded_fn: callable
+   :param ewald_fn: ``(angles) -> float``
+   :type ewald_fn: callable
+   :param max_iter:
+   :type max_iter: int
+   :param h: Finite-difference step for the derivative.
+   :type h: float
+
+   :returns: Refined solution dict, or None if refinement failed.
+   :rtype: dict[str, float] or None
 
 
 .. py:function:: _solve_bisecting(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
@@ -474,21 +525,29 @@ Module Contents
       Import: ``ad_hoc_diffractometer.forward._solve_double_diffraction``
 
 
-   Full 4D simultaneous solver for double-diffraction modes.
+   Decomposed solver for double-diffraction modes.
 
-   Finds motor angles where both the primary reflection (h₁,k₁,l₁) and a
-   secondary reflection (h₂,k₂,l₂) simultaneously satisfy the Ewald sphere
-   condition.  Matches the Hkl library's ``_double_diffraction`` function
-   (``hkl-pseudoaxis-common-hkl.c``).
+   Finds motor angles where both the primary reflection (h1,k1,l1) and a
+   secondary reflection (h2,k2,l2) simultaneously satisfy the Ewald sphere
+   condition.
 
-   Four equations, four unknowns:
+   Instead of a 4D Newton-Raphson system, the problem is decomposed into
+   sequential subproblems:
 
-   - Equations 1-3: Bragg condition for primary hkl₁ --
-     ``Q_phi_computed - Q_phi_target = 0`` (3 components).
-   - Equation 4: Ewald sphere for secondary hkl₂ --
-     ``|ki + Z @ UB @ hkl₂|² - |ki|² = 0``.
+   1. **Detector angle** -- known from Bragg's law (``ttheta_deg``).
+   2. **Outer sample angle scan** -- 1D sweep over the outermost free
+      sample stage (omega, eta, mu, or komega).
+   3. **(chi, phi) from Q direction** -- for each outer angle, solve the
+      primary Bragg condition for the two inner sample stages.  Uses the
+      analytic decomposition (``_solve_bisecting_analytic``) for standard
+      Eulerian geometries, or the 2D Gauss-Newton solver for kappa axes.
+   4. **Ewald sphere filter** -- accept only candidates where the secondary
+      reflection hkl2 lies on the Ewald sphere.  A 1D Newton refinement
+      on the outer sample angle drives the residual to machine precision.
 
-   where ``Z`` is the sample rotation matrix and ``ki = (2π/λ) ŷ``.
+   This replaces the former 4D Newton system (~50 seeds x 300 iterations x
+   5 residual evaluations per step) with a 1D scan + analytic 2D solve +
+   scalar filter, yielding a 100-1000x speedup.
 
    :param geometry:
    :type geometry: AdHocDiffractometer
