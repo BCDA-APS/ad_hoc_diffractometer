@@ -1,0 +1,1236 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ad_hoc_diffractometer.drawing &#8212; ad_hoc_diffractometer 0.7</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=fe7df9b0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/drawing';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.7.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.7" />
+    <meta name="docbuild:last-update" content="2026-04-27 10:53 CDT"/>
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.7</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer.drawing</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ad_hoc_diffractometer.drawing</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2026 Pete R. Jemian &lt;prjemian+ad_hoc_diffractometer@gmail.com&gt;</span>
+<span class="c1"># SPDX-License-Identifier: CC-BY-4.0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">drawing.py — geometry visualization helpers.</span>
+
+<span class="sd">Provides interactive Plotly figures for diffractometer geometry diagrams:</span>
+
+<span class="sd">:class:`StageAxisFigure`</span>
+<span class="sd">    3D interactive diagram for a single stage rotation axis.</span>
+
+<span class="sd">:class:`GeometryAxisFigure`</span>
+<span class="sd">    Composite diagram showing all stages of a geometry arranged in a</span>
+<span class="sd">    directed-graph layout with parent-child relationships.</span>
+
+<span class="sd">These are the preferred output for documentation; pre-generate them</span>
+<span class="sd">with ``tools/generate_geometry_drawings.py`` and embed the resulting</span>
+<span class="sd">HTML files as ``&lt;iframe&gt;`` elements in the Sphinx pages.</span>
+
+<span class="sd">Plotly is an optional dependency.  Both classes raise</span>
+<span class="sd">:class:`ImportError` with a helpful message if it is not installed.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">axis_label</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_physical_label</span><span class="p">(</span><span class="n">axis_vec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a human-readable axis label with physical direction if possible.</span>
+
+<span class="sd">    For standard signed basis vectors, returns e.g. ``&quot;-transverse&quot;`` or</span>
+<span class="sd">    ``&quot;+vertical&quot;``.  For tilted axes (kappa), returns the numeric label.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">basis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">axis_label</span><span class="p">(</span><span class="n">axis_vec</span><span class="p">)</span>
+
+    <span class="n">atol</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="k">for</span> <span class="n">direction</span><span class="p">,</span> <span class="n">bvec</span> <span class="ow">in</span> <span class="n">basis</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">bvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bvec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">axis_vec</span><span class="p">,</span> <span class="n">bvec</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;+</span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">axis_vec</span><span class="p">,</span> <span class="o">-</span><span class="n">bvec</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;-</span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># Tilted axis (kappa) — fall back to numeric label</span>
+    <span class="k">return</span> <span class="n">axis_label</span><span class="p">(</span><span class="n">axis_vec</span><span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Plotly interactive figures</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="n">_ROLE_COLORS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sample&quot;</span><span class="p">:</span> <span class="s2">&quot;aliceblue&quot;</span><span class="p">,</span> <span class="s2">&quot;detector&quot;</span><span class="p">:</span> <span class="s2">&quot;seashell&quot;</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span><span class="p">:</span> <span class="s2">&quot;honeydew&quot;</span><span class="p">}</span>
+
+<span class="c1"># GeometryAxisFigure layout constants</span>
+<span class="n">_CELL_W</span> <span class="o">=</span> <span class="mi">400</span>  <span class="c1"># px per column</span>
+<span class="n">_CELL_H</span> <span class="o">=</span> <span class="mi">400</span>  <span class="c1"># px per row</span>
+<span class="n">_TITLE_PX</span> <span class="o">=</span> <span class="mi">70</span>  <span class="c1"># px reserved above each scene for the HTML title annotation</span>
+<span class="n">_GAP</span> <span class="o">=</span> <span class="mf">0.02</span>  <span class="c1"># fractional gap between adjacent scenes (paper coords)</span>
+<span class="n">_EYE_SCALE</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># camera zoom-out relative to StageAxisFigure default</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_require_plotly</span><span class="p">():</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Import and return plotly.graph_objects, or raise ImportError.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+
+        <span class="k">return</span> <span class="n">go</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;plotly is required for StageAxisFigure and GeometryAxisFigure.  &quot;</span>
+            <span class="s2">&quot;Install it with:  pip install plotly&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_tree_layout</span><span class="p">(</span><span class="n">stages</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute bottom-to-top tree layout positions for a stage dict.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    depth : dict  stage_name -&gt; int</span>
+<span class="sd">        0 for roots (bottom), increasing toward leaves (top).</span>
+<span class="sd">    x_pos : dict  stage_name -&gt; float</span>
+<span class="sd">        Leaf nodes get integer slots 0, 1, 2, …</span>
+<span class="sd">        Parent nodes are centered over their children (may be half-integer).</span>
+<span class="sd">    children : dict  stage_name -&gt; list[str]</span>
+<span class="sd">    roots : list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">children</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">stages</span><span class="p">}</span>
+    <span class="n">roots</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+            <span class="n">children</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">parent</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">roots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="c1"># depth = longest path from any root</span>
+    <span class="n">memo</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_depth</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">memo</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">stages</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span>
+            <span class="n">memo</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">get_depth</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">memo</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="n">depth</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">get_depth</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">stages</span><span class="p">}</span>
+
+    <span class="c1"># leaf order: depth-first traversal from each root</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subtree_leaves</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">children</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">children</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">subtree_leaves</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">leaves</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
+        <span class="n">leaves</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">subtree_leaves</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+
+    <span class="c1"># x position: leaf nodes get integer slots; parents center over children</span>
+    <span class="n">x_pos</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_x</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+        <span class="n">kids</span> <span class="o">=</span> <span class="n">children</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">kids</span><span class="p">:</span>
+            <span class="n">x_pos</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">leaves</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kids</span><span class="p">:</span>
+                <span class="n">assign_x</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">x_pos</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">min</span><span class="p">(</span><span class="n">x_pos</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kids</span><span class="p">)</span> <span class="o">+</span> <span class="nb">max</span><span class="p">(</span><span class="n">x_pos</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kids</span><span class="p">)</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
+        <span class="n">assign_x</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">depth</span><span class="p">,</span> <span class="n">x_pos</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="n">roots</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_scene_domain</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">title_frac</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Paper-coordinate domain for a scene at grid position (col, row).</span>
+
+<span class="sd">    row=0 is the bottom (roots); row=n_rows-1 is the top (deepest leaves).</span>
+<span class="sd">    title_frac is the fraction of each row height reserved for the title.</span>
+<span class="sd">    Returns (x_domain, y_domain) as two [lo, hi] lists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">col_w</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">n_cols</span>
+    <span class="n">row_h</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">n_rows</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">col</span> <span class="o">*</span> <span class="n">col_w</span> <span class="o">+</span> <span class="n">_GAP</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="p">(</span><span class="n">col</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">col_w</span> <span class="o">-</span> <span class="n">_GAP</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">y0</span> <span class="o">=</span> <span class="n">row</span> <span class="o">*</span> <span class="n">row_h</span> <span class="o">+</span> <span class="n">_GAP</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">row_h</span> <span class="o">-</span> <span class="n">_GAP</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">title_frac</span> <span class="o">*</span> <span class="n">row_h</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">],</span> <span class="p">[</span><span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="StageAxisFigure">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StageAxisFigure</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interactive Plotly figure for a single stage rotation-axis diagram.</span>
+
+<span class="sd">    Draws the geometry&#39;s basis vectors (grey, semi-transparent) and the</span>
+<span class="sd">    stage&#39;s rotation axis (red) with a direction arc, in a 3-D interactive</span>
+<span class="sd">    Plotly scene.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry_name : str</span>
+<span class="sd">        Name of a preset geometry (e.g. ``&#39;kappa6c&#39;``, ``&#39;zaxis&#39;``).</span>
+<span class="sd">    axis_name : str</span>
+<span class="sd">        Name of a stage in that geometry (e.g. ``&#39;komega&#39;``, ``&#39;Z&#39;``).</span>
+<span class="sd">    axis_labels : bool</span>
+<span class="sd">        If ``True``, label the basis vectors (V, L, T) in the figure.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Forwarded to :class:`plotly.graph_objects.Figure`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from ad_hoc_diffractometer.drawing import StageAxisFigure</span>
+<span class="sd">    &gt;&gt;&gt; fig = StageAxisFigure(&quot;fourcv&quot;, &quot;omega&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; fig.write_html(&quot;omega.html&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">geometry_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">axis_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">axis_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">go</span> <span class="o">=</span> <span class="n">_require_plotly</span><span class="p">()</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.presets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_presets</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_go</span> <span class="o">=</span> <span class="n">go</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">factory</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_presets</span><span class="p">,</span> <span class="n">geometry_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">factory</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">axis_name</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># set in _draw_basis_vectors</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;StageAxisFigure: </span><span class="si">%s</span><span class="s2"> / </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">geometry_name</span><span class="p">,</span> <span class="n">axis_name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_draw_basis_vectors</span><span class="p">(</span><span class="n">axis_labels</span><span class="o">=</span><span class="n">axis_labels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_draw_axis</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_titles</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_scene</span><span class="p">()</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Public Figure-compatible interface</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plotly traces (delegated to the internal Figure).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plotly layout (delegated to the internal Figure).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">layout</span>
+
+<div class="viewcode-block" id="StageAxisFigure.add_trace">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure.add_trace">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a trace to the internal figure.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StageAxisFigure.update_layout">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure.update_layout">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update layout on the internal figure.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StageAxisFigure.write_html">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure.write_html">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the figure to an HTML file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or pathlib.Path</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Forwarded to :meth:`plotly.graph_objects.Figure.write_html`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">write_html</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StageAxisFigure.write_image">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure.write_image">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the figure to a static image file (SVG, PNG, etc.).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or pathlib.Path</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Forwarded to :meth:`plotly.graph_objects.Figure.write_image`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StageAxisFigure.show">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure.show">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the figure (delegates to the internal Figure).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Drawing helpers</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_basis_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw basis vectors as lines with cone tips.&quot;&quot;&quot;</span>
+        <span class="n">go</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_go</span>
+        <span class="n">ver</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="c1"># R maps basis vectors to display coordinates:</span>
+        <span class="c1">#   lat  -&gt; +x; lon -&gt; -y; ver -&gt; +z (up on screen)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lat</span><span class="p">,</span> <span class="o">-</span><span class="n">lon</span><span class="p">,</span> <span class="n">ver</span><span class="p">])</span>
+
+        <span class="n">ver_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">@</span> <span class="n">ver</span>
+        <span class="n">lon_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">@</span> <span class="n">lon</span>
+        <span class="n">lat_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">@</span> <span class="n">lat</span>
+
+        <span class="n">basis_length</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">vec</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="n">ver_d</span><span class="p">,</span> <span class="s2">&quot;grey&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="n">lon_d</span><span class="p">,</span> <span class="s2">&quot;grey&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">lat_d</span><span class="p">,</span> <span class="s2">&quot;grey&quot;</span><span class="p">),</span>
+        <span class="p">]:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">vec</span> <span class="o">*</span> <span class="n">basis_length</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+                <span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span>
+                    <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                    <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                    <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+                    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lines&quot;</span><span class="p">,</span>
+                    <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span>
+                    <span class="n">opacity</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+                    <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+                <span class="n">go</span><span class="o">.</span><span class="n">Cone</span><span class="p">(</span>
+                    <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                    <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                    <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+                    <span class="n">u</span><span class="o">=</span><span class="p">[</span><span class="n">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">],</span>
+                    <span class="n">v</span><span class="o">=</span><span class="p">[</span><span class="n">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">],</span>
+                    <span class="n">w</span><span class="o">=</span><span class="p">[</span><span class="n">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">],</span>
+                    <span class="n">colorscale</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="p">]],</span>
+                    <span class="n">showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">sizemode</span><span class="o">=</span><span class="s2">&quot;absolute&quot;</span><span class="p">,</span>
+                    <span class="n">sizeref</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                    <span class="n">opacity</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">axis_labels</span><span class="p">:</span>
+                <span class="n">tv</span> <span class="o">=</span> <span class="n">vec</span> <span class="o">*</span> <span class="p">(</span><span class="n">basis_length</span> <span class="o">+</span> <span class="mf">0.15</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+                    <span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span>
+                        <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">tv</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                        <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">tv</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                        <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="n">tv</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+                        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                        <span class="n">text</span><span class="o">=</span><span class="p">[</span><span class="n">name</span><span class="p">],</span>
+                        <span class="n">textfont</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">),</span>
+                        <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw the axis vector and rotation arc.&quot;&quot;&quot;</span>
+        <span class="n">axis_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_draw_axis_vector</span><span class="p">()</span>
+
+        <span class="n">stage_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">stage_norm</span> <span class="o">=</span> <span class="n">stage_axis</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">stage_axis</span><span class="p">)</span>
+        <span class="c1"># Arc sweep direction encodes handedness: +1 for right-handed</span>
+        <span class="c1"># (stage axis parallel to drawn axis), -1 for left-handed</span>
+        <span class="c1"># (stage axis anti-parallel, i.e. negated).</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">stage_norm</span><span class="p">,</span> <span class="n">axis_norm</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: stage_axis=</span><span class="si">%s</span><span class="s2">  axis_norm=</span><span class="si">%s</span><span class="s2">  direction=</span><span class="si">%+d</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">stage_axis</span><span class="p">,</span>
+            <span class="n">axis_norm</span><span class="p">,</span>
+            <span class="n">direction</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_draw_axis_arc</span><span class="p">(</span><span class="n">axis_norm</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_axis_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw the rotation axis as a red line; return positive unit vector.&quot;&quot;&quot;</span>
+        <span class="n">go</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_go</span>
+        <span class="n">stage_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">axis_norm</span> <span class="o">=</span> <span class="n">stage_axis</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">stage_axis</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">axis_norm</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">component</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-9</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">component</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">axis_norm</span> <span class="o">=</span> <span class="o">-</span><span class="n">axis_norm</span>
+                <span class="k">break</span>
+
+        <span class="n">axis_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">@</span> <span class="n">axis_norm</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">axis_d</span> <span class="o">*</span> <span class="mf">0.4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+            <span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span>
+                <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lines&quot;</span><span class="p">,</span>
+                <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                <span class="n">opacity</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">axis_norm</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_axis_arc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis_norm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw the rotation arc and arrowhead.&quot;&quot;&quot;</span>
+        <span class="n">go</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_go</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">axis_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">@</span> <span class="n">axis_norm</span>
+
+        <span class="n">eye</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.92</span><span class="p">,</span> <span class="mf">1.18</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.10</span><span class="p">])</span>
+        <span class="n">view_dir</span> <span class="o">=</span> <span class="o">-</span><span class="n">eye</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">eye</span><span class="p">)</span>
+        <span class="n">cam_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+        <span class="n">screen_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">cam_up</span><span class="p">,</span> <span class="n">view_dir</span><span class="p">)</span>
+        <span class="n">screen_right</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">screen_right</span><span class="p">)</span>
+        <span class="n">screen_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">view_dir</span><span class="p">,</span> <span class="n">screen_right</span><span class="p">)</span>
+
+        <span class="n">perp1_d</span> <span class="o">=</span> <span class="n">screen_right</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">screen_right</span><span class="p">,</span> <span class="n">axis_d</span><span class="p">)</span> <span class="o">*</span> <span class="n">axis_d</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">perp1_d</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+            <span class="n">perp1_d</span> <span class="o">=</span> <span class="n">screen_up</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">screen_up</span><span class="p">,</span> <span class="n">axis_d</span><span class="p">)</span> <span class="o">*</span> <span class="n">axis_d</span>
+        <span class="n">perp1_d</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">perp1_d</span><span class="p">)</span>
+
+        <span class="c1"># Build a right-handed perpendicular frame: cross(axis_d, perp1_d)</span>
+        <span class="c1"># guarantees (perp1_d, perp2_d, axis_d) is right-handed, so</span>
+        <span class="c1"># sweeping from -π/3 to +π/3 draws a right-handed (CCW) arc.</span>
+        <span class="c1"># For left-handed stages (direction=-1), flip perp2_d to reverse</span>
+        <span class="c1"># the visual sweep sense.</span>
+        <span class="n">perp2_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">axis_d</span><span class="p">,</span> <span class="n">perp1_d</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">perp2_d</span> <span class="o">=</span> <span class="o">-</span><span class="n">perp2_d</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;_draw_axis_arc: direction=</span><span class="si">%+d</span><span class="s2">  axis_d=</span><span class="si">%s</span><span class="s2">  perp1_d=</span><span class="si">%s</span><span class="s2">  perp2_d=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">direction</span><span class="p">,</span>
+            <span class="n">axis_d</span><span class="p">,</span>
+            <span class="n">perp1_d</span><span class="p">,</span>
+            <span class="n">perp2_d</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">arc_radius</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">arc_center_d</span> <span class="o">=</span> <span class="n">axis_d</span> <span class="o">*</span> <span class="mf">0.45</span>
+        <span class="n">arc_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+        <span class="n">arc_pts_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">arc_center_d</span> <span class="o">+</span> <span class="n">arc_radius</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">perp1_d</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">perp2_d</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arc_angles</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">arc_scale</span> <span class="o">=</span> <span class="mf">0.6</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+            <span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">arc_pts_d</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">arc_scale</span><span class="p">,</span>
+                <span class="n">y</span><span class="o">=</span><span class="n">arc_pts_d</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">arc_scale</span><span class="p">,</span>
+                <span class="n">z</span><span class="o">=</span><span class="n">arc_pts_d</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">arc_scale</span><span class="p">,</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lines&quot;</span><span class="p">,</span>
+                <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+                <span class="n">opacity</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">tangent</span> <span class="o">=</span> <span class="n">arc_pts_d</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">arc_pts_d</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">tangent</span> <span class="o">=</span> <span class="n">tangent</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">tangent</span><span class="p">)</span>
+        <span class="n">tip</span> <span class="o">=</span> <span class="n">arc_pts_d</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">arc_scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+            <span class="n">go</span><span class="o">.</span><span class="n">Cone</span><span class="p">(</span>
+                <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">tip</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">tip</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="n">tip</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+                <span class="n">u</span><span class="o">=</span><span class="p">[</span><span class="n">tangent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">],</span>
+                <span class="n">v</span><span class="o">=</span><span class="p">[</span><span class="n">tangent</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">],</span>
+                <span class="n">w</span><span class="o">=</span><span class="p">[</span><span class="n">tangent</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">],</span>
+                <span class="n">colorscale</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;black&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;black&quot;</span><span class="p">]],</span>
+                <span class="n">showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">sizemode</span><span class="o">=</span><span class="s2">&quot;absolute&quot;</span><span class="p">,</span>
+                <span class="n">sizeref</span><span class="o">=</span><span class="mf">0.06</span><span class="p">,</span>
+                <span class="n">opacity</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_titles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add title and subtitle to the figure.&quot;&quot;&quot;</span>
+        <span class="n">stage_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">phys</span> <span class="o">=</span> <span class="n">_physical_label</span><span class="p">(</span><span class="n">stage_axis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
+        <span class="n">cartesian</span> <span class="o">=</span> <span class="n">axis_label</span><span class="p">(</span><span class="n">stage_axis</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">phys</span> <span class="o">!=</span> <span class="n">cartesian</span><span class="p">:</span>
+            <span class="n">axis_desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phys</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">cartesian</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">axis_desc</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">stage_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">stage_axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">stage_axis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">]&quot;</span>
+            <span class="p">)</span>
+        <span class="n">role</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">role</span>
+        <span class="n">subtitle</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">axis_desc</span><span class="si">}</span><span class="s2"> </span><span class="se">\u2014</span><span class="s2"> </span><span class="si">{</span><span class="n">role</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">title_text</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&lt;b&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="se">\u2014</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/b&gt;&lt;br&gt;&quot;</span>
+            <span class="sa">f</span><span class="s1">&#39;&lt;span style=&quot;color:gray;font-size:12px&quot;&gt;</span><span class="si">{</span><span class="n">subtitle</span><span class="si">}</span><span class="s1">&lt;/span&gt;&#39;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">title_text</span><span class="p">,</span>
+                <span class="n">x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">xanchor</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure the 3-D scene camera and axes.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+            <span class="n">scene</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">zaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">aspectmode</span><span class="o">=</span><span class="s2">&quot;cube&quot;</span><span class="p">,</span>
+                <span class="n">camera</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">center</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                    <span class="n">eye</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.92</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.18</span><span class="p">,</span> <span class="n">z</span><span class="o">=-</span><span class="mf">0.10</span><span class="p">),</span>
+                    <span class="n">up</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="mi">450</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="GeometryAxisFigure">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.GeometryAxisFigure">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeometryAxisFigure</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interactive Plotly figure showing all stages of a geometry.</span>
+
+<span class="sd">    Stages are arranged as a directed graph following parent relationships.</span>
+<span class="sd">    The graph flows bottom-to-top: root stages (``parent=None``) are at the</span>
+<span class="sd">    bottom; each child is one row above its parent.  Leaf nodes are assigned</span>
+<span class="sd">    integer column slots; parents are centered over their children.</span>
+
+<span class="sd">    Role is indicated by scene background color:</span>
+
+<span class="sd">    - sample   → aliceblue</span>
+<span class="sd">    - detector → seashell</span>
+<span class="sd">    - other    → honeydew</span>
+
+<span class="sd">    Parent-child relationships are drawn as arrows on the figure.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry_name : str</span>
+<span class="sd">        Name of a preset geometry (e.g. ``&#39;zaxis&#39;``, ``&#39;kappa6c&#39;``).</span>
+<span class="sd">    axis_labels : bool</span>
+<span class="sd">        If ``True``, label the basis vectors on each sub-plot.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Forwarded to :class:`plotly.graph_objects.Figure`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from ad_hoc_diffractometer.drawing import GeometryAxisFigure</span>
+<span class="sd">    &gt;&gt;&gt; fig = GeometryAxisFigure(&quot;fourcv&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; fig.write_html(&quot;fourcv.html&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">geometry_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">axis_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">go</span> <span class="o">=</span> <span class="n">_require_plotly</span><span class="p">()</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.presets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_presets</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_go</span> <span class="o">=</span> <span class="n">go</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">factory</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_presets</span><span class="p">,</span> <span class="n">geometry_name</span><span class="p">)</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">factory</span><span class="p">()</span>
+        <span class="n">stages</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;GeometryAxisFigure: </span><span class="si">%s</span><span class="s2">  stages=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">geometry_name</span><span class="p">,</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">stages</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">depth</span><span class="p">,</span> <span class="n">x_pos</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="n">roots</span> <span class="o">=</span> <span class="n">_tree_layout</span><span class="p">(</span><span class="n">stages</span><span class="p">)</span>
+        <span class="n">max_depth</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">depth</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">n_rows</span> <span class="o">=</span> <span class="n">max_depth</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">leaf_xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_pos</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">stages</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">children</span><span class="p">[</span><span class="n">n</span><span class="p">]]</span>
+        <span class="n">n_cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">leaf_xs</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">title_frac</span> <span class="o">=</span> <span class="n">_TITLE_PX</span> <span class="o">/</span> <span class="n">_CELL_H</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">_CELL_W</span> <span class="o">*</span> <span class="n">n_cols</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">_CELL_H</span> <span class="o">*</span> <span class="n">n_rows</span><span class="p">,</span>
+            <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">scene_domains</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">scene_idx</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="n">stages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">x_pos</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">depth</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">x_domain</span><span class="p">,</span> <span class="n">y_domain</span> <span class="o">=</span> <span class="n">_scene_domain</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">title_frac</span><span class="p">)</span>
+            <span class="n">scene_domains</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_domain</span><span class="p">,</span> <span class="n">y_domain</span><span class="p">)</span>
+            <span class="n">scene_key</span> <span class="o">=</span> <span class="s2">&quot;scene&quot;</span> <span class="k">if</span> <span class="n">scene_idx</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;scene</span><span class="si">{</span><span class="n">scene_idx</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">scene_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">sf</span> <span class="o">=</span> <span class="n">StageAxisFigure</span><span class="p">(</span><span class="n">geometry_name</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">axis_labels</span><span class="o">=</span><span class="n">axis_labels</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">trace</span> <span class="ow">in</span> <span class="n">sf</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+                <span class="n">trace</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">scene</span><span class="o">=</span><span class="n">scene_key</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span>
+
+            <span class="n">role</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="s2">&quot;role&quot;</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span><span class="p">)</span>
+            <span class="n">scene_layout</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">to_plotly_json</span><span class="p">()</span>
+            <span class="n">scene_layout</span><span class="p">[</span><span class="s2">&quot;domain&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">x_domain</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y_domain</span><span class="p">}</span>
+            <span class="n">scene_layout</span><span class="p">[</span><span class="s2">&quot;bgcolor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_ROLE_COLORS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">role</span><span class="p">,</span> <span class="n">_ROLE_COLORS</span><span class="p">[</span><span class="s2">&quot;other&quot;</span><span class="p">])</span>
+            <span class="n">eye</span> <span class="o">=</span> <span class="n">scene_layout</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;camera&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eye&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">scene_layout</span><span class="p">[</span><span class="s2">&quot;camera&quot;</span><span class="p">][</span><span class="s2">&quot;eye&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="o">*</span> <span class="n">_EYE_SCALE</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">eye</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">({</span><span class="n">scene_key</span><span class="p">:</span> <span class="n">scene_layout</span><span class="p">})</span>
+
+            <span class="n">x_mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_domain</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x_domain</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">y_top</span> <span class="o">=</span> <span class="n">y_domain</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">text</span><span class="o">=</span><span class="n">sf</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                    <span class="n">x</span><span class="o">=</span><span class="n">x_mid</span><span class="p">,</span>
+                    <span class="n">y</span><span class="o">=</span><span class="n">y_top</span><span class="p">,</span>
+                    <span class="n">xref</span><span class="o">=</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span>
+                    <span class="n">yref</span><span class="o">=</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span>
+                    <span class="n">xanchor</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                    <span class="n">yanchor</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span>
+                    <span class="n">showarrow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">12</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Parent-child edges</span>
+        <span class="n">fig_w</span> <span class="o">=</span> <span class="n">_CELL_W</span> <span class="o">*</span> <span class="n">n_cols</span>
+        <span class="n">fig_h</span> <span class="o">=</span> <span class="n">_CELL_H</span> <span class="o">*</span> <span class="n">n_rows</span>
+        <span class="n">margin_l</span> <span class="o">=</span> <span class="n">margin_t</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">plot_w</span> <span class="o">=</span> <span class="n">fig_w</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">margin_l</span>
+        <span class="n">plot_h</span> <span class="o">=</span> <span class="n">fig_h</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">margin_t</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">paper_to_px</span><span class="p">(</span><span class="n">xp</span><span class="p">,</span> <span class="n">yp</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">margin_l</span> <span class="o">+</span> <span class="n">xp</span> <span class="o">*</span> <span class="n">plot_w</span><span class="p">,</span> <span class="n">margin_t</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">yp</span><span class="p">)</span> <span class="o">*</span> <span class="n">plot_h</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="n">stages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">stage</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">parent_name</span> <span class="o">=</span> <span class="n">stage</span><span class="o">.</span><span class="n">parent</span>
+            <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="n">scene_domains</span><span class="p">[</span><span class="n">parent_name</span><span class="p">]</span>
+            <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">scene_domains</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+            <span class="n">x_start</span> <span class="o">=</span> <span class="p">(</span><span class="n">px</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">px</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">y_start</span> <span class="o">=</span> <span class="n">py</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">x_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">cx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">cx</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">y_end</span> <span class="o">=</span> <span class="n">cy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_shape</span><span class="p">(</span>
+                <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;line&quot;</span><span class="p">,</span>
+                <span class="n">x0</span><span class="o">=</span><span class="n">x_start</span><span class="p">,</span>
+                <span class="n">y0</span><span class="o">=</span><span class="n">y_start</span><span class="p">,</span>
+                <span class="n">x1</span><span class="o">=</span><span class="n">x_end</span><span class="p">,</span>
+                <span class="n">y1</span><span class="o">=</span><span class="n">y_end</span><span class="p">,</span>
+                <span class="n">xref</span><span class="o">=</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span>
+                <span class="n">yref</span><span class="o">=</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span>
+                <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;dimgray&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">1.5</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="n">sx_px</span><span class="p">,</span> <span class="n">sy_px</span> <span class="o">=</span> <span class="n">paper_to_px</span><span class="p">(</span><span class="n">x_start</span><span class="p">,</span> <span class="n">y_start</span><span class="p">)</span>
+            <span class="n">ex_px</span><span class="p">,</span> <span class="n">ey_px</span> <span class="o">=</span> <span class="n">paper_to_px</span><span class="p">(</span><span class="n">x_end</span><span class="p">,</span> <span class="n">y_end</span><span class="p">)</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">sx_px</span> <span class="o">-</span> <span class="n">ex_px</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="n">sy_px</span> <span class="o">-</span> <span class="n">ey_px</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
+            <span class="n">shaft_px</span> <span class="o">=</span> <span class="mf">12.0</span>
+            <span class="n">ax_px</span> <span class="o">=</span> <span class="n">dx</span> <span class="o">/</span> <span class="n">dist</span> <span class="o">*</span> <span class="n">shaft_px</span> <span class="k">if</span> <span class="n">dist</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+            <span class="n">ay_px</span> <span class="o">=</span> <span class="n">dy</span> <span class="o">/</span> <span class="n">dist</span> <span class="o">*</span> <span class="n">shaft_px</span> <span class="k">if</span> <span class="n">dist</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">shaft_px</span>
+            <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">x</span><span class="o">=</span><span class="n">x_end</span><span class="p">,</span>
+                    <span class="n">y</span><span class="o">=</span><span class="n">y_end</span><span class="p">,</span>
+                    <span class="n">xref</span><span class="o">=</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span>
+                    <span class="n">yref</span><span class="o">=</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span>
+                    <span class="n">ax</span><span class="o">=</span><span class="n">ax_px</span><span class="p">,</span>
+                    <span class="n">ay</span><span class="o">=</span><span class="n">ay_px</span><span class="p">,</span>
+                    <span class="n">axref</span><span class="o">=</span><span class="s2">&quot;pixel&quot;</span><span class="p">,</span>
+                    <span class="n">ayref</span><span class="o">=</span><span class="s2">&quot;pixel&quot;</span><span class="p">,</span>
+                    <span class="n">showarrow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">arrowhead</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">arrowsize</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span>
+                    <span class="n">arrowwidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+                    <span class="n">arrowcolor</span><span class="o">=</span><span class="s2">&quot;dimgray&quot;</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Public Figure-compatible interface</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plotly traces (delegated to the internal Figure).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plotly layout (delegated to the internal Figure).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">layout</span>
+
+<div class="viewcode-block" id="GeometryAxisFigure.write_html">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.GeometryAxisFigure.write_html">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the figure to an HTML file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or pathlib.Path</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Forwarded to :meth:`plotly.graph_objects.Figure.write_html`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">write_html</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GeometryAxisFigure.write_image">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.GeometryAxisFigure.write_image">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the figure to a static image file (SVG, PNG, etc.).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or pathlib.Path</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Forwarded to :meth:`plotly.graph_objects.Figure.write_image`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GeometryAxisFigure.show">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.GeometryAxisFigure.show">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the figure (delegates to the internal Figure).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-04-27 10:53 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Pete Jemian.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,248 @@
+refinement
+==========
+
+.. py:module:: ad_hoc_diffractometer.refinement
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.refinement``
+
+   Functions
+   ---------
+   refine_lattice_bl1967(sample, reflections, ...)
+       Simultaneously refine cell parameters and orientation (U matrix) from
+       N ≥ 3 reflections by iterative least-squares (Busing & Levy 1967,
+       §"Refinement of lattice and orientation parameters").  Uses finite-
+       difference Jacobians; no scipy dependency.
+
+   refine_lattice_simplex(sample, reflections, ...)
+       Derivative-free refinement of cell parameters (and optionally orientation)
+       using the Nelder-Mead simplex method.  Falls back to a pure-numpy
+       implementation when scipy is not available.
+
+   Parameter-space notes
+   ---------------------
+   Both functions accept a ``refine_all`` keyword argument (default ``False``).
+
+   * ``refine_all=False`` — refine only the **free parameters** for the
+     crystal system currently deduced from ``sample.lattice``.  Symmetry
+     constraints are maintained at every iteration: constrained parameters
+     are re-derived from the free ones by constructing a new ``Lattice``
+     object.  For example, for a cubic crystal only ``a`` is refined;
+     ``b``, ``c``, and all angles are kept equal to ``a`` and 90°.
+
+   * ``refine_all=True`` — treat all six cell parameters as independent,
+     regardless of the crystal system of the starting lattice.  Use this
+     when you expect the refined lattice to break the nominal symmetry
+     (e.g. due to strain or twinning), or when the crystal system is
+     genuinely unknown.
+
+   The same ``refine_all`` argument applies to both ``refine_lattice_bl1967``
+   and ``refine_lattice_simplex``.
+
+   .. rubric:: References
+
+   * Busing & Levy, Acta Cryst. 22, 457-464 (1967),
+     §"Refinement of lattice and orientation parameters".
+   * Nelder & Mead, The Computer Journal 7(4), 308-313 (1965).
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.refinement.refine_lattice_bl1967
+   ad_hoc_diffractometer.refinement.refine_lattice_simplex
+
+
+Module Contents
+---------------
+
+.. py:function:: refine_lattice_bl1967(sample, reflections, refine_cell: bool = True, refine_orientation: bool = True, refine_all: bool = False, max_iter: int = 100, tol: float | None = None) -> dict
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement.refine_lattice_bl1967``
+
+
+   Refine lattice parameters and/or orientation from N≥3 reflections.
+
+   Uses the Busing & Levy (1967) least-squares approach (§"Refinement of
+   lattice and orientation parameters").  Starting from the current
+   ``sample.UB`` and ``sample.lattice``, iteratively solves the linearized
+   normal equations to minimize the sum of squared residuals between
+   observed and calculated phi-frame scattering vectors.
+
+   Observed vector for reflection i:
+       ``hiφ_obs = angles_to_phi_vector(geometry, **ri.angles)``
+   Calculated vector:
+       ``hiφ_calc = UB @ hi``
+   Residual:
+       ``Δhiφ = hiφ_obs − hiφ_calc``
+
+   The Jacobian of ``hiφ_calc`` with respect to cell parameters is
+   computed by finite difference on the B matrix; the Jacobian with
+   respect to the three orientation parameters (infinitesimal rotation
+   components) uses the analytical cross-product formula.
+
+   :param sample: The sample whose ``lattice``, ``U``, and ``UB`` are updated
+                  in-place.  ``sample.parent`` must be a geometry with
+                  ``wavelength`` set (needed by ``angles_to_phi_vector``).
+                  ``sample.UB`` must be set (call one of the ``ub_from_*``
+                  functions first).
+   :type sample: Sample
+   :param reflections: N ≥ 3 reflections.  Each may be a ``Reflection`` object or a
+                       name string in ``sample.reflections``.
+   :type reflections: list of Reflection or str
+   :param refine_cell: If True (default), refine the cell parameters.
+   :type refine_cell: bool, optional
+   :param refine_orientation: If True (default), refine the three orientation parameters
+                              (infinitesimal rotation components).
+   :type refine_orientation: bool, optional
+   :param refine_all: Controls which cell parameters are treated as free:
+
+                      * ``False`` (default) — refine only the parameters that are
+                        free in the crystal system of the *current* ``sample.lattice``
+                        (e.g. only ``a`` for cubic, ``a`` and ``c`` for tetragonal,
+                        etc.).  Symmetry constraints are enforced at every iteration.
+                      * ``True`` — treat all six parameters (a, b, c, α, β, γ) as
+                        independent, regardless of the starting crystal system.  Use
+                        this when the refined cell is expected to break the nominal
+                        symmetry, or when the crystal system is unknown.
+   :type refine_all: bool, optional
+   :param max_iter: Maximum number of iterations (default 100).
+   :type max_iter: int, optional
+   :param tol: Convergence tolerance on the RMS residual change between
+               iterations.  If None, defaults to 1e-10 Å⁻¹.
+   :type tol: float or None, optional
+
+   :returns: **result** -- ``lattice``    — refined :class:`Lattice` (also stored on ``sample``)
+             ``UB``         — refined UB matrix (3×3 ndarray)
+             ``U``          — derived U = UB @ B⁻¹ (3×3 ndarray or None)
+             ``residuals``  — per-reflection residual vectors, shape (N, 3) Å⁻¹
+             ``rms``        — root-mean-square residual (scalar, Å⁻¹)
+             ``converged``  — True if converged within ``max_iter`` iterations
+             ``n_iter``     — number of iterations performed
+   :rtype: dict
+
+   :raises ValueError: If ``sample.parent`` is None.
+   :raises ValueError: If ``sample.UB`` is None (call a ``ub_from_*`` function first).
+   :raises ValueError: If fewer than 3 reflections are supplied.
+   :raises ValueError: If neither ``refine_cell`` nor ``refine_orientation`` is True.
+   :raises TypeError: If any element of ``reflections`` is not a Reflection or str.
+
+   .. rubric:: Notes
+
+   UB is updated in-place at each iteration.  U is derived at the end
+   as ``U = UB @ B⁻¹``.  Both ``sample.U`` and ``sample.UB`` are set
+   in-place before returning, and ``sample.lattice`` is replaced by
+   the refined ``Lattice`` object.
+
+   If the least-squares system is ill-conditioned (e.g. reflections are
+   nearly coplanar), the normal equations are solved with
+   ``numpy.linalg.lstsq`` (rcond=1e-15), which returns the minimum-norm
+   solution.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.fourcv()
+   >>> g.wavelength = 1.5406
+   >>> g.add_sample("sapphire", ahd.Lattice(a=4.758, c=12.991, gamma=120))
+   >>> g.sample = "sapphire"
+   >>> # ... add reflections, compute initial UB ...
+   >>> result = ahd.refine_lattice_bl1967(
+   ...     g.sample, ["r1", "r2", "r3"],
+   ...     refine_all=False,   # keep hexagonal constraints
+   ... )
+   >>> result["converged"]
+   True
+   >>> result["lattice"].a    # refined a (= b enforced by hexagonal symmetry)
+   ...
+
+   .. rubric:: References
+
+   Busing & Levy, Acta Cryst. 22, 457-464 (1967),
+   §"Refinement of lattice and orientation parameters".
+
+
+.. py:function:: refine_lattice_simplex(sample, reflections, refine_cell: bool = True, refine_orientation: bool = False, refine_all: bool = False, max_iter: int = 1000, tol: float | None = None) -> dict
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement.refine_lattice_simplex``
+
+
+   Derivative-free lattice refinement using the Nelder-Mead simplex method.
+
+   Minimises the scalar cost function::
+
+       f(params) = Σ_i |hiφ_obs_i − UB(params) @ hi|²
+
+   where ``UB(params) = U @ B(params)`` and U is held fixed at its current
+   value (unless ``refine_orientation=True``).
+
+   Uses ``scipy.optimize.minimize`` with ``method='Nelder-Mead'`` when
+   scipy is available, and falls back to a built-in pure-numpy
+   Nelder-Mead implementation otherwise.
+
+   :param sample: The sample whose ``lattice``, ``U``, and ``UB`` are updated
+                  in-place.  ``sample.parent`` must be a geometry with
+                  ``wavelength`` set.  ``sample.UB`` must already be set.
+   :type sample: Sample
+   :param reflections: N ≥ 3 reflections.
+   :type reflections: list of Reflection or str
+   :param refine_cell: If True (default), refine the cell parameters.
+   :type refine_cell: bool, optional
+   :param refine_orientation: If True, also perturb the orientation parameters (three rotation
+                              components) during the simplex search.  Default False.
+   :type refine_orientation: bool, optional
+   :param refine_all: Controls which cell parameters are treated as free:
+
+                      * ``False`` (default) — refine only the free parameters for the
+                        crystal system of the *current* ``sample.lattice``.  Symmetry
+                        constraints are enforced by reconstructing a ``Lattice`` at
+                        each function evaluation.
+                      * ``True`` — treat all six parameters as independent.
+   :type refine_all: bool, optional
+   :param max_iter: Maximum number of function evaluations (default 1000).
+   :type max_iter: int, optional
+   :param tol: Convergence tolerance on the cost function value.
+               If None, defaults to 1e-12.
+   :type tol: float or None, optional
+
+   :returns: **result** -- Same keys as ``refine_lattice_bl1967``:
+             ``lattice``, ``UB``, ``U``, ``residuals``, ``rms``,
+             ``converged``, ``n_iter``.
+   :rtype: dict
+
+   :raises ValueError: If ``sample.parent`` is None or ``sample.UB`` is None.
+   :raises ValueError: If fewer than 3 reflections are supplied.
+   :raises ValueError: If neither ``refine_cell`` nor ``refine_orientation`` is True.
+   :raises TypeError: If any element of ``reflections`` is not a Reflection or str.
+
+   .. rubric:: Notes
+
+   The default ``refine_orientation=False`` leaves U fixed; only the
+   cell parameters (and thus B, and thus UB = U @ B) are optimized.
+   This is the typical use case: use ``ub_from_two_reflections_bl1967``
+   to get U, then use the simplex to find the best cell parameters.
+
+   When scipy is not available, a minimal pure-numpy Nelder-Mead
+   implementation is used.
+
+   .. rubric:: Examples
+
+   >>> result = ahd.refine_lattice_simplex(
+   ...     g.sample, ["r1", "r2", "r3"],
+   ...     refine_all=False,   # keep hexagonal constraints on a=b, gamma=120
+   ... )
+   >>> result["converged"]
+   True
+
+   .. rubric:: References
+
+   Nelder & Mead, The Computer Journal 7(4), 308-313 (1965).
+
+

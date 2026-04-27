@@ -1,0 +1,196 @@
+drawing
+=======
+
+.. py:module:: ad_hoc_diffractometer.drawing
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.drawing``
+
+   Provides interactive Plotly figures for diffractometer geometry diagrams:
+
+   :class:`StageAxisFigure`
+       3D interactive diagram for a single stage rotation axis.
+
+   :class:`GeometryAxisFigure`
+       Composite diagram showing all stages of a geometry arranged in a
+       directed-graph layout with parent-child relationships.
+
+   These are the preferred output for documentation; pre-generate them
+   with ``tools/generate_geometry_drawings.py`` and embed the resulting
+   HTML files as ``<iframe>`` elements in the Sphinx pages.
+
+   Plotly is an optional dependency.  Both classes raise
+   :class:`ImportError` with a helpful message if it is not installed.
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.drawing.GeometryAxisFigure
+   ad_hoc_diffractometer.drawing.StageAxisFigure
+
+
+Module Contents
+---------------
+
+.. py:class:: GeometryAxisFigure(geometry_name: str, axis_labels: bool = True, **kwargs)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.drawing.GeometryAxisFigure``
+
+
+   Interactive Plotly figure showing all stages of a geometry.
+
+   Stages are arranged as a directed graph following parent relationships.
+   The graph flows bottom-to-top: root stages (``parent=None``) are at the
+   bottom; each child is one row above its parent.  Leaf nodes are assigned
+   integer column slots; parents are centered over their children.
+
+   Role is indicated by scene background color:
+
+   - sample   → aliceblue
+   - detector → seashell
+   - other    → honeydew
+
+   Parent-child relationships are drawn as arrows on the figure.
+
+   :param geometry_name: Name of a preset geometry (e.g. ``'zaxis'``, ``'kappa6c'``).
+   :type geometry_name: str
+   :param axis_labels: If ``True``, label the basis vectors on each sub-plot.
+   :type axis_labels: bool
+   :param \*\*kwargs: Forwarded to :class:`plotly.graph_objects.Figure`.
+
+   .. rubric:: Examples
+
+   >>> from ad_hoc_diffractometer.drawing import GeometryAxisFigure
+   >>> fig = GeometryAxisFigure("fourcv")
+   >>> fig.write_html("fourcv.html")
+
+
+   .. py:property:: data
+
+      Plotly traces (delegated to the internal Figure).
+
+
+   .. py:property:: layout
+
+      Plotly layout (delegated to the internal Figure).
+
+
+   .. py:method:: show(**kwargs)
+
+      Display the figure (delegates to the internal Figure).
+
+
+
+   .. py:method:: write_html(path, **kwargs)
+
+      Write the figure to an HTML file.
+
+      :param path:
+      :type path: str or pathlib.Path
+      :param \*\*kwargs: Forwarded to :meth:`plotly.graph_objects.Figure.write_html`.
+
+
+
+   .. py:method:: write_image(path, **kwargs)
+
+      Write the figure to a static image file (SVG, PNG, etc.).
+
+      :param path:
+      :type path: str or pathlib.Path
+      :param \*\*kwargs: Forwarded to :meth:`plotly.graph_objects.Figure.write_image`.
+
+
+
+.. py:class:: StageAxisFigure(geometry_name: str, axis_name: str, axis_labels: bool = False, **kwargs)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.drawing.StageAxisFigure``
+
+
+   Interactive Plotly figure for a single stage rotation-axis diagram.
+
+   Draws the geometry's basis vectors (grey, semi-transparent) and the
+   stage's rotation axis (red) with a direction arc, in a 3-D interactive
+   Plotly scene.
+
+   :param geometry_name: Name of a preset geometry (e.g. ``'kappa6c'``, ``'zaxis'``).
+   :type geometry_name: str
+   :param axis_name: Name of a stage in that geometry (e.g. ``'komega'``, ``'Z'``).
+   :type axis_name: str
+   :param axis_labels: If ``True``, label the basis vectors (V, L, T) in the figure.
+   :type axis_labels: bool
+   :param \*\*kwargs: Forwarded to :class:`plotly.graph_objects.Figure`.
+
+   .. rubric:: Examples
+
+   >>> from ad_hoc_diffractometer.drawing import StageAxisFigure
+   >>> fig = StageAxisFigure("fourcv", "omega")
+   >>> fig.write_html("omega.html")
+
+
+   .. py:attribute:: R
+      :value: None
+
+
+
+   .. py:method:: add_trace(trace)
+
+      Add a trace to the internal figure.
+
+
+
+   .. py:property:: data
+
+      Plotly traces (delegated to the internal Figure).
+
+
+   .. py:attribute:: geometry
+
+
+   .. py:property:: layout
+
+      Plotly layout (delegated to the internal Figure).
+
+
+   .. py:method:: show(**kwargs)
+
+      Display the figure (delegates to the internal Figure).
+
+
+
+   .. py:attribute:: stage
+
+
+   .. py:method:: update_layout(*args, **kwargs)
+
+      Update layout on the internal figure.
+
+
+
+   .. py:method:: write_html(path, **kwargs)
+
+      Write the figure to an HTML file.
+
+      :param path:
+      :type path: str or pathlib.Path
+      :param \*\*kwargs: Forwarded to :meth:`plotly.graph_objects.Figure.write_html`.
+
+
+
+   .. py:method:: write_image(path, **kwargs)
+
+      Write the figure to a static image file (SVG, PNG, etc.).
+
+      :param path:
+      :type path: str or pathlib.Path
+      :param \*\*kwargs: Forwarded to :meth:`plotly.graph_objects.Figure.write_image`.
+
+
+
