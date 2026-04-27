@@ -45,6 +45,7 @@ References
 
 from __future__ import annotations
 
+import itertools
 import math
 from typing import TYPE_CHECKING
 
@@ -437,32 +438,56 @@ def solve_kappa_virtual(
     solutions_eulerian: list[tuple[float, float, float]] = []
     seen: list[np.ndarray] = []
 
-    for branch in (+1, -1):
-        for seed in seeds:
-            sol = _newton_solve(seed, branch)
-            if sol is None:
-                continue
-            # Check residual
-            r = _q_residual_branch(sol, branch)
-            if float(np.linalg.norm(r)) > 1e-6:
-                continue
-            # Reconstruct full virtual angles
-            if fixed_omega is not None:
-                omega_e, chi_e, phi_e = fixed_omega, float(sol[0]), float(sol[1])
-            elif fixed_chi is not None:
-                omega_e, chi_e, phi_e = float(sol[0]), fixed_chi, float(sol[1])
-            else:
-                omega_e, chi_e, phi_e = float(sol[0]), float(sol[1]), fixed_phi
-            # Deduplicate
-            is_dup = any(
-                abs(omega_e - float(s[0])) < 1e-3
-                and abs(chi_e - float(s[1])) < 1e-3
-                and abs(phi_e - float(s[2])) < 1e-3
-                for s in seen
-            )
-            if not is_dup:
-                seen.append(np.array([omega_e, chi_e, phi_e]))
-                solutions_eulerian.append((omega_e, chi_e, phi_e))
+    # Early termination: once _MIN_SOLUTIONS unique Eulerian solutions have
+    # been found, stop after _MAX_STALE consecutive stale seeds (failed,
+    # high-residual, or duplicate).  Also stop immediately at _MAX_SOLUTIONS.
+    _MAX_SOLUTIONS = 4
+    _MIN_SOLUTIONS = 2
+    _MAX_STALE = 6
+    stale_count = 0
+
+    def _should_stop() -> bool:
+        """True when enough solutions found and seeds are producing duplicates."""
+        return len(solutions_eulerian) >= _MIN_SOLUTIONS and stale_count >= _MAX_STALE
+
+    for branch, seed in itertools.product((+1, -1), seeds):
+        sol = _newton_solve(seed, branch)
+        if sol is None:
+            stale_count += 1
+            if _should_stop():
+                break  # pragma: no cover
+            continue
+        # Check residual
+        r = _q_residual_branch(sol, branch)
+        if float(np.linalg.norm(r)) > 1e-6:
+            stale_count += 1
+            if _should_stop():
+                break
+            continue
+        # Reconstruct full virtual angles
+        if fixed_omega is not None:
+            omega_e, chi_e, phi_e = fixed_omega, float(sol[0]), float(sol[1])
+        elif fixed_chi is not None:
+            omega_e, chi_e, phi_e = float(sol[0]), fixed_chi, float(sol[1])
+        else:
+            omega_e, chi_e, phi_e = float(sol[0]), float(sol[1]), fixed_phi
+        # Deduplicate
+        is_dup = any(
+            abs(omega_e - float(s[0])) < 1e-3
+            and abs(chi_e - float(s[1])) < 1e-3
+            and abs(phi_e - float(s[2])) < 1e-3
+            for s in seen
+        )
+        if is_dup:
+            stale_count += 1
+            if _should_stop():
+                break  # pragma: no cover
+            continue
+        seen.append(np.array([omega_e, chi_e, phi_e]))
+        solutions_eulerian.append((omega_e, chi_e, phi_e))
+        stale_count = 0  # reset: found a new unique solution
+        if len(solutions_eulerian) >= _MAX_SOLUTIONS:
+            break
 
     if not solutions_eulerian:  # pragma: no cover
         return []

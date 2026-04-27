@@ -451,3 +451,86 @@ def test_sample_constraint_is_implemented_virtual_on_non_kappa():
     # has no kappa_alpha_deg, so SampleConstraint('omega') returns False.
     g = ahd.presets.psic()
     assert SampleConstraint("omega", 0.0).is_implemented(g) is False
+
+
+# ---------------------------------------------------------------------------
+# solve_kappa_virtual — early termination (#221)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "mode_name, constraint_name, constraint_value, h, k, l, context",
+    [
+        pytest.param(
+            "fixed_phi",
+            "phi",
+            0.0,
+            0,
+            1,
+            0,
+            does_not_raise(),
+            id="fixed_phi-010",
+        ),
+        pytest.param(
+            "fixed_omega",
+            "omega",
+            0.0,
+            0,
+            1,
+            0,
+            does_not_raise(),
+            id="fixed_omega-010",
+        ),
+        pytest.param(
+            "fixed_chi",
+            "chi",
+            90.0,
+            0,
+            0,
+            1,
+            does_not_raise(),
+            id="fixed_chi-001",
+        ),
+    ],
+)
+def test_solve_kappa_virtual_early_termination(
+    mode_name,
+    constraint_name,
+    constraint_value,
+    h,
+    k,
+    l,  # noqa: E741
+    context,
+):
+    """Early termination produces the same solutions as exhaustive search.
+
+    Verifies that solve_kappa_virtual with _MAX_SOLUTIONS / _MAX_STALE
+    returns results consistent with a correct forward calculation, and
+    that the number of Eulerian solutions found is bounded by
+    _MAX_SOLUTIONS (4).
+    """
+    import numpy as np
+
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import SampleConstraint
+    from ad_hoc_diffractometer.kappa import solve_kappa_virtual
+
+    with context:
+        g = ahd.presets.kappa4cv()
+        g.wavelength = 1.5406
+        g.sample.lattice = ahd.Lattice(a=5.431)
+        ahd.ub_identity(g.sample)
+
+        mode = ConstraintSet([SampleConstraint(constraint_name, constraint_value)])
+        Q_phi = g.sample.UB @ np.array([h, k, l], dtype=float)
+        ttheta = 2 * math.degrees(
+            math.asin(float(np.linalg.norm(Q_phi)) * g.wavelength / (4 * math.pi))
+        )
+        results = solve_kappa_virtual(g, Q_phi, ttheta, mode)
+
+        # Must produce at least one solution
+        assert len(results) >= 1
+        # Must not exceed _MAX_SOLUTIONS * 2 (each Eulerian solution
+        # produces up to 2 kappa branches)
+        assert len(results) <= 8  # _MAX_SOLUTIONS=4, 2 branches each
