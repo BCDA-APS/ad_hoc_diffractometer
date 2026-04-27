@@ -565,8 +565,11 @@ def _solve_bisecting_analytic(
         \begin{pmatrix} \cos\chi \\ \sin\chi \end{pmatrix}
         = \begin{pmatrix} C \\ E \end{pmatrix}
 
-    where :math:`A = \hat n_\phi \cdot q`, :math:`B = \hat n_\phi \cdot (\hat n_\chi \times q)`,
-    :math:`C = \hat n_\phi \cdot v`, :math:`E = \hat n_3 \cdot v`.
+    where
+    :math:`A = \hat n_\phi \cdot q`,
+    :math:`B = \hat n_\phi \cdot (\hat n_\chi \times q)`,
+    :math:`C = \hat n_\phi \cdot v`,
+    :math:`E = \hat n_3 \cdot v`.
     This yields a unique :math:`\chi` via ``atan2``.
 
     Phi is then solved from the :math:`\hat n_\chi` component:
@@ -782,9 +785,9 @@ def _solve_bisecting(
     that stage at its declared value.  Any fixed ``SampleConstraint`` values
     are applied before solving for the remaining free stages.
 
-    Two solutions are returned corresponding to:
-        - "positive chi" branch: chi ∈ [0°, 180°]
-        - "negative chi" branch: chi ∈ (-180°, 0°)
+    Two solutions are returned corresponding to the "positive chi"
+    branch (chi in [0, 180]) and the "negative chi" branch
+    (chi in (-180, 0)).
 
     Both solutions are validated against stage limits; those that fail are
     dropped.  Cut-points from the mode are applied to each angle.
@@ -1508,10 +1511,10 @@ def _solve_double_diffraction(
 
     Four equations, four unknowns:
 
-    1-3. Bragg condition for primary hkl₁:
-         ``Q_phi_computed - Q_phi_target = 0``  (3 components)
-    4.   Ewald sphere for secondary hkl₂:
-         ``|ki + Z @ UB @ hkl₂|² - |ki|² = 0``
+    - Equations 1-3: Bragg condition for primary hkl₁ --
+      ``Q_phi_computed - Q_phi_target = 0`` (3 components).
+    - Equation 4: Ewald sphere for secondary hkl₂ --
+      ``|ki + Z @ UB @ hkl₂|² - |ki|² = 0``.
 
     where ``Z`` is the sample rotation matrix and ``ki = (2π/λ) ŷ``.
 
