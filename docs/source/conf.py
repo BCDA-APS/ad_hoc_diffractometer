@@ -100,6 +100,7 @@ autoapi_options = [
     "undoc-members",
     "show-inheritance",
     "show-module-summary",
+    "private-members",
     # "imported-members" is intentionally omitted: including it causes
     # "more than one target" cross-reference warnings for every symbol
     # re-exported via __init__.py.
@@ -112,11 +113,31 @@ suppress_warnings = ["autoapi.python_import_resolution"]
 
 
 def autoapi_skip_member(app, what, name, obj, skip, options):
-    """Skip logger instances and private _version from the autoapi output."""
+    """Skip logger instances, _version, and private non-callable members.
+
+    Private *functions* and *methods* (``_name``) are kept because they
+    contain the most valuable algorithm documentation in the codebase.
+    Private *attributes*, *data*, and *properties* are suppressed because
+    they are property-backing fields, cache slots, internal storage, or
+    module-level constants that duplicate the public API.
+
+    This rule is self-maintaining: new private functions are automatically
+    published, and new private attributes are automatically suppressed,
+    with no manual list to update.
+    """
     if what == "data" and name.endswith(".logger"):
         return True
     if "_version" in name:
         return True
+
+    # Suppress private attributes, data, and properties — these are
+    # implementation details (backing fields, caches, constants).
+    # Private functions and methods are kept (algorithm documentation).
+    if what in ("attribute", "data", "property"):
+        short = name.rsplit(".", 1)[-1]
+        if short.startswith("_"):
+            return True
+
     return skip
 
 
