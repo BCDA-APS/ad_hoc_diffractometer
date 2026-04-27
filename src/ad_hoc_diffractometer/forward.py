@@ -187,6 +187,127 @@ class ForwardContext:
             self.y_eff,
         )
 
+    def jacobian_analytic(
+        self,
+        angles: dict[str, float],
+        free_names: list[str],
+    ) -> np.ndarray:
+        """
+        Compute the analytic Jacobian of Q_phi with respect to free stage angles.
+
+        Uses the closed-form derivative of the Rodrigues rotation matrix to
+        avoid finite-difference evaluations entirely.  The detector rotation
+        ``D`` must be cached (all detector stages fixed) — this is the case
+        for every call site that passes a ``ForwardContext`` to
+        :func:`_solve_two_angles`.
+
+        Parameters
+        ----------
+        angles : dict[str, float]
+            Current motor angles (degrees) for all stages.
+        free_names : list of str
+            Ordered list of free stage names (length 1 or 2).
+
+        Returns
+        -------
+        J : numpy.ndarray, shape (3, n_free)
+            ``J[:, k]`` is ``dQ_phi / d(stage_k angle in degrees)``.
+        """
+        from .rotation import _rotation_matrix_and_derivative_normalized
+        from .rotation import _rotation_matrix_normalized
+
+        n_free = len(free_names)
+        free_set = set(free_names)
+
+        # Q_lab is constant (D and y_eff are fixed).
+        D = self._cached_D if self._cached_D is not None else np.eye(3)
+        Q_lab = self.two_pi_over_lambda * (D @ self.y_eff - self.y_eff)
+
+        # Build per-stage rotation matrices for all sample stages from the
+        # first free index onward (stages before that are in cached_Z_prefix).
+        stages = self.sample_stages
+        first_free = (
+            self._free_sample_indices[0] if self._free_sample_indices else len(stages)
+        )
+
+        # Collect R_i and (for free stages) dR_i for indices >= first_free.
+        n_tail = len(stages) - first_free
+        R_list: list[np.ndarray] = [np.empty((3, 3))] * n_tail
+        dR_map: dict[int, np.ndarray] = {}  # absolute index -> dR
+
+        for idx in range(first_free, len(stages)):
+            s = stages[idx]
+            angle = angles.get(s.name, s.angle)
+            if s.name in free_set:
+                R_i, dR_i = _rotation_matrix_and_derivative_normalized(
+                    s._axis_hat,
+                    angle,  # noqa: SLF001
+                )
+                R_list[idx - first_free] = R_i
+                dR_map[idx] = dR_i
+            else:
+                R_list[idx - first_free] = _rotation_matrix_normalized(
+                    s._axis_hat,
+                    angle,  # noqa: SLF001
+                )
+
+        # Build suffix products:  suffix[k] = R_{k-1} @ ... @ R_0
+        # where indices are relative to first_free.
+        # suffix[0] = cached_Z_prefix (product of stages 0..first_free-1).
+        # suffix[k] = R_{first_free+k-1} @ suffix[k-1]
+        suffix = [np.empty((3, 3))] * (n_tail + 1)
+        suffix[0] = (
+            self._cached_Z_prefix if self._cached_Z_prefix is not None else np.eye(3)
+        )
+        for k in range(n_tail):
+            suffix[k + 1] = R_list[k] @ suffix[k]
+
+        # Build prefix products:  prefix[k] = R_{N-1} @ ... @ R_{k+1}
+        # where indices are relative to first_free.
+        # prefix[n_tail] = I  (nothing after the last stage)
+        # prefix[k] = prefix[k+1] @ R_{k+1}
+        #
+        # Actually we need prefix in absolute terms:
+        # prefix_abs[j] = R_{N-1} @ ... @ R_{j+1}
+        # For j = first_free + k:
+        #   prefix[k] = R_{n_tail-1} @ ... @ R_{k+1}  (relative indices)
+        prefix = [np.empty((3, 3))] * (n_tail + 1)
+        prefix[n_tail] = np.eye(3)
+        for k in range(n_tail - 1, -1, -1):
+            prefix[k] = prefix[k + 1] @ R_list[k + 1] if k + 1 < n_tail else np.eye(3)
+        # Recalculate more carefully:
+        # prefix[k] should be the product of R_list[k+1] ... R_list[n_tail-1]
+        # applied left to right in stacking order (outermost first).
+        # Actually the Z chain is: Z = R_{N-1} @ R_{N-2} @ ... @ R_0
+        # So for relative index k, R_list[k] = R_{first_free + k}.
+        # Z_tail = R_list[n_tail-1] @ R_list[n_tail-2] @ ... @ R_list[0]
+        #        = suffix[n_tail] (already computed above, without prefix)
+        #
+        # dZ/dθ_j for j = first_free + k:
+        #   = (R_list[n_tail-1] @ ... @ R_list[k+1]) @ dR_list[k] @ (R_list[k-1] @ ... @ R_list[0] @ Z_prefix)
+        #   = prefix[k] @ dR_list[k] @ suffix[k]
+        #
+        # Rebuild prefix properly:
+        prefix[n_tail] = np.eye(3)
+        for k in range(n_tail - 1, -1, -1):
+            prefix[k] = prefix[k + 1] @ R_list[k + 1] if (k + 1) < n_tail else np.eye(3)
+
+        # deg2rad factor: dR is w.r.t. radians, but angles are in degrees.
+        deg2rad = np.pi / 180.0
+
+        J = np.zeros((3, n_free))
+        for col, name in enumerate(free_names):
+            # Find the absolute stage index for this free name
+            abs_idx = next(i for i, s in enumerate(stages) if s.name == name)
+            k = abs_idx - first_free  # relative index into R_list
+            dR_k = dR_map[abs_idx]
+            # dZ/dθ = prefix[k] @ dR_k @ suffix[k]
+            dZ = prefix[k] @ dR_k @ suffix[k]
+            # dQ_phi/dθ = dZ^T @ Q_lab, with deg2rad conversion
+            J[:, col] = deg2rad * (dZ.T @ Q_lab)
+
+        return J
+
 
 # ---------------------------------------------------------------------------
 # Public entry point
@@ -724,14 +845,21 @@ def _solve_two_angles(
             Q = a2phi_fn(geometry, **trial)
             return Q - Q_phi_target
 
-    def jacobian_fd(x, r0, h=1e-4):
-        """Finite-difference Jacobian (3 × n_free)."""
-        J = np.zeros((3, n_free))
-        for i in range(n_free):
-            xp = x.copy()
-            xp[i] += h
-            J[:, i] = (residual(xp) - r0) / h
-        return J
+    def jacobian_fd(x, r0, h=1e-4):  # pragma: no cover
+        """Finite-difference Jacobian (3 × n_free) — fallback when no ctx."""
+        J = np.zeros((3, n_free))  # pragma: no cover
+        for i in range(n_free):  # pragma: no cover
+            xp = x.copy()  # pragma: no cover
+            xp[i] += h  # pragma: no cover
+            J[:, i] = (residual(xp) - r0) / h  # pragma: no cover
+        return J  # pragma: no cover
+
+    # Build the ordered list of free stage names for the analytic Jacobian.
+    if _ctx is not None:
+        if _one_dimensional:
+            _free_names = [free_stage_1]
+        else:
+            _free_names = [free_stage_1, free_stage_2]
 
     for _ in range(max_iter):
         r = residual(x)
@@ -739,7 +867,10 @@ def _solve_two_angles(
             a1 = float(x[0])
             a2 = float(x[1]) if not _one_dimensional else start_2
             return (a1, a2)
-        J = jacobian_fd(x, r)
+        if _ctx is not None:
+            J = _ctx.jacobian_analytic(trial, _free_names)
+        else:
+            J = jacobian_fd(x, r)  # pragma: no cover
         try:
             dx, _, _, _ = np.linalg.lstsq(J, -r, rcond=None)
         except np.linalg.LinAlgError:  # pragma: no cover

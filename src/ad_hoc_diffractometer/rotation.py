@@ -91,3 +91,55 @@ def _rotation_matrix_normalized(n: np.ndarray, angle_deg: float) -> np.ndarray:
         ]
     )
     return c * np.eye(3) + (1 - c) * np.outer(n, n) + s * skew
+
+
+def _rotation_matrix_and_derivative_normalized(
+    n: np.ndarray, angle_deg: float
+) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Compute both the rotation matrix and its derivative with respect to angle.
+
+    Returns ``(R, dR/dtheta)`` where ``theta`` is in **radians** — the
+    derivative is with respect to the radian-valued angle, not degrees.
+    The caller is responsible for the deg-to-rad conversion factor
+    (``pi/180``) when composing chain-rule Jacobians that take degree
+    inputs.
+
+    Uses the same Rodrigues decomposition as
+    :func:`_rotation_matrix_normalized` and shares the trig values, so the
+    marginal cost of the derivative is negligible.
+
+    The derivative formula:
+
+        dR/dtheta = -sin(theta) * (I - n (x) n) + cos(theta) * [n]_x
+
+    Parameters
+    ----------
+    n : numpy.ndarray, shape (3,)
+        **Unit** rotation axis vector.
+    angle_deg : float
+        Rotation angle in degrees.
+
+    Returns
+    -------
+    R : numpy.ndarray, shape (3, 3)
+        Rotation matrix (identical to ``_rotation_matrix_normalized``).
+    dR_dtheta : numpy.ndarray, shape (3, 3)
+        Derivative of R with respect to theta (radians).
+    """
+    theta = np.deg2rad(angle_deg)
+    c = np.cos(theta)
+    s = np.sin(theta)
+    nx, ny, nz = n
+    skew = np.array(
+        [
+            [0, -nz, ny],
+            [nz, 0, -nx],
+            [-ny, nx, 0],
+        ]
+    )
+    nn = np.outer(n, n)
+    R = c * np.eye(3) + (1 - c) * nn + s * skew
+    # dR/dtheta = -sin(theta)(I - n⊗n) + cos(theta)[n]×
+    dR = -s * (np.eye(3) - nn) + c * skew
+    return R, dR

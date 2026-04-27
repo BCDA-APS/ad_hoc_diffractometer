@@ -2303,6 +2303,162 @@ def test_double_diffraction_secondary_on_ewald_sphere(
 
 
 # ---------------------------------------------------------------------------
+# ForwardContext.jacobian_analytic — matches finite-difference Jacobian
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, hkl, context",
+    [
+        pytest.param(
+            fourcv, "bisecting", (1, 0, 0), does_not_raise(), id="fourcv-bisecting-100"
+        ),
+        pytest.param(
+            fourcv, "bisecting", (1, 1, 0), does_not_raise(), id="fourcv-bisecting-110"
+        ),
+        pytest.param(
+            fourcv, "bisecting", (0, 0, 1), does_not_raise(), id="fourcv-bisecting-001"
+        ),
+        pytest.param(
+            fourch, "bisecting", (1, 0, 0), does_not_raise(), id="fourch-bisecting-100"
+        ),
+        pytest.param(
+            psic,
+            "bisecting_vertical",
+            (1, 0, 0),
+            does_not_raise(),
+            id="psic-bisecting-100",
+        ),
+        pytest.param(
+            psic,
+            "bisecting_vertical",
+            (1, 1, 1),
+            does_not_raise(),
+            id="psic-bisecting-111",
+        ),
+        pytest.param(
+            fourcv, "fixed_chi", (1, 0, 0), does_not_raise(), id="fourcv-fixed_chi-100"
+        ),
+        pytest.param(
+            sixc, "bisecting_4c", (1, 0, 0), does_not_raise(), id="sixc-bisecting-100"
+        ),
+        pytest.param(
+            kappa4cv,
+            "bisecting",
+            (0, 1, 0),
+            does_not_raise(),
+            id="kappa4cv-bisecting-010",
+        ),
+        pytest.param(
+            kappa6c,
+            "bisecting_vertical",
+            (1, 0, 0),
+            does_not_raise(),
+            id="kappa6c-bisecting-100",
+        ),
+    ],
+)
+def test_jacobian_analytic_vs_fd(factory, mode_name, hkl, context):
+    """Analytic Jacobian agrees with finite-difference Jacobian to high precision."""
+    with context:
+        from ad_hoc_diffractometer.forward import ForwardContext
+
+        g = _setup_cubic(factory, a=4.0)
+        g.mode_name = mode_name
+
+        # Get a forward solution so we have realistic angles
+        solutions = g.forward(*hkl)
+        assert len(solutions) > 0
+        sol = solutions[0]
+
+        # Identify the free sample stages for this mode
+        constrained = set(g.mode.constrained_stages(g))
+        # Add detector stages to constrained set
+        det_names = {s.name for s in g.detector_stages}
+        constrained |= det_names
+        free_sample = [s for s in g.sample_stages if s.name not in constrained]
+
+        if len(free_sample) == 0:
+            return  # nothing to test — all constrained
+
+        free_names = [s.name for s in free_sample]
+
+        # Build ForwardContext and prepare caching
+        ctx = ForwardContext(g)
+        ctx.prepare_caching(sol, set(free_names))
+
+        # Analytic Jacobian
+        J_analytic = ctx.jacobian_analytic(sol, free_names)
+
+        # Finite-difference Jacobian
+        n_free = len(free_names)
+        h_deg = 1e-6
+        J_fd = np.zeros((3, n_free))
+        for i, name in enumerate(free_names):
+            sol_plus = dict(sol)
+            sol_plus[name] = sol[name] + h_deg
+            sol_minus = dict(sol)
+            sol_minus[name] = sol[name] - h_deg
+            Q_plus = ctx.q_phi(sol_plus)
+            Q_minus = ctx.q_phi(sol_minus)
+            J_fd[:, i] = (Q_plus - Q_minus) / (2 * h_deg)
+
+        np.testing.assert_allclose(J_analytic, J_fd, atol=1e-5)
+
+
+@pytest.mark.parametrize(
+    "factory, mode_name, hkl, context",
+    [
+        pytest.param(
+            fourcv, "bisecting", (1, 0, 0), does_not_raise(), id="fourcv-1d-100"
+        ),
+        pytest.param(
+            fourch, "bisecting", (0, 1, 0), does_not_raise(), id="fourch-1d-010"
+        ),
+    ],
+)
+def test_jacobian_analytic_1d(factory, mode_name, hkl, context):
+    """Analytic Jacobian works for the 1D case (single free stage)."""
+    with context:
+        from ad_hoc_diffractometer.forward import ForwardContext
+
+        g = _setup_cubic(factory, a=4.0)
+        g.mode_name = mode_name
+
+        solutions = g.forward(*hkl)
+        assert len(solutions) > 0
+        sol = solutions[0]
+
+        # Pick just one free sample stage
+        constrained = set(g.mode.constrained_stages(g))
+        det_names = {s.name for s in g.detector_stages}
+        constrained |= det_names
+        free_sample = [s for s in g.sample_stages if s.name not in constrained]
+
+        if len(free_sample) < 1:
+            return
+
+        # Test with just the first free stage
+        free_names = [free_sample[0].name]
+        ctx = ForwardContext(g)
+        ctx.prepare_caching(sol, set(free_names))
+
+        J_analytic = ctx.jacobian_analytic(sol, free_names)
+        assert J_analytic.shape == (3, 1)
+
+        # Finite-difference check
+        h_deg = 1e-6
+        name = free_names[0]
+        sol_plus = dict(sol)
+        sol_plus[name] = sol[name] + h_deg
+        sol_minus = dict(sol)
+        sol_minus[name] = sol[name] - h_deg
+        J_fd_col = (ctx.q_phi(sol_plus) - ctx.q_phi(sol_minus)) / (2 * h_deg)
+
+        np.testing.assert_allclose(J_analytic[:, 0], J_fd_col, atol=1e-5)
+
+
+# ---------------------------------------------------------------------------
 # ForwardContext coverage — all-sample-stages-constrained caching path
 # ---------------------------------------------------------------------------
 

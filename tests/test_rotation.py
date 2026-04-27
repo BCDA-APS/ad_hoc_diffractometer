@@ -18,6 +18,7 @@ from helpers import Rz
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
+from ad_hoc_diffractometer.rotation import _rotation_matrix_and_derivative_normalized
 from ad_hoc_diffractometer.rotation import rotation_matrix
 
 # ---------------------------------------------------------------------------
@@ -98,3 +99,101 @@ def test_rotation_matrix_orthogonal(axis, angle_deg, context):
         R = rotation_matrix(axis, angle_deg)
         np.testing.assert_allclose(R @ R.T, np.eye(3), atol=1e-10)
         assert abs(np.linalg.det(R) - 1.0) < 1e-10
+
+
+# ---------------------------------------------------------------------------
+# _rotation_matrix_and_derivative_normalized() — R matches, dR is correct
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "axis, angle_deg, context",
+    [
+        pytest.param(XHAT, 0.0, does_not_raise(), id="x-0deg"),
+        pytest.param(XHAT, 90.0, does_not_raise(), id="x-90deg"),
+        pytest.param(YHAT, 45.0, does_not_raise(), id="y-45deg"),
+        pytest.param(ZHAT, 180.0, does_not_raise(), id="z-180deg"),
+        pytest.param(-ZHAT, 30.0, does_not_raise(), id="neg-z-30deg"),
+        pytest.param(XHAT, -60.0, does_not_raise(), id="x-neg60deg"),
+        pytest.param(
+            np.array([1, 1, 1]) / np.sqrt(3),
+            72.0,
+            does_not_raise(),
+            id="diagonal-72deg",
+        ),
+        pytest.param(YHAT, 360.0, does_not_raise(), id="y-360deg"),
+    ],
+)
+def test_rotation_matrix_and_derivative_R_matches(axis, angle_deg, context):
+    """The R returned by the combined function matches rotation_matrix()."""
+    with context:
+        n = np.asarray(axis, dtype=float)
+        n = n / np.linalg.norm(n)
+        R, _dR = _rotation_matrix_and_derivative_normalized(n, angle_deg)
+        R_expected = rotation_matrix(axis, angle_deg)
+        np.testing.assert_allclose(R, R_expected, atol=1e-14)
+
+
+@pytest.mark.parametrize(
+    "axis, angle_deg, context",
+    [
+        pytest.param(XHAT, 0.0, does_not_raise(), id="x-0deg"),
+        pytest.param(XHAT, 90.0, does_not_raise(), id="x-90deg"),
+        pytest.param(YHAT, 45.0, does_not_raise(), id="y-45deg"),
+        pytest.param(ZHAT, 180.0, does_not_raise(), id="z-180deg"),
+        pytest.param(-ZHAT, 30.0, does_not_raise(), id="neg-z-30deg"),
+        pytest.param(XHAT, -60.0, does_not_raise(), id="x-neg60deg"),
+        pytest.param(
+            np.array([1, 1, 1]) / np.sqrt(3),
+            72.0,
+            does_not_raise(),
+            id="diagonal-72deg",
+        ),
+        pytest.param(YHAT, 360.0, does_not_raise(), id="y-360deg"),
+    ],
+)
+def test_rotation_matrix_and_derivative_dR_vs_finite_difference(
+    axis, angle_deg, context
+):
+    """dR/dtheta agrees with a central finite-difference estimate."""
+    with context:
+        n = np.asarray(axis, dtype=float)
+        n = n / np.linalg.norm(n)
+        _R, dR = _rotation_matrix_and_derivative_normalized(n, angle_deg)
+
+        # Central finite-difference in radians
+        h_deg = 1e-6
+        R_plus = rotation_matrix(n, angle_deg + h_deg)
+        R_minus = rotation_matrix(n, angle_deg - h_deg)
+        h_rad = np.deg2rad(h_deg)
+        dR_fd = (R_plus - R_minus) / (2 * h_rad)
+
+        np.testing.assert_allclose(dR, dR_fd, atol=1e-6)
+
+
+@pytest.mark.parametrize(
+    "axis, angle_deg, context",
+    [
+        pytest.param(XHAT, 37.0, does_not_raise(), id="x-37deg"),
+        pytest.param(YHAT, -73.0, does_not_raise(), id="y-neg73deg"),
+        pytest.param(ZHAT, 120.0, does_not_raise(), id="z-120deg"),
+        pytest.param(-ZHAT, 55.0, does_not_raise(), id="neg-z-55deg"),
+        pytest.param(
+            np.array([1, 1, 1]) / np.sqrt(3),
+            60.0,
+            does_not_raise(),
+            id="diagonal-60deg",
+        ),
+    ],
+)
+def test_rotation_matrix_and_derivative_dR_antisymmetric_product(
+    axis, angle_deg, context
+):
+    """R^T @ dR/dtheta is antisymmetric (a rotation derivative property)."""
+    with context:
+        n = np.asarray(axis, dtype=float)
+        n = n / np.linalg.norm(n)
+        R, dR = _rotation_matrix_and_derivative_normalized(n, angle_deg)
+        product = R.T @ dR
+        # R^T dR should be antisymmetric: product + product.T == 0
+        np.testing.assert_allclose(product + product.T, np.zeros((3, 3)), atol=1e-12)

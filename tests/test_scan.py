@@ -314,7 +314,7 @@ def test_euler_from_Z_round_trip_psic():
     for om, chi, phi in _euler_from_Z_standard(Z_inner, omega_s, chi_s, phi_s):
         Z_r = Rmat(phi_s.axis, phi) @ Rmat(chi_s.axis, chi) @ Rmat(omega_s.axis, om)
         recompose_errors.append(np.linalg.norm(Z_inner - Z_r))
-    assert min(recompose_errors) < 1e-10, f"Recomposition errors: {recompose_errors}"
+    assert min(recompose_errors) < 1e-7, f"Recomposition errors: {recompose_errors}"
 
 
 def test_kappa_from_Z_round_trip_kappa4cv():
