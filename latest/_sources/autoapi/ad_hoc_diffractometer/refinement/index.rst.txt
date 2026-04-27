@@ -52,12 +52,166 @@ Functions
 
 .. autoapisummary::
 
+   ad_hoc_diffractometer.refinement._B_from_full_params
+   ad_hoc_diffractometer.refinement._active_cell_params
+   ad_hoc_diffractometer.refinement._apply_delta
+   ad_hoc_diffractometer.refinement._build_jacobian_and_residuals
+   ad_hoc_diffractometer.refinement._dB_dp_finite_diff
+   ad_hoc_diffractometer.refinement._free_params_for_system
+   ad_hoc_diffractometer.refinement._full_params_from_free
+   ad_hoc_diffractometer.refinement._nelder_mead_numpy
+   ad_hoc_diffractometer.refinement._resolve_reflections
+   ad_hoc_diffractometer.refinement._rotation_from_vector
    ad_hoc_diffractometer.refinement.refine_lattice_bl1967
    ad_hoc_diffractometer.refinement.refine_lattice_simplex
 
 
 Module Contents
 ---------------
+
+.. py:function:: _B_from_full_params(params: dict) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement._B_from_full_params``
+
+
+   Return the B matrix for a complete six-parameter dict.
+
+
+.. py:function:: _active_cell_params(lat: ~ad_hoc_diffractometer.lattice.Lattice, refine_all: bool) -> tuple[str, Ellipsis]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement._active_cell_params``
+
+
+   Return the parameter names that will be varied during refinement.
+
+   :param lat: Current sample lattice (used to read crystal system when
+               ``refine_all=False``).
+   :type lat: Lattice
+   :param refine_all: If True, all six parameters are free.
+   :type refine_all: bool
+
+   :rtype: tuple of str — the active parameter names.
+
+
+.. py:function:: _apply_delta(full_params: dict, free_params: dict, UB: ~numpy.ndarray, delta_p: ~numpy.ndarray, active_cell: tuple[str, Ellipsis], system: str, refine_all: bool, refine_cell: bool, refine_orientation: bool) -> tuple[dict, dict, ~numpy.ndarray]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement._apply_delta``
+
+
+   Apply parameter update delta_p; return (new_full_params, new_free_params, new_UB).
+
+
+.. py:function:: _build_jacobian_and_residuals(geometry, refl_list: list, UB: ~numpy.ndarray, full_params: dict, free_params: dict, active_cell: tuple[str, Ellipsis], system: str, refine_all: bool, refine_cell: bool, refine_orientation: bool) -> tuple[~numpy.ndarray, ~numpy.ndarray]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement._build_jacobian_and_residuals``
+
+
+   Build Jacobian J (3N × n_params) and residual vector r (3N,).
+
+   Cell-param columns use finite-difference on B; orientation columns use
+   the analytical cross-product formula.
+
+
+.. py:function:: _dB_dp_finite_diff(full_params: dict, free_params: dict, pname: str, system: str, refine_all: bool, eps: float = 1e-06) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement._dB_dp_finite_diff``
+
+
+   Finite-difference derivative of the B matrix with respect to free parameter
+   ``pname``, enforcing symmetry constraints when ``refine_all=False``.
+
+   :param full_params:
+   :type full_params: dict — current full six-parameter set.
+   :param free_params:
+   :type free_params: dict — current free-parameter values.
+   :param pname:
+   :type pname: str — the free parameter being differentiated.
+   :param system:
+   :type system: str — crystal system.
+   :param refine_all:
+   :type refine_all: bool
+   :param eps:
+   :type eps: float — finite-difference step.
+
+   :returns: **dB**
+   :rtype: numpy.ndarray, shape (3, 3)
+
+
+.. py:function:: _free_params_for_system(system: str) -> tuple[str, Ellipsis]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement._free_params_for_system``
+
+
+   Return the free parameter names for the given crystal system.
+
+
+.. py:function:: _full_params_from_free(free_vals: dict, system: str) -> dict
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement._full_params_from_free``
+
+
+   Expand the free-parameter dict to a full six-parameter dict by applying
+   the symmetry constraints of ``system``.
+
+   Constructs a temporary ``Lattice`` from the free values plus any
+   system-specific hint parameters (e.g. ``gamma=120`` for hexagonal)
+   needed for the ``Lattice`` class to recognize the correct system, then
+   reads back all six parameters.
+
+   :param free_vals: Mapping from free parameter name → value for the given system.
+   :type free_vals: dict
+   :param system: Crystal system name (key in ``_SYSTEM_FREE_PARAMS``).
+   :type system: str
+
+   :rtype: dict with keys 'a','b','c','alpha','beta','gamma'.
+
+
+.. py:function:: _nelder_mead_numpy(f, x0: ~numpy.ndarray, max_iter: int = 1000, tol: float = 1e-12) -> tuple[~numpy.ndarray, int, bool]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement._nelder_mead_numpy``
+
+
+   Minimal pure-numpy Nelder-Mead simplex minimisation.
+
+   Implements the standard reflection/expansion/contraction/shrink
+   operations (Nelder & Mead 1965).
+
+
+.. py:function:: _resolve_reflections(sample, reflections: list) -> list
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement._resolve_reflections``
+
+
+   Return a list of Reflection objects from a mix of names and objects.
+
+
+.. py:function:: _rotation_from_vector(v: ~numpy.ndarray) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.refinement._rotation_from_vector``
+
+
+   Rotation matrix for a small rotation vector v (Rodrigues formula).
+
 
 .. py:function:: refine_lattice_bl1967(sample, reflections, refine_cell: bool = True, refine_orientation: bool = True, refine_all: bool = False, max_iter: int = 100, tol: float | None = None) -> dict
 

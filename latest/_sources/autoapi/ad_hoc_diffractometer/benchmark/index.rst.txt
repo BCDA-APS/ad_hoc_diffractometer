@@ -61,6 +61,11 @@ Functions
 
 .. autoapisummary::
 
+   ad_hoc_diffractometer.benchmark._prepare_mode
+   ad_hoc_diffractometer.benchmark._print_results
+   ad_hoc_diffractometer.benchmark._setup_geometry
+   ad_hoc_diffractometer.benchmark._time_forward
+   ad_hoc_diffractometer.benchmark._time_inverse
    ad_hoc_diffractometer.benchmark.benchmark_all
    ad_hoc_diffractometer.benchmark.benchmark_geometry
    ad_hoc_diffractometer.benchmark.benchmark_mode
@@ -96,6 +101,72 @@ Module Contents
 
 
    Cu Kα wavelength in Å.
+
+.. py:function:: _prepare_mode(geometry, mode_name: str) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.benchmark._prepare_mode``
+
+
+   Activate a mode and configure any special prerequisites.
+
+   Sets ``mode_name`` on the geometry and provides the minimum setup
+   required for modes that need extra configuration:
+
+   - fixed_psi modes: sets ``azimuthal_reference``
+   - double_diffraction modes: sets h2/k2/l2 extras
+   - surface/reference modes (alpha_i, beta_out, a_eq_b):
+     sets ``surface_normal``
+
+
+.. py:function:: _print_results(results: list[dict]) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.benchmark._print_results``
+
+
+   Print a formatted table of benchmark results to stdout.
+
+
+.. py:function:: _setup_geometry(name: str)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.benchmark._setup_geometry``
+
+
+   Create a geometry with a standard cubic sample and UB = B.
+
+
+.. py:function:: _time_forward(geometry, reflections, n_iter: int) -> tuple[float, list]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.benchmark._time_forward``
+
+
+   Time forward() calls and collect solutions.
+
+   Returns (ops_per_sec, all_solutions) where all_solutions is a list
+   of (hkl, solutions) pairs from the final iteration.
+
+
+.. py:function:: _time_inverse(geometry, solutions_by_hkl, n_iter: int) -> tuple[float, float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.benchmark._time_inverse``
+
+
+   Time inverse() calls and measure round-trip error.
+
+   :param solutions_by_hkl: Output from _time_forward.
+   :type solutions_by_hkl: list of (hkl, solutions)
+   :param Returns (ops_per_sec:
+   :param max_error).:
+
 
 .. py:function:: benchmark_all(*, reflections: list[tuple[float, float, float]] | None = None, n_iter: int = DEFAULT_N_ITER, verbose: bool = True) -> list[dict]
 

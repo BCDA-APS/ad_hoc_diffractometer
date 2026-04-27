@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=fcea3c37"></script>
+    <script src="../../../_static/documentation_options.js?v=576530e4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 14:27 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 15:03 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -575,16 +575,19 @@ DOI:10.1107/97809553602060000577</p></li>
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.get_geometry" title="ad_hoc_diffractometer.factories.get_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_geometry</span></code></a>(name)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories._load_entry_point_geometries" title="ad_hoc_diffractometer.factories._load_entry_point_geometries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_load_entry_point_geometries</span></code></a>(→ None)</p></td>
+<td><p>Discover and load geometry factories from installed entry points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.get_geometry" title="ad_hoc_diffractometer.factories.get_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_geometry</span></code></a>(name)</p></td>
 <td><p>Return the registered factory function for the named geometry.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.list_geometries" title="ad_hoc_diffractometer.factories.list_geometries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_geometries</span></code></a>(→ dict[str, type])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.list_geometries" title="ad_hoc_diffractometer.factories.list_geometries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_geometries</span></code></a>(→ dict[str, type])</p></td>
 <td><p>Return a copy of the geometry registry as {name: factory_callable}.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.make_geometry" title="ad_hoc_diffractometer.factories.make_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_geometry</span></code></a>(name, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.make_geometry" title="ad_hoc_diffractometer.factories.make_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_geometry</span></code></a>(name, **kwargs)</p></td>
 <td><p>Instantiate a geometry by name, passing keyword arguments to its factory.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.register_geometry" title="ad_hoc_diffractometer.factories.register_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_geometry</span></code></a>(func)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.register_geometry" title="ad_hoc_diffractometer.factories.register_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_geometry</span></code></a>(func)</p></td>
 <td><p>Decorator that registers a geometry factory in _GEOMETRY_REGISTRY.</p></td>
 </tr>
 </tbody>
@@ -631,6 +634,42 @@ DOI:10.1107/97809553602060000577</p></li>
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">KAPPA_ALPHA_DEFAULT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">50.0</span></span><a class="headerlink" href="#ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT" title="Link to this definition">#</a></dt>
 <dd><p>Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories._load_entry_point_geometries">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">_load_entry_point_geometries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/factories.html#_load_entry_point_geometries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.factories._load_entry_point_geometries" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.factories._load_entry_point_geometries</span></code></p>
+</div>
+<p>Discover and load geometry factories from installed entry points.</p>
+<p>Scans the <code class="docutils literal notranslate"><span class="pre">&quot;ad_hoc_diffractometer.geometries&quot;</span></code> entry-point group
+for all installed packages (including this package itself) and adds
+any factories not already present in <code class="docutils literal notranslate"><span class="pre">_GEOMETRY_REGISTRY</span></code>.</p>
+<p>This function is called automatically — and only once — by
+<code class="docutils literal notranslate"><span class="pre">list_geometries()</span></code> and <code class="docutils literal notranslate"><span class="pre">get_geometry()</span></code>.  It is idempotent:
+repeated calls after the first are no-ops.</p>
+<p class="rubric">Notes</p>
+<p>Built-in factories are registered via <code class="docutils literal notranslate"><span class="pre">&#64;register_geometry</span></code> at
+import time, so they are always present even if entry-point discovery
+fails.  Entry-point discovery supplements the registry with any
+third-party plugins that are installed but were not decorated with
+<code class="docutils literal notranslate"><span class="pre">&#64;register_geometry</span></code>.</p>
+<p>Each geometry name must be unique across all installed packages.  If
+an entry-point name collides with an already-registered name (whether
+a built-in or a previously loaded plugin), a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> is raised
+identifying the conflicting name and its source.  This prevents silent
+shadowing of built-in geometries and ambiguous duplicate registrations.</p>
+<p>If loading a particular entry point raises an exception <em>other than</em> a
+name collision (e.g. the plugin package is broken or missing), that
+entry point is silently skipped so that the rest of the registry is
+unaffected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If an entry-point name duplicates an already-registered geometry
+name.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -825,6 +864,7 @@ can instead declare an entry point in the
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.BASIS_YOU"><code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP"><code class="docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT"><code class="docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories._load_entry_point_geometries"><code class="docutils literal notranslate"><span class="pre">_load_entry_point_geometries()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.get_geometry"><code class="docutils literal notranslate"><span class="pre">get_geometry()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.list_geometries"><code class="docutils literal notranslate"><span class="pre">list_geometries()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.make_geometry"><code class="docutils literal notranslate"><span class="pre">make_geometry()</span></code></a></li>
@@ -865,7 +905,7 @@ can instead declare an entry point in the
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 14:27 CDT.
+  Last updated on 2026-04-27 15:03 CDT.
   <br/>
 </p></div>
       

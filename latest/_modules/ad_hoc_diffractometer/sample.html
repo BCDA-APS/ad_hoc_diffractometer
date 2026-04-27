@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=fcea3c37"></script>
+    <script src="../../_static/documentation_options.js?v=576530e4"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 14:27 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 15:03 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -500,23 +500,29 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_active_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_ref</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
+<div class="viewcode-block" id="SampleDict._guard_active">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.SampleDict._guard_active">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_guard_active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_name</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Cannot </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2"> the active sample </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">. &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;Select a different sample first.&quot;</span>
-            <span class="p">)</span>
+            <span class="p">)</span></div>
+
 
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Type guard</span>
     <span class="c1"># ------------------------------------------------------------------</span>
 
+<div class="viewcode-block" id="SampleDict._guard_type">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/sample/index.html#ad_hoc_diffractometer.sample.SampleDict._guard_type">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_guard_type</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Sample</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;SampleDict only accepts Sample instances; got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+            <span class="p">)</span></div>
+
 
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Dict-like interface</span>
@@ -763,7 +769,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 14:27 CDT.
+  Last updated on 2026-04-27 15:03 CDT.
   <br/>
 </p></div>
       

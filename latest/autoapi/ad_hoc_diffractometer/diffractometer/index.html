@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=fcea3c37"></script>
+    <script src="../../../_static/documentation_options.js?v=576530e4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 14:27 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 15:03 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -562,6 +562,72 @@ A cut-point C for stage X means the returned angle lies in
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.DEFAULT_BASIS">
 <span class="sig-name descname"><span class="pre">DEFAULT_BASIS</span></span><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.DEFAULT_BASIS" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._check_basis">
+<span class="sig-name descname"><span class="pre">_check_basis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer._check_basis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._check_basis" title="Link to this definition">#</a></dt>
+<dd><p>Validate that the basis contains exactly three mutually orthogonal,
+non-zero, 3-dimensional vectors.</p>
+<p>The basis is a labelled dict; its keys have no defined ordering, so
+right-handedness cannot be checked here (the cross product of two
+vectors depends on which is ‘first’).  Right-handedness is the
+caller’s responsibility and should be verified by the geometry
+factory functions or the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the basis does not have exactly three entries, if any vector
+is not 3-dimensional or is zero, or if any two vectors are not
+mutually orthogonal (normalized dot product exceeds tolerance).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._check_no_cycles">
+<span class="sig-name descname"><span class="pre">_check_no_cycles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer._check_no_cycles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._check_no_cycles" title="Link to this definition">#</a></dt>
+<dd><p>Raise ValueError if the parent graph contains a cycle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._clean_zero">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">_clean_zero</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer._clean_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._clean_zero" title="Link to this definition">#</a></dt>
+<dd><p>Return 0.0 if <code class="docutils literal notranslate"><span class="pre">abs(v)</span> <span class="pre">&lt;</span> <span class="pre">atol</span></code>, else <code class="docutils literal notranslate"><span class="pre">v</span></code>.</p>
+<p>Prevents <code class="docutils literal notranslate"><span class="pre">-0.0</span></code> or floating-point noise like <code class="docutils literal notranslate"><span class="pre">1e-16</span></code> from
+appearing in status output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._mode_from_dict">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">_mode_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><span class="pre">ConstraintSet</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer._mode_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._mode_from_dict" title="Link to this definition">#</a></dt>
+<dd><p>Reconstruct a <code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code> from a dict produced by
+<a class="reference internal" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._mode_to_dict" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._mode_to_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_mode_to_dict()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the dict does not have <code class="docutils literal notranslate"><span class="pre">&quot;type&quot;:</span> <span class="pre">&quot;ConstraintSet&quot;</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._mode_to_dict">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">_mode_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><span class="pre">ConstraintSet</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer._mode_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._mode_to_dict" title="Link to this definition">#</a></dt>
+<dd><p>Serialise a <code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code> to a JSON-serialisable dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._ordered_stages">
+<span class="sig-name descname"><span class="pre">_ordered_stages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><span class="pre">Stage</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer._ordered_stages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._ordered_stages" title="Link to this definition">#</a></dt>
+<dd><p>Return stages of the given role in stacking order (floor-most first).</p>
+<p>Uses a topological sort on the parent graph restricted to stages of
+the requested role.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._spec_motor_name">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">_spec_motor_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer._spec_motor_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._spec_motor_name" title="Link to this definition">#</a></dt>
+<dd><p>Map internal stage names to SPEC-style column headers.</p>
+<p>Unknown names pass through unchanged.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.add_reflection">
@@ -1790,6 +1856,13 @@ capture the string instead.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.DEFAULT_BASIS"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.DEFAULT_BASIS</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._check_basis"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer._check_basis()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._check_no_cycles"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer._check_no_cycles()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._clean_zero"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer._clean_zero()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._mode_from_dict"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer._mode_from_dict()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._mode_to_dict"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer._mode_to_dict()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._ordered_stages"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer._ordered_stages()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._spec_motor_name"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer._spec_motor_name()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.add_reflection"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.add_reflection()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.add_sample"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.add_sample()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.alpha_f"><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.alpha_f()</span></code></a></li>
@@ -1878,7 +1951,7 @@ capture the string instead.</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 14:27 CDT.
+  Last updated on 2026-04-27 15:03 CDT.
   <br/>
 </p></div>
       

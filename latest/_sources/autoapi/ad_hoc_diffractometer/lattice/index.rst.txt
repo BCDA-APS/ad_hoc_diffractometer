@@ -41,6 +41,8 @@ Functions
 
 .. autoapisummary::
 
+   ad_hoc_diffractometer.lattice._deduce_system_and_params
+   ad_hoc_diffractometer.lattice._validate_params
    ad_hoc_diffractometer.lattice.b_matrix
    ad_hoc_diffractometer.lattice.lattice_vectors
    ad_hoc_diffractometer.lattice.reciprocal_vectors
@@ -177,6 +179,29 @@ Module Contents
       Cached until a lattice parameter changes.
 
 
+   .. py:method:: _invalidate() -> None
+
+      Mark all cached computations as stale.
+
+
+
+   .. py:method:: _set_params(**kwargs) -> None
+
+      Update one or more lattice parameters, re-deduce the crystal system,
+      and invalidate the cache.  Parameters are always passed to the
+      deduction function in the canonical order a, b, c, alpha, beta, gamma.
+
+      All six current values are passed through, with kwargs overriding.
+      This allows re-deduction across crystal systems when a parameter
+      change alters the symmetry (e.g. setting b != a on a cubic lattice
+      causes re-deduction to orthorhombic).
+
+      Individual parameter validation (positive lengths, angle range) is
+      performed first, before deduction, so that errors are reported with
+      the correct parameter name rather than a generic deduction error.
+
+
+
    .. py:property:: a
       :type: float
 
@@ -287,6 +312,61 @@ Module Contents
       >>> Lattice(a=4.785, c=12.991, gamma=120).to_dict()
       {'a': 4.785, 'b': 4.785, 'c': 12.991, 'alpha': 90.0, 'beta': 90.0, 'gamma': 120.0}
 
+
+
+.. py:function:: _deduce_system_and_params(a, b, c, alpha, beta, gamma) -> tuple[str, float, float, float, float, float, float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice._deduce_system_and_params``
+
+
+   Deduce the crystal system from the supplied parameters and fill in
+   symmetry-required defaults for any that were not supplied.
+
+   Caller supplies values or _UNSET for each parameter.  'a' is always
+   required.  All other parameters are optional; their defaults depend on
+   the deduced crystal system.
+
+   Deduction rules (most constrained first):
+
+   Cubic:         a only
+   Trigonal:      a + alpha (alpha != 90)
+   Hexagonal:     a + c + gamma=120 (gamma must be explicit)
+   Tetragonal:    a + c (no angles)
+   Orthorhombic:  a + b + c (no angles)
+   Monoclinic:    a + b + c + beta
+   Triclinic:     all six
+
+   When all six parameters are supplied, the system is classified by
+   examining the symmetry of the values.
+
+   :param a: Each is either a float (supplied) or _UNSET (not supplied).
+   :param b: Each is either a float (supplied) or _UNSET (not supplied).
+   :param c: Each is either a float (supplied) or _UNSET (not supplied).
+   :param alpha: Each is either a float (supplied) or _UNSET (not supplied).
+   :param beta: Each is either a float (supplied) or _UNSET (not supplied).
+   :param gamma: Each is either a float (supplied) or _UNSET (not supplied).
+
+   :returns: * **system** (*str*)
+             * **a, b, c, alpha, beta, gamma** (*float (complete, validated)*)
+
+   :raises ValueError: If 'a' is not supplied, if the supplied combination is ambiguous
+       or inconsistent, or if validated parameters are out of range.
+
+
+.. py:function:: _validate_params(a, b, c, alpha, beta, gamma) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice._validate_params``
+
+
+   Validate a complete set of lattice parameters.
+
+   :raises ValueError: If any length is not strictly positive, any angle is outside
+       (_ANGLE_MIN, _ANGLE_MAX), or the parameters would produce a
+       degenerate (zero-volume) unit cell.
 
 
 .. py:function:: b_matrix(b1: ~numpy.ndarray, b2: ~numpy.ndarray, b3: ~numpy.ndarray) -> ~numpy.ndarray

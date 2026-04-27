@@ -127,6 +127,14 @@ Classes
    ad_hoc_diffractometer.mode.SampleConstraint
 
 
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.mode._qaz_residual
+
+
 Module Contents
 ---------------
 
@@ -1001,5 +1009,41 @@ Module Contents
       a fixed angle in degrees.
 
       :type: Constraint value
+
+
+.. py:function:: _qaz_residual(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, target_qaz_deg: float) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode._qaz_residual``
+
+
+   Compute the residual for a qaz detector constraint (You 1999, eq. 18).
+
+   ``qaz`` is the azimuthal angle of Q in the plane spanned by the
+   vertical and transverse axes::
+
+       tan(qaz) = tan(delta) / sin(nu)
+
+   where ``nu`` is the outer (vertical-axis) detector stage angle and
+   ``delta`` is the inner (transverse-axis) detector stage angle.  The
+   two detector stages are identified from ``geometry.detector_stages``
+   by position: the outermost stage (index 0) plays the role of ``nu``
+   and the innermost stage (index -1) plays the role of ``delta``.
+
+   :param angles: Current motor angles in degrees.  Must contain entries for both
+                  detector stage names.
+   :type angles: dict[str, float]
+   :param geometry: The diffractometer.  ``geometry.detector_stages`` must contain
+                    exactly two stages.
+   :type geometry: AdHocDiffractometer
+   :param target_qaz_deg: Target qaz angle in degrees.
+   :type target_qaz_deg: float
+
+   :returns: Residual in degrees: ``qaz_computed - target_qaz_deg``.
+             Zero means the constraint is satisfied.
+   :rtype: float
+
+   :raises ValueError: If the geometry has fewer than two detector stages.
 
 

@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=fcea3c37"></script>
+    <script src="../../_static/documentation_options.js?v=576530e4"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 14:27 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 15:03 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -472,6 +472,8 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
+<div class="viewcode-block" id="_require_surface_normal">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference._require_surface_normal">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_require_surface_normal</span><span class="p">(</span><span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise ValueError if surface_normal is not set on the geometry.&quot;&quot;&quot;</span>
     <span class="n">sn</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">surface_normal</span>
@@ -481,9 +483,12 @@
             <span class="s2">&quot;calling reference pseudo-angle functions.  &quot;</span>
             <span class="s2">&quot;Set g.surface_normal = (h, k, l) with the surface normal &quot;</span>
             <span class="s2">&quot;expressed as Miller indices.&quot;</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
 
+
+<div class="viewcode-block" id="_require_azimuthal_reference">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference._require_azimuthal_reference">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_require_azimuthal_reference</span><span class="p">(</span><span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise ValueError if azimuthal_reference is not set on the geometry.&quot;&quot;&quot;</span>
     <span class="n">ar</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">azimuthal_reference</span>
@@ -493,7 +498,8 @@
             <span class="s2">&quot;computing the ψ angle.  &quot;</span>
             <span class="s2">&quot;Set g.azimuthal_reference = (h, k, l) with the reference direction &quot;</span>
             <span class="s2">&quot;expressed as Miller indices.&quot;</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="incidence_angle">
@@ -747,7 +753,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 14:27 CDT.
+  Last updated on 2026-04-27 15:03 CDT.
   <br/>
 </p></div>
       

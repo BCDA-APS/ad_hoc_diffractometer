@@ -124,6 +124,14 @@ Functions
 .. autoapisummary::
 
    ad_hoc_diffractometer.scan.NEAREST_ANGLES
+   ad_hoc_diffractometer.scan._check_limits
+   ad_hoc_diffractometer.scan._euler_from_Z_standard
+   ad_hoc_diffractometer.scan._hkl_points
+   ad_hoc_diffractometer.scan._kappa_from_Z
+   ad_hoc_diffractometer.scan._measure_psi
+   ad_hoc_diffractometer.scan._perp_ref
+   ad_hoc_diffractometer.scan._pick_solution
+   ad_hoc_diffractometer.scan._psi_candidates
    ad_hoc_diffractometer.scan.hkl_trajectory
    ad_hoc_diffractometer.scan.psi_trajectory
    ad_hoc_diffractometer.scan.trajectory_plan
@@ -155,6 +163,170 @@ Module Contents
 
    :returns: Non-negative score; lower is preferred.
    :rtype: float
+
+
+.. py:function:: _check_limits(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float]) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan._check_limits``
+
+
+   Return True if all supplied angles are within their stage limits.
+
+
+.. py:function:: _euler_from_Z_standard(Z: ~numpy.ndarray, omega_stage: object, chi_stage: object, phi_stage: object) -> list[tuple[float, float, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan._euler_from_Z_standard``
+
+
+   Decompose Z = R(n_φ, φ) · R(n_χ, χ) · R(n_ω, ω) into (ω, χ, φ) in degrees.
+
+   This is the innermost-first product order used by
+   ``geometry.sample_rotation_matrix()``: the outermost stage (omega/eta)
+   is applied first (rightmost), the innermost (phi) last (leftmost).
+
+   The decomposition generalizes Busing & Levy (1967) eqs. 14-17 to
+   arbitrary signed stage axes.  Two χ branches are returned
+   (χ ∈ [0°, 180°] and χ ∈ [-180°, 0°]).
+
+   .. rubric:: Notes
+
+   **Chi** is extracted from the element n_φ · Z · n_ω, which equals
+   n_φ · R_χ · n_ω (since R_φ fixes n_φ and R_ω fixes n_ω).
+   For the standard case n_ω ∥ n_φ this equals cos(χ).
+
+   **Phi** is extracted from Z · n_ω = R_φ · (R_χ · n_ω): the angle in the
+   plane ⊥ n_φ between (R_χ · n_ω) and (Z · n_ω).
+
+   **Omega** is extracted from Z^T · n_φ = R_χ^T · n_φ: the angle in the
+   plane ⊥ n_ω between (R_χ^T · n_φ) and (Z^T · n_φ), with sign reversed.
+
+   :param Z: Sample rotation matrix to decompose.
+   :type Z: ndarray, shape (3, 3)
+   :param omega_stage: The three innermost sample stages in stacking order (floor → sample).
+   :type omega_stage: Stage
+   :param chi_stage: The three innermost sample stages in stacking order (floor → sample).
+   :type chi_stage: Stage
+   :param phi_stage: The three innermost sample stages in stacking order (floor → sample).
+   :type phi_stage: Stage
+
+   :returns: One or two solutions.
+   :rtype: list of (omega_deg, chi_deg, phi_deg)
+
+
+.. py:function:: _hkl_points(trajectory: dict, n_points: int) -> list[tuple[float, float, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan._hkl_points``
+
+
+   Generate ``n_points`` evenly-spaced (h, k, l) tuples from a trajectory dict.
+
+   :raises ValueError: If ``n_points < 2``, type is unknown, or a direction/Q_ref is zero.
+   :raises KeyError: If a required trajectory key is missing.
+
+
+.. py:function:: _kappa_from_Z(Z: ~numpy.ndarray, komega_stage: object, kappa_stage: object, kphi_stage: object, alpha_deg: float) -> list[tuple[float, float, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan._kappa_from_Z``
+
+
+   Decompose Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω) into (kω, κ, kφ).
+
+   Uses the kappa-specific chi element formula derived from the Rodrigues
+   expansion (ITC Vol. C Sec. 2.2.6 / Walko 2016):
+
+       n_kφ · Z · n_kω = cos(κ)·cos²(α) + sin²(α)
+
+   where α is ``alpha_deg`` (the kappa tilt angle).  This isolates κ;
+   komega and kphi are then extracted by the same projection method as
+   ``_euler_from_Z_standard``.
+
+   :param Z:
+   :type Z: ndarray, shape (3, 3)
+   :param komega_stage:
+   :type komega_stage: Stage
+   :param kappa_stage:
+   :type kappa_stage: Stage
+   :param kphi_stage:
+   :type kphi_stage: Stage
+   :param alpha_deg: Kappa tilt angle in degrees.
+   :type alpha_deg: float
+
+   :returns: Two solutions (positive and negative κ branches), or one if degenerate.
+   :rtype: list of (komega_deg, kappa_deg, kphi_deg)
+
+
+.. py:function:: _measure_psi(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float], Q_lab_hat: ~numpy.ndarray, y_eff: ~numpy.ndarray, q_hat_phi: ~numpy.ndarray, ref_dir: ~numpy.ndarray) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan._measure_psi``
+
+
+   Measure the BL1967 operational ψ for ``angles`` relative to ``ref_dir``.
+
+   ψ is the angle from ``ref_dir`` to (Z^T · y_eff)_⊥ about q̂_phi,
+   where the perpendicular projection removes the Q component.
+
+
+.. py:function:: _perp_ref(axis: ~numpy.ndarray) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan._perp_ref``
+
+
+   Return a unit vector perpendicular to ``axis``.
+
+   Picks the first of [y, x, z] that is not nearly parallel to ``axis``,
+   then Gram-Schmidt-orthogonalises it.  This avoids the conditional
+   ``if abs(dot(ref, axis)) > 0.9`` scattered across the decomposition steps.
+
+
+.. py:function:: _pick_solution(solutions: list[dict[str, float]], previous: dict[str, float] | None, solution_key) -> dict[str, float] | None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan._pick_solution``
+
+
+   Return the best solution scored by ``solution_key``, or None if empty.
+
+
+.. py:function:: _psi_candidates(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Z0: ~numpy.ndarray, Q_lab_hat: ~numpy.ndarray, y_eff: ~numpy.ndarray, psi_target: float, base: dict[str, float]) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.scan._psi_candidates``
+
+
+   Compute all in-limits motor-angle candidates for ``psi_target``.
+
+   Implements BL1967 step 3-4: builds Z(ψ) = R(Q̂_lab, −ψ) · Z₀ then
+   decomposes the inner three stages analytically.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Z0: Sample rotation matrix at the base forward() solution.
+   :type Z0: ndarray (3, 3)
+   :param Q_lab_hat: Unit scattering vector in the lab frame (from detector position).
+   :type Q_lab_hat: ndarray (3,)
+   :param y_eff: Effective incident-beam direction (accounts for inclination).
+   :type y_eff: ndarray (3,)
+   :param psi_target: Target ψ in degrees.
+   :type psi_target: float
+   :param base: Base motor angles (Bragg solution); used for outer stages and ttheta.
+   :type base: dict[str, float]
+
+   :returns: All limit-passing candidate motor-angle dicts.
+   :rtype: list of dict[str, float]
 
 
 .. py:function:: hkl_trajectory(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, trajectory: dict, n_points: int, *, solution_key=NEAREST_ANGLES) -> ~collections.abc.Iterator[dict]

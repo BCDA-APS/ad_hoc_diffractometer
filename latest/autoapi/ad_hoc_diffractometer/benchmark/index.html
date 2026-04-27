@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=fcea3c37"></script>
+    <script src="../../../_static/documentation_options.js?v=576530e4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 14:27 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 15:03 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -533,13 +533,28 @@ algorithmic efficiency of the forward solver.</p></li>
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.benchmark.benchmark_all" title="ad_hoc_diffractometer.benchmark.benchmark_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">benchmark_all</span></code></a>(→ list[dict])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.benchmark._prepare_mode" title="ad_hoc_diffractometer.benchmark._prepare_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_prepare_mode</span></code></a>(→ None)</p></td>
+<td><p>Activate a mode and configure any special prerequisites.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.benchmark._print_results" title="ad_hoc_diffractometer.benchmark._print_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_print_results</span></code></a>(→ None)</p></td>
+<td><p>Print a formatted table of benchmark results to stdout.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.benchmark._setup_geometry" title="ad_hoc_diffractometer.benchmark._setup_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_setup_geometry</span></code></a>(name)</p></td>
+<td><p>Create a geometry with a standard cubic sample and UB = B.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.benchmark._time_forward" title="ad_hoc_diffractometer.benchmark._time_forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_time_forward</span></code></a>(→ tuple[float, list])</p></td>
+<td><p>Time forward() calls and collect solutions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.benchmark._time_inverse" title="ad_hoc_diffractometer.benchmark._time_inverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_time_inverse</span></code></a>(→ tuple[float, float])</p></td>
+<td><p>Time inverse() calls and measure round-trip error.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.benchmark.benchmark_all" title="ad_hoc_diffractometer.benchmark.benchmark_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">benchmark_all</span></code></a>(→ list[dict])</p></td>
 <td><p>Benchmark all modes of all registered geometries.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.benchmark.benchmark_geometry" title="ad_hoc_diffractometer.benchmark.benchmark_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">benchmark_geometry</span></code></a>(→ list[dict])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.benchmark.benchmark_geometry" title="ad_hoc_diffractometer.benchmark.benchmark_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">benchmark_geometry</span></code></a>(→ list[dict])</p></td>
 <td><p>Benchmark all modes of a single geometry.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.benchmark.benchmark_mode" title="ad_hoc_diffractometer.benchmark.benchmark_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">benchmark_mode</span></code></a>(→ dict)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.benchmark.benchmark_mode" title="ad_hoc_diffractometer.benchmark.benchmark_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">benchmark_mode</span></code></a>(→ dict)</p></td>
 <td><p>Benchmark a single geometry + mode combination.</p></td>
 </tr>
 </tbody>
@@ -570,6 +585,70 @@ algorithmic efficiency of the forward solver.</p></li>
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.benchmark.DEFAULT_WAVELENGTH">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.benchmark.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_WAVELENGTH</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.5406</span></span><a class="headerlink" href="#ad_hoc_diffractometer.benchmark.DEFAULT_WAVELENGTH" title="Link to this definition">#</a></dt>
 <dd><p>Cu Kα wavelength in Å.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.benchmark._prepare_mode">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.benchmark.</span></span><span class="sig-name descname"><span class="pre">_prepare_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/benchmark.html#_prepare_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.benchmark._prepare_mode" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.benchmark._prepare_mode</span></code></p>
+</div>
+<p>Activate a mode and configure any special prerequisites.</p>
+<p>Sets <code class="docutils literal notranslate"><span class="pre">mode_name</span></code> on the geometry and provides the minimum setup
+required for modes that need extra configuration:</p>
+<ul class="simple">
+<li><p>fixed_psi modes: sets <code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code></p></li>
+<li><p>double_diffraction modes: sets h2/k2/l2 extras</p></li>
+<li><p>surface/reference modes (alpha_i, beta_out, a_eq_b):
+sets <code class="docutils literal notranslate"><span class="pre">surface_normal</span></code></p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.benchmark._print_results">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.benchmark.</span></span><span class="sig-name descname"><span class="pre">_print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/benchmark.html#_print_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.benchmark._print_results" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.benchmark._print_results</span></code></p>
+</div>
+<p>Print a formatted table of benchmark results to stdout.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.benchmark._setup_geometry">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.benchmark.</span></span><span class="sig-name descname"><span class="pre">_setup_geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/benchmark.html#_setup_geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.benchmark._setup_geometry" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.benchmark._setup_geometry</span></code></p>
+</div>
+<p>Create a geometry with a standard cubic sample and UB = B.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.benchmark._time_forward">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.benchmark.</span></span><span class="sig-name descname"><span class="pre">_time_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflections</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/benchmark.html#_time_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.benchmark._time_forward" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.benchmark._time_forward</span></code></p>
+</div>
+<p>Time forward() calls and collect solutions.</p>
+<p>Returns (ops_per_sec, all_solutions) where all_solutions is a list
+of (hkl, solutions) pairs from the final iteration.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.benchmark._time_inverse">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.benchmark.</span></span><span class="sig-name descname"><span class="pre">_time_inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solutions_by_hkl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/benchmark.html#_time_inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.benchmark._time_inverse" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.benchmark._time_inverse</span></code></p>
+</div>
+<p>Time inverse() calls and measure round-trip error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>solutions_by_hkl</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>(</em><a class="reference internal" href="../reflection/index.html#ad_hoc_diffractometer.reflection.Reflection.hkl" title="ad_hoc_diffractometer.reflection.Reflection.hkl"><em>hkl</em></a><em>, </em><em>solutions</em><em>)</em>) – Output from _time_forward.</p></li>
+<li><p><strong>(</strong><strong>ops_per_sec</strong> (<em>Returns</em>)</p></li>
+<li><p><strong>max_error</strong><strong>)</strong><strong>.</strong></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -706,6 +785,11 @@ algorithmic efficiency of the forward solver.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.benchmark.DEFAULT_N_ITER"><code class="docutils literal notranslate"><span class="pre">DEFAULT_N_ITER</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.benchmark.DEFAULT_REFLECTIONS"><code class="docutils literal notranslate"><span class="pre">DEFAULT_REFLECTIONS</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.benchmark.DEFAULT_WAVELENGTH"><code class="docutils literal notranslate"><span class="pre">DEFAULT_WAVELENGTH</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.benchmark._prepare_mode"><code class="docutils literal notranslate"><span class="pre">_prepare_mode()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.benchmark._print_results"><code class="docutils literal notranslate"><span class="pre">_print_results()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.benchmark._setup_geometry"><code class="docutils literal notranslate"><span class="pre">_setup_geometry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.benchmark._time_forward"><code class="docutils literal notranslate"><span class="pre">_time_forward()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.benchmark._time_inverse"><code class="docutils literal notranslate"><span class="pre">_time_inverse()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.benchmark.benchmark_all"><code class="docutils literal notranslate"><span class="pre">benchmark_all()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.benchmark.benchmark_geometry"><code class="docutils literal notranslate"><span class="pre">benchmark_geometry()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.benchmark.benchmark_mode"><code class="docutils literal notranslate"><span class="pre">benchmark_mode()</span></code></a></li>
@@ -745,7 +829,7 @@ algorithmic efficiency of the forward solver.</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 14:27 CDT.
+  Last updated on 2026-04-27 15:03 CDT.
   <br/>
 </p></div>
       

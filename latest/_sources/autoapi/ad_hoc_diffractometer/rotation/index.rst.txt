@@ -16,11 +16,68 @@ Functions
 
 .. autoapisummary::
 
+   ad_hoc_diffractometer.rotation._rotation_matrix_and_derivative_normalized
+   ad_hoc_diffractometer.rotation._rotation_matrix_normalized
    ad_hoc_diffractometer.rotation.rotation_matrix
 
 
 Module Contents
 ---------------
+
+.. py:function:: _rotation_matrix_and_derivative_normalized(n: ~numpy.ndarray, angle_deg: float) -> tuple[~numpy.ndarray, ~numpy.ndarray]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.rotation._rotation_matrix_and_derivative_normalized``
+
+
+   Compute both the rotation matrix and its derivative with respect to angle.
+
+   Returns ``(R, dR/dtheta)`` where ``theta`` is in **radians** — the
+   derivative is with respect to the radian-valued angle, not degrees.
+   The caller is responsible for the deg-to-rad conversion factor
+   (``pi/180``) when composing chain-rule Jacobians that take degree
+   inputs.
+
+   Uses the same Rodrigues decomposition as
+   :func:`_rotation_matrix_normalized` and shares the trig values, so the
+   marginal cost of the derivative is negligible.
+
+   The derivative formula:
+
+       dR/dtheta = -sin(theta) * (I - n (x) n) + cos(theta) * [n]_x
+
+   :param n: **Unit** rotation axis vector.
+   :type n: numpy.ndarray, shape (3,)
+   :param angle_deg: Rotation angle in degrees.
+   :type angle_deg: float
+
+   :returns: * **R** (*numpy.ndarray, shape (3, 3)*) -- Rotation matrix (identical to ``_rotation_matrix_normalized``).
+             * **dR_dtheta** (*numpy.ndarray, shape (3, 3)*) -- Derivative of R with respect to theta (radians).
+
+
+.. py:function:: _rotation_matrix_normalized(n: ~numpy.ndarray, angle_deg: float) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.rotation._rotation_matrix_normalized``
+
+
+   Compute a rotation matrix from a pre-normalized axis vector.
+
+   Fast path: skips the normalization step.  The caller must guarantee
+   that ``n`` is a unit vector (``|n| = 1``).  Produces bit-identical
+   results to :func:`rotation_matrix` when the input axis is already
+   normalized.
+
+   :param n: **Unit** rotation axis vector.
+   :type n: numpy.ndarray, shape (3,)
+   :param angle_deg: Rotation angle in degrees.
+   :type angle_deg: float
+
+   :returns: **R**
+   :rtype: numpy.ndarray, shape (3, 3)
+
 
 .. py:function:: rotation_matrix(axis: ~numpy.ndarray, angle_deg: float) -> ~numpy.ndarray
 

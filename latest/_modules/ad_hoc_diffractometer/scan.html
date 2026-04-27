@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=fcea3c37"></script>
+    <script src="../../_static/documentation_options.js?v=576530e4"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 14:27 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 15:03 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -593,6 +593,8 @@
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 
+<div class="viewcode-block" id="_pick_solution">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan._pick_solution">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_pick_solution</span><span class="p">(</span>
     <span class="n">solutions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
     <span class="n">previous</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
@@ -603,9 +605,12 @@
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">solution_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">solutions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">solution_key</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">previous</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">solution_key</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">previous</span><span class="p">))</span></div>
 
 
+
+<div class="viewcode-block" id="_check_limits">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan._check_limits">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_check_limits</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
@@ -618,7 +623,8 @@
             <span class="k">continue</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">in_limits</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -626,6 +632,8 @@
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 
+<div class="viewcode-block" id="_hkl_points">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan._hkl_points">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_hkl_points</span><span class="p">(</span><span class="n">trajectory</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate ``n_points`` evenly-spaced (h, k, l) tuples from a trajectory dict.</span>
@@ -692,7 +700,8 @@
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;hkl_trajectory: unknown trajectory type </span><span class="si">{</span><span class="n">ttype</span><span class="si">!r}</span><span class="s2">. &quot;</span>
         <span class="s2">&quot;Supported types: &#39;line&#39;, &#39;radial&#39;, &#39;transverse&#39;.&quot;</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
+
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -700,6 +709,8 @@
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 
+<div class="viewcode-block" id="_perp_ref">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan._perp_ref">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_perp_ref</span><span class="p">(</span><span class="n">axis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a unit vector perpendicular to ``axis``.</span>
@@ -720,9 +731,12 @@
     <span class="c1"># Unreachable for any valid unit axis vector, but satisfies type checker.</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Cannot find a reference perpendicular to </span><span class="si">{</span><span class="n">axis</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>  <span class="c1"># pragma: no cover</span>
+    <span class="p">)</span>  <span class="c1"># pragma: no cover</span></div>
 
 
+
+<div class="viewcode-block" id="_euler_from_Z_standard">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan._euler_from_Z_standard">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_euler_from_Z_standard</span><span class="p">(</span>
     <span class="n">Z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">omega_stage</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
@@ -811,9 +825,12 @@
     <span class="c1"># chi — return only the first.</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-8</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-    <span class="k">return</span> <span class="n">results</span>
+    <span class="k">return</span> <span class="n">results</span></div>
 
 
+
+<div class="viewcode-block" id="_kappa_from_Z">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan._kappa_from_Z">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_kappa_from_Z</span><span class="p">(</span>
     <span class="n">Z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">komega_stage</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
@@ -894,7 +911,8 @@
     <span class="c1"># De-duplicate (kappa = 0): both branches produce identical kappa values.</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-8</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-    <span class="k">return</span> <span class="n">results</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -902,6 +920,8 @@
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 
+<div class="viewcode-block" id="_psi_candidates">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan._psi_candidates">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_psi_candidates</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">Z0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -972,9 +992,12 @@
         <span class="k">if</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">):</span>
             <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">candidates</span>
+    <span class="k">return</span> <span class="n">candidates</span></div>
 
 
+
+<div class="viewcode-block" id="_measure_psi">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/scan/index.html#ad_hoc_diffractometer.scan._measure_psi">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_measure_psi</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
@@ -1004,7 +1027,8 @@
     <span class="n">new_dir</span> <span class="o">=</span> <span class="n">y_perp</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y_perp</span><span class="p">)</span>
     <span class="n">cos_a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ref_dir</span><span class="p">,</span> <span class="n">new_dir</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
     <span class="n">sin_a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q_hat_phi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">ref_dir</span><span class="p">,</span> <span class="n">new_dir</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_a</span><span class="p">,</span> <span class="n">cos_a</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_a</span><span class="p">,</span> <span class="n">cos_a</span><span class="p">))</span></div>
+
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -1482,7 +1506,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 14:27 CDT.
+  Last updated on 2026-04-27 15:03 CDT.
   <br/>
 </p></div>
       

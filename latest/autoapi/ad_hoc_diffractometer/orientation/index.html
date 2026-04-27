@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=fcea3c37"></script>
+    <script src="../../../_static/documentation_options.js?v=576530e4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 14:27 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 15:03 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -509,19 +509,28 @@ available.  Returns UB.</p>
 <h2>Functions<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.angles_to_phi_vector" title="ad_hoc_diffractometer.orientation.angles_to_phi_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angles_to_phi_vector</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation._compute_q_phi" title="ad_hoc_diffractometer.orientation._compute_q_phi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_q_phi</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Compute Q_phi from angle values without mutating any geometry state.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation._compute_q_phi_cached" title="ad_hoc_diffractometer.orientation._compute_q_phi_cached"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_q_phi_cached</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Compute Q_phi using cached rotation matrices for fixed stages.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation._gram_schmidt_triple" title="ad_hoc_diffractometer.orientation._gram_schmidt_triple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_gram_schmidt_triple</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Build a right-handed orthonormal 3×3 matrix from two linearly independent</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.angles_to_phi_vector" title="ad_hoc_diffractometer.orientation.angles_to_phi_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angles_to_phi_vector</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Convert a set of motor angles to the scattering vector in the phi frame.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_one_reflection" title="ad_hoc_diffractometer.orientation.ub_from_one_reflection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_one_reflection</span></code></a>([reference_stage])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_one_reflection" title="ad_hoc_diffractometer.orientation.ub_from_one_reflection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_one_reflection</span></code></a>([reference_stage])</p></td>
 <td><p>Compute a provisional U and UB from one reflection (Rodrigues method).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Compute UB directly from three reflections (Busing &amp; Levy 1967, eqs. 29-31).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Compute U and UB from two orienting reflections (Busing &amp; Levy 1967, eqs. 23-27).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_identity" title="ad_hoc_diffractometer.orientation.ub_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_identity</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_identity" title="ad_hoc_diffractometer.orientation.ub_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_identity</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Set U = I (identity) and UB = B; return UB.</p></td>
 </tr>
 </tbody>
@@ -530,6 +539,112 @@ available.  Returns UB.</p>
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation._compute_q_phi">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">_compute_q_phi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_stages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_stages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_pi_over_lambda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_eff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#_compute_q_phi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation._compute_q_phi" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation._compute_q_phi</span></code></p>
+</div>
+<p>Compute Q_phi from angle values without mutating any geometry state.</p>
+<p>This is the inner hot-path function called hundreds of times per
+forward() invocation.  It avoids all attribute mutation, dict copying,
+and save/restore overhead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample_stages</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a>) – Sample stages in stacking order (floor-most first).</p></li>
+<li><p><strong>detector_stages</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a>) – Detector stages in stacking order (floor-most first).</p></li>
+<li><p><strong>angles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Motor angles in degrees, keyed by stage name.  Stages not present
+in the dict use the stage’s current <code class="docutils literal notranslate"><span class="pre">angle</span></code> attribute.</p></li>
+<li><p><strong>two_pi_over_lambda</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Pre-computed <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">pi</span> <span class="pre">/</span> <span class="pre">wavelength</span></code>.</p></li>
+<li><p><strong>y_eff</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Pre-computed effective beam direction <code class="docutils literal notranslate"><span class="pre">R_inc.T</span> <span class="pre">&#64;</span> <span class="pre">y_hat</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Q_phi</strong> – Scattering vector in the phi frame, in Å⁻¹.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation._compute_q_phi_cached">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">_compute_q_phi_cached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_stages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_stages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_pi_over_lambda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_eff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached_Z_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">free_sample_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached_D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#_compute_q_phi_cached"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation._compute_q_phi_cached" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation._compute_q_phi_cached</span></code></p>
+</div>
+<p>Compute Q_phi using cached rotation matrices for fixed stages.</p>
+<p>When some stages have fixed angles across all Newton iterations, their
+rotation matrices are constant and can be pre-computed.  This function
+uses the cached prefix product for the fixed portion and only computes
+rotation matrices for the free stages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample_stages</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a>) – All sample stages in stacking order.</p></li>
+<li><p><strong>detector_stages</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a>) – All detector stages in stacking order.</p></li>
+<li><p><strong>angles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Motor angles in degrees.</p></li>
+<li><p><strong>two_pi_over_lambda</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>)</p></li>
+<li><p><strong>y_eff</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>)</p></li>
+<li><p><strong>cached_Z_prefix</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><em>None</em>) – Pre-computed product of rotation matrices for all sample stages
+<strong>before</strong> the first free stage.  None means no caching (compute all).</p></li>
+<li><p><strong>free_sample_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><em>None</em>) – Indices into sample_stages of the free (varying) stages.  None means
+all stages are free (no caching).</p></li>
+<li><p><strong>cached_D</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><em>None</em>) – Pre-computed detector rotation matrix.  None means compute it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Q_phi</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation._gram_schmidt_triple">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">_gram_schmidt_triple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">v2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#_gram_schmidt_triple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation._gram_schmidt_triple" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation._gram_schmidt_triple</span></code></p>
+</div>
+<p>Build a right-handed orthonormal 3×3 matrix from two linearly independent
+vectors using Gram-Schmidt orthogonalisation.</p>
+<p>The columns of the returned matrix <code class="docutils literal notranslate"><span class="pre">T</span></code> are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>t1 = v1 / |v1|
+t3 = t1 × v2 / |t1 × v2|
+t2 = t3 × t1
+</pre></div>
+</div>
+<p>so that <code class="docutils literal notranslate"><span class="pre">t1</span> <span class="pre">∥</span> <span class="pre">v1</span></code>, <code class="docutils literal notranslate"><span class="pre">t2</span></code> lies in the plane of <code class="docutils literal notranslate"><span class="pre">v1</span></code> and <code class="docutils literal notranslate"><span class="pre">v2</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">t3</span></code> is perpendicular to that plane.  The triple <code class="docutils literal notranslate"><span class="pre">(t1,</span> <span class="pre">t2,</span> <span class="pre">t3)</span></code> is
+right-handed and orthonormal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v1</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Primary vector (must be non-zero).</p></li>
+<li><p><strong>v2</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Secondary vector (must not be parallel to <code class="docutils literal notranslate"><span class="pre">v1</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>T</strong> – Columns are <code class="docutils literal notranslate"><span class="pre">[t1,</span> <span class="pre">t2,</span> <span class="pre">t3]</span></code>, forming a right-handed orthonormal basis.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3, 3)</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">v1</span></code> is the zero vector or <code class="docutils literal notranslate"><span class="pre">v1</span></code> and <code class="docutils literal notranslate"><span class="pre">v2</span></code> are parallel
+(cross product is zero).</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is the Gram-Schmidt construction used in Busing &amp; Levy (1967) to
+build the orthonormal triples <code class="docutils literal notranslate"><span class="pre">Tc</span></code> (crystal frame) and <code class="docutils literal notranslate"><span class="pre">Tφ</span></code> (phi
+frame) for the two-reflection orientation algorithm (eqs. 23-27).</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation.angles_to_phi_vector">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">angles_to_phi_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">motor_angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#angles_to_phi_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation.angles_to_phi_vector" title="Link to this definition">#</a></dt>
@@ -957,6 +1072,9 @@ is available at all.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation._compute_q_phi"><code class="docutils literal notranslate"><span class="pre">_compute_q_phi()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation._compute_q_phi_cached"><code class="docutils literal notranslate"><span class="pre">_compute_q_phi_cached()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation._gram_schmidt_triple"><code class="docutils literal notranslate"><span class="pre">_gram_schmidt_triple()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation.angles_to_phi_vector"><code class="docutils literal notranslate"><span class="pre">angles_to_phi_vector()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation.ub_from_one_reflection"><code class="docutils literal notranslate"><span class="pre">ub_from_one_reflection()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967"><code class="docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967()</span></code></a></li>
@@ -998,7 +1116,7 @@ is available at all.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 14:27 CDT.
+  Last updated on 2026-04-27 15:03 CDT.
   <br/>
 </p></div>
       

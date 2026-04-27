@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=fcea3c37"></script>
+    <script src="../../_static/documentation_options.js?v=576530e4"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 14:27 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 15:03 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -611,6 +611,8 @@
     <span class="c1"># Internal helpers</span>
     <span class="c1"># ------------------------------------------------------------------</span>
 
+<div class="viewcode-block" id="AdHocDiffractometer._check_basis">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._check_basis">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validate that the basis contains exactly three mutually orthogonal,</span>
@@ -654,8 +656,11 @@
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Basis vectors </span><span class="si">{</span><span class="n">n1</span><span class="si">!r}</span><span class="s2"> and </span><span class="si">{</span><span class="n">n2</span><span class="si">!r}</span><span class="s2"> are not orthogonal &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;(normalized dot product = </span><span class="si">{</span><span class="n">dot</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2">, tolerance </span><span class="si">{</span><span class="n">atol</span><span class="si">}</span><span class="s2">).&quot;</span>
-                    <span class="p">)</span>
+                    <span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="AdHocDiffractometer._check_no_cycles">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._check_no_cycles">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_no_cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Raise ValueError if the parent graph contains a cycle.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>
@@ -667,8 +672,11 @@
                         <span class="sa">f</span><span class="s2">&quot;Cycle detected in parent chain starting from </span><span class="si">{</span><span class="n">start</span><span class="si">!r}</span><span class="s2">.&quot;</span>
                     <span class="p">)</span>
                 <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-                <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span></div>
 
+
+<div class="viewcode-block" id="AdHocDiffractometer._ordered_stages">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._ordered_stages">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_ordered_stages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Stage</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return stages of the given role in stacking order (floor-most first).</span>
@@ -695,7 +703,8 @@
                     <span class="n">role_names</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                     <span class="k">break</span>
 
-        <span class="k">return</span> <span class="n">ordered</span>
+        <span class="k">return</span> <span class="n">ordered</span></div>
+
 
 <div class="viewcode-block" id="AdHocDiffractometer.stages_by_role">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.stages_by_role">[docs]</a>
@@ -2205,6 +2214,8 @@
     <span class="c1"># Private status helpers (used by wh and pa methods)</span>
     <span class="c1"># ------------------------------------------------------------------</span>
 
+<div class="viewcode-block" id="AdHocDiffractometer._clean_zero">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._clean_zero">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_clean_zero</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return 0.0 if ``abs(v) &lt; atol``, else ``v``.</span>
@@ -2212,8 +2223,11 @@
 <span class="sd">        Prevents ``-0.0`` or floating-point noise like ``1e-16`` from</span>
 <span class="sd">        appearing in status output.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">atol</span> <span class="k">else</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">atol</span> <span class="k">else</span> <span class="n">v</span></div>
 
+
+<div class="viewcode-block" id="AdHocDiffractometer._spec_motor_name">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._spec_motor_name">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_spec_motor_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Map internal stage names to SPEC-style column headers.</span>
@@ -2230,7 +2244,8 @@
             <span class="s2">&quot;nu&quot;</span><span class="p">:</span> <span class="s2">&quot;Nu&quot;</span><span class="p">,</span>
             <span class="s2">&quot;delta&quot;</span><span class="p">:</span> <span class="s2">&quot;Delta&quot;</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="n">_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="AdHocDiffractometer.sample_rotation_matrix">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.sample_rotation_matrix">[docs]</a>
@@ -2318,13 +2333,18 @@
     <span class="c1"># Serialisation</span>
     <span class="c1"># ------------------------------------------------------------------</span>
 
+<div class="viewcode-block" id="AdHocDiffractometer._mode_to_dict">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._mode_to_dict">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_mode_to_dict</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="s2">&quot;ConstraintSet&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serialise a :class:`~mode.ConstraintSet` to a JSON-serialisable dict.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">mode</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">mode</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div>
 
+
+<div class="viewcode-block" id="AdHocDiffractometer._mode_from_dict">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer._mode_from_dict">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_mode_from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ConstraintSet&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2345,7 +2365,8 @@
                 <span class="s2">&quot;The old BisectingMode / FixedAngleMode serialisation format is no &quot;</span>
                 <span class="s2">&quot;longer supported.  Re-save the geometry with the current version.&quot;</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="n">ConstraintSet</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ConstraintSet</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="AdHocDiffractometer.to_dict">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.to_dict">[docs]</a>
@@ -2726,7 +2747,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 14:27 CDT.
+  Last updated on 2026-04-27 15:03 CDT.
   <br/>
 </p></div>
       

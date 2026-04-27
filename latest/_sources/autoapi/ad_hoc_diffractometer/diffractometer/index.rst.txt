@@ -97,6 +97,78 @@ Module Contents
    .. py:attribute:: DEFAULT_BASIS
 
 
+   .. py:method:: _check_basis() -> None
+
+      Validate that the basis contains exactly three mutually orthogonal,
+      non-zero, 3-dimensional vectors.
+
+      The basis is a labelled dict; its keys have no defined ordering, so
+      right-handedness cannot be checked here (the cross product of two
+      vectors depends on which is 'first').  Right-handedness is the
+      caller's responsibility and should be verified by the geometry
+      factory functions or the user.
+
+      :raises ValueError: If the basis does not have exactly three entries, if any vector
+          is not 3-dimensional or is zero, or if any two vectors are not
+          mutually orthogonal (normalized dot product exceeds tolerance).
+
+
+
+   .. py:method:: _check_no_cycles() -> None
+
+      Raise ValueError if the parent graph contains a cycle.
+
+
+
+   .. py:method:: _clean_zero(v: float, atol: float = 1e-10) -> float
+      :staticmethod:
+
+
+      Return 0.0 if ``abs(v) < atol``, else ``v``.
+
+      Prevents ``-0.0`` or floating-point noise like ``1e-16`` from
+      appearing in status output.
+
+
+
+   .. py:method:: _mode_from_dict(d: dict) -> ~ad_hoc_diffractometer.mode.ConstraintSet
+      :staticmethod:
+
+
+      Reconstruct a :class:`~mode.ConstraintSet` from a dict produced by
+      :meth:`_mode_to_dict`.
+
+      :raises ValueError: If the dict does not have ``"type": "ConstraintSet"``.
+
+
+
+   .. py:method:: _mode_to_dict(mode: ~ad_hoc_diffractometer.mode.ConstraintSet) -> dict
+      :staticmethod:
+
+
+      Serialise a :class:`~mode.ConstraintSet` to a JSON-serialisable dict.
+
+
+
+   .. py:method:: _ordered_stages(role: str) -> list[~ad_hoc_diffractometer.stage.Stage]
+
+      Return stages of the given role in stacking order (floor-most first).
+
+      Uses a topological sort on the parent graph restricted to stages of
+      the requested role.
+
+
+
+   .. py:method:: _spec_motor_name(name: str) -> str
+      :staticmethod:
+
+
+      Map internal stage names to SPEC-style column headers.
+
+      Unknown names pass through unchanged.
+
+
+
    .. py:method:: add_reflection(name: str, hkl: tuple[float, float, float], angles: dict[str, float], wavelength: float | None = None) -> ~ad_hoc_diffractometer.reflection.Reflection
 
       Add a named orienting reflection to the active sample.

@@ -79,6 +79,7 @@ Functions
 
 .. autoapisummary::
 
+   ad_hoc_diffractometer.surface._surface_vectors
    ad_hoc_diffractometer.surface.alpha_f
    ad_hoc_diffractometer.surface.alpha_i
    ad_hoc_diffractometer.surface.is_evanescent
@@ -88,6 +89,33 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:function:: _surface_vectors(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None) -> tuple[~numpy.ndarray, ~numpy.ndarray, ~numpy.ndarray, ~numpy.ndarray]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.surface._surface_vectors``
+
+
+   Compute the vectors needed for surface angle calculations.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param angles:
+   :type angles: dict or None
+
+   :returns: * **y_hat** (*np.ndarray (3,)*) -- Unit incident-beam direction in the lab frame (longitudinal).
+             * **kf_hat** (*np.ndarray (3,)*) -- Unit diffracted-beam direction in the lab frame.
+             * **n_hat** (*np.ndarray (3,)*) -- Unit surface normal in the lab frame.
+             * **Q_lab** (*np.ndarray (3,)*) -- Scattering vector in the lab frame, in the same units as
+               ``angles_to_phi_vector`` (Å⁻¹ without the 2π factor that the
+               B matrix omits).
+
+   :raises ValueError: If ``geometry.wavelength`` is None.
+   :raises ValueError: If ``geometry.surface_normal`` and ``geometry.azimuthal_reference``
+       are both None (no surface normal available).
+   :raises ValueError: If ``geometry.sample.UB`` is None.
+
 
 .. py:function:: alpha_f(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
 

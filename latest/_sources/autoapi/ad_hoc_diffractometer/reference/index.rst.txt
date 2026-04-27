@@ -46,6 +46,8 @@ Functions
 
 .. autoapisummary::
 
+   ad_hoc_diffractometer.reference._require_azimuthal_reference
+   ad_hoc_diffractometer.reference._require_surface_normal
    ad_hoc_diffractometer.reference.exit_angle
    ad_hoc_diffractometer.reference.incidence_angle
    ad_hoc_diffractometer.reference.naz_angle
@@ -54,6 +56,26 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:function:: _require_azimuthal_reference(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference._require_azimuthal_reference``
+
+
+   Raise ValueError if azimuthal_reference is not set on the geometry.
+
+
+.. py:function:: _require_surface_normal(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference._require_surface_normal``
+
+
+   Raise ValueError if surface_normal is not set on the geometry.
+
 
 .. py:function:: exit_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
 

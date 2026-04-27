@@ -48,6 +48,9 @@ Functions
 
 .. autoapisummary::
 
+   ad_hoc_diffractometer.orientation._compute_q_phi
+   ad_hoc_diffractometer.orientation._compute_q_phi_cached
+   ad_hoc_diffractometer.orientation._gram_schmidt_triple
    ad_hoc_diffractometer.orientation.angles_to_phi_vector
    ad_hoc_diffractometer.orientation.ub_from_one_reflection
    ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967
@@ -57,6 +60,110 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:function:: _compute_q_phi(sample_stages: list, detector_stages: list, angles: dict[str, float], two_pi_over_lambda: float, y_eff: ~numpy.ndarray) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation._compute_q_phi``
+
+
+   Compute Q_phi from angle values without mutating any geometry state.
+
+   This is the inner hot-path function called hundreds of times per
+   forward() invocation.  It avoids all attribute mutation, dict copying,
+   and save/restore overhead.
+
+   :param sample_stages: Sample stages in stacking order (floor-most first).
+   :type sample_stages: list of Stage
+   :param detector_stages: Detector stages in stacking order (floor-most first).
+   :type detector_stages: list of Stage
+   :param angles: Motor angles in degrees, keyed by stage name.  Stages not present
+                  in the dict use the stage's current ``angle`` attribute.
+   :type angles: dict[str, float]
+   :param two_pi_over_lambda: Pre-computed ``2 * pi / wavelength``.
+   :type two_pi_over_lambda: float
+   :param y_eff: Pre-computed effective beam direction ``R_inc.T @ y_hat``.
+   :type y_eff: numpy.ndarray, shape (3,)
+
+   :returns: **Q_phi** -- Scattering vector in the phi frame, in Å⁻¹.
+   :rtype: numpy.ndarray, shape (3,)
+
+
+.. py:function:: _compute_q_phi_cached(sample_stages: list, detector_stages: list, angles: dict[str, float], two_pi_over_lambda: float, y_eff: ~numpy.ndarray, cached_Z_prefix: ~numpy.ndarray | None, free_sample_indices: list[int] | None, cached_D: ~numpy.ndarray | None) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation._compute_q_phi_cached``
+
+
+   Compute Q_phi using cached rotation matrices for fixed stages.
+
+   When some stages have fixed angles across all Newton iterations, their
+   rotation matrices are constant and can be pre-computed.  This function
+   uses the cached prefix product for the fixed portion and only computes
+   rotation matrices for the free stages.
+
+   :param sample_stages: All sample stages in stacking order.
+   :type sample_stages: list of Stage
+   :param detector_stages: All detector stages in stacking order.
+   :type detector_stages: list of Stage
+   :param angles: Motor angles in degrees.
+   :type angles: dict[str, float]
+   :param two_pi_over_lambda:
+   :type two_pi_over_lambda: float
+   :param y_eff:
+   :type y_eff: numpy.ndarray, shape (3,)
+   :param cached_Z_prefix: Pre-computed product of rotation matrices for all sample stages
+                           **before** the first free stage.  None means no caching (compute all).
+   :type cached_Z_prefix: numpy.ndarray or None
+   :param free_sample_indices: Indices into sample_stages of the free (varying) stages.  None means
+                               all stages are free (no caching).
+   :type free_sample_indices: list of int or None
+   :param cached_D: Pre-computed detector rotation matrix.  None means compute it.
+   :type cached_D: numpy.ndarray or None
+
+   :returns: **Q_phi**
+   :rtype: numpy.ndarray, shape (3,)
+
+
+.. py:function:: _gram_schmidt_triple(v1: ~numpy.ndarray, v2: ~numpy.ndarray) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.orientation._gram_schmidt_triple``
+
+
+   Build a right-handed orthonormal 3×3 matrix from two linearly independent
+   vectors using Gram-Schmidt orthogonalisation.
+
+   The columns of the returned matrix ``T`` are::
+
+       t1 = v1 / |v1|
+       t3 = t1 × v2 / |t1 × v2|
+       t2 = t3 × t1
+
+   so that ``t1 ∥ v1``, ``t2`` lies in the plane of ``v1`` and ``v2``, and
+   ``t3`` is perpendicular to that plane.  The triple ``(t1, t2, t3)`` is
+   right-handed and orthonormal.
+
+   :param v1: Primary vector (must be non-zero).
+   :type v1: numpy.ndarray, shape (3,)
+   :param v2: Secondary vector (must not be parallel to ``v1``).
+   :type v2: numpy.ndarray, shape (3,)
+
+   :returns: **T** -- Columns are ``[t1, t2, t3]``, forming a right-handed orthonormal basis.
+   :rtype: numpy.ndarray, shape (3, 3)
+
+   :raises ValueError: If ``v1`` is the zero vector or ``v1`` and ``v2`` are parallel
+       (cross product is zero).
+
+   .. rubric:: Notes
+
+   This is the Gram-Schmidt construction used in Busing & Levy (1967) to
+   build the orthonormal triples ``Tc`` (crystal frame) and ``Tφ`` (phi
+   frame) for the two-reflection orientation algorithm (eqs. 23-27).
+
 
 .. py:function:: angles_to_phi_vector(geometry, **motor_angles: float) -> ~numpy.ndarray
 

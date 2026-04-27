@@ -105,6 +105,7 @@ Functions
 
 .. autoapisummary::
 
+   ad_hoc_diffractometer.factories._load_entry_point_geometries
    ad_hoc_diffractometer.factories.get_geometry
    ad_hoc_diffractometer.factories.list_geometries
    ad_hoc_diffractometer.factories.make_geometry
@@ -151,6 +152,46 @@ Module Contents
 
 
    Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C).
+
+.. py:function:: _load_entry_point_geometries() -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.factories._load_entry_point_geometries``
+
+
+   Discover and load geometry factories from installed entry points.
+
+   Scans the ``"ad_hoc_diffractometer.geometries"`` entry-point group
+   for all installed packages (including this package itself) and adds
+   any factories not already present in ``_GEOMETRY_REGISTRY``.
+
+   This function is called automatically — and only once — by
+   ``list_geometries()`` and ``get_geometry()``.  It is idempotent:
+   repeated calls after the first are no-ops.
+
+   .. rubric:: Notes
+
+   Built-in factories are registered via ``@register_geometry`` at
+   import time, so they are always present even if entry-point discovery
+   fails.  Entry-point discovery supplements the registry with any
+   third-party plugins that are installed but were not decorated with
+   ``@register_geometry``.
+
+   Each geometry name must be unique across all installed packages.  If
+   an entry-point name collides with an already-registered name (whether
+   a built-in or a previously loaded plugin), a ``ValueError`` is raised
+   identifying the conflicting name and its source.  This prevents silent
+   shadowing of built-in geometries and ambiguous duplicate registrations.
+
+   If loading a particular entry point raises an exception *other than* a
+   name collision (e.g. the plugin package is broken or missing), that
+   entry point is silently skipped so that the rest of the registry is
+   unaffected.
+
+   :raises ValueError: If an entry-point name duplicates an already-registered geometry
+       name.
+
 
 .. py:function:: get_geometry(name: str)
 

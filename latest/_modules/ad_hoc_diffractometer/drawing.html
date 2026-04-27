@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=fcea3c37"></script>
+    <script src="../../_static/documentation_options.js?v=576530e4"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 14:27 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 15:03 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -452,6 +452,8 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
+<div class="viewcode-block" id="_physical_label">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing._physical_label">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_physical_label</span><span class="p">(</span><span class="n">axis_vec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a human-readable axis label with physical direction if possible.</span>
 
@@ -469,7 +471,8 @@
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">axis_vec</span><span class="p">,</span> <span class="o">-</span><span class="n">bvec</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;-</span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="c1"># Tilted axis (kappa) — fall back to numeric label</span>
-    <span class="k">return</span> <span class="n">axis_label</span><span class="p">(</span><span class="n">axis_vec</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">axis_label</span><span class="p">(</span><span class="n">axis_vec</span><span class="p">)</span></div>
+
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -486,6 +489,8 @@
 <span class="n">_EYE_SCALE</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># camera zoom-out relative to StageAxisFigure default</span>
 
 
+<div class="viewcode-block" id="_require_plotly">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing._require_plotly">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_require_plotly</span><span class="p">():</span>  <span class="c1"># pragma: no cover</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Import and return plotly.graph_objects, or raise ImportError.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -496,9 +501,12 @@
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
             <span class="s2">&quot;plotly is required for StageAxisFigure and GeometryAxisFigure.  &quot;</span>
             <span class="s2">&quot;Install it with:  pip install plotly&quot;</span>
-        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
 
 
+
+<div class="viewcode-block" id="_tree_layout">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing._tree_layout">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_tree_layout</span><span class="p">(</span><span class="n">stages</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute bottom-to-top tree layout positions for a stage dict.</span>
 
@@ -561,9 +569,12 @@
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
         <span class="n">assign_x</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">depth</span><span class="p">,</span> <span class="n">x_pos</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="n">roots</span>
+    <span class="k">return</span> <span class="n">depth</span><span class="p">,</span> <span class="n">x_pos</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="n">roots</span></div>
 
 
+
+<div class="viewcode-block" id="_scene_domain">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing._scene_domain">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_scene_domain</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">title_frac</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Paper-coordinate domain for a scene at grid position (col, row).</span>
 
@@ -577,7 +588,8 @@
     <span class="n">x1</span> <span class="o">=</span> <span class="p">(</span><span class="n">col</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">col_w</span> <span class="o">-</span> <span class="n">_GAP</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="n">y0</span> <span class="o">=</span> <span class="n">row</span> <span class="o">*</span> <span class="n">row_h</span> <span class="o">+</span> <span class="n">_GAP</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="n">y1</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">row_h</span> <span class="o">-</span> <span class="n">_GAP</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">title_frac</span> <span class="o">*</span> <span class="n">row_h</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">],</span> <span class="p">[</span><span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">],</span> <span class="p">[</span><span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">]</span></div>
+
 
 
 <div class="viewcode-block" id="StageAxisFigure">
@@ -698,6 +710,8 @@
     <span class="c1"># Drawing helpers</span>
     <span class="c1"># ------------------------------------------------------------------</span>
 
+<div class="viewcode-block" id="StageAxisFigure._draw_basis_vectors">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure._draw_basis_vectors">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_draw_basis_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw basis vectors as lines with cone tips.&quot;&quot;&quot;</span>
         <span class="n">go</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_go</span>
@@ -759,8 +773,11 @@
                         <span class="n">textfont</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">),</span>
                         <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="p">)</span>
+                <span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="StageAxisFigure._draw_axis">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure._draw_axis">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_draw_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw the axis vector and rotation arc.&quot;&quot;&quot;</span>
         <span class="n">axis_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_draw_axis_vector</span><span class="p">()</span>
@@ -779,8 +796,11 @@
             <span class="n">direction</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_draw_axis_arc</span><span class="p">(</span><span class="n">axis_norm</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_draw_axis_arc</span><span class="p">(</span><span class="n">axis_norm</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="StageAxisFigure._draw_axis_vector">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure._draw_axis_vector">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_draw_axis_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw the rotation axis as a red line; return positive unit vector.&quot;&quot;&quot;</span>
         <span class="n">go</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_go</span>
@@ -806,8 +826,11 @@
                 <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">axis_norm</span>
+        <span class="k">return</span> <span class="n">axis_norm</span></div>
 
+
+<div class="viewcode-block" id="StageAxisFigure._draw_axis_arc">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure._draw_axis_arc">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_draw_axis_arc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis_norm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw the rotation arc and arrowhead.&quot;&quot;&quot;</span>
         <span class="n">go</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_go</span>
@@ -884,8 +907,11 @@
                 <span class="n">sizeref</span><span class="o">=</span><span class="mf">0.06</span><span class="p">,</span>
                 <span class="n">opacity</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="StageAxisFigure._set_titles">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure._set_titles">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_titles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add title and subtitle to the figure.&quot;&quot;&quot;</span>
         <span class="n">stage_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -910,8 +936,11 @@
                 <span class="n">xanchor</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
                 <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">),</span>
             <span class="p">),</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="StageAxisFigure._set_scene">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/drawing/index.html#ad_hoc_diffractometer.drawing.StageAxisFigure._set_scene">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure the 3-D scene camera and axes.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
@@ -930,6 +959,7 @@
             <span class="n">width</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
             <span class="n">height</span><span class="o">=</span><span class="mi">450</span><span class="p">,</span>
         <span class="p">)</span></div>
+</div>
 
 
 
@@ -1195,7 +1225,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 14:27 CDT.
+  Last updated on 2026-04-27 15:03 CDT.
   <br/>
 </p></div>
       
