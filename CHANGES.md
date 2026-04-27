@@ -5,6 +5,23 @@ Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues) for the full
 issue tracker.  The initial project development roadmap is documented here:
 [roadmap](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/roadmap.md).
 
+## Release v0.7.0
+
+Released 2026-04-27.
+
+### Breaking changes
+
+- Standardized 14 mode names across 6 geometries to use the consistent
+  `fixed_AXIS` naming convention (#220):
+  - `constant_omega` → `fixed_omega` (fourcv, fourch, kappa4cv, kappa4ch)
+  - `psi_constant` → `fixed_psi` (fourcv, fourch, kappa4cv, kappa4ch)
+  - `constant_chi` → `fixed_chi` (kappa4cv, kappa4ch)
+  - `constant_phi` → `fixed_phi` (kappa4cv, kappa4ch)
+  - `constant_omega_noncoplanar` → `fixed_omega_noncoplanar` (fivec)
+  - `mu_fixed` → `fixed_mu` (s2d2)
+- No backward-compatibility aliases — mode names from v0.6.0 will raise
+  `KeyError` if used directly
+
 ## Release v0.6.0
 
 Released 2026-04-26.
