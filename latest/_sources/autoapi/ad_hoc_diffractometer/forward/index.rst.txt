@@ -620,8 +620,11 @@ Module Contents
    1. Bragg: ``cos(nu) * cos(delta) = cos(ttheta)``
    2. qaz:   ``atan2(tan(delta), sin(nu)) = qaz_target``
 
-   The 2D Newton-Raphson solver is seeded from a coarse grid over
-   ``(nu, delta)`` to capture both the ``nu > 0`` and ``nu < 0`` branches.
+   The detector angles are solved analytically (no Newton iteration).
+   For ``qaz = 90°`` (vertical scattering plane, the common case):
+   ``nu = 0``, ``delta = ±ttheta``.  For the general case,
+   ``sin²(nu) = (1 - cos²(ttheta)) / (1 + cos²(ttheta)·tan²(qaz))``
+   and ``delta = atan(sin(nu)·tan(qaz))``.
 
    After finding the detector angles, any remaining free sample stages
    (those not frozen by the fixed sample constraints) are solved

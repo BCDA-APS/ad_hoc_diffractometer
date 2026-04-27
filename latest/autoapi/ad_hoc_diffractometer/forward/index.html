@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=576530e4"></script>
+    <script src="../../../_static/documentation_options.js?v=a3b38c7c"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 15:03 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 15:43 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -1149,8 +1149,11 @@ that simultaneously satisfy the Bragg condition and the qaz constraint.</p>
 <li><p>Bragg: <code class="docutils literal notranslate"><span class="pre">cos(nu)</span> <span class="pre">*</span> <span class="pre">cos(delta)</span> <span class="pre">=</span> <span class="pre">cos(ttheta)</span></code></p></li>
 <li><p>qaz:   <code class="docutils literal notranslate"><span class="pre">atan2(tan(delta),</span> <span class="pre">sin(nu))</span> <span class="pre">=</span> <span class="pre">qaz_target</span></code></p></li>
 </ol>
-<p>The 2D Newton-Raphson solver is seeded from a coarse grid over
-<code class="docutils literal notranslate"><span class="pre">(nu,</span> <span class="pre">delta)</span></code> to capture both the <code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> branches.</p>
+<p>The detector angles are solved analytically (no Newton iteration).
+For <code class="docutils literal notranslate"><span class="pre">qaz</span> <span class="pre">=</span> <span class="pre">90°</span></code> (vertical scattering plane, the common case):
+<code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">delta</span> <span class="pre">=</span> <span class="pre">±ttheta</span></code>.  For the general case,
+<code class="docutils literal notranslate"><span class="pre">sin²(nu)</span> <span class="pre">=</span> <span class="pre">(1</span> <span class="pre">-</span> <span class="pre">cos²(ttheta))</span> <span class="pre">/</span> <span class="pre">(1</span> <span class="pre">+</span> <span class="pre">cos²(ttheta)·tan²(qaz))</span></code>
+and <code class="docutils literal notranslate"><span class="pre">delta</span> <span class="pre">=</span> <span class="pre">atan(sin(nu)·tan(qaz))</span></code>.</p>
 <p>After finding the detector angles, any remaining free sample stages
 (those not frozen by the fixed sample constraints) are solved
 numerically via <a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_one_free_angle" title="ad_hoc_diffractometer.forward._solve_one_free_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_one_free_angle()</span></code></a> or <a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_two_angles" title="ad_hoc_diffractometer.forward._solve_two_angles"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_two_angles()</span></code></a>.</p>
@@ -1456,7 +1459,7 @@ for this geometry.</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 15:03 CDT.
+  Last updated on 2026-04-27 15:43 CDT.
   <br/>
 </p></div>
       
