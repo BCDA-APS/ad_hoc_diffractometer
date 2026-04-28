@@ -125,6 +125,7 @@ from .mode import ConstraintSet
 from .mode import DetectorConstraint
 from .mode import ReferenceConstraint
 from .mode import SampleConstraint
+from .mode import VirtualBisectConstraint
 from .stage import Stage
 
 __all__ = [
@@ -701,13 +702,14 @@ def kappa4cv(
     ]
     # kappa4cv: 4 DOF, N-3=1 constraint needed per mode.
     # Virtual Eulerian angles (omega, chi, phi) are computed from real kappa
-    # angles (komega, kappa, kphi) via Walko (2016) eq. [16].  Constraints
-    # using virtual angle names are stubs pending Issue I (#153).
-    # BisectConstraint('komega','ttheta') approximates bisecting but is
-    # physically inaccurate — true bisect requires virtual omega=0.
+    # angles (komega, kappa, kphi) via Walko (2016) eq. [16].
+    # The ``bisecting`` mode uses :class:`VirtualBisectConstraint` to enforce
+    # *true* bisecting in the virtual Eulerian frame: ``omega_virtual =
+    # ttheta/2``.  This is the physically correct bisecting condition for
+    # a kappa diffractometer (Walko 2016).  See issue #226.
     modes = {
         "bisecting": ConstraintSet(
-            [BisectConstraint("komega", "ttheta")],
+            [VirtualBisectConstraint("omega", "ttheta")],
             computed=["komega", "kappa", "kphi", "ttheta"],
         ),
         "fixed_kphi": ConstraintSet(
@@ -794,10 +796,12 @@ def kappa4ch(
         Stage("ttheta", -VERTICAL, parent=None, role="detector"),
     ]
     # kappa4ch: 4 DOF, N-3=1 constraint needed per mode.
-    # Same mode set as kappa4cv; virtual angle stubs pending Issue I (#153).
+    # Same mode set as kappa4cv; ``bisecting`` uses VirtualBisectConstraint
+    # to enforce true virtual bisecting (omega_virtual = ttheta/2).  See
+    # issue #226 and Walko (2016) eq. [16].
     modes = {
         "bisecting": ConstraintSet(
-            [BisectConstraint("komega", "ttheta")],
+            [VirtualBisectConstraint("omega", "ttheta")],
             computed=["komega", "kappa", "kphi", "ttheta"],
         ),
         "fixed_kphi": ConstraintSet(
@@ -885,15 +889,18 @@ def kappa6c(
         Stage("delta", -TRANSVERSE, parent="nu", role="detector"),
     ]
     # kappa6c: 6 DOF, N-3=3 constraints needed per mode.
-    # Vertical bisect pair: komega(transverse) <-> delta(transverse) => komega = delta/2
-    #   (approximates virtual omega_euler = delta/2; corrected by Issue I / #153)
+    # Vertical bisect pair (kappa-omega bisect): VirtualBisectConstraint
+    #   enforces ``omega_virtual = delta/2`` — the physically correct
+    #   bisecting condition for a kappa diffractometer (Walko 2016 eq. [16];
+    #   issue #226).
     # Horizontal bisect pair: mu(vertical) <-> nu(vertical) => mu = nu/2
+    #   (literal motor bisect; mu is a real outer stage, not a kappa motor).
     # Virtual Eulerian angles (omega, chi, phi) via Walko (2016) eq. [16].
     modes = {
         # ── Implemented (generic solver) ────────────────────────────────────
         "bisecting_vertical": ConstraintSet(
             [
-                BisectConstraint("komega", "delta"),
+                VirtualBisectConstraint("omega", "delta"),
                 SampleConstraint("mu", 0.0),
                 DetectorConstraint("nu", 0.0),
             ],
@@ -918,7 +925,7 @@ def kappa6c(
         "fixed_mu": ConstraintSet(
             [
                 SampleConstraint("mu", 0.0),
-                BisectConstraint("komega", "delta"),
+                VirtualBisectConstraint("omega", "delta"),
                 DetectorConstraint("nu", 0.0),
             ],
             computed=["komega", "kappa", "kphi", "delta"],
@@ -926,7 +933,7 @@ def kappa6c(
         "fixed_nu": ConstraintSet(
             [
                 DetectorConstraint("nu", 0.0),
-                BisectConstraint("komega", "delta"),
+                VirtualBisectConstraint("omega", "delta"),
                 SampleConstraint("mu", 0.0),
             ],
             computed=["komega", "kappa", "kphi", "delta"],
@@ -958,7 +965,7 @@ def kappa6c(
         ),
         "fixed_psi_vertical": ConstraintSet(
             [
-                BisectConstraint("komega", "delta"),
+                VirtualBisectConstraint("omega", "delta"),
                 SampleConstraint("mu", 0.0),
                 ReferenceConstraint("psi", 0.0),
             ],
