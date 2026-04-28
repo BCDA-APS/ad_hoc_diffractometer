@@ -5,6 +5,85 @@ Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues) for the full
 issue tracker.  The initial project development roadmap is documented here:
 [roadmap](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/roadmap.md).
 
+## Release v0.8.0
+
+Released 2026-04-28.
+
+Performance and correctness release for the `forward()` solver.  The
+slow-benchmark suite drops from ~561 s to ~56 s (~10× faster overall)
+on top of the 3-4× speedup already delivered in v0.6.0.  See #217 for
+the umbrella plan and the seven sub-issues #221–#227 for the
+individual optimisations.
+
+### Breaking changes
+
+- Kappa **bisecting** modes now enforce *true* virtual bisecting
+  (`omega_virtual = ttheta/2`, Walko 2016 eq. [16]) instead of the
+  literal motor approximation `komega = ttheta/2`.  Affected modes:
+  `kappa4cv.bisecting`, `kappa4ch.bisecting`,
+  `kappa6c.bisecting_vertical`, `kappa6c.fixed_mu`, `kappa6c.fixed_nu`.
+  Some `(h, k, l)` reflections previously accepted as "bisecting" are
+  no longer accessible in these modes because their old solutions did
+  not satisfy the physical bisecting condition.  Horizontal kappa
+  bisect modes (`bisecting_horizontal`, `fixed_delta`) are unchanged.
+  (#226, #235)
+
+### Added
+
+- `VirtualBisectConstraint` class — subclass of `BisectConstraint` that
+  enforces a constraint on a *virtual* (Eulerian) angle computed from a
+  kappa motor triple via `kappa_to_eulerian()`.  Exported from the
+  top-level package namespace. (#226, #235)
+- `rotation.rotation_matrix_and_derivative_normalized()` — returns both
+  `R` and `dR/dθ` from a single trig evaluation, enabling closed-form
+  Jacobians without redundant work. (#222, #229)
+- `ForwardContext.jacobian_analytic()` — exact analytic Jacobian for
+  the forward solver, computed by chain rule through the sample
+  rotation matrix product. (#222, #229)
+- Private functions and methods are now published in the AutoAPI
+  reference (algorithm documentation); private attributes/data/
+  properties remain hidden. (#231, #232)
+
+### Changed (performance)
+
+- **Analytic bisecting solver** for standard Eulerian geometries:
+  `(chi, phi)` derived directly from `atan2`/`acos` formulas applied
+  to the cached `Z_prefix` and `Q_lab` vectors.  **58–86× speedup**
+  on bisecting modes for fourcv, fourch, psic, sixc, fivec.  Newton
+  retained as fallback for kappa and degenerate cases. (#223, #230)
+- **Decomposed double-diffraction solver**: 4D Newton-Raphson
+  replaced by sequential subproblems (closed-form detector angle,
+  1D outer-angle scan with sign-change detection, analytic 2D
+  inner solve, scalar Ewald filter with 1D Newton refinement).
+  **2.9–24×** per geometry; the slow-benchmark suite drops from
+  561 s to 56 s (~10× overall). (#225, #234)
+- **Analytic qaz detector solver**: 26-seed Newton loop replaced by
+  closed-form solution.  Detector-angle solve goes from ~4.7 ms to
+  ~0.3 µs (~13 500×); end-to-end `forward()` improves ~6 % since
+  the inner sample-angle solver dominates. (#224, #233)
+- **Analytic 1-free-angle solver**: when the only free sample stage
+  rotates about a cardinal axis (±X, ±Y, ±Z), the 3×1 system
+  reduces to a single `atan2`.  **8.4× speedup** on representative
+  fourcv cases.  Falls back to Newton for tilted/kappa axes. (#227,
+  #236)
+- **Analytic Jacobian** in the generic Newton solver: closed-form
+  derivative of the Rodrigues rotation matrix replaces the
+  finite-difference Jacobian, eliminating `n_free` extra residual
+  evaluations per Newton step.  **1.4–2.4× per Newton step** across
+  every Newton path. (#222, #229)
+- **Early termination in `solve_kappa_virtual()`**: matches the
+  `_MAX_STALE` / `_MAX_SOLUTIONS` pattern from `_solve_bisecting`.
+  **2–6×** speedup on kappa virtual-angle modes. (#221, #228)
+
+### Fixed
+
+- Kappa bisecting modes were returning solutions whose virtual omega
+  did not equal ttheta/2 (the literal `komega = ttheta/2` only
+  coincides with true bisecting at `kappa = 0`).  Now physically
+  correct.  See breaking changes above. (#226, #235)
+- Two docstring formatting issues in `forward.py` that produced RST
+  warnings once private docstrings became visible in AutoAPI. (#232)
+
 ## Release v0.7.0
 
 Released 2026-04-27.
