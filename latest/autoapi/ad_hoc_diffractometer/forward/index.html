@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=b32d37a4"></script>
+    <script src="../../../_static/documentation_options.js?v=b79a97b6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 17:17 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 19:03 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -507,6 +507,34 @@ chi in [-180°, 0°]).</p></li>
 </dd>
 </dl>
 </dd>
+<dt>True virtual bisecting (ConstraintSet with VirtualBisectConstraint)</dt><dd><p>The physically correct bisecting condition for kappa diffractometers
+(kappa4cv, kappa4ch, kappa6c).  The bisecting condition is enforced
+on the <em>virtual</em> Eulerian omega pseudoangle (Walko 2016, eq. [16]):
+<code class="docutils literal notranslate"><span class="pre">omega_virtual</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code>.  The literal <code class="docutils literal notranslate"><span class="pre">komega</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code>
+enforced by <code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code> is only an approximation
+and is replaced for kappa-bisect modes by
+<code class="xref py py-class docutils literal notranslate"><span class="pre">VirtualBisectConstraint</span></code>.  See issue #226.</p>
+<dl class="simple">
+<dt>Algorithm (<a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual" title="ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_bisecting_kappa_virtual()</span></code></a>):</dt><dd><ol class="arabic simple">
+<li><p>Build a synthetic mode that fixes <code class="docutils literal notranslate"><span class="pre">omega_virtual</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code>
+via a <code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code>.</p></li>
+<li><p>Delegate to <code class="xref py py-func docutils literal notranslate"><span class="pre">solve_kappa_virtual()</span></code>, which runs
+Newton iteration on virtual <code class="docutils literal notranslate"><span class="pre">(chi,</span> <span class="pre">phi)</span></code> with the omega
+pseudoangle frozen.</p></li>
+<li><p>For each converged virtual triple, convert to real motors via
+<code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code> for both kappa branches
+(<code class="docutils literal notranslate"><span class="pre">±1</span></code>).</p></li>
+<li><p>Polish the result with a finer central-difference Newton on
+<code class="docutils literal notranslate"><span class="pre">(chi,</span> <span class="pre">phi)</span></code> to push the residual toward machine precision.</p></li>
+</ol>
+</dd>
+</dl>
+<p>Some reflections that were “accessible” under the previous
+<code class="docutils literal notranslate"><span class="pre">komega</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code> approximation are <strong>not</strong> accessible under
+true virtual bisecting — those previous solutions had
+<code class="docutils literal notranslate"><span class="pre">omega_virtual</span> <span class="pre">≠</span> <span class="pre">ttheta/2</span></code> and were therefore not physically
+bisecting.</p>
+</dd>
 <dt>Fixed sample angle (ConstraintSet without BisectConstraint)</dt><dd><p>One or more sample stages are frozen at declared values.  The
 remaining free stages are solved numerically from the direction
 of Q_phi.</p>
@@ -589,40 +617,43 @@ of Q_phi.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_bisecting_analytic" title="ad_hoc_diffractometer.forward._solve_bisecting_analytic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_bisecting_analytic</span></code></a>(→ list[tuple[float, float]])</p></td>
 <td><p>Analytic solver for bisecting with two free Eulerian angles.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_constraint_set" title="ad_hoc_diffractometer.forward._solve_constraint_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_constraint_set</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual" title="ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_bisecting_kappa_virtual</span></code></a>(→ list[dict[str, float]])</p></td>
+<td><p>True virtual bisecting solver for kappa geometries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_constraint_set" title="ad_hoc_diffractometer.forward._solve_constraint_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_constraint_set</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Dispatch to the appropriate analytic or numeric solver based on the</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_double_diffraction" title="ad_hoc_diffractometer.forward._solve_double_diffraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_double_diffraction</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_double_diffraction" title="ad_hoc_diffractometer.forward._solve_double_diffraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_double_diffraction</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Decomposed solver for double-diffraction modes.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_fixed_sample" title="ad_hoc_diffractometer.forward._solve_fixed_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_fixed_sample</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_fixed_sample" title="ad_hoc_diffractometer.forward._solve_fixed_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_fixed_sample</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Fixed-sample-angle solver (no bisect condition).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_kappa_virtual" title="ad_hoc_diffractometer.forward._solve_kappa_virtual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_kappa_virtual</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_kappa_virtual" title="ad_hoc_diffractometer.forward._solve_kappa_virtual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_kappa_virtual</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Kappa virtual-angle solver.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_one_free_angle" title="ad_hoc_diffractometer.forward._solve_one_free_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_one_free_angle</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_one_free_angle" title="ad_hoc_diffractometer.forward._solve_one_free_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_one_free_angle</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Numerically solve for one free stage angle such that</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_psi_mode" title="ad_hoc_diffractometer.forward._solve_psi_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_psi_mode</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_psi_mode" title="ad_hoc_diffractometer.forward._solve_psi_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_psi_mode</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Forward solver for psi-constant modes (validation filter).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_qaz_mode" title="ad_hoc_diffractometer.forward._solve_qaz_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_qaz_mode</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_qaz_mode" title="ad_hoc_diffractometer.forward._solve_qaz_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_qaz_mode</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Forward solver for modes with a <code class="docutils literal notranslate"><span class="pre">DetectorConstraint(&quot;qaz&quot;,</span> <span class="pre">value)</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_surface" title="ad_hoc_diffractometer.forward._solve_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_surface</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_surface" title="ad_hoc_diffractometer.forward._solve_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_surface</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Surface diffraction forward solver.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_two_angles" title="ad_hoc_diffractometer.forward._solve_two_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_two_angles</span></code></a>(→ tuple[float, float] | None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_two_angles" title="ad_hoc_diffractometer.forward._solve_two_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_two_angles</span></code></a>(→ tuple[float, float] | None)</p></td>
 <td><p>Numerically solve for one or two free stage angles such that</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._surface_residual" title="ad_hoc_diffractometer.forward._surface_residual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_surface_residual</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._surface_residual" title="ad_hoc_diffractometer.forward._surface_residual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_surface_residual</span></code></a>(→ float)</p></td>
 <td><p>Compute the surface constraint residual for the given angles.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._validate_solutions" title="ad_hoc_diffractometer.forward._validate_solutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_solutions</span></code></a>(→ None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._validate_solutions" title="ad_hoc_diffractometer.forward._validate_solutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_solutions</span></code></a>(→ None)</p></td>
 <td><p>Validate that every returned solution actually satisfies all constraints</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward.compute_forward" title="ad_hoc_diffractometer.forward.compute_forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_forward</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward.compute_forward" title="ad_hoc_diffractometer.forward.compute_forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_forward</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Compute all valid motor-angle solutions for the reciprocal-lattice point</p></td>
 </tr>
 </tbody>
@@ -943,11 +974,24 @@ branch (chi in [0, 180]) and the “negative chi” branch
 (chi in (-180, 0)).</p>
 <p>Both solutions are validated against stage limits; those that fail are
 dropped.  Cut-points from the mode are applied to each angle.</p>
-<p>When the two free stages have orthogonal axes (standard Eulerian
-geometry), an analytic fast path (<code class="docutils literal notranslate"><span class="pre">_solve_bisecting_analytic</span></code>) is
-used instead of Newton iteration, yielding a 5-10× speedup.  The
-Newton solver is retained as fallback for non-standard (e.g. kappa)
-axis configurations.</p>
+<p><strong>Dispatch</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Kappa true-virtual bisecting</strong> — if the geometry is a kappa
+diffractometer and the bisect sample stage is <code class="docutils literal notranslate"><span class="pre">komega</span></code>, the
+solver works in the <em>virtual</em> Eulerian frame (omega, chi, phi)
+where true bisecting means <code class="docutils literal notranslate"><span class="pre">omega_virtual</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code>.  The
+analytic solver is invoked on the synthetic Eulerian triple, and
+each solution is converted to real <code class="docutils literal notranslate"><span class="pre">(komega,</span> <span class="pre">kappa,</span> <span class="pre">kphi)</span></code> motor
+angles via <code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code> for both branches
+(kappa ≥ 0 and kappa ≤ 0).  See
+<a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual" title="ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_bisecting_kappa_virtual()</span></code></a>.</p></li>
+<li><p><strong>Standard Eulerian fast path</strong> — when the two free sample stages
+have orthogonal axes (fourcv, fourch, psic, sixc, fivec), the
+analytic solver <a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_bisecting_analytic" title="ad_hoc_diffractometer.forward._solve_bisecting_analytic"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_bisecting_analytic()</span></code></a> yields a
+5-10× speedup over Newton iteration.</p></li>
+<li><p><strong>Newton fallback</strong> — for any non-standard axis configuration not
+covered by the fast paths above.</p></li>
+</ol>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1030,6 +1074,77 @@ All entries have been validated against a single residual check.</p>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of (chi_deg, phi_deg)</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_solve_bisecting_kappa_virtual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttheta_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bisect_c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_solve_bisecting_kappa_virtual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual</span></code></p>
+</div>
+<p>True virtual bisecting solver for kappa geometries.</p>
+<p>On a kappa diffractometer the real motor triple
+<code class="docutils literal notranslate"><span class="pre">(komega,</span> <span class="pre">kappa,</span> <span class="pre">kphi)</span></code> is parameterised by virtual Eulerian
+<em>pseudoangles</em> <code class="docutils literal notranslate"><span class="pre">(omega,</span> <span class="pre">chi,</span> <span class="pre">phi)</span></code> via Walko (2016) eq. [16].
+<em>True</em> bisecting means the <strong>virtual</strong> omega equals <code class="docutils literal notranslate"><span class="pre">ttheta/2</span></code> —
+not the previous approximation <code class="docutils literal notranslate"><span class="pre">komega</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code>, which only
+coincides with true bisecting at <code class="docutils literal notranslate"><span class="pre">kappa</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p>
+<p>Walko’s pseudoangles do <strong>not</strong> correspond to a simple Eulerian
+sample stack: the relation between <code class="docutils literal notranslate"><span class="pre">(omega,</span> <span class="pre">chi,</span> <span class="pre">phi)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">(komega,</span> <span class="pre">kappa,</span> <span class="pre">kphi)</span></code> is non-affine, and the virtual angles
+parametrise the kappa motor space rather than represent an
+equivalent fourcv-style rotation.  Consequently no analytic
+decomposition exists: the (chi, phi) pseudoangle pair must be
+solved numerically given fixed virtual omega.</p>
+<p>Implementation: this solver delegates to
+<a class="reference internal" href="../kappa/index.html#ad_hoc_diffractometer.kappa.solve_kappa_virtual" title="ad_hoc_diffractometer.kappa.solve_kappa_virtual"><code class="xref py py-func docutils literal notranslate"><span class="pre">solve_kappa_virtual()</span></code></a> by
+constructing a synthetic mode that fixes virtual omega at
+<code class="docutils literal notranslate"><span class="pre">ttheta/2</span></code> via a <code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code>.  All fixed
+sample / detector constraints from the active mode are preserved.
+The kappa virtual solver runs Newton iteration on (chi, phi),
+converts each converged virtual triple to real motor angles via
+<code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code> (both kappa branches <code class="docutils literal notranslate"><span class="pre">±1</span></code>).</p>
+<p>Each raw solution is then refined by a final central-difference
+Newton polish on <code class="docutils literal notranslate"><span class="pre">(chi,</span> <span class="pre">phi)</span></code> to push the residual toward
+machine precision before cut-points / limits / deduplication are
+applied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>) – A kappa diffractometer (<code class="docutils literal notranslate"><span class="pre">kappa_alpha_deg</span></code> is set).</p></li>
+<li><p><strong>Q_phi</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Target scattering vector in the phi frame (Å⁻¹).</p></li>
+<li><p><strong>ttheta_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Detector angle (2θ) in degrees.</p></li>
+<li><p><strong>mode</strong> (<a class="reference internal" href="../mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><em>ConstraintSet</em></a>) – Active diffraction mode (used for cut-points, limits, and
+non-bisect sample / detector constraints).</p></li>
+<li><p><strong>bisect_c</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">VirtualBisectConstraint</span></code>) – Active virtual-bisecting constraint.  <code class="docutils literal notranslate"><span class="pre">bisect_c.detector_stage</span></code>
+names the detector stage whose half-angle is the virtual omega.</p></li>
+<li><p><strong>angles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Baseline angles with all fixed sample/detector stages already
+set.  The detector stage covered by <code class="docutils literal notranslate"><span class="pre">bisect_c.detector_stage</span></code>
+is already frozen at <code class="docutils literal notranslate"><span class="pre">ttheta_deg</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Valid solutions (may be empty when the requested reflection is
+not in the bisecting locus, or when all candidate (komega,
+kappa, kphi) configurations are outside the stage limits).</p>
+<p><strong>Note</strong>: Some reflections that were “accessible” under the
+previous <code class="docutils literal notranslate"><span class="pre">komega</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code> approximation are <strong>not</strong>
+accessible under true virtual bisecting — those previous
+solutions had <code class="docutils literal notranslate"><span class="pre">omega_virtual</span> <span class="pre">≠</span> <span class="pre">ttheta/2</span></code> and were therefore
+not physically bisecting.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>]</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>D. A. Walko, <em>Ref. Module Mater. Sci. Mater. Eng.</em> (2016),
+eq. [16] — the kappa-Eulerian pseudoangle relations.</p></li>
+<li><p>W. R. Busing &amp; H. A. Levy, <em>Acta Cryst.</em> 22, 457-464 (1967) —
+bisecting Eulerian geometry.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
@@ -1471,6 +1586,7 @@ for this geometry.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._refine_dd_outer_seeded"><code class="docutils literal notranslate"><span class="pre">_refine_dd_outer_seeded()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_bisecting"><code class="docutils literal notranslate"><span class="pre">_solve_bisecting()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_bisecting_analytic"><code class="docutils literal notranslate"><span class="pre">_solve_bisecting_analytic()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual"><code class="docutils literal notranslate"><span class="pre">_solve_bisecting_kappa_virtual()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_constraint_set"><code class="docutils literal notranslate"><span class="pre">_solve_constraint_set()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_double_diffraction"><code class="docutils literal notranslate"><span class="pre">_solve_double_diffraction()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_fixed_sample"><code class="docutils literal notranslate"><span class="pre">_solve_fixed_sample()</span></code></a></li>
@@ -1519,7 +1635,7 @@ for this geometry.</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 17:17 CDT.
+  Last updated on 2026-04-27 19:03 CDT.
   <br/>
 </p></div>
       

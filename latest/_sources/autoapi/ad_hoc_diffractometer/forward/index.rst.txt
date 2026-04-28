@@ -37,6 +37,33 @@ forward
               solution branches (two solutions: chi in [0°,180°] and
               chi in [-180°, 0°]).
 
+   True virtual bisecting (ConstraintSet with VirtualBisectConstraint)
+       The physically correct bisecting condition for kappa diffractometers
+       (kappa4cv, kappa4ch, kappa6c).  The bisecting condition is enforced
+       on the *virtual* Eulerian omega pseudoangle (Walko 2016, eq. [16]):
+       ``omega_virtual = ttheta/2``.  The literal ``komega = ttheta/2``
+       enforced by :class:`~mode.BisectConstraint` is only an approximation
+       and is replaced for kappa-bisect modes by
+       :class:`~mode.VirtualBisectConstraint`.  See issue #226.
+
+       Algorithm (:func:`_solve_bisecting_kappa_virtual`):
+           1. Build a synthetic mode that fixes ``omega_virtual = ttheta/2``
+              via a :class:`~mode.SampleConstraint`.
+           2. Delegate to :func:`~kappa.solve_kappa_virtual`, which runs
+              Newton iteration on virtual ``(chi, phi)`` with the omega
+              pseudoangle frozen.
+           3. For each converged virtual triple, convert to real motors via
+              :func:`~kappa.eulerian_to_kappa` for both kappa branches
+              (``±1``).
+           4. Polish the result with a finer central-difference Newton on
+              ``(chi, phi)`` to push the residual toward machine precision.
+
+       Some reflections that were "accessible" under the previous
+       ``komega = ttheta/2`` approximation are **not** accessible under
+       true virtual bisecting — those previous solutions had
+       ``omega_virtual ≠ ttheta/2`` and were therefore not physically
+       bisecting.
+
    Fixed sample angle (ConstraintSet without BisectConstraint)
        One or more sample stages are frozen at declared values.  The
        remaining free stages are solved numerically from the direction
@@ -80,6 +107,7 @@ Functions
    ad_hoc_diffractometer.forward._refine_dd_outer_seeded
    ad_hoc_diffractometer.forward._solve_bisecting
    ad_hoc_diffractometer.forward._solve_bisecting_analytic
+   ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual
    ad_hoc_diffractometer.forward._solve_constraint_set
    ad_hoc_diffractometer.forward._solve_double_diffraction
    ad_hoc_diffractometer.forward._solve_fixed_sample
@@ -395,11 +423,23 @@ Module Contents
    Both solutions are validated against stage limits; those that fail are
    dropped.  Cut-points from the mode are applied to each angle.
 
-   When the two free stages have orthogonal axes (standard Eulerian
-   geometry), an analytic fast path (``_solve_bisecting_analytic``) is
-   used instead of Newton iteration, yielding a 5-10× speedup.  The
-   Newton solver is retained as fallback for non-standard (e.g. kappa)
-   axis configurations.
+   **Dispatch**
+
+   1. **Kappa true-virtual bisecting** — if the geometry is a kappa
+      diffractometer and the bisect sample stage is ``komega``, the
+      solver works in the *virtual* Eulerian frame (omega, chi, phi)
+      where true bisecting means ``omega_virtual = ttheta/2``.  The
+      analytic solver is invoked on the synthetic Eulerian triple, and
+      each solution is converted to real ``(komega, kappa, kphi)`` motor
+      angles via :func:`~kappa.eulerian_to_kappa` for both branches
+      (kappa ≥ 0 and kappa ≤ 0).  See
+      :func:`_solve_bisecting_kappa_virtual`.
+   2. **Standard Eulerian fast path** — when the two free sample stages
+      have orthogonal axes (fourcv, fourch, psic, sixc, fivec), the
+      analytic solver :func:`_solve_bisecting_analytic` yields a
+      5-10× speedup over Newton iteration.
+   3. **Newton fallback** — for any non-standard axis configuration not
+      covered by the fast paths above.
 
    :param geometry:
    :type geometry: AdHocDiffractometer
@@ -495,6 +535,80 @@ Module Contents
    :returns: Candidate solutions.  May contain 0, 1, or 2 entries.
              All entries have been validated against a single residual check.
    :rtype: list of (chi_deg, phi_deg)
+
+
+.. py:function:: _solve_bisecting_kappa_virtual(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode, bisect_c, angles: dict[str, float]) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual``
+
+
+   True virtual bisecting solver for kappa geometries.
+
+   On a kappa diffractometer the real motor triple
+   ``(komega, kappa, kphi)`` is parameterised by virtual Eulerian
+   *pseudoangles* ``(omega, chi, phi)`` via Walko (2016) eq. [16].
+   *True* bisecting means the **virtual** omega equals ``ttheta/2`` —
+   not the previous approximation ``komega = ttheta/2``, which only
+   coincides with true bisecting at ``kappa = 0``.
+
+   Walko's pseudoangles do **not** correspond to a simple Eulerian
+   sample stack: the relation between ``(omega, chi, phi)`` and
+   ``(komega, kappa, kphi)`` is non-affine, and the virtual angles
+   parametrise the kappa motor space rather than represent an
+   equivalent fourcv-style rotation.  Consequently no analytic
+   decomposition exists: the (chi, phi) pseudoangle pair must be
+   solved numerically given fixed virtual omega.
+
+   Implementation: this solver delegates to
+   :func:`~ad_hoc_diffractometer.kappa.solve_kappa_virtual` by
+   constructing a synthetic mode that fixes virtual omega at
+   ``ttheta/2`` via a :class:`~mode.SampleConstraint`.  All fixed
+   sample / detector constraints from the active mode are preserved.
+   The kappa virtual solver runs Newton iteration on (chi, phi),
+   converts each converged virtual triple to real motor angles via
+   :func:`~kappa.eulerian_to_kappa` (both kappa branches ``±1``).
+
+   Each raw solution is then refined by a final central-difference
+   Newton polish on ``(chi, phi)`` to push the residual toward
+   machine precision before cut-points / limits / deduplication are
+   applied.
+
+   :param geometry: A kappa diffractometer (``kappa_alpha_deg`` is set).
+   :type geometry: AdHocDiffractometer
+   :param Q_phi: Target scattering vector in the phi frame (Å⁻¹).
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg: Detector angle (2θ) in degrees.
+   :type ttheta_deg: float
+   :param mode: Active diffraction mode (used for cut-points, limits, and
+                non-bisect sample / detector constraints).
+   :type mode: ConstraintSet
+   :param bisect_c: Active virtual-bisecting constraint.  ``bisect_c.detector_stage``
+                    names the detector stage whose half-angle is the virtual omega.
+   :type bisect_c: :class:`~mode.VirtualBisectConstraint`
+   :param angles: Baseline angles with all fixed sample/detector stages already
+                  set.  The detector stage covered by ``bisect_c.detector_stage``
+                  is already frozen at ``ttheta_deg``.
+   :type angles: dict[str, float]
+
+   :returns: Valid solutions (may be empty when the requested reflection is
+             not in the bisecting locus, or when all candidate (komega,
+             kappa, kphi) configurations are outside the stage limits).
+
+             **Note**: Some reflections that were "accessible" under the
+             previous ``komega = ttheta/2`` approximation are **not**
+             accessible under true virtual bisecting — those previous
+             solutions had ``omega_virtual ≠ ttheta/2`` and were therefore
+             not physically bisecting.
+   :rtype: list of dict[str, float]
+
+   .. rubric:: References
+
+   * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016),
+     eq. [16] — the kappa-Eulerian pseudoangle relations.
+   * W. R. Busing & H. A. Levy, *Acta Cryst.* 22, 457-464 (1967) —
+     bisecting Eulerian geometry.
 
 
 .. py:function:: _solve_constraint_set(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]

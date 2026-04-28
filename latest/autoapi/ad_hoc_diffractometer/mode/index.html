@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=b32d37a4"></script>
+    <script src="../../../_static/documentation_options.js?v=b79a97b6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 17:17 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 19:03 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -604,6 +604,9 @@ actual geometry at solve time.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a></p></td>
 <td><p>Constrains one sample motor angle to a fixed value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint" title="ad_hoc_diffractometer.mode.VirtualBisectConstraint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VirtualBisectConstraint</span></code></a></p></td>
+<td><p>True virtual bisecting constraint for kappa geometries.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1502,6 +1505,114 @@ converts the virtual angle constraint to real kappa motor angles.</p>
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.VirtualBisectConstraint">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.mode.</span></span><span class="sig-name descname"><span class="pre">VirtualBisectConstraint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/mode.html#VirtualBisectConstraint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.mode.VirtualBisectConstraint</span></code></p>
+</div>
+<p>Bases: <a class="reference internal" href="#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a></p>
+<p>True virtual bisecting constraint for kappa geometries.</p>
+<p>Identical in structure to <a class="reference internal" href="#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a> but
+semantically distinct: the bisecting condition is enforced on the
+<strong>virtual</strong> Eulerian omega pseudoangle rather than on a real motor
+angle.  On a kappa diffractometer the virtual omega is computed
+from <code class="docutils literal notranslate"><span class="pre">(komega,</span> <span class="pre">kappa,</span> <span class="pre">kphi)</span></code> via the Walko (2016) eq. [16]
+relations (see <a class="reference internal" href="../kappa/index.html#ad_hoc_diffractometer.kappa.kappa_to_eulerian" title="ad_hoc_diffractometer.kappa.kappa_to_eulerian"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_to_eulerian()</span></code></a>).</p>
+<p>The constraint residual is therefore:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">residual</span> <span class="o">=</span> <span class="n">omega_virtual</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="n">angles</span><span class="p">[</span><span class="n">detector_stage</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">omega_virtual</span></code> depends nonlinearly on the kappa motor
+triple.  This is the physically correct bisecting condition for a
+kappa diffractometer; the literal <code class="docutils literal notranslate"><span class="pre">komega</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code> enforced by
+<a class="reference internal" href="#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a> is only an approximation that coincides
+with true bisecting at <code class="docutils literal notranslate"><span class="pre">kappa</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p>
+<p>The dispatcher in <a class="reference internal" href="../forward/index.html#module-ad_hoc_diffractometer.forward" title="ad_hoc_diffractometer.forward"><code class="xref py py-mod docutils literal notranslate"><span class="pre">forward</span></code></a> routes
+modes containing a <a class="reference internal" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint" title="ad_hoc_diffractometer.mode.VirtualBisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">VirtualBisectConstraint</span></code></a> to
+<a class="reference internal" href="../forward/index.html#ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual" title="ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_bisecting_kappa_virtual()</span></code></a>,
+which solves a 2D Newton problem in virtual <code class="docutils literal notranslate"><span class="pre">(chi,</span> <span class="pre">phi)</span></code> space
+with <code class="docutils literal notranslate"><span class="pre">omega_virtual</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code> enforced exactly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample_stage</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the <em>virtual</em> Eulerian angle to drive (typically
+<code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code>).  Stored for documentation and serialization;
+the solver always enforces <code class="docutils literal notranslate"><span class="pre">omega_virtual</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code>
+regardless of this name.</p></li>
+<li><p><strong>detector_stage</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the detector stage whose angle is halved (e.g.
+<code class="docutils literal notranslate"><span class="pre">&quot;ttheta&quot;</span></code> on kappa4cv/kappa4ch, <code class="docutils literal notranslate"><span class="pre">&quot;delta&quot;</span></code> on kappa6c).</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">VirtualBisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">)</span>
+<span class="go">VirtualBisectConstraint(&#39;omega&#39;, &#39;ttheta&#39;)</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>D. A. Walko, <em>Ref. Module Mater. Sci. Mater. Eng.</em> (2016),
+eq. [16] — kappa pseudoangle relations.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.VirtualBisectConstraint.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/mode.html#VirtualBisectConstraint.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint.evaluate" title="Link to this definition">#</a></dt>
+<dd><p>Return the constraint residual <code class="docutils literal notranslate"><span class="pre">omega_virtual</span> <span class="pre">−</span> <span class="pre">detector/2</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">omega_virtual</span></code> is computed from the kappa motor triple
+<code class="docutils literal notranslate"><span class="pre">(komega,</span> <span class="pre">kappa,</span> <span class="pre">kphi)</span></code> via
+<a class="reference internal" href="../kappa/index.html#ad_hoc_diffractometer.kappa.kappa_to_eulerian" title="ad_hoc_diffractometer.kappa.kappa_to_eulerian"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_to_eulerian()</span></code></a>.  The
+<code class="docutils literal notranslate"><span class="pre">geometry</span></code> argument supplies the kappa tilt angle
+<code class="docutils literal notranslate"><span class="pre">kappa_alpha_deg</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Current motor angles in degrees; must include <code class="docutils literal notranslate"><span class="pre">komega</span></code>,
+<code class="docutils literal notranslate"><span class="pre">kappa</span></code>, <code class="docutils literal notranslate"><span class="pre">kphi</span></code>, and the detector stage named by
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">detector_stage</span></code>.</p></li>
+<li><p><strong>geometry</strong> (<a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>) – The diffractometer, used only for <code class="docutils literal notranslate"><span class="pre">kappa_alpha_deg</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Residual in degrees.  Zero means true virtual bisecting is
+satisfied.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – If a required motor angle is missing from <code class="docutils literal notranslate"><span class="pre">angles</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">geometry.kappa_alpha_deg</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (the constraint
+is only meaningful on kappa geometries) or if the kappa
+triple lies outside the reachable virtual range.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.VirtualBisectConstraint.is_implemented">
+<span class="sig-name descname"><span class="pre">is_implemented</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/mode.html#VirtualBisectConstraint.is_implemented"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint.is_implemented" title="Link to this definition">#</a></dt>
+<dd><p>Return True when the geometry is a kappa diffractometer with
+the required <code class="docutils literal notranslate"><span class="pre">komega</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa</span></code>, <code class="docutils literal notranslate"><span class="pre">kphi</span></code> stages and the
+named detector stage.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.VirtualBisectConstraint.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'virtual_bisect'</span></span><a class="headerlink" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint.name" title="Link to this definition">#</a></dt>
+<dd><p>Constraint name — <code class="docutils literal notranslate"><span class="pre">&quot;virtual_bisect&quot;</span></code> (overrides <code class="docutils literal notranslate"><span class="pre">&quot;bisect&quot;</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.VirtualBisectConstraint.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/mode.html#VirtualBisectConstraint.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint.to_dict" title="Link to this definition">#</a></dt>
+<dd><p>Return a JSON-serialisable dict.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.mode._qaz_residual">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.mode.</span></span><span class="sig-name descname"><span class="pre">_qaz_residual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_qaz_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/mode.html#_qaz_residual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.mode._qaz_residual" title="Link to this definition">#</a></dt>
@@ -1693,6 +1804,13 @@ Zero means the constraint is satisfied.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.SampleConstraint.value"><code class="docutils literal notranslate"><span class="pre">SampleConstraint.value</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint"><code class="docutils literal notranslate"><span class="pre">VirtualBisectConstraint</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint.evaluate"><code class="docutils literal notranslate"><span class="pre">VirtualBisectConstraint.evaluate()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint.is_implemented"><code class="docutils literal notranslate"><span class="pre">VirtualBisectConstraint.is_implemented()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint.name"><code class="docutils literal notranslate"><span class="pre">VirtualBisectConstraint.name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode.VirtualBisectConstraint.to_dict"><code class="docutils literal notranslate"><span class="pre">VirtualBisectConstraint.to_dict()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.mode._qaz_residual"><code class="docutils literal notranslate"><span class="pre">_qaz_residual()</span></code></a></li>
 </ul>
 </li>
@@ -1730,7 +1848,7 @@ Zero means the constraint is satisfied.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 17:17 CDT.
+  Last updated on 2026-04-27 19:03 CDT.
   <br/>
 </p></div>
       

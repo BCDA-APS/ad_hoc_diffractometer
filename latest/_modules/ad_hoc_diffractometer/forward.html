@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=b32d37a4"></script>
+    <script src="../../_static/documentation_options.js?v=b79a97b6"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.7" />
-    <meta name="docbuild:last-update" content="2026-04-27 17:17 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-27 19:03 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -453,6 +453,33 @@
 <span class="sd">           from the direction of Q_phi, choosing among the standard</span>
 <span class="sd">           solution branches (two solutions: chi in [0°,180°] and</span>
 <span class="sd">           chi in [-180°, 0°]).</span>
+
+<span class="sd">True virtual bisecting (ConstraintSet with VirtualBisectConstraint)</span>
+<span class="sd">    The physically correct bisecting condition for kappa diffractometers</span>
+<span class="sd">    (kappa4cv, kappa4ch, kappa6c).  The bisecting condition is enforced</span>
+<span class="sd">    on the *virtual* Eulerian omega pseudoangle (Walko 2016, eq. [16]):</span>
+<span class="sd">    ``omega_virtual = ttheta/2``.  The literal ``komega = ttheta/2``</span>
+<span class="sd">    enforced by :class:`~mode.BisectConstraint` is only an approximation</span>
+<span class="sd">    and is replaced for kappa-bisect modes by</span>
+<span class="sd">    :class:`~mode.VirtualBisectConstraint`.  See issue #226.</span>
+
+<span class="sd">    Algorithm (:func:`_solve_bisecting_kappa_virtual`):</span>
+<span class="sd">        1. Build a synthetic mode that fixes ``omega_virtual = ttheta/2``</span>
+<span class="sd">           via a :class:`~mode.SampleConstraint`.</span>
+<span class="sd">        2. Delegate to :func:`~kappa.solve_kappa_virtual`, which runs</span>
+<span class="sd">           Newton iteration on virtual ``(chi, phi)`` with the omega</span>
+<span class="sd">           pseudoangle frozen.</span>
+<span class="sd">        3. For each converged virtual triple, convert to real motors via</span>
+<span class="sd">           :func:`~kappa.eulerian_to_kappa` for both kappa branches</span>
+<span class="sd">           (``±1``).</span>
+<span class="sd">        4. Polish the result with a finer central-difference Newton on</span>
+<span class="sd">           ``(chi, phi)`` to push the residual toward machine precision.</span>
+
+<span class="sd">    Some reflections that were &quot;accessible&quot; under the previous</span>
+<span class="sd">    ``komega = ttheta/2`` approximation are **not** accessible under</span>
+<span class="sd">    true virtual bisecting — those previous solutions had</span>
+<span class="sd">    ``omega_virtual ≠ ttheta/2`` and were therefore not physically</span>
+<span class="sd">    bisecting.</span>
 
 <span class="sd">Fixed sample angle (ConstraintSet without BisectConstraint)</span>
 <span class="sd">    One or more sample stages are frozen at declared values.  The</span>
@@ -1212,6 +1239,261 @@
 
 
 
+<div class="viewcode-block" id="_solve_bisecting_kappa_virtual">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/forward/index.html#ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_bisecting_kappa_virtual</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ttheta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+    <span class="n">bisect_c</span><span class="p">,</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    True virtual bisecting solver for kappa geometries.</span>
+
+<span class="sd">    On a kappa diffractometer the real motor triple</span>
+<span class="sd">    ``(komega, kappa, kphi)`` is parameterised by virtual Eulerian</span>
+<span class="sd">    *pseudoangles* ``(omega, chi, phi)`` via Walko (2016) eq. [16].</span>
+<span class="sd">    *True* bisecting means the **virtual** omega equals ``ttheta/2`` —</span>
+<span class="sd">    not the previous approximation ``komega = ttheta/2``, which only</span>
+<span class="sd">    coincides with true bisecting at ``kappa = 0``.</span>
+
+<span class="sd">    Walko&#39;s pseudoangles do **not** correspond to a simple Eulerian</span>
+<span class="sd">    sample stack: the relation between ``(omega, chi, phi)`` and</span>
+<span class="sd">    ``(komega, kappa, kphi)`` is non-affine, and the virtual angles</span>
+<span class="sd">    parametrise the kappa motor space rather than represent an</span>
+<span class="sd">    equivalent fourcv-style rotation.  Consequently no analytic</span>
+<span class="sd">    decomposition exists: the (chi, phi) pseudoangle pair must be</span>
+<span class="sd">    solved numerically given fixed virtual omega.</span>
+
+<span class="sd">    Implementation: this solver delegates to</span>
+<span class="sd">    :func:`~ad_hoc_diffractometer.kappa.solve_kappa_virtual` by</span>
+<span class="sd">    constructing a synthetic mode that fixes virtual omega at</span>
+<span class="sd">    ``ttheta/2`` via a :class:`~mode.SampleConstraint`.  All fixed</span>
+<span class="sd">    sample / detector constraints from the active mode are preserved.</span>
+<span class="sd">    The kappa virtual solver runs Newton iteration on (chi, phi),</span>
+<span class="sd">    converts each converged virtual triple to real motor angles via</span>
+<span class="sd">    :func:`~kappa.eulerian_to_kappa` (both kappa branches ``±1``).</span>
+
+<span class="sd">    Each raw solution is then refined by a final central-difference</span>
+<span class="sd">    Newton polish on ``(chi, phi)`` to push the residual toward</span>
+<span class="sd">    machine precision before cut-points / limits / deduplication are</span>
+<span class="sd">    applied.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        A kappa diffractometer (``kappa_alpha_deg`` is set).</span>
+<span class="sd">    Q_phi : numpy.ndarray, shape (3,)</span>
+<span class="sd">        Target scattering vector in the phi frame (Å⁻¹).</span>
+<span class="sd">    ttheta_deg : float</span>
+<span class="sd">        Detector angle (2θ) in degrees.</span>
+<span class="sd">    mode : ConstraintSet</span>
+<span class="sd">        Active diffraction mode (used for cut-points, limits, and</span>
+<span class="sd">        non-bisect sample / detector constraints).</span>
+<span class="sd">    bisect_c : :class:`~mode.VirtualBisectConstraint`</span>
+<span class="sd">        Active virtual-bisecting constraint.  ``bisect_c.detector_stage``</span>
+<span class="sd">        names the detector stage whose half-angle is the virtual omega.</span>
+<span class="sd">    angles : dict[str, float]</span>
+<span class="sd">        Baseline angles with all fixed sample/detector stages already</span>
+<span class="sd">        set.  The detector stage covered by ``bisect_c.detector_stage``</span>
+<span class="sd">        is already frozen at ``ttheta_deg``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">        Valid solutions (may be empty when the requested reflection is</span>
+<span class="sd">        not in the bisecting locus, or when all candidate (komega,</span>
+<span class="sd">        kappa, kphi) configurations are outside the stage limits).</span>
+
+<span class="sd">        **Note**: Some reflections that were &quot;accessible&quot; under the</span>
+<span class="sd">        previous ``komega = ttheta/2`` approximation are **not**</span>
+<span class="sd">        accessible under true virtual bisecting — those previous</span>
+<span class="sd">        solutions had ``omega_virtual ≠ ttheta/2`` and were therefore</span>
+<span class="sd">        not physically bisecting.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016),</span>
+<span class="sd">      eq. [16] — the kappa-Eulerian pseudoangle relations.</span>
+<span class="sd">    * W. R. Busing &amp; H. A. Levy, *Acta Cryst.* 22, 457-464 (1967) —</span>
+<span class="sd">      bisecting Eulerian geometry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_kappa_virtual</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectorConstraint</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleConstraint</span>
+
+    <span class="n">omega_v</span> <span class="o">=</span> <span class="n">ttheta_deg</span> <span class="o">/</span> <span class="mf">2.0</span>  <span class="c1"># virtual omega for true bisecting</span>
+
+    <span class="c1"># Build a synthetic mode that is identical to the original except:</span>
+    <span class="c1">#   - the VirtualBisectConstraint is replaced by a fixed virtual</span>
+    <span class="c1">#     omega SampleConstraint at ttheta/2 (so the kappa virtual</span>
+    <span class="c1">#     solver knows omega is fixed and (chi, phi) are free)</span>
+    <span class="n">synthetic_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">omega_v</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="n">bisect_c</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">DetectorConstraint</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">bisect_c</span><span class="o">.</span><span class="n">detector_stage</span>
+        <span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">continue</span>
+        <span class="n">synthetic_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">synthetic_mode</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">(</span><span class="n">synthetic_constraints</span><span class="p">,</span> <span class="n">computed</span><span class="o">=</span><span class="n">mode</span><span class="o">.</span><span class="n">computed</span><span class="p">)</span>
+
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">solve_kappa_virtual</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">synthetic_mode</span><span class="p">)</span>
+
+    <span class="c1"># Post-process: polish, apply cut-points, limits, deduplicate.</span>
+    <span class="n">Q_phi_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Q_phi</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.orientation</span><span class="w"> </span><span class="kn">import</span> <span class="n">angles_to_phi_vector</span> <span class="k">as</span> <span class="n">_a2phi</span>
+
+    <span class="c1"># Set up a polish context that reuses the cached detector / outer</span>
+    <span class="c1"># rotations; the kappa triple varies during polishing.</span>
+    <span class="n">polish_ctx</span> <span class="o">=</span> <span class="n">ForwardContext</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="n">polish_ctx</span><span class="o">.</span><span class="n">prepare_caching</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">})</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_polish</span><span class="p">(</span><span class="n">sol</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Refine (komega, kappa, kphi) by Newton with a tighter</span>
+<span class="sd">        finite-difference step, while *holding the virtual omega</span>
+<span class="sd">        invariant* via constrained motion in (kappa, kphi).</span>
+
+<span class="sd">        The constraint ``omega_virtual = ttheta/2`` couples the three</span>
+<span class="sd">        motors via Walko&#39;s eq. [16]:</span>
+
+<span class="sd">            komega = omega_v + arccos(cos(kappa/2) / cos(chi/2))</span>
+
+<span class="sd">        where ``chi = 2 arcsin(sin(kappa/2) sin(α₀))``.  Treating</span>
+<span class="sd">        (kappa, kphi) as the independent variables and updating komega</span>
+<span class="sd">        from this relation preserves bisecting exactly.</span>
+
+<span class="sd">        A 2D Newton step is taken on (kappa, kphi) using a central-</span>
+<span class="sd">        difference Jacobian with step ``h = 1e-6``.  Two refinement</span>
+<span class="sd">        sweeps are run; further iterations rarely improve the residual.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">eulerian_to_kappa</span>
+
+        <span class="c1"># Use the kappa.eulerian_to_kappa branch consistent with the</span>
+        <span class="c1"># current sign of kappa.</span>
+        <span class="n">branch</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span> <span class="k">if</span> <span class="n">sol</span><span class="p">[</span><span class="s2">&quot;kappa&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="c1"># Recover the virtual (chi, phi) from the current motor triple</span>
+        <span class="c1"># by inverting kappa_to_eulerian.</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">kappa_to_eulerian</span>
+
+        <span class="n">omega_v_curr</span><span class="p">,</span> <span class="n">chi_v</span><span class="p">,</span> <span class="n">phi_v</span> <span class="o">=</span> <span class="n">kappa_to_eulerian</span><span class="p">(</span>
+            <span class="n">sol</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">],</span>
+            <span class="n">sol</span><span class="p">[</span><span class="s2">&quot;kappa&quot;</span><span class="p">],</span>
+            <span class="n">sol</span><span class="p">[</span><span class="s2">&quot;kphi&quot;</span><span class="p">],</span>
+            <span class="n">alpha_deg</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_residual</span><span class="p">(</span><span class="n">chi</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">phi</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ko</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">kp</span> <span class="o">=</span> <span class="n">eulerian_to_kappa</span><span class="p">(</span>
+                    <span class="n">omega_v</span><span class="p">,</span>
+                    <span class="n">chi</span><span class="p">,</span>
+                    <span class="n">phi</span><span class="p">,</span>
+                    <span class="n">alpha_deg</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span><span class="p">,</span>
+                    <span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">])</span>
+            <span class="n">trial</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+            <span class="n">trial</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ko</span>
+            <span class="n">trial</span><span class="p">[</span><span class="s2">&quot;kappa&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+            <span class="n">trial</span><span class="p">[</span><span class="s2">&quot;kphi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kp</span>
+            <span class="k">return</span> <span class="n">polish_ctx</span><span class="o">.</span><span class="n">q_phi</span><span class="p">(</span><span class="n">trial</span><span class="p">)</span> <span class="o">-</span> <span class="n">Q_phi_arr</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">chi_v</span><span class="p">,</span> <span class="n">phi_v</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="c1"># Central-difference Newton with small h for higher precision</span>
+        <span class="c1"># than the coarse forward-difference Newton in solve_kappa_virtual.</span>
+        <span class="c1"># We accept only steps that strictly reduce the residual.</span>
+        <span class="n">best_x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">best_r</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">_residual</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="mf">1e-6</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">15</span><span class="p">):</span>  <span class="c1"># pragma: no branch</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">_residual</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">r2</span> <span class="o">=</span> <span class="n">r</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">r_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">r_norm</span> <span class="o">&lt;</span> <span class="mf">1e-13</span><span class="p">:</span>
+                <span class="n">best_x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">best_r</span> <span class="o">=</span> <span class="n">r_norm</span>
+                <span class="k">break</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+                <span class="n">xp</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">xm</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">xp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+                <span class="n">xm</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">h</span>
+                <span class="n">J</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_residual</span><span class="p">(</span><span class="n">xp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xp</span><span class="p">[</span><span class="mi">1</span><span class="p">])[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">_residual</span><span class="p">(</span><span class="n">xm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xm</span><span class="p">[</span><span class="mi">1</span><span class="p">])[:</span><span class="mi">2</span><span class="p">]</span>
+                <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="o">-</span><span class="n">r2</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+                <span class="k">break</span>
+            <span class="n">x_new</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">dx</span>
+            <span class="n">r_new_full</span> <span class="o">=</span> <span class="n">_residual</span><span class="p">(</span><span class="n">x_new</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_new</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">r_new_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_new_full</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">r_new_norm</span> <span class="o">&lt;</span> <span class="n">best_r</span><span class="p">:</span>
+                <span class="n">best_r</span> <span class="o">=</span> <span class="n">r_new_norm</span>
+                <span class="n">best_x</span> <span class="o">=</span> <span class="n">x_new</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">x_new</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>  <span class="c1"># no improvement — stop</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">best_x</span>
+
+        <span class="c1"># Build final solution from the polished virtual triple</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ko</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">kp</span> <span class="o">=</span> <span class="n">eulerian_to_kappa</span><span class="p">(</span>
+                <span class="n">omega_v</span><span class="p">,</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="n">alpha_deg</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span><span class="p">,</span>
+                <span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">return</span> <span class="n">sol</span>
+        <span class="n">polished</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+        <span class="n">polished</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ko</span>
+        <span class="n">polished</span><span class="p">[</span><span class="s2">&quot;kappa&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="n">polished</span><span class="p">[</span><span class="s2">&quot;kphi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kp</span>
+        <span class="k">return</span> <span class="n">polished</span>
+
+    <span class="n">solutions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">raw</span><span class="p">:</span>
+        <span class="c1"># Merge baseline angles (outer fixed stages not always echoed</span>
+        <span class="c1"># back by solve_kappa_virtual)</span>
+        <span class="n">merged</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+        <span class="n">merged</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+
+        <span class="c1"># Polish for higher precision</span>
+        <span class="n">merged</span> <span class="o">=</span> <span class="n">_polish</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span>
+
+        <span class="c1"># Validate via uncached Q computation (final safety check)</span>
+        <span class="n">Q_check</span> <span class="o">=</span> <span class="n">_a2phi</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="o">**</span><span class="n">merged</span><span class="p">)</span>
+        <span class="n">residual</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Q_check</span> <span class="o">-</span> <span class="n">Q_phi_arr</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">residual</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">continue</span>
+        <span class="n">_apply_cut_points</span><span class="p">(</span><span class="n">merged</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+        <span class="c1"># Dedup on real motor angles</span>
+        <span class="n">duplicate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">existing</span> <span class="ow">in</span> <span class="n">solutions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span>
+                <span class="nb">abs</span><span class="p">(</span><span class="n">existing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">merged</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-4</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">duplicate</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">duplicate</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">merged</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">solutions</span></div>
+
+
+
 <div class="viewcode-block" id="_solve_bisecting">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/forward/index.html#ad_hoc_diffractometer.forward._solve_bisecting">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_solve_bisecting</span><span class="p">(</span>
@@ -1242,11 +1524,23 @@
 <span class="sd">    Both solutions are validated against stage limits; those that fail are</span>
 <span class="sd">    dropped.  Cut-points from the mode are applied to each angle.</span>
 
-<span class="sd">    When the two free stages have orthogonal axes (standard Eulerian</span>
-<span class="sd">    geometry), an analytic fast path (``_solve_bisecting_analytic``) is</span>
-<span class="sd">    used instead of Newton iteration, yielding a 5-10× speedup.  The</span>
-<span class="sd">    Newton solver is retained as fallback for non-standard (e.g. kappa)</span>
-<span class="sd">    axis configurations.</span>
+<span class="sd">    **Dispatch**</span>
+
+<span class="sd">    1. **Kappa true-virtual bisecting** — if the geometry is a kappa</span>
+<span class="sd">       diffractometer and the bisect sample stage is ``komega``, the</span>
+<span class="sd">       solver works in the *virtual* Eulerian frame (omega, chi, phi)</span>
+<span class="sd">       where true bisecting means ``omega_virtual = ttheta/2``.  The</span>
+<span class="sd">       analytic solver is invoked on the synthetic Eulerian triple, and</span>
+<span class="sd">       each solution is converted to real ``(komega, kappa, kphi)`` motor</span>
+<span class="sd">       angles via :func:`~kappa.eulerian_to_kappa` for both branches</span>
+<span class="sd">       (kappa ≥ 0 and kappa ≤ 0).  See</span>
+<span class="sd">       :func:`_solve_bisecting_kappa_virtual`.</span>
+<span class="sd">    2. **Standard Eulerian fast path** — when the two free sample stages</span>
+<span class="sd">       have orthogonal axes (fourcv, fourch, psic, sixc, fivec), the</span>
+<span class="sd">       analytic solver :func:`_solve_bisecting_analytic` yields a</span>
+<span class="sd">       5-10× speedup over Newton iteration.</span>
+<span class="sd">    3. **Newton fallback** — for any non-standard axis configuration not</span>
+<span class="sd">       covered by the fast paths above.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1288,6 +1582,22 @@
     <span class="n">sample_bisect_name</span> <span class="o">=</span> <span class="n">bisect_c</span><span class="o">.</span><span class="n">sample_stage</span>  <span class="c1"># receives ttheta_deg / 2</span>
 
     <span class="n">angles</span><span class="p">[</span><span class="n">detector_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttheta_deg</span>
+
+    <span class="c1"># --- Kappa true-virtual bisecting fast path -----------------------------</span>
+    <span class="c1">#</span>
+    <span class="c1"># When the bisect constraint is a :class:`VirtualBisectConstraint`,</span>
+    <span class="c1"># the bisecting condition is on the *virtual* Eulerian omega</span>
+    <span class="c1"># pseudoangle (``omega_virtual = ttheta/2``), not on the real</span>
+    <span class="c1"># ``komega`` motor.  Dispatch to a dedicated solver that works in</span>
+    <span class="c1"># virtual Eulerian space and converts to real kappa motor angles via</span>
+    <span class="c1"># :func:`~kappa.eulerian_to_kappa`.</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">VirtualBisectConstraint</span> <span class="k">as</span> <span class="n">_VBC</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bisect_c</span><span class="p">,</span> <span class="n">_VBC</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_solve_bisecting_kappa_virtual</span><span class="p">(</span>
+            <span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">bisect_c</span><span class="p">,</span> <span class="n">angles</span>
+        <span class="p">)</span>
+
     <span class="n">angles</span><span class="p">[</span><span class="n">sample_bisect_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttheta_deg</span> <span class="o">/</span> <span class="mf">2.0</span>
 
     <span class="c1"># The remaining free sample stages are those not fixed by any constraint.</span>
@@ -3493,7 +3803,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-27 17:17 CDT.
+  Last updated on 2026-04-27 19:03 CDT.
   <br/>
 </p></div>
       

@@ -125,6 +125,7 @@ Classes
    ad_hoc_diffractometer.mode.ModeDict
    ad_hoc_diffractometer.mode.ReferenceConstraint
    ad_hoc_diffractometer.mode.SampleConstraint
+   ad_hoc_diffractometer.mode.VirtualBisectConstraint
 
 
 Functions
@@ -1009,6 +1010,111 @@ Module Contents
       a fixed angle in degrees.
 
       :type: Constraint value
+
+
+.. py:class:: VirtualBisectConstraint(sample_stage: str, detector_stage: str)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.VirtualBisectConstraint``
+
+
+   Bases: :py:obj:`BisectConstraint`
+
+
+   True virtual bisecting constraint for kappa geometries.
+
+   Identical in structure to :class:`BisectConstraint` but
+   semantically distinct: the bisecting condition is enforced on the
+   **virtual** Eulerian omega pseudoangle rather than on a real motor
+   angle.  On a kappa diffractometer the virtual omega is computed
+   from ``(komega, kappa, kphi)`` via the Walko (2016) eq. [16]
+   relations (see :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian`).
+
+   The constraint residual is therefore::
+
+       residual = omega_virtual(angles) - angles[detector_stage] / 2
+
+   where ``omega_virtual`` depends nonlinearly on the kappa motor
+   triple.  This is the physically correct bisecting condition for a
+   kappa diffractometer; the literal ``komega = ttheta/2`` enforced by
+   :class:`BisectConstraint` is only an approximation that coincides
+   with true bisecting at ``kappa = 0``.
+
+   The dispatcher in :mod:`~ad_hoc_diffractometer.forward` routes
+   modes containing a :class:`VirtualBisectConstraint` to
+   :func:`~ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual`,
+   which solves a 2D Newton problem in virtual ``(chi, phi)`` space
+   with ``omega_virtual = ttheta/2`` enforced exactly.
+
+   :param sample_stage: Name of the *virtual* Eulerian angle to drive (typically
+                        ``"omega"``).  Stored for documentation and serialization;
+                        the solver always enforces ``omega_virtual = ttheta/2``
+                        regardless of this name.
+   :type sample_stage: str
+   :param detector_stage: Name of the detector stage whose angle is halved (e.g.
+                          ``"ttheta"`` on kappa4cv/kappa4ch, ``"delta"`` on kappa6c).
+   :type detector_stage: str
+
+   .. rubric:: Examples
+
+   >>> VirtualBisectConstraint("omega", "ttheta")
+   VirtualBisectConstraint('omega', 'ttheta')
+
+   .. rubric:: References
+
+   * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016),
+     eq. [16] — kappa pseudoangle relations.
+
+
+   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> float
+
+      Return the constraint residual ``omega_virtual − detector/2``.
+
+      ``omega_virtual`` is computed from the kappa motor triple
+      ``(komega, kappa, kphi)`` via
+      :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian`.  The
+      ``geometry`` argument supplies the kappa tilt angle
+      ``kappa_alpha_deg``.
+
+      :param angles: Current motor angles in degrees; must include ``komega``,
+                     ``kappa``, ``kphi``, and the detector stage named by
+                     :attr:`detector_stage`.
+      :type angles: dict[str, float]
+      :param geometry: The diffractometer, used only for ``kappa_alpha_deg``.
+      :type geometry: AdHocDiffractometer
+
+      :returns: Residual in degrees.  Zero means true virtual bisecting is
+                satisfied.
+      :rtype: float
+
+      :raises KeyError: If a required motor angle is missing from ``angles``.
+      :raises ValueError: If ``geometry.kappa_alpha_deg`` is ``None`` (the constraint
+          is only meaningful on kappa geometries) or if the kappa
+          triple lies outside the reachable virtual range.
+
+
+
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
+
+      Return True when the geometry is a kappa diffractometer with
+      the required ``komega``, ``kappa``, ``kphi`` stages and the
+      named detector stage.
+
+
+
+   .. py:attribute:: name
+      :type:  str
+      :value: 'virtual_bisect'
+
+
+      Constraint name — ``"virtual_bisect"`` (overrides ``"bisect"``).
+
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable dict.
+
 
 
 .. py:function:: _qaz_residual(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, target_qaz_deg: float) -> float
