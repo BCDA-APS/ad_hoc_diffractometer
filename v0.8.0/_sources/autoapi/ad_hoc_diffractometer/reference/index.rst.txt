@@ -1,0 +1,208 @@
+reference
+=========
+
+.. py:module:: ad_hoc_diffractometer.reference
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.reference``
+
+   Provides standalone functions for computing the physical pseudo-angles that
+   appear in :class:`~mode.ReferenceConstraint` conditions: incidence angle,
+   exit angle, azimuthal angle ψ, and lab-frame azimuthal angle naz.
+
+   These functions require the geometry's :attr:`surface_normal` or
+   :attr:`azimuthal_reference` to be set before calling.
+
+   Functions
+   ---------
+   :func:`incidence_angle`
+       Angle of incidence α_i between the incident beam and the sample surface.
+
+   :func:`exit_angle`
+       Angle of exit β_out between the diffracted beam and the sample surface.
+
+   :func:`psi_angle`
+       Azimuthal angle ψ of the reference vector n̂ about Q (You 1999, eq. 23).
+
+   :func:`naz_angle`
+       Azimuthal angle of n̂ projected onto the lab-frame horizontal plane.
+
+   .. rubric:: Notes
+
+   All functions accept a ``geometry`` instance and an optional ``angles`` dict
+   of motor angles (defaulting to the geometry's current stage angles when
+   ``None``).  They raise :class:`ValueError` when the required reference vector
+   is not set on the geometry.
+
+   .. rubric:: References
+
+   * You, *J. Appl. Cryst.* **32**, 614-623 (1999), eqs. 10-11, 23.
+   * Lohmeier & Vlieg, *J. Appl. Cryst.* **26**, 706-716 (1993), §4.2.
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.reference._require_azimuthal_reference
+   ad_hoc_diffractometer.reference._require_surface_normal
+   ad_hoc_diffractometer.reference.exit_angle
+   ad_hoc_diffractometer.reference.incidence_angle
+   ad_hoc_diffractometer.reference.naz_angle
+   ad_hoc_diffractometer.reference.psi_angle
+
+
+Module Contents
+---------------
+
+.. py:function:: _require_azimuthal_reference(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference._require_azimuthal_reference``
+
+
+   Raise ValueError if azimuthal_reference is not set on the geometry.
+
+
+.. py:function:: _require_surface_normal(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference._require_surface_normal``
+
+
+   Raise ValueError if surface_normal is not set on the geometry.
+
+
+.. py:function:: exit_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference.exit_angle``
+
+
+   Compute the angle of exit β_out in degrees.
+
+   The angle between the diffracted beam and the sample surface.
+   Positive when the diffracted beam exits through the front face.
+
+   Requires :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
+
+   :param geometry: The diffractometer instance.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.  If ``None``, the geometry's current
+                  stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns: Exit angle β_out in degrees.
+   :rtype: float
+
+   :raises ValueError: If ``geometry.surface_normal`` is ``None``.
+
+   .. rubric:: References
+
+   * You (1999), eq. 11.
+   * Lohmeier & Vlieg (1993), §4.2.
+
+
+.. py:function:: incidence_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference.incidence_angle``
+
+
+   Compute the angle of incidence α_i in degrees.
+
+   The angle between the incident beam and the sample surface (the
+   complement of the angle between the incident beam and the surface
+   normal).  Positive when the beam strikes the front face.
+
+   Requires :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
+
+   :param geometry: The diffractometer instance.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.  If ``None``, the geometry's current
+                  stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns: Incidence angle α_i in degrees.
+   :rtype: float
+
+   :raises ValueError: If ``geometry.surface_normal`` is ``None``.
+
+   .. rubric:: References
+
+   * You (1999), eq. 10.
+   * Lohmeier & Vlieg (1993), §4.2.
+
+
+.. py:function:: naz_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference.naz_angle``
+
+
+   Compute the lab-frame azimuthal angle of n̂ (naz) in degrees.
+
+   naz is the azimuthal angle of the surface normal n̂ projected onto
+   the horizontal plane of the lab frame (the plane perpendicular to
+   the vertical axis).  It describes the in-plane orientation of the
+   sample surface relative to the lab coordinate system.
+
+   Requires :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
+
+   :param geometry: The diffractometer instance.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.  If ``None``, the geometry's current
+                  stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns: Azimuthal angle naz in degrees, in the range (−180°, +180°].
+   :rtype: float
+
+   :raises ValueError: If ``geometry.surface_normal`` is ``None``.
+
+   .. rubric:: References
+
+   * You (1999).
+
+
+.. py:function:: psi_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference.psi_angle``
+
+
+   Compute the azimuthal angle ψ of the reference vector n̂ about Q.
+
+   ψ is the angle between the azimuthal reference direction (projected
+   onto the plane perpendicular to Q) and the incident beam direction
+   (also projected onto that plane).  ψ = 0 when the reference vector
+   lies in the scattering plane on the same side as the incident beam.
+
+   Requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`
+   to be set.
+
+   :param geometry: The diffractometer instance.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.  If ``None``, the geometry's current
+                  stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns: Azimuthal angle ψ in degrees, in the range (−180°, +180°].
+   :rtype: float
+
+   :raises ValueError: If ``geometry.azimuthal_reference`` is ``None``.
+   :raises ValueError: If the reference vector is parallel to Q (ψ is undefined).
+
+   .. rubric:: References
+
+   * You (1999), eq. 23.
+
+

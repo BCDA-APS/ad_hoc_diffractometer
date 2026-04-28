@@ -1,0 +1,891 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ad_hoc_diffractometer.factories &#8212; ad_hoc_diffractometer 0.8</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=486e5634"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/factories';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.8.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.8" />
+    <meta name="docbuild:last-update" content="2026-04-27 21:04 CDT"/>
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.8</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer.factories</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ad_hoc_diffractometer.factories</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2026 Pete R. Jemian &lt;prjemian+ad_hoc_diffractometer@gmail.com&gt;</span>
+<span class="c1"># SPDX-License-Identifier: CC-BY-4.0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">factories.py — geometry registry and shared definitions.</span>
+
+<span class="sd">This module provides the **geometry registry** infrastructure: the</span>
+<span class="sd">``@register_geometry`` decorator, discovery of third-party geometry plugins</span>
+<span class="sd">via entry points, and the ``list_geometries()`` / ``get_geometry()`` /</span>
+<span class="sd">``make_geometry()`` lookup functions.</span>
+
+<span class="sd">It also defines the shared **basis dictionaries** (``BASIS_YOU``,</span>
+<span class="sd">``BASIS_BL``) and the default **kappa tilt angle** (``KAPPA_ALPHA_DEFAULT``)</span>
+<span class="sd">used by the pre-built geometry functions in</span>
+<span class="sd">:mod:`ad_hoc_diffractometer.presets`.</span>
+
+<span class="sd">Pre-built geometries</span>
+<span class="sd">--------------------</span>
+
+<span class="sd">The 10 pre-built geometry factory functions (``psic``, ``fourcv``,</span>
+<span class="sd">``fourch``, ``sixc``, ``kappa4cv``, ``kappa4ch``, ``kappa6c``, ``zaxis``,</span>
+<span class="sd">``s2d2``, ``fivec``) live in :mod:`ad_hoc_diffractometer.presets`.</span>
+<span class="sd">Access them as::</span>
+
+<span class="sd">    import ad_hoc_diffractometer as ahd</span>
+
+<span class="sd">    g = ahd.presets.fourcv()</span>
+
+<span class="sd">Extension via entry points</span>
+<span class="sd">--------------------------</span>
+<span class="sd">Third-party packages can contribute additional geometry factories by</span>
+<span class="sd">declaring an entry point in the ``&quot;ad_hoc_diffractometer.geometries&quot;``</span>
+<span class="sd">group in their ``pyproject.toml``::</span>
+
+<span class="sd">    [project.entry-points.&quot;ad_hoc_diffractometer.geometries&quot;]</span>
+<span class="sd">    my_geom = &quot;my_package.module:my_factory_function&quot;</span>
+
+<span class="sd">The factory function must accept no required arguments (it may accept</span>
+<span class="sd">keyword arguments) and return an ``AdHocDiffractometer`` instance.</span>
+<span class="sd">Entry-point geometries are discovered and loaded automatically when</span>
+<span class="sd">``list_geometries()`` or ``get_geometry()`` is first called; they do NOT</span>
+<span class="sd">need to call ``@register_geometry`` themselves.</span>
+
+<span class="sd">**Geometry names must be globally unique.**  If an entry-point name</span>
+<span class="sd">duplicates an already-registered name (whether a built-in or a</span>
+<span class="sd">previously loaded plugin), a ``ValueError`` is raised at discovery time.</span>
+<span class="sd">This prevents silent shadowing: an external package cannot overwrite</span>
+<span class="sd">``fourcv``, ``psic``, or any other registered geometry.</span>
+
+<span class="sd">Writing a custom geometry</span>
+<span class="sd">-------------------------</span>
+<span class="sd">Each factory accepts an optional ``basis`` keyword argument (defaulting to</span>
+<span class="sd">the canonical convention for that geometry).  Inside the factory, resolve</span>
+<span class="sd">physical-direction aliases locally::</span>
+
+<span class="sd">    from ad_hoc_diffractometer import AdHocDiffractometer, register_geometry</span>
+<span class="sd">    from ad_hoc_diffractometer.factories import BASIS_YOU</span>
+<span class="sd">    from ad_hoc_diffractometer.stage import Stage</span>
+
+<span class="sd">    @register_geometry</span>
+<span class="sd">    def my_geometry(basis=BASIS_YOU):</span>
+<span class="sd">        VERTICAL     = basis[&quot;vertical&quot;]</span>
+<span class="sd">        TRANSVERSE   = basis[&quot;transverse&quot;]</span>
+<span class="sd">        LONGITUDINAL = basis[&quot;longitudinal&quot;]</span>
+<span class="sd">        stages = [</span>
+<span class="sd">            Stage(&quot;omega&quot;, -TRANSVERSE,      role=&quot;sample&quot;),</span>
+<span class="sd">            Stage(&quot;chi&quot;,   +LONGITUDINAL, parent=&quot;omega&quot;, role=&quot;sample&quot;),</span>
+<span class="sd">            Stage(&quot;phi&quot;,   -TRANSVERSE,      parent=&quot;chi&quot;,   role=&quot;sample&quot;),</span>
+<span class="sd">            Stage(&quot;ttheta&quot;, -TRANSVERSE,     role=&quot;detector&quot;),</span>
+<span class="sd">        ]</span>
+<span class="sd">        return AdHocDiffractometer(</span>
+<span class="sd">            name=&quot;my_geometry&quot;, stages=stages, basis=basis,</span>
+<span class="sd">        )</span>
+
+<span class="sd">The two public basis dicts ``BASIS_YOU`` and ``BASIS_BL`` are available</span>
+<span class="sd">from this module.  Pass ``basis=BASIS_BL`` for Busing &amp; Levy convention</span>
+<span class="sd">geometries.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">* W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967)</span>
+<span class="sd">* H. You, J. Appl. Cryst. 32, 614-623 (1999)</span>
+<span class="sd">  DOI:10.1107/S0021889899001223</span>
+<span class="sd">* ITC Vol. C, Sec. 2.2.6 (2006)</span>
+<span class="sd">  DOI:10.1107/97809553602060000577</span>
+<span class="sd">* D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">entry_points</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">XHAT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">YHAT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZHAT</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Registry</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="n">_GEOMETRY_REGISTRY</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="sd">&quot;&quot;&quot;Maps factory function name to factory callable.</span>
+
+<span class="sd">Populated first by ``@register_geometry`` at import time, then supplemented</span>
+<span class="sd">by installed third-party entry points the first time :func:`list_geometries`</span>
+<span class="sd">or :func:`get_geometry` is called.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">_EP_LOADED</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="sd">&quot;&quot;&quot;``True`` once entry-point discovery has run, so it only runs once.&quot;&quot;&quot;</span>
+
+<span class="n">GEOMETRY_ENTRY_POINT_GROUP</span> <span class="o">=</span> <span class="s2">&quot;ad_hoc_diffractometer.geometries&quot;</span>
+<span class="sd">&quot;&quot;&quot;Entry-point group name for geometry plugins.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="register_geometry">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.register_geometry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_geometry</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator that registers a geometry factory in _GEOMETRY_REGISTRY.</span>
+
+<span class="sd">    The function is stored under its own ``__name__``, so the registry</span>
+<span class="sd">    key is always identical to the callable&#39;s name.  The function is</span>
+<span class="sd">    returned unchanged; this decorator has no runtime effect on the</span>
+<span class="sd">    factory itself.</span>
+
+<span class="sd">    Third-party packages do **not** need to use this decorator — they</span>
+<span class="sd">    can instead declare an entry point in the</span>
+<span class="sd">    ``&quot;ad_hoc_diffractometer.geometries&quot;`` group in their</span>
+<span class="sd">    ``pyproject.toml`` and the factory will be discovered automatically.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        @register_geometry</span>
+<span class="sd">        def psic() -&gt; AdHocDiffractometer:</span>
+<span class="sd">            ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_GEOMETRY_REGISTRY</span><span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+    <span class="k">return</span> <span class="n">func</span></div>
+
+
+
+<div class="viewcode-block" id="_load_entry_point_geometries">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories._load_entry_point_geometries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_entry_point_geometries</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Discover and load geometry factories from installed entry points.</span>
+
+<span class="sd">    Scans the ``&quot;ad_hoc_diffractometer.geometries&quot;`` entry-point group</span>
+<span class="sd">    for all installed packages (including this package itself) and adds</span>
+<span class="sd">    any factories not already present in ``_GEOMETRY_REGISTRY``.</span>
+
+<span class="sd">    This function is called automatically — and only once — by</span>
+<span class="sd">    ``list_geometries()`` and ``get_geometry()``.  It is idempotent:</span>
+<span class="sd">    repeated calls after the first are no-ops.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Built-in factories are registered via ``@register_geometry`` at</span>
+<span class="sd">    import time, so they are always present even if entry-point discovery</span>
+<span class="sd">    fails.  Entry-point discovery supplements the registry with any</span>
+<span class="sd">    third-party plugins that are installed but were not decorated with</span>
+<span class="sd">    ``@register_geometry``.</span>
+
+<span class="sd">    Each geometry name must be unique across all installed packages.  If</span>
+<span class="sd">    an entry-point name collides with an already-registered name (whether</span>
+<span class="sd">    a built-in or a previously loaded plugin), a ``ValueError`` is raised</span>
+<span class="sd">    identifying the conflicting name and its source.  This prevents silent</span>
+<span class="sd">    shadowing of built-in geometries and ambiguous duplicate registrations.</span>
+
+<span class="sd">    If loading a particular entry point raises an exception *other than* a</span>
+<span class="sd">    name collision (e.g. the plugin package is broken or missing), that</span>
+<span class="sd">    entry point is silently skipped so that the rest of the registry is</span>
+<span class="sd">    unaffected.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If an entry-point name duplicates an already-registered geometry</span>
+<span class="sd">        name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_EP_LOADED</span>  <span class="c1"># noqa: PLW0603</span>
+    <span class="k">if</span> <span class="n">_EP_LOADED</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">_EP_LOADED</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">eps</span> <span class="o">=</span> <span class="n">entry_points</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="n">GEOMETRY_ENTRY_POINT_GROUP</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ep</span> <span class="ow">in</span> <span class="n">eps</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">factory</span> <span class="o">=</span> <span class="n">ep</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Skipping broken entry point </span><span class="si">%r</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">ep</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">_GEOMETRY_REGISTRY</span><span class="p">:</span>
+                <span class="n">existing</span> <span class="o">=</span> <span class="n">_GEOMETRY_REGISTRY</span><span class="p">[</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">existing</span> <span class="ow">is</span> <span class="n">factory</span><span class="p">:</span>
+                    <span class="c1"># Same callable re-declared via entry point (e.g. a built-in</span>
+                    <span class="c1"># that is both @register_geometry&#39;d and listed in pyproject.toml).</span>
+                    <span class="c1"># This is not a conflict — skip silently.</span>
+                    <span class="k">continue</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Geometry name </span><span class="si">{</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> is already registered. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Each geometry name must be unique across all installed &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;packages. The entry point </span><span class="si">{</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> from </span><span class="si">{</span><span class="n">ep</span><span class="o">.</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;conflicts with the existing registration &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">existing</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Rename the geometry in your package to resolve this conflict.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">_GEOMETRY_REGISTRY</span><span class="p">[</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">factory</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">raise</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;entry_points() failed; no plugins loaded: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="list_geometries">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.list_geometries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_geometries</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a copy of the geometry registry as {name: factory_callable}.</span>
+
+<span class="sd">    Includes all built-in geometries (registered via ``@register_geometry``</span>
+<span class="sd">    at import time) plus any third-party geometry plugins installed as</span>
+<span class="sd">    entry points in the ``&quot;ad_hoc_diffractometer.geometries&quot;`` group.</span>
+
+<span class="sd">    Entry-point discovery runs automatically the first time this function</span>
+<span class="sd">    is called; subsequent calls use the already-populated registry.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Keys are factory names (e.g. ``&#39;psic&#39;``, ``&#39;fourcv&#39;``).</span>
+<span class="sd">        Values are the callable factory functions.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from ad_hoc_diffractometer import list_geometries</span>
+<span class="sd">    &gt;&gt;&gt; sorted(list_geometries())</span>
+<span class="sd">    [&#39;fivec&#39;, &#39;fourch&#39;, &#39;fourcv&#39;, &#39;kappa4ch&#39;, &#39;kappa4cv&#39;, &#39;kappa6c&#39;,</span>
+<span class="sd">     &#39;psic&#39;, &#39;s2d2&#39;, &#39;sixc&#39;, &#39;zaxis&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; list_geometries()[&#39;psic&#39;]()   # instantiate by name</span>
+<span class="sd">    AdHocDiffractometer(name=&#39;psic&#39;, ...)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_load_entry_point_geometries</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_GEOMETRY_REGISTRY</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_geometry">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.get_geometry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the registered factory function for the named geometry.</span>
+
+<span class="sd">    This is the primitive lookup — it returns the callable factory, not an</span>
+<span class="sd">    instance.  Use make_geometry() if you want an AdHocDiffractometer</span>
+<span class="sd">    instance directly.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the geometry, as registered by @register_geometry</span>
+<span class="sd">        (e.g. &#39;psic&#39;, &#39;fourcv&#39;, &#39;kappa4cv&#39;).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    callable</span>
+<span class="sd">        The factory function for the named geometry.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If no geometry with that name is registered, with a message listing</span>
+<span class="sd">        the available names.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from ad_hoc_diffractometer import get_geometry</span>
+<span class="sd">    &gt;&gt;&gt; factory = get_geometry(&quot;psic&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; factory()</span>
+<span class="sd">    AdHocDiffractometer(name=&#39;psic&#39;, ...)</span>
+<span class="sd">    &gt;&gt;&gt; get_geometry(&quot;kappa4cv&quot;)(alpha_deg=50)</span>
+<span class="sd">    AdHocDiffractometer(name=&#39;kappa4cv&#39;, ...)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_load_entry_point_geometries</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_GEOMETRY_REGISTRY</span><span class="p">:</span>
+        <span class="n">available</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_GEOMETRY_REGISTRY</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No geometry named </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> is registered. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Available geometries: </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_GEOMETRY_REGISTRY</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="make_geometry">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.make_geometry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Instantiate a geometry by name, passing keyword arguments to its factory.</span>
+
+<span class="sd">    Looks up the factory for the named geometry via get_geometry() and calls</span>
+<span class="sd">    it with the supplied kwargs.  This is the most convenient entry point for</span>
+<span class="sd">    config-driven or programmatic geometry selection.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the geometry (e.g. &#39;psic&#39;, &#39;fourcv&#39;, &#39;kappa4cv&#39;).</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Keyword arguments forwarded to the factory function.  Most factories</span>
+<span class="sd">        take no arguments; kappa factories accept alpha_deg.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    AdHocDiffractometer</span>
+<span class="sd">        A fully configured diffractometer geometry instance.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If no geometry with that name is registered.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from ad_hoc_diffractometer import make_geometry</span>
+<span class="sd">    &gt;&gt;&gt; make_geometry(&quot;psic&quot;)</span>
+<span class="sd">    AdHocDiffractometer(name=&#39;psic&#39;, ...)</span>
+<span class="sd">    &gt;&gt;&gt; make_geometry(&quot;kappa4cv&quot;, alpha_deg=50)</span>
+<span class="sd">    AdHocDiffractometer(name=&#39;kappa4cv&#39;, ...)</span>
+<span class="sd">    &gt;&gt;&gt; make_geometry(&quot;kappa6c&quot;, alpha_deg=55)</span>
+<span class="sd">    AdHocDiffractometer(name=&#39;kappa6c&#39;, ...)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">get_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">)(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Shared basis definitions</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="n">BASIS_YOU</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;vertical&quot;</span><span class="p">:</span> <span class="n">XHAT</span><span class="p">,</span>
+    <span class="s2">&quot;longitudinal&quot;</span><span class="p">:</span> <span class="n">YHAT</span><span class="p">,</span>
+    <span class="s2">&quot;transverse&quot;</span><span class="p">:</span> <span class="n">ZHAT</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Basis vector dictionary for the You (1999) coordinate convention.</span>
+
+<span class="sd">Maps physical direction names to Cartesian unit vectors:</span>
+
+<span class="sd">- ``&quot;vertical&quot;`` → ``XHAT`` (+x, opposite to gravitational acceleration)</span>
+<span class="sd">- ``&quot;longitudinal&quot;`` → ``YHAT`` (+y, along the beam)</span>
+<span class="sd">- ``&quot;transverse&quot;`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)</span>
+
+<span class="sd">Default basis used by ``psic``, ``sixc``, ``kappa6c``,</span>
+<span class="sd">``zaxis``, ``s2d2``, and ``fivec`` (in :mod:`ad_hoc_diffractometer.presets`).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">_BASIS_YOU</span> <span class="o">=</span> <span class="n">BASIS_YOU</span>
+<span class="sd">&quot;&quot;&quot;Alias for :data:`BASIS_YOU` (backward compatibility).&quot;&quot;&quot;</span>
+
+<span class="n">BASIS_BL</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;vertical&quot;</span><span class="p">:</span> <span class="n">ZHAT</span><span class="p">,</span>
+    <span class="s2">&quot;longitudinal&quot;</span><span class="p">:</span> <span class="n">YHAT</span><span class="p">,</span>
+    <span class="s2">&quot;transverse&quot;</span><span class="p">:</span> <span class="n">XHAT</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Basis vector dictionary for the Busing &amp; Levy (1967) coordinate convention.</span>
+
+<span class="sd">Maps physical direction names to Cartesian unit vectors:</span>
+
+<span class="sd">- ``&quot;transverse&quot;`` → +x</span>
+<span class="sd">- ``&quot;longitudinal&quot;`` → +y (along the beam)</span>
+<span class="sd">- ``&quot;vertical&quot;`` → +z (opposite to gravitational acceleration)</span>
+
+<span class="sd">Used by ``fourcv``, ``fourch``, ``kappa4cv``, and ``kappa4ch``</span>
+<span class="sd">(in :mod:`ad_hoc_diffractometer.presets`).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">_BASIS_BL</span> <span class="o">=</span> <span class="n">BASIS_BL</span>
+<span class="sd">&quot;&quot;&quot;Alias for :data:`BASIS_BL` (backward compatibility).&quot;&quot;&quot;</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Kappa angle default</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="n">KAPPA_ALPHA_DEFAULT</span> <span class="o">=</span> <span class="mf">50.0</span>
+<span class="sd">&quot;&quot;&quot;Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C).&quot;&quot;&quot;</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-04-27 21:04 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Pete Jemian.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
