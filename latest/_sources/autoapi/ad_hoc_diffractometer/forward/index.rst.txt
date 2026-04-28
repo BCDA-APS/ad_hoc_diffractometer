@@ -98,6 +98,7 @@ Functions
    ad_hoc_diffractometer.forward._check_limits
    ad_hoc_diffractometer.forward._collect_dd_solution
    ad_hoc_diffractometer.forward._compute_natural_psi
+   ad_hoc_diffractometer.forward._is_cardinal_axis
    ad_hoc_diffractometer.forward._is_double_diffraction_mode
    ad_hoc_diffractometer.forward._is_kappa_virtual_mode
    ad_hoc_diffractometer.forward._is_psi_mode
@@ -113,6 +114,7 @@ Functions
    ad_hoc_diffractometer.forward._solve_fixed_sample
    ad_hoc_diffractometer.forward._solve_kappa_virtual
    ad_hoc_diffractometer.forward._solve_one_free_angle
+   ad_hoc_diffractometer.forward._solve_one_free_angle_analytic
    ad_hoc_diffractometer.forward._solve_psi_mode
    ad_hoc_diffractometer.forward._solve_qaz_mode
    ad_hoc_diffractometer.forward._solve_surface
@@ -275,6 +277,32 @@ Module Contents
    :returns: ψ in degrees (−180°, +180°], or ``None`` when ψ is undefined
              (Q ∥ incident beam, or reference vector ∥ Q).
    :rtype: float or None
+
+
+.. py:function:: _is_cardinal_axis(n: ~numpy.ndarray, atol: float = 1e-12) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_cardinal_axis``
+
+
+   Return True if ``n`` is exactly (within ``atol``) ``±XHAT``, ``±YHAT``,
+   or ``±ZHAT``.
+
+   The strict cardinal-axis check gates the analytic 1-free-angle fast
+   path (issue #227).  Geometries with axes that are slightly off-axis
+   (e.g. mis-aligned mounts, kappa-style tilted axes) will fall back to
+   the Newton solver.
+
+   :param n: Unit-norm axis vector to test.
+   :type n: numpy.ndarray, shape (3,)
+   :param atol: Absolute tolerance for the equality check.  Default ``1e-12``,
+                matching the cleanliness of basis vectors that come from
+                :data:`~constants.XHAT` / ``YHAT`` / ``ZHAT`` after stage
+                construction.
+   :type atol: float, optional
+
+   :rtype: bool
 
 
 .. py:function:: _is_double_diffraction_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode) -> bool
@@ -726,7 +754,16 @@ Module Contents
    ``angles_to_phi_vector(geometry, **all_angles) == Q_phi_target``.
 
    Used when only one sample stage is free (e.g. phi in fixed_chi mode).
-   Seeds from 4 quadrants and deduplicates.
+
+   **Fast path (issue #227).**  When the free stage's axis vector is
+   exactly one of the cardinal directions (``±XHAT``, ``±YHAT``,
+   ``±ZHAT``), :func:`_solve_one_free_angle_analytic` derives the angle
+   via a single ``atan2`` call.  This eliminates Newton iteration
+   entirely (no Jacobian, no seed sweep) and is 10-20× faster than the
+   Newton fallback.
+
+   For non-cardinal axes the function falls back to the previous Newton
+   solver, which seeds from four quadrants and deduplicates.
 
    :param geometry:
    :type geometry: AdHocDiffractometer
@@ -740,6 +777,67 @@ Module Contents
    :type mode: DiffractionMode
 
    :rtype: list of dict[str, float]
+
+
+.. py:function:: _solve_one_free_angle_analytic(ctx: ForwardContext, free_stage, angles: dict[str, float], Q_phi_target: ~numpy.ndarray) -> float | None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_one_free_angle_analytic``
+
+
+   Analytic single-``atan2`` solver for one free sample-stage rotation.
+
+   When all detector stages and all sample stages **except one** have
+   fixed angles, the forward equation reduces to a single rotation:
+
+   .. math::
+
+       R_{\text{after}} \cdot R(\hat n, \theta) \cdot R_{\text{before}}
+           \cdot Q_{\phi,\text{target}}^* = Q_{\text{lab}}
+
+   where :math:`R_{\text{before}}` is the product of fixed sample stages
+   *outer* to the free stage (already cached as ``ctx._cached_Z_prefix``),
+   :math:`R_{\text{after}}` is the product of fixed sample stages *inner*
+   to the free stage, and the target satisfies
+   :math:`Q_\phi = Z^T Q_{\text{lab}}`.
+
+   Rearranging:
+
+   .. math::
+
+       R(\hat n, \theta) \cdot q = u
+
+   with :math:`q = R_{\text{before}} \cdot Q_{\phi,\text{target}}` and
+   :math:`u = R_{\text{after}}^T \cdot Q_{\text{lab}}`.  The unknown
+   rotation about a known axis :math:`\hat n` is recovered by projecting
+   both vectors onto the plane perpendicular to :math:`\hat n` and
+   reading off the angle with a single ``atan2``.
+
+   :param ctx: Must have :meth:`~ForwardContext.prepare_caching` already called
+               with ``free_stage.name`` as the only free name.
+   :type ctx: ForwardContext
+   :param free_stage: The single free sample stage.  ``free_stage._axis_hat`` must be
+                      a unit vector.
+   :type free_stage: Stage
+   :param angles: Baseline angles with all fixed stages set.
+   :type angles: dict[str, float]
+   :param Q_phi_target: Target scattering vector in the phi frame (Å⁻¹).
+   :type Q_phi_target: numpy.ndarray, shape (3,)
+
+   :returns: Angle in degrees that satisfies the rotation equation, or
+             ``None`` when:
+
+             * the free stage's axis is not the *first* free index (i.e. there
+               are non-trivial fixed sample stages after it that
+               :class:`ForwardContext` does not currently cache as a suffix),
+             * the projections onto the plane perpendicular to ``n`` are
+               degenerate (``q`` or ``u`` is parallel to ``n``), or
+             * the parallel-component consistency check fails (``Q_phi_target``
+               is not reachable by varying the free angle alone).
+
+             In all such cases the caller falls back to Newton.
+   :rtype: float or None
 
 
 .. py:function:: _solve_psi_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
