@@ -280,10 +280,17 @@ def test_psic_bisecting_eta_equals_delta_half():
 
 
 def test_kappa4cv_bisecting_round_trip():
-    """kappa4cv round-trip: use (0,1,0) which is reachable in BL transverse basis."""
+    """kappa4cv round-trip: use (0,1,0) which is reachable in BL transverse basis.
+
+    Atol relaxed to 1e-7 because true virtual bisecting on kappa
+    (issue #226) has a fundamental precision floor of ~1e-7 in motor
+    angle near the chi=0 singularity of Walko's eq. [16] — the kappa
+    formula's derivative diverges there, capping finite-difference
+    Newton precision.
+    """
     g = _setup_cubic(kappa4cv, a=4.0)
     assert g.mode_name == "bisecting"
-    assert _round_trip_ok(g, 0, 1, 0)
+    assert _round_trip_ok(g, 0, 1, 0, atol=1e-7)
 
 
 # ---------------------------------------------------------------------------
@@ -2049,8 +2056,11 @@ def test_fixed_psi_psi_verified_in_solutions(
         pytest.param(
             "fixed_psi_vertical", 1, 0, 0, (0, 0, 1), id="kappa6c-psi_vert-100"
         ),
+        # (1,1,0) was previously here but is NOT accessible in true
+        # virtual bisecting on kappa6c at λ=1.5406, a=4 (issue #226).
+        # Use (-2,1,1) instead — non-degenerate kappa, accessible.
         pytest.param(
-            "fixed_psi_vertical", 1, 1, 0, (0, 0, 1), id="kappa6c-psi_vert-110"
+            "fixed_psi_vertical", -2, 1, 1, (0, 0, 1), id="kappa6c-psi_vert-211"
         ),
     ],
 )

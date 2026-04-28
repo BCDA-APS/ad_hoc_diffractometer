@@ -366,6 +366,152 @@ class BisectConstraint:
         return hash((self._sample_stage, self._detector_stage))
 
 
+class VirtualBisectConstraint(BisectConstraint):
+    """
+    True virtual bisecting constraint for kappa geometries.
+
+    Identical in structure to :class:`BisectConstraint` but
+    semantically distinct: the bisecting condition is enforced on the
+    **virtual** Eulerian omega pseudoangle rather than on a real motor
+    angle.  On a kappa diffractometer the virtual omega is computed
+    from ``(komega, kappa, kphi)`` via the Walko (2016) eq. [16]
+    relations (see :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian`).
+
+    The constraint residual is therefore::
+
+        residual = omega_virtual(angles) - angles[detector_stage] / 2
+
+    where ``omega_virtual`` depends nonlinearly on the kappa motor
+    triple.  This is the physically correct bisecting condition for a
+    kappa diffractometer; the literal ``komega = ttheta/2`` enforced by
+    :class:`BisectConstraint` is only an approximation that coincides
+    with true bisecting at ``kappa = 0``.
+
+    The dispatcher in :mod:`~ad_hoc_diffractometer.forward` routes
+    modes containing a :class:`VirtualBisectConstraint` to
+    :func:`~ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual`,
+    which solves a 2D Newton problem in virtual ``(chi, phi)`` space
+    with ``omega_virtual = ttheta/2`` enforced exactly.
+
+    Parameters
+    ----------
+    sample_stage : str
+        Name of the *virtual* Eulerian angle to drive (typically
+        ``"omega"``).  Stored for documentation and serialization;
+        the solver always enforces ``omega_virtual = ttheta/2``
+        regardless of this name.
+    detector_stage : str
+        Name of the detector stage whose angle is halved (e.g.
+        ``"ttheta"`` on kappa4cv/kappa4ch, ``"delta"`` on kappa6c).
+
+    Examples
+    --------
+    >>> VirtualBisectConstraint("omega", "ttheta")
+    VirtualBisectConstraint('omega', 'ttheta')
+
+    References
+    ----------
+    * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016),
+      eq. [16] — kappa pseudoangle relations.
+    """
+
+    name: str = "virtual_bisect"
+    """Constraint name — ``"virtual_bisect"`` (overrides ``"bisect"``)."""
+
+    def evaluate(
+        self,
+        angles: dict[str, float],
+        geometry: AdHocDiffractometer,
+    ) -> float:
+        """
+        Return the constraint residual ``omega_virtual − detector/2``.
+
+        ``omega_virtual`` is computed from the kappa motor triple
+        ``(komega, kappa, kphi)`` via
+        :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian`.  The
+        ``geometry`` argument supplies the kappa tilt angle
+        ``kappa_alpha_deg``.
+
+        Parameters
+        ----------
+        angles : dict[str, float]
+            Current motor angles in degrees; must include ``komega``,
+            ``kappa``, ``kphi``, and the detector stage named by
+            :attr:`detector_stage`.
+        geometry : AdHocDiffractometer
+            The diffractometer, used only for ``kappa_alpha_deg``.
+
+        Returns
+        -------
+        float
+            Residual in degrees.  Zero means true virtual bisecting is
+            satisfied.
+
+        Raises
+        ------
+        KeyError
+            If a required motor angle is missing from ``angles``.
+        ValueError
+            If ``geometry.kappa_alpha_deg`` is ``None`` (the constraint
+            is only meaningful on kappa geometries) or if the kappa
+            triple lies outside the reachable virtual range.
+        """
+        from .kappa import kappa_to_eulerian
+
+        if geometry.kappa_alpha_deg is None:
+            raise ValueError(
+                f"VirtualBisectConstraint requires geometry.kappa_alpha_deg "
+                f"to be set; geometry {geometry.name!r} has no kappa tilt."
+            )
+        komega = angles["komega"]
+        kappa = angles["kappa"]
+        kphi = angles["kphi"]
+        omega_v, _chi_v, _phi_v = kappa_to_eulerian(
+            komega, kappa, kphi, alpha_deg=geometry.kappa_alpha_deg
+        )
+        return omega_v - angles[self._detector_stage] / 2.0
+
+    def is_implemented(self, geometry: AdHocDiffractometer) -> bool:
+        """
+        Return True when the geometry is a kappa diffractometer with
+        the required ``komega``, ``kappa``, ``kphi`` stages and the
+        named detector stage.
+        """
+        if geometry.kappa_alpha_deg is None:
+            return False
+        sample_names = {s.name for s in geometry.sample_stages}
+        if not {"komega", "kappa", "kphi"}.issubset(sample_names):  # pragma: no cover
+            return False
+        detector_names = {s.name for s in geometry.detector_stages}
+        return self._detector_stage in detector_names
+
+    def to_dict(self) -> dict:
+        """Return a JSON-serialisable dict."""
+        return {
+            "type": "VirtualBisectConstraint",
+            "sample_stage": self._sample_stage,
+            "detector_stage": self._detector_stage,
+        }
+
+    def __repr__(self) -> str:
+        return (
+            f"VirtualBisectConstraint({self._sample_stage!r}, {self._detector_stage!r})"
+        )
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, VirtualBisectConstraint):
+            return False
+        return (
+            self._sample_stage == other._sample_stage
+            and self._detector_stage == other._detector_stage
+        )
+
+    def __hash__(self) -> int:
+        return hash(
+            ("VirtualBisectConstraint", self._sample_stage, self._detector_stage)
+        )
+
+
 class SampleConstraint:
     """
     Constrains one sample motor angle to a fixed value.
@@ -1109,6 +1255,8 @@ class ConstraintSet:
             t = cd.get("type", "")
             if t == "BisectConstraint":
                 constraints.append(BisectConstraint.from_dict(cd))
+            elif t == "VirtualBisectConstraint":
+                constraints.append(VirtualBisectConstraint.from_dict(cd))
             elif t == "SampleConstraint":
                 constraints.append(SampleConstraint.from_dict(cd))
             elif t == "DetectorConstraint":
