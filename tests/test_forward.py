@@ -2744,3 +2744,89 @@ def test_one_free_angle_analytic_falls_back_for_non_cardinal_axis():
         fmod._solve_one_free_angle_analytic = orig
 
     assert calls == []
+
+
+def test_one_free_angle_analytic_with_inner_fixed_stage():
+    """Free stage is not the innermost — ``R_after`` accumulates fixed inner rotations.
+
+    Covers the loop body in ``_solve_one_free_angle_analytic`` that builds
+    ``R_after`` from sample stages *inner* to (above) the free stage.  In
+    a fourcv stack ordered ``[omega, chi, phi]``, fixing ``phi`` and
+    leaving ``omega`` free means stages ``chi`` and ``phi`` (both inner
+    to ``omega``) contribute to ``R_after``.
+    """
+    from ad_hoc_diffractometer.forward import ForwardContext
+    from ad_hoc_diffractometer.forward import _solve_one_free_angle_analytic
+
+    g = _setup_cubic(fourcv, a=4.0)
+    # Custom mode: bisect on ttheta (so ttheta is fixed by Bragg) but the
+    # bisect sample stage is *chi* (not omega), and phi is fixed.  This
+    # leaves omega as the only free sample stage, with chi and phi inner
+    # to it in the stacking order.
+    #
+    # Actually the bisect constraint wires sample_stage = ttheta/2.  We
+    # want omega free, so freeze chi and phi via SampleConstraints and
+    # use a synthetic "bisect" that ties one of them to ttheta/2.  The
+    # cleanest path: use _solve_one_free_angle_analytic directly with a
+    # hand-built angles dict where phi is non-zero (so R_after ≠ I).
+    angles = {
+        "omega": 0.0,
+        "chi": 0.0,
+        "phi": 30.0,  # non-zero → R_after has the phi rotation
+        "ttheta": 60.0,
+    }
+    free_stage = g._stages["omega"]
+    ctx = ForwardContext(g)
+    ctx.prepare_caching(angles, {"omega"})
+
+    # Build a Q_phi target that is reachable: forward-compute Q_phi at a
+    # known omega value, then ask the helper to recover that omega.
+    angles["omega"] = 25.0
+    Q_target = ctx.q_phi(angles)
+    angles["omega"] = 0.0  # reset for the helper call
+
+    theta = _solve_one_free_angle_analytic(ctx, free_stage, angles, Q_target)
+    assert theta is not None
+    # Recovered omega must reproduce Q_target.
+    angles["omega"] = theta
+    Q_check = ctx.q_phi(angles)
+    assert np.linalg.norm(Q_check - Q_target) < 1e-9
+
+
+def test_one_free_angle_analytic_returns_none_on_magnitude_mismatch():
+    """Helper returns None when ``|q_perp| != |u_perp|`` (rotation cannot match).
+
+    Covers the magnitude-mismatch branch.  This happens when the parallel
+    components agree but the perpendicular magnitudes disagree — i.e.
+    the target lies on a different cone about the rotation axis than the
+    one swept by ``R(n, θ) @ q``.  Constructed by manually rescaling the
+    target's perpendicular component.
+    """
+    from ad_hoc_diffractometer.forward import ForwardContext
+    from ad_hoc_diffractometer.forward import _solve_one_free_angle_analytic
+
+    g = _setup_cubic(fourcv, a=4.0)
+    angles = {
+        "omega": 0.0,
+        "chi": 90.0,
+        "phi": 0.0,
+        "ttheta": 60.0,
+    }
+    free_stage = g._stages["phi"]
+    ctx = ForwardContext(g)
+    ctx.prepare_caching(angles, {"phi"})
+
+    # Compute a reachable target, then scale its perpendicular component
+    # to break the magnitude match while preserving the parallel component.
+    Q_reachable = ctx.q_phi({**angles, "phi": 17.0})
+    n = free_stage._axis_hat
+    Z_prefix = ctx._cached_Z_prefix
+    q = Z_prefix @ Q_reachable
+    q_par = float(np.dot(q, n))
+    q_perp = q - q_par * n
+    # Inflate q_perp to a different magnitude
+    q_bad = q_par * n + 2.0 * q_perp
+    Q_target_bad = np.linalg.solve(Z_prefix, q_bad)
+
+    result = _solve_one_free_angle_analytic(ctx, free_stage, angles, Q_target_bad)
+    assert result is None

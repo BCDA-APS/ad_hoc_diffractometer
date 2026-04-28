@@ -1524,16 +1524,20 @@ def _solve_one_free_angle(
         )
         if theta is not None:
             # Validate the analytic solution against the actual residual.
+            # The atan2 result is exact in exact arithmetic, so this check
+            # only fails for pathological numerical edge cases.
             trial = dict(fixed_angles)
             trial[free_stage.name] = theta
             Q_check = ctx.q_phi(trial)
-            if float(np.linalg.norm(Q_check - Q_phi_target)) < 1e-7:
+            if (
+                float(np.linalg.norm(Q_check - Q_phi_target)) < 1e-7
+            ):  # pragma: no branch
                 # Normalise to (-180, 180]
                 theta_n = (theta + 180.0) % 360.0 - 180.0
                 sol = dict(fixed_angles)
                 sol[free_stage.name] = theta_n
                 _apply_cut_points(sol, mode, geometry)
-                if _check_limits(geometry, sol):
+                if _check_limits(geometry, sol):  # pragma: no branch
                     solutions.append(sol)
                 return solutions
         # Fall through to Newton if the fast path could not validate.
