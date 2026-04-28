@@ -2530,3 +2530,303 @@ def test_bisecting_max_solutions_termination():
             assert abs(hkl_back[2] - hkl[2]) < 1e-6
     # Verify we find more than 2 solutions for at least one reflection
     assert max_sols >= 2  # noqa: PLR2004
+
+
+# ---------------------------------------------------------------------------
+# Issue #227 — Analytic 1-free-angle solver
+# ---------------------------------------------------------------------------
+
+
+def _bisect_fchi_fourcv(chi_value=90.0):
+    """fourcv with a custom bisecting + fixed_chi mode (only phi free)."""
+    g = _setup_cubic(fourcv, a=4.0)
+    g.modes["bisect_fchi"] = ConstraintSet(
+        [BisectConstraint("omega", "ttheta"), SampleConstraint("chi", chi_value)],
+        computed=["omega", "phi", "ttheta"],
+    )
+    g.mode_name = "bisect_fchi"
+    return g
+
+
+@pytest.mark.parametrize(
+    "n,expected",
+    [
+        pytest.param(np.array([1.0, 0.0, 0.0]), True, id="+x"),
+        pytest.param(np.array([-1.0, 0.0, 0.0]), True, id="-x"),
+        pytest.param(np.array([0.0, 1.0, 0.0]), True, id="+y"),
+        pytest.param(np.array([0.0, -1.0, 0.0]), True, id="-y"),
+        pytest.param(np.array([0.0, 0.0, 1.0]), True, id="+z"),
+        pytest.param(np.array([0.0, 0.0, -1.0]), True, id="-z"),
+        pytest.param(np.array([1.0, 1.0, 0.0]) / np.sqrt(2), False, id="diagonal-xy"),
+        pytest.param(
+            np.cos(np.deg2rad(50)) * np.array([0.0, 0.0, 1.0])
+            + np.sin(np.deg2rad(50)) * np.array([0.0, 1.0, 0.0]),
+            False,
+            id="kappa-tilted",
+        ),
+        pytest.param(np.array([1.0 + 1e-13, 0.0, 0.0]), True, id="near-+x-within-tol"),
+        pytest.param(np.array([1.0 + 1e-9, 0.0, 0.0]), False, id="near-+x-beyond-tol"),
+    ],
+)
+def test_is_cardinal_axis(n, expected):
+    """_is_cardinal_axis correctly classifies axis vectors."""
+    from ad_hoc_diffractometer.forward import _is_cardinal_axis
+
+    assert _is_cardinal_axis(n) is expected
+
+
+def test_one_free_angle_analytic_invokes_fast_path():
+    """The analytic helper is invoked when the free-stage axis is cardinal."""
+    from ad_hoc_diffractometer import forward as fmod
+
+    g = _bisect_fchi_fourcv()
+    calls: list[tuple[str, float | None]] = []
+    orig = fmod._solve_one_free_angle_analytic
+
+    def spy(ctx, free_stage, angles, Q_phi_target):
+        result = orig(ctx, free_stage, angles, Q_phi_target)
+        calls.append((free_stage.name, result))
+        return result
+
+    fmod._solve_one_free_angle_analytic = spy
+    try:
+        g.forward(1, 0, 0)
+    finally:
+        fmod._solve_one_free_angle_analytic = orig
+
+    # Exactly one call expected for this single-HKL forward.
+    assert len(calls) == 1
+    name, theta = calls[0]
+    assert name == "phi"
+    assert theta is not None  # solution exists for (1,0,0)
+
+
+def test_one_free_angle_analytic_round_trip():
+    """Analytic solution round-trips exactly through forward/inverse."""
+    g = _bisect_fchi_fourcv()
+    sols = g.forward(1, 0, 0)
+    assert len(sols) >= 1
+    for sol in sols:
+        hkl_back = g.inverse(sol)
+        assert np.allclose(hkl_back, [1.0, 0.0, 0.0], atol=1e-9)
+
+
+def test_one_free_angle_analytic_matches_newton():
+    """Analytic phi matches the Newton-derived phi to 1e-9 rad."""
+    from ad_hoc_diffractometer import forward as fmod
+
+    g = _bisect_fchi_fourcv()
+    sols_analytic = g.forward(1, 0, 0)
+    assert len(sols_analytic) == 1
+    phi_analytic = sols_analytic[0]["phi"]
+
+    # Force fallback to Newton by monkeypatching the cardinal-axis check.
+    orig_check = fmod._is_cardinal_axis
+    fmod._is_cardinal_axis = lambda n, atol=1e-12: False
+    try:
+        sols_newton = g.forward(1, 0, 0)
+    finally:
+        fmod._is_cardinal_axis = orig_check
+    assert len(sols_newton) == 1
+    phi_newton = sols_newton[0]["phi"]
+
+    # Same branch, agreement to atol=1e-9 (in degrees → much tighter than radians).
+    diff = abs((phi_analytic - phi_newton + 180.0) % 360.0 - 180.0)
+    assert diff < math.degrees(1e-9)
+
+
+def test_one_free_angle_analytic_returns_none_when_unreachable():
+    """Analytic helper returns None when target is not reachable by the free angle."""
+    from ad_hoc_diffractometer.forward import ForwardContext
+    from ad_hoc_diffractometer.forward import _solve_one_free_angle_analytic
+
+    # Use s2d2 fixed_mu, which has Z (rotation about +y) as the only free
+    # sample stage.  For a reflection like (1,0,0) the parallel components
+    # of q and u disagree → the helper must return None.
+    g = ahd.presets.s2d2()
+    g.wavelength = WAVELENGTH
+    g.sample.lattice = ahd.Lattice(a=4.0)
+    ub_identity(g.sample)
+    g.mode_name = "fixed_mu"
+
+    # Construct the angle dict and context the way _solve_one_free_angle does.
+    angles = {s.name: s.angle for s in g._stages.values()}
+    angles["mu"] = 0.0
+    angles["delta"] = 30.0  # arbitrary detector position
+    angles["nu"] = 0.0
+    free_stage = g._stages["Z"]
+    ctx = ForwardContext(g)
+    ctx.prepare_caching(angles, {free_stage.name})
+
+    Q_phi_target = g.sample.UB @ np.array([1.0, 0.0, 0.0])
+    result = _solve_one_free_angle_analytic(ctx, free_stage, angles, Q_phi_target)
+    assert result is None
+
+
+def test_one_free_angle_analytic_returns_none_when_q_parallel_to_axis():
+    """Analytic helper returns None when q ∥ free-stage axis (degenerate)."""
+    from ad_hoc_diffractometer.forward import ForwardContext
+    from ad_hoc_diffractometer.forward import _solve_one_free_angle_analytic
+
+    g = _bisect_fchi_fourcv(chi_value=0.0)
+    # With chi=0, the phi axis (-transverse=-z in BL) coincides with omega's
+    # axis (-z).  For the (0,0,1) reflection with bisecting, Q_phi may align
+    # with the free axis after Z_prefix is applied, making q_perp tiny.
+    angles = {s.name: s.angle for s in g._stages.values()}
+    angles["chi"] = 0.0
+    angles["omega"] = 0.0
+    angles["ttheta"] = 0.0  # Q_lab = 0 → degenerate
+    free_stage = g._stages["phi"]
+    ctx = ForwardContext(g)
+    ctx.prepare_caching(angles, {free_stage.name})
+
+    Q_phi_target = np.zeros(3)  # degenerate target
+    result = _solve_one_free_angle_analytic(ctx, free_stage, angles, Q_phi_target)
+    assert result is None
+
+
+def test_one_free_angle_analytic_falls_back_for_non_cardinal_axis():
+    """Non-cardinal-axis geometries skip the analytic helper entirely.
+
+    Builds a custom fourcv-like geometry with a tilted ``phi`` axis (45°
+    between +x and +z).  ``_is_cardinal_axis`` returns False, so the
+    Newton fallback runs exclusively.  The 1D bisecting + fixed_chi locus
+    on this geometry is highly restricted, so most HKLs are unreachable;
+    this test only asserts that the fast path is *not* invoked.
+    """
+    from ad_hoc_diffractometer import AdHocDiffractometer
+    from ad_hoc_diffractometer import forward as fmod
+    from ad_hoc_diffractometer.forward import _is_cardinal_axis
+
+    tilted = np.array([1.0, 0.0, 1.0]) / math.sqrt(2.0)
+    stages = [
+        Stage("omega", -ZHAT, parent=None, role="sample"),
+        Stage("chi", +YHAT, parent="omega", role="sample"),
+        Stage("phi", tilted, parent="chi", role="sample"),
+        Stage("ttheta", -ZHAT, parent=None, role="detector"),
+    ]
+    g = AdHocDiffractometer(
+        name="tilted_fourcv",
+        stages=stages,
+        basis={"vertical": ZHAT, "longitudinal": YHAT, "transverse": XHAT},
+        modes={
+            "bisect_fchi": ConstraintSet(
+                [
+                    BisectConstraint("omega", "ttheta"),
+                    SampleConstraint("chi", 90.0),
+                ],
+                computed=["omega", "phi", "ttheta"],
+            ),
+        },
+        default_mode="bisect_fchi",
+    )
+    g.wavelength = WAVELENGTH
+    g.sample.lattice = ahd.Lattice(a=4.0)
+    ub_identity(g.sample)
+
+    # Confirm the tilted axis is NOT classified as cardinal.
+    assert not _is_cardinal_axis(g._stages["phi"]._axis_hat)
+
+    # Spy on the analytic helper — must NOT be called.
+    calls: list[bool] = []
+    orig = fmod._solve_one_free_angle_analytic
+
+    def spy(*a, **kw):
+        calls.append(True)
+        return orig(*a, **kw)
+
+    fmod._solve_one_free_angle_analytic = spy
+    try:
+        # Forward call may return zero solutions (1-DOF locus is restricted),
+        # but the analytic helper must never be invoked.
+        g.forward(1, 0, 0)
+    finally:
+        fmod._solve_one_free_angle_analytic = orig
+
+    assert calls == []
+
+
+def test_one_free_angle_analytic_with_inner_fixed_stage():
+    """Free stage is not the innermost — ``R_after`` accumulates fixed inner rotations.
+
+    Covers the loop body in ``_solve_one_free_angle_analytic`` that builds
+    ``R_after`` from sample stages *inner* to (above) the free stage.  In
+    a fourcv stack ordered ``[omega, chi, phi]``, fixing ``phi`` and
+    leaving ``omega`` free means stages ``chi`` and ``phi`` (both inner
+    to ``omega``) contribute to ``R_after``.
+    """
+    from ad_hoc_diffractometer.forward import ForwardContext
+    from ad_hoc_diffractometer.forward import _solve_one_free_angle_analytic
+
+    g = _setup_cubic(fourcv, a=4.0)
+    # Custom mode: bisect on ttheta (so ttheta is fixed by Bragg) but the
+    # bisect sample stage is *chi* (not omega), and phi is fixed.  This
+    # leaves omega as the only free sample stage, with chi and phi inner
+    # to it in the stacking order.
+    #
+    # Actually the bisect constraint wires sample_stage = ttheta/2.  We
+    # want omega free, so freeze chi and phi via SampleConstraints and
+    # use a synthetic "bisect" that ties one of them to ttheta/2.  The
+    # cleanest path: use _solve_one_free_angle_analytic directly with a
+    # hand-built angles dict where phi is non-zero (so R_after ≠ I).
+    angles = {
+        "omega": 0.0,
+        "chi": 0.0,
+        "phi": 30.0,  # non-zero → R_after has the phi rotation
+        "ttheta": 60.0,
+    }
+    free_stage = g._stages["omega"]
+    ctx = ForwardContext(g)
+    ctx.prepare_caching(angles, {"omega"})
+
+    # Build a Q_phi target that is reachable: forward-compute Q_phi at a
+    # known omega value, then ask the helper to recover that omega.
+    angles["omega"] = 25.0
+    Q_target = ctx.q_phi(angles)
+    angles["omega"] = 0.0  # reset for the helper call
+
+    theta = _solve_one_free_angle_analytic(ctx, free_stage, angles, Q_target)
+    assert theta is not None
+    # Recovered omega must reproduce Q_target.
+    angles["omega"] = theta
+    Q_check = ctx.q_phi(angles)
+    assert np.linalg.norm(Q_check - Q_target) < 1e-9
+
+
+def test_one_free_angle_analytic_returns_none_on_magnitude_mismatch():
+    """Helper returns None when ``|q_perp| != |u_perp|`` (rotation cannot match).
+
+    Covers the magnitude-mismatch branch.  This happens when the parallel
+    components agree but the perpendicular magnitudes disagree — i.e.
+    the target lies on a different cone about the rotation axis than the
+    one swept by ``R(n, θ) @ q``.  Constructed by manually rescaling the
+    target's perpendicular component.
+    """
+    from ad_hoc_diffractometer.forward import ForwardContext
+    from ad_hoc_diffractometer.forward import _solve_one_free_angle_analytic
+
+    g = _setup_cubic(fourcv, a=4.0)
+    angles = {
+        "omega": 0.0,
+        "chi": 90.0,
+        "phi": 0.0,
+        "ttheta": 60.0,
+    }
+    free_stage = g._stages["phi"]
+    ctx = ForwardContext(g)
+    ctx.prepare_caching(angles, {"phi"})
+
+    # Compute a reachable target, then scale its perpendicular component
+    # to break the magnitude match while preserving the parallel component.
+    Q_reachable = ctx.q_phi({**angles, "phi": 17.0})
+    n = free_stage._axis_hat
+    Z_prefix = ctx._cached_Z_prefix
+    q = Z_prefix @ Q_reachable
+    q_par = float(np.dot(q, n))
+    q_perp = q - q_par * n
+    # Inflate q_perp to a different magnitude
+    q_bad = q_par * n + 2.0 * q_perp
+    Q_target_bad = np.linalg.solve(Z_prefix, q_bad)
+
+    result = _solve_one_free_angle_analytic(ctx, free_stage, angles, Q_target_bad)
+    assert result is None
