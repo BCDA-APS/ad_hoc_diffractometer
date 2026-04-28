@@ -39,6 +39,7 @@ from .mode import DetectorConstraint
 from .mode import EwaldSphereViolation
 from .mode import ReferenceConstraint
 from .mode import SampleConstraint
+from .mode import VirtualBisectConstraint
 from .orientation import ub_from_one_reflection
 from .orientation import ub_from_three_reflections_bl1967
 from .orientation import ub_from_two_reflections_bl1967
@@ -74,6 +75,7 @@ __all__ = [
     "SampleConstraint",
     "DetectorConstraint",
     "BisectConstraint",
+    "VirtualBisectConstraint",
     "ReferenceConstraint",
     # exceptions
     "EwaldSphereViolation",

@@ -41,6 +41,7 @@ from ad_hoc_diffractometer import ConstraintViolation
 from ad_hoc_diffractometer import DetectorConstraint
 from ad_hoc_diffractometer import ReferenceConstraint
 from ad_hoc_diffractometer import SampleConstraint
+from ad_hoc_diffractometer import VirtualBisectConstraint
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
@@ -505,6 +506,167 @@ def test_bisect_constraint_is_bisect_flag():
 
 def test_bisect_constraint_name():
     assert BisectConstraint("omega", "ttheta").name == "bisect"
+
+
+# ---------------------------------------------------------------------------
+# VirtualBisectConstraint (issue #226)
+# ---------------------------------------------------------------------------
+
+
+def test_virtual_bisect_constraint_name():
+    """VirtualBisectConstraint exposes the 'virtual_bisect' constraint name."""
+    assert VirtualBisectConstraint("omega", "ttheta").name == "virtual_bisect"
+
+
+def test_virtual_bisect_constraint_is_subclass_of_bisect():
+    """VirtualBisectConstraint inherits BisectConstraint (so has_bisect, etc. work)."""
+    vbc = VirtualBisectConstraint("omega", "ttheta")
+    assert isinstance(vbc, BisectConstraint)
+    assert vbc.is_bisect is True
+    assert vbc.category == "sample"
+    assert vbc.sample_stage == "omega"
+    assert vbc.detector_stage == "ttheta"
+
+
+def test_virtual_bisect_constraint_repr():
+    vbc = VirtualBisectConstraint("omega", "ttheta")
+    assert repr(vbc) == "VirtualBisectConstraint('omega', 'ttheta')"
+
+
+def test_virtual_bisect_constraint_eq_and_hash():
+    """VirtualBisectConstraint equality and hashing distinguish from BisectConstraint."""
+    vbc1 = VirtualBisectConstraint("omega", "ttheta")
+    vbc2 = VirtualBisectConstraint("omega", "ttheta")
+    vbc3 = VirtualBisectConstraint("omega", "delta")
+    bc = BisectConstraint("omega", "ttheta")
+    assert vbc1 == vbc2
+    assert vbc1 != vbc3
+    assert vbc1 != bc  # different type
+    assert vbc1 != "not a constraint"
+    assert hash(vbc1) == hash(vbc2)
+    assert hash(vbc1) != hash(vbc3)
+    # Hashes of VirtualBisectConstraint and BisectConstraint with the
+    # same stages are intentionally different because the types differ.
+    assert hash(vbc1) != hash(bc)
+
+
+def test_virtual_bisect_constraint_to_dict_from_dict():
+    """VirtualBisectConstraint round-trips via to_dict / from_dict."""
+    vbc = VirtualBisectConstraint("omega", "delta")
+    d = vbc.to_dict()
+    assert d == {
+        "type": "VirtualBisectConstraint",
+        "sample_stage": "omega",
+        "detector_stage": "delta",
+    }
+    vbc2 = VirtualBisectConstraint.from_dict(d)
+    assert vbc2 == vbc
+
+
+def test_virtual_bisect_constraint_evaluate_kappa_geometry():
+    """evaluate() returns omega_virtual − detector/2 on a kappa geometry."""
+    from ad_hoc_diffractometer.kappa import kappa_to_eulerian
+    from ad_hoc_diffractometer.presets import kappa4cv
+
+    g = kappa4cv()
+    vbc = VirtualBisectConstraint("omega", "ttheta")
+
+    # Build an angles dict; omega_virtual = ttheta/2 → residual ≈ 0
+    omega_v = 10.0
+    chi_v = 30.0
+    phi_v = 45.0
+    from ad_hoc_diffractometer.kappa import eulerian_to_kappa
+
+    ko, k, kp = eulerian_to_kappa(
+        omega_v, chi_v, phi_v, alpha_deg=g.kappa_alpha_deg, branch=+1
+    )
+    angles = {"komega": ko, "kappa": k, "kphi": kp, "ttheta": 2.0 * omega_v}
+    residual = vbc.evaluate(angles, g)
+    # omega_virtual recomputed from motors should match the seed exactly
+    om_check, _, _ = kappa_to_eulerian(ko, k, kp, alpha_deg=g.kappa_alpha_deg)
+    assert abs(om_check - omega_v) < 1e-12
+    assert abs(residual) < 1e-12
+
+
+def test_virtual_bisect_constraint_evaluate_nonzero_residual():
+    """evaluate() returns nonzero when motors do not satisfy bisecting."""
+    from ad_hoc_diffractometer.presets import kappa4cv
+
+    g = kappa4cv()
+    vbc = VirtualBisectConstraint("omega", "ttheta")
+    # Set komega far from ttheta/2 → omega_virtual ≠ ttheta/2 → residual ≠ 0
+    angles = {"komega": 0.0, "kappa": 60.0, "kphi": 0.0, "ttheta": 30.0}
+    residual = vbc.evaluate(angles, g)
+    # |residual| should be significant (offset is ~10° + ttheta/2=15° → ≠0)
+    assert abs(residual) > 1.0
+
+
+def test_virtual_bisect_constraint_evaluate_requires_kappa_geometry():
+    """evaluate() raises ValueError on a non-kappa geometry."""
+    from ad_hoc_diffractometer.presets import fourcv
+
+    g = fourcv()
+    vbc = VirtualBisectConstraint("omega", "ttheta")
+    angles = {"komega": 0.0, "kappa": 0.0, "kphi": 0.0, "ttheta": 30.0}
+    with pytest.raises(ValueError, match=re.escape("kappa_alpha_deg")):
+        vbc.evaluate(angles, g)
+
+
+@pytest.mark.parametrize(
+    "geometry_factory, sample_stage, detector_stage, expected",
+    [
+        pytest.param(
+            "kappa4cv", "omega", "ttheta", True, id="kappa4cv-omega-ttheta-implemented"
+        ),
+        pytest.param(
+            "kappa6c", "omega", "delta", True, id="kappa6c-omega-delta-implemented"
+        ),
+        pytest.param(
+            "kappa4cv",
+            "omega",
+            "missing",
+            False,
+            id="kappa4cv-missing-detector",
+        ),
+        pytest.param(
+            "fourcv",
+            "omega",
+            "ttheta",
+            False,
+            id="fourcv-not-kappa-geometry",
+        ),
+    ],
+)
+def test_virtual_bisect_constraint_is_implemented(
+    geometry_factory, sample_stage, detector_stage, expected
+):
+    """is_implemented() requires kappa_alpha_deg, komega/kappa/kphi, detector."""
+    from ad_hoc_diffractometer import presets
+
+    g = getattr(presets, geometry_factory)()
+    vbc = VirtualBisectConstraint(sample_stage, detector_stage)
+    assert vbc.is_implemented(g) is expected
+
+
+def test_constraint_set_from_dict_virtual_bisect():
+    """ConstraintSet.from_dict reconstructs VirtualBisectConstraint by type."""
+    cs = ConstraintSet([VirtualBisectConstraint("omega", "ttheta")])
+    d = cs.to_dict()
+    cs2 = ConstraintSet.from_dict(d)
+    assert isinstance(cs2.constraints[0], VirtualBisectConstraint)
+    assert cs2 == cs
+
+
+def test_constraint_set_only_one_bisect_or_virtual_bisect():
+    """ConstraintSet rejects more than one BisectConstraint *or* VirtualBisectConstraint."""
+    # VirtualBisectConstraint is-a BisectConstraint, so the count check applies
+    with pytest.raises(ValueError, match=re.escape("at most one BisectConstraint")):
+        ConstraintSet(
+            [
+                BisectConstraint("omega", "ttheta"),
+                VirtualBisectConstraint("omega", "ttheta"),
+            ]
+        )
 
 
 # ---------------------------------------------------------------------------
