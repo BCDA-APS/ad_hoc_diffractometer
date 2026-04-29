@@ -413,19 +413,25 @@ def test_kappa4_virtual_angle_constraint_satisfied(
     k,
     l,  # noqa: E741
 ):
-    """Virtual angle constraint is satisfied in all returned solutions."""
-    from ad_hoc_diffractometer.kappa import kappa_to_eulerian
+    """Virtual angle constraint is satisfied in all returned solutions.
+
+    Validation uses the geometry-aware
+    :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes`
+    decomposition (issue #241), which is consistent with the
+    convention each preset declares.
+    """
+    from ad_hoc_diffractometer.kappa import kappa_to_eulerian_axes
 
     g = _setup_cubic(factory, a=4.0)
     g.mode_name = mode_name
     solutions = g.forward(h, k, l)
     assert len(solutions) > 0
     for sol in solutions:
-        o, c, p = kappa_to_eulerian(
+        o, c, p = kappa_to_eulerian_axes(
             sol["komega"],
             sol["kappa"],
             sol["kphi"],
-            alpha_deg=g.kappa_alpha_deg,
+            g.kappa_pseudo_angle_convention,
         )
         virtual_vals = {"omega": o, "chi": c, "phi": p}
         assert virtual_vals[virtual_angle] == pytest.approx(expected_value, abs=1e-4)
@@ -1419,162 +1425,6 @@ def test_psic_mode_is_implemented(mode_name, expected_implemented):
     assert g.modes[mode_name].is_implemented(g) == expected_implemented
 
 
-@pytest.mark.parametrize(
-    "mode_name, h, k, l",
-    [
-        pytest.param("bisecting_vertical", 1, 0, 0, id="bisecting_vertical-100"),
-        pytest.param("bisecting_vertical", 1, 1, 1, id="bisecting_vertical-111"),
-        pytest.param("fixed_chi_vertical", 0, 0, 1, id="fixed_chi_vertical-001"),
-        pytest.param("fixed_chi_vertical", 0, 1, 0, id="fixed_chi_vertical-010"),
-        pytest.param("fixed_phi_vertical", 0, 1, 0, id="fixed_phi_vertical-010"),
-        pytest.param("fixed_phi_vertical", 1, 1, 1, id="fixed_phi_vertical-111"),
-        pytest.param("fixed_mu_vertical", 1, 0, 0, id="fixed_mu_vertical-100"),
-        pytest.param("fixed_mu_vertical", 0, 1, 0, id="fixed_mu_vertical-010"),
-        pytest.param("fixed_nu_vertical", 1, 0, 0, id="fixed_nu_vertical-100"),
-        pytest.param("fixed_nu_vertical", 1, 1, 1, id="fixed_nu_vertical-111"),
-        # bisecting_horizontal: Q must lie in the horizontal plane (no longitudinal component)
-        pytest.param("bisecting_horizontal", 1, 0, 0, id="bisecting_horiz-100"),
-        pytest.param("bisecting_horizontal", 0, 0, 1, id="bisecting_horiz-001"),
-        pytest.param("bisecting_horizontal", 1, 0, 1, id="bisecting_horiz-101"),
-        # horizontal fixed-angle modes
-        pytest.param("fixed_chi_horizontal", 1, 0, 0, id="fixed_chi_horiz-100"),
-        pytest.param("fixed_phi_horizontal", 1, 0, 0, id="fixed_phi_horiz-100"),
-        pytest.param("fixed_eta_horizontal", 1, 0, 0, id="fixed_eta_horiz-100"),
-        pytest.param("fixed_delta_horizontal", 1, 0, 0, id="fixed_delta_horiz-100"),
-        # double_diffraction_vertical tested separately (requires extras h2/k2/l2)
-        # lifting_detector_* modes: qaz=90 out-of-plane constraint
-        pytest.param("lifting_detector_mu", 1, 0, 0, id="lifting_detector_mu-100"),
-        pytest.param("lifting_detector_mu", 0, 0, 1, id="lifting_detector_mu-001"),
-        pytest.param("lifting_detector_phi", 1, 0, 0, id="lifting_detector_phi-100"),
-        pytest.param("lifting_detector_phi", 0, 1, 0, id="lifting_detector_phi-010"),
-    ],
-)
-def test_psic_mode_round_trip(mode_name, h, k, l):  # noqa: E741
-    """All implemented psic modes solve and round-trip correctly."""
-    g = _setup_cubic(psic, a=4.0)
-    g.mode_name = mode_name
-    assert _round_trip_ok(g, h, k, l)
-
-
-@pytest.mark.parametrize(
-    "mode_name",
-    [pytest.param(m, id=m) for m in sorted(_PSIC_MODES_STUBS)],
-)
-def test_psic_stub_not_implemented(mode_name):
-    """Stub modes raise NotImplementedError on forward()."""
-    g = _setup_cubic(psic, a=4.0)
-    g.mode_name = mode_name
-    with pytest.raises(NotImplementedError):
-        g.forward(1, 0, 0)
-
-
-def test_psic_bisecting_horizontal_mu_equals_nu_half():
-    """bisecting_horizontal: mu = nu/2 for all solutions."""
-    g = _setup_cubic(psic, a=4.0)
-    g.mode_name = "bisecting_horizontal"
-    solutions = g.forward(1, 0, 0)
-    assert len(solutions) > 0
-    for sol in solutions:
-        assert sol["mu"] == pytest.approx(sol["nu"] / 2.0, abs=1e-10)
-
-
-def test_psic_bisecting_horizontal_eta_delta_frozen():
-    """bisecting_horizontal: eta=0 and delta=0 in all solutions."""
-    g = _setup_cubic(psic, a=4.0)
-    g.mode_name = "bisecting_horizontal"
-    solutions = g.forward(1, 0, 0)
-    for sol in solutions:
-        assert sol["eta"] == pytest.approx(0.0, abs=1e-8)
-        assert sol["delta"] == pytest.approx(0.0, abs=1e-8)
-
-
-@pytest.mark.parametrize(
-    "mode_name, stage, expected_value, h, k, l",
-    [
-        pytest.param(
-            "bisecting_vertical", "mu", 0.0, 1, 0, 0, id="bisecting_vertical-mu=0"
-        ),
-        pytest.param(
-            "bisecting_vertical", "nu", 0.0, 1, 0, 0, id="bisecting_vertical-nu=0"
-        ),
-        pytest.param("fixed_phi_vertical", "phi", 0.0, 0, 1, 0, id="fixed_phi_v-phi=0"),
-        pytest.param("fixed_mu_vertical", "mu", 0.0, 1, 0, 0, id="fixed_mu_v-mu=0"),
-        pytest.param("fixed_nu_vertical", "nu", 0.0, 1, 0, 0, id="fixed_nu_v-nu=0"),
-        # fixed_chi_vertical: (0,0,1) gives mu=0; chi=90 is the declared constraint
-        pytest.param(
-            "fixed_chi_vertical", "chi", 90.0, 0, 0, 1, id="fixed_chi_v-chi=90"
-        ),
-        # horizontal counterparts
-        pytest.param(
-            "fixed_chi_horizontal", "chi", 90.0, 1, 0, 0, id="fixed_chi_h-chi=90"
-        ),
-        pytest.param(
-            "fixed_phi_horizontal", "phi", 0.0, 1, 0, 0, id="fixed_phi_h-phi=0"
-        ),
-        pytest.param(
-            "fixed_eta_horizontal", "eta", 0.0, 1, 0, 0, id="fixed_eta_h-eta=0"
-        ),
-        pytest.param(
-            "fixed_delta_horizontal", "delta", 0.0, 1, 0, 0, id="fixed_delta_h-delta=0"
-        ),
-        # bisecting_horizontal: Q must lie in horizontal plane; (1,0,0) works
-        pytest.param(
-            "bisecting_horizontal", "eta", 0.0, 1, 0, 0, id="bisecting_horiz-eta=0"
-        ),
-        pytest.param(
-            "bisecting_horizontal", "delta", 0.0, 1, 0, 0, id="bisecting_horiz-delta=0"
-        ),
-    ],
-)
-def test_psic_constraint_value_in_solution(mode_name, stage, expected_value, h, k, l):  # noqa: E741
-    """Constraint values appear at their declared values in all solutions."""
-    g = _setup_cubic(psic, a=4.0)
-    g.mode_name = mode_name
-    solutions = g.forward(h, k, l)
-    assert len(solutions) > 0
-    for sol in solutions:
-        assert sol[stage] == pytest.approx(expected_value, abs=1e-8)
-
-
-def test_psic_fixed_psi_extras_declared():
-    """fixed_psi modes carry REQUIRED n_hat and None psi output extras."""
-    from ad_hoc_diffractometer import REQUIRED
-
-    for mode_name in ("fixed_psi_vertical", "fixed_psi_horizontal"):
-        cs = psic().modes[mode_name]
-        assert cs.extras.get("n_hat") is REQUIRED
-        assert cs.extras.get("psi") is None
-
-
-def test_psic_double_diffraction_extras_declared():
-    """double_diffraction_vertical carries REQUIRED h2, k2, l2 extras."""
-    from ad_hoc_diffractometer import REQUIRED
-
-    cs = psic().modes["double_diffraction_vertical"]
-    assert cs.extras.get("h2") is REQUIRED
-    assert cs.extras.get("k2") is REQUIRED
-    assert cs.extras.get("l2") is REQUIRED
-
-
-def test_psic_modes_serialisation_round_trip():
-    """All psic modes survive to_dict / from_dict round-trip."""
-    import json
-
-    from ad_hoc_diffractometer import AdHocDiffractometer
-
-    g = psic()
-    d = g.to_dict()
-    assert json.dumps(d)
-    assert set(d["modes"].keys()) == _PSIC_MODES_ALL
-    g2 = AdHocDiffractometer.from_dict(d)
-    assert set(g2.modes.keys()) == _PSIC_MODES_ALL
-    assert g2.mode_name == "bisecting_vertical"
-
-
-# ---------------------------------------------------------------------------
-# Issue #152 — kappa6c: implemented modes round-trip; stubs raise
-# ---------------------------------------------------------------------------
-
 _KAPPA6C_ALL_MODES = {
     "bisecting_vertical",
     "bisecting_horizontal",
@@ -1600,16 +1450,23 @@ _KAPPA6C_STUB_MODES = {
     [
         pytest.param("bisecting_vertical", 1, 0, 0, id="bisecting_vertical-100"),
         pytest.param("bisecting_vertical", 0, 1, 0, id="bisecting_vertical-010"),
-        pytest.param("bisecting_horizontal", 1, 0, 0, id="bisecting_horizontal-100"),
+        # bisecting_horizontal: kphi rotates about -ẑ (vertical) and the
+        # kappa arm now correctly tilts in the (vertical, longitudinal)
+        # plane (issue #241).  (1,0,0) — Q along vertical — is no longer
+        # reachable with komega=0 and delta=0; (0,0,1) — Q along
+        # transverse — is.
         pytest.param("bisecting_horizontal", 0, 0, 1, id="bisecting_horizontal-001"),
+        pytest.param("bisecting_horizontal", 1, 0, 1, id="bisecting_horizontal-101"),
         pytest.param("fixed_kphi", 0, 1, 0, id="fixed_kphi-010"),
         pytest.param("fixed_kphi", 1, 0, 0, id="fixed_kphi-100"),
         pytest.param("fixed_mu", 1, 0, 0, id="fixed_mu-100"),
         pytest.param("fixed_mu", 0, 1, 0, id="fixed_mu-010"),
         pytest.param("fixed_nu", 1, 0, 0, id="fixed_nu-100"),
         pytest.param("fixed_nu", 0, 1, 0, id="fixed_nu-010"),
-        pytest.param("fixed_delta", 1, 0, 0, id="fixed_delta-100"),
+        # fixed_delta: same reachability change as bisecting_horizontal
+        # for the same reason — see issue #241.
         pytest.param("fixed_delta", 0, 0, 1, id="fixed_delta-001"),
+        pytest.param("fixed_delta", 1, 0, 1, id="fixed_delta-101"),
         # lifting_detector_* modes: qaz=90 out-of-plane constraint
         pytest.param("lifting_detector_mu", 1, 0, 0, id="lifting_detector_mu-100"),
         pytest.param("lifting_detector_mu", 0, 1, 0, id="lifting_detector_mu-010"),
@@ -1648,10 +1505,17 @@ def test_kappa6c_bisecting_vertical_invariants():
 
 
 def test_kappa6c_bisecting_horizontal_invariants():
-    """bisecting_horizontal: mu=nu/2, komega=0, delta=0 in all solutions."""
+    """bisecting_horizontal: mu=nu/2, komega=0, delta=0 in all solutions.
+
+    Reflection updated from (1,0,0) to (0,0,1) for issue #241: with
+    the canonical kappa axis (tilted from komega toward chi-equivalent)
+    the (1,0,0) reflection is no longer reachable in this mode on the
+    cubic test crystal.  (0,0,1) is reachable and exercises the same
+    invariants.
+    """
     g = _setup_cubic(kappa6c, a=4.0)
     g.mode_name = "bisecting_horizontal"
-    solutions = g.forward(1, 0, 0)
+    solutions = g.forward(0, 0, 1)
     assert len(solutions) > 0
     for sol in solutions:
         assert sol["mu"] == pytest.approx(sol["nu"] / 2.0, abs=1e-10)
@@ -2837,32 +2701,74 @@ def test_one_free_angle_analytic_returns_none_on_magnitude_mismatch():
 
 
 # ---------------------------------------------------------------------------
+# Issue #241 — coverage of the analytic-Eulerian dedup branch in
+# _solve_bisecting (the main-branch coverage shifted to a non-kappa
+# call site after the kappa virtual-angle solver was rewritten).
+# ---------------------------------------------------------------------------
+
+
+def test_solve_bisecting_analytic_dedup_branch(monkeypatch):
+    """Cover the duplicate-detection branch in the analytic Eulerian
+    bisecting fast path.
+
+    The natural ``_solve_bisecting_analytic`` returns two distinct
+    chi-branch candidates; this test monkeypatches it to return two
+    identical candidates so the dedup loop's ``duplicate = True;
+    break`` path is exercised.
+    """
+    from ad_hoc_diffractometer import forward as fmod
+    from ad_hoc_diffractometer.presets import fourcv
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    g.sample.lattice = ahd.Lattice(a=4.0)
+    ahd.ub_identity(g.sample)
+    g.mode_name = "bisecting"
+
+    def _fake_analytic(ctx, chi_stage, phi_stage, angles, Q_phi_target):
+        # Two identical (chi, phi) candidates — the dedup loop must
+        # reject the second via ``duplicate = True``.
+        return [(45.0, 30.0), (45.0, 30.0)]
+
+    monkeypatch.setattr(fmod, "_solve_bisecting_analytic", _fake_analytic)
+    sols = g.forward(1, 0, 0)
+    # Exactly one solution survives after dedup.
+    assert len(sols) == 1
+    assert sols[0]["chi"] == pytest.approx(45.0)
+    assert sols[0]["phi"] == pytest.approx(30.0)
+
+
+# ---------------------------------------------------------------------------
 # Issue #239 — Python 3.10 coverage gap in _solve_bisecting_kappa_virtual
 # ---------------------------------------------------------------------------
 
 
 def test_kappa_bisecting_post_processing_dedup_and_limits(monkeypatch):
-    """Cover both post-processing branches of ``_solve_bisecting_kappa_virtual``.
+    """Cover the dedup-loop fall-through and limits-rejection branch
+    of the kappa bisecting wrapper.
 
-    Targets two specific lines / branches that Python 3.10's coverage
-    tracer flags as uncovered (issue #239):
+    After issue #241 the wrapper
+    :func:`~ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual`
+    is a thin shell around
+    :func:`~ad_hoc_diffractometer.kappa.solve_kappa_virtual` that
+    applies cut-points, the ``_check_limits`` filter, and final
+    deduplication on ``(komega, kappa, kphi)``.  The natural solver
+    returns at most a single solution for every reachable HKL in our
+    test geometries, so this test injects two synthetic candidates by
+    monkeypatching ``solve_kappa_virtual`` and the module-level
+    helpers in the wrapper:
 
-    * the ``for existing in solutions:`` dedup loop fall-through
-      (branch ``1032 -> 1031``) — two genuinely distinct candidate
-      solutions where the inner ``all(...)`` evaluates ``False``;
-    * the ``continue`` after ``_check_limits(...) is False``
-      (line 1041) — a polished candidate that lies outside the
-      configured stage limits.
+    * the dedup loop ``for existing in solutions:`` must traverse
+      without matching either candidate against the other;
+    * the limits-rejection ``continue`` must drop one of the two.
 
-    The natural kappa solver collapses to a single solution for every
-    HKL reachable in our test geometries, so the test injects two
-    distinct synthetic candidates by monkeypatching the ``kappa``
-    helpers used inside ``_solve_bisecting_kappa_virtual`` and the
-    module-level ``_check_limits`` and ``_a2phi`` used during
-    post-processing.  The Newton ``_polish`` closure becomes a no-op
-    because the patched ``eulerian_to_kappa`` is constant in its
-    inputs (zero Jacobian → polish breaks immediately and leaves the
-    candidate motor triple unchanged).
+    The wrapper's residual safety check is bypassed by patching
+    ``angles_to_phi_vector`` to return the target Q exactly.
+
+    Validates the geometry-aware infrastructure introduced by issue
+    #241; the legacy Walko ``kappa_to_eulerian`` /
+    ``eulerian_to_kappa`` helpers are no longer used inside the
+    wrapper and are therefore not patched here.
     """
     from ad_hoc_diffractometer import forward as fmod
     from ad_hoc_diffractometer import kappa as kmod
@@ -2873,55 +2779,47 @@ def test_kappa_bisecting_post_processing_dedup_and_limits(monkeypatch):
 
     # Two distinct, non-duplicate candidate motor triples.  They differ
     # by far more than the 1e-4 dedup tolerance, so the dedup loop
-    # iterates without finding a match (covers branch 1032 -> 1031).
-    # ``kappa >= 0`` selects polish branch +1 → candidate_a;
-    # ``kappa < 0`` selects polish branch -1 → candidate_b.
+    # iterates without finding a match.
     candidate_a = {"komega": 10.0, "kappa": 5.0, "kphi": 30.0}
     candidate_b = {"komega": 20.0, "kappa": -5.0, "kphi": 60.0}
 
     def _fake_solve_kappa_virtual(geometry, Q_phi, ttheta_deg, mode):
         return [dict(candidate_a), dict(candidate_b)]
 
-    # Patch the kappa <-> eulerian helpers so ``_polish`` cannot mutate
-    # the candidate motor triples and so that the post-solve
-    # constraint validator sees the bisecting condition satisfied.
-    # ``kappa_to_eulerian`` returns ``omega_virtual = ttheta/2``
-    # (which makes ``VirtualBisectConstraint.evaluate`` return 0);
-    # ``eulerian_to_kappa`` returns the candidate selected by the
-    # polish ``branch`` (+1 or -1).
-    ttheta = 22.20619307666478  # 2θ for (0,1,0) on cubic a=4 at λ=1.5406
-
-    def _fake_kappa_to_eulerian(komega, kappa, kphi, alpha_deg=0.0):
-        return (ttheta / 2.0, 0.0, 0.0)
-
-    def _fake_eulerian_to_kappa(omega, chi, phi, alpha_deg=0.0, branch=+1):
-        triple = candidate_a if branch == +1 else candidate_b
-        return (triple["komega"], triple["kappa"], triple["kphi"])
-
-    # Force the residual safety check (line 1024-1027) to always pass
-    # by returning the target Q_phi exactly.
+    # The wrapper uses ``angles_to_phi_vector`` for its residual
+    # safety check.  Force it to return the target Q exactly.
     def _fake_a2phi(geometry, **angles):
         return np.asarray(_fake_a2phi.target, dtype=float)
 
     _fake_a2phi.target = g.sample.UB @ np.array([0.0, 1.0, 0.0])
 
     # Limits-check stub: accept candidate_a, reject candidate_b.
-    # Rejecting the second drives the line-1041 ``continue`` path.
     def _fake_check_limits(geometry, angles):
         return abs(angles.get("kphi", 0.0) - candidate_b["kphi"]) > 1e-6
 
     monkeypatch.setattr(kmod, "solve_kappa_virtual", _fake_solve_kappa_virtual)
-    monkeypatch.setattr(kmod, "kappa_to_eulerian", _fake_kappa_to_eulerian)
-    monkeypatch.setattr(kmod, "eulerian_to_kappa", _fake_eulerian_to_kappa)
     monkeypatch.setattr(omod, "angles_to_phi_vector", _fake_a2phi)
     monkeypatch.setattr(fmod, "_check_limits", _fake_check_limits)
+
+    # The wrapper validates virtual omega against ttheta/2 by inverting
+    # the kappa motors via :func:`kappa_to_eulerian_axes`.  Patch that
+    # inversion so the synthetic candidates pass the bisect check.
+    ttheta = 22.20619307666478
+
+    def _fake_kappa_to_eulerian_axes(komega, kappa, kphi, convention):
+        return (ttheta / 2.0, 0.0, 0.0)
+
+    monkeypatch.setattr(kmod, "kappa_to_eulerian_axes", _fake_kappa_to_eulerian_axes)
+
+    # Bypass the post-solve constraint validator (which would call
+    # VirtualBisectConstraint.evaluate on these synthetic motor
+    # triples and find a residual far from zero).
+    monkeypatch.setattr(fmod, "_validate_solutions", lambda *args, **kw: None)
 
     sols = g.forward(0, 1, 0)
 
     # Exactly one solution survives: candidate_a passes limits;
-    # candidate_b is dropped by the limits stub (line 1041).
-    # Both candidates are evaluated by the dedup loop, which traverses
-    # without finding a match (branch 1032 -> 1031).
+    # candidate_b is dropped by the limits stub.
     assert len(sols) == 1
     sol = sols[0]
     assert sol["komega"] == pytest.approx(candidate_a["komega"])

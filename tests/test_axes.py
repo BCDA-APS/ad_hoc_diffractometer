@@ -267,3 +267,14 @@ def test_kappa_axis_is_unit_vector(alpha_deg, context):
 def test_kappa_axis_bad_basis():
     with pytest.raises(ValueError, match=re.escape("missing: 'transverse'")):
         kappa_axis(50.0, basis={"vertical": XHAT, "longitudinal": YHAT})
+
+
+def test_kappa_axis_with_explicit_basis():
+    """``kappa_axis`` honours an explicit basis dict (covers the
+    happy path that no longer goes through ``presets.py`` after
+    issue #241).
+    """
+    basis = {"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT}
+    ax = kappa_axis(50.0, basis=basis)
+    expected = np.cos(np.deg2rad(50.0)) * XHAT + np.sin(np.deg2rad(50.0)) * ZHAT
+    np.testing.assert_allclose(ax, expected, atol=1e-12)

@@ -427,10 +427,11 @@ class VirtualBisectConstraint(BisectConstraint):
         Return the constraint residual ``omega_virtual − detector/2``.
 
         ``omega_virtual`` is computed from the kappa motor triple
-        ``(komega, kappa, kphi)`` via
-        :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian`.  The
-        ``geometry`` argument supplies the kappa tilt angle
-        ``kappa_alpha_deg``.
+        ``(komega, kappa, kphi)`` via the geometry-aware decomposition
+        :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes`,
+        using the per-geometry
+        :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`
+        attached to ``geometry``.
 
         Parameters
         ----------
@@ -439,7 +440,8 @@ class VirtualBisectConstraint(BisectConstraint):
             ``kappa``, ``kphi``, and the detector stage named by
             :attr:`detector_stage`.
         geometry : AdHocDiffractometer
-            The diffractometer, used only for ``kappa_alpha_deg``.
+            The diffractometer, used to retrieve the
+            ``kappa_pseudo_angle_convention``.
 
         Returns
         -------
@@ -452,22 +454,25 @@ class VirtualBisectConstraint(BisectConstraint):
         KeyError
             If a required motor angle is missing from ``angles``.
         ValueError
-            If ``geometry.kappa_alpha_deg`` is ``None`` (the constraint
-            is only meaningful on kappa geometries) or if the kappa
-            triple lies outside the reachable virtual range.
+            If ``geometry.kappa_pseudo_angle_convention`` is ``None``
+            (the constraint is only meaningful on kappa geometries)
+            or if the kappa triple lies outside the reachable virtual
+            range.
         """
-        from .kappa import kappa_to_eulerian
+        from .kappa import kappa_to_eulerian_axes
 
-        if geometry.kappa_alpha_deg is None:
+        convention = geometry.kappa_pseudo_angle_convention
+        if convention is None:
             raise ValueError(
-                f"VirtualBisectConstraint requires geometry.kappa_alpha_deg "
-                f"to be set; geometry {geometry.name!r} has no kappa tilt."
+                f"VirtualBisectConstraint requires "
+                f"geometry.kappa_pseudo_angle_convention to be set; "
+                f"geometry {geometry.name!r} is not a kappa geometry."
             )
         komega = angles["komega"]
         kappa = angles["kappa"]
         kphi = angles["kphi"]
-        omega_v, _chi_v, _phi_v = kappa_to_eulerian(
-            komega, kappa, kphi, alpha_deg=geometry.kappa_alpha_deg
+        omega_v, _chi_v, _phi_v = kappa_to_eulerian_axes(
+            komega, kappa, kphi, convention
         )
         return omega_v - angles[self._detector_stage] / 2.0
 

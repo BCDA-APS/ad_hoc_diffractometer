@@ -505,12 +505,15 @@ def test_solve_kappa_virtual_early_termination(
     l,  # noqa: E741
     context,
 ):
-    """Early termination produces the same solutions as exhaustive search.
+    """``solve_kappa_virtual`` returns at least one valid solution per
+    fixed-virtual-angle mode for a cubic test crystal.
 
-    Verifies that solve_kappa_virtual with _MAX_SOLUTIONS / _MAX_STALE
-    returns results consistent with a correct forward calculation, and
-    that the number of Eulerian solutions found is bounded by
-    _MAX_SOLUTIONS (4).
+    After issue #241 the kappa virtual-angle solver delegates to the
+    analytic Eulerian-equivalent dispatch, which has no early
+    termination heuristic — at most one Eulerian solution per
+    convergent branch, doubled for the two kappa branches, gives at
+    most 4 solutions per virtual-mode call.  The retained test name
+    is historical; the assertion now checks the post-fix bound.
     """
     import numpy as np
 
@@ -534,6 +537,160 @@ def test_solve_kappa_virtual_early_termination(
 
         # Must produce at least one solution
         assert len(results) >= 1
-        # Must not exceed _MAX_SOLUTIONS * 2 (each Eulerian solution
-        # produces up to 2 kappa branches)
-        assert len(results) <= 8  # _MAX_SOLUTIONS=4, 2 branches each
+        # The analytic Eulerian dispatch returns at most 2 Eulerian
+        # solutions per call; each is converted to up to 2 kappa
+        # branches.  Empirical bound: ≤ 4 unique kappa motor triples.
+        assert len(results) <= 4
+
+
+# ---------------------------------------------------------------------------
+# Issue #241 — geometry-aware pseudoangle conversions and kappa axis
+# ---------------------------------------------------------------------------
+
+
+def test_kappa_pseudo_angle_convention_zero_norm_raises():
+    """KappaPseudoAngleConvention rejects zero-norm axis vectors."""
+    from ad_hoc_diffractometer.kappa import KappaPseudoAngleConvention
+
+    with pytest.raises(ValueError, match=re.escape("has zero norm")):
+        KappaPseudoAngleConvention(
+            n_komega=[0.0, 0.0, 0.0],
+            n_kappa=[1.0, 0.0, 0.0],
+            n_kphi=[1.0, 0.0, 0.0],
+            n_chi_eq=[0.0, 1.0, 0.0],
+        )
+
+
+def test_make_kappa_pseudo_angle_convention():
+    """``make_kappa_pseudo_angle_convention`` is the public constructor."""
+    from ad_hoc_diffractometer.kappa import KappaPseudoAngleConvention
+    from ad_hoc_diffractometer.kappa import make_kappa_pseudo_angle_convention
+
+    conv = make_kappa_pseudo_angle_convention(
+        n_komega=[-1.0, 0.0, 0.0],
+        n_kappa=[0.5, 0.866, 0.0],
+        n_kphi=[-1.0, 0.0, 0.0],
+        n_chi_eq=[0.0, 1.0, 0.0],
+    )
+    assert isinstance(conv, KappaPseudoAngleConvention)
+
+
+def test_kappa_axis_from_eulerian_perpendicularity_check():
+    """``kappa_axis_from_eulerian`` raises if komega and chi_eq are not perpendicular."""
+    from ad_hoc_diffractometer.kappa import kappa_axis_from_eulerian
+
+    with pytest.raises(ValueError, match=re.escape("perpendicular")):
+        kappa_axis_from_eulerian([1.0, 0.0, 0.0], [1.0, 1.0, 0.0], 50.0)
+
+
+def test_kappa_axis_from_eulerian_correct_tilt():
+    """The returned axis is tilted α from komega toward chi_eq."""
+    import numpy as np
+
+    from ad_hoc_diffractometer.kappa import kappa_axis_from_eulerian
+
+    n_om = np.array([1.0, 0.0, 0.0])
+    n_ch = np.array([0.0, 1.0, 0.0])
+    n_kappa = kappa_axis_from_eulerian(n_om, n_ch, 30.0)
+    expected = math.cos(math.radians(30)) * n_om + math.sin(math.radians(30)) * n_ch
+    np.testing.assert_allclose(n_kappa, expected, atol=1e-12)
+    # Angle between komega and kappa is exactly α
+    angle = math.degrees(math.acos(float(np.dot(n_om, n_kappa))))
+    assert angle == pytest.approx(30.0, abs=1e-10)
+
+
+@pytest.mark.parametrize(
+    "branch, context",
+    [
+        pytest.param(+1, does_not_raise(), id="branch+1"),
+        pytest.param(-1, does_not_raise(), id="branch-1"),
+        pytest.param(
+            0,
+            pytest.raises(ValueError, match=re.escape("branch must be +1 or -1")),
+            id="branch0-raises",
+        ),
+        pytest.param(
+            2,
+            pytest.raises(ValueError, match=re.escape("branch must be +1 or -1")),
+            id="branch2-raises",
+        ),
+    ],
+)
+def test_eulerian_to_kappa_axes_invalid_branch(branch, context):
+    """``eulerian_to_kappa_axes`` rejects branch values other than ±1."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
+
+    g = ahd.presets.kappa4cv()
+    convention = g.kappa_pseudo_angle_convention
+    with context:
+        eulerian_to_kappa_axes(0.0, 30.0, 0.0, convention, branch=branch)
+
+
+def test_eulerian_to_kappa_axes_unreachable_chi_raises():
+    """``eulerian_to_kappa_axes`` raises when the requested chi is
+    outside the kappa-arm reachable range."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
+
+    g = ahd.presets.kappa4cv()
+    convention = g.kappa_pseudo_angle_convention
+    # The kappa-arm reachable chi range is |chi| ≤ 2·α = 100° for
+    # α = 50°.  chi = 120° is outside.
+    with pytest.raises(ValueError, match=re.escape("no real solution")):
+        eulerian_to_kappa_axes(0.0, 120.0, 0.0, convention, branch=+1)
+
+
+def test_kappa_pseudo_angle_convention_set_via_property():
+    """The convention can be set after construction via the property setter."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer.kappa import KappaPseudoAngleConvention
+
+    g = ahd.presets.fourcv()  # non-kappa geometry
+    assert g.kappa_pseudo_angle_convention is None
+    new_conv = KappaPseudoAngleConvention(
+        n_komega=[-1.0, 0.0, 0.0],
+        n_kappa=[0.5, 0.866, 0.0],
+        n_kphi=[-1.0, 0.0, 0.0],
+        n_chi_eq=[0.0, 1.0, 0.0],
+    )
+    g.kappa_pseudo_angle_convention = new_conv
+    assert g.kappa_pseudo_angle_convention is new_conv
+
+
+def test_angle_about_axis_degenerate_parallel_to_axis():
+    """``_angle_about_axis`` returns 0 when both vectors are parallel
+    to the rotation axis (kappa.py line 355 — defensive branch)."""
+    import numpy as np
+
+    from ad_hoc_diffractometer.kappa import _angle_about_axis
+
+    axis = np.array([1.0, 0.0, 0.0])
+    # v_from == v_to == axis ⇒ both projections are zero ⇒ return 0
+    assert _angle_about_axis(axis, axis, axis) == 0.0
+
+
+def test_solve_alpha_cos_beta_sin_unsolvable_zero_amplitude():
+    """``_solve_alpha_cos_beta_sin_eq_gamma`` raises when α=β=0 and
+    γ≠0 (kappa.py line 379 — defensive branch)."""
+    from ad_hoc_diffractometer.kappa import _solve_alpha_cos_beta_sin_eq_gamma
+
+    with pytest.raises(ValueError, match=re.escape("LHS amplitude is zero")):
+        _solve_alpha_cos_beta_sin_eq_gamma(0.0, 0.0, 1.0)
+
+
+def test_eulerian_to_kappa_axes_chi_zero_degenerate():
+    """``eulerian_to_kappa_axes`` collapses ``ω → κω, φ → κφ`` at
+    χ = 0 with parallel komega/kphi (kappa.py line 548 — degenerate
+    short-circuit)."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
+
+    g = ahd.presets.kappa4cv()
+    convention = g.kappa_pseudo_angle_convention
+    # Trigger the chi=0 + parallel-axes short-circuit explicitly
+    # (the function returns immediately before computing R_eul).
+    ko, k, kp = eulerian_to_kappa_axes(20.0, 0.0, 35.0, convention, branch=+1)
+    assert ko == pytest.approx(20.0, abs=1e-12)
+    assert k == 0.0
+    assert kp == pytest.approx(35.0, abs=1e-12)
