@@ -865,7 +865,6 @@ def _solve_bisecting_kappa_virtual(
     """
     from .kappa import kappa_to_eulerian_axes
     from .kappa import solve_kappa_virtual
-    from .orientation import angles_to_phi_vector as _a2phi
 
     Q_phi_arr = np.asarray(Q_phi, dtype=float)
 
@@ -874,40 +873,28 @@ def _solve_bisecting_kappa_virtual(
     convention = geometry.kappa_pseudo_angle_convention
     omega_target = ttheta_deg / 2.0
 
+    # ``solve_kappa_virtual`` returns analytic, deduplicated kappa
+    # motor triples (the geometry-aware decomposition introduced by
+    # issue #241 is exact, and the inner solver deduplicates at 1e-6).
+    # The wrapper therefore only needs to:
+    #   1. enforce the virtual-bisect omega = ttheta/2 condition (the
+    #      equivalent Eulerian solver returns both chi branches, only
+    #      one of which is bisecting);
+    #   2. apply mode cut-points; and
+    #   3. drop solutions outside the hardware stage limits.
+    # No residual Q-recheck or wrapper-side dedup is needed; both were
+    # removed in issue #245 cleanup as unreachable post-#241 code.
     solutions: list[dict[str, float]] = []
     for sol in raw:
         merged = dict(angles)
         merged.update(sol)
-        # Enforce the virtual-bisect constraint: the equivalent
-        # Eulerian solver returns both analytic chi branches, but
-        # only one (the principal +chi branch) satisfies
-        # ``omega_virtual = ttheta/2``.  The other branch differs by
-        # 180° in omega and must be filtered out before validation.
         om_v, _, _ = kappa_to_eulerian_axes(
             merged["komega"], merged["kappa"], merged["kphi"], convention
         )
         residual = (om_v - omega_target + 180.0) % 360.0 - 180.0
         if abs(residual) > 1e-6:
             continue
-        # Final correctness check: ensure the kappa stack actually
-        # produces the target Q vector.
-        Q_check = _a2phi(geometry, **merged)
-        if float(np.linalg.norm(Q_check - Q_phi_arr)) > 1e-6:  # pragma: no cover
-            continue
         _apply_cut_points(merged, mode, geometry)
-        # Deduplicate on the kappa motor triple (the equivalent
-        # Eulerian solver may return both the +chi and −chi solutions
-        # which can collapse to the same kappa triple).
-        duplicate = False
-        for existing in solutions:
-            if all(
-                abs(existing.get(name, 0.0) - merged.get(name, 0.0)) < 1e-4
-                for name in ("komega", "kappa", "kphi")
-            ):  # pragma: no cover
-                duplicate = True
-                break
-        if duplicate:  # pragma: no cover
-            continue
         if not _check_limits(geometry, merged):
             continue
         solutions.append(merged)
