@@ -1,7 +1,11 @@
 (geometry-kappa4cv)=
 # kappa4cv — Kappa Four-Circle (Synchrotron)
 
-Four-circle kappa diffractometer, vertical scattering plane. The chi circle is replaced by a kappa axis tilted at α = 50° from the vertical toward the transverse axis.
+Four-circle kappa diffractometer, vertical scattering plane. The chi
+circle is replaced by a kappa axis tilted at α = 50° **from the
+outer komega axis toward the equivalent Eulerian chi axis** (issue
+#241; see [How the kappa axis is defined](#kappa4cv-axis-definition)
+below).
 
 **Walko (2016) designation:** S3D1 (kappa)
 
@@ -49,7 +53,7 @@ and mode configuration.
 | Stage | Axis | Handedness | Parent |
 |---|---|---|---|
 | ``komega`` | −transverse (−x BL) | left-handed | base |
-| ``kappa`` | tilted axis, α=50° | right-handed | ``komega`` |
+| ``kappa`` | −x · cos α + ŷ · sin α (α = 50°) | right-handed | ``komega`` |
 | ``kphi`` | −transverse (−x BL) | left-handed | ``kappa`` |
 
 **Detector stages (base first):**
@@ -58,9 +62,44 @@ and mode configuration.
 |---|---|---|---|
 | ``ttheta`` | −transverse (−x BL) | left-handed | base |
 
-**Virtual Eulerian angles** (computed from real kappa angles via Walko 2016 eq. [16]):
-omega, chi, phi.  Used as constraint names for stub modes; converted back to
-komega, kappa, kphi by the kappa inversion solver (Issue I / #153).
+(kappa4cv-axis-definition)=
+### How the kappa axis is defined
+
+The kappa rotation axis lies in the plane spanned by the outer
+``komega`` axis and the *equivalent Eulerian chi axis*, tilted by
+``α`` from ``komega`` toward the chi-equivalent direction:
+
+$$
+\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{n}_{\kappa\omega} \;+\; \sin\alpha \cdot \hat{n}_{\chi,\,\text{eq}}.
+$$
+
+For ``kappa4cv`` (BL convention) this is
+
+$$
+\hat{n}_{\kappa} \;=\; \cos 50° \cdot (-\hat{x}) \;+\; \sin 50° \cdot (+\hat{y}) \;=\; (-0.643,\, 0.766,\, 0).
+$$
+
+This **differs** from earlier versions of the package, which set the
+kappa axis from a textbook formula
+``vertical · cos α + transverse · sin α`` regardless of the actual
+``komega`` orientation.  The earlier formula is correct only when
+``komega`` is along ``+vertical``; it is *not* correct for
+``kappa4cv``, ``kappa4ch``, or ``kappa6c``, all of which encode
+``komega`` along a non-vertical signed axis.  The mismatch caused a
+silent solver gap that returned ``"No solutions"`` for several
+physically reachable reflections; see issue #241 and
+{class}`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention` for
+the full derivation and rationale.
+
+**Virtual Eulerian angles** ``omega``, ``chi``, ``phi`` are mapped
+to / from the real motors via the geometry-aware decomposition in
+{func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes` and
+{func}`~ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes`.  The
+older Walko-textbook helpers
+{func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa` and
+{func}`~ad_hoc_diffractometer.kappa.kappa_to_eulerian` are retained
+as reference implementations of the published closed form but are
+**not** used inside the solver.
 
 ## Diffraction modes
 
@@ -71,11 +110,12 @@ changing constraint values at run time.
 
 ### `bisecting` *(default)*
 
-{class}`~ad_hoc_diffractometer.mode.BisectConstraint`:
-`komega = ttheta / 2` (approximates the bisecting condition).
-
-> **Note:** The correct bisecting condition is virtual `omega_euler = 0`,
-> which differs from `komega = ttheta/2`. Corrected in Issue I / #153.
+{class}`~ad_hoc_diffractometer.mode.VirtualBisectConstraint`:
+``omega_virtual = ttheta / 2`` enforced on the **virtual** Eulerian
+omega pseudoangle.  The kappa motor triple ``(komega, kappa, kphi)``
+satisfies this constraint via the geometry-aware
+{func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes`
+decomposition (issue #241).
 
 | | |
 |---|---|
@@ -97,8 +137,9 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 Fix the virtual Eulerian omega at declared value (default 0°).
-Uses the kappa Newton-Raphson solver — the caller chooses the value by
-constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
+Solved analytically via the equivalent-Eulerian dispatch (issue
+#241) — the caller chooses the value by constructing a
+{class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
 
 | | |
 |---|---|

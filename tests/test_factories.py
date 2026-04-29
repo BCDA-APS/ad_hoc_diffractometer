@@ -176,11 +176,20 @@ def test_make_geometry_returns_correct_instance():
 
 
 def test_make_geometry_kappa_alpha_forwarded():
-    """Keyword args must be forwarded to the factory (kappa alpha test)."""
+    """Keyword args must be forwarded to the factory (kappa alpha test).
+
+    The kappa axis is tilted ``alpha`` degrees from the actual outer
+    ``komega`` axis toward the equivalent Eulerian chi axis.  For
+    ``kappa4cv`` (BL basis) the komega axis is ``-TRANSVERSE = -x̂`` and
+    the equivalent chi axis is ``+LONGITUDINAL = +ŷ``, so the kappa
+    axis is ``-x̂·cos(α) + ŷ·sin(α)``.  See issue #241 for the
+    correction to the historic ``kappa_axis()`` helper which assumed
+    ``n_komega = +vertical`` unconditionally.
+    """
     g = make_geometry("kappa4cv", alpha_deg=45.0)
-    expected = np.cos(np.deg2rad(45)) * np.array([0, 0, 1]) + np.sin(
+    expected = np.cos(np.deg2rad(45)) * np.array([-1, 0, 0]) + np.sin(
         np.deg2rad(45)
-    ) * np.array([1, 0, 0])
+    ) * np.array([0, 1, 0])
     np.testing.assert_allclose(g.stage("kappa").axis, expected, atol=1e-12)
 
 
@@ -545,8 +554,13 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
         pytest.param(
             kappa4cv,
             "kappa",
-            np.cos(np.deg2rad(50)) * np.array([0, 0, 1])
-            + np.sin(np.deg2rad(50)) * np.array([1, 0, 0]),
+            # The kappa axis is tilted α from the *actual* komega axis
+            # toward the equivalent Eulerian chi axis.  For kappa4cv
+            # (BL): n_komega = -TRANSVERSE = -x̂ and n_chi_eq =
+            # +LONGITUDINAL = +ŷ, so n_kappa = -x̂·cos α + ŷ·sin α.
+            # See issue #241.
+            np.cos(np.deg2rad(50)) * np.array([-1, 0, 0])
+            + np.sin(np.deg2rad(50)) * np.array([0, 1, 0]),
             does_not_raise(),
             id="kappa4cv-kappa-axis-tilted",
         ),
@@ -722,18 +736,24 @@ def test_kappa_alpha_deg_stored(factory, alpha_deg, context):
     ],
 )
 def test_kappa_alpha_deg_matches_axis_vector(factory, alpha_deg, context):
-    """kappa_alpha_deg is consistent with the kappa stage axis vector."""
-    from ad_hoc_diffractometer.axes import kappa_axis
-    from ad_hoc_diffractometer.factories import _BASIS_BL
-    from ad_hoc_diffractometer.factories import _BASIS_YOU
+    """kappa_alpha_deg is consistent with the kappa stage axis vector.
+
+    The kappa axis is tilted ``alpha`` degrees from the **actual outer
+    komega axis** toward the **equivalent Eulerian chi axis** (issue
+    #241).  The geometry-aware helper
+    :func:`~ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian`
+    encodes this; the test asserts that each preset's ``kappa`` stage
+    matches that helper's output for its declared convention.
+    """
+    from ad_hoc_diffractometer.kappa import kappa_axis_from_eulerian
 
     with context:
         g = factory(alpha_deg=alpha_deg)
         kax = g.stage("kappa").axis
-        basis = (
-            _BASIS_YOU if factory is kappa6c else _BASIS_BL
-        )  # kappa4cv/kappa4ch use BL
-        expected_axis = kappa_axis(g.kappa_alpha_deg, basis=basis)
+        conv = g.kappa_pseudo_angle_convention
+        expected_axis = kappa_axis_from_eulerian(
+            conv.n_komega, conv.n_chi_eq, g.kappa_alpha_deg
+        )
         np.testing.assert_allclose(kax, expected_axis, atol=1e-12)
 
 

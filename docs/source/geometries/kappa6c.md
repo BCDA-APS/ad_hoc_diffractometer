@@ -48,7 +48,7 @@ and mode configuration.
 |---|---|---|---|
 | ``mu`` | +vertical (+x) | right-handed | base |
 | ``komega`` | −transverse (−z) | left-handed | ``mu`` |
-| ``kappa`` | tilted axis, α=50° | right-handed | ``komega`` |
+| ``kappa`` | −z · cos α + ŷ · sin α (α = 50°) | right-handed | ``komega`` |
 | ``kphi`` | −transverse (−z) | left-handed | ``kappa`` |
 
 **Detector stages (base first):**
@@ -58,8 +58,25 @@ and mode configuration.
 | ``nu`` | +vertical (+x) | right-handed | base |
 | ``delta`` | −transverse (−z) | left-handed | ``nu`` |
 
-**Virtual Eulerian angles** (computed from komega, kappa, kphi via Walko 2016 eq. [16]):
-omega, chi, phi.  Used in stub mode descriptions; kappa inversion required (Issue I / #153).
+The kappa axis is computed by
+{func}`~ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian` from
+the preset's actual ``komega`` axis (``-TRANSVERSE`` in the You
+basis) and the equivalent Eulerian chi axis (``+LONGITUDINAL``):
+
+$$
+\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{n}_{\kappa\omega} \;+\; \sin\alpha \cdot \hat{n}_{\chi,\,\text{eq}}
+\;=\; \cos 50° \cdot (-\hat{z}) \;+\; \sin 50° \cdot (+\hat{y}).
+$$
+
+This formulation is geometry-aware and is correct for ``kappa6c``.
+See the [kappa4cv documentation](kappa4cv-axis-definition) and
+issue #241 for the reasons this differs from the textbook
+``vertical · cos α + transverse · sin α`` formula.
+
+**Virtual Eulerian angles** ``omega``, ``chi``, ``phi`` are mapped
+to / from the real motors via the geometry-aware decomposition in
+{func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes` and
+{func}`~ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes`.
 
 **Bisect pairs:**
 
@@ -75,8 +92,14 @@ changing constraint values at run time.
 
 ### `bisecting_vertical` *(default)*
 
-{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
-`komega = delta/2`, `mu = 0`, `nu = 0`.
+{class}`~ad_hoc_diffractometer.mode.VirtualBisectConstraint` +
+{class}`~ad_hoc_diffractometer.mode.SampleConstraint` +
+{class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+``omega_virtual = delta / 2``, ``mu = 0``, ``nu = 0``.  The
+virtual-bisect condition is on the **virtual** Eulerian omega
+pseudoangle and is solved via the geometry-aware
+{func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes`
+decomposition (issue #241).
 Vertical scattering plane (psic-style).
 
 | | |
