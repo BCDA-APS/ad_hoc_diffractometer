@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=43c997d7"></script>
+    <script src="../../_static/documentation_options.js?v=dd125ed0"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-04-28 21:57 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-29 15:21 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -838,35 +838,63 @@
     <span class="n">kphi_stage</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
     <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decompose Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω) into (kω, κ, kφ).</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decompose ``Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω)`` into</span>
+<span class="sd">    ``(kω, κ, kφ)`` using a Rodrigues expansion that is **agnostic to</span>
+<span class="sd">    the specific signed axis convention** of the kappa preset.</span>
 
-<span class="sd">    Uses the kappa-specific chi element formula derived from the Rodrigues</span>
-<span class="sd">    expansion (ITC Vol. C Sec. 2.2.6 / Walko 2016):</span>
+<span class="sd">    Derivation</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Apply both sides to ``n_komega``:</span>
 
-<span class="sd">        n_kφ · Z · n_kω = cos(κ)·cos²(α) + sin²(α)</span>
+<span class="sd">        Z · n_kω  =  R(n_kφ, kφ) · R(n_κ, κ) · n_kω</span>
 
-<span class="sd">    where α is ``alpha_deg`` (the kappa tilt angle).  This isolates κ;</span>
-<span class="sd">    komega and kphi are then extracted by the same projection method as</span>
-<span class="sd">    ``_euler_from_Z_standard``.</span>
+<span class="sd">    (since ``R(n_kω, ·) · n_kω = n_kω``).  Take the dot product with</span>
+<span class="sd">    ``n_kphi``:</span>
+
+<span class="sd">        n_kφ · Z · n_kω  =  n_kφ · R(n_κ, κ) · n_kω</span>
+
+<span class="sd">    Expanding the right side via Rodrigues (with</span>
+<span class="sd">    ``a = n_kphi · n_komega``,</span>
+<span class="sd">    ``b = n_kphi · (n_kappa × n_komega)``,</span>
+<span class="sd">    ``c = (n_kphi · n_kappa)·(n_kappa · n_komega)``):</span>
+
+<span class="sd">        elem  =  a·cos(κ) + b·sin(κ) + c·(1 − cos(κ))</span>
+<span class="sd">              =  (a − c)·cos(κ) + b·sin(κ) + c</span>
+
+<span class="sd">    For the Walko (2016) textbook axis convention this reduces to</span>
+<span class="sd">    ``cos(κ)·cos²(α) + sin²(α)``; for the geometry-aware kappa axis</span>
+<span class="sd">    introduced by issue #241 (``n_kappa = cos(α)·n_komega +</span>
+<span class="sd">    sin(α)·n_chi_eq``, with ``n_komega`` parallel to ``n_kphi``) the</span>
+<span class="sd">    same expression evaluates to ``cos(κ)·sin²(α) + cos²(α)``.  The</span>
+<span class="sd">    code below uses the general ``(a − c)·cos(κ) + b·sin(κ) = γ − c``</span>
+<span class="sd">    form so that any future kappa convention with non-parallel</span>
+<span class="sd">    komega/kphi axes is handled correctly.</span>
+
+<span class="sd">    ``komega`` and ``kphi`` are then extracted by the same projection</span>
+<span class="sd">    method as :func:`_euler_from_Z_standard`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Z : ndarray, shape (3, 3)</span>
 <span class="sd">    komega_stage, kappa_stage, kphi_stage : Stage</span>
 <span class="sd">    alpha_deg : float</span>
-<span class="sd">        Kappa tilt angle in degrees.</span>
+<span class="sd">        Kappa tilt angle in degrees.  Retained for API compatibility;</span>
+<span class="sd">        the decomposition itself uses only the geometric axes.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    list of (komega_deg, kappa_deg, kphi_deg)</span>
-<span class="sd">        Two solutions (positive and negative κ branches), or one if degenerate.</span>
+<span class="sd">        Two solutions (positive and negative κ branches), or one if</span>
+<span class="sd">        degenerate.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    * Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016) — textbook</span>
+<span class="sd">      special case used by earlier versions of this function.</span>
+<span class="sd">    * Issue #241 — geometry-aware re-derivation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">rotation_matrix</span> <span class="k">as</span> <span class="n">_Rmat</span>
-
-    <span class="n">alpha_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">)</span>
-    <span class="n">sin2a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha_rad</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
-    <span class="n">cos2a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha_rad</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
 
     <span class="n">n_km</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">komega_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
         <span class="n">komega_stage</span><span class="o">.</span><span class="n">axis</span>
@@ -874,11 +902,37 @@
     <span class="n">n_kap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kappa_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">kappa_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
     <span class="n">n_kph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kphi_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">kphi_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
 
-    <span class="c1"># --- Step 1: kappa from n_kphi · Z · n_komega ---------------------------</span>
+    <span class="c1"># --- Step 1: κ from the Rodrigues expansion of n_kphi · Z · n_komega ----</span>
     <span class="n">elem</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_km</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-    <span class="n">cos_kap</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="n">elem</span> <span class="o">-</span> <span class="n">sin2a</span><span class="p">)</span> <span class="o">/</span> <span class="n">cos2a</span><span class="p">))</span>
-    <span class="n">kap_pos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cos_kap</span><span class="p">))</span>
-    <span class="n">kap_neg</span> <span class="o">=</span> <span class="o">-</span><span class="n">kap_pos</span>
+    <span class="n">a_coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">n_km</span><span class="p">))</span>
+    <span class="n">b_coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_kap</span><span class="p">,</span> <span class="n">n_km</span><span class="p">)))</span>
+    <span class="n">c_coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">n_kap</span><span class="p">))</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kap</span><span class="p">,</span> <span class="n">n_km</span><span class="p">))</span>
+    <span class="c1"># Solve (a − c)·cos(κ) + b·sin(κ) = elem − c</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="n">elem</span> <span class="o">-</span> <span class="n">c_coeff</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">a_coeff</span> <span class="o">-</span> <span class="n">c_coeff</span><span class="p">,</span> <span class="n">b_coeff</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">M</span> <span class="o">&lt;</span> <span class="mf">1e-14</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">raw_ratio</span> <span class="o">=</span> <span class="n">rhs</span> <span class="o">/</span> <span class="n">M</span>
+    <span class="c1"># The target Z is outside the kappa arm&#39;s reachable range when</span>
+    <span class="c1"># |ratio| &gt; 1.  Reject (no real κ exists) so the caller can mark</span>
+    <span class="c1"># the trajectory point as inaccessible instead of returning a</span>
+    <span class="c1"># spurious clamped solution.</span>
+    <span class="k">if</span> <span class="n">raw_ratio</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1e-9</span> <span class="ow">or</span> <span class="n">raw_ratio</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">-</span> <span class="mf">1e-9</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">raw_ratio</span><span class="p">))</span>
+    <span class="n">phi0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">b_coeff</span><span class="p">,</span> <span class="n">a_coeff</span> <span class="o">-</span> <span class="n">c_coeff</span><span class="p">)</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+    <span class="n">kap_pos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">phi0</span> <span class="o">+</span> <span class="n">delta</span><span class="p">)</span>
+    <span class="n">kap_neg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">phi0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span>
+    <span class="c1"># Normalise into (-180, 180]</span>
+    <span class="n">kap_pos</span> <span class="o">=</span> <span class="p">((</span><span class="n">kap_pos</span> <span class="o">+</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span><span class="p">)</span> <span class="o">-</span> <span class="mf">180.0</span>
+    <span class="n">kap_neg</span> <span class="o">=</span> <span class="p">((</span><span class="n">kap_neg</span> <span class="o">+</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span><span class="p">)</span> <span class="o">-</span> <span class="mf">180.0</span>
+    <span class="c1"># Order so the smaller |κ| comes first (matches historic ordering).</span>
+    <span class="c1"># In every shipped kappa preset the analytic decomposition naturally</span>
+    <span class="c1"># returns kap_pos with smaller |κ|, so the swap branch is unreached</span>
+    <span class="c1"># in practice — retained as a defensive ordering guarantee.</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">kap_pos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">kap_neg</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">kap_pos</span><span class="p">,</span> <span class="n">kap_neg</span> <span class="o">=</span> <span class="n">kap_neg</span><span class="p">,</span> <span class="n">kap_pos</span>
 
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">kap_deg</span> <span class="ow">in</span> <span class="p">(</span><span class="n">kap_pos</span><span class="p">,</span> <span class="n">kap_neg</span><span class="p">):</span>
@@ -1506,7 +1560,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-28 21:57 CDT.
+  Last updated on 2026-04-29 15:21 CDT.
   <br/>
 </p></div>
       

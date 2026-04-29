@@ -31,7 +31,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:class:: AdHocDiffractometer(name: str, stages: list[~ad_hoc_diffractometer.stage.Stage], basis: dict | None = None, description: str = '', wavelength: float | None = None, kappa_alpha_deg: float | None = None, azimuthal_reference: tuple[float, float, float] | None = None, modes: dict | ~ad_hoc_diffractometer.mode.ModeDict | None = None, default_mode: str | None = None, cut_points: dict[str, float] | None = None)
+.. py:class:: AdHocDiffractometer(name: str, stages: list[~ad_hoc_diffractometer.stage.Stage], basis: dict | None = None, description: str = '', wavelength: float | None = None, kappa_alpha_deg: float | None = None, kappa_pseudo_angle_convention=None, azimuthal_reference: tuple[float, float, float] | None = None, modes: dict | ~ad_hoc_diffractometer.mode.ModeDict | None = None, default_mode: str | None = None, cut_points: dict[str, float] | None = None)
 
    .. container:: import-path
 
@@ -687,6 +687,28 @@ Module Contents
       This is the angle between the kappa rotation axis and the vertical
       axis (toward the transverse axis).  Typical value: 50 deg.
       Set by kappa factory functions (kappa4cv, kappa4ch, kappa6c).
+
+
+   .. py:property:: kappa_pseudo_angle_convention
+
+      Per-geometry declaration of the four signed axes that define
+      the kappa ↔ Eulerian pseudoangle decomposition, or ``None`` for
+      non-kappa geometries.
+
+      See :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`
+      for the semantics.  This attribute is set by the kappa
+      factory functions (:func:`~ad_hoc_diffractometer.presets.kappa4cv`,
+      :func:`~ad_hoc_diffractometer.presets.kappa4ch`,
+      :func:`~ad_hoc_diffractometer.presets.kappa6c`) and is consumed
+      by the kappa virtual-angle solver.
+
+      The convention is declared explicitly per preset because the
+      physical meaning of the kappa-tilt angle ``α`` (and therefore
+      the relation between virtual ``(omega, chi, phi)`` and real
+      ``(komega, kappa, kphi)``) depends on the orientation of the
+      outer ``komega`` axis — which differs across vertical-scattering
+      (``kappa4cv``, ``kappa6c``) and horizontal-scattering
+      (``kappa4ch``) presets.  See issue #241 for the diagnostic.
 
 
    .. py:property:: mode

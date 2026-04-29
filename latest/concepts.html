@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=43c997d7"></script>
+    <script src="_static/documentation_options.js?v=dd125ed0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-04-28 21:57 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-29 15:21 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -791,34 +791,100 @@ independent of solver availability).</p></li>
 <hr class="docutils" />
 <section id="kappa-virtual-angles">
 <h2>Kappa virtual angles<a class="headerlink" href="#kappa-virtual-angles" title="Link to this heading">#</a></h2>
-<p>Kappa geometries (<code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code>) have <strong>real motor
-angles</strong> (komega, kappa, kphi) and <strong>virtual Eulerian pseudoangles</strong> (omega,
-chi, phi) that are more intuitive to specify.</p>
-<p>The conversion follows Walko (2016) eq. [16] with a fixed tilt angle
-α₀ (default 50°):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">kappa_to_eulerian</span><span class="p">,</span> <span class="n">eulerian_to_kappa</span>
+<p>Kappa geometries (<code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code>) have <strong>real
+motor angles</strong> (<code class="docutils literal notranslate"><span class="pre">komega</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa</span></code>, <code class="docutils literal notranslate"><span class="pre">kphi</span></code>) and <strong>virtual
+Eulerian pseudoangles</strong> (<code class="docutils literal notranslate"><span class="pre">omega</span></code>, <code class="docutils literal notranslate"><span class="pre">chi</span></code>, <code class="docutils literal notranslate"><span class="pre">phi</span></code>) that are more
+intuitive to specify.</p>
+<section id="geometry-aware-decomposition">
+<h3>Geometry-aware decomposition<a class="headerlink" href="#geometry-aware-decomposition" title="Link to this heading">#</a></h3>
+<p>The conversion is derived directly from the preset’s actual signed
+stage axes via the rotation-matrix identity</p>
+<div class="math notranslate nohighlight">
+\[
+R(\hat{n}_{\kappa\varphi},\,\kappa\varphi) \cdot
+R(\hat{n}_{\kappa},\,\kappa) \cdot
+R(\hat{n}_{\kappa\omega},\,\kappa\omega)
+\;=\;
+R(\hat{n}_{\kappa\varphi},\,\varphi) \cdot
+R(\hat{n}_{\chi,\,\text{eq}},\,\chi) \cdot
+R(\hat{n}_{\kappa\omega},\,\omega).
+\]</div>
+<p>Each kappa preset declares the four signed axis vectors
+<code class="docutils literal notranslate"><span class="pre">(n_komega,</span> <span class="pre">n_kappa,</span> <span class="pre">n_kphi,</span> <span class="pre">n_chi_eq)</span></code> in a
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention" title="ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention"><code class="xref py py-class docutils literal notranslate"><span class="pre">KappaPseudoAngleConvention</span></code></a>
+instance attached to <code class="docutils literal notranslate"><span class="pre">geometry.kappa_pseudo_angle_convention</span></code>.
+The conversion functions
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes"><code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa_axes()</span></code></a> and
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes" title="ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_to_eulerian_axes()</span></code></a> solve the
+identity above analytically — no Newton iteration is required:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">eulerian_to_kappa_axes</span><span class="p">,</span> <span class="n">kappa_to_eulerian_axes</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="c1"># Real kappa angles → virtual Eulerian angles</span>
-<span class="n">omega</span><span class="p">,</span> <span class="n">chi</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">kappa_to_eulerian</span><span class="p">(</span><span class="n">komega</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">kphi</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">kappa4cv</span><span class="p">()</span>
+<span class="n">convention</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">kappa_pseudo_angle_convention</span>
 
-<span class="c1"># Virtual Eulerian angles → real kappa angles (two branches)</span>
-<span class="n">komega</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">kphi</span> <span class="o">=</span> <span class="n">eulerian_to_kappa</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">chi</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
+<span class="c1"># Virtual Eulerian angles → real kappa motor angles (two branches)</span>
+<span class="n">komega</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">kphi</span> <span class="o">=</span> <span class="n">eulerian_to_kappa_axes</span><span class="p">(</span>
+    <span class="n">omega</span><span class="p">,</span> <span class="n">chi</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">convention</span><span class="p">,</span> <span class="n">branch</span><span class="o">=+</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="c1"># Real kappa angles → virtual Eulerian pseudoangles</span>
+<span class="n">omega</span><span class="p">,</span> <span class="n">chi</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">kappa_to_eulerian_axes</span><span class="p">(</span><span class="n">komega</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">kphi</span><span class="p">,</span> <span class="n">convention</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Branch selection: the positive branch (kappa ≥ 0) corresponds to positive
-chi; the negative branch (kappa &lt; 0) to negative chi.</p>
-<p>Kappa modes accept virtual angle names directly in
+<p>Branch selection: <code class="docutils literal notranslate"><span class="pre">branch=+1</span></code> (default) returns the kappa solution
+with the smaller <code class="docutils literal notranslate"><span class="pre">|κ|</span></code> (the natural identity branch); <code class="docutils literal notranslate"><span class="pre">branch=-1</span></code>
+returns the chi-mirrored solution.</p>
+<p>The kappa rotation axis itself is computed from the convention via</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{n}_{\kappa\omega} \;+\; \sin\alpha \cdot \hat{n}_{\chi,\,\text{eq}}
+\]</div>
+<p>(see <a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian" title="ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_axis_from_eulerian()</span></code></a>).</p>
+</section>
+<section id="divergence-from-walko-2016-eq-16">
+<h3>Divergence from Walko (2016) eq. [16]<a class="headerlink" href="#divergence-from-walko-2016-eq-16" title="Link to this heading">#</a></h3>
+<p>The original Walko closed form</p>
+<div class="math notranslate nohighlight">
+\[
+\sin(\chi/2) = \sin(\kappa/2) \cdot \sin(\alpha_0), \qquad
+\text{offset} = \arccos\bigl(\cos(\kappa/2)/\cos(\chi/2)\bigr)
+\]</div>
+<p>is correct <strong>only for the axis convention assumed in Walko’s
+derivation</strong> — omega about the transverse axis, chi about the
+longitudinal axis, phi about the transverse axis, all with a
+specific handedness.  No preset shipped with this package matches
+that convention exactly: <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code> (BL) places <code class="docutils literal notranslate"><span class="pre">komega</span></code> along
+<code class="docutils literal notranslate"><span class="pre">-TRANSVERSE</span></code>; <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code> (BL) along <code class="docutils literal notranslate"><span class="pre">-VERTICAL</span></code>; <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code>
+(You) along <code class="docutils literal notranslate"><span class="pre">-TRANSVERSE</span></code> with a horizontal <code class="docutils literal notranslate"><span class="pre">mu</span></code> base.  The
+textbook formula therefore does <strong>not</strong> preserve the scattering
+vector for any non-zero <code class="docutils literal notranslate"><span class="pre">chi</span></code> in any of these presets, which
+manifested as silent <code class="docutils literal notranslate"><span class="pre">&quot;No</span> <span class="pre">solutions&quot;</span></code> returns from the kappa
+virtual-angle solver (issue #241).</p>
+<p>The textbook helpers
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.eulerian_to_kappa" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa"><code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code></a> and
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.kappa_to_eulerian" title="ad_hoc_diffractometer.kappa.kappa_to_eulerian"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_to_eulerian()</span></code></a> are retained
+as reference implementations of the published closed form (with
+deprecation warnings in their docstrings) but are <strong>not</strong> used
+inside the solver.</p>
+</section>
+<section id="modes-accept-virtual-angle-names">
+<h3>Modes accept virtual angle names<a class="headerlink" href="#modes-accept-virtual-angle-names" title="Link to this heading">#</a></h3>
+<p>Kappa modes accept the virtual angle names directly in
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span><span class="p">,</span> <span class="n">SampleConstraint</span><span class="p">,</span> <span class="n">BisectConstraint</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span><span class="p">,</span> <span class="n">SampleConstraint</span>
 
 <span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">kappa4cv</span><span class="p">()</span>
 <span class="c1"># &quot;chi&quot; is a virtual angle — the kappa inversion solver handles it</span>
 <span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_chi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">([</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)])</span>
 </pre></div>
 </div>
-<p>See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.kappa_to_eulerian" title="ad_hoc_diffractometer.kappa.kappa_to_eulerian"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_to_eulerian()</span></code></a>,
-<a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.eulerian_to_kappa" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa"><code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa()</span></code></a>, and the
-<a class="reference internal" href="howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a> guide.</p>
+<p>See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes"><code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa_axes()</span></code></a>,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes" title="ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_to_eulerian_axes()</span></code></a>,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention" title="ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention"><code class="xref py py-class docutils literal notranslate"><span class="pre">KappaPseudoAngleConvention</span></code></a>,
+and the <a class="reference internal" href="howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a> guide.</p>
+</section>
 </section>
 <hr class="docutils" />
 <section id="surface-geometry-and-reference-vector">
@@ -956,7 +1022,12 @@ The dict contains only JSON-compatible types; save to JSON (stdlib) or YAML
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-b-u-and-ub-matrices">The B, U, and UB matrices</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-modes">Diffraction modes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-constraints">Diffraction constraints</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kappa-virtual-angles">Kappa virtual angles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kappa-virtual-angles">Kappa virtual angles</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-aware-decomposition">Geometry-aware decomposition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#divergence-from-walko-2016-eq-16">Divergence from Walko (2016) eq. [16]</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modes-accept-virtual-angle-names">Modes accept virtual angle names</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#surface-geometry-and-reference-vector">Surface geometry and reference vector</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-exceptions">Custom exceptions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#forward-and-inverse-computations">Forward and inverse computations</a></li>
@@ -996,7 +1067,7 @@ The dict contains only JSON-compatible types; save to JSON (stdlib) or YAML
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-28 21:57 CDT.
+  Last updated on 2026-04-29 15:21 CDT.
   <br/>
 </p></div>
       

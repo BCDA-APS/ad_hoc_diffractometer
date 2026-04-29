@@ -575,68 +575,57 @@ Module Contents
    True virtual bisecting solver for kappa geometries.
 
    On a kappa diffractometer the real motor triple
-   ``(komega, kappa, kphi)`` is parameterised by virtual Eulerian
-   *pseudoangles* ``(omega, chi, phi)`` via Walko (2016) eq. [16].
-   *True* bisecting means the **virtual** omega equals ``ttheta/2`` —
-   not the previous approximation ``komega = ttheta/2``, which only
-   coincides with true bisecting at ``kappa = 0``.
+   ``(komega, kappa, kphi)`` is parameterised by *virtual Eulerian
+   pseudoangles* ``(omega, chi, phi)``.  *True* virtual bisecting
+   means the **virtual** ``omega`` equals ``ttheta/2`` — not the
+   previous approximation ``komega = ttheta/2``, which only coincides
+   with true bisecting at ``kappa = 0``.
 
-   Walko's pseudoangles do **not** correspond to a simple Eulerian
-   sample stack: the relation between ``(omega, chi, phi)`` and
-   ``(komega, kappa, kphi)`` is non-affine, and the virtual angles
-   parametrise the kappa motor space rather than represent an
-   equivalent fourcv-style rotation.  Consequently no analytic
-   decomposition exists: the (chi, phi) pseudoangle pair must be
-   solved numerically given fixed virtual omega.
+   Implementation
+   --------------
+   This function is a thin wrapper around
+   :func:`~ad_hoc_diffractometer.kappa.solve_kappa_virtual`, which
+   handles the entire kappa virtual-angle solve uniformly for both
+   bisect (``VirtualBisectConstraint``) and fixed-virtual-angle
+   (``SampleConstraint`` on ``omega``/``chi``/``phi``) modes via the
+   geometry-aware :func:`~kappa.eulerian_to_kappa_axes` decomposition
+   introduced by issue #241.
 
-   Implementation: this solver delegates to
-   :func:`~ad_hoc_diffractometer.kappa.solve_kappa_virtual` by
-   constructing a synthetic mode that fixes virtual omega at
-   ``ttheta/2`` via a :class:`~mode.SampleConstraint`.  All fixed
-   sample / detector constraints from the active mode are preserved.
-   The kappa virtual solver runs Newton iteration on (chi, phi),
-   converts each converged virtual triple to real motor angles via
-   :func:`~kappa.eulerian_to_kappa` (both kappa branches ``±1``).
+   The wrapper applies the kappa-side post-processing — cut-points,
+   motor-limit checks, and final deduplication on ``(komega, kappa,
+   kphi)`` — that the rest of the forward pipeline expects.
 
-   Each raw solution is then refined by a final central-difference
-   Newton polish on ``(chi, phi)`` to push the residual toward
-   machine precision before cut-points / limits / deduplication are
-   applied.
-
-   :param geometry: A kappa diffractometer (``kappa_alpha_deg`` is set).
+   :param geometry: A kappa diffractometer with ``kappa_pseudo_angle_convention``
+                    set.
    :type geometry: AdHocDiffractometer
    :param Q_phi: Target scattering vector in the phi frame (Å⁻¹).
    :type Q_phi: numpy.ndarray, shape (3,)
    :param ttheta_deg: Detector angle (2θ) in degrees.
    :type ttheta_deg: float
-   :param mode: Active diffraction mode (used for cut-points, limits, and
-                non-bisect sample / detector constraints).
+   :param mode: Active diffraction mode.
    :type mode: ConstraintSet
-   :param bisect_c: Active virtual-bisecting constraint.  ``bisect_c.detector_stage``
-                    names the detector stage whose half-angle is the virtual omega.
+   :param bisect_c: Active virtual-bisecting constraint (parameter retained for
+                    signature compatibility with the dispatcher in
+                    :func:`_solve_bisecting`).
    :type bisect_c: :class:`~mode.VirtualBisectConstraint`
-   :param angles: Baseline angles with all fixed sample/detector stages already
-                  set.  The detector stage covered by ``bisect_c.detector_stage``
-                  is already frozen at ``ttheta_deg``.
+   :param angles: Baseline angles dict with detector stage already frozen at
+                  ``ttheta_deg`` (parameter retained for signature
+                  compatibility).
    :type angles: dict[str, float]
 
-   :returns: Valid solutions (may be empty when the requested reflection is
-             not in the bisecting locus, or when all candidate (komega,
-             kappa, kphi) configurations are outside the stage limits).
-
-             **Note**: Some reflections that were "accessible" under the
-             previous ``komega = ttheta/2`` approximation are **not**
-             accessible under true virtual bisecting — those previous
-             solutions had ``omega_virtual ≠ ttheta/2`` and were therefore
-             not physically bisecting.
+   :returns: Valid solutions, possibly empty when the requested reflection
+             is not in the bisecting locus or all candidate configurations
+             are outside the stage limits.
    :rtype: list of dict[str, float]
 
    .. rubric:: References
 
-   * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016),
-     eq. [16] — the kappa-Eulerian pseudoangle relations.
+   * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016) —
+     textbook pseudoangle special case.
    * W. R. Busing & H. A. Levy, *Acta Cryst.* 22, 457-464 (1967) —
      bisecting Eulerian geometry.
+   * Issue #241 — geometry-aware decomposition that supersedes the
+     Walko-only implementation.
 
 
 .. py:function:: _solve_constraint_set(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
@@ -737,10 +726,14 @@ Module Contents
       Import: ``ad_hoc_diffractometer.forward._solve_kappa_virtual``
 
 
-   Kappa virtual-angle solver.
+   Kappa virtual-angle dispatcher.
 
-   Delegates the geometric computation to :func:`~kappa.solve_kappa_virtual`,
-   then applies cut-points, limits, and deduplication.
+   Wraps :func:`~kappa.solve_kappa_virtual` (which performs the
+   geometry-aware Eulerian-equivalent solve introduced by issue #241)
+   with the kappa-side post-processing: virtual-angle validation
+   against the per-geometry
+   :class:`~kappa.KappaPseudoAngleConvention`, cut-points, motor
+   limits, and deduplication.
 
 
 .. py:function:: _solve_one_free_angle(geometry, fixed_angles: dict, free_stage, Q_phi_target: ~numpy.ndarray, mode) -> list[dict[str, float]]

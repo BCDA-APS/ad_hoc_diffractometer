@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=43c997d7"></script>
+    <script src="../../_static/documentation_options.js?v=dd125ed0"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-04-28 21:57 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-29 15:21 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -526,6 +526,7 @@
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">kappa_alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kappa_pseudo_angle_convention</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">azimuthal_reference</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">modes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="n">ModeDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">default_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -537,6 +538,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;xray&quot;</span>  <span class="c1"># default; validated via property setter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">wavelength</span>  <span class="c1"># validated via property setter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa_alpha_deg</span> <span class="o">=</span> <span class="n">kappa_alpha_deg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa_pseudo_angle_convention</span> <span class="o">=</span> <span class="n">kappa_pseudo_angle_convention</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="o">=</span> <span class="n">azimuthal_reference</span>  <span class="c1"># validated via property setter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_surface_normal</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_detector_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -936,6 +938,35 @@
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kappa_alpha_deg</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kappa_pseudo_angle_convention</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Per-geometry declaration of the four signed axes that define</span>
+<span class="sd">        the kappa ↔ Eulerian pseudoangle decomposition, or ``None`` for</span>
+<span class="sd">        non-kappa geometries.</span>
+
+<span class="sd">        See :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`</span>
+<span class="sd">        for the semantics.  This attribute is set by the kappa</span>
+<span class="sd">        factory functions (:func:`~ad_hoc_diffractometer.presets.kappa4cv`,</span>
+<span class="sd">        :func:`~ad_hoc_diffractometer.presets.kappa4ch`,</span>
+<span class="sd">        :func:`~ad_hoc_diffractometer.presets.kappa6c`) and is consumed</span>
+<span class="sd">        by the kappa virtual-angle solver.</span>
+
+<span class="sd">        The convention is declared explicitly per preset because the</span>
+<span class="sd">        physical meaning of the kappa-tilt angle ``α`` (and therefore</span>
+<span class="sd">        the relation between virtual ``(omega, chi, phi)`` and real</span>
+<span class="sd">        ``(komega, kappa, kphi)``) depends on the orientation of the</span>
+<span class="sd">        outer ``komega`` axis — which differs across vertical-scattering</span>
+<span class="sd">        (``kappa4cv``, ``kappa6c``) and horizontal-scattering</span>
+<span class="sd">        (``kappa4ch``) presets.  See issue #241 for the diagnostic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kappa_pseudo_angle_convention</span>
+
+    <span class="nd">@kappa_pseudo_angle_convention</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kappa_pseudo_angle_convention</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Stored as-is; the dataclass validates its own contents.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kappa_pseudo_angle_convention</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">azimuthal_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -2747,7 +2778,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-28 21:57 CDT.
+  Last updated on 2026-04-29 15:21 CDT.
   <br/>
 </p></div>
       

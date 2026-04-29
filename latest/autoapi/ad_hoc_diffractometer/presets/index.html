@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=43c997d7"></script>
+    <script src="../../../_static/documentation_options.js?v=dd125ed0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-04-28 21:57 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-29 15:21 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -732,10 +732,14 @@ phi    : transverse,   left-handed</p>
 <p>Identical to kappa4cv() but komega and ttheta rotate about the vertical
 axis, giving a horizontal scattering plane (laboratory convention).</p>
 <p>Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</p>
-<dl class="simple">
+<dl>
 <dt>Sample stack (floor first):</dt><dd><p>komega : vertical, left-handed
-kappa  : tilted,   kappa_axis(alpha), right-handed
-kphi   : vertical, left-handed</p>
+kappa  : tilted,   kappa_axis_from_eulerian(-VERTICAL,</p>
+<blockquote>
+<div><p>+LONGITUDINAL,
+alpha), right-handed</p>
+</div></blockquote>
+<p>kphi   : vertical, left-handed</p>
 </dd>
 <dt>Detector (floor, mechanically independent):</dt><dd><p>ttheta : vertical, left-handed</p>
 </dd>
@@ -766,10 +770,14 @@ from the vertical toward the transverse axis.</p>
 <p>komega and ttheta both rotate about the transverse axis; the scattering
 plane is vertical (synchrotron convention).</p>
 <p>Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</p>
-<dl class="simple">
+<dl>
 <dt>Sample stack (floor first):</dt><dd><p>komega : transverse, left-handed
-kappa  : tilted,     kappa_axis(alpha), right-handed
-kphi   : transverse, left-handed</p>
+kappa  : tilted,     kappa_axis_from_eulerian(-TRANSVERSE,</p>
+<blockquote>
+<div><p>+LONGITUDINAL,
+alpha), right-handed</p>
+</div></blockquote>
+<p>kphi   : transverse, left-handed</p>
 </dd>
 <dt>Detector (floor, mechanically independent):</dt><dd><p>ttheta : transverse, left-handed</p>
 </dd>
@@ -798,11 +806,15 @@ ITC Vol. C, Sec. 2.2.6 (2006).</p></li>
 the style of the psic geometry (You 1999), giving full orientation freedom.
 This is the synchrotron configuration with a transverse detector.</p>
 <p>Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</p>
-<dl class="simple">
+<dl>
 <dt>Sample stack (floor first):</dt><dd><p>mu     : vertical,     right-handed   [outermost]
 komega : transverse,   left-handed
-kappa  : tilted,       kappa_axis(alpha), right-handed
-kphi   : transverse,   left-handed</p>
+kappa  : tilted,       kappa_axis_from_eulerian(-TRANSVERSE,</p>
+<blockquote>
+<div><p>+LONGITUDINAL,
+alpha), right-handed</p>
+</div></blockquote>
+<p>kphi   : transverse,   left-handed</p>
 </dd>
 <dt>Detector stack (floor first):</dt><dd><p>nu     : vertical,     right-handed
 delta  : transverse,   left-handed</p>
@@ -1036,7 +1048,7 @@ D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-28 21:57 CDT.
+  Last updated on 2026-04-29 15:21 CDT.
   <br/>
 </p></div>
       

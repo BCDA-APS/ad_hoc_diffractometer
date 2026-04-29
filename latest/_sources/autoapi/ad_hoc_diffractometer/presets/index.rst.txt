@@ -244,7 +244,9 @@ Module Contents
 
    Sample stack (floor first):
        komega : vertical, left-handed
-       kappa  : tilted,   kappa_axis(alpha), right-handed
+       kappa  : tilted,   kappa_axis_from_eulerian(-VERTICAL,
+                                                   +LONGITUDINAL,
+                                                   alpha), right-handed
        kphi   : vertical, left-handed
 
    Detector (floor, mechanically independent):
@@ -281,7 +283,9 @@ Module Contents
 
    Sample stack (floor first):
        komega : transverse, left-handed
-       kappa  : tilted,     kappa_axis(alpha), right-handed
+       kappa  : tilted,     kappa_axis_from_eulerian(-TRANSVERSE,
+                                                    +LONGITUDINAL,
+                                                    alpha), right-handed
        kphi   : transverse, left-handed
 
    Detector (floor, mechanically independent):
@@ -316,7 +320,9 @@ Module Contents
    Sample stack (floor first):
        mu     : vertical,     right-handed   [outermost]
        komega : transverse,   left-handed
-       kappa  : tilted,       kappa_axis(alpha), right-handed
+       kappa  : tilted,       kappa_axis_from_eulerian(-TRANSVERSE,
+                                                       +LONGITUDINAL,
+                                                       alpha), right-handed
        kphi   : transverse,   left-handed
 
    Detector stack (floor first):

@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=43c997d7"></script>
+    <script src="../../_static/documentation_options.js?v=dd125ed0"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-04-28 21:57 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-29 15:21 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -534,12 +534,13 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">kappa_axis</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdHocDiffractometer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">BASIS_BL</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">BASIS_YOU</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">KAPPA_ALPHA_DEFAULT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_geometry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">KappaPseudoAngleConvention</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">kappa_axis_from_eulerian</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">REQUIRED</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectConstraint</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span>
@@ -1110,7 +1111,9 @@
 
 <span class="sd">    Sample stack (floor first):</span>
 <span class="sd">        komega : transverse, left-handed</span>
-<span class="sd">        kappa  : tilted,     kappa_axis(alpha), right-handed</span>
+<span class="sd">        kappa  : tilted,     kappa_axis_from_eulerian(-TRANSVERSE,</span>
+<span class="sd">                                                     +LONGITUDINAL,</span>
+<span class="sd">                                                     alpha), right-handed</span>
 <span class="sd">        kphi   : transverse, left-handed</span>
 
 <span class="sd">    Detector (floor, mechanically independent):</span>
@@ -1128,7 +1131,13 @@
 <span class="sd">                ITC Vol. C, Sec. 2.2.6 (2006).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">TRANSVERSE</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
-    <span class="n">kax</span> <span class="o">=</span> <span class="n">kappa_axis</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
+    <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
+    <span class="c1"># Kappa axis derived from the actual outer (komega) axis and the</span>
+    <span class="c1"># equivalent Eulerian chi axis — see kappa_axis_from_eulerian and</span>
+    <span class="c1"># issue #241.  The historic axes.kappa_axis() helper assumes</span>
+    <span class="c1"># n_komega = +vertical and so is wrong for kappa4cv (n_komega =</span>
+    <span class="c1"># -transverse).</span>
+    <span class="n">kax</span> <span class="o">=</span> <span class="n">kappa_axis_from_eulerian</span><span class="p">(</span><span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="p">)</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">kax</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
@@ -1136,12 +1145,18 @@
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;ttheta&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="c1"># kappa4cv: 4 DOF, N-3=1 constraint needed per mode.</span>
-    <span class="c1"># Virtual Eulerian angles (omega, chi, phi) are computed from real kappa</span>
-    <span class="c1"># angles (komega, kappa, kphi) via Walko (2016) eq. [16].</span>
-    <span class="c1"># The ``bisecting`` mode uses :class:`VirtualBisectConstraint` to enforce</span>
-    <span class="c1"># *true* bisecting in the virtual Eulerian frame: ``omega_virtual =</span>
-    <span class="c1"># ttheta/2``.  This is the physically correct bisecting condition for</span>
-    <span class="c1"># a kappa diffractometer (Walko 2016).  See issue #226.</span>
+    <span class="c1"># Virtual Eulerian angles (omega, chi, phi) are mapped to / from</span>
+    <span class="c1"># real kappa motors via the geometry-aware decomposition in</span>
+    <span class="c1"># ad_hoc_diffractometer.kappa.  The ``bisecting`` mode uses</span>
+    <span class="c1"># ``VirtualBisectConstraint`` to enforce *true* bisecting in the</span>
+    <span class="c1"># virtual Eulerian frame: ``omega_virtual = ttheta/2``.  See</span>
+    <span class="c1"># issues #226 and #241.</span>
+    <span class="n">convention</span> <span class="o">=</span> <span class="n">KappaPseudoAngleConvention</span><span class="p">(</span>
+        <span class="n">n_komega</span><span class="o">=-</span><span class="n">TRANSVERSE</span><span class="p">,</span>
+        <span class="n">n_kappa</span><span class="o">=</span><span class="n">kax</span><span class="p">,</span>
+        <span class="n">n_kphi</span><span class="o">=-</span><span class="n">TRANSVERSE</span><span class="p">,</span>
+        <span class="n">n_chi_eq</span><span class="o">=+</span><span class="n">LONGITUDINAL</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;bisecting&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span><span class="n">VirtualBisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">)],</span>
@@ -1183,6 +1198,7 @@
             <span class="sa">f</span><span class="s2">&quot;(synchrotron). Kappa alpha = </span><span class="si">{</span><span class="n">alpha_deg</span><span class="si">}</span><span class="s2"> deg.&quot;</span>
         <span class="p">),</span>
         <span class="n">kappa_alpha_deg</span><span class="o">=</span><span class="n">alpha_deg</span><span class="p">,</span>
+        <span class="n">kappa_pseudo_angle_convention</span><span class="o">=</span><span class="n">convention</span><span class="p">,</span>
         <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
         <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
@@ -1208,7 +1224,9 @@
 
 <span class="sd">    Sample stack (floor first):</span>
 <span class="sd">        komega : vertical, left-handed</span>
-<span class="sd">        kappa  : tilted,   kappa_axis(alpha), right-handed</span>
+<span class="sd">        kappa  : tilted,   kappa_axis_from_eulerian(-VERTICAL,</span>
+<span class="sd">                                                    +LONGITUDINAL,</span>
+<span class="sd">                                                    alpha), right-handed</span>
 <span class="sd">        kphi   : vertical, left-handed</span>
 
 <span class="sd">    Detector (floor, mechanically independent):</span>
@@ -1226,7 +1244,8 @@
 <span class="sd">                ITC Vol. C, Sec. 2.2.6 (2006).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
-    <span class="n">kax</span> <span class="o">=</span> <span class="n">kappa_axis</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
+    <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
+    <span class="n">kax</span> <span class="o">=</span> <span class="n">kappa_axis_from_eulerian</span><span class="p">(</span><span class="o">-</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="p">)</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">kax</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
@@ -1235,8 +1254,15 @@
     <span class="p">]</span>
     <span class="c1"># kappa4ch: 4 DOF, N-3=1 constraint needed per mode.</span>
     <span class="c1"># Same mode set as kappa4cv; ``bisecting`` uses VirtualBisectConstraint</span>
-    <span class="c1"># to enforce true virtual bisecting (omega_virtual = ttheta/2).  See</span>
-    <span class="c1"># issue #226 and Walko (2016) eq. [16].</span>
+    <span class="c1"># to enforce true virtual bisecting (omega_virtual = ttheta/2).</span>
+    <span class="c1"># The kappa axis is tilted α from the vertical komega toward the</span>
+    <span class="c1"># longitudinal chi-equivalent (issue #241).</span>
+    <span class="n">convention</span> <span class="o">=</span> <span class="n">KappaPseudoAngleConvention</span><span class="p">(</span>
+        <span class="n">n_komega</span><span class="o">=-</span><span class="n">VERTICAL</span><span class="p">,</span>
+        <span class="n">n_kappa</span><span class="o">=</span><span class="n">kax</span><span class="p">,</span>
+        <span class="n">n_kphi</span><span class="o">=-</span><span class="n">VERTICAL</span><span class="p">,</span>
+        <span class="n">n_chi_eq</span><span class="o">=+</span><span class="n">LONGITUDINAL</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;bisecting&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
             <span class="p">[</span><span class="n">VirtualBisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;ttheta&quot;</span><span class="p">)],</span>
@@ -1273,6 +1299,7 @@
             <span class="sa">f</span><span class="s2">&quot;(laboratory). Kappa alpha = </span><span class="si">{</span><span class="n">alpha_deg</span><span class="si">}</span><span class="s2"> deg.&quot;</span>
         <span class="p">),</span>
         <span class="n">kappa_alpha_deg</span><span class="o">=</span><span class="n">alpha_deg</span><span class="p">,</span>
+        <span class="n">kappa_pseudo_angle_convention</span><span class="o">=</span><span class="n">convention</span><span class="p">,</span>
         <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
         <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
@@ -1300,7 +1327,9 @@
 <span class="sd">    Sample stack (floor first):</span>
 <span class="sd">        mu     : vertical,     right-handed   [outermost]</span>
 <span class="sd">        komega : transverse,   left-handed</span>
-<span class="sd">        kappa  : tilted,       kappa_axis(alpha), right-handed</span>
+<span class="sd">        kappa  : tilted,       kappa_axis_from_eulerian(-TRANSVERSE,</span>
+<span class="sd">                                                        +LONGITUDINAL,</span>
+<span class="sd">                                                        alpha), right-handed</span>
 <span class="sd">        kphi   : transverse,   left-handed</span>
 
 <span class="sd">    Detector stack (floor first):</span>
@@ -1320,7 +1349,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
     <span class="n">TRANSVERSE</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
-    <span class="n">kax</span> <span class="o">=</span> <span class="n">kappa_axis</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
+    <span class="n">LONGITUDINAL</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
+    <span class="n">kax</span> <span class="o">=</span> <span class="n">kappa_axis_from_eulerian</span><span class="p">(</span><span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="o">+</span><span class="n">LONGITUDINAL</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="p">)</span>
     <span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="o">+</span><span class="n">VERTICAL</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
         <span class="n">Stage</span><span class="p">(</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="o">-</span><span class="n">TRANSVERSE</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">),</span>
@@ -1332,11 +1362,18 @@
     <span class="c1"># kappa6c: 6 DOF, N-3=3 constraints needed per mode.</span>
     <span class="c1"># Vertical bisect pair (kappa-omega bisect): VirtualBisectConstraint</span>
     <span class="c1">#   enforces ``omega_virtual = delta/2`` — the physically correct</span>
-    <span class="c1">#   bisecting condition for a kappa diffractometer (Walko 2016 eq. [16];</span>
-    <span class="c1">#   issue #226).</span>
+    <span class="c1">#   bisecting condition for a kappa diffractometer (issues #226 and</span>
+    <span class="c1">#   #241).</span>
     <span class="c1"># Horizontal bisect pair: mu(vertical) &lt;-&gt; nu(vertical) =&gt; mu = nu/2</span>
     <span class="c1">#   (literal motor bisect; mu is a real outer stage, not a kappa motor).</span>
-    <span class="c1"># Virtual Eulerian angles (omega, chi, phi) via Walko (2016) eq. [16].</span>
+    <span class="c1"># The kappa axis is tilted α from the (transverse) komega toward the</span>
+    <span class="c1"># longitudinal chi-equivalent.</span>
+    <span class="n">convention</span> <span class="o">=</span> <span class="n">KappaPseudoAngleConvention</span><span class="p">(</span>
+        <span class="n">n_komega</span><span class="o">=-</span><span class="n">TRANSVERSE</span><span class="p">,</span>
+        <span class="n">n_kappa</span><span class="o">=</span><span class="n">kax</span><span class="p">,</span>
+        <span class="n">n_kphi</span><span class="o">=-</span><span class="n">TRANSVERSE</span><span class="p">,</span>
+        <span class="n">n_chi_eq</span><span class="o">=+</span><span class="n">LONGITUDINAL</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">modes</span> <span class="o">=</span> <span class="p">{</span>
         <span class="c1"># ── Implemented (generic solver) ────────────────────────────────────</span>
         <span class="s2">&quot;bisecting_vertical&quot;</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">(</span>
@@ -1449,6 +1486,7 @@
             <span class="sa">f</span><span class="s2">&quot;Kappa alpha = </span><span class="si">{</span><span class="n">alpha_deg</span><span class="si">}</span><span class="s2"> deg.&quot;</span>
         <span class="p">),</span>
         <span class="n">kappa_alpha_deg</span><span class="o">=</span><span class="n">alpha_deg</span><span class="p">,</span>
+        <span class="n">kappa_pseudo_angle_convention</span><span class="o">=</span><span class="n">convention</span><span class="p">,</span>
         <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
         <span class="n">default_mode</span><span class="o">=</span><span class="s2">&quot;bisecting_vertical&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
@@ -1725,7 +1763,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-28 21:57 CDT.
+  Last updated on 2026-04-29 15:21 CDT.
   <br/>
 </p></div>
       

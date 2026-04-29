@@ -1072,16 +1072,18 @@ Module Contents
       Return the constraint residual ``omega_virtual − detector/2``.
 
       ``omega_virtual`` is computed from the kappa motor triple
-      ``(komega, kappa, kphi)`` via
-      :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian`.  The
-      ``geometry`` argument supplies the kappa tilt angle
-      ``kappa_alpha_deg``.
+      ``(komega, kappa, kphi)`` via the geometry-aware decomposition
+      :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes`,
+      using the per-geometry
+      :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`
+      attached to ``geometry``.
 
       :param angles: Current motor angles in degrees; must include ``komega``,
                      ``kappa``, ``kphi``, and the detector stage named by
                      :attr:`detector_stage`.
       :type angles: dict[str, float]
-      :param geometry: The diffractometer, used only for ``kappa_alpha_deg``.
+      :param geometry: The diffractometer, used to retrieve the
+                       ``kappa_pseudo_angle_convention``.
       :type geometry: AdHocDiffractometer
 
       :returns: Residual in degrees.  Zero means true virtual bisecting is
@@ -1089,9 +1091,10 @@ Module Contents
       :rtype: float
 
       :raises KeyError: If a required motor angle is missing from ``angles``.
-      :raises ValueError: If ``geometry.kappa_alpha_deg`` is ``None`` (the constraint
-          is only meaningful on kappa geometries) or if the kappa
-          triple lies outside the reachable virtual range.
+      :raises ValueError: If ``geometry.kappa_pseudo_angle_convention`` is ``None``
+          (the constraint is only meaningful on kappa geometries)
+          or if the kappa triple lies outside the reachable virtual
+          range.
 
 
 

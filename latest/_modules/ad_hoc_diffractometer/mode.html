@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=43c997d7"></script>
+    <script src="../../_static/documentation_options.js?v=dd125ed0"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-04-28 21:57 CDT"/>
+    <meta name="docbuild:last-update" content="2026-04-29 15:21 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -876,10 +876,11 @@
 <span class="sd">        Return the constraint residual ``omega_virtual − detector/2``.</span>
 
 <span class="sd">        ``omega_virtual`` is computed from the kappa motor triple</span>
-<span class="sd">        ``(komega, kappa, kphi)`` via</span>
-<span class="sd">        :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian`.  The</span>
-<span class="sd">        ``geometry`` argument supplies the kappa tilt angle</span>
-<span class="sd">        ``kappa_alpha_deg``.</span>
+<span class="sd">        ``(komega, kappa, kphi)`` via the geometry-aware decomposition</span>
+<span class="sd">        :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes`,</span>
+<span class="sd">        using the per-geometry</span>
+<span class="sd">        :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`</span>
+<span class="sd">        attached to ``geometry``.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -888,7 +889,8 @@
 <span class="sd">            ``kappa``, ``kphi``, and the detector stage named by</span>
 <span class="sd">            :attr:`detector_stage`.</span>
 <span class="sd">        geometry : AdHocDiffractometer</span>
-<span class="sd">            The diffractometer, used only for ``kappa_alpha_deg``.</span>
+<span class="sd">            The diffractometer, used to retrieve the</span>
+<span class="sd">            ``kappa_pseudo_angle_convention``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -901,22 +903,25 @@
 <span class="sd">        KeyError</span>
 <span class="sd">            If a required motor angle is missing from ``angles``.</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If ``geometry.kappa_alpha_deg`` is ``None`` (the constraint</span>
-<span class="sd">            is only meaningful on kappa geometries) or if the kappa</span>
-<span class="sd">            triple lies outside the reachable virtual range.</span>
+<span class="sd">            If ``geometry.kappa_pseudo_angle_convention`` is ``None``</span>
+<span class="sd">            (the constraint is only meaningful on kappa geometries)</span>
+<span class="sd">            or if the kappa triple lies outside the reachable virtual</span>
+<span class="sd">            range.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">kappa_to_eulerian</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">kappa_to_eulerian_axes</span>
 
-        <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">convention</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_pseudo_angle_convention</span>
+        <span class="k">if</span> <span class="n">convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;VirtualBisectConstraint requires geometry.kappa_alpha_deg &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;to be set; geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> has no kappa tilt.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;VirtualBisectConstraint requires &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;geometry.kappa_pseudo_angle_convention to be set; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> is not a kappa geometry.&quot;</span>
             <span class="p">)</span>
         <span class="n">komega</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">]</span>
         <span class="n">kappa</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="s2">&quot;kappa&quot;</span><span class="p">]</span>
         <span class="n">kphi</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="s2">&quot;kphi&quot;</span><span class="p">]</span>
-        <span class="n">omega_v</span><span class="p">,</span> <span class="n">_chi_v</span><span class="p">,</span> <span class="n">_phi_v</span> <span class="o">=</span> <span class="n">kappa_to_eulerian</span><span class="p">(</span>
-            <span class="n">komega</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">kphi</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span>
+        <span class="n">omega_v</span><span class="p">,</span> <span class="n">_chi_v</span><span class="p">,</span> <span class="n">_phi_v</span> <span class="o">=</span> <span class="n">kappa_to_eulerian_axes</span><span class="p">(</span>
+            <span class="n">komega</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">kphi</span><span class="p">,</span> <span class="n">convention</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">omega_v</span> <span class="o">-</span> <span class="n">angles</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span></div>
 
@@ -2049,7 +2054,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-28 21:57 CDT.
+  Last updated on 2026-04-29 15:21 CDT.
   <br/>
 </p></div>
       

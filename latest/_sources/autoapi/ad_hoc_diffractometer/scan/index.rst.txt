@@ -237,16 +237,40 @@ Module Contents
       Import: ``ad_hoc_diffractometer.scan._kappa_from_Z``
 
 
-   Decompose Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω) into (kω, κ, kφ).
+   Decompose ``Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω)`` into
+   ``(kω, κ, kφ)`` using a Rodrigues expansion that is **agnostic to
+   the specific signed axis convention** of the kappa preset.
 
-   Uses the kappa-specific chi element formula derived from the Rodrigues
-   expansion (ITC Vol. C Sec. 2.2.6 / Walko 2016):
+   Derivation
+   ----------
+   Apply both sides to ``n_komega``:
 
-       n_kφ · Z · n_kω = cos(κ)·cos²(α) + sin²(α)
+       Z · n_kω  =  R(n_kφ, kφ) · R(n_κ, κ) · n_kω
 
-   where α is ``alpha_deg`` (the kappa tilt angle).  This isolates κ;
-   komega and kphi are then extracted by the same projection method as
-   ``_euler_from_Z_standard``.
+   (since ``R(n_kω, ·) · n_kω = n_kω``).  Take the dot product with
+   ``n_kphi``:
+
+       n_kφ · Z · n_kω  =  n_kφ · R(n_κ, κ) · n_kω
+
+   Expanding the right side via Rodrigues (with
+   ``a = n_kphi · n_komega``,
+   ``b = n_kphi · (n_kappa × n_komega)``,
+   ``c = (n_kphi · n_kappa)·(n_kappa · n_komega)``):
+
+       elem  =  a·cos(κ) + b·sin(κ) + c·(1 − cos(κ))
+             =  (a − c)·cos(κ) + b·sin(κ) + c
+
+   For the Walko (2016) textbook axis convention this reduces to
+   ``cos(κ)·cos²(α) + sin²(α)``; for the geometry-aware kappa axis
+   introduced by issue #241 (``n_kappa = cos(α)·n_komega +
+   sin(α)·n_chi_eq``, with ``n_komega`` parallel to ``n_kphi``) the
+   same expression evaluates to ``cos(κ)·sin²(α) + cos²(α)``.  The
+   code below uses the general ``(a − c)·cos(κ) + b·sin(κ) = γ − c``
+   form so that any future kappa convention with non-parallel
+   komega/kphi axes is handled correctly.
+
+   ``komega`` and ``kphi`` are then extracted by the same projection
+   method as :func:`_euler_from_Z_standard`.
 
    :param Z:
    :type Z: ndarray, shape (3, 3)
@@ -256,11 +280,19 @@ Module Contents
    :type kappa_stage: Stage
    :param kphi_stage:
    :type kphi_stage: Stage
-   :param alpha_deg: Kappa tilt angle in degrees.
+   :param alpha_deg: Kappa tilt angle in degrees.  Retained for API compatibility;
+                     the decomposition itself uses only the geometric axes.
    :type alpha_deg: float
 
-   :returns: Two solutions (positive and negative κ branches), or one if degenerate.
+   :returns: Two solutions (positive and negative κ branches), or one if
+             degenerate.
    :rtype: list of (komega_deg, kappa_deg, kphi_deg)
+
+   .. rubric:: References
+
+   * Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016) — textbook
+     special case used by earlier versions of this function.
+   * Issue #241 — geometry-aware re-derivation.
 
 
 .. py:function:: _measure_psi(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float], Q_lab_hat: ~numpy.ndarray, y_eff: ~numpy.ndarray, q_hat_phi: ~numpy.ndarray, ref_dir: ~numpy.ndarray) -> float
