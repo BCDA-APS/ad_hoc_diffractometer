@@ -16,6 +16,7 @@ Released 2026-04-29.
 ### Added
 
 - `KappaPseudoAngleConvention` and axis-aware kappa pseudoangle helpers. (#241)
+- Cross-validation regression suite against `hkl_soleil` (libhkl). (#242)
 
 ### Fixed
 
