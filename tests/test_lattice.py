@@ -595,13 +595,182 @@ def test_lattice_B_cubic_diagonal(a, context):
     ],
 )
 def test_lattice_B_bl1967_convention(kwargs, context):
-    """Verify (b1, b2, b3) = B.T (BL1967 / SPEC convention, 2π included in B)."""
+    """Verify (b1, b2, b3) are the columns of B (BL1967 / SPEC convention).
+
+    With 2π included in the reciprocal vectors, the columns of B are
+    b1, b2, b3, so ``column_stack([b1, b2, b3]) == B`` and
+    ``B @ h == h*b1 + k*b2 + l*b3``.
+    """
     with context:
         lat = Lattice(**kwargs)
         b1, b2, b3 = lat.reciprocal_lattice_vectors
         B = lat.B
         rec_matrix = np.column_stack([b1, b2, b3])
-        np.testing.assert_allclose(rec_matrix, B.T, atol=1e-10)
+        np.testing.assert_allclose(rec_matrix, B, atol=1e-10)
+        # Verify the BL1967 action: B @ h == h*b1 + k*b2 + l*b3
+        for hkl in ([1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1]):
+            expected = hkl[0] * b1 + hkl[1] * b2 + hkl[2] * b3
+            np.testing.assert_allclose(B @ np.array(hkl), expected, atol=1e-10)
+
+
+# ---------------------------------------------------------------------------
+# Lower-symmetry B-matrix correctness (issue #237)
+#
+# These tests exercise non-orthogonal crystal systems (hexagonal, trigonal,
+# monoclinic, triclinic) to confirm that ``Q = B @ h`` returns the correct
+# scattering vector, with magnitude equal to ``2π/d_hkl`` computed
+# independently from the reciprocal metric tensor.
+#
+# This is the regression coverage for issue #237, where ``b_matrix()`` had a
+# spurious ``.T`` that placed the reciprocal vectors as rows of B instead of
+# columns.  The bug was silent for cubic/tetragonal/orthorhombic cells (whose
+# reciprocal vectors are mutually orthogonal Cartesian axes, so ``M`` and
+# ``M.T`` are equal) but produced wrong results for any ``(h, k, 0)``-type
+# reflection in a cell with non-orthogonal reciprocal vectors.
+# ---------------------------------------------------------------------------
+
+
+def _d_spacing_from_metric(
+    a: float,
+    b: float,
+    c: float,
+    alpha: float,
+    beta: float,
+    gamma: float,
+    h: int,
+    k: int,
+    l: int,  # noqa: E741
+) -> float:
+    """
+    Compute ``d_hkl`` from the reciprocal metric tensor, independent of B.
+
+    Uses the standard crystallographic formula ``1/d² = h G* h^T``, where
+    ``G* = (G)⁻¹`` and ``G`` is the real-space metric tensor:
+
+        G_{ij} = a_i · a_j
+
+    All angles in degrees.  Returns d in Angstroms.
+    """
+    ar, br_, gr = np.deg2rad([alpha, beta, gamma])
+    G = np.array(
+        [
+            [a * a, a * b * np.cos(gr), a * c * np.cos(br_)],
+            [a * b * np.cos(gr), b * b, b * c * np.cos(ar)],
+            [a * c * np.cos(br_), b * c * np.cos(ar), c * c],
+        ]
+    )
+    Gstar = np.linalg.inv(G)
+    h_vec = np.array([h, k, l], dtype=float)
+    inv_d_sq = float(h_vec @ Gstar @ h_vec)
+    return 1.0 / np.sqrt(inv_d_sq)
+
+
+_LOW_SYMMETRY_LATTICES = [
+    pytest.param(
+        # hexagonal sapphire (α-Al₂O₃)
+        dict(a=4.785, c=12.991, gamma=120.0),
+        dict(a=4.785, b=4.785, c=12.991, alpha=90.0, beta=90.0, gamma=120.0),
+        id="hexagonal-sapphire",
+    ),
+    pytest.param(
+        # trigonal (rhombohedral setting), e.g. dolomite-like
+        dict(a=4.81, alpha=47.0),
+        dict(a=4.81, b=4.81, c=4.81, alpha=47.0, beta=47.0, gamma=47.0),
+        id="trigonal-rhombohedral",
+    ),
+    pytest.param(
+        # monoclinic gypsum (CaSO₄·2H₂O)
+        dict(a=6.284, b=15.200, c=5.678, beta=114.09),
+        dict(a=6.284, b=15.200, c=5.678, alpha=90.0, beta=114.09, gamma=90.0),
+        id="monoclinic-gypsum",
+    ),
+    pytest.param(
+        # triclinic K₂Cr₂O₇-like cell (all six parameters distinct from 90°)
+        dict(a=7.45, b=7.38, c=13.40, alpha=98.0, beta=96.5, gamma=91.5),
+        dict(a=7.45, b=7.38, c=13.40, alpha=98.0, beta=96.5, gamma=91.5),
+        id="triclinic-K2Cr2O7-like",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "lattice_kwargs, full_params",
+    [(p.values[0], p.values[1]) for p in _LOW_SYMMETRY_LATTICES],
+    ids=[p.id for p in _LOW_SYMMETRY_LATTICES],
+)
+@pytest.mark.parametrize(
+    "h, k, l",
+    [
+        (1, 0, 0),
+        (0, 1, 0),
+        (0, 0, 1),
+        (1, 1, 0),  # mixes b1 and b2 — exposes B-matrix layout bug
+        (1, 0, 1),  # mixes b1 and b3
+        (0, 1, 1),  # mixes b2 and b3
+        (1, 1, 1),  # mixes all three
+        (2, -1, 0),  # negative index
+        (3, 2, 1),  # generic
+    ],
+)
+def test_lattice_B_lower_symmetry_d_spacing(lattice_kwargs, full_params, h, k, l):  # noqa: E741
+    """
+    For non-orthogonal cells, ``|B @ h| == 2π / d_hkl``.
+
+    ``d_hkl`` is computed independently from the reciprocal metric tensor
+    (no use of B), so this test verifies the B-matrix layout end-to-end.
+
+    Regression test for issue #237.
+    """
+    lat = Lattice(**lattice_kwargs)
+    B = lat.B
+    hkl = np.array([h, k, l], dtype=float)
+    Q = B @ hkl
+    Q_mag = float(np.linalg.norm(Q))
+
+    d_expected = _d_spacing_from_metric(**full_params, h=h, k=k, l=l)
+    Q_expected_mag = 2.0 * np.pi / d_expected
+
+    np.testing.assert_allclose(Q_mag, Q_expected_mag, rtol=1e-10)
+
+
+@pytest.mark.parametrize(
+    "lattice_kwargs",
+    [
+        pytest.param(dict(a=4.785, c=12.991, gamma=120.0), id="hexagonal-sapphire"),
+        pytest.param(dict(a=4.81, alpha=47.0), id="trigonal-rhombohedral"),
+        pytest.param(
+            dict(a=6.284, b=15.200, c=5.678, beta=114.09), id="monoclinic-gypsum"
+        ),
+        pytest.param(
+            dict(a=7.45, b=7.38, c=13.40, alpha=98.0, beta=96.5, gamma=91.5),
+            id="triclinic-K2Cr2O7-like",
+        ),
+    ],
+)
+def test_lattice_B_lower_symmetry_columns_are_reciprocal(lattice_kwargs):
+    """
+    For non-orthogonal cells, the columns of B are the reciprocal lattice vectors.
+
+    This is the layout assertion that caught issue #237: ``B @ (1, 0, 0) == b1``
+    only holds when columns of B are b1, b2, b3 (BL1967 / SPEC convention).
+    The pre-fix implementation used ``B = column_stack([b1, b2, b3]).T`` which
+    placed the reciprocal vectors as rows, causing ``B @ (1, 0, 0)`` to return
+    ``(b1·x̂, b2·x̂, b3·x̂)`` instead of ``b1``.
+
+    Regression test for issue #237.
+    """
+    lat = Lattice(**lattice_kwargs)
+    b1, b2, b3 = lat.reciprocal_lattice_vectors
+    B = lat.B
+
+    np.testing.assert_allclose(B[:, 0], b1, atol=1e-12)
+    np.testing.assert_allclose(B[:, 1], b2, atol=1e-12)
+    np.testing.assert_allclose(B[:, 2], b3, atol=1e-12)
+
+    # B @ unit-h returns the corresponding reciprocal vector.
+    np.testing.assert_allclose(B @ np.array([1.0, 0.0, 0.0]), b1, atol=1e-12)
+    np.testing.assert_allclose(B @ np.array([0.0, 1.0, 0.0]), b2, atol=1e-12)
+    np.testing.assert_allclose(B @ np.array([0.0, 0.0, 1.0]), b3, atol=1e-12)
 
 
 # ---------------------------------------------------------------------------

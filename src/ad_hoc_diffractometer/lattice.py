@@ -817,10 +817,10 @@ def b_matrix(
     The columns of B are the reciprocal lattice vectors b₁, b₂, b₃
     (each including the 2π factor), so::
 
-        B.T = [b1, b2, b3]    (column-stack of the reciprocal vectors)
+        B = [b1, b2, b3]    (column-stack of the reciprocal vectors)
 
-    The orthogonality condition is ``bᵢ · aⱼ = 2π δᵢⱼ``, and
-    ``|B @ h| = 2π / d_hkl``.
+    Hence ``B @ h = h·b1 + k·b2 + l·b3``.  The orthogonality condition
+    is ``bᵢ · aⱼ = 2π δᵢⱼ``, and ``|B @ h| = 2π / d_hkl``.
 
     This is the Busing & Levy (1967) and SPEC convention.  Some packages
     (FullProf, CrysFML, parts of CCP4, the hkl library with ``tau=1``)
@@ -838,4 +838,4 @@ def b_matrix(
     B : numpy.ndarray, shape (3, 3)
         B matrix in inverse Angstroms (with 2π factor, BL1967 convention).
     """
-    return np.column_stack([b1, b2, b3]).T
+    return np.column_stack([b1, b2, b3])
