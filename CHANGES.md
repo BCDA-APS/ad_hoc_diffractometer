@@ -11,22 +11,15 @@ Released 2026-04-29.
 
 ### Behavior change
 
-- Kappa pseudoangle conversions and the kappa axis itself are now
-  derived from each preset's signed stage axes instead of a
-  basis-independent textbook formula; re-derive saved UB matrices
-  on `kappa4cv`, `kappa4ch`, and `kappa6c` if you stored them with
-  the previous (incorrect) kappa axis. (#241)
+- Kappa pseudoangle conversions are now geometry-aware; re-derive saved kappa UB matrices. (#241)
 
 ### Added
 
-- `KappaPseudoAngleConvention` dataclass and `kappa_axis_from_eulerian`,
-  `eulerian_to_kappa_axes`, `kappa_to_eulerian_axes` helpers in
-  `ad_hoc_diffractometer.kappa`. (#241)
+- `KappaPseudoAngleConvention` and axis-aware kappa pseudoangle helpers. (#241)
 
 ### Fixed
 
-- Kappa bisecting and fixed-virtual-angle solvers no longer return
-  "No solutions" for physically reachable reflections. (#241)
+- Kappa bisecting and fixed-virtual-angle solvers return solutions for physically reachable reflections. (#241)
 
 ## Release v0.9.0
 
