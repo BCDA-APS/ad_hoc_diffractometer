@@ -366,6 +366,41 @@ way: every new algorithm must be implementable with NumPy alone.
 
 ---
 
+## CHANGES.md style
+
+`CHANGES.md` is a user-facing changelog, not a design document.  Entries
+must be **concise** — match the brevity of existing release sections.
+
+- One bullet per change (one or two short sentences, occasionally three).
+  Pack the technical detail into a single sentence; do not enumerate
+  internal subtleties or design rationale.
+- Use the existing subsection headings: `Breaking changes`, `Behavior
+  change`, `Added`, `Changed`, `Fixed`.  Omit any that are empty.
+- End every bullet with the issue/PR reference(s) in parentheses, e.g.
+  `(#237, #238)`.
+- A correctness fix that changes computed numerical output deserves a
+  short `Behavior change` callout (one bullet, ~3 lines) telling users
+  what to re-derive — not a multi-paragraph essay.
+- Cross-validation numbers and scientific references go in the bullet
+  if they materially help users (e.g. one comparison value), not as
+  a separate section.
+- Do not include test-suite changes (new tests, parametrization edits,
+  test-only HKL substitutions) as their own bullets — these are not
+  user-facing.  A `Fixed` entry implicitly includes its regression test.
+- The release header is just `## Release vX.Y.Z` followed by
+  `Released YYYY-MM-DD.` — no extra prose paragraph unless the release
+  has a single overarching theme that genuinely needs introducing
+  (rare; v0.8.0 is the recent example).
+
+When in doubt, scan the three most recent release sections in
+`CHANGES.md` and match their length and density.  If a v0.9.0 entry
+runs longer than a v0.6.0 entry that introduced 6+ features, it is
+too long.
+
+Contributed by: OpenCode (argo/claudeopus47)
+
+---
+
 ## Testing instructions
 
 **Test file naming**
