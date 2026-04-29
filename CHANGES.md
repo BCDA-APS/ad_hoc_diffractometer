@@ -9,64 +9,22 @@ issue tracker.  The initial project development roadmap is documented here:
 
 Released 2026-04-28.
 
-Correctness release.  Fixes a silent B-matrix layout bug that
-produced wrong scattering vectors for non-orthogonal crystal lattices
-(hexagonal, trigonal, monoclinic, triclinic).  Cubic, tetragonal,
-and orthorhombic samples are unaffected.
+### Behavior change
 
-### Behavior change (non-orthogonal lattices only)
-
-- `Lattice.B`, `Sample.UB`, and the results of `forward()` /
-  `inverse()` now return **physically correct** scattering vectors
-  for hexagonal, trigonal, monoclinic, and triclinic samples.
-  Previous releases (≤ v0.8.0) returned wrong values for any
-  reflection that mixed two or more reciprocal vectors along the
-  same Cartesian axis (notably `(h, k, 0)`-type reflections in
-  hexagonal cells).
-- **Cross-validation**: hexagonal sapphire (a = 4.785 Å, c = 12.991 Å,
-  γ = 120°), reflection (1, 0, 0) at λ = 1.5498 Å:
-  pre-fix 2θ = 18.640°; post-fix 2θ = 21.555° (matches `hkl_soleil`
-  via `hklpy2`).  The (0, 0, 6) reflection happened to agree pre-
-  and post-fix because `b3` was the only reciprocal vector with a
-  z-component.
-- **Action for users**: any saved UB matrix or orientation file for a
-  non-orthogonal sample produced with v0.6.0–v0.8.0 should be
-  re-derived (e.g. by re-running `ub_from_two_reflections_bl1967` from
-  the original observed reflections).  Cubic, tetragonal, and
-  orthorhombic UB matrices are bit-identical to v0.8.0.
+- `Lattice.B`, `Sample.UB`, and `forward()`/`inverse()` results change
+  for hexagonal, trigonal, monoclinic, and triclinic samples.  UB
+  matrices saved under v0.6.0–v0.8.0 for non-orthogonal samples must
+  be re-derived.  Cubic, tetragonal, and orthorhombic results are
+  unchanged. (#237, #238)
 
 ### Fixed
 
-- `lattice.b_matrix()` had a stray `.T` that placed the reciprocal
-  lattice vectors as the rows of B instead of the columns required by
-  Busing & Levy (1967) eq. 3.  Bug was silent for cubic, tetragonal,
-  and orthorhombic cells (whose reciprocal vectors are mutually
-  orthogonal Cartesian axes, so B is diagonal and invariant under
-  transpose) and silently wrong for all other crystal systems on
-  reflections mixing non-orthogonal reciprocal vectors. (#237, #238)
-
-### Added
-
-- 45 lower-symmetry lattice tests (hexagonal, trigonal, monoclinic,
-  triclinic × 9 reflections including `(h, k, 0)`-type) verifying
-  `|B @ h| = 2π / d_hkl` against an independent calculation from the
-  reciprocal metric tensor. (#238)
-- `tests/test_regression_issue_237.py` — cross-module regression
-  tests for the sapphire reproducer, including the (0, 0, 6) case
-  that "accidentally" agreed pre-fix and a Bragg 2θ check matching
-  the `hkl_soleil` cross-reference. (#238)
-
-### Changed
-
-- `kappa4cv` `fixed_omega` test cases use `(0, 0, 1)` instead of
-  `(0, 1, 0)`.  `(0, 1, 0)` is along the beam axis on `kappa4cv`
-  (vertical scattering plane) and physically cannot diffract with
-  omega fixed at 0; the previous "passes" relied on tiny float noise
-  from the buggy B layout perturbing Q in the one direction the kappa
-  Newton solver could exploit.  No solver code change. (#238)
-- `docs/source/direct-lattice.md` LaTeX corrected from
-  `B^T = [b1 b2 b3]` to `B = [b1 b2 b3]` (the prose already said
-  "columns"; only the formula disagreed). (#238)
+- `lattice.b_matrix()`: drop stray `.T` so the columns of B are the
+  reciprocal lattice vectors (BL1967 eq. 3).  Bug was silent for
+  orthogonal cells (B is diagonal) but produced wrong `|B @ h|` for
+  reflections mixing non-orthogonal reciprocal vectors — e.g.
+  sapphire (1, 0, 0) at λ = 1.5498 Å gave 2θ = 18.640° vs the true
+  21.555° (verified against `hkl_soleil`). (#237, #238)
 
 ## Release v0.8.0
 
