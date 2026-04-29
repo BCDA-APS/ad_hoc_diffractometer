@@ -472,14 +472,17 @@ def test_sample_constraint_is_implemented_virtual_on_non_kappa():
             id="fixed_phi-010",
         ),
         pytest.param(
+            # (0,1,0) is along the beam axis and unreachable with omega=0
+            # on kappa4cv; use (0,0,1) which is the canonical fixed_omega
+            # reflection (vertical-axis scattering).
             "fixed_omega",
             "omega",
             0.0,
             0,
-            1,
             0,
+            1,
             does_not_raise(),
-            id="fixed_omega-010",
+            id="fixed_omega-001",
         ),
         pytest.param(
             "fixed_chi",
