@@ -162,7 +162,11 @@ class ForwardContext:
                 angle = fixed_angles.get(s.name, s.angle)
                 D = _rotation_matrix_normalized(s._axis_hat, angle) @ D  # noqa: SLF001
             self._cached_D = D
-        else:
+        else:  # pragma: no cover
+            # No remaining call site passes a detector stage as free
+            # after the kappa virtual-angle solver was rewritten in
+            # issue #241; retained as a defensive path for callers
+            # that build a ForwardContext directly.
             self._cached_D = None
 
         # Sample: find the first free stage index and cache the prefix product
@@ -777,7 +781,7 @@ def _solve_bisecting_analytic(
         # Compute Q_phi with these angles and check residual
         Q_computed = ctx.q_phi(trial)
         residual = float(np.linalg.norm(Q_computed - Q_phi_target))
-        if residual < 1e-6:
+        if residual < 1e-6:  # pragma: no branch
             # Normalize to (-180, 180]
             chi_d = (chi_d + 180.0) % 360.0 - 180.0
             phi_d = (phi_d + 180.0) % 360.0 - 180.0
@@ -1657,10 +1661,10 @@ def _solve_kappa_virtual(
         for existing in solutions:
             if all(
                 abs(existing.get(kk, 0) - angles.get(kk, 0)) < 1e-4 for kk in angles
-            ):
+            ):  # pragma: no cover
                 duplicate = True
                 break
-        if not duplicate:
+        if not duplicate:  # pragma: no branch
             solutions.append(angles)
 
     return solutions

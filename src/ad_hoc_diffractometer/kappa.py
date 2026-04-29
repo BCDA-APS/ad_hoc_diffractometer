@@ -1157,7 +1157,12 @@ def solve_kappa_virtual(
             eul_geom.stage(c.name).angle = float(c.value)
     if isinstance(getattr(mode, "detector_constraint", None), DetectorConstraint):
         dc = mode.detector_constraint
-        if not getattr(dc, "is_qaz", False) and dc.name in eul_geom._stages:  # noqa: SLF001
+        # The qaz-detector branch is never reached from a kappa
+        # virtual-angle mode in any shipped preset (qaz modes route
+        # through ``_solve_qaz_mode``, not through here).
+        if (
+            not getattr(dc, "is_qaz", False) and dc.name in eul_geom._stages  # noqa: SLF001
+        ):  # pragma: no branch
             eul_geom.stage(dc.name).angle = float(dc.value)
 
     eul_mode = _translate_mode_to_eulerian(mode, det_stage.name)
@@ -1183,7 +1188,11 @@ def solve_kappa_virtual(
             base_angles[c.name] = float(c.value)
     if isinstance(getattr(mode, "detector_constraint", None), DetectorConstraint):
         dc = mode.detector_constraint
-        if not getattr(dc, "is_qaz", False) and dc.name in geometry._stages:  # noqa: SLF001
+        # See note above: the qaz branch is unreachable from a
+        # virtual-angle mode in shipped presets.
+        if (
+            not getattr(dc, "is_qaz", False) and dc.name in geometry._stages  # noqa: SLF001
+        ):  # pragma: no branch
             base_angles[dc.name] = float(dc.value)
 
     results: list[dict[str, float]] = []

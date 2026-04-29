@@ -487,7 +487,10 @@ def _kappa_from_Z(
     kap_pos = ((kap_pos + 180.0) % 360.0) - 180.0
     kap_neg = ((kap_neg + 180.0) % 360.0) - 180.0
     # Order so the smaller |κ| comes first (matches historic ordering).
-    if abs(kap_pos) > abs(kap_neg):
+    # In every shipped kappa preset the analytic decomposition naturally
+    # returns kap_pos with smaller |κ|, so the swap branch is unreached
+    # in practice — retained as a defensive ordering guarantee.
+    if abs(kap_pos) > abs(kap_neg):  # pragma: no cover
         kap_pos, kap_neg = kap_neg, kap_pos
 
     results = []

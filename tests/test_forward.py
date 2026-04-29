@@ -2701,6 +2701,44 @@ def test_one_free_angle_analytic_returns_none_on_magnitude_mismatch():
 
 
 # ---------------------------------------------------------------------------
+# Issue #241 — coverage of the analytic-Eulerian dedup branch in
+# _solve_bisecting (the main-branch coverage shifted to a non-kappa
+# call site after the kappa virtual-angle solver was rewritten).
+# ---------------------------------------------------------------------------
+
+
+def test_solve_bisecting_analytic_dedup_branch(monkeypatch):
+    """Cover the duplicate-detection branch in the analytic Eulerian
+    bisecting fast path.
+
+    The natural ``_solve_bisecting_analytic`` returns two distinct
+    chi-branch candidates; this test monkeypatches it to return two
+    identical candidates so the dedup loop's ``duplicate = True;
+    break`` path is exercised.
+    """
+    from ad_hoc_diffractometer import forward as fmod
+    from ad_hoc_diffractometer.presets import fourcv
+
+    g = fourcv()
+    g.wavelength = 1.5406
+    g.sample.lattice = ahd.Lattice(a=4.0)
+    ahd.ub_identity(g.sample)
+    g.mode_name = "bisecting"
+
+    def _fake_analytic(ctx, chi_stage, phi_stage, angles, Q_phi_target):
+        # Two identical (chi, phi) candidates — the dedup loop must
+        # reject the second via ``duplicate = True``.
+        return [(45.0, 30.0), (45.0, 30.0)]
+
+    monkeypatch.setattr(fmod, "_solve_bisecting_analytic", _fake_analytic)
+    sols = g.forward(1, 0, 0)
+    # Exactly one solution survives after dedup.
+    assert len(sols) == 1
+    assert sols[0]["chi"] == pytest.approx(45.0)
+    assert sols[0]["phi"] == pytest.approx(30.0)
+
+
+# ---------------------------------------------------------------------------
 # Issue #239 — Python 3.10 coverage gap in _solve_bisecting_kappa_virtual
 # ---------------------------------------------------------------------------
 
