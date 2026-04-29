@@ -372,7 +372,9 @@ def test_kappa4_fixed_kphi_value_in_solution(factory):
     "factory, mode_name, h, k, l",
     [
         # kappa4cv (BL basis: transverse=x, longitudinal=y, vertical=z)
-        pytest.param(kappa4cv, "fixed_omega", 0, 1, 0, id="kappa4cv-fixed_omega"),
+        # Note: (0,1,0) is NOT reachable for kappa4cv with omega=0
+        # because (0,1,0) is along the beam axis; use (0,0,1) instead.
+        pytest.param(kappa4cv, "fixed_omega", 0, 0, 1, id="kappa4cv-fixed_omega"),
         pytest.param(kappa4cv, "fixed_chi", 0, 0, 1, id="kappa4cv-fixed_chi"),
         pytest.param(kappa4cv, "fixed_phi", 0, 1, 0, id="kappa4cv-fixed_phi"),
         # kappa4ch (horizontal scattering plane — different reachable reflections)
@@ -393,8 +395,10 @@ def test_kappa4_virtual_angle_round_trip(factory, mode_name, h, k, l):  # noqa: 
 @pytest.mark.parametrize(
     "factory, mode_name, virtual_angle, expected_value, h, k, l",
     [
+        # (0,1,0) is along the beam axis and cannot diffract with omega=0
+        # on kappa4cv (vertical scattering plane); use (0,0,1) instead.
         pytest.param(
-            kappa4cv, "fixed_omega", "omega", 0.0, 0, 1, 0, id="kappa4cv-omega=0"
+            kappa4cv, "fixed_omega", "omega", 0.0, 0, 0, 1, id="kappa4cv-omega=0"
         ),
         pytest.param(kappa4cv, "fixed_chi", "chi", 90.0, 0, 0, 1, id="kappa4cv-chi=90"),
         pytest.param(kappa4cv, "fixed_phi", "phi", 0.0, 0, 1, 0, id="kappa4cv-phi=0"),

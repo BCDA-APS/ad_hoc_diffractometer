@@ -53,7 +53,7 @@ factor (the convention used in `ad_hoc_diffractometer` and by Busing & Levy 1967
 
 The **B matrix** encodes the reciprocal lattice vectors as its columns:
 
-$$\mathbf{B}^T = [\mathbf{b}_1\ \mathbf{b}_2\ \mathbf{b}_3]$$
+$$\mathbf{B} = [\mathbf{b}_1\ \mathbf{b}_2\ \mathbf{b}_3]$$
 
 It maps Miller indices $\mathbf{h} = (h, k, l)^T$ to the scattering vector
 in Cartesian crystal-frame coordinates (Busing & Levy 1967, eq. 3):
