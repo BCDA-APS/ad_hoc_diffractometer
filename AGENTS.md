@@ -368,34 +368,34 @@ way: every new algorithm must be implementable with NumPy alone.
 
 ## CHANGES.md style
 
-`CHANGES.md` is a user-facing changelog, not a design document.  Entries
-must be **concise** — match the brevity of existing release sections.
+`CHANGES.md` is a user-facing changelog, not a design document.  Each
+bullet is **one short headline plus the issue/PR reference** — that is
+the entire bullet.  Nothing more.
 
-- One bullet per change (one or two short sentences, occasionally three).
-  Pack the technical detail into a single sentence; do not enumerate
-  internal subtleties or design rationale.
+**Use v0.6.0 and earlier as the style reference.**  Several recent
+entries (v0.7.0, v0.8.0) drifted toward multi-sentence bullets with
+implementation detail and benchmark numbers; do not imitate them.
+v0.6.0 is the canonical pattern: each bullet is a short headline
+(typically ≤ 12 words) followed by ` (#NNN)` or ` (#NNN, #MMM)`.
+
+- One bullet per change.  A single short sentence (or sentence
+  fragment) followed by the issue/PR reference.  No second sentence,
+  no rationale, no cross-validation numbers, no comparison to other
+  packages, no internal implementation detail, no benchmark numbers.
 - Use the existing subsection headings: `Breaking changes`, `Behavior
   change`, `Added`, `Changed`, `Fixed`.  Omit any that are empty.
-- End every bullet with the issue/PR reference(s) in parentheses, e.g.
-  `(#237, #238)`.
-- A correctness fix that changes computed numerical output deserves a
-  short `Behavior change` callout (one bullet, ~3 lines) telling users
-  what to re-derive — not a multi-paragraph essay.
-- Cross-validation numbers and scientific references go in the bullet
-  if they materially help users (e.g. one comparison value), not as
-  a separate section.
-- Do not include test-suite changes (new tests, parametrization edits,
-  test-only HKL substitutions) as their own bullets — these are not
-  user-facing.  A `Fixed` entry implicitly includes its regression test.
-- The release header is just `## Release vX.Y.Z` followed by
-  `Released YYYY-MM-DD.` — no extra prose paragraph unless the release
-  has a single overarching theme that genuinely needs introducing
-  (rare; v0.8.0 is the recent example).
-
-When in doubt, scan the three most recent release sections in
-`CHANGES.md` and match their length and density.  If a v0.9.0 entry
-runs longer than a v0.6.0 entry that introduced 6+ features, it is
-too long.
+- A correctness fix that changes computed numerical output gets one
+  short `Behavior change` bullet stating what changes and what users
+  must do (e.g. "re-derive saved UB matrices") — not a multi-line
+  essay.
+- Do **not** add bullets for test-suite changes (new tests,
+  parametrization edits, test-only HKL substitutions), docstring
+  fixes, or internal refactoring.  A `Fixed` entry implicitly
+  includes its regression test.
+- The release header is `## Release vX.Y.Z` followed by
+  `Released YYYY-MM-DD.` and nothing else.  No prose paragraph.
+- A single-fix release should be three or four lines of bullets, not
+  more (see v0.9.0 for the model: two bullets, one line each).
 
 Contributed by: OpenCode (argo/claudeopus47)
 

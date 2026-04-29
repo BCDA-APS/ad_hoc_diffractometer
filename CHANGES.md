@@ -11,20 +11,12 @@ Released 2026-04-28.
 
 ### Behavior change
 
-- `Lattice.B`, `Sample.UB`, and `forward()`/`inverse()` results change
-  for hexagonal, trigonal, monoclinic, and triclinic samples.  UB
-  matrices saved under v0.6.0–v0.8.0 for non-orthogonal samples must
-  be re-derived.  Cubic, tetragonal, and orthorhombic results are
-  unchanged. (#237, #238)
+- B / UB / `forward()` / `inverse()` results change for non-orthogonal
+  lattices; re-derive saved UB matrices. (#237, #238)
 
 ### Fixed
 
-- `lattice.b_matrix()`: drop stray `.T` so the columns of B are the
-  reciprocal lattice vectors (BL1967 eq. 3).  Bug was silent for
-  orthogonal cells (B is diagonal) but produced wrong `|B @ h|` for
-  reflections mixing non-orthogonal reciprocal vectors — e.g.
-  sapphire (1, 0, 0) at λ = 1.5498 Å gave 2θ = 18.640° vs the true
-  21.555° (verified against `hkl_soleil`). (#237, #238)
+- B matrix column layout for non-orthogonal lattices. (#237, #238)
 
 ## Release v0.8.0
 
