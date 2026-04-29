@@ -1,7 +1,10 @@
 (geometry-kappa4ch)=
 # kappa4ch — Kappa Four-Circle (Laboratory)
 
-Four-circle kappa diffractometer, horizontal scattering plane. Kappa axis tilted at α = 50° from vertical. Laboratory convention.
+Four-circle kappa diffractometer, horizontal scattering plane.  Kappa
+axis tilted at α = 50° **from the outer komega axis (which here is
+along the −vertical direction) toward the equivalent Eulerian chi
+axis**.  Laboratory convention.
 
 **Walko (2016) designation:** S3D1 (kappa)
 
@@ -49,7 +52,7 @@ and mode configuration.
 | Stage | Axis | Handedness | Parent |
 |---|---|---|---|
 | ``komega`` | −vertical (−z BL) | left-handed | base |
-| ``kappa`` | tilted axis, α=50° | right-handed | ``komega`` |
+| ``kappa`` | −z · cos α + ŷ · sin α (α = 50°) | right-handed | ``komega`` |
 | ``kphi`` | −vertical (−z BL) | left-handed | ``kappa`` |
 
 **Detector stages (base first):**
@@ -58,9 +61,25 @@ and mode configuration.
 |---|---|---|---|
 | ``ttheta`` | −vertical (−z BL) | left-handed | base |
 
-**Virtual Eulerian angles** (computed from real kappa angles via Walko 2016 eq. [16]):
-omega, chi, phi.  Used as constraint names for stub modes; converted back to
-komega, kappa, kphi by the kappa inversion solver (Issue I / #153).
+The kappa axis is computed by
+{func}`~ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian` from the
+preset's actual ``komega`` and equivalent Eulerian chi axes:
+
+$$
+\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{n}_{\kappa\omega} \;+\; \sin\alpha \cdot \hat{n}_{\chi,\,\text{eq}}
+\;=\; \cos 50° \cdot (-\hat{z}) \;+\; \sin 50° \cdot (+\hat{y}).
+$$
+
+This formulation is geometry-aware and is correct for the
+``kappa4ch`` ``komega = -VERTICAL`` orientation.  See the
+[kappa4cv documentation](kappa4cv-axis-definition) and issue #241
+for the reasons this differs from the textbook
+``vertical · cos α + transverse · sin α`` formula.
+
+**Virtual Eulerian angles** ``omega``, ``chi``, ``phi`` are mapped
+to / from the real motors via the geometry-aware decomposition in
+{func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes` and
+{func}`~ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes`.
 
 ## Diffraction modes
 
@@ -72,11 +91,11 @@ changing constraint values at run time.
 
 ### `bisecting` *(default)*
 
-{class}`~ad_hoc_diffractometer.mode.BisectConstraint`:
-`komega = ttheta / 2` (approximates the bisecting condition).
-
-> **Note:** The correct bisecting condition is virtual `omega_euler = 0`.
-> Corrected in Issue I / #153.
+{class}`~ad_hoc_diffractometer.mode.VirtualBisectConstraint`:
+``omega_virtual = ttheta / 2`` enforced on the virtual Eulerian
+omega pseudoangle.  Solved via the geometry-aware
+{func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes`
+decomposition (issue #241).
 
 | | |
 |---|---|

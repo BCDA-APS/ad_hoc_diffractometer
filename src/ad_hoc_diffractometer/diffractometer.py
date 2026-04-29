@@ -103,6 +103,7 @@ class AdHocDiffractometer:
         description: str = "",
         wavelength: float | None = None,
         kappa_alpha_deg: float | None = None,
+        kappa_pseudo_angle_convention=None,
         azimuthal_reference: tuple[float, float, float] | None = None,
         modes: dict | ModeDict | None = None,
         default_mode: str | None = None,
@@ -114,6 +115,7 @@ class AdHocDiffractometer:
         self._source_type: str = "xray"  # default; validated via property setter
         self.wavelength = wavelength  # validated via property setter
         self.kappa_alpha_deg = kappa_alpha_deg
+        self.kappa_pseudo_angle_convention = kappa_pseudo_angle_convention
         self.azimuthal_reference = azimuthal_reference  # validated via property setter
         self._surface_normal: tuple[float, float, float] | None = None
         self._detector_distance: float | None = None
@@ -501,6 +503,35 @@ class AdHocDiffractometer:
         if value is not None:
             value = float(value)
         self._kappa_alpha_deg = value
+
+    @property
+    def kappa_pseudo_angle_convention(self):
+        """
+        Per-geometry declaration of the four signed axes that define
+        the kappa ↔ Eulerian pseudoangle decomposition, or ``None`` for
+        non-kappa geometries.
+
+        See :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`
+        for the semantics.  This attribute is set by the kappa
+        factory functions (:func:`~ad_hoc_diffractometer.presets.kappa4cv`,
+        :func:`~ad_hoc_diffractometer.presets.kappa4ch`,
+        :func:`~ad_hoc_diffractometer.presets.kappa6c`) and is consumed
+        by the kappa virtual-angle solver.
+
+        The convention is declared explicitly per preset because the
+        physical meaning of the kappa-tilt angle ``α`` (and therefore
+        the relation between virtual ``(omega, chi, phi)`` and real
+        ``(komega, kappa, kphi)``) depends on the orientation of the
+        outer ``komega`` axis — which differs across vertical-scattering
+        (``kappa4cv``, ``kappa6c``) and horizontal-scattering
+        (``kappa4ch``) presets.  See issue #241 for the diagnostic.
+        """
+        return self._kappa_pseudo_angle_convention
+
+    @kappa_pseudo_angle_convention.setter
+    def kappa_pseudo_angle_convention(self, value) -> None:
+        # Stored as-is; the dataclass validates its own contents.
+        self._kappa_pseudo_angle_convention = value
 
     @property
     def azimuthal_reference(self) -> tuple[float, float, float] | None:

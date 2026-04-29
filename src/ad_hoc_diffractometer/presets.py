@@ -113,12 +113,13 @@ from __future__ import annotations
 
 import inspect
 
-from .axes import kappa_axis
 from .diffractometer import AdHocDiffractometer
 from .factories import BASIS_BL
 from .factories import BASIS_YOU
 from .factories import KAPPA_ALPHA_DEFAULT
 from .factories import register_geometry
+from .kappa import KappaPseudoAngleConvention
+from .kappa import kappa_axis_from_eulerian
 from .mode import REQUIRED
 from .mode import BisectConstraint
 from .mode import ConstraintSet
@@ -675,7 +676,9 @@ def kappa4cv(
 
     Sample stack (floor first):
         komega : transverse, left-handed
-        kappa  : tilted,     kappa_axis(alpha), right-handed
+        kappa  : tilted,     kappa_axis_from_eulerian(-TRANSVERSE,
+                                                     +LONGITUDINAL,
+                                                     alpha), right-handed
         kphi   : transverse, left-handed
 
     Detector (floor, mechanically independent):
@@ -693,7 +696,13 @@ def kappa4cv(
                 ITC Vol. C, Sec. 2.2.6 (2006).
     """
     TRANSVERSE = basis["transverse"]
-    kax = kappa_axis(alpha_deg, basis=basis)
+    LONGITUDINAL = basis["longitudinal"]
+    # Kappa axis derived from the actual outer (komega) axis and the
+    # equivalent Eulerian chi axis — see kappa_axis_from_eulerian and
+    # issue #241.  The historic axes.kappa_axis() helper assumes
+    # n_komega = +vertical and so is wrong for kappa4cv (n_komega =
+    # -transverse).
+    kax = kappa_axis_from_eulerian(-TRANSVERSE, +LONGITUDINAL, alpha_deg)
     stages = [
         Stage("komega", -TRANSVERSE, parent=None, role="sample"),
         Stage("kappa", kax, parent="komega", role="sample"),
@@ -701,12 +710,18 @@ def kappa4cv(
         Stage("ttheta", -TRANSVERSE, parent=None, role="detector"),
     ]
     # kappa4cv: 4 DOF, N-3=1 constraint needed per mode.
-    # Virtual Eulerian angles (omega, chi, phi) are computed from real kappa
-    # angles (komega, kappa, kphi) via Walko (2016) eq. [16].
-    # The ``bisecting`` mode uses :class:`VirtualBisectConstraint` to enforce
-    # *true* bisecting in the virtual Eulerian frame: ``omega_virtual =
-    # ttheta/2``.  This is the physically correct bisecting condition for
-    # a kappa diffractometer (Walko 2016).  See issue #226.
+    # Virtual Eulerian angles (omega, chi, phi) are mapped to / from
+    # real kappa motors via the geometry-aware decomposition in
+    # ad_hoc_diffractometer.kappa.  The ``bisecting`` mode uses
+    # ``VirtualBisectConstraint`` to enforce *true* bisecting in the
+    # virtual Eulerian frame: ``omega_virtual = ttheta/2``.  See
+    # issues #226 and #241.
+    convention = KappaPseudoAngleConvention(
+        n_komega=-TRANSVERSE,
+        n_kappa=kax,
+        n_kphi=-TRANSVERSE,
+        n_chi_eq=+LONGITUDINAL,
+    )
     modes = {
         "bisecting": ConstraintSet(
             [VirtualBisectConstraint("omega", "ttheta")],
@@ -748,6 +763,7 @@ def kappa4cv(
             f"(synchrotron). Kappa alpha = {alpha_deg} deg."
         ),
         kappa_alpha_deg=alpha_deg,
+        kappa_pseudo_angle_convention=convention,
         modes=modes,
         default_mode="bisecting",
     )
@@ -770,7 +786,9 @@ def kappa4ch(
 
     Sample stack (floor first):
         komega : vertical, left-handed
-        kappa  : tilted,   kappa_axis(alpha), right-handed
+        kappa  : tilted,   kappa_axis_from_eulerian(-VERTICAL,
+                                                    +LONGITUDINAL,
+                                                    alpha), right-handed
         kphi   : vertical, left-handed
 
     Detector (floor, mechanically independent):
@@ -788,7 +806,8 @@ def kappa4ch(
                 ITC Vol. C, Sec. 2.2.6 (2006).
     """
     VERTICAL = basis["vertical"]
-    kax = kappa_axis(alpha_deg, basis=basis)
+    LONGITUDINAL = basis["longitudinal"]
+    kax = kappa_axis_from_eulerian(-VERTICAL, +LONGITUDINAL, alpha_deg)
     stages = [
         Stage("komega", -VERTICAL, parent=None, role="sample"),
         Stage("kappa", kax, parent="komega", role="sample"),
@@ -797,8 +816,15 @@ def kappa4ch(
     ]
     # kappa4ch: 4 DOF, N-3=1 constraint needed per mode.
     # Same mode set as kappa4cv; ``bisecting`` uses VirtualBisectConstraint
-    # to enforce true virtual bisecting (omega_virtual = ttheta/2).  See
-    # issue #226 and Walko (2016) eq. [16].
+    # to enforce true virtual bisecting (omega_virtual = ttheta/2).
+    # The kappa axis is tilted α from the vertical komega toward the
+    # longitudinal chi-equivalent (issue #241).
+    convention = KappaPseudoAngleConvention(
+        n_komega=-VERTICAL,
+        n_kappa=kax,
+        n_kphi=-VERTICAL,
+        n_chi_eq=+LONGITUDINAL,
+    )
     modes = {
         "bisecting": ConstraintSet(
             [VirtualBisectConstraint("omega", "ttheta")],
@@ -835,6 +861,7 @@ def kappa4ch(
             f"(laboratory). Kappa alpha = {alpha_deg} deg."
         ),
         kappa_alpha_deg=alpha_deg,
+        kappa_pseudo_angle_convention=convention,
         modes=modes,
         default_mode="bisecting",
     )
@@ -859,7 +886,9 @@ def kappa6c(
     Sample stack (floor first):
         mu     : vertical,     right-handed   [outermost]
         komega : transverse,   left-handed
-        kappa  : tilted,       kappa_axis(alpha), right-handed
+        kappa  : tilted,       kappa_axis_from_eulerian(-TRANSVERSE,
+                                                        +LONGITUDINAL,
+                                                        alpha), right-handed
         kphi   : transverse,   left-handed
 
     Detector stack (floor first):
@@ -879,7 +908,8 @@ def kappa6c(
     """
     VERTICAL = basis["vertical"]
     TRANSVERSE = basis["transverse"]
-    kax = kappa_axis(alpha_deg, basis=basis)
+    LONGITUDINAL = basis["longitudinal"]
+    kax = kappa_axis_from_eulerian(-TRANSVERSE, +LONGITUDINAL, alpha_deg)
     stages = [
         Stage("mu", +VERTICAL, parent=None, role="sample"),
         Stage("komega", -TRANSVERSE, parent="mu", role="sample"),
@@ -891,11 +921,18 @@ def kappa6c(
     # kappa6c: 6 DOF, N-3=3 constraints needed per mode.
     # Vertical bisect pair (kappa-omega bisect): VirtualBisectConstraint
     #   enforces ``omega_virtual = delta/2`` — the physically correct
-    #   bisecting condition for a kappa diffractometer (Walko 2016 eq. [16];
-    #   issue #226).
+    #   bisecting condition for a kappa diffractometer (issues #226 and
+    #   #241).
     # Horizontal bisect pair: mu(vertical) <-> nu(vertical) => mu = nu/2
     #   (literal motor bisect; mu is a real outer stage, not a kappa motor).
-    # Virtual Eulerian angles (omega, chi, phi) via Walko (2016) eq. [16].
+    # The kappa axis is tilted α from the (transverse) komega toward the
+    # longitudinal chi-equivalent.
+    convention = KappaPseudoAngleConvention(
+        n_komega=-TRANSVERSE,
+        n_kappa=kax,
+        n_kphi=-TRANSVERSE,
+        n_chi_eq=+LONGITUDINAL,
+    )
     modes = {
         # ── Implemented (generic solver) ────────────────────────────────────
         "bisecting_vertical": ConstraintSet(
@@ -1008,6 +1045,7 @@ def kappa6c(
             f"Kappa alpha = {alpha_deg} deg."
         ),
         kappa_alpha_deg=alpha_deg,
+        kappa_pseudo_angle_convention=convention,
         modes=modes,
         default_mode="bisecting_vertical",
     )

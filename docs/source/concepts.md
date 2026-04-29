@@ -230,40 +230,109 @@ See {doc}`howto/constraints` and {mod}`~ad_hoc_diffractometer.mode`.
 
 ## Kappa virtual angles
 
-Kappa geometries (``kappa4cv``, ``kappa4ch``, ``kappa6c``) have **real motor
-angles** (komega, kappa, kphi) and **virtual Eulerian pseudoangles** (omega,
-chi, phi) that are more intuitive to specify.
+Kappa geometries (``kappa4cv``, ``kappa4ch``, ``kappa6c``) have **real
+motor angles** (``komega``, ``kappa``, ``kphi``) and **virtual
+Eulerian pseudoangles** (``omega``, ``chi``, ``phi``) that are more
+intuitive to specify.
 
-The conversion follows Walko (2016) eq. [16] with a fixed tilt angle
-α₀ (default 50°):
+### Geometry-aware decomposition
+
+The conversion is derived directly from the preset's actual signed
+stage axes via the rotation-matrix identity
+
+$$
+R(\hat{n}_{\kappa\varphi},\,\kappa\varphi) \cdot
+R(\hat{n}_{\kappa},\,\kappa) \cdot
+R(\hat{n}_{\kappa\omega},\,\kappa\omega)
+\;=\;
+R(\hat{n}_{\kappa\varphi},\,\varphi) \cdot
+R(\hat{n}_{\chi,\,\text{eq}},\,\chi) \cdot
+R(\hat{n}_{\kappa\omega},\,\omega).
+$$
+
+Each kappa preset declares the four signed axis vectors
+``(n_komega, n_kappa, n_kphi, n_chi_eq)`` in a
+{class}`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`
+instance attached to ``geometry.kappa_pseudo_angle_convention``.
+The conversion functions
+{func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes` and
+{func}`~ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes` solve the
+identity above analytically — no Newton iteration is required:
 
 ```python
-from ad_hoc_diffractometer.kappa import kappa_to_eulerian, eulerian_to_kappa
+from ad_hoc_diffractometer.kappa import (
+    eulerian_to_kappa_axes, kappa_to_eulerian_axes,
+)
 
-# Real kappa angles → virtual Eulerian angles
-omega, chi, phi = kappa_to_eulerian(komega, kappa, kphi, alpha_deg=50.0)
+g = ahd.presets.kappa4cv()
+convention = g.kappa_pseudo_angle_convention
 
-# Virtual Eulerian angles → real kappa angles (two branches)
-komega, kappa, kphi = eulerian_to_kappa(omega, chi, phi, alpha_deg=50.0)
+# Virtual Eulerian angles → real kappa motor angles (two branches)
+komega, kappa, kphi = eulerian_to_kappa_axes(
+    omega, chi, phi, convention, branch=+1
+)
+
+# Real kappa angles → virtual Eulerian pseudoangles
+omega, chi, phi = kappa_to_eulerian_axes(komega, kappa, kphi, convention)
 ```
 
-Branch selection: the positive branch (kappa ≥ 0) corresponds to positive
-chi; the negative branch (kappa < 0) to negative chi.
+Branch selection: ``branch=+1`` (default) returns the kappa solution
+with the smaller ``|κ|`` (the natural identity branch); ``branch=-1``
+returns the chi-mirrored solution.
 
-Kappa modes accept virtual angle names directly in
+The kappa rotation axis itself is computed from the convention via
+
+$$
+\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{n}_{\kappa\omega} \;+\; \sin\alpha \cdot \hat{n}_{\chi,\,\text{eq}}
+$$
+
+(see {func}`~ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian`).
+
+### Divergence from Walko (2016) eq. [16]
+
+The original Walko closed form
+
+$$
+\sin(\chi/2) = \sin(\kappa/2) \cdot \sin(\alpha_0), \qquad
+\text{offset} = \arccos\bigl(\cos(\kappa/2)/\cos(\chi/2)\bigr)
+$$
+
+is correct **only for the axis convention assumed in Walko's
+derivation** — omega about the transverse axis, chi about the
+longitudinal axis, phi about the transverse axis, all with a
+specific handedness.  No preset shipped with this package matches
+that convention exactly: ``kappa4cv`` (BL) places ``komega`` along
+``-TRANSVERSE``; ``kappa4ch`` (BL) along ``-VERTICAL``; ``kappa6c``
+(You) along ``-TRANSVERSE`` with a horizontal ``mu`` base.  The
+textbook formula therefore does **not** preserve the scattering
+vector for any non-zero ``chi`` in any of these presets, which
+manifested as silent ``"No solutions"`` returns from the kappa
+virtual-angle solver (issue #241).
+
+The textbook helpers
+{func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa` and
+{func}`~ad_hoc_diffractometer.kappa.kappa_to_eulerian` are retained
+as reference implementations of the published closed form (with
+deprecation warnings in their docstrings) but are **not** used
+inside the solver.
+
+### Modes accept virtual angle names
+
+Kappa modes accept the virtual angle names directly in
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 
 ```python
-from ad_hoc_diffractometer import ConstraintSet, SampleConstraint, BisectConstraint
+from ad_hoc_diffractometer import ConstraintSet, SampleConstraint
 
 g = ahd.presets.kappa4cv()
 # "chi" is a virtual angle — the kappa inversion solver handles it
 g.modes["fixed_chi"] = ConstraintSet([SampleConstraint("chi", 90.0)])
 ```
 
-See {func}`~ad_hoc_diffractometer.kappa.kappa_to_eulerian`,
-{func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa`, and the
-{doc}`howto/constraints` guide.
+See {func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes`,
+{func}`~ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes`,
+{class}`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`,
+and the {doc}`howto/constraints` guide.
 
 ---
 

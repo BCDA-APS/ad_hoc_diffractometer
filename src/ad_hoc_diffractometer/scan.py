@@ -397,35 +397,63 @@ def _kappa_from_Z(
     kphi_stage: object,
     alpha_deg: float,
 ) -> list[tuple[float, float, float]]:
-    """
-    Decompose Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω) into (kω, κ, kφ).
+    r"""
+    Decompose ``Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω)`` into
+    ``(kω, κ, kφ)`` using a Rodrigues expansion that is **agnostic to
+    the specific signed axis convention** of the kappa preset.
 
-    Uses the kappa-specific chi element formula derived from the Rodrigues
-    expansion (ITC Vol. C Sec. 2.2.6 / Walko 2016):
+    Derivation
+    ----------
+    Apply both sides to ``n_komega``:
 
-        n_kφ · Z · n_kω = cos(κ)·cos²(α) + sin²(α)
+        Z · n_kω  =  R(n_kφ, kφ) · R(n_κ, κ) · n_kω
 
-    where α is ``alpha_deg`` (the kappa tilt angle).  This isolates κ;
-    komega and kphi are then extracted by the same projection method as
-    ``_euler_from_Z_standard``.
+    (since ``R(n_kω, ·) · n_kω = n_kω``).  Take the dot product with
+    ``n_kphi``:
+
+        n_kφ · Z · n_kω  =  n_kφ · R(n_κ, κ) · n_kω
+
+    Expanding the right side via Rodrigues (with
+    ``a = n_kphi · n_komega``,
+    ``b = n_kphi · (n_kappa × n_komega)``,
+    ``c = (n_kphi · n_kappa)·(n_kappa · n_komega)``):
+
+        elem  =  a·cos(κ) + b·sin(κ) + c·(1 − cos(κ))
+              =  (a − c)·cos(κ) + b·sin(κ) + c
+
+    For the Walko (2016) textbook axis convention this reduces to
+    ``cos(κ)·cos²(α) + sin²(α)``; for the geometry-aware kappa axis
+    introduced by issue #241 (``n_kappa = cos(α)·n_komega +
+    sin(α)·n_chi_eq``, with ``n_komega`` parallel to ``n_kphi``) the
+    same expression evaluates to ``cos(κ)·sin²(α) + cos²(α)``.  The
+    code below uses the general ``(a − c)·cos(κ) + b·sin(κ) = γ − c``
+    form so that any future kappa convention with non-parallel
+    komega/kphi axes is handled correctly.
+
+    ``komega`` and ``kphi`` are then extracted by the same projection
+    method as :func:`_euler_from_Z_standard`.
 
     Parameters
     ----------
     Z : ndarray, shape (3, 3)
     komega_stage, kappa_stage, kphi_stage : Stage
     alpha_deg : float
-        Kappa tilt angle in degrees.
+        Kappa tilt angle in degrees.  Retained for API compatibility;
+        the decomposition itself uses only the geometric axes.
 
     Returns
     -------
     list of (komega_deg, kappa_deg, kphi_deg)
-        Two solutions (positive and negative κ branches), or one if degenerate.
+        Two solutions (positive and negative κ branches), or one if
+        degenerate.
+
+    References
+    ----------
+    * Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016) — textbook
+      special case used by earlier versions of this function.
+    * Issue #241 — geometry-aware re-derivation.
     """
     from .rotation import rotation_matrix as _Rmat
-
-    alpha_rad = math.radians(alpha_deg)
-    sin2a = math.sin(alpha_rad) ** 2
-    cos2a = math.cos(alpha_rad) ** 2
 
     n_km = np.asarray(komega_stage.axis, dtype=float) / np.linalg.norm(
         komega_stage.axis
@@ -433,11 +461,34 @@ def _kappa_from_Z(
     n_kap = np.asarray(kappa_stage.axis, dtype=float) / np.linalg.norm(kappa_stage.axis)
     n_kph = np.asarray(kphi_stage.axis, dtype=float) / np.linalg.norm(kphi_stage.axis)
 
-    # --- Step 1: kappa from n_kphi · Z · n_komega ---------------------------
+    # --- Step 1: κ from the Rodrigues expansion of n_kphi · Z · n_komega ----
     elem = float(np.clip(np.dot(n_kph, Z @ n_km), -1.0, 1.0))
-    cos_kap = max(-1.0, min(1.0, (elem - sin2a) / cos2a))
-    kap_pos = math.degrees(math.acos(cos_kap))
-    kap_neg = -kap_pos
+    a_coeff = float(np.dot(n_kph, n_km))
+    b_coeff = float(np.dot(n_kph, np.cross(n_kap, n_km)))
+    c_coeff = float(np.dot(n_kph, n_kap)) * float(np.dot(n_kap, n_km))
+    # Solve (a − c)·cos(κ) + b·sin(κ) = elem − c
+    rhs = elem - c_coeff
+    M = math.hypot(a_coeff - c_coeff, b_coeff)
+    if M < 1e-14:  # pragma: no cover
+        return []
+    raw_ratio = rhs / M
+    # The target Z is outside the kappa arm's reachable range when
+    # |ratio| > 1.  Reject (no real κ exists) so the caller can mark
+    # the trajectory point as inaccessible instead of returning a
+    # spurious clamped solution.
+    if raw_ratio > 1.0 + 1e-9 or raw_ratio < -1.0 - 1e-9:
+        return []
+    ratio = max(-1.0, min(1.0, raw_ratio))
+    phi0 = math.atan2(b_coeff, a_coeff - c_coeff)
+    delta = math.acos(ratio)
+    kap_pos = math.degrees(phi0 + delta)
+    kap_neg = math.degrees(phi0 - delta)
+    # Normalise into (-180, 180]
+    kap_pos = ((kap_pos + 180.0) % 360.0) - 180.0
+    kap_neg = ((kap_neg + 180.0) % 360.0) - 180.0
+    # Order so the smaller |κ| comes first (matches historic ordering).
+    if abs(kap_pos) > abs(kap_neg):
+        kap_pos, kap_neg = kap_neg, kap_pos
 
     results = []
     for kap_deg in (kap_pos, kap_neg):

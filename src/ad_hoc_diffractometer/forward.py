@@ -803,239 +803,106 @@ def _solve_bisecting_kappa_virtual(
     True virtual bisecting solver for kappa geometries.
 
     On a kappa diffractometer the real motor triple
-    ``(komega, kappa, kphi)`` is parameterised by virtual Eulerian
-    *pseudoangles* ``(omega, chi, phi)`` via Walko (2016) eq. [16].
-    *True* bisecting means the **virtual** omega equals ``ttheta/2`` —
-    not the previous approximation ``komega = ttheta/2``, which only
-    coincides with true bisecting at ``kappa = 0``.
+    ``(komega, kappa, kphi)`` is parameterised by *virtual Eulerian
+    pseudoangles* ``(omega, chi, phi)``.  *True* virtual bisecting
+    means the **virtual** ``omega`` equals ``ttheta/2`` — not the
+    previous approximation ``komega = ttheta/2``, which only coincides
+    with true bisecting at ``kappa = 0``.
 
-    Walko's pseudoangles do **not** correspond to a simple Eulerian
-    sample stack: the relation between ``(omega, chi, phi)`` and
-    ``(komega, kappa, kphi)`` is non-affine, and the virtual angles
-    parametrise the kappa motor space rather than represent an
-    equivalent fourcv-style rotation.  Consequently no analytic
-    decomposition exists: the (chi, phi) pseudoangle pair must be
-    solved numerically given fixed virtual omega.
+    Implementation
+    --------------
+    This function is a thin wrapper around
+    :func:`~ad_hoc_diffractometer.kappa.solve_kappa_virtual`, which
+    handles the entire kappa virtual-angle solve uniformly for both
+    bisect (``VirtualBisectConstraint``) and fixed-virtual-angle
+    (``SampleConstraint`` on ``omega``/``chi``/``phi``) modes via the
+    geometry-aware :func:`~kappa.eulerian_to_kappa_axes` decomposition
+    introduced by issue #241.
 
-    Implementation: this solver delegates to
-    :func:`~ad_hoc_diffractometer.kappa.solve_kappa_virtual` by
-    constructing a synthetic mode that fixes virtual omega at
-    ``ttheta/2`` via a :class:`~mode.SampleConstraint`.  All fixed
-    sample / detector constraints from the active mode are preserved.
-    The kappa virtual solver runs Newton iteration on (chi, phi),
-    converts each converged virtual triple to real motor angles via
-    :func:`~kappa.eulerian_to_kappa` (both kappa branches ``±1``).
-
-    Each raw solution is then refined by a final central-difference
-    Newton polish on ``(chi, phi)`` to push the residual toward
-    machine precision before cut-points / limits / deduplication are
-    applied.
+    The wrapper applies the kappa-side post-processing — cut-points,
+    motor-limit checks, and final deduplication on ``(komega, kappa,
+    kphi)`` — that the rest of the forward pipeline expects.
 
     Parameters
     ----------
     geometry : AdHocDiffractometer
-        A kappa diffractometer (``kappa_alpha_deg`` is set).
+        A kappa diffractometer with ``kappa_pseudo_angle_convention``
+        set.
     Q_phi : numpy.ndarray, shape (3,)
         Target scattering vector in the phi frame (Å⁻¹).
     ttheta_deg : float
         Detector angle (2θ) in degrees.
     mode : ConstraintSet
-        Active diffraction mode (used for cut-points, limits, and
-        non-bisect sample / detector constraints).
+        Active diffraction mode.
     bisect_c : :class:`~mode.VirtualBisectConstraint`
-        Active virtual-bisecting constraint.  ``bisect_c.detector_stage``
-        names the detector stage whose half-angle is the virtual omega.
+        Active virtual-bisecting constraint (parameter retained for
+        signature compatibility with the dispatcher in
+        :func:`_solve_bisecting`).
     angles : dict[str, float]
-        Baseline angles with all fixed sample/detector stages already
-        set.  The detector stage covered by ``bisect_c.detector_stage``
-        is already frozen at ``ttheta_deg``.
+        Baseline angles dict with detector stage already frozen at
+        ``ttheta_deg`` (parameter retained for signature
+        compatibility).
 
     Returns
     -------
     list of dict[str, float]
-        Valid solutions (may be empty when the requested reflection is
-        not in the bisecting locus, or when all candidate (komega,
-        kappa, kphi) configurations are outside the stage limits).
-
-        **Note**: Some reflections that were "accessible" under the
-        previous ``komega = ttheta/2`` approximation are **not**
-        accessible under true virtual bisecting — those previous
-        solutions had ``omega_virtual ≠ ttheta/2`` and were therefore
-        not physically bisecting.
+        Valid solutions, possibly empty when the requested reflection
+        is not in the bisecting locus or all candidate configurations
+        are outside the stage limits.
 
     References
     ----------
-    * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016),
-      eq. [16] — the kappa-Eulerian pseudoangle relations.
+    * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016) —
+      textbook pseudoangle special case.
     * W. R. Busing & H. A. Levy, *Acta Cryst.* 22, 457-464 (1967) —
       bisecting Eulerian geometry.
+    * Issue #241 — geometry-aware decomposition that supersedes the
+      Walko-only implementation.
     """
+    from .kappa import kappa_to_eulerian_axes
     from .kappa import solve_kappa_virtual
-    from .mode import ConstraintSet
-    from .mode import DetectorConstraint
-    from .mode import SampleConstraint
-
-    omega_v = ttheta_deg / 2.0  # virtual omega for true bisecting
-
-    # Build a synthetic mode that is identical to the original except:
-    #   - the VirtualBisectConstraint is replaced by a fixed virtual
-    #     omega SampleConstraint at ttheta/2 (so the kappa virtual
-    #     solver knows omega is fixed and (chi, phi) are free)
-    synthetic_constraints = [SampleConstraint("omega", omega_v)]
-    for c in mode.constraints:
-        if c is bisect_c:
-            continue
-        if (
-            isinstance(c, DetectorConstraint) and c.name == bisect_c.detector_stage
-        ):  # pragma: no cover
-            continue
-        synthetic_constraints.append(c)
-    synthetic_mode = ConstraintSet(synthetic_constraints, computed=mode.computed)
-
-    raw = solve_kappa_virtual(geometry, Q_phi, ttheta_deg, synthetic_mode)
-
-    # Post-process: polish, apply cut-points, limits, deduplicate.
-    Q_phi_arr = np.asarray(Q_phi, dtype=float)
     from .orientation import angles_to_phi_vector as _a2phi
 
-    # Set up a polish context that reuses the cached detector / outer
-    # rotations; the kappa triple varies during polishing.
-    polish_ctx = ForwardContext(geometry)
-    polish_ctx.prepare_caching(angles, {"komega", "kappa", "kphi"})
+    Q_phi_arr = np.asarray(Q_phi, dtype=float)
 
-    def _polish(sol: dict[str, float]) -> dict[str, float]:
-        """Refine (komega, kappa, kphi) by Newton with a tighter
-        finite-difference step, while *holding the virtual omega
-        invariant* via constrained motion in (kappa, kphi).
+    raw = solve_kappa_virtual(geometry, Q_phi_arr, ttheta_deg, mode)
 
-        The constraint ``omega_virtual = ttheta/2`` couples the three
-        motors via Walko's eq. [16]:
-
-            komega = omega_v + arccos(cos(kappa/2) / cos(chi/2))
-
-        where ``chi = 2 arcsin(sin(kappa/2) sin(α₀))``.  Treating
-        (kappa, kphi) as the independent variables and updating komega
-        from this relation preserves bisecting exactly.
-
-        A 2D Newton step is taken on (kappa, kphi) using a central-
-        difference Jacobian with step ``h = 1e-6``.  Two refinement
-        sweeps are run; further iterations rarely improve the residual.
-        """
-        from .kappa import eulerian_to_kappa
-
-        # Use the kappa.eulerian_to_kappa branch consistent with the
-        # current sign of kappa.
-        branch = +1 if sol["kappa"] >= 0 else -1
-        # Recover the virtual (chi, phi) from the current motor triple
-        # by inverting kappa_to_eulerian.
-        from .kappa import kappa_to_eulerian
-
-        omega_v_curr, chi_v, phi_v = kappa_to_eulerian(
-            sol["komega"],
-            sol["kappa"],
-            sol["kphi"],
-            alpha_deg=geometry.kappa_alpha_deg,
-        )
-
-        def _residual(chi: float, phi: float) -> np.ndarray:
-            try:
-                ko, k, kp = eulerian_to_kappa(
-                    omega_v,
-                    chi,
-                    phi,
-                    alpha_deg=geometry.kappa_alpha_deg,
-                    branch=branch,
-                )
-            except ValueError:  # pragma: no cover
-                return np.array([1e6, 1e6, 1e6])
-            trial = dict(angles)
-            trial["komega"] = ko
-            trial["kappa"] = k
-            trial["kphi"] = kp
-            return polish_ctx.q_phi(trial) - Q_phi_arr
-
-        x = np.array([chi_v, phi_v], dtype=float)
-        # Central-difference Newton with small h for higher precision
-        # than the coarse forward-difference Newton in solve_kappa_virtual.
-        # We accept only steps that strictly reduce the residual.
-        best_x = x.copy()
-        best_r = float(np.linalg.norm(_residual(x[0], x[1])))
-        h = 1e-6
-        for _ in range(15):  # pragma: no branch
-            r = _residual(x[0], x[1])
-            r2 = r[:2]
-            r_norm = float(np.linalg.norm(r))
-            if r_norm < 1e-13:
-                best_x = x.copy()
-                best_r = r_norm
-                break
-            J = np.zeros((2, 2))
-            for j in range(2):
-                xp = x.copy()
-                xm = x.copy()
-                xp[j] += h
-                xm[j] -= h
-                J[:, j] = (
-                    _residual(xp[0], xp[1])[:2] - _residual(xm[0], xm[1])[:2]
-                ) / (2.0 * h)
-            try:
-                dx = np.linalg.solve(J, -r2)
-            except np.linalg.LinAlgError:  # pragma: no cover
-                break
-            x_new = x + dx
-            r_new_full = _residual(x_new[0], x_new[1])
-            r_new_norm = float(np.linalg.norm(r_new_full))
-            if r_new_norm < best_r:
-                best_r = r_new_norm
-                best_x = x_new.copy()
-                x = x_new
-            else:
-                break  # no improvement — stop
-        x = best_x
-
-        # Build final solution from the polished virtual triple
-        try:
-            ko, k, kp = eulerian_to_kappa(
-                omega_v,
-                float(x[0]),
-                float(x[1]),
-                alpha_deg=geometry.kappa_alpha_deg,
-                branch=branch,
-            )
-        except ValueError:  # pragma: no cover
-            return sol
-        polished = dict(sol)
-        polished["komega"] = ko
-        polished["kappa"] = k
-        polished["kphi"] = kp
-        return polished
+    convention = geometry.kappa_pseudo_angle_convention
+    omega_target = ttheta_deg / 2.0
 
     solutions: list[dict[str, float]] = []
     for sol in raw:
-        # Merge baseline angles (outer fixed stages not always echoed
-        # back by solve_kappa_virtual)
         merged = dict(angles)
         merged.update(sol)
-
-        # Polish for higher precision
-        merged = _polish(merged)
-
-        # Validate via uncached Q computation (final safety check)
+        # Enforce the virtual-bisect constraint: the equivalent
+        # Eulerian solver returns both analytic chi branches, but
+        # only one (the principal +chi branch) satisfies
+        # ``omega_virtual = ttheta/2``.  The other branch differs by
+        # 180° in omega and must be filtered out before validation.
+        om_v, _, _ = kappa_to_eulerian_axes(
+            merged["komega"], merged["kappa"], merged["kphi"], convention
+        )
+        residual = (om_v - omega_target + 180.0) % 360.0 - 180.0
+        if abs(residual) > 1e-6:
+            continue
+        # Final correctness check: ensure the kappa stack actually
+        # produces the target Q vector.
         Q_check = _a2phi(geometry, **merged)
-        residual = float(np.linalg.norm(Q_check - Q_phi_arr))
-        if residual > 1e-6:  # pragma: no cover
+        if float(np.linalg.norm(Q_check - Q_phi_arr)) > 1e-6:  # pragma: no cover
             continue
         _apply_cut_points(merged, mode, geometry)
-        # Dedup on real motor angles
+        # Deduplicate on the kappa motor triple (the equivalent
+        # Eulerian solver may return both the +chi and −chi solutions
+        # which can collapse to the same kappa triple).
         duplicate = False
         for existing in solutions:
             if all(
                 abs(existing.get(name, 0.0) - merged.get(name, 0.0)) < 1e-4
                 for name in ("komega", "kappa", "kphi")
-            ):
+            ):  # pragma: no cover
                 duplicate = True
                 break
-        if duplicate:
+        if duplicate:  # pragma: no cover
             continue
         if not _check_limits(geometry, merged):
             continue
@@ -1709,91 +1576,77 @@ def _solve_kappa_virtual(
     mode,
 ) -> list[dict[str, float]]:
     """
-    Kappa virtual-angle solver.
+    Kappa virtual-angle dispatcher.
 
-    Delegates the geometric computation to :func:`~kappa.solve_kappa_virtual`,
-    then applies cut-points, limits, and deduplication.
+    Wraps :func:`~kappa.solve_kappa_virtual` (which performs the
+    geometry-aware Eulerian-equivalent solve introduced by issue #241)
+    with the kappa-side post-processing: virtual-angle validation
+    against the per-geometry
+    :class:`~kappa.KappaPseudoAngleConvention`, cut-points, motor
+    limits, and deduplication.
     """
+    from .kappa import KAPPA_VIRTUAL_ANGLES
+    from .kappa import kappa_to_eulerian_axes
     from .kappa import solve_kappa_virtual
-    from .mode import DetectorConstraint
     from .mode import SampleConstraint
 
-    # Get (komega, kappa, kphi, det_name, ttheta, other_constraints) raw tuples
     raw = solve_kappa_virtual(geometry, Q_phi, ttheta_deg, mode)
     if not raw:  # pragma: no cover
         return []
 
-    from .kappa import KAPPA_VIRTUAL_ANGLES
-    from .kappa import kappa_to_eulerian
+    convention = geometry.kappa_pseudo_angle_convention
 
-    # Extract non-virtual other constraints for applying to angles dict
-    other_constraints = [
-        c
-        for c in mode.constraints
-        if not (isinstance(c, SampleConstraint) and c.name in KAPPA_VIRTUAL_ANGLES)
-    ]
-
-    # Identify kappa stage names for virtual angle validation
     sample_stages = geometry.sample_stages
     kappa_idx = next(
         (i for i, s in enumerate(sample_stages) if s.name == "kappa"), None
     )
     komega_name = sample_stages[kappa_idx - 1].name if kappa_idx else None
     kphi_name = sample_stages[kappa_idx + 1].name if kappa_idx else None
-    alpha_deg = geometry.kappa_alpha_deg
 
-    # Virtual angle constraints that must be verified
     virtual_constraints = [
         c
         for c in mode.constraints
         if isinstance(c, SampleConstraint) and c.name in KAPPA_VIRTUAL_ANGLES
     ]
 
-    solutions = []
+    solutions: list[dict[str, float]] = []
     for angle_dict in raw:
         angles = dict(angle_dict)
 
-        # Apply non-virtual constraints (e.g. DetectorConstraint on kappa6c modes)
-        for c in other_constraints:
-            if isinstance(c, SampleConstraint):  # pragma: no cover
-                if c.name in geometry._stages:  # noqa: SLF001
-                    angles[c.name] = float(c.value)
-            elif isinstance(c, DetectorConstraint) and not c.is_qaz:  # pragma: no cover
-                angles[c.name] = c.value
-
-        # Normalise kappa angles to (-180, 180] to satisfy typical stage limits
+        # Wrap kappa angles into (-180, 180] (standard motor cut).
         if komega_name and kphi_name:  # pragma: no branch
             for kname in (komega_name, "kappa", kphi_name):
                 if kname in angles:  # pragma: no branch
                     a = angles[kname]
                     a = (a + 180.0) % 360.0 - 180.0
+                    if a == -180.0:  # pragma: no cover
+                        a = 180.0
                     angles[kname] = a
 
-        # Validate virtual angle constraints using kappa_to_eulerian
-        if (
-            virtual_constraints and komega_name and kphi_name and alpha_deg is not None
-        ):  # pragma: no branch
+        # Validate any fixed virtual-angle constraints by inverting
+        # the (komega, kappa, kphi) triple via the geometry-aware
+        # decomposition.
+        if virtual_constraints and convention is not None:  # pragma: no branch
             try:
-                om_v, chi_v, phi_v = kappa_to_eulerian(
+                om_v, chi_v, phi_v = kappa_to_eulerian_axes(
                     angles[komega_name],
                     angles["kappa"],
                     angles[kphi_name],
-                    alpha_deg=alpha_deg,
+                    convention,
                 )
                 virtual_vals = {"omega": om_v, "chi": chi_v, "phi": phi_v}
-                valid = all(
-                    abs(virtual_vals[c.name] - float(c.value)) < 1e-2
+                if not all(
+                    abs(virtual_vals[c.name] - float(c.value)) < 1e-4
                     for c in virtual_constraints
-                )
-                if not valid:
-                    continue
+                ):
+                    continue  # pragma: no cover
             except (ValueError, KeyError):  # pragma: no cover
                 continue
 
-        # Verify geometric consistency: Q_computed must match Q_target
+        # Verify geometric consistency: Q_computed must match Q_target.
         kv_ctx = ForwardContext(geometry)
         Q_computed = kv_ctx.q_phi_uncached(angles)
-        if not np.allclose(Q_computed, Q_phi, atol=1e-3):
+        if not np.allclose(Q_computed, Q_phi, atol=1e-6):  # pragma: no cover
             continue
 
         _apply_cut_points(angles, mode, geometry)

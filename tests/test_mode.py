@@ -564,8 +564,16 @@ def test_virtual_bisect_constraint_to_dict_from_dict():
 
 
 def test_virtual_bisect_constraint_evaluate_kappa_geometry():
-    """evaluate() returns omega_virtual − detector/2 on a kappa geometry."""
-    from ad_hoc_diffractometer.kappa import kappa_to_eulerian
+    """evaluate() returns omega_virtual − detector/2 on a kappa geometry.
+
+    Uses the geometry-aware
+    :func:`~ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes` and
+    :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes`
+    functions because every preset's signed axis convention can
+    differ from the Walko (2016) textbook frame (issue #241).
+    """
+    from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
+    from ad_hoc_diffractometer.kappa import kappa_to_eulerian_axes
     from ad_hoc_diffractometer.presets import kappa4cv
 
     g = kappa4cv()
@@ -575,15 +583,13 @@ def test_virtual_bisect_constraint_evaluate_kappa_geometry():
     omega_v = 10.0
     chi_v = 30.0
     phi_v = 45.0
-    from ad_hoc_diffractometer.kappa import eulerian_to_kappa
+    convention = g.kappa_pseudo_angle_convention
 
-    ko, k, kp = eulerian_to_kappa(
-        omega_v, chi_v, phi_v, alpha_deg=g.kappa_alpha_deg, branch=+1
-    )
+    ko, k, kp = eulerian_to_kappa_axes(omega_v, chi_v, phi_v, convention, branch=+1)
     angles = {"komega": ko, "kappa": k, "kphi": kp, "ttheta": 2.0 * omega_v}
     residual = vbc.evaluate(angles, g)
     # omega_virtual recomputed from motors should match the seed exactly
-    om_check, _, _ = kappa_to_eulerian(ko, k, kp, alpha_deg=g.kappa_alpha_deg)
+    om_check, _, _ = kappa_to_eulerian_axes(ko, k, kp, convention)
     assert abs(om_check - omega_v) < 1e-12
     assert abs(residual) < 1e-12
 
@@ -608,7 +614,7 @@ def test_virtual_bisect_constraint_evaluate_requires_kappa_geometry():
     g = fourcv()
     vbc = VirtualBisectConstraint("omega", "ttheta")
     angles = {"komega": 0.0, "kappa": 0.0, "kphi": 0.0, "ttheta": 30.0}
-    with pytest.raises(ValueError, match=re.escape("kappa_alpha_deg")):
+    with pytest.raises(ValueError, match=re.escape("kappa_pseudo_angle_convention")):
         vbc.evaluate(angles, g)
 
 
