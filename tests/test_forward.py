@@ -2834,3 +2834,96 @@ def test_one_free_angle_analytic_returns_none_on_magnitude_mismatch():
 
     result = _solve_one_free_angle_analytic(ctx, free_stage, angles, Q_target_bad)
     assert result is None
+
+
+# ---------------------------------------------------------------------------
+# Issue #239 — Python 3.10 coverage gap in _solve_bisecting_kappa_virtual
+# ---------------------------------------------------------------------------
+
+
+def test_kappa_bisecting_post_processing_dedup_and_limits(monkeypatch):
+    """Cover both post-processing branches of ``_solve_bisecting_kappa_virtual``.
+
+    Targets two specific lines / branches that Python 3.10's coverage
+    tracer flags as uncovered (issue #239):
+
+    * the ``for existing in solutions:`` dedup loop fall-through
+      (branch ``1032 -> 1031``) — two genuinely distinct candidate
+      solutions where the inner ``all(...)`` evaluates ``False``;
+    * the ``continue`` after ``_check_limits(...) is False``
+      (line 1041) — a polished candidate that lies outside the
+      configured stage limits.
+
+    The natural kappa solver collapses to a single solution for every
+    HKL reachable in our test geometries, so the test injects two
+    distinct synthetic candidates by monkeypatching the ``kappa``
+    helpers used inside ``_solve_bisecting_kappa_virtual`` and the
+    module-level ``_check_limits`` and ``_a2phi`` used during
+    post-processing.  The Newton ``_polish`` closure becomes a no-op
+    because the patched ``eulerian_to_kappa`` is constant in its
+    inputs (zero Jacobian → polish breaks immediately and leaves the
+    candidate motor triple unchanged).
+    """
+    from ad_hoc_diffractometer import forward as fmod
+    from ad_hoc_diffractometer import kappa as kmod
+    from ad_hoc_diffractometer import orientation as omod
+
+    g = _setup_cubic(kappa4cv, a=4.0)
+    assert g.mode_name == "bisecting"
+
+    # Two distinct, non-duplicate candidate motor triples.  They differ
+    # by far more than the 1e-4 dedup tolerance, so the dedup loop
+    # iterates without finding a match (covers branch 1032 -> 1031).
+    # ``kappa >= 0`` selects polish branch +1 → candidate_a;
+    # ``kappa < 0`` selects polish branch -1 → candidate_b.
+    candidate_a = {"komega": 10.0, "kappa": 5.0, "kphi": 30.0}
+    candidate_b = {"komega": 20.0, "kappa": -5.0, "kphi": 60.0}
+
+    def _fake_solve_kappa_virtual(geometry, Q_phi, ttheta_deg, mode):
+        return [dict(candidate_a), dict(candidate_b)]
+
+    # Patch the kappa <-> eulerian helpers so ``_polish`` cannot mutate
+    # the candidate motor triples and so that the post-solve
+    # constraint validator sees the bisecting condition satisfied.
+    # ``kappa_to_eulerian`` returns ``omega_virtual = ttheta/2``
+    # (which makes ``VirtualBisectConstraint.evaluate`` return 0);
+    # ``eulerian_to_kappa`` returns the candidate selected by the
+    # polish ``branch`` (+1 or -1).
+    ttheta = 22.20619307666478  # 2θ for (0,1,0) on cubic a=4 at λ=1.5406
+
+    def _fake_kappa_to_eulerian(komega, kappa, kphi, alpha_deg=0.0):
+        return (ttheta / 2.0, 0.0, 0.0)
+
+    def _fake_eulerian_to_kappa(omega, chi, phi, alpha_deg=0.0, branch=+1):
+        triple = candidate_a if branch == +1 else candidate_b
+        return (triple["komega"], triple["kappa"], triple["kphi"])
+
+    # Force the residual safety check (line 1024-1027) to always pass
+    # by returning the target Q_phi exactly.
+    def _fake_a2phi(geometry, **angles):
+        return np.asarray(_fake_a2phi.target, dtype=float)
+
+    _fake_a2phi.target = g.sample.UB @ np.array([0.0, 1.0, 0.0])
+
+    # Limits-check stub: accept candidate_a, reject candidate_b.
+    # Rejecting the second drives the line-1041 ``continue`` path.
+    def _fake_check_limits(geometry, angles):
+        return abs(angles.get("kphi", 0.0) - candidate_b["kphi"]) > 1e-6
+
+    monkeypatch.setattr(kmod, "solve_kappa_virtual", _fake_solve_kappa_virtual)
+    monkeypatch.setattr(kmod, "kappa_to_eulerian", _fake_kappa_to_eulerian)
+    monkeypatch.setattr(kmod, "eulerian_to_kappa", _fake_eulerian_to_kappa)
+    monkeypatch.setattr(omod, "angles_to_phi_vector", _fake_a2phi)
+    monkeypatch.setattr(fmod, "_check_limits", _fake_check_limits)
+
+    sols = g.forward(0, 1, 0)
+
+    # Exactly one solution survives: candidate_a passes limits;
+    # candidate_b is dropped by the limits stub (line 1041).
+    # Both candidates are evaluated by the dedup loop, which traverses
+    # without finding a match (branch 1032 -> 1031).
+    assert len(sols) == 1
+    sol = sols[0]
+    assert sol["komega"] == pytest.approx(candidate_a["komega"])
+    assert sol["kappa"] == pytest.approx(candidate_a["kappa"])
+    assert sol["kphi"] == pytest.approx(candidate_a["kphi"])
