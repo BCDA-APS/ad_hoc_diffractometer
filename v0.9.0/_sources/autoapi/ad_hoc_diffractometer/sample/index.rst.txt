@@ -1,0 +1,171 @@
+sample
+======
+
+.. py:module:: ad_hoc_diffractometer.sample
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.sample``
+
+   A Sample bundles together everything that is specific to one crystal
+   mounted on the diffractometer:
+
+     - a name (also used as the dict key in AdHocDiffractometer.samples)
+     - a Lattice (crystal structure → B matrix)
+     - a ReflectionList (geometry-specific orienting reflections)
+     - U and UB matrices (orientation, computed later)
+
+   A SampleDict is a guarded ordered dict that:
+     - only accepts Sample values (no None, no arbitrary objects)
+     - prevents removing or replacing the currently active sample unless a
+       different sample has first been selected as active
+
+   The diffractometer owns a SampleDict and keeps one sample active.
+   All reflection operations via AdHocDiffractometer.add_reflection()
+   target the active sample's ReflectionList.
+
+   Typical usage::
+
+       g = psic()
+       g.sample                        # -> Sample(name='test', ...)
+       g.samples                       # -> SampleDict with 'test'
+       g.add_sample("silicon", Lattice(a=5.4310))
+       g.sample = "silicon"            # set active sample by name
+       g.add_reflection("r1", hkl=(1,1,1), angles={...})  # -> silicon's reflections
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.sample.Sample
+   ad_hoc_diffractometer.sample.SampleDict
+
+
+Module Contents
+---------------
+
+.. py:class:: Sample(name: str, lattice: ~ad_hoc_diffractometer.lattice.Lattice, reflections: ~ad_hoc_diffractometer.reflection.ReflectionList, U: ~numpy.ndarray | None = None, UB: ~numpy.ndarray | None = None, parent=None)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.sample.Sample``
+
+
+   One crystal sample mounted on a diffractometer.
+
+   :param name: Unique label, matching the key in ``AdHocDiffractometer.samples``.
+   :type name: str
+   :param lattice: Crystal lattice; provides the B matrix.
+   :type lattice: Lattice
+   :param reflections: Geometry-specific reflection collection.  Must be constructed
+                       with the owning geometry's stage names as ``valid_stages``.
+   :type reflections: ReflectionList
+   :param U: 3×3 crystal orientation matrix.  None until computed.
+   :type U: numpy.ndarray or None
+   :param UB: 3×3 UB = U @ B matrix.  None until computed.
+   :type UB: numpy.ndarray or None
+
+   .. rubric:: Notes
+
+   U and UB are set by the U/UB computation routines.  They are stored
+   here so that each sample carries its own orientation independently.
+
+
+   .. py:attribute:: U
+      :value: None
+
+
+
+   .. py:attribute:: UB
+      :value: None
+
+
+
+   .. py:method:: from_dict(d: dict, parent=None) -> Sample
+      :classmethod:
+
+
+      Reconstruct a :class:`Sample` from a dict produced by :meth:`to_dict`.
+
+      :param d: Must contain ``"name"``, ``"lattice"``, ``"reflections"``.
+                ``"U"`` and ``"UB"`` are optional (default ``None``).
+      :type d: dict
+      :param parent: Geometry to attach as the parent back-reference.
+      :type parent: AdHocDiffractometer or None
+
+      :rtype: Sample
+
+
+
+   .. py:attribute:: lattice
+
+
+   .. py:attribute:: name
+
+
+   .. py:attribute:: parent
+      :value: None
+
+
+
+   .. py:attribute:: reflections
+
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable ``dict`` representing this sample.
+
+      :returns: Keys: ``"name"`` (str), ``"lattice"`` (lattice dict),
+                ``"reflections"`` (reflection-list dict), ``"U"`` (3×3 list or
+                None), ``"UB"`` (3×3 list or None).
+      :rtype: dict
+
+
+
+.. py:class:: SampleDict(active_ref: list[str])
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.sample.SampleDict``
+
+
+   Guarded ordered dict of Sample objects.
+
+   Enforces two invariants:
+     1. Every value must be a Sample instance — no None, no arbitrary objects.
+     2. The currently active sample cannot be removed or replaced.
+
+   The active sample name is tracked via a reference to a one-element list
+   ``[active_name]`` shared with the owning AdHocDiffractometer, so changes
+   to the active selection are always visible here.
+
+   Direct reassignment of the underlying container
+   (``g._samples = something``) is blocked by making ``_samples`` a
+   read-only property on AdHocDiffractometer.
+
+
+   .. py:method:: _guard_active(name: str, action: str) -> None
+
+
+   .. py:method:: _guard_type(value: object) -> None
+      :staticmethod:
+
+
+
+   .. py:method:: clear() -> None
+
+
+   .. py:method:: items()
+
+
+   .. py:method:: keys()
+
+
+   .. py:method:: pop(name: str, *args) -> Sample
+
+
+   .. py:method:: values()
+
+

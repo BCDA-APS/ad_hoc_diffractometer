@@ -1,0 +1,892 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ad_hoc_diffractometer.radiation &#8212; ad_hoc_diffractometer 0.9</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=39bb1c6d"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/radiation';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.9.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.9" />
+    <meta name="docbuild:last-update" content="2026-04-28 21:41 CDT"/>
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.9</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer.radiation</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ad_hoc_diffractometer.radiation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2026 Pete R. Jemian &lt;prjemian+ad_hoc_diffractometer@gmail.com&gt;</span>
+<span class="c1"># SPDX-License-Identifier: CC-BY-4.0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">radiation.py — Wavelength, energy, and wave-number conversions.</span>
+
+<span class="sd">Provides named constants for common laboratory X-ray emission lines,</span>
+<span class="sd">standalone conversion functions for both X-rays and fixed-wavelength</span>
+<span class="sd">neutrons (reactor sources), and the ``SOURCE_TYPES`` sentinel used by</span>
+<span class="sd">:class:`AdHocDiffractometer` to select the correct energy formula.</span>
+
+<span class="sd">**Source type scope**</span>
+
+<span class="sd">This module supports two source types:</span>
+
+<span class="sd">``&quot;xray&quot;`` (default)</span>
+<span class="sd">    Photon energy: E (keV) = hc/λ = 12.39842 / λ (Å).</span>
+
+<span class="sd">``&quot;neutron&quot;``</span>
+<span class="sd">    Fixed-wavelength **reactor** neutrons only.  Energy via the de Broglie</span>
+<span class="sd">    relation: E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å).</span>
+<span class="sd">    Spallation/time-of-flight sources sweep the full spectrum with each</span>
+<span class="sd">    pulse and require a fundamentally different instrument description;</span>
+<span class="sd">    they are out of scope for this project.</span>
+
+<span class="sd">Constants</span>
+<span class="sd">---------</span>
+<span class="sd">HC_KEV_ANGSTROM : float</span>
+<span class="sd">    hc = 12.398 419 843 320 026 keV·Å.  Exact (NIST CODATA 2022).</span>
+
+<span class="sd">HC_KEV_ANGSTROM_UNCERTAINTY : float</span>
+<span class="sd">    0.0 — exactly zero.  The 2019 SI redefinition fixed both *h* and *c*</span>
+<span class="sd">    exactly, so *hc* has no uncertainty by definition.</span>
+
+<span class="sd">NEUTRON_MEV_ANGSTROM2 : float</span>
+<span class="sd">    h²/(2 m_n) = 81.804 210 235 2 meV·Å² (NIST CODATA 2022).</span>
+
+<span class="sd">NEUTRON_MEV_ANGSTROM2_UNCERTAINTY : float</span>
+<span class="sd">    0.0000000415 meV·Å² — propagated from CODATA 2022 m_n uncertainty.</span>
+
+<span class="sd">SOURCE_TYPES : tuple[str, ...]</span>
+<span class="sd">    Valid source-type strings: ``(&quot;xray&quot;, &quot;neutron&quot;)``.</span>
+
+<span class="sd">XRAY_LINES : dict[str, float]</span>
+<span class="sd">    Named X-ray emission line wavelengths in Å.</span>
+
+<span class="sd">X-ray functions</span>
+<span class="sd">---------------</span>
+<span class="sd">wavelength_to_energy(wavelength) -&gt; float</span>
+<span class="sd">    λ (Å) → E (keV) = hc/λ.</span>
+
+<span class="sd">energy_to_wavelength(energy_kev) -&gt; float</span>
+<span class="sd">    E (keV) → λ (Å) = hc/E.</span>
+
+<span class="sd">wavelength_to_wavenumber(wavelength) -&gt; float</span>
+<span class="sd">    λ (Å) → k (Å⁻¹) = 2π/λ.</span>
+
+<span class="sd">wavenumber_to_wavelength(wavenumber) -&gt; float</span>
+<span class="sd">    k (Å⁻¹) → λ (Å) = 2π/k.</span>
+
+<span class="sd">Neutron functions</span>
+<span class="sd">-----------------</span>
+<span class="sd">neutron_wavelength_to_energy(wavelength) -&gt; float</span>
+<span class="sd">    λ (Å) → E (meV) = 81.8042 / λ².</span>
+
+<span class="sd">neutron_energy_to_wavelength(energy_mev) -&gt; float</span>
+<span class="sd">    E (meV) → λ (Å) = sqrt(81.8042 / E).</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">NIST CODATA 2018 — hc = 12398.42 eV·Å = 12.39842 keV·Å</span>
+<span class="sd">NIST neutron scattering — h²/(2 m_n) = 81.8042 meV·Å²</span>
+<span class="sd">de Broglie relation — λ = h/p, E = p²/(2 m_n)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Physical constant</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Physical constants — NIST CODATA 2022 adjustment</span>
+<span class="c1"># https://physics.nist.gov/cuu/Constants/Table/allascii.txt</span>
+<span class="c1">#</span>
+<span class="c1"># HC_KEV_ANGSTROM: hc in keV·Å.</span>
+<span class="c1">#   Derived from h (exact), c (exact), e (exact) per SI 2019 redefinition.</span>
+<span class="c1">#   hc = 6.62607015e-34 J·Hz⁻¹ × 299792458 m·s⁻¹ / 1.602176634e-19 J·eV⁻¹</span>
+<span class="c1">#      = 1.239841984332003e-6 eV·m  (exact, listed in CODATA table)</span>
+<span class="c1">#      = 12.398419843320026 keV·Å  (exact — no uncertainty)</span>
+<span class="c1">#</span>
+<span class="c1"># NEUTRON_MEV_ANGSTROM2: h²/(2 m_n) in meV·Å².</span>
+<span class="c1">#   h (exact); m_n = 1.674 927 500 56 e-27 kg ± 0.000 000 000 85 e-27 kg</span>
+<span class="c1">#   CODATA 2022 relative uncertainty of m_n: 5.075e-10</span>
+<span class="c1">#   NEUTRON_MEV_ANGSTROM2_UNCERTAINTY = 0.0000000415 meV·Å²</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="n">HC_KEV_ANGSTROM</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">12.398419843320026</span>
+<span class="sd">&quot;&quot;&quot;hc = 12.398 419 843 320 026 keV·Å.</span>
+
+<span class="sd">Exact (h, c, and e are all defined SI constants since 2019).</span>
+<span class="sd">Source: NIST CODATA 2022.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">HC_KEV_ANGSTROM_UNCERTAINTY</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="sd">&quot;&quot;&quot;Uncertainty of :data:`HC_KEV_ANGSTROM` in keV·Å.</span>
+
+<span class="sd">Exactly **0.0** — not a placeholder.  The 2019 redefinition of the SI</span>
+<span class="sd">fixed the numerical values of Planck&#39;s constant *h* and the speed of light</span>
+<span class="sd">*c* exactly; their product *hc* therefore has zero uncertainty by</span>
+<span class="sd">definition.  Reference: BIPM SI Brochure, 9th edition (2019); NIST CODATA 2022.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">NEUTRON_MEV_ANGSTROM2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">81.8042102352</span>
+<span class="sd">&quot;&quot;&quot;h²/(2 m_n) = 81.804 210 235 2 meV·Å².</span>
+
+<span class="sd">Used for reactor-neutron kinetic energy via the de Broglie relation.</span>
+<span class="sd">Source: NIST CODATA 2022; m_n = 1.674 927 500 56(85) × 10⁻²⁷ kg.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">NEUTRON_MEV_ANGSTROM2_UNCERTAINTY</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0000000415</span>
+<span class="sd">&quot;&quot;&quot;Uncertainty of :data:`NEUTRON_MEV_ANGSTROM2` in meV·Å².</span>
+
+<span class="sd">Propagated from the CODATA 2022 uncertainty in the neutron mass m_n.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">SOURCE_TYPES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;xray&quot;</span><span class="p">,</span> <span class="s2">&quot;neutron&quot;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;Valid source-type strings for :attr:`AdHocDiffractometer.source_type`.</span>
+
+<span class="sd">``&quot;xray&quot;`` uses hc/λ (keV); ``&quot;neutron&quot;`` uses de Broglie h²/(2 m_n λ²) (meV).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Named X-ray emission lines (wavelengths in Å)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="n">XRAY_LINES</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Cu_Ka&quot;</span><span class="p">:</span> <span class="mf">1.54060</span><span class="p">,</span>  <span class="c1"># Cu Kα  weighted mean (2·Kα1 + Kα2) / 3</span>
+    <span class="s2">&quot;Cu_Ka1&quot;</span><span class="p">:</span> <span class="mf">1.54056</span><span class="p">,</span>  <span class="c1"># Cu Kα1</span>
+    <span class="s2">&quot;Cu_Ka2&quot;</span><span class="p">:</span> <span class="mf">1.54439</span><span class="p">,</span>  <span class="c1"># Cu Kα2</span>
+    <span class="s2">&quot;Mo_Ka&quot;</span><span class="p">:</span> <span class="mf">0.71073</span><span class="p">,</span>  <span class="c1"># Mo Kα  weighted mean</span>
+    <span class="s2">&quot;Mo_Ka1&quot;</span><span class="p">:</span> <span class="mf">0.70930</span><span class="p">,</span>  <span class="c1"># Mo Kα1</span>
+    <span class="s2">&quot;Ag_Ka&quot;</span><span class="p">:</span> <span class="mf">0.56087</span><span class="p">,</span>  <span class="c1"># Ag Kα  weighted mean</span>
+    <span class="s2">&quot;Ag_Ka1&quot;</span><span class="p">:</span> <span class="mf">0.55941</span><span class="p">,</span>  <span class="c1"># Ag Kα1</span>
+    <span class="s2">&quot;Co_Ka&quot;</span><span class="p">:</span> <span class="mf">1.79021</span><span class="p">,</span>  <span class="c1"># Co Kα  weighted mean</span>
+    <span class="s2">&quot;Co_Ka1&quot;</span><span class="p">:</span> <span class="mf">1.78897</span><span class="p">,</span>  <span class="c1"># Co Kα1</span>
+<span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Common laboratory X-ray emission line wavelengths in Å.</span>
+
+<span class="sd">Weighted means (Kα) use the standard 2:1 weighting of Kα1 and Kα2.</span>
+<span class="sd">Values from NIST X-Ray Transition Energies Database.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Conversion functions</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="wavelength_to_energy">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.wavelength_to_energy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wavelength_to_energy</span><span class="p">(</span><span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert wavelength to photon energy for X-rays.</span>
+
+<span class="sd">    E (keV) = hc / λ = 12.39842 / λ (Å)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wavelength : float</span>
+<span class="sd">        Wavelength in Å.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Photon energy in keV.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``wavelength`` ≤ 0.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.wavelength_to_energy(1.5406), 4)</span>
+<span class="sd">    8.0478</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;wavelength_to_energy(): wavelength must be &gt; 0 Å; got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">HC_KEV_ANGSTROM</span> <span class="o">/</span> <span class="n">wavelength</span></div>
+
+
+
+<div class="viewcode-block" id="energy_to_wavelength">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.energy_to_wavelength">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">energy_to_wavelength</span><span class="p">(</span><span class="n">energy_kev</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert photon energy to wavelength for X-rays.</span>
+
+<span class="sd">    λ (Å) = hc / E = 12.39842 / E (keV)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    energy_kev : float</span>
+<span class="sd">        Photon energy in keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Wavelength in Å.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``energy_kev`` ≤ 0.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.energy_to_wavelength(8.047), 4)</span>
+<span class="sd">    1.5408</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">energy_kev</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;energy_to_wavelength(): energy must be &gt; 0 keV; got </span><span class="si">{</span><span class="n">energy_kev</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">HC_KEV_ANGSTROM</span> <span class="o">/</span> <span class="n">energy_kev</span></div>
+
+
+
+<div class="viewcode-block" id="wavelength_to_wavenumber">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.wavelength_to_wavenumber">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wavelength_to_wavenumber</span><span class="p">(</span><span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert wavelength to wave number k.</span>
+
+<span class="sd">    k (Å⁻¹) = 2π / λ (Å)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wavelength : float</span>
+<span class="sd">        Wavelength in Å.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Wave number k in Å⁻¹.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``wavelength`` ≤ 0.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.wavelength_to_wavenumber(1.0), 6)</span>
+<span class="sd">    6.283185</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;wavelength_to_wavenumber(): wavelength must be &gt; 0 Å; got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavelength</span></div>
+
+
+
+<div class="viewcode-block" id="wavenumber_to_wavelength">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.wavenumber_to_wavelength">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wavenumber_to_wavelength</span><span class="p">(</span><span class="n">wavenumber</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert wave number k to wavelength.</span>
+
+<span class="sd">    λ (Å) = 2π / k (Å⁻¹)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wavenumber : float</span>
+<span class="sd">        Wave number k in Å⁻¹.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Wavelength in Å.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``wavenumber`` ≤ 0.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.wavenumber_to_wavelength(6.283185), 6)</span>
+<span class="sd">    1.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">wavenumber</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;wavenumber_to_wavelength(): wavenumber must be &gt; 0 Å⁻¹; got </span><span class="si">{</span><span class="n">wavenumber</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavenumber</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Neutron conversion functions  (de Broglie, reactor / fixed-wavelength only)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="neutron_wavelength_to_energy">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.neutron_wavelength_to_energy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">neutron_wavelength_to_energy</span><span class="p">(</span><span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert wavelength to neutron kinetic energy (de Broglie relation).</span>
+
+<span class="sd">    E (meV) = h² / (2 m_n λ²) = 81.8042 / λ² (Å)</span>
+
+<span class="sd">    Applies to **fixed-wavelength reactor neutrons** only.  Spallation</span>
+<span class="sd">    (time-of-flight) sources are out of scope for this project.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wavelength : float</span>
+<span class="sd">        Neutron wavelength in Å.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Neutron kinetic energy in meV.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``wavelength`` ≤ 0.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    wavelength_to_energy : X-ray photon energy in keV.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.neutron_wavelength_to_energy(1.8), 4)</span>
+<span class="sd">    25.2482</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;neutron_wavelength_to_energy(): wavelength must be &gt; 0 Å; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">NEUTRON_MEV_ANGSTROM2</span> <span class="o">/</span> <span class="p">(</span><span class="n">wavelength</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="neutron_energy_to_wavelength">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.neutron_energy_to_wavelength">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">neutron_energy_to_wavelength</span><span class="p">(</span><span class="n">energy_mev</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert neutron kinetic energy to wavelength (de Broglie relation).</span>
+
+<span class="sd">    λ (Å) = sqrt(h² / (2 m_n E)) = sqrt(81.8042 / E (meV))</span>
+
+<span class="sd">    Applies to **fixed-wavelength reactor neutrons** only.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    energy_mev : float</span>
+<span class="sd">        Neutron kinetic energy in meV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Neutron wavelength in Å.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``energy_mev`` ≤ 0.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; round(ahd.neutron_energy_to_wavelength(25.0), 4)</span>
+<span class="sd">    1.809</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">energy_mev</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;neutron_energy_to_wavelength(): energy must be &gt; 0 meV; got </span><span class="si">{</span><span class="n">energy_mev</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">NEUTRON_MEV_ANGSTROM2</span> <span class="o">/</span> <span class="n">energy_mev</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-04-28 21:41 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Pete Jemian.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

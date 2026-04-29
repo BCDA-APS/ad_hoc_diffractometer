@@ -1,0 +1,56 @@
+constants
+=========
+
+.. py:module:: ad_hoc_diffractometer.constants
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.constants``
+
+   These are the internal numpy representations used throughout the package.
+   The caller-facing notation (+x, -z, etc.) is handled in axes.py.
+
+   Default coordinate convention (You 1999):
+
+   - XHAT (+x) — vertical (opposite to gravitational acceleration)
+   - YHAT (+y) — longitudinal (a chosen direction in the plane perpendicular to vertical, conventionally along the nominal beam)
+   - ZHAT (+z) — transverse (completes the right-handed system: vertical × longitudinal)
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.constants.XHAT
+   ad_hoc_diffractometer.constants.YHAT
+   ad_hoc_diffractometer.constants.ZHAT
+
+
+Module Contents
+---------------
+
+.. py:data:: XHAT
+
+   Unit vector along the +x axis.
+
+   In the You (1999) convention this is the **vertical** direction
+   (opposite to gravitational acceleration).
+   In the Busing & Levy (1967) convention this is the **transverse** direction.
+
+.. py:data:: YHAT
+
+   Unit vector along the +y axis.
+
+   **Longitudinal** direction — a chosen direction in the plane perpendicular
+   to vertical, conventionally aligned with the nominal incident beam.
+   Consistent across both the You (1999) and Busing & Levy (1967) conventions.
+
+.. py:data:: ZHAT
+
+   Unit vector along the +z axis.
+
+   In the You (1999) convention this is the **transverse** direction
+   (completes the right-handed system: vertical × longitudinal).
+   In the Busing & Levy (1967) convention this is the **vertical** direction.
+
