@@ -2743,27 +2743,23 @@ def test_solve_bisecting_analytic_dedup_branch(monkeypatch):
 # ---------------------------------------------------------------------------
 
 
-def test_kappa_bisecting_post_processing_dedup_and_limits(monkeypatch):
-    """Cover the dedup-loop fall-through and limits-rejection branch
-    of the kappa bisecting wrapper.
+def test_kappa_bisecting_post_processing_limits_rejection(monkeypatch):
+    """Cover the limits-rejection branch of the kappa bisecting wrapper.
 
     After issue #241 the wrapper
     :func:`~ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual`
     is a thin shell around
     :func:`~ad_hoc_diffractometer.kappa.solve_kappa_virtual` that
-    applies cut-points, the ``_check_limits`` filter, and final
-    deduplication on ``(komega, kappa, kphi)``.  The natural solver
-    returns at most a single solution for every reachable HKL in our
-    test geometries, so this test injects two synthetic candidates by
-    monkeypatching ``solve_kappa_virtual`` and the module-level
-    helpers in the wrapper:
+    enforces the virtual-bisect ``omega = ttheta/2`` condition,
+    applies cut-points, and drops solutions outside the hardware
+    stage limits.  Issue #245 removed the unreachable Q-residual
+    recheck and the wrapper-side dedup loop (the inner solver already
+    deduplicates at 1e-6, tighter than the previous 1e-4 wrapper
+    check), so this test now covers only the surviving filters.
 
-    * the dedup loop ``for existing in solutions:`` must traverse
-      without matching either candidate against the other;
-    * the limits-rejection ``continue`` must drop one of the two.
-
-    The wrapper's residual safety check is bypassed by patching
-    ``angles_to_phi_vector`` to return the target Q exactly.
+    Two synthetic candidates are injected via a monkeypatch of
+    ``solve_kappa_virtual``; the limits stub accepts one and rejects
+    the other.
 
     Validates the geometry-aware infrastructure introduced by issue
     #241; the legacy Walko ``kappa_to_eulerian`` /
@@ -2772,33 +2768,22 @@ def test_kappa_bisecting_post_processing_dedup_and_limits(monkeypatch):
     """
     from ad_hoc_diffractometer import forward as fmod
     from ad_hoc_diffractometer import kappa as kmod
-    from ad_hoc_diffractometer import orientation as omod
 
     g = _setup_cubic(kappa4cv, a=4.0)
     assert g.mode_name == "bisecting"
 
-    # Two distinct, non-duplicate candidate motor triples.  They differ
-    # by far more than the 1e-4 dedup tolerance, so the dedup loop
-    # iterates without finding a match.
+    # Two distinct candidate motor triples.
     candidate_a = {"komega": 10.0, "kappa": 5.0, "kphi": 30.0}
     candidate_b = {"komega": 20.0, "kappa": -5.0, "kphi": 60.0}
 
     def _fake_solve_kappa_virtual(geometry, Q_phi, ttheta_deg, mode):
         return [dict(candidate_a), dict(candidate_b)]
 
-    # The wrapper uses ``angles_to_phi_vector`` for its residual
-    # safety check.  Force it to return the target Q exactly.
-    def _fake_a2phi(geometry, **angles):
-        return np.asarray(_fake_a2phi.target, dtype=float)
-
-    _fake_a2phi.target = g.sample.UB @ np.array([0.0, 1.0, 0.0])
-
     # Limits-check stub: accept candidate_a, reject candidate_b.
     def _fake_check_limits(geometry, angles):
         return abs(angles.get("kphi", 0.0) - candidate_b["kphi"]) > 1e-6
 
     monkeypatch.setattr(kmod, "solve_kappa_virtual", _fake_solve_kappa_virtual)
-    monkeypatch.setattr(omod, "angles_to_phi_vector", _fake_a2phi)
     monkeypatch.setattr(fmod, "_check_limits", _fake_check_limits)
 
     # The wrapper validates virtual omega against ttheta/2 by inverting
