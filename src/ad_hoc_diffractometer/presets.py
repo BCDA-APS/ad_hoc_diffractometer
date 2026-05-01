@@ -83,9 +83,25 @@ or the geometry uses a non-standard detector arrangement (zaxis, s2d2, fivec).
     fourcv  (vertical   scattering plane) is the synchrotron convention.
     kappa4ch and kappa4cv follow the same convention as fourch and fourcv.
 
-Kappa angle (alpha) convention (Walko 2016; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):
-    The kappa axis lies in the vertical-transverse plane, tilted alpha degrees
-    from the vertical axis toward the transverse axis.  Typical value: 50 deg.
+Kappa angle (alpha) convention (Walko 2016 Fig. 3; Wyckoff 1985 Fig. 2(b);
+Thorkildsen 2006 Table 1; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):
+    The kappa axis is tilted alpha degrees from the omega axis toward an
+    "up" direction (the equivalent-Eulerian chi direction) in the plane
+    containing both.  Per-preset:
+        kappa4cv: kappa in the transverse-vertical plane, between +T and +V
+        kappa4ch: kappa in the vertical-longitudinal plane, between +V and +L
+        kappa6c:  same as kappa4cv (mounted on top of mu and nu)
+    Typical value: alpha = 50 deg.
+
+Handedness convention:
+    These presets follow Walko (2016) and encode omega/kappa/phi/2theta as
+    *left-handed* about their respective signed-axis vectors (e.g.
+    ``-TRANSVERSE`` for kappa4cv komega).  ITC Vol. C Sec. 2.2.6.2 (2006)
+    instead specifies the standard signs of omega/chi/phi as right-handed
+    (only 2theta is left-handed in Hamilton's choice).  Either convention
+    is internally consistent; users who prefer the ITC convention can
+    construct their own geometry by negating the relevant Stage axis
+    vectors.  See ``factories.py`` for how to build a custom geometry.
 
 Walko (2016) designations:
     S3D1      fourcv, fourch, kappa4cv, kappa4ch
@@ -104,8 +120,15 @@ References
 * K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) — s2d2
 * H. You, J. Appl. Cryst. 32, 614-623 (1999)
   DOI:10.1107/S0021889899001223 — psic
-* ITC Vol. C, Sec. 2.2.6 (2006)
-  DOI:10.1107/97809553602060000577 — kappa
+* ITC Vol. C, Sec. 2.2.6 (2006), p. 36
+  DOI:10.1107/97809553602060000577 — kappa goniostat;
+  cites Wyckoff (1985, p. 334) for the schematic picture and
+  states "the κ axis is inclined at 50° to the ω axis".
+* H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
+  kappa diffractometer, Fig. 2(b) on p. 334
+* G. Thorkildsen, H.B. Larsen & J.A. Beukes,
+  J. Appl. Cryst. 39, 151-157 (2006) — three-circle goniostat
+  angle calculations, Table 1 (kappa axes)
 * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — kappa, zaxis, s2d2, fivec
 """
 
@@ -676,9 +699,9 @@ def kappa4cv(
 
     Sample stack (floor first):
         komega : transverse, left-handed
-        kappa  : tilted,     kappa_axis_from_eulerian(-TRANSVERSE,
-                                                     +LONGITUDINAL,
-                                                     alpha), right-handed
+        kappa  : tilted in the transverse-vertical plane, between +T
+                 and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
+                 Thorkildsen 2006 Table 1).
         kphi   : transverse, left-handed
 
     Detector (floor, mechanically independent):
@@ -686,23 +709,36 @@ def kappa4cv(
 
     komega and ttheta share the same transverse axis; mechanically independent.
 
+    Handedness note: this preset encodes omega/kphi/2theta as left-handed
+    about transverse, following Walko (2016).  ITC Vol. C Sec. 2.2.6.2
+    (2006) prefers a right-handed sign convention for omega/chi/phi.
+    The two conventions are equivalent up to motor-angle sign flips;
+    either yields the same physical orientations.  See the module
+    docstring for further discussion.
+
     Parameters
     ----------
     alpha_deg : float
         Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
 
-    References: D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
-                W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-                ITC Vol. C, Sec. 2.2.6 (2006).
+    References:
+        D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
+        G. Thorkildsen, H.B. Larsen & J.A. Beukes,
+            J. Appl. Cryst. 39, 151-157 (2006) — Table 1, eqn (3).
+        W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+        ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+            Wyckoff (1985, p. 334) for the schematic picture.
     """
     TRANSVERSE = basis["transverse"]
-    LONGITUDINAL = basis["longitudinal"]
-    # Kappa axis derived from the actual outer (komega) axis and the
-    # equivalent Eulerian chi axis — see kappa_axis_from_eulerian and
-    # issue #241.  The historic axes.kappa_axis() helper assumes
-    # n_komega = +vertical and so is wrong for kappa4cv (n_komega =
-    # -transverse).
-    kax = kappa_axis_from_eulerian(-TRANSVERSE, +LONGITUDINAL, alpha_deg)
+    VERTICAL = basis["vertical"]
+    # Kappa axis per Walko (2016) Fig. 3 and Thorkildsen et al. (2006)
+    # Table 1: the kappa arm lies in the transverse-vertical plane,
+    # tilted ``alpha_deg`` from the (unsigned) transverse direction
+    # toward the (unsigned) vertical direction.  See issue #252.
+    # Note: omega itself is left-handed about transverse (encoded as
+    # ``-TRANSVERSE`` in the Stage line below); the kappa arm extends
+    # into the +T+V quadrant regardless of the omega-handedness sign.
+    kax = kappa_axis_from_eulerian(+TRANSVERSE, +VERTICAL, alpha_deg)
     stages = [
         Stage("komega", -TRANSVERSE, parent=None, role="sample"),
         Stage("kappa", kax, parent="komega", role="sample"),
@@ -720,7 +756,7 @@ def kappa4cv(
         n_komega=-TRANSVERSE,
         n_kappa=kax,
         n_kphi=-TRANSVERSE,
-        n_chi_eq=+LONGITUDINAL,
+        n_chi_eq=+VERTICAL,
     )
     modes = {
         "bisecting": ConstraintSet(
@@ -786,9 +822,8 @@ def kappa4ch(
 
     Sample stack (floor first):
         komega : vertical, left-handed
-        kappa  : tilted,   kappa_axis_from_eulerian(-VERTICAL,
-                                                    +LONGITUDINAL,
-                                                    alpha), right-handed
+        kappa  : tilted in the vertical-longitudinal plane, between +V
+                 and +L; α from +V toward +L (per Wyckoff 1985 Fig. 2(b)).
         kphi   : vertical, left-handed
 
     Detector (floor, mechanically independent):
@@ -796,18 +831,36 @@ def kappa4ch(
 
     komega and ttheta share the same vertical axis; mechanically independent.
 
+    Handedness note: this preset encodes omega/kphi/2theta as left-handed
+    about vertical, following Walko (2016).  ITC Vol. C Sec. 2.2.6.2
+    (2006) prefers a right-handed sign convention for omega/chi/phi.
+    The two conventions are equivalent up to motor-angle sign flips;
+    either yields the same physical orientations.  See the module
+    docstring for further discussion.
+
     Parameters
     ----------
     alpha_deg : float
         Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
 
-    References: D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
-                W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-                ITC Vol. C, Sec. 2.2.6 (2006).
+    References:
+        H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
+            Fig. 2(b) on p. 334 (kappa diffractometer).
+        D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+        W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+        ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+            Wyckoff (1985, p. 334) for the schematic picture.
     """
     VERTICAL = basis["vertical"]
     LONGITUDINAL = basis["longitudinal"]
-    kax = kappa_axis_from_eulerian(-VERTICAL, +LONGITUDINAL, alpha_deg)
+    # Kappa axis per Wyckoff (1985) Fig. 2(b): the kappa arm lies in
+    # the vertical-longitudinal plane, tilted ``alpha_deg`` from the
+    # (unsigned) vertical direction toward the (unsigned) longitudinal
+    # direction (toward the X-ray source/sample).  See issue #252.
+    # Note: omega itself is left-handed about vertical (encoded as
+    # ``-VERTICAL`` in the Stage line below); the kappa arm extends
+    # into the +V+L quadrant regardless of the omega-handedness sign.
+    kax = kappa_axis_from_eulerian(+VERTICAL, +LONGITUDINAL, alpha_deg)
     stages = [
         Stage("komega", -VERTICAL, parent=None, role="sample"),
         Stage("kappa", kax, parent="komega", role="sample"),
@@ -817,8 +870,6 @@ def kappa4ch(
     # kappa4ch: 4 DOF, N-3=1 constraint needed per mode.
     # Same mode set as kappa4cv; ``bisecting`` uses VirtualBisectConstraint
     # to enforce true virtual bisecting (omega_virtual = ttheta/2).
-    # The kappa axis is tilted α from the vertical komega toward the
-    # longitudinal chi-equivalent (issue #241).
     convention = KappaPseudoAngleConvention(
         n_komega=-VERTICAL,
         n_kappa=kax,
@@ -886,9 +937,9 @@ def kappa6c(
     Sample stack (floor first):
         mu     : vertical,     right-handed   [outermost]
         komega : transverse,   left-handed
-        kappa  : tilted,       kappa_axis_from_eulerian(-TRANSVERSE,
-                                                        +LONGITUDINAL,
-                                                        alpha), right-handed
+        kappa  : tilted in the transverse-vertical plane, between +T and
+                 +V; α from +T toward +V (per Walko 2016 Fig. 3 and
+                 Thorkildsen 2006 Table 1).
         kphi   : transverse,   left-handed
 
     Detector stack (floor first):
@@ -897,19 +948,41 @@ def kappa6c(
 
     mu and nu share the same vertical axis; mechanically independent.
 
+    Handedness note: this preset encodes komega/kphi/delta as left-handed
+    about transverse and mu/nu as right-handed about vertical, following
+    Walko (2016) and You (1999) respectively.  ITC Vol. C Sec. 2.2.6.2
+    (2006) prefers a right-handed sign convention for omega/chi/phi.
+    The two conventions are equivalent up to motor-angle sign flips;
+    either yields the same physical orientations.  See the module
+    docstring for further discussion.
+
     Parameters
     ----------
     alpha_deg : float
         Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
 
-    References: D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
-                H. You, J. Appl. Cryst. 32, 614-623 (1999).
-                ITC Vol. C, Sec. 2.2.6 (2006).
+    References:
+        H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen & H. Fjellvåg,
+            J. Synchrotron Rad. 20, 644-647 (2013) — six-axis κ
+            diffractometer (KUMA6 at SNBL/ESRF).
+        G. Thorkildsen, H.B. Larsen & J.A. Beukes,
+            J. Appl. Cryst. 39, 151-157 (2006) — Table 1, eqn (3);
+            extends to additional rotation axes (§3 last paragraph).
+        D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
+        H. You, J. Appl. Cryst. 32, 614-623 (1999) — outer-axis layout
+            (psic 4S+2D) and You coordinate basis.
+        ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+            Wyckoff (1985, p. 334) for the schematic picture.
     """
     VERTICAL = basis["vertical"]
     TRANSVERSE = basis["transverse"]
-    LONGITUDINAL = basis["longitudinal"]
-    kax = kappa_axis_from_eulerian(-TRANSVERSE, +LONGITUDINAL, alpha_deg)
+    # Kappa axis per Walko (2016) Fig. 3 and Thorkildsen et al. (2006)
+    # Table 1 (same as kappa4cv): the kappa arm lies in the
+    # transverse-vertical plane, tilted ``alpha_deg`` from the
+    # (unsigned) transverse direction toward the (unsigned) vertical
+    # direction.  kappa6c = kappa4cv sample stack mounted on top of
+    # the You (1999) ``mu`` outer axis.  See issue #252.
+    kax = kappa_axis_from_eulerian(+TRANSVERSE, +VERTICAL, alpha_deg)
     stages = [
         Stage("mu", +VERTICAL, parent=None, role="sample"),
         Stage("komega", -TRANSVERSE, parent="mu", role="sample"),
@@ -925,13 +998,11 @@ def kappa6c(
     #   #241).
     # Horizontal bisect pair: mu(vertical) <-> nu(vertical) => mu = nu/2
     #   (literal motor bisect; mu is a real outer stage, not a kappa motor).
-    # The kappa axis is tilted α from the (transverse) komega toward the
-    # longitudinal chi-equivalent.
     convention = KappaPseudoAngleConvention(
         n_komega=-TRANSVERSE,
         n_kappa=kax,
         n_kphi=-TRANSVERSE,
-        n_chi_eq=+LONGITUDINAL,
+        n_chi_eq=+VERTICAL,
     )
     modes = {
         # ── Implemented (generic solver) ────────────────────────────────────
