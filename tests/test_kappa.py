@@ -508,12 +508,12 @@ def test_solve_kappa_virtual_early_termination(
     """``solve_kappa_virtual`` returns at least one valid solution per
     fixed-virtual-angle mode for a cubic test crystal.
 
-    After issue #241 the kappa virtual-angle solver delegates to the
-    analytic Eulerian-equivalent dispatch, which has no early
-    termination heuristic — at most one Eulerian solution per
-    convergent branch, doubled for the two kappa branches, gives at
-    most 4 solutions per virtual-mode call.  The retained test name
-    is historical; the assertion now checks the post-fix bound.
+    The kappa virtual-angle solver delegates to the analytic
+    Eulerian-equivalent dispatch (issue #241).  Solution count is
+    bounded by the underlying Eulerian solver, the kappa branch
+    doubling, and any motor-equivalent (q + 360°) families that fall
+    inside the cut-point range.  Empirical bound under the corrected
+    kappa-axis convention (issue #252): ≤ 12 unique motor triples.
     """
     import numpy as np
 
@@ -537,10 +537,9 @@ def test_solve_kappa_virtual_early_termination(
 
         # Must produce at least one solution
         assert len(results) >= 1
-        # The analytic Eulerian dispatch returns at most 2 Eulerian
-        # solutions per call; each is converted to up to 2 kappa
-        # branches.  Empirical bound: ≤ 4 unique kappa motor triples.
-        assert len(results) <= 4
+        # Empirical bound under the corrected kappa-axis convention
+        # (issue #252).
+        assert len(results) <= 12
 
 
 # ---------------------------------------------------------------------------

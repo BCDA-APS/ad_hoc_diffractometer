@@ -1450,13 +1450,15 @@ _KAPPA6C_STUB_MODES = {
     [
         pytest.param("bisecting_vertical", 1, 0, 0, id="bisecting_vertical-100"),
         pytest.param("bisecting_vertical", 0, 1, 0, id="bisecting_vertical-010"),
-        # bisecting_horizontal: kphi rotates about -ẑ (vertical) and the
-        # kappa arm now correctly tilts in the (vertical, longitudinal)
-        # plane (issue #241).  (1,0,0) — Q along vertical — is no longer
-        # reachable with komega=0 and delta=0; (0,0,1) — Q along
-        # transverse — is.
+        # bisecting_horizontal: kphi rotates about -x̂ (transverse) and
+        # the kappa arm tilts in the (transverse, vertical) plane per
+        # the published convention (Walko 2016 Fig. 3 / Thorkildsen
+        # 2006 Table 1; see issue #252).  (1,0,0) and (0,1,0) are not
+        # reachable with komega=0 and delta=0; (0,0,1), (0,1,1), and
+        # (1,1,0) are.
         pytest.param("bisecting_horizontal", 0, 0, 1, id="bisecting_horizontal-001"),
-        pytest.param("bisecting_horizontal", 1, 0, 1, id="bisecting_horizontal-101"),
+        pytest.param("bisecting_horizontal", 0, 1, 1, id="bisecting_horizontal-011"),
+        pytest.param("bisecting_horizontal", 1, 1, 0, id="bisecting_horizontal-110"),
         pytest.param("fixed_kphi", 0, 1, 0, id="fixed_kphi-010"),
         pytest.param("fixed_kphi", 1, 0, 0, id="fixed_kphi-100"),
         pytest.param("fixed_mu", 1, 0, 0, id="fixed_mu-100"),
@@ -1464,9 +1466,10 @@ _KAPPA6C_STUB_MODES = {
         pytest.param("fixed_nu", 1, 0, 0, id="fixed_nu-100"),
         pytest.param("fixed_nu", 0, 1, 0, id="fixed_nu-010"),
         # fixed_delta: same reachability change as bisecting_horizontal
-        # for the same reason — see issue #241.
+        # for the same reason — see issue #252.
         pytest.param("fixed_delta", 0, 0, 1, id="fixed_delta-001"),
-        pytest.param("fixed_delta", 1, 0, 1, id="fixed_delta-101"),
+        pytest.param("fixed_delta", 0, 1, 1, id="fixed_delta-011"),
+        pytest.param("fixed_delta", 1, 1, 0, id="fixed_delta-110"),
         # lifting_detector_* modes: qaz=90 out-of-plane constraint
         pytest.param("lifting_detector_mu", 1, 0, 0, id="lifting_detector_mu-100"),
         pytest.param("lifting_detector_mu", 0, 1, 0, id="lifting_detector_mu-010"),
@@ -1924,11 +1927,12 @@ def test_fixed_psi_psi_verified_in_solutions(
         pytest.param(
             "fixed_psi_vertical", 1, 0, 0, (0, 0, 1), id="kappa6c-psi_vert-100"
         ),
-        # (1,1,0) was previously here but is NOT accessible in true
-        # virtual bisecting on kappa6c at λ=1.5406, a=4 (issue #226).
-        # Use (-2,1,1) instead — non-degenerate kappa, accessible.
+        # (-2,1,1) was previously here but is NOT accessible in true
+        # virtual bisecting on kappa6c with the kappa axis in the
+        # transverse-vertical plane (issue #252).  Use (2,1,-1) instead
+        # — non-degenerate kappa (≈78°), accessible.
         pytest.param(
-            "fixed_psi_vertical", -2, 1, 1, (0, 0, 1), id="kappa6c-psi_vert-211"
+            "fixed_psi_vertical", 2, 1, -1, (0, 0, 1), id="kappa6c-psi_vert-21m1"
         ),
     ],
 )
