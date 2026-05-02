@@ -83,15 +83,22 @@ or the geometry uses a non-standard detector arrangement (zaxis, s2d2, fivec).
     fourcv  (vertical   scattering plane) is the synchrotron convention.
     kappa4ch and kappa4cv follow the same convention as fourch and fourcv.
 
-Kappa angle (alpha) convention (Walko 2016 Fig. 3; Wyckoff 1985 Fig. 2(b);
-Thorkildsen 2006 Table 1; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):
-    The kappa axis is tilted alpha degrees from the omega axis toward an
-    "up" direction (the equivalent-Eulerian chi direction) in the plane
-    containing both.  Per-preset:
-        kappa4cv: kappa in the transverse-vertical plane, between +T and +V
-        kappa4ch: kappa in the vertical-longitudinal plane, between +V and +L
-        kappa6c:  same as kappa4cv (mounted on top of mu and nu)
-    Typical value: alpha = 50 deg.
+Kappa angle (alpha) convention
+(Walko 2016 Fig. 3; Wyckoff 1985 Fig. 2(b); Thorkildsen 2006 Table 1;
+Enraf-Nonius; ITC Vol. C Sec. 2.2.6):
+The kappa axis is inclined by alpha degrees from the omega axis,
+lying in the plane that contains both omega and the equivalent-
+Eulerian chi axis, and tilted from omega toward that chi direction.
+Per preset (with omega and chi-equivalent shown as physical
+basis-direction lines, ignoring sign of handedness):
+
+- kappa4cv: omega along transverse, chi-eq along vertical;
+  kappa lies in the T-V plane between +T and +V.
+- kappa4ch: omega along vertical, chi-eq along longitudinal;
+  kappa lies in the V-L plane between +V and +L.
+- kappa6c:  same as kappa4cv (mounted on top of mu and nu).
+
+Typical value: alpha = 50 deg.
 
 Handedness convention:
     These presets follow Walko (2016) and encode omega/kappa/phi/2theta as
@@ -698,14 +705,16 @@ def kappa4cv(
     Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
 
     Sample stack (floor first):
-        komega : transverse, left-handed
-        kappa  : tilted in the transverse-vertical plane, between +T
-                 and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
-                 Thorkildsen 2006 Table 1).
-        kphi   : transverse, left-handed
+
+    - ``komega`` — transverse, left-handed
+    - ``kappa`` — tilted in the transverse-vertical plane, between +T
+      and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
+      Thorkildsen 2006 Table 1).
+    - ``kphi`` — transverse, left-handed
 
     Detector (floor, mechanically independent):
-        ttheta : transverse, left-handed
+
+    - ``ttheta`` — transverse, left-handed
 
     komega and ttheta share the same transverse axis; mechanically independent.
 
@@ -721,13 +730,14 @@ def kappa4cv(
     alpha_deg : float
         Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
 
-    References:
-        D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
-        G. Thorkildsen, H.B. Larsen & J.A. Beukes,
-            J. Appl. Cryst. 39, 151-157 (2006) — Table 1, eqn (3).
-        W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-        ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
-            Wyckoff (1985, p. 334) for the schematic picture.
+    References
+    ----------
+    * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
+    * G. Thorkildsen, H.B. Larsen & J.A. Beukes, J. Appl. Cryst. 39,
+      151-157 (2006) — Table 1, eqn (3).
+    * W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+    * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+      Wyckoff (1985, p. 334) for the schematic picture.
     """
     TRANSVERSE = basis["transverse"]
     VERTICAL = basis["vertical"]
@@ -821,13 +831,15 @@ def kappa4ch(
     Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
 
     Sample stack (floor first):
-        komega : vertical, left-handed
-        kappa  : tilted in the vertical-longitudinal plane, between +V
-                 and +L; α from +V toward +L (per Wyckoff 1985 Fig. 2(b)).
-        kphi   : vertical, left-handed
+
+    - ``komega`` — vertical, left-handed
+    - ``kappa`` — tilted in the vertical-longitudinal plane, between +V
+      and +L; α from +V toward +L (per Wyckoff 1985 Fig. 2(b)).
+    - ``kphi`` — vertical, left-handed
 
     Detector (floor, mechanically independent):
-        ttheta : vertical, left-handed
+
+    - ``ttheta`` — vertical, left-handed
 
     komega and ttheta share the same vertical axis; mechanically independent.
 
@@ -843,13 +855,14 @@ def kappa4ch(
     alpha_deg : float
         Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
 
-    References:
-        H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
-            Fig. 2(b) on p. 334 (kappa diffractometer).
-        D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
-        W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-        ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
-            Wyckoff (1985, p. 334) for the schematic picture.
+    References
+    ----------
+    * H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
+      Fig. 2(b) on p. 334 (kappa diffractometer).
+    * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+    * W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+    * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+      Wyckoff (1985, p. 334) for the schematic picture.
     """
     VERTICAL = basis["vertical"]
     LONGITUDINAL = basis["longitudinal"]
@@ -935,16 +948,18 @@ def kappa6c(
     Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
 
     Sample stack (floor first):
-        mu     : vertical,     right-handed   [outermost]
-        komega : transverse,   left-handed
-        kappa  : tilted in the transverse-vertical plane, between +T and
-                 +V; α from +T toward +V (per Walko 2016 Fig. 3 and
-                 Thorkildsen 2006 Table 1).
-        kphi   : transverse,   left-handed
+
+    - ``mu`` — vertical, right-handed (outermost)
+    - ``komega`` — transverse, left-handed
+    - ``kappa`` — tilted in the transverse-vertical plane, between +T
+      and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
+      Thorkildsen 2006 Table 1).
+    - ``kphi`` — transverse, left-handed
 
     Detector stack (floor first):
-        nu     : vertical,     right-handed
-        delta  : transverse,   left-handed
+
+    - ``nu`` — vertical, right-handed
+    - ``delta`` — transverse, left-handed
 
     mu and nu share the same vertical axis; mechanically independent.
 
@@ -961,18 +976,19 @@ def kappa6c(
     alpha_deg : float
         Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
 
-    References:
-        H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen & H. Fjellvåg,
-            J. Synchrotron Rad. 20, 644-647 (2013) — six-axis κ
-            diffractometer (KUMA6 at SNBL/ESRF).
-        G. Thorkildsen, H.B. Larsen & J.A. Beukes,
-            J. Appl. Cryst. 39, 151-157 (2006) — Table 1, eqn (3);
-            extends to additional rotation axes (§3 last paragraph).
-        D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
-        H. You, J. Appl. Cryst. 32, 614-623 (1999) — outer-axis layout
-            (psic 4S+2D) and You coordinate basis.
-        ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
-            Wyckoff (1985, p. 334) for the schematic picture.
+    References
+    ----------
+    * H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen & H. Fjellvåg,
+      J. Synchrotron Rad. 20, 644-647 (2013) — six-axis κ
+      diffractometer (KUMA6 at SNBL/ESRF).
+    * G. Thorkildsen, H.B. Larsen & J.A. Beukes, J. Appl. Cryst. 39,
+      151-157 (2006) — Table 1, eqn (3); extends to additional
+      rotation axes (§3 last paragraph).
+    * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
+    * H. You, J. Appl. Cryst. 32, 614-623 (1999) — outer-axis layout
+      (psic 4S+2D) and You coordinate basis.
+    * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+      Wyckoff (1985, p. 334) for the schematic picture.
     """
     VERTICAL = basis["vertical"]
     TRANSVERSE = basis["transverse"]
