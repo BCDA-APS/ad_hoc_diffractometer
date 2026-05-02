@@ -1,0 +1,567 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "```{note}\nThis page was generated from a Jupyter notebook.  [Download the notebook](fourcv_alignment_howto.ipynb) to run it locally — it requires only `ad_hoc_diffractometer`, NumPy, and Matplotlib.\n```\n\n# Align a Four-Circle Diffractometer (`fourcv`)\n\nThis notebook is a **how-to guide** for aligning a crystal on a four-circle\nEulerian diffractometer in the **vertical scattering plane**\n([`ahd.presets.fourcv`](../geometries/fourcv.md)),\nthe synchrotron convention where ω and 2θ rotate about the transverse axis.\n\nThe example uses **sapphire (α-Al₂O₃)** with the (001) axis pre-aligned\nalong the φ-axis — a common starting configuration at synchrotron beamlines.\nThe motor-angle values are drawn from a real alignment session at APS\n7-ID-C (December 2020, private communication, D.A. Walko).\n\n## Alignment steps\n\n1. Create the geometry and set the wavelength\n2. Set the sample lattice constants\n3. Predict Bragg peak positions\n4. Enter the primary orienting reflection (calculated position)\n5. Enter the secondary orienting reflection (geometric placeholder)\n6. Compute the orientation matrix\n7. Verify the orientation — direction check\n8. Scan to find the peak; update the primary reflection with the measured position\n9. Re-compute and display the refined orientation\n\n---\n\n## Before you begin\n\nThis guide uses `ahd.presets.fourcv()` — the synchrotron four-circle with ω and 2θ\nboth rotating about the transverse axis (vertical scattering plane).\nUsers familiar with SPEC will recognise the workflow: the steps parallel\nSPEC's `setor0`/`setor0`, `pa`, `ca`, and `wh` commands,\nbut everything runs in pure Python with no hardware connection.\n\n---\n\n## References\n\n- W.R. Busing & H.A. Levy, *Acta Cryst.* **22**, 457–464 (1967)\n- D.A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016)\n- D.A. Walko, private communication (December 2020) —\n  APS 7-ID-C sapphire alignment session\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Step 0 — Imports"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import math\n",
+    "\n",
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
+    "\n",
+    "import ad_hoc_diffractometer as ahd\n",
+    "\n",
+    "%matplotlib inline\n",
+    "plt.rcParams[\"figure.figsize\"] = (8, 4)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "\n",
+    "## Step 1 — Create the geometry and set the wavelength\n",
+    "\n",
+    "`ahd.presets.fourcv()` creates a four-circle Eulerian diffractometer in the\n",
+    "**vertical scattering plane** (synchrotron convention).  ω and 2θ both\n",
+    "rotate about the **transverse** axis (−x in the Busing & Levy coordinate\n",
+    "system), so the scattering plane is vertical.\n",
+    "\n",
+    "The four stages and their rotation axes in the BL1967 basis\n",
+    "(transverse = +x, longitudinal = +y, vertical = +z):\n",
+    "\n",
+    "| Stage | Axis | Handedness | Role |\n",
+    "|-------|------|------------|------|\n",
+    "| `omega` | transverse | left-handed (−x) | sample |\n",
+    "| `chi` | longitudinal | right-handed (+y) | sample |\n",
+    "| `phi` | transverse | left-handed (−x) | sample |\n",
+    "| `ttheta` | transverse | left-handed (−x) | detector |"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "g = ahd.presets.fourcv()\n",
+    "\n",
+    "# Wavelength from the beamline monochromator at APS 7-ID-C\n",
+    "g.wavelength = 1.5498  # Angstroms\n",
+    "\n",
+    "print(f\"Geometry  : {g.name}\")\n",
+    "print(f\"Wavelength: {g.wavelength} Å\")\n",
+    "print(f\"Description: {g.description}\")\n",
+    "print()\n",
+    "print(\"Sample stages:\")\n",
+    "for s in g.sample_stages:\n",
+    "    print(f\"  {s.name:8s}  axis = {ahd.axes.axis_label(s.axis)}\")\n",
+    "print(\"Detector stages:\")\n",
+    "for s in g.detector_stages:\n",
+    "    print(f\"  {s.name:8s}  axis = {ahd.axes.axis_label(s.axis)}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "\n",
+    "## Step 2 — Set the sample lattice constants\n",
+    "\n",
+    "Sapphire (α-Al₂O₃) is trigonal / hexagonal:\n",
+    "\n",
+    "| Parameter | Value |\n",
+    "|-----------|-------|\n",
+    "| a = b | 4.785 Å |\n",
+    "| c | 12.991 Å |\n",
+    "| α = β | 90° |\n",
+    "| γ | 120° |\n",
+    "\n",
+    "`ahd.Lattice` deduces the crystal system automatically.\n",
+    "Supplying `a`, `c`, and `gamma=120` is sufficient for a hexagonal lattice."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Hexagonal lattice: a, c, and gamma=120 are sufficient.\n# ahd.Lattice deduces the crystal system automatically.\ng.sample.lattice = ahd.Lattice(a=4.785, c=12.991, gamma=120.0)\n\nprint(g.sample.lattice)\nprint()\nprint(\"B matrix (reciprocal lattice, Å⁻¹, BL1967 convention with 2π):\")\nprint(np.round(g.sample.lattice.B, 6))\nprint()\nprint(\"Reciprocal lattice parameters (a*, b*, c* = norms of the columns of B):\")\nb1, b2, b3 = g.sample.lattice.reciprocal_lattice_vectors\nprint(f\"  a* = {np.linalg.norm(b1):.6f} Å⁻¹  (SPEC #G1: 1.516238 Å⁻¹)\")\nprint(f\"  b* = {np.linalg.norm(b2):.6f} Å⁻¹\")\nprint(f\"  c* = {np.linalg.norm(b3):.6f} Å⁻¹  (SPEC #G1: 0.483657 Å⁻¹)\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The reciprocal lattice parameters include the 2π factor\n(a* = 1.516 Å⁻¹, c* = 0.484 Å⁻¹), consistent with the\nBusing & Levy (1967) and SPEC `pa` convention."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n\n## Step 3 — Predict Bragg peak positions\n\nBefore moving any motors, use Bragg's law to predict where each reflection\nshould appear:\n\n```{math}\nd_{hkl} = \\frac{2\\pi}{|\\mathbf{B}\\,\\mathbf{h}|}\n\\qquad\n2\\theta = 2\\arcsin\\left(\\frac{\\lambda}{2\\,d_{hkl}}\\right)\n```\n\nThe **B** matrix follows the Busing & Levy (1967) and SPEC convention:\nit includes the 2π factor, so `|B @ h| = 2π/d_hkl` (in Å⁻¹).\nThis is consistent with `UB @ hkl = Q_phi` where\n`|Q_phi| = (2π/λ) · 2 sin θ`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def bragg_angles(geometry, h, k, l):\n",
+    "    \"\"\"\n",
+    "    Return (d_hkl in Å, 2theta in degrees) for reflection (h, k, l).\n",
+    "\n",
+    "    Uses Bragg's law: λ = 2 d sin θ.\n",
+    "    The B matrix includes the 2π factor (BL1967 convention), so\n",
+    "    d = 2π / |B @ hkl|.\n",
+    "    Returns (d, None) if the reflection is not reachable at the current\n",
+    "    wavelength (sin θ > 1).\n",
+    "    \"\"\"\n",
+    "    B = geometry.sample.lattice.B\n",
+    "    q_vec = B @ np.array([h, k, l], dtype=float)\n",
+    "    q_mag = np.linalg.norm(q_vec)   # = 2π/d_hkl  (Å⁻¹, BL1967)\n",
+    "    d = 2.0 * math.pi / q_mag\n",
+    "    sin_theta = geometry.wavelength / (2.0 * d)\n",
+    "    if sin_theta > 1.0:\n",
+    "        return d, None\n",
+    "    tth = 2.0 * math.degrees(math.asin(sin_theta))\n",
+    "    return d, tth\n",
+    "\n",
+    "\n",
+    "reflections_to_check = [(0, 0, 6), (1, 0, 0), (1, 0, 4), (0, 0, 12)]\n",
+    "\n",
+    "print(f\"{'hkl':>12s}  {'d (Å)':>8s}  {'2θ (deg)':>10s}\")\n",
+    "print(\"-\" * 36)\n",
+    "for hkl in reflections_to_check:\n",
+    "    d, tth = bragg_angles(g, *hkl)\n",
+    "    tth_str = f\"{tth:10.4f}\" if tth is not None else \"  unreachable\"\n",
+    "    print(f\"({hkl[0]:1d} {hkl[1]:1d} {hkl[2]:2d})         {d:8.4f}  {tth_str}\")\n",
+    "\n",
+    "print()\n",
+    "_, tth_006 = bragg_angles(g, 0, 0, 6)\n",
+    "print(f\"SPEC 'ca 0 0 6' prediction: 2θ = 41.9419°\")\n",
+    "print(f\"Our  Bragg prediction:      2θ = {tth_006:.4f}°\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "With the (001) axis pre-aligned along the φ-axis, the (006) reflection\n",
+    "sits in the vertical scattering plane when **χ = 90°** (tilting the\n",
+    "c-axis into the plane).  In bisecting mode (ω = 2θ/2), the predicted\n",
+    "position is:\n",
+    "\n",
+    "```\n",
+    "2θ ≈ 41.94°     ω ≈ 20.97°     χ = 90°     φ = 0°\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n\n## Step 4 — Enter the primary orienting reflection (calculated position)\n\nThe **primary orienting reflection** (or1) is entered at its *calculated*\nposition before any scanning.  This gives the package enough information\nto compute a provisional orientation matrix.\n\nThe primary reflection is recorded at its calculated position\n(equivalent to SPEC's `setor0`):\n\n```\nhkl = (0, 0, 6)\n2θ = 41.9419°   ω = 20.97°   χ = 90°   φ = 0°\n```\n\nNote that χ = **+90°** is used (not the −90° that `g.forward()` may\nreturn as its first solution).  With the c-axis nominally along the\nφ-axis, χ = +90° brings c* into the vertical scattering plane without\nrequiring φ to move to −90°."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Calculated position of (006) — χ = +90° to bring c-axis into scattering plane\nor1_angles_calc = {\n    \"ttheta\": 41.9419,\n    \"omega\":  20.97,\n    \"chi\":    90.0,\n    \"phi\":    0.0,\n}\n\ng.add_reflection(\n    \"or1\",\n    hkl=(0, 0, 6),\n    angles=or1_angles_calc,\n    wavelength=g.wavelength,\n)\ng.sample.reflections.setor0(\"or1\")\n\nr = g.sample.reflections[\"or1\"]\nprint(f\"or1  hkl    : {r.hkl}\")\nprint(f\"     angles : {r.angles}\")\nprint(f\"     lambda : {r.wavelength} Å\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n\n## Step 5 — Enter the secondary orienting reflection (geometric placeholder)\n\nA single reflection constrains only one reciprocal-lattice direction.  A\nsecond, non-parallel reflection is needed to fully define the crystal\norientation.\n\nA second reflection 90° away in φ is recorded as a geometric placeholder\n(equivalent to SPEC's `setor0`):\n\n```\nhkl = (1, 0, 0)\n2θ = 60°   θ = 30°   χ = 0°   φ = 0°\n```\n\n> **Accommodation**: `2θ = 60°` is **not** the Bragg angle for (1, 0, 0)\n> of sapphire at λ = 1.5498 Å.  The true Bragg angle is 2θ ≈ 18.64°.\n> SPEC accepts this geometric placeholder because the UB algorithm uses\n> only the **direction** of the scattering vector (normalized), not its\n> magnitude, to build the orientation matrix.\n>\n> `ahd.ub_from_two_reflections_bl1967` follows the same Busing & Levy\n> algorithm and therefore also accepts this placeholder.  The consequence\n> is a ~7° directional misalignment for the secondary reflection in the\n> direction check (Step 7) — expected and acceptable at this stage."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Geometric placeholder for the secondary reflection:\n# 2θ = 60° is NOT the Bragg angle for (1,0,0) of sapphire at λ = 1.5498 Å.\n# The true Bragg 2θ for (1,0,0) is ~18.64°.\n# This position is used only to define the φ-rotation plane direction.\nor2_angles = {\n    \"ttheta\": 60.0,\n    \"omega\":  30.0,\n    \"chi\":    0.0,\n    \"phi\":    0.0,\n}\n\n_, tth_100_true = bragg_angles(g, 1, 0, 0)\nprint(f\"True Bragg 2θ for (1,0,0) at λ={g.wavelength} Å: {tth_100_true:.4f}°\")\nprint(f\"Geometric placeholder 2θ used:                    {or2_angles['ttheta']:.4f}°\")\nprint(f\"Difference: {or2_angles['ttheta'] - tth_100_true:.4f}°  (accepted by BL1967 algorithm)\")\nprint()\n\ng.add_reflection(\n    \"or2\",\n    hkl=(1, 0, 0),\n    angles=or2_angles,\n    wavelength=g.wavelength,\n)\ng.sample.reflections.setor1(\"or2\")\n\nr = g.sample.reflections[\"or2\"]\nprint(f\"or2  hkl    : {r.hkl}\")\nprint(f\"     angles : {r.angles}\")\nprint(f\"     lambda : {r.wavelength} Å\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "\n",
+    "## Step 6 — Compute the orientation matrix\n",
+    "\n",
+    "`ahd.ub_from_two_reflections_bl1967` computes the orientation matrix **U**\n",
+    "and the combined **UB** matrix using the Busing & Levy (1967) algorithm\n",
+    "(eqs. 23–27):\n",
+    "\n",
+    "1. Compute Q_φ for each reflection from its motor angles.\n",
+    "2. Compute crystal-frame vectors: **h**_c = **B h**.\n",
+    "3. Build orthonormal triads (Gram–Schmidt) in the crystal frame (**T**_c)\n",
+    "   and the φ frame (**T**_φ).\n",
+    "4. **U** = **T**_φ **T**_c^T.\n",
+    "5. **UB** = **U** **B**."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "UB_initial = ahd.ub_from_two_reflections_bl1967(g.sample)\n",
+    "\n",
+    "print(\"UB matrix (Å⁻¹, no 2π factor):\")\n",
+    "print(np.round(UB_initial, 6))\n",
+    "print()\n",
+    "print(\"U matrix (orientation):\")\n",
+    "print(np.round(g.sample.U, 6))\n",
+    "print()\n",
+    "print(f\"det(U) = {np.linalg.det(g.sample.U):.8f}  (must be +1 for a proper rotation)\")\n",
+    "UtU = g.sample.U.T @ g.sample.U\n",
+    "print(f\"max |U^T U - I| = {np.max(np.abs(UtU - np.eye(3))):.2e}  (must be ~0 for orthonormality)\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n\n## Step 7 — Verify the orientation: direction check\n\nThe orientation matrix is correct when **UB** @ **h** points in the same\n**direction** as the scattering vector Q_φ computed from the measured\nmotor angles.  We check the cosine of the angle between the two vectors\n(both normalized to unit length):\n\n```{math}\n\\cos\\theta = \\frac{(\\mathbf{UB}\\,\\mathbf{h}) \\cdot \\mathbf{Q}_\\phi}\n{|\\mathbf{UB}\\,\\mathbf{h}|\\;|\\mathbf{Q}_\\phi|}\n```\n\ncos θ = 1 means perfect alignment; θ = 0° means no angular discrepancy.\n\n> **Expected behavior with a geometric placeholder**:  \n> The primary reflection (or1) is exact by construction — cos θ = 1.  \n> The secondary reflection (or2) has a ~7° discrepancy because its\n> motor angles (2θ = 60°) are not at the true Bragg condition for (1,0,0).\n> The orientation matrix is still valid: it correctly encodes the (006)\n> direction and the φ-rotation plane."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def direction_check(geometry, reflection_name):\n",
+    "    \"\"\"\n",
+    "    Check whether UB @ hkl is parallel to Q_phi at the recorded motor angles.\n",
+    "\n",
+    "    Prints the cosine of the angle between the two directions\n",
+    "    (1.0 = perfectly aligned, 0° angular discrepancy).\n",
+    "    \"\"\"\n",
+    "    r = geometry.sample.reflections[reflection_name]\n",
+    "    Q_phi = ahd.orientation.angles_to_phi_vector(geometry, **r.angles)\n",
+    "    UB_hkl = geometry.sample.UB @ np.array(r.hkl, dtype=float)\n",
+    "\n",
+    "    Q_hat   = Q_phi   / np.linalg.norm(Q_phi)\n",
+    "    UBh_hat = UB_hkl  / np.linalg.norm(UB_hkl)\n",
+    "    cos_ang = float(np.dot(Q_hat, UBh_hat))\n",
+    "    angle   = math.degrees(math.acos(np.clip(cos_ang, -1.0, 1.0)))\n",
+    "\n",
+    "    print(f\"  {reflection_name}  hkl={r.hkl}\")\n",
+    "    print(f\"    cos(angle) = {cos_ang:.8f}   angular discrepancy = {angle:.4f}°\")\n",
+    "\n",
+    "\n",
+    "print(\"Direction check — UB @ hkl vs Q_phi at recorded motor angles:\")\n",
+    "print()\n",
+    "direction_check(g, \"or1\")\n",
+    "print()\n",
+    "direction_check(g, \"or2\")\n",
+    "print()\n",
+    "print(\"or1 is exact by construction.\")\n",
+    "print(\"or2 has a ~7° discrepancy because 2θ=60° is not the Bragg angle\")\n",
+    "print(\"for (1,0,0) of sapphire.  This is expected for a geometric placeholder.\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n\n## Step 8 — Find the peak by scanning; update the primary reflection\n\nAt a real beamline the next steps are:\n\n1. Move motors to the predicted (006) position.\n2. Scan ω (theta) to find the peak.\n3. Scan χ to centre the peak.\n4. Scan 2θ to confirm the peak position.\n5. Enter the measured peak position as the updated primary reflection.\n\nThe data below are from the APS 7-ID-C session (private communication,\nD.A. Walko, December 2020)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Scan 1: ω scan, wide range, open slits — finds the peak near ω ≈ 20.37°\n",
+    "# (SPEC command: dscan th -1 1 50 0.1)\n",
+    "scan1_omega = np.linspace(19.97, 21.97, 51)\n",
+    "scan1_counts = np.array([\n",
+    "    328,   328,   373,   433,   445,   450,   514,   613,   725,  1118,\n",
+    "    46509, 1041,  692,   621,   466,   425,   431,   427,   351,   312,\n",
+    "    335,   282,   289,   283,   235,   257,   271,   242,   217,   204,\n",
+    "    205,   204,   210,   205,   182,   183,   207,   166,   182,   180,\n",
+    "    170,   171,   182,   159,   163,   197,   148,   166,   158,   152, 157,\n",
+    "])\n",
+    "\n",
+    "peak_omega_scan1 = scan1_omega[np.argmax(scan1_counts)]\n",
+    "\n",
+    "fig, ax = plt.subplots()\n",
+    "ax.semilogy(scan1_omega, scan1_counts, \"o-\", markersize=4)\n",
+    "ax.axvline(20.97, color=\"gray\",  ls=\":\",  label=f\"Predicted ω = 20.97°\")\n",
+    "ax.axvline(peak_omega_scan1, color=\"red\",  ls=\"--\",\n",
+    "           label=f\"Observed peak ≈ {peak_omega_scan1:.2f}°\")\n",
+    "ax.set_xlabel(\"ω (deg)\")\n",
+    "ax.set_ylabel(\"Counts (log scale)\")\n",
+    "ax.set_title(\"Scan 1 — ω scan, (006), wide slits\")\n",
+    "ax.legend()\n",
+    "plt.tight_layout()\n",
+    "plt.show()\n",
+    "\n",
+    "print(f\"Peak found at ω ≈ {peak_omega_scan1:.2f}°  (predicted: 20.97°)\")\n",
+    "print(\"0.6° discrepancy is consistent with χ ≠ 90° (c-axis slightly misaligned).\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Scan 4: χ scan, heavy attenuation — locates the true chi position\n",
+    "# (SPEC command: dscan chi -3 0 40 0.5)\n",
+    "scan4_chi = np.linspace(87.0, 90.0, 41)\n",
+    "scan4_counts = np.array([\n",
+    "     0,     2,     0,     1,     0,     0,     2,     0,     0,     1,\n",
+    "     0,     0,     2,     1,     1,     2,     1,     1,     5,    10,\n",
+    "    26,    60,   114,   179,   168,  2130, 11934, 13676, 12861, 12379,\n",
+    "    11871, 11947, 12192, 11207, 11665, 11745,  9734,  1411,   110,    60, 29,\n",
+    "])\n",
+    "\n",
+    "fig, ax = plt.subplots()\n",
+    "ax.semilogy(scan4_chi, np.maximum(scan4_counts, 1), \"o-\", markersize=4)\n",
+    "ax.axvline(90.0, color=\"gray\", ls=\":\", label=\"Nominal χ = 90.0°\")\n",
+    "ax.axvline(89.32, color=\"red\",  ls=\"--\", label=\"Centroid χ = 89.32°\")\n",
+    "ax.set_xlabel(\"χ (deg)\")\n",
+    "ax.set_ylabel(\"Counts (log scale)\")\n",
+    "ax.set_title(\"Scan 4 — χ scan, (006), heavy attenuation\")\n",
+    "ax.legend()\n",
+    "plt.tight_layout()\n",
+    "plt.show()\n",
+    "\n",
+    "chi_measured = 89.32  # SPEC centroid from the scan\n",
+    "print(f\"χ centroid = {chi_measured}°  (nominal: 90.0°,  offset: {chi_measured - 90.0:.2f}°)\")\n",
+    "print(\"The c-axis is 0.68° from the φ-axis — the crystal is slightly miscut.\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "After centering in ω, χ, and 2θ, the **measured** peak position is:\n\n```\n2θ = 41.9394°     ω = 20.3654°     χ = 89.32°     φ = 0°\n```\n\nReplace the calculated primary reflection with this measured position:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Measured peak position after scanning and centering\nor1_angles_meas = {\n    \"ttheta\": 41.9394,\n    \"omega\":  20.3654,\n    \"chi\":    89.32,\n    \"phi\":    0.0,\n}\n\n# Remove the calculated or1 and replace with the measured position\ng.sample.reflections.remove(\"or1\")\ng.add_reflection(\n    \"or1\",\n    hkl=(0, 0, 6),\n    angles=or1_angles_meas,\n    wavelength=g.wavelength,\n)\ng.sample.reflections.setor0(\"or1\")\n\nprint(\"Updated or1 (measured position):\")\nr = g.sample.reflections[\"or1\"]\nprint(f\"  hkl    : {r.hkl}\")\nprint(f\"  angles : {r.angles}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "\n",
+    "## Step 9 — Re-compute the orientation matrix and display the state\n",
+    "\n",
+    "Re-running `ub_from_two_reflections_bl1967` with the measured or1 gives a\n",
+    "refined **UB** matrix that reflects the actual crystal alignment."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "UB_refined = ahd.ub_from_two_reflections_bl1967(g.sample)\n\nprint(\"UB matrix — initial (calculated) vs refined (measured):\")\nprint(f\"{'':30s}  {'Initial':>10s}  {'Refined':>10s}\")\nlabels = [(i, j) for i in range(3) for j in range(3)]\nfor i, j in labels:\n    print(f\"  UB[{i},{j}]  {UB_initial[i,j]:12.6f}  {UB_refined[i,j]:12.6f}\")\nprint()\nprint(\"Off-diagonal terms grow slightly — consistent with the 0.68° χ offset.\")\nprint()\nnorm_initial = np.linalg.norm(UB_initial)\nnorm_refined = np.linalg.norm(UB_refined)\noff_diag_initial = np.linalg.norm(UB_initial - np.diag(np.diag(UB_initial)))\noff_diag_refined = np.linalg.norm(UB_refined - np.diag(np.diag(UB_refined)))\nprint(f\"Frobenius norm:            initial = {norm_initial:.6f}  refined = {norm_refined:.6f}\")\nprint(f\"Off-diagonal Frobenius norm: initial = {off_diag_initial:.6f}  refined = {off_diag_refined:.6f}\")\nprint(\"(A larger off-diagonal norm in the refined matrix reflects the measured χ offset.)\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Direction check after refinement\n",
+    "print(\"Direction check after entering the measured or1:\")\n",
+    "print()\n",
+    "direction_check(g, \"or1\")\n",
+    "print()\n",
+    "direction_check(g, \"or2\")\n",
+    "print()\n",
+    "print(\"or1 remains exact.\")\n",
+    "print(\"or2 still shows ~7° discrepancy — the geometric placeholder has not changed.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Set the azimuthal reference to the c-axis (conventional for surface work)\n",
+    "g.azimuthal_reference = (0, 0, 1)\n",
+    "\n",
+    "# pa() prints the full SPEC-style diffractometer status\n",
+    "g.pa(print=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Set motors to the measured (006) position and display wh()\n",
+    "for name, val in or1_angles_meas.items():\n",
+    "    g.set_angle(name, val)\n",
+    "\n",
+    "g.wh(print=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n\n## Summary\n\nThe alignment procedure in `ad_hoc_diffractometer` follows the same steps\nas a typical SPEC workflow.  The table below compares the calculated and\nmeasured (006) peak positions."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_, tth_calc = bragg_angles(g, 0, 0, 6)\n",
+    "omega_calc  = tth_calc / 2.0\n",
+    "chi_calc    = 90.0\n",
+    "\n",
+    "rows = [\n",
+    "    (\"2θ (deg)\",  tth_calc,    or1_angles_meas[\"ttheta\"]),\n",
+    "    (\"ω (deg)\",   omega_calc,  or1_angles_meas[\"omega\"]),\n",
+    "    (\"χ (deg)\",   chi_calc,    or1_angles_meas[\"chi\"]),\n",
+    "    (\"φ (deg)\",   0.0,         or1_angles_meas[\"phi\"]),\n",
+    "]\n",
+    "\n",
+    "print(f\"(006) reflection — calculated vs measured:\")\n",
+    "print(f\"  {'':10s}  {'Calculated':>12s}  {'Measured':>12s}  {'Δ':>8s}\")\n",
+    "print(\"-\" * 52)\n",
+    "for label, calc, meas in rows:\n",
+    "    delta = meas - calc\n",
+    "    print(f\"  {label:10s}  {calc:12.4f}  {meas:12.4f}  {delta:+8.4f}\")\n",
+    "\n",
+    "print()\n",
+    "print(\"The 0.68° offset in χ (c-axis tilt) causes the ~0.61° shift in ω.\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "\n",
+    "## What next?\n",
+    "\n",
+    "With the orientation matrix established, the diffractometer can:\n",
+    "\n",
+    "- **Predict other reflection positions** using `bragg_angles()` above.\n",
+    "- **Refine lattice constants** from several measured 2θ values with\n",
+    "  `ahd.refine_lattice_bl1967()` or `ahd.refine_lattice_simplex()`.\n",
+    "- **Compute the azimuthal angle ψ** with `g.psi()` once the UB matrix\n",
+    "  is fully refined (requires `g.azimuthal_reference` to be set).\n",
+    "- **Save and restore the alignment** with `g.to_dict()` / `g.from_dict()`,\n",
+    "  which serialises the full state (lattice, reflections, UB matrix,\n",
+    "  wavelength, modes, cut-points) to a JSON-compatible dict."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Predict positions of additional sapphire reflections now that the\n",
+    "# lattice constants are confirmed\n",
+    "more_reflections = [\n",
+    "    (1, 0, 4), (0, 1, 2), (1, 1, 0), (2, 0, 0), (0, 0, 12), (1, 0, 10),\n",
+    "]\n",
+    "\n",
+    "print(f\"{'hkl':>14s}  {'d (Å)':>8s}  {'2θ (deg)':>10s}\")\n",
+    "print(\"-\" * 38)\n",
+    "for hkl in more_reflections:\n",
+    "    d, tth = bragg_angles(g, *hkl)\n",
+    "    if tth is not None:\n",
+    "        print(f\"({hkl[0]:1d} {hkl[1]:1d} {hkl[2]:2d})           {d:8.4f}  {tth:10.4f}\")\n",
+    "    else:\n",
+    "        print(f\"({hkl[0]:1d} {hkl[1]:1d} {hkl[2]:2d})           {d:8.4f}  unreachable\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import json\n",
+    "\n",
+    "state = g.to_dict()\n",
+    "print(\"Keys in saved alignment state:\")\n",
+    "print([k for k in state if not k.startswith(\"_\")])\n",
+    "print()\n",
+    "print(f\"JSON-serialisable: {bool(json.dumps(state))}\")\n",
+    "print()\n",
+    "print(\"The saved state can be restored later with:\")\n",
+    "print(\"  g2 = ahd.AdHocDiffractometer.from_dict(state)\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbformat_minor": 4,
+   "pygments_lexer": "ipython3",
+   "version": "3.12.12"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

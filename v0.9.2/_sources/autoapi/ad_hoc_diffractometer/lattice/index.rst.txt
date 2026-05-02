@@ -1,0 +1,483 @@
+lattice
+=======
+
+.. py:module:: ad_hoc_diffractometer.lattice
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.lattice``
+
+   Provides:
+     - Lattice class: describes a crystal lattice with lazy-computed properties
+       for Cartesian lattice vectors, reciprocal lattice vectors, and the B matrix.
+     - lattice_vectors(): standalone function (kept for backward compatibility)
+     - reciprocal_vectors(): standalone function
+     - b_matrix(): standalone function
+
+   Based on:
+     Busing & Levy, Acta Cryst. 22, 457-464 (1967)
+     I16 Diffractometer Rotation Matrix document
+     Lecture-2-Reciprocal-lattice-notes
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.lattice.CRYSTAL_SYSTEMS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.lattice.Lattice
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.lattice._deduce_system_and_params
+   ad_hoc_diffractometer.lattice._validate_params
+   ad_hoc_diffractometer.lattice.b_matrix
+   ad_hoc_diffractometer.lattice.lattice_vectors
+   ad_hoc_diffractometer.lattice.reciprocal_vectors
+
+
+Module Contents
+---------------
+
+.. py:data:: CRYSTAL_SYSTEMS
+   :value: ['cubic', 'tetragonal', 'orthorhombic', 'hexagonal', 'trigonal', 'monoclinic', 'triclinic']
+
+
+   The seven crystal systems, derived from :data:`_SYSTEM_FREE_PARAMS`.
+
+   Membership and order are always consistent with the free-parameter table.
+
+.. py:class:: Lattice(a: float = 1.0, b: float = _UNSET, c: float = _UNSET, alpha: float = _UNSET, beta: float = _UNSET, gamma: float = _UNSET, precision: int | None = None)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice.Lattice``
+
+
+   A crystal lattice described by up to six parameters (a, b, c, α, β, γ).
+
+   The crystal system is deduced automatically from the **minimum set** of
+   parameters supplied.  Missing parameters are filled in according to the
+   symmetry constraints of the deduced system.  The default (no arguments)
+   is a cubic lattice with a = 1 Å.
+
+   .. list-table:: Minimum parameters by crystal system
+      :header-rows: 1
+      :widths: 20 50
+
+      * - System
+        - Minimum parameters required
+      * - Cubic
+        - ``a``
+      * - Tetragonal
+        - ``a``, ``c``
+      * - Hexagonal
+        - ``a``, ``c``, ``gamma=120`` *(must be explicit)*
+      * - Trigonal
+        - ``a``, ``alpha`` *(alpha ≠ 90)*
+      * - Orthorhombic
+        - ``a``, ``b``, ``c``
+      * - Monoclinic
+        - ``a``, ``b``, ``c``, ``beta``
+      * - Triclinic
+        - ``a``, ``b``, ``c``, ``alpha``, ``beta``, ``gamma``
+
+   All parameters are validated on construction and on every change:
+     - Lengths (a, b, c) must be strictly positive.
+     - Angles (alpha, beta, gamma) must be in (1, 179) degrees.
+     - The combination must produce a non-degenerate unit cell.
+
+   Cartesian lattice vectors, reciprocal lattice vectors, and the B matrix
+   are computed lazily: calculated on first access and cached until any
+   lattice parameter changes.
+
+   :param a: Lattice parameter a in Angstroms.  Default 1.0.
+   :type a: float, optional
+   :param b: Lattice parameter b in Angstroms.
+   :type b: float, optional
+   :param c: Lattice parameter c in Angstroms.
+   :type c: float, optional
+   :param alpha: Angle between b and c axes in degrees.
+   :type alpha: float, optional
+   :param beta: Angle between a and c axes in degrees.
+   :type beta: float, optional
+   :param gamma: Angle between a and b axes in degrees.
+   :type gamma: float, optional
+   :param Properties (read/write):
+   :param -----------------------:
+   :param a:
+   :type a: float — lattice parameters in Angstroms
+   :param b:
+   :type b: float — lattice parameters in Angstroms
+   :param c:
+   :type c: float — lattice parameters in Angstroms
+   :param alpha:
+   :type alpha: float — lattice angles in degrees
+   :param beta:
+   :type beta: float — lattice angles in degrees
+   :param gamma:
+   :type gamma: float — lattice angles in degrees
+   :param precision: package-level default from display.get_precision()
+   :type precision: int or None — decimal places for display; None uses the
+   :param Properties (read-only:
+   :param lazy):
+   :param ----------------------------:
+   :param system:
+   :type system: str — deduced crystal system
+   :param cartesian_lattice_vectors:
+   :type cartesian_lattice_vectors: tuple(a1, a2, a3) — direct lattice vectors (Å)
+   :param reciprocal_lattice_vectors:
+   :type reciprocal_lattice_vectors: tuple(b1, b2, b3) — reciprocal vectors (Å⁻¹, with 2π)
+   :param B:
+   :type B: ndarray (3,3) — B matrix (Å⁻¹, no 2π)
+
+   .. rubric:: Examples
+
+   >>> Lattice()                                     # cubic, a=1 Å
+   >>> Lattice(a=5.0)                                # cubic, a=5 Å
+   >>> Lattice(a=3.0, c=6.0)                         # tetragonal
+   >>> Lattice(a=4.785, c=12.991, gamma=120.0)       # hexagonal
+   >>> Lattice(a=5.0, alpha=60.0)                    # trigonal
+   >>> Lattice(a=2.0, b=3.0, c=4.0)                 # orthorhombic
+   >>> Lattice(a=5.0, b=6.0, c=7.0, beta=110.0)     # monoclinic
+   >>> Lattice(a=3, b=4, c=5, alpha=80, beta=85, gamma=95)  # triclinic
+   >>> lat = Lattice(a=4.785, c=12.991, gamma=120.0)
+   >>> lat.precision = 3
+   >>> print(lat)   # shows 3 decimal places
+
+
+   .. py:property:: B
+      :type: ~numpy.ndarray
+
+
+      B matrix in Å⁻¹ (with 2π factor, Busing & Levy 1967 / SPEC convention).
+
+      Transforms Miller indices ``h`` = (h, k, l) to the scattering vector
+      in Cartesian crystal-frame coordinates::
+
+          Q_c = B @ h
+
+      ``|B @ h| = 2π / d_hkl``.  The orthogonality condition is
+      ``bᵢ · aⱼ = 2π δᵢⱼ``.
+
+      This follows the Busing & Levy (1967) eq. 3 and SPEC convention.
+      Some other packages (FullProf, CrysFML, hkl with ``tau=1``) use a
+      no-2π variant where ``bᵢ · aⱼ = δᵢⱼ`` and ``|B @ h| = 1/d_hkl``.
+
+      Cached until a lattice parameter changes.
+
+
+   .. py:method:: _invalidate() -> None
+
+      Mark all cached computations as stale.
+
+
+
+   .. py:method:: _set_params(**kwargs) -> None
+
+      Update one or more lattice parameters, re-deduce the crystal system,
+      and invalidate the cache.  Parameters are always passed to the
+      deduction function in the canonical order a, b, c, alpha, beta, gamma.
+
+      All six current values are passed through, with kwargs overriding.
+      This allows re-deduction across crystal systems when a parameter
+      change alters the symmetry (e.g. setting b != a on a cubic lattice
+      causes re-deduction to orthorhombic).
+
+      Individual parameter validation (positive lengths, angle range) is
+      performed first, before deduction, so that errors are reported with
+      the correct parameter name rather than a generic deduction error.
+
+
+
+   .. py:property:: a
+      :type: float
+
+
+      Lattice parameter a (Å).
+
+
+   .. py:property:: alpha
+      :type: float
+
+
+      Lattice angle alpha (degrees).
+
+
+   .. py:property:: b
+      :type: float
+
+
+      Lattice parameter b (Å).
+
+
+   .. py:property:: beta
+      :type: float
+
+
+      Lattice angle beta (degrees).
+
+
+   .. py:property:: c
+      :type: float
+
+
+      Lattice parameter c (Å).
+
+
+   .. py:property:: cartesian_lattice_vectors
+      :type: tuple[~numpy.ndarray, ~numpy.ndarray, ~numpy.ndarray]
+
+
+      Direct lattice vectors (a1, a2, a3) in Angstroms.
+
+      a1 is along xHat, a2 lies in the xHat-yHat plane, a3 is
+      determined by the right-hand rule.  Cached until a parameter changes.
+
+
+   .. py:method:: from_dict(d: dict) -> Lattice
+      :classmethod:
+
+
+      Reconstruct a ``Lattice`` from a dict produced by :meth:`to_dict`.
+
+      :param d: Must contain keys ``"a"``, ``"b"``, ``"c"``, ``"alpha"``,
+                ``"beta"``, ``"gamma"``.
+      :type d: dict
+
+      :rtype: Lattice
+
+      .. rubric:: Examples
+
+      >>> Lattice.from_dict({'a': 5.431, 'b': 5.431, 'c': 5.431,
+      ...                    'alpha': 90.0, 'beta': 90.0, 'gamma': 90.0})
+      Lattice(system='cubic', a=5.431, b=5.431, c=5.431, ...)
+
+
+
+   .. py:property:: gamma
+      :type: float
+
+
+      Lattice angle gamma (degrees).
+
+
+   .. py:attribute:: precision
+      :type:  int | None
+      :value: None
+
+
+
+   .. py:property:: reciprocal_lattice_vectors
+      :type: tuple[~numpy.ndarray, ~numpy.ndarray, ~numpy.ndarray]
+
+
+      Reciprocal lattice vectors (b1, b2, b3) in Å⁻¹ (with 2π factor).
+
+      Satisfies b_i · a_j = 2π δ_ij.  Cached until a parameter changes.
+
+
+   .. py:property:: system
+      :type: str
+
+
+      Deduced crystal system name.
+
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable ``dict`` representing this lattice.
+
+      All six parameters are always stored (even constrained ones), so
+      the dict is unambiguous regardless of crystal system.
+
+      :returns: Keys: ``"a"``, ``"b"``, ``"c"``, ``"alpha"``, ``"beta"``,
+                ``"gamma"`` (all ``float``).
+      :rtype: dict
+
+      .. rubric:: Examples
+
+      >>> Lattice(a=4.785, c=12.991, gamma=120).to_dict()
+      {'a': 4.785, 'b': 4.785, 'c': 12.991, 'alpha': 90.0, 'beta': 90.0, 'gamma': 120.0}
+
+
+
+.. py:function:: _deduce_system_and_params(a, b, c, alpha, beta, gamma) -> tuple[str, float, float, float, float, float, float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice._deduce_system_and_params``
+
+
+   Deduce the crystal system from the supplied parameters and fill in
+   symmetry-required defaults for any that were not supplied.
+
+   Caller supplies values or _UNSET for each parameter.  'a' is always
+   required.  All other parameters are optional; their defaults depend on
+   the deduced crystal system.
+
+   Deduction rules (most constrained first):
+
+   Cubic:         a only
+   Trigonal:      a + alpha (alpha != 90)
+   Hexagonal:     a + c + gamma=120 (gamma must be explicit)
+   Tetragonal:    a + c (no angles)
+   Orthorhombic:  a + b + c (no angles)
+   Monoclinic:    a + b + c + beta
+   Triclinic:     all six
+
+   When all six parameters are supplied, the system is classified by
+   examining the symmetry of the values.
+
+   :param a: Each is either a float (supplied) or _UNSET (not supplied).
+   :param b: Each is either a float (supplied) or _UNSET (not supplied).
+   :param c: Each is either a float (supplied) or _UNSET (not supplied).
+   :param alpha: Each is either a float (supplied) or _UNSET (not supplied).
+   :param beta: Each is either a float (supplied) or _UNSET (not supplied).
+   :param gamma: Each is either a float (supplied) or _UNSET (not supplied).
+
+   :returns: * **system** (*str*)
+             * **a, b, c, alpha, beta, gamma** (*float (complete, validated)*)
+
+   :raises ValueError: If 'a' is not supplied, if the supplied combination is ambiguous
+       or inconsistent, or if validated parameters are out of range.
+
+
+.. py:function:: _validate_params(a, b, c, alpha, beta, gamma) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice._validate_params``
+
+
+   Validate a complete set of lattice parameters.
+
+   :raises ValueError: If any length is not strictly positive, any angle is outside
+       (_ANGLE_MIN, _ANGLE_MAX), or the parameters would produce a
+       degenerate (zero-volume) unit cell.
+
+
+.. py:function:: b_matrix(b1: ~numpy.ndarray, b2: ~numpy.ndarray, b3: ~numpy.ndarray) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice.b_matrix``
+
+
+   Compute the B matrix from the reciprocal lattice vectors.
+
+   The B matrix transforms Miller indices ``h`` = (h, k, l) to the
+   scattering vector in Cartesian crystal-frame coordinates
+   (Busing & Levy, 1967, eq. 3)::
+
+       Q_c = B @ h
+
+   The columns of B are the reciprocal lattice vectors b₁, b₂, b₃
+   (each including the 2π factor), so::
+
+       B = [b1, b2, b3]    (column-stack of the reciprocal vectors)
+
+   Hence ``B @ h = h·b1 + k·b2 + l·b3``.  The orthogonality condition
+   is ``bᵢ · aⱼ = 2π δᵢⱼ``, and ``|B @ h| = 2π / d_hkl``.
+
+   This is the Busing & Levy (1967) and SPEC convention.  Some packages
+   (FullProf, CrysFML, parts of CCP4, the hkl library with ``tau=1``)
+   use the alternative no-2π convention ``bᵢ · aⱼ = δᵢⱼ``, which gives
+   a B matrix smaller by a factor of 2π.
+
+   :param b1: Reciprocal lattice vectors in inverse Angstroms (with 2π factor),
+              as returned by :func:`reciprocal_vectors`.
+   :type b1: numpy.ndarray, shape (3,)
+   :param b2: Reciprocal lattice vectors in inverse Angstroms (with 2π factor),
+              as returned by :func:`reciprocal_vectors`.
+   :type b2: numpy.ndarray, shape (3,)
+   :param b3: Reciprocal lattice vectors in inverse Angstroms (with 2π factor),
+              as returned by :func:`reciprocal_vectors`.
+   :type b3: numpy.ndarray, shape (3,)
+
+   :returns: **B** -- B matrix in inverse Angstroms (with 2π factor, BL1967 convention).
+   :rtype: numpy.ndarray, shape (3, 3)
+
+
+.. py:function:: lattice_vectors(a: float, b: float, c: float, alpha: float, beta: float, gamma: float) -> tuple[~numpy.ndarray, ~numpy.ndarray, ~numpy.ndarray]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice.lattice_vectors``
+
+
+   Compute the three Cartesian direct lattice vectors from crystal lattice
+   parameters.
+
+   The convention places a1 along xHat, a2 in the xHat-yHat plane, and a3
+   determined by the right-hand rule.
+
+   :param a: Lattice parameters in Angstroms.
+   :type a: float
+   :param b: Lattice parameters in Angstroms.
+   :type b: float
+   :param c: Lattice parameters in Angstroms.
+   :type c: float
+   :param alpha: Lattice angles in degrees.
+                 alpha = angle between b and c axes
+                 beta  = angle between a and c axes
+                 gamma = angle between a and b axes
+   :type alpha: float
+   :param beta: Lattice angles in degrees.
+                alpha = angle between b and c axes
+                beta  = angle between a and c axes
+                gamma = angle between a and b axes
+   :type beta: float
+   :param gamma: Lattice angles in degrees.
+                 alpha = angle between b and c axes
+                 beta  = angle between a and c axes
+                 gamma = angle between a and b axes
+   :type gamma: float
+
+   :returns: **a1, a2, a3** -- Cartesian direct lattice vectors in Angstroms.
+   :rtype: numpy.ndarray, shape (3,)
+
+
+.. py:function:: reciprocal_vectors(a1: ~numpy.ndarray, a2: ~numpy.ndarray, a3: ~numpy.ndarray) -> tuple[~numpy.ndarray, ~numpy.ndarray, ~numpy.ndarray]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.lattice.reciprocal_vectors``
+
+
+   Compute the three reciprocal lattice vectors from Cartesian direct lattice
+   vectors.
+
+   Uses the standard crystallographic definition:
+
+       b1 = 2*pi * (a2 x a3) / (a1 . (a2 x a3))
+       b2 = 2*pi * (a3 x a1) / (a1 . (a2 x a3))
+       b3 = 2*pi * (a1 x a2) / (a1 . (a2 x a3))
+
+   The orthogonality condition is satisfied:
+
+       b_i . a_j = 2*pi * delta_ij
+
+   :param a1: Cartesian direct lattice vectors in Angstroms.
+   :type a1: numpy.ndarray, shape (3,)
+   :param a2: Cartesian direct lattice vectors in Angstroms.
+   :type a2: numpy.ndarray, shape (3,)
+   :param a3: Cartesian direct lattice vectors in Angstroms.
+   :type a3: numpy.ndarray, shape (3,)
+
+   :returns: **b1, b2, b3** -- Reciprocal lattice vectors in inverse Angstroms (with 2*pi factor).
+   :rtype: numpy.ndarray, shape (3,)
+
+

@@ -1,0 +1,787 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>References &#8212; ad_hoc_diffractometer 0.9</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=91f10d53" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="_static/documentation_options.js?v=aa3b121e"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'references';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.9.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Concepts" href="concepts.html" />
+    <link rel="prev" title="Glossary" href="glossary.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.9" />
+    <meta name="docbuild:last-update" content="2026-05-02 08:53 CDT"/>
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.9</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="howto/index.html">How-to Guides</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/basis_vectors.html">Choose and Understand Basis Vectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/custom_geometry.html">Build a Custom Diffractometer Geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/wavelength.html">Set Wavelength / Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/lattice.html">Define the Sample Lattice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/orient.html">Orient a Crystal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/forward.html">Forward and Inverse Computations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/modes.html">Switch Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/constraints.html">Work with Constraints and Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/surface.html">Surface Geometry and the Reference Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/trajectory.html">Plan a Trajectory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/refine_lattice.html">Refine the Lattice Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serialize.html">Save and Restore a Diffractometer Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/inclination.html">Set Diffractometer Inclination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/performance.html">Measure Forward/Inverse Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/fourcv_alignment_howto.html">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="geometries/index.html">Prebuilt Geometries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="geometries/fourcv.html">fourcv — Eulerian Four-Circle (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/fourch.html">fourch — Eulerian Four-Circle (Laboratory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/fivec.html">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/psic.html">psic — Eulerian Six-Circle, 4S+2D (You 1999)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/sixc.html">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/kappa4cv.html">kappa4cv — Kappa Four-Circle (Synchrotron)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/kappa4ch.html">kappa4ch — Kappa Four-Circle (Laboratory)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/kappa6c.html">kappa6c — Kappa Six-Circle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/zaxis.html">zaxis — Z-Axis Four-Circle (Surface)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="direct-lattice.html">Direct Lattice in Crystallography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problem1.html">Case Study: Describing a Diffractometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problem2.html">Case Study: Coordinate Convention and UB Matrix</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="user_guide.html" class="nav-link">User Guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">References</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="references">
+<span id="id1"></span><h1>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h1>
+<p>Literature citations used throughout <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code>.
+Geometries, algorithms, and conventions are traced to their primary sources.</p>
+<hr class="docutils" />
+<section id="diffractometer-geometries">
+<h2>Diffractometer geometries<a class="headerlink" href="#diffractometer-geometries" title="Link to this heading">#</a></h2>
+<p><strong>Busing &amp; Levy (1967)</strong>
+: W.R. Busing and H.A. Levy.
+<em>Angle calculations for 3- and 4-circle X-ray and neutron diffractometers.</em>
+Acta Crystallographica <strong>22</strong>, 457–464 (1967).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0365110X67000970">10.1107/S0365110X67000970</a></p>
+<p>Foundational reference for the four-circle geometry, B matrix, U matrix,
+and UB matrix.  Defines the orientation refinement least-squares procedure.
+Used by: <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.fourcv" title="ad_hoc_diffractometer.presets.fourcv"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourcv()</span></code></a>,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.fourch" title="ad_hoc_diffractometer.presets.fourch"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourch()</span></code></a>,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa4cv" title="ad_hoc_diffractometer.presets.kappa4cv"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4cv()</span></code></a>,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa4ch" title="ad_hoc_diffractometer.presets.kappa4ch"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4ch()</span></code></a>.</p>
+<p><strong>Wyckoff (1985)</strong>
+: H.W. Wyckoff.
+<em>Diffractometry.</em>
+Methods in Enzymology <strong>114</strong>, 330–386 (1985).
+DOI: <a class="reference external" href="https://doi.org/10.1016/0076-6879(85)14026-7">10.1016/0076-6879(85)14026-7</a></p>
+<p>Figure 2(b) on p. 334 — the canonical Enraf-Nonius kappa
+diffractometer with explicit X/Y/Z coordinate axes and κ-rotation
+NEG/POS sense; the schematic cited by ITC Vol. C §2.2.6 as the
+reference for the kappa goniostat geometry.
+Local copy: <code class="docutils literal notranslate"><span class="pre">references/1985-Wyckhoff-1-s2.0-0076687985140267-main.pdf</span></code>.
+Used by: <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa4ch" title="ad_hoc_diffractometer.presets.kappa4ch"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4ch()</span></code></a>.</p>
+<p><strong>Bloch (1985)</strong>
+: J.M. Bloch.
+<em>Angle and distance calculations for X-ray diffraction with the Z-axis
+geometry.</em>
+Journal of Applied Crystallography <strong>18</strong>, 33–36 (1985).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0021889885009858">10.1107/S0021889885009858</a></p>
+<p>Defines the Z-axis diffractometer geometry.
+Used by: <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.zaxis" title="ad_hoc_diffractometer.presets.zaxis"><code class="xref py py-func docutils literal notranslate"><span class="pre">zaxis()</span></code></a>.</p>
+<p><strong>Vlieg et al. (1987)</strong>
+: E. Vlieg, A.E.M.J. Fischer, J.F. van der Veen, B.N. Dev, and G. Materlik.
+<em>Surface X-ray diffraction: a study of relaxation in the Cu(110) system.</em>
+Journal of Applied Crystallography <strong>20</strong>, 330–337 (1987).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0021889887087266">10.1107/S0021889887087266</a></p>
+<p>Defines the five-circle geometry.
+Used by: <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.fivec" title="ad_hoc_diffractometer.presets.fivec"><code class="xref py py-func docutils literal notranslate"><span class="pre">fivec()</span></code></a>.</p>
+<p><strong>Lohmeier &amp; Vlieg (1993)</strong>
+: M. Lohmeier and E. Vlieg.
+<em>Angle calculations for a six-circle surface X-ray diffractometer.</em>
+Journal of Applied Crystallography <strong>26</strong>, 706–716 (1993).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0021889893006198">10.1107/S0021889893006198</a></p>
+<p>Defines the six-circle surface diffractometer geometry.
+Used by: <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.sixc" title="ad_hoc_diffractometer.presets.sixc"><code class="xref py py-func docutils literal notranslate"><span class="pre">sixc()</span></code></a>.</p>
+<p><strong>Evans-Lutterodt &amp; Tang (1995)</strong>
+: K.W. Evans-Lutterodt and M.-T. Tang.
+<em>Angle calculations for a ‘2+2’ surface X-ray diffractometer.</em>
+Journal of Applied Crystallography <strong>28</strong>, 318–326 (1995).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0021889895001063">10.1107/S0021889895001063</a></p>
+<p>Defines the S2D2 (2+2) diffractometer geometry.
+Used by: <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.s2d2" title="ad_hoc_diffractometer.presets.s2d2"><code class="xref py py-func docutils literal notranslate"><span class="pre">s2d2()</span></code></a>.</p>
+<p><strong>Paciorek, Meyer &amp; Chapuis (1999)</strong>
+: W.A. Paciorek, M. Meyer, and G. Chapuis.
+<em>On the geometry of a modern imaging diffractometer.</em>
+Acta Crystallographica A <strong>55</strong>, 543–557 (1999).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0108767399000951">10.1107/S0108767399000951</a></p>
+<p>Mathematical description of a four-circle κ-goniometer
+(KM4CCD) with explicit coordinate frame (Fig. 1) and the
+κ-axis tilt parameters χ, α (Fig. 2).  Cited by Sønsteby
+<em>et al.</em> (2013) as the basic mathematics of the
+six-axis κ instrument.
+Local copy: <code class="docutils literal notranslate"><span class="pre">references/li0302.pdf</span></code>.</p>
+<p><strong>You (1999)</strong>
+: H. You.
+<em>Angle calculations for a ‘4S+2D’ six-circle diffractometer.</em>
+Journal of Applied Crystallography <strong>32</strong>, 614–623 (1999).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0021889899001223">10.1107/S0021889899001223</a></p>
+<p>Defines the psic (4S+2D) six-circle geometry; axis sign conventions
+(mixed handedness); ψ angle definitions (eqs. 10–11).
+Used by: <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.psic" title="ad_hoc_diffractometer.presets.psic"><code class="xref py py-func docutils literal notranslate"><span class="pre">psic()</span></code></a>,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa6c" title="ad_hoc_diffractometer.presets.kappa6c"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa6c()</span></code></a>.</p>
+<p><strong>ITC Vol. C §2.2.6 (2006)</strong>
+: International Tables for Crystallography, Volume C, Section 2.2.6,
+p. 36.
+<em>Single-crystal X-ray techniques.</em>
+DOI: <a class="reference external" href="https://doi.org/10.1107/97809553602060000577">10.1107/97809553602060000577</a></p>
+<p>Confirms the kappa 50° tilt convention; cites Wyckoff (1985, p. 334)
+for the schematic picture of the kappa goniostat.  §2.2.6.2
+documents the standard sign convention (right-handed for ω/χ/φ;
+left-handed for 2θ in Hamilton’s choice) — note that the presets
+shipped here follow Walko’s left-handed convention for ω/φ/2θ; see
+the <a class="reference internal" href="concepts.html"><span class="doc">Concepts</span></a> page for the handedness discussion.
+Local copy: <code class="docutils literal notranslate"><span class="pre">references/ITC-vol-c-2004.pdf</span></code>.
+Used by: <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa4cv" title="ad_hoc_diffractometer.presets.kappa4cv"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4cv()</span></code></a>,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa4ch" title="ad_hoc_diffractometer.presets.kappa4ch"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4ch()</span></code></a>,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa6c" title="ad_hoc_diffractometer.presets.kappa6c"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa6c()</span></code></a>.</p>
+<p><strong>Thorkildsen, Larsen &amp; Beukes (2006)</strong>
+: G. Thorkildsen, H.B. Larsen, and J.A. Beukes.
+<em>Angle calculations for a three-circle goniostat.</em>
+Journal of Applied Crystallography <strong>39</strong>, 151–157 (2006).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0021889805041877">10.1107/S0021889805041877</a></p>
+<p>Vector formulation of the diffractometer angle-calculation problem,
+applicable to arbitrary goniostat designs (Eulerian, κ, and
+generalisations).  Table 1 + equation (3) give the canonical
+κ-goniostat axes used by <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">kappa6c</span></code>; §3 last paragraph explicitly notes the extension to
+additional rotation axes.
+Local copy: <code class="docutils literal notranslate"><span class="pre">references/2006</span> <span class="pre">Thorkildsen</span> <span class="pre">J</span> <span class="pre">Appl</span> <span class="pre">Cryst.pdf</span></code>.
+Used by: <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa4cv" title="ad_hoc_diffractometer.presets.kappa4cv"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4cv()</span></code></a>,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa4ch" title="ad_hoc_diffractometer.presets.kappa4ch"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4ch()</span></code></a>,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa6c" title="ad_hoc_diffractometer.presets.kappa6c"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa6c()</span></code></a>.</p>
+<p><strong>Sønsteby et al. (2013)</strong>
+: H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen, and H. Fjellvåg.
+<em>On the application of a single-crystal κ-diffractometer and a CCD
+area detector for studies of thin films.</em>
+Journal of Synchrotron Radiation <strong>20</strong>, 644–647 (2013).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0909049513009102">10.1107/S0909049513009102</a></p>
+<p>Six-axis κ-diffractometer (KUMA6) at Swiss-Norwegian Beam Lines
+BM01A at the European Synchrotron Radiation Facility.  Cites
+Paciorek (1999) for the basic mathematics and Thorkildsen
+<em>et al.</em> (2006) for the angular-calculation method used by the
+CrysAlis control software.  The reference instrument for the
+<code class="docutils literal notranslate"><span class="pre">kappa6c</span></code> preset.
+Local copy: <code class="docutils literal notranslate"><span class="pre">references/vv5059.pdf</span></code>.
+Used by: <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa6c" title="ad_hoc_diffractometer.presets.kappa6c"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa6c()</span></code></a>.</p>
+<p><strong>Walko (2016)</strong>
+: D.A. Walko.
+<em>Multicircle Diffractometry Methods.</em>
+Reference Module in Materials Science and Materials Engineering,
+Elsevier (2016).
+DOI: <a class="reference external" href="https://doi.org/10.1016/B978-0-12-803581-8.01215-7">10.1016/B978-0-12-803581-8.01215-7</a></p>
+<p>Comprehensive survey of diffractometer geometry designations (S/D
+system); kappa convention; zaxis, s2d2, fivec geometries.  Figure 3
+shows the kappa diffractometer in vertical-scattering layout (the
+<code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code> reference).
+Used throughout the geometry factory descriptions.</p>
+</section>
+<hr class="docutils" />
+<section id="physical-constants">
+<h2>Physical constants<a class="headerlink" href="#physical-constants" title="Link to this heading">#</a></h2>
+<p><strong>CODATA 2022 / 2019 SI</strong>
+: NIST CODATA 2022 recommended values.
+BIPM SI Brochure, 9th edition (2019).</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(hc = 12.398\,419\,843\,320\,026\,\text{keV·Å}\)</span> — exact (h and c are
+defined constants since the 2019 SI redefinition).</p></li>
+<li><p><span class="math notranslate nohighlight">\(h^2/(2m_n) = 81.804\,210\,235\,2\,\text{meV·Å}^2\)</span> — from CODATA 2022
+neutron mass <span class="math notranslate nohighlight">\(m_n\)</span>.</p></li>
+</ul>
+<p>See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM" title="ad_hoc_diffractometer.radiation.HC_KEV_ANGSTROM"><code class="xref py py-data docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM</span></code></a> and
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2" title="ad_hoc_diffractometer.radiation.NEUTRON_MEV_ANGSTROM2"><code class="xref py py-data docutils literal notranslate"><span class="pre">NEUTRON_MEV_ANGSTROM2</span></code></a>.</p>
+</section>
+<hr class="docutils" />
+<section id="numerical-methods">
+<h2>Numerical methods<a class="headerlink" href="#numerical-methods" title="Link to this heading">#</a></h2>
+<p><strong>Nelder &amp; Mead (1965)</strong>
+: J.A. Nelder and R. Mead.
+<em>A simplex method for function minimization.</em>
+The Computer Journal <strong>7</strong>(4), 308–313 (1965).
+DOI: <a class="reference external" href="https://doi.org/10.1093/comjnl/7.4.308">10.1093/comjnl/7.4.308</a></p>
+<p>Derivative-free simplex optimisation algorithm used by
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/refinement/index.html#ad_hoc_diffractometer.refinement.refine_lattice_simplex" title="ad_hoc_diffractometer.refinement.refine_lattice_simplex"><code class="xref py py-func docutils literal notranslate"><span class="pre">refine_lattice_simplex()</span></code></a>.</p>
+</section>
+<hr class="docutils" />
+<section id="aps-alignment-session">
+<h2>APS alignment session<a class="headerlink" href="#aps-alignment-session" title="Link to this heading">#</a></h2>
+<p><strong>Walko (2020)</strong>
+: D.A. Walko, private communication (December 2020).
+Crystal alignment session at APS beamline 7-ID-C using a sapphire sample.
+Documented in <a class="reference internal" href="howto/fourcv_alignment_howto.html"><span class="doc">Align a Four-Circle Diffractometer (fourcv)</span></a>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="glossary.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Glossary</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="concepts.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Concepts</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffractometer-geometries">Diffractometer geometries</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#physical-constants">Physical constants</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-methods">Numerical methods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aps-alignment-session">APS alignment session</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/references.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-05-02 08:53 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Pete Jemian.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
