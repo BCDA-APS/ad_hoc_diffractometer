@@ -87,9 +87,32 @@ presets
        fourcv  (vertical   scattering plane) is the synchrotron convention.
        kappa4ch and kappa4cv follow the same convention as fourch and fourcv.
 
-   Kappa angle (alpha) convention (Walko 2016; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):
-       The kappa axis lies in the vertical-transverse plane, tilted alpha degrees
-       from the vertical axis toward the transverse axis.  Typical value: 50 deg.
+   Kappa angle (alpha) convention
+   (Walko 2016 Fig. 3; Wyckoff 1985 Fig. 2(b); Thorkildsen 2006 Table 1;
+   Enraf-Nonius; ITC Vol. C Sec. 2.2.6):
+   The kappa axis is inclined by alpha degrees from the omega axis,
+   lying in the plane that contains both omega and the equivalent-
+   Eulerian chi axis, and tilted from omega toward that chi direction.
+   Per preset (with omega and chi-equivalent shown as physical
+   basis-direction lines, ignoring sign of handedness):
+
+   - kappa4cv: omega along transverse, chi-eq along vertical;
+     kappa lies in the T-V plane between +T and +V.
+   - kappa4ch: omega along vertical, chi-eq along longitudinal;
+     kappa lies in the V-L plane between +V and +L.
+   - kappa6c:  same as kappa4cv (mounted on top of mu and nu).
+
+   Typical value: alpha = 50 deg.
+
+   Handedness convention:
+       These presets follow Walko (2016) and encode omega/kappa/phi/2theta as
+       *left-handed* about their respective signed-axis vectors (e.g.
+       ``-TRANSVERSE`` for kappa4cv komega).  ITC Vol. C Sec. 2.2.6.2 (2006)
+       instead specifies the standard signs of omega/chi/phi as right-handed
+       (only 2theta is left-handed in Hamilton's choice).  Either convention
+       is internally consistent; users who prefer the ITC convention can
+       construct their own geometry by negating the relevant Stage axis
+       vectors.  See ``factories.py`` for how to build a custom geometry.
 
    Walko (2016) designations:
        S3D1      fourcv, fourch, kappa4cv, kappa4ch
@@ -108,8 +131,15 @@ presets
    * K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) — s2d2
    * H. You, J. Appl. Cryst. 32, 614-623 (1999)
      DOI:10.1107/S0021889899001223 — psic
-   * ITC Vol. C, Sec. 2.2.6 (2006)
-     DOI:10.1107/97809553602060000577 — kappa
+   * ITC Vol. C, Sec. 2.2.6 (2006), p. 36
+     DOI:10.1107/97809553602060000577 — kappa goniostat;
+     cites Wyckoff (1985, p. 334) for the schematic picture and
+     states "the κ axis is inclined at 50° to the ω axis".
+   * H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
+     kappa diffractometer, Fig. 2(b) on p. 334
+   * G. Thorkildsen, H.B. Larsen & J.A. Beukes,
+     J. Appl. Cryst. 39, 151-157 (2006) — three-circle goniostat
+     angle calculations, Table 1 (kappa axes)
    * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — kappa, zaxis, s2d2, fivec
 
 
@@ -243,22 +273,36 @@ Module Contents
    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
 
    Sample stack (floor first):
-       komega : vertical, left-handed
-       kappa  : tilted,   kappa_axis_from_eulerian(-VERTICAL,
-                                                   +LONGITUDINAL,
-                                                   alpha), right-handed
-       kphi   : vertical, left-handed
+
+   - ``komega`` — vertical, left-handed
+   - ``kappa`` — tilted in the vertical-longitudinal plane, between +V
+     and +L; α from +V toward +L (per Wyckoff 1985 Fig. 2(b)).
+   - ``kphi`` — vertical, left-handed
 
    Detector (floor, mechanically independent):
-       ttheta : vertical, left-handed
+
+   - ``ttheta`` — vertical, left-handed
 
    komega and ttheta share the same vertical axis; mechanically independent.
 
+   Handedness note: this preset encodes omega/kphi/2theta as left-handed
+   about vertical, following Walko (2016).  ITC Vol. C Sec. 2.2.6.2
+   (2006) prefers a right-handed sign convention for omega/chi/phi.
+   The two conventions are equivalent up to motor-angle sign flips;
+   either yields the same physical orientations.  See the module
+   docstring for further discussion.
+
    :param alpha_deg: Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
    :type alpha_deg: float
-   :param References: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-                      ITC Vol. C, Sec. 2.2.6 (2006).
-   :type References: D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
+   .. rubric:: References
+
+   * H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
+     Fig. 2(b) on p. 334 (kappa diffractometer).
+   * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+   * W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+   * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+     Wyckoff (1985, p. 334) for the schematic picture.
 
 
 .. py:function:: kappa4cv(alpha_deg: float = KAPPA_ALPHA_DEFAULT, basis: dict = BASIS_BL) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
@@ -282,22 +326,37 @@ Module Contents
    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
 
    Sample stack (floor first):
-       komega : transverse, left-handed
-       kappa  : tilted,     kappa_axis_from_eulerian(-TRANSVERSE,
-                                                    +LONGITUDINAL,
-                                                    alpha), right-handed
-       kphi   : transverse, left-handed
+
+   - ``komega`` — transverse, left-handed
+   - ``kappa`` — tilted in the transverse-vertical plane, between +T
+     and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
+     Thorkildsen 2006 Table 1).
+   - ``kphi`` — transverse, left-handed
 
    Detector (floor, mechanically independent):
-       ttheta : transverse, left-handed
+
+   - ``ttheta`` — transverse, left-handed
 
    komega and ttheta share the same transverse axis; mechanically independent.
 
+   Handedness note: this preset encodes omega/kphi/2theta as left-handed
+   about transverse, following Walko (2016).  ITC Vol. C Sec. 2.2.6.2
+   (2006) prefers a right-handed sign convention for omega/chi/phi.
+   The two conventions are equivalent up to motor-angle sign flips;
+   either yields the same physical orientations.  See the module
+   docstring for further discussion.
+
    :param alpha_deg: Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
    :type alpha_deg: float
-   :param References: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-                      ITC Vol. C, Sec. 2.2.6 (2006).
-   :type References: D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
+   .. rubric:: References
+
+   * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
+   * G. Thorkildsen, H.B. Larsen & J.A. Beukes, J. Appl. Cryst. 39,
+     151-157 (2006) — Table 1, eqn (3).
+   * W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+   * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+     Wyckoff (1985, p. 334) for the schematic picture.
 
 
 .. py:function:: kappa6c(alpha_deg: float = KAPPA_ALPHA_DEFAULT, basis: dict = BASIS_YOU) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
@@ -318,25 +377,45 @@ Module Contents
    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
 
    Sample stack (floor first):
-       mu     : vertical,     right-handed   [outermost]
-       komega : transverse,   left-handed
-       kappa  : tilted,       kappa_axis_from_eulerian(-TRANSVERSE,
-                                                       +LONGITUDINAL,
-                                                       alpha), right-handed
-       kphi   : transverse,   left-handed
+
+   - ``mu`` — vertical, right-handed (outermost)
+   - ``komega`` — transverse, left-handed
+   - ``kappa`` — tilted in the transverse-vertical plane, between +T
+     and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
+     Thorkildsen 2006 Table 1).
+   - ``kphi`` — transverse, left-handed
 
    Detector stack (floor first):
-       nu     : vertical,     right-handed
-       delta  : transverse,   left-handed
+
+   - ``nu`` — vertical, right-handed
+   - ``delta`` — transverse, left-handed
 
    mu and nu share the same vertical axis; mechanically independent.
 
+   Handedness note: this preset encodes komega/kphi/delta as left-handed
+   about transverse and mu/nu as right-handed about vertical, following
+   Walko (2016) and You (1999) respectively.  ITC Vol. C Sec. 2.2.6.2
+   (2006) prefers a right-handed sign convention for omega/chi/phi.
+   The two conventions are equivalent up to motor-angle sign flips;
+   either yields the same physical orientations.  See the module
+   docstring for further discussion.
+
    :param alpha_deg: Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
    :type alpha_deg: float
-   :param References:
-                      H. You, J. Appl. Cryst. 32, 614-623 (1999).
-                      ITC Vol. C, Sec. 2.2.6 (2006).
-   :type References: D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
+   .. rubric:: References
+
+   * H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen & H. Fjellvåg,
+     J. Synchrotron Rad. 20, 644-647 (2013) — six-axis κ
+     diffractometer (KUMA6 at SNBL/ESRF).
+   * G. Thorkildsen, H.B. Larsen & J.A. Beukes, J. Appl. Cryst. 39,
+     151-157 (2006) — Table 1, eqn (3); extends to additional
+     rotation axes (§3 last paragraph).
+   * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
+   * H. You, J. Appl. Cryst. 32, 614-623 (1999) — outer-axis layout
+     (psic 4S+2D) and You coordinate basis.
+   * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+     Wyckoff (1985, p. 334) for the schematic picture.
 
 
 .. py:function:: psic(basis: dict = BASIS_YOU) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer

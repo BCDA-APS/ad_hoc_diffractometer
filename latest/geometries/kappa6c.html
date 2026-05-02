@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=6fa2f2be"></script>
+    <script src="../_static/documentation_options.js?v=6afc648e"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-04-29 17:53 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-01 20:57 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -536,22 +536,22 @@ and mode configuration.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mu</span></code></p></td>
-<td><p>+vertical (+x)</p></td>
+<td><p>vertical (+x in You)</p></td>
 <td><p>right-handed</p></td>
 <td><p>base</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">komega</span></code></p></td>
-<td><p>−transverse (−z)</p></td>
+<td><p>transverse (−z in You)</p></td>
 <td><p>left-handed</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mu</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kappa</span></code></p></td>
-<td><p>−z · cos α + ŷ · sin α (α = 50°)</p></td>
+<td><p>(cos α)·transverse + (sin α)·vertical = (cos α)·ẑ + (sin α)·x̂ in You (α = 50°)</p></td>
 <td><p>right-handed</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">komega</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kphi</span></code></p></td>
-<td><p>−transverse (−z)</p></td>
+<td><p>transverse (−z in You)</p></td>
 <td><p>left-handed</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">kappa</span></code></p></td>
 </tr>
@@ -569,31 +569,55 @@ and mode configuration.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nu</span></code></p></td>
-<td><p>+vertical (+x)</p></td>
+<td><p>vertical (+x in You)</p></td>
 <td><p>right-handed</p></td>
 <td><p>base</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">delta</span></code></p></td>
-<td><p>−transverse (−z)</p></td>
+<td><p>transverse (−z in You)</p></td>
 <td><p>left-handed</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">nu</span></code></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>The kappa axis is computed by
-<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian" title="ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_axis_from_eulerian()</span></code></a> from
-the preset’s actual <code class="docutils literal notranslate"><span class="pre">komega</span></code> axis (<code class="docutils literal notranslate"><span class="pre">-TRANSVERSE</span></code> in the You
-basis) and the equivalent Eulerian chi axis (<code class="docutils literal notranslate"><span class="pre">+LONGITUDINAL</span></code>):</p>
+<section id="how-the-kappa-axis-is-defined">
+<h3>How the kappa axis is defined<a class="headerlink" href="#how-the-kappa-axis-is-defined" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">kappa6c</span></code> is structurally the
+<a class="reference internal" href="kappa4cv.html#kappa4cv-axis-definition"><span class="std std-ref"><code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code></span></a> sample stack mounted on
+top of the You (1999) <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">nu</span></code> outer axes.  The kappa
+rotation axis is therefore <strong>inclined by α from the omega axis</strong>,
+lying in the plane that contains both omega and the
+equivalent-Eulerian chi axis, and tilted from omega toward that chi
+direction (Walko 2016 §4.1; ITC Vol. C §2.2.6.2: <em>“the κ axis is
+inclined at 50° to the ω axis”</em>).</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code> the omega axis lies along the <strong>transverse</strong> line
+and the equivalent-Eulerian chi axis lies along the <strong>vertical</strong>
+direction.  The kappa arm therefore lies in the <strong>transverse–
+vertical plane</strong>, tilted by <code class="docutils literal notranslate"><span class="pre">α</span></code> from the transverse line toward
++V:</p>
 <div class="math notranslate nohighlight">
 \[
-\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{n}_{\kappa\omega} \;+\; \sin\alpha \cdot \hat{n}_{\chi,\,\text{eq}}
-\;=\; \cos 50° \cdot (-\hat{z}) \;+\; \sin 50° \cdot (+\hat{y}).
+\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{T} \;+\; \sin\alpha \cdot \hat{V}.
 \]</div>
-<p>This formulation is geometry-aware and is correct for <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code>.
-See the <a class="reference internal" href="kappa4cv.html#kappa4cv-axis-definition"><span class="std std-ref">kappa4cv documentation</span></a> and
-issue #241 for the reasons this differs from the textbook
-<code class="docutils literal notranslate"><span class="pre">vertical</span> <span class="pre">·</span> <span class="pre">cos</span> <span class="pre">α</span> <span class="pre">+</span> <span class="pre">transverse</span> <span class="pre">·</span> <span class="pre">sin</span> <span class="pre">α</span></code> formula.</p>
+<p>In the You basis (V=+x̂, L=+ŷ, T=+ẑ) at α = 50° this is</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{n}_{\kappa} \;=\; \cos 50° \cdot \hat{z} \;+\; \sin 50° \cdot \hat{x} \;=\; (0.766,\, 0,\, 0.643).
+\]</div>
+<p>The longitudinal component is <em>exactly zero</em>: at <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">0</span></code> the
+kappa arm rises upward and outward in the vertical plane
+perpendicular to the incident beam, exactly as in <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>.</p>
+<p><strong>Published references.</strong>  The kappa-arm orientation matches Walko
+(2016) Figure 3 and the canonical κ-goniostat axes in Thorkildsen
+<em>et al.</em> (2006) Table 1 and equation (3).  Sønsteby <em>et al.</em>
+(2013) describes the six-axis κ-diffractometer (“KUMA6”) at
+SNBL/ESRF BM01A whose angular calculations follow Thorkildsen
+(2006); §3 of Thorkildsen (2006) explicitly notes that “additional
+rotation axes in the goniostat design are easily incorporated in
+the formalism”.  No single published figure depicts the
+kappa6c-on-mu-nu composite directly; this preset constructs it
+from the kappa4cv sample stack and the psic outer axes.</p>
 <p><strong>Virtual Eulerian angles</strong> <code class="docutils literal notranslate"><span class="pre">omega</span></code>, <code class="docutils literal notranslate"><span class="pre">chi</span></code>, <code class="docutils literal notranslate"><span class="pre">phi</span></code> are mapped
 to / from the real motors via the geometry-aware decomposition in
 <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes"><code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa_axes()</span></code></a> and
@@ -603,6 +627,7 @@ to / from the real motors via the geometry-aware decomposition in
 <li><p>Vertical: komega (transverse) ↔ delta (transverse) → <code class="docutils literal notranslate"><span class="pre">komega</span> <span class="pre">=</span> <span class="pre">delta/2</span></code></p></li>
 <li><p>Horizontal: mu (vertical) ↔ nu (vertical) → <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">nu/2</span></code></p></li>
 </ul>
+</section>
 </section>
 <section id="diffraction-modes">
 <h2>Diffraction modes<a class="headerlink" href="#diffraction-modes" title="Link to this heading">#</a></h2>
@@ -619,7 +644,7 @@ changing constraint values at run time.</p>
 virtual-bisect condition is on the <strong>virtual</strong> Eulerian omega
 pseudoangle and is solved via the geometry-aware
 <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes"><code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa_axes()</span></code></a>
-decomposition (issue #241).
+decomposition.
 Vertical scattering plane (psic-style).</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -913,9 +938,29 @@ reflections satisfy the Ewald sphere condition.</p>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>ITC Vol. C §2.2.6 (2006). DOI: <a class="reference external" href="https://doi.org/10.1107/97809553602060000577">10.1107/97809553602060000577</a></p></li>
-<li><p>You, <em>J. Appl. Cryst.</em> <strong>32</strong>, 614–623 (1999). DOI: <a class="reference external" href="https://doi.org/10.1107/S0021889899001223">10.1107/S0021889899001223</a></p></li>
-<li><p>Walko, <em>Ref. Module Mater. Sci. Mater. Eng.</em> (2016), eq. [16].</p></li>
+<li><p>H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen &amp; H. Fjellvåg,
+<em>On the application of a single-crystal κ-diffractometer and a
+CCD area detector for studies of thin films</em>, J. Synchrotron
+Rad. <strong>20</strong>, 644–647 (2013) (six-axis κ instrument; KUMA6 at
+SNBL/ESRF).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0909049513009102">10.1107/S0909049513009102</a>.</p></li>
+<li><p>G. Thorkildsen, H.B. Larsen &amp; J.A. Beukes, <em>Angle calculations
+for a three-circle goniostat</em>, J. Appl. Cryst. <strong>39</strong>, 151–157
+(2006), Table 1, equation (3); §3 last paragraph
+(extension to additional rotation axes).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0021889805041877">10.1107/S0021889805041877</a>.</p></li>
+<li><p>D.A. Walko, <em>Multicircle Diffractometry Methods</em>, in <em>Reference
+Module in Materials Science and Materials Engineering</em> (Elsevier,
+2016), §4.1, Figure 3, equation [16].
+DOI: <a class="reference external" href="https://doi.org/10.1016/B978-0-12-803581-8.01215-7">10.1016/B978-0-12-803581-8.01215-7</a>.</p></li>
+<li><p>H. You, <em>Angle calculations for a 4S+2D six-circle
+diffractometer</em>, J. Appl. Cryst. <strong>32</strong>, 614–623 (1999) (psic
+outer axes and You coordinate basis).
+DOI: <a class="reference external" href="https://doi.org/10.1107/S0021889899001223">10.1107/S0021889899001223</a>.</p></li>
+<li><p><em>International Tables for Crystallography</em>, Vol. C, §2.2.6
+(2006), p. 36 (α = 50° convention; cites Wyckoff 1985 for the
+schematic picture).
+DOI: <a class="reference external" href="https://doi.org/10.1107/97809553602060000577">10.1107/97809553602060000577</a>.</p></li>
 </ul>
 </section>
 </section>
@@ -969,7 +1014,10 @@ reflections satisfy the Ewald sphere condition.</p>
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick start</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-built-geometry-definition">Pre-built geometry definition</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-layout">Stage layout</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-layout">Stage layout</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-the-kappa-axis-is-defined">How the kappa axis is defined</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diffraction-modes">Diffraction modes</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting-vertical-default"><code class="docutils literal notranslate"><span class="pre">bisecting_vertical</span></code> <em>(default)</em></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting-horizontal"><code class="docutils literal notranslate"><span class="pre">bisecting_horizontal</span></code></a></li>
@@ -1021,7 +1069,7 @@ reflections satisfy the Ewald sphere condition.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-29 17:53 CDT.
+  Last updated on 2026-05-01 20:57 CDT.
   <br/>
 </p></div>
       

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=6fa2f2be"></script>
+    <script src="../../../_static/documentation_options.js?v=6afc648e"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-04-29 17:53 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-01 20:57 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -568,9 +568,31 @@ or the geometry uses a non-standard detector arrangement (zaxis, s2d2, fivec).</
 fourcv  (vertical   scattering plane) is the synchrotron convention.
 kappa4ch and kappa4cv follow the same convention as fourch and fourcv.</p>
 </div></blockquote>
+<p>Kappa angle (alpha) convention
+(Walko 2016 Fig. 3; Wyckoff 1985 Fig. 2(b); Thorkildsen 2006 Table 1;
+Enraf-Nonius; ITC Vol. C Sec. 2.2.6):
+The kappa axis is inclined by alpha degrees from the omega axis,
+lying in the plane that contains both omega and the equivalent-
+Eulerian chi axis, and tilted from omega toward that chi direction.
+Per preset (with omega and chi-equivalent shown as physical
+basis-direction lines, ignoring sign of handedness):</p>
+<ul class="simple">
+<li><p>kappa4cv: omega along transverse, chi-eq along vertical;
+kappa lies in the T-V plane between +T and +V.</p></li>
+<li><p>kappa4ch: omega along vertical, chi-eq along longitudinal;
+kappa lies in the V-L plane between +V and +L.</p></li>
+<li><p>kappa6c:  same as kappa4cv (mounted on top of mu and nu).</p></li>
+</ul>
+<p>Typical value: alpha = 50 deg.</p>
 <dl class="simple">
-<dt>Kappa angle (alpha) convention (Walko 2016; Enraf-Nonius; ITC Vol. C Sec. 2.2.6):</dt><dd><p>The kappa axis lies in the vertical-transverse plane, tilted alpha degrees
-from the vertical axis toward the transverse axis.  Typical value: 50 deg.</p>
+<dt>Handedness convention:</dt><dd><p>These presets follow Walko (2016) and encode omega/kappa/phi/2theta as
+<em>left-handed</em> about their respective signed-axis vectors (e.g.
+<code class="docutils literal notranslate"><span class="pre">-TRANSVERSE</span></code> for kappa4cv komega).  ITC Vol. C Sec. 2.2.6.2 (2006)
+instead specifies the standard signs of omega/chi/phi as right-handed
+(only 2theta is left-handed in Hamilton’s choice).  Either convention
+is internally consistent; users who prefer the ITC convention can
+construct their own geometry by negating the relevant Stage axis
+vectors.  See <code class="docutils literal notranslate"><span class="pre">factories.py</span></code> for how to build a custom geometry.</p>
 </dd>
 <dt>Walko (2016) designations:</dt><dd><p>S3D1      fourcv, fourch, kappa4cv, kappa4ch
 S4D2      psic, kappa6c
@@ -595,8 +617,15 @@ S2D2      s2d2   (fully decoupled sample/detector pairs)</p>
 <li><p>K.W. Evans-Lutterodt &amp; M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) — s2d2</p></li>
 <li><p>H. You, J. Appl. Cryst. 32, 614-623 (1999)
 DOI:10.1107/S0021889899001223 — psic</p></li>
-<li><p>ITC Vol. C, Sec. 2.2.6 (2006)
-DOI:10.1107/97809553602060000577 — kappa</p></li>
+<li><p>ITC Vol. C, Sec. 2.2.6 (2006), p. 36
+DOI:10.1107/97809553602060000577 — kappa goniostat;
+cites Wyckoff (1985, p. 334) for the schematic picture and
+states “the κ axis is inclined at 50° to the ω axis”.</p></li>
+<li><p>H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
+kappa diffractometer, Fig. 2(b) on p. 334</p></li>
+<li><p>G. Thorkildsen, H.B. Larsen &amp; J.A. Beukes,
+J. Appl. Cryst. 39, 151-157 (2006) — three-circle goniostat
+angle calculations, Table 1 (kappa axes)</p></li>
 <li><p>D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — kappa, zaxis, s2d2, fivec</p></li>
 </ul>
 </section>
@@ -732,28 +761,38 @@ phi    : transverse,   left-handed</p>
 <p>Identical to kappa4cv() but komega and ttheta rotate about the vertical
 axis, giving a horizontal scattering plane (laboratory convention).</p>
 <p>Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</p>
-<dl>
-<dt>Sample stack (floor first):</dt><dd><p>komega : vertical, left-handed
-kappa  : tilted,   kappa_axis_from_eulerian(-VERTICAL,</p>
-<blockquote>
-<div><p>+LONGITUDINAL,
-alpha), right-handed</p>
-</div></blockquote>
-<p>kphi   : vertical, left-handed</p>
-</dd>
-<dt>Detector (floor, mechanically independent):</dt><dd><p>ttheta : vertical, left-handed</p>
-</dd>
-</dl>
+<p>Sample stack (floor first):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">komega</span></code> — vertical, left-handed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kappa</span></code> — tilted in the vertical-longitudinal plane, between +V
+and +L; α from +V toward +L (per Wyckoff 1985 Fig. 2(b)).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kphi</span></code> — vertical, left-handed</p></li>
+</ul>
+<p>Detector (floor, mechanically independent):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ttheta</span></code> — vertical, left-handed</p></li>
+</ul>
 <p>komega and ttheta share the same vertical axis; mechanically independent.</p>
+<p>Handedness note: this preset encodes omega/kphi/2theta as left-handed
+about vertical, following Walko (2016).  ITC Vol. C Sec. 2.2.6.2
+(2006) prefers a right-handed sign convention for omega/chi/phi.
+The two conventions are equivalent up to motor-angle sign flips;
+either yields the same physical orientations.  See the module
+docstring for further discussion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>alpha_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</p></li>
-<li><p><strong>References</strong> (<em>D.A. Walko</em><em>, </em><em>Ref. Module Mater. Sci. Mater. Eng.</em><em> (</em><em>2016</em><em>)</em><em>.</em>) – W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-ITC Vol. C, Sec. 2.2.6 (2006).</p></li>
-</ul>
+<dd class="field-odd"><p><strong>alpha_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
+Fig. 2(b) on p. 334 (kappa diffractometer).</p></li>
+<li><p>D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).</p></li>
+<li><p>W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).</p></li>
+<li><p>ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+Wyckoff (1985, p. 334) for the schematic picture.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
@@ -770,28 +809,39 @@ from the vertical toward the transverse axis.</p>
 <p>komega and ttheta both rotate about the transverse axis; the scattering
 plane is vertical (synchrotron convention).</p>
 <p>Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.</p>
-<dl>
-<dt>Sample stack (floor first):</dt><dd><p>komega : transverse, left-handed
-kappa  : tilted,     kappa_axis_from_eulerian(-TRANSVERSE,</p>
-<blockquote>
-<div><p>+LONGITUDINAL,
-alpha), right-handed</p>
-</div></blockquote>
-<p>kphi   : transverse, left-handed</p>
-</dd>
-<dt>Detector (floor, mechanically independent):</dt><dd><p>ttheta : transverse, left-handed</p>
-</dd>
-</dl>
+<p>Sample stack (floor first):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">komega</span></code> — transverse, left-handed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kappa</span></code> — tilted in the transverse-vertical plane, between +T
+and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
+Thorkildsen 2006 Table 1).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kphi</span></code> — transverse, left-handed</p></li>
+</ul>
+<p>Detector (floor, mechanically independent):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ttheta</span></code> — transverse, left-handed</p></li>
+</ul>
 <p>komega and ttheta share the same transverse axis; mechanically independent.</p>
+<p>Handedness note: this preset encodes omega/kphi/2theta as left-handed
+about transverse, following Walko (2016).  ITC Vol. C Sec. 2.2.6.2
+(2006) prefers a right-handed sign convention for omega/chi/phi.
+The two conventions are equivalent up to motor-angle sign flips;
+either yields the same physical orientations.  See the module
+docstring for further discussion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>alpha_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</p></li>
-<li><p><strong>References</strong> (<em>D.A. Walko</em><em>, </em><em>Ref. Module Mater. Sci. Mater. Eng.</em><em> (</em><em>2016</em><em>)</em><em>.</em>) – W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-ITC Vol. C, Sec. 2.2.6 (2006).</p></li>
-</ul>
+<dd class="field-odd"><p><strong>alpha_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.</p></li>
+<li><p>G. Thorkildsen, H.B. Larsen &amp; J.A. Beukes, J. Appl. Cryst. 39,
+151-157 (2006) — Table 1, eqn (3).</p></li>
+<li><p>W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).</p></li>
+<li><p>ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+Wyckoff (1985, p. 334) for the schematic picture.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
@@ -806,30 +856,47 @@ ITC Vol. C, Sec. 2.2.6 (2006).</p></li>
 the style of the psic geometry (You 1999), giving full orientation freedom.
 This is the synchrotron configuration with a transverse detector.</p>
 <p>Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.</p>
-<dl>
-<dt>Sample stack (floor first):</dt><dd><p>mu     : vertical,     right-handed   [outermost]
-komega : transverse,   left-handed
-kappa  : tilted,       kappa_axis_from_eulerian(-TRANSVERSE,</p>
-<blockquote>
-<div><p>+LONGITUDINAL,
-alpha), right-handed</p>
-</div></blockquote>
-<p>kphi   : transverse,   left-handed</p>
-</dd>
-<dt>Detector stack (floor first):</dt><dd><p>nu     : vertical,     right-handed
-delta  : transverse,   left-handed</p>
-</dd>
-</dl>
+<p>Sample stack (floor first):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mu</span></code> — vertical, right-handed (outermost)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">komega</span></code> — transverse, left-handed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kappa</span></code> — tilted in the transverse-vertical plane, between +T
+and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
+Thorkildsen 2006 Table 1).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kphi</span></code> — transverse, left-handed</p></li>
+</ul>
+<p>Detector stack (floor first):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nu</span></code> — vertical, right-handed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delta</span></code> — transverse, left-handed</p></li>
+</ul>
 <p>mu and nu share the same vertical axis; mechanically independent.</p>
+<p>Handedness note: this preset encodes komega/kphi/delta as left-handed
+about transverse and mu/nu as right-handed about vertical, following
+Walko (2016) and You (1999) respectively.  ITC Vol. C Sec. 2.2.6.2
+(2006) prefers a right-handed sign convention for omega/chi/phi.
+The two conventions are equivalent up to motor-angle sign flips;
+either yields the same physical orientations.  See the module
+docstring for further discussion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>alpha_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</p></li>
-<li><p><strong>References</strong> (<em>D.A. Walko</em><em>, </em><em>Ref. Module Mater. Sci. Mater. Eng.</em><em> (</em><em>2016</em><em>)</em><em>.</em>) – H. You, J. Appl. Cryst. 32, 614-623 (1999).
-ITC Vol. C, Sec. 2.2.6 (2006).</p></li>
-</ul>
+<dd class="field-odd"><p><strong>alpha_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Kappa tilt angle in degrees (default 50).  Must be in (0, 90).</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen &amp; H. Fjellvåg,
+J. Synchrotron Rad. 20, 644-647 (2013) — six-axis κ
+diffractometer (KUMA6 at SNBL/ESRF).</p></li>
+<li><p>G. Thorkildsen, H.B. Larsen &amp; J.A. Beukes, J. Appl. Cryst. 39,
+151-157 (2006) — Table 1, eqn (3); extends to additional
+rotation axes (§3 last paragraph).</p></li>
+<li><p>D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.</p></li>
+<li><p>H. You, J. Appl. Cryst. 32, 614-623 (1999) — outer-axis layout
+(psic 4S+2D) and You coordinate basis.</p></li>
+<li><p>ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+Wyckoff (1985, p. 334) for the schematic picture.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
@@ -1048,7 +1115,7 @@ D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-04-29 17:53 CDT.
+  Last updated on 2026-05-01 20:57 CDT.
   <br/>
 </p></div>
       
