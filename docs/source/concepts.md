@@ -280,13 +280,35 @@ Branch selection: ``branch=+1`` (default) returns the kappa solution
 with the smaller ``|κ|`` (the natural identity branch); ``branch=-1``
 returns the chi-mirrored solution.
 
-The kappa rotation axis itself is computed from the convention via
+The kappa rotation axis itself is computed per preset to match the
+published reference figures (issue #252).  In **physical-direction
+language** the kappa axis is **inclined by α from the omega axis**,
+lying in the plane that contains both omega and the
+equivalent-Eulerian chi axis, and tilted from omega toward that chi
+direction (Walko 2016 §4.1; ITC Vol. C §2.2.6.2: *"the κ axis is
+inclined at 50° to the ω axis"*).  Per preset:
 
-$$
-\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{n}_{\kappa\omega} \;+\; \sin\alpha \cdot \hat{n}_{\chi,\,\text{eq}}
-$$
+| Preset | omega line | chi-eq line | Axis vector |
+|---|---|---|---|
+| ``kappa4cv`` | transverse | +vertical | $\hat{n}_{\kappa} = \cos\alpha \cdot \hat{T} + \sin\alpha \cdot \hat{V}$ |
+| ``kappa4ch`` | vertical | +longitudinal | $\hat{n}_{\kappa} = \cos\alpha \cdot \hat{V} + \sin\alpha \cdot \hat{L}$ |
+| ``kappa6c``  | transverse | +vertical | $\hat{n}_{\kappa} = \cos\alpha \cdot \hat{T} + \sin\alpha \cdot \hat{V}$ (same as ``kappa4cv``) |
 
-(see {func}`~ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian`).
+For ``kappa4cv`` and ``kappa6c`` this matches Walko (2016) Figure 3
+and Thorkildsen *et al.* (2006) Table 1; for ``kappa4ch`` it
+matches Wyckoff (1985) Figure 2(b) on p. 334.
+
+Note that the kappa axis vector is not in general equal to
+``cos α · n_komega + sin α · n_chi_eq``: the omega axis carries a
+*signed handedness* (e.g. ``komega = −TRANSVERSE`` for left-handed
+omega about the transverse line), while the kappa axis is computed
+from the *unsigned* basis-direction lines so the kappa arm
+physically extends into the upper half-space toward the published
+direction.  The four-axis kappa pseudoangle convention stored in
+{class}`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`
+records the actual signed stage axes; the closed-form solver in
+``kappa.py`` works directly from those signed axes and does *not*
+rely on the algebraic identity above.
 
 ### Divergence from Walko (2016) eq. [16]
 
@@ -302,8 +324,8 @@ derivation** — omega about the transverse axis, chi about the
 longitudinal axis, phi about the transverse axis, all with a
 specific handedness.  No preset shipped with this package matches
 that convention exactly: ``kappa4cv`` (BL) places ``komega`` along
-``-TRANSVERSE``; ``kappa4ch`` (BL) along ``-VERTICAL``; ``kappa6c``
-(You) along ``-TRANSVERSE`` with a horizontal ``mu`` base.  The
+``−TRANSVERSE``; ``kappa4ch`` (BL) along ``−VERTICAL``; ``kappa6c``
+(You) along ``−TRANSVERSE`` with a horizontal ``mu`` base.  The
 textbook formula therefore does **not** preserve the scattering
 vector for any non-zero ``chi`` in any of these presets, which
 manifested as silent ``"No solutions"`` returns from the kappa
@@ -315,6 +337,20 @@ The textbook helpers
 as reference implementations of the published closed form (with
 deprecation warnings in their docstrings) but are **not** used
 inside the solver.
+
+### Handedness convention (Walko vs. ITC §2.2.6.2)
+
+The presets shipped with this package follow Walko's left-handed
+sign convention for ``omega/kphi/2theta`` (encoded as
+``−TRANSVERSE`` or ``−VERTICAL`` in the ``Stage`` axis vectors).
+ITC Vol. C §2.2.6.2 (2006) instead specifies the standard signs
+of ``omega/chi/phi`` as right-handed (only ``2θ`` is left-handed
+in Hamilton's choice).  The two conventions are equivalent up to
+motor-angle sign flips and yield the same physical orientations.
+Users who prefer the ITC convention can construct their own
+geometry by negating the relevant ``Stage`` axis vectors — see
+{func}`~ad_hoc_diffractometer.factories.register_geometry` for the
+preset-construction API.
 
 ### Modes accept virtual angle names
 

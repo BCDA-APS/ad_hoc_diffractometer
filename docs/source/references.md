@@ -21,6 +21,19 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   {func}`~ad_hoc_diffractometer.presets.kappa4cv`,
   {func}`~ad_hoc_diffractometer.presets.kappa4ch`.
 
+**Wyckoff (1985)**
+: H.W. Wyckoff.
+  *Diffractometry.*
+  Methods in Enzymology **114**, 330–386 (1985).
+  DOI: [10.1016/0076-6879(85)14026-7](https://doi.org/10.1016/0076-6879(85)14026-7)
+
+  Figure 2(b) on p. 334 — the canonical Enraf-Nonius kappa
+  diffractometer with explicit X/Y/Z coordinate axes and κ-rotation
+  NEG/POS sense; the schematic cited by ITC Vol. C §2.2.6 as the
+  reference for the kappa goniostat geometry.
+  Local copy: ``references/1985-Wyckhoff-1-s2.0-0076687985140267-main.pdf``.
+  Used by: {func}`~ad_hoc_diffractometer.presets.kappa4ch`.
+
 **Bloch (1985)**
 : J.M. Bloch.
   *Angle and distance calculations for X-ray diffraction with the Z-axis
@@ -58,6 +71,19 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   Defines the S2D2 (2+2) diffractometer geometry.
   Used by: {func}`~ad_hoc_diffractometer.presets.s2d2`.
 
+**Paciorek, Meyer & Chapuis (1999)**
+: W.A. Paciorek, M. Meyer, and G. Chapuis.
+  *On the geometry of a modern imaging diffractometer.*
+  Acta Crystallographica A **55**, 543–557 (1999).
+  DOI: [10.1107/S0108767399000951](https://doi.org/10.1107/S0108767399000951)
+
+  Mathematical description of a four-circle κ-goniometer
+  (KM4CCD) with explicit coordinate frame (Fig. 1) and the
+  κ-axis tilt parameters χ, α (Fig. 2).  Cited by Sønsteby
+  *et al.* (2013) as the basic mathematics of the
+  six-axis κ instrument.
+  Local copy: ``references/li0302.pdf``.
+
 **You (1999)**
 : H. You.
   *Angle calculations for a '4S+2D' six-circle diffractometer.*
@@ -70,23 +96,66 @@ Geometries, algorithms, and conventions are traced to their primary sources.
    {func}`~ad_hoc_diffractometer.presets.kappa6c`.
 
 **ITC Vol. C §2.2.6 (2006)**
-: International Tables for Crystallography, Volume C, Section 2.2.6.
+: International Tables for Crystallography, Volume C, Section 2.2.6,
+  p. 36.
   *Single-crystal X-ray techniques.*
   DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577)
 
-  Confirms the kappa 50° tilt convention and normal-beam equatorial geometry.
+  Confirms the kappa 50° tilt convention; cites Wyckoff (1985, p. 334)
+  for the schematic picture of the kappa goniostat.  §2.2.6.2
+  documents the standard sign convention (right-handed for ω/χ/φ;
+  left-handed for 2θ in Hamilton's choice) — note that the presets
+  shipped here follow Walko's left-handed convention for ω/φ/2θ; see
+  the {doc}`/concepts` page for the handedness discussion.
+  Local copy: ``references/ITC-vol-c-2004.pdf``.
   Used by: {func}`~ad_hoc_diffractometer.presets.kappa4cv`,
   {func}`~ad_hoc_diffractometer.presets.kappa4ch`,
   {func}`~ad_hoc_diffractometer.presets.kappa6c`.
 
+**Thorkildsen, Larsen & Beukes (2006)**
+: G. Thorkildsen, H.B. Larsen, and J.A. Beukes.
+  *Angle calculations for a three-circle goniostat.*
+  Journal of Applied Crystallography **39**, 151–157 (2006).
+  DOI: [10.1107/S0021889805041877](https://doi.org/10.1107/S0021889805041877)
+
+  Vector formulation of the diffractometer angle-calculation problem,
+  applicable to arbitrary goniostat designs (Eulerian, κ, and
+  generalisations).  Table 1 + equation (3) give the canonical
+  κ-goniostat axes used by ``kappa4cv``, ``kappa4ch``, and
+  ``kappa6c``; §3 last paragraph explicitly notes the extension to
+  additional rotation axes.
+  Local copy: ``references/2006 Thorkildsen J Appl Cryst.pdf``.
+  Used by: {func}`~ad_hoc_diffractometer.presets.kappa4cv`,
+  {func}`~ad_hoc_diffractometer.presets.kappa4ch`,
+  {func}`~ad_hoc_diffractometer.presets.kappa6c`.
+
+**Sønsteby et al. (2013)**
+: H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen, and H. Fjellvåg.
+  *On the application of a single-crystal κ-diffractometer and a CCD
+  area detector for studies of thin films.*
+  Journal of Synchrotron Radiation **20**, 644–647 (2013).
+  DOI: [10.1107/S0909049513009102](https://doi.org/10.1107/S0909049513009102)
+
+  Six-axis κ-diffractometer (KUMA6) at Swiss-Norwegian Beam Lines
+  BM01A at the European Synchrotron Radiation Facility.  Cites
+  Paciorek (1999) for the basic mathematics and Thorkildsen
+  *et al.* (2006) for the angular-calculation method used by the
+  CrysAlis control software.  The reference instrument for the
+  ``kappa6c`` preset.
+  Local copy: ``references/vv5059.pdf``.
+  Used by: {func}`~ad_hoc_diffractometer.presets.kappa6c`.
+
 **Walko (2016)**
 : D.A. Walko.
-  *X-ray diffractometers.*
+  *Multicircle Diffractometry Methods.*
   Reference Module in Materials Science and Materials Engineering,
   Elsevier (2016).
+  DOI: [10.1016/B978-0-12-803581-8.01215-7](https://doi.org/10.1016/B978-0-12-803581-8.01215-7)
 
-  Comprehensive survey of diffractometer geometry designations (S/D system);
-  kappa convention; zaxis, s2d2 geometries.
+  Comprehensive survey of diffractometer geometry designations (S/D
+  system); kappa convention; zaxis, s2d2, fivec geometries.  Figure 3
+  shows the kappa diffractometer in vertical-scattering layout (the
+  ``kappa4cv`` reference).
   Used throughout the geometry factory descriptions.
 
 ---

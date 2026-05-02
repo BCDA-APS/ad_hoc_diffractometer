@@ -46,32 +46,59 @@ and mode configuration.
 
 | Stage | Axis | Handedness | Parent |
 |---|---|---|---|
-| ``mu`` | +vertical (+x) | right-handed | base |
-| ``komega`` | −transverse (−z) | left-handed | ``mu`` |
-| ``kappa`` | −z · cos α + ŷ · sin α (α = 50°) | right-handed | ``komega`` |
-| ``kphi`` | −transverse (−z) | left-handed | ``kappa`` |
+| ``mu`` | vertical (+x in You) | right-handed | base |
+| ``komega`` | transverse (−z in You) | left-handed | ``mu`` |
+| ``kappa`` | (cos α)·transverse + (sin α)·vertical = (cos α)·ẑ + (sin α)·x̂ in You (α = 50°) | right-handed | ``komega`` |
+| ``kphi`` | transverse (−z in You) | left-handed | ``kappa`` |
 
 **Detector stages (base first):**
 
 | Stage | Axis | Handedness | Parent |
 |---|---|---|---|
-| ``nu`` | +vertical (+x) | right-handed | base |
-| ``delta`` | −transverse (−z) | left-handed | ``nu`` |
+| ``nu`` | vertical (+x in You) | right-handed | base |
+| ``delta`` | transverse (−z in You) | left-handed | ``nu`` |
 
-The kappa axis is computed by
-{func}`~ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian` from
-the preset's actual ``komega`` axis (``-TRANSVERSE`` in the You
-basis) and the equivalent Eulerian chi axis (``+LONGITUDINAL``):
+### How the kappa axis is defined
+
+``kappa6c`` is structurally the
+[``kappa4cv``](kappa4cv-axis-definition) sample stack mounted on
+top of the You (1999) ``mu`` and ``nu`` outer axes.  The kappa
+rotation axis is therefore **inclined by α from the omega axis**,
+lying in the plane that contains both omega and the
+equivalent-Eulerian chi axis, and tilted from omega toward that chi
+direction (Walko 2016 §4.1; ITC Vol. C §2.2.6.2: *"the κ axis is
+inclined at 50° to the ω axis"*).
+
+For ``kappa6c`` the omega axis lies along the **transverse** line
+and the equivalent-Eulerian chi axis lies along the **vertical**
+direction.  The kappa arm therefore lies in the **transverse–
+vertical plane**, tilted by ``α`` from the transverse line toward
++V:
 
 $$
-\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{n}_{\kappa\omega} \;+\; \sin\alpha \cdot \hat{n}_{\chi,\,\text{eq}}
-\;=\; \cos 50° \cdot (-\hat{z}) \;+\; \sin 50° \cdot (+\hat{y}).
+\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{T} \;+\; \sin\alpha \cdot \hat{V}.
 $$
 
-This formulation is geometry-aware and is correct for ``kappa6c``.
-See the [kappa4cv documentation](kappa4cv-axis-definition) and
-issue #241 for the reasons this differs from the textbook
-``vertical · cos α + transverse · sin α`` formula.
+In the You basis (V=+x̂, L=+ŷ, T=+ẑ) at α = 50° this is
+
+$$
+\hat{n}_{\kappa} \;=\; \cos 50° \cdot \hat{z} \;+\; \sin 50° \cdot \hat{x} \;=\; (0.766,\, 0,\, 0.643).
+$$
+
+The longitudinal component is *exactly zero*: at ``mu = 0`` the
+kappa arm rises upward and outward in the vertical plane
+perpendicular to the incident beam, exactly as in ``kappa4cv``.
+
+**Published references.**  The kappa-arm orientation matches Walko
+(2016) Figure 3 and the canonical κ-goniostat axes in Thorkildsen
+*et al.* (2006) Table 1 and equation (3).  Sønsteby *et al.*
+(2013) describes the six-axis κ-diffractometer ("KUMA6") at
+SNBL/ESRF BM01A whose angular calculations follow Thorkildsen
+(2006); §3 of Thorkildsen (2006) explicitly notes that "additional
+rotation axes in the goniostat design are easily incorporated in
+the formalism".  No single published figure depicts the
+kappa6c-on-mu-nu composite directly; this preset constructs it
+from the kappa4cv sample stack and the psic outer axes.
 
 **Virtual Eulerian angles** ``omega``, ``chi``, ``phi`` are mapped
 to / from the real motors via the geometry-aware decomposition in
@@ -99,7 +126,7 @@ changing constraint values at run time.
 virtual-bisect condition is on the **virtual** Eulerian omega
 pseudoangle and is solved via the geometry-aware
 {func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes`
-decomposition (issue #241).
+decomposition.
 Vertical scattering plane (psic-style).
 
 | | |
@@ -245,6 +272,26 @@ Full 4D simultaneous solver in the horizontal scattering plane.
 
 ## References
 
-- ITC Vol. C §2.2.6 (2006). DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577)
-- You, *J. Appl. Cryst.* **32**, 614–623 (1999). DOI: [10.1107/S0021889899001223](https://doi.org/10.1107/S0021889899001223)
-- Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016), eq. [16].
+- H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen & H. Fjellvåg,
+  *On the application of a single-crystal κ-diffractometer and a
+  CCD area detector for studies of thin films*, J. Synchrotron
+  Rad. **20**, 644–647 (2013) (six-axis κ instrument; KUMA6 at
+  SNBL/ESRF).
+  DOI: [10.1107/S0909049513009102](https://doi.org/10.1107/S0909049513009102).
+- G. Thorkildsen, H.B. Larsen & J.A. Beukes, *Angle calculations
+  for a three-circle goniostat*, J. Appl. Cryst. **39**, 151–157
+  (2006), Table 1, equation (3); §3 last paragraph
+  (extension to additional rotation axes).
+  DOI: [10.1107/S0021889805041877](https://doi.org/10.1107/S0021889805041877).
+- D.A. Walko, *Multicircle Diffractometry Methods*, in *Reference
+  Module in Materials Science and Materials Engineering* (Elsevier,
+  2016), §4.1, Figure 3, equation [16].
+  DOI: [10.1016/B978-0-12-803581-8.01215-7](https://doi.org/10.1016/B978-0-12-803581-8.01215-7).
+- H. You, *Angle calculations for a 4S+2D six-circle
+  diffractometer*, J. Appl. Cryst. **32**, 614–623 (1999) (psic
+  outer axes and You coordinate basis).
+  DOI: [10.1107/S0021889899001223](https://doi.org/10.1107/S0021889899001223).
+- *International Tables for Crystallography*, Vol. C, §2.2.6
+  (2006), p. 36 (α = 50° convention; cites Wyckoff 1985 for the
+  schematic picture).
+  DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577).
