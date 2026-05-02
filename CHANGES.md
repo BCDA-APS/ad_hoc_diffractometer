@@ -5,6 +5,18 @@ Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues) for the full
 issue tracker.  The initial project development roadmap is documented here:
 [roadmap](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/roadmap.md).
 
+## Release v0.9.2
+
+Released 2026-05-01.
+
+### Fixed
+
+- Restore correct kappa axis direction in kappa4cv, kappa4ch, kappa6c presets per published references (#252)
+
+### Added
+
+- Basis-invariance tests for all preset geometries (#252)
+
 ## Release v0.9.1
 
 Released 2026-04-29.

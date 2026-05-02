@@ -320,17 +320,16 @@ def test_euler_from_Z_round_trip_psic():
 def test_kappa_from_Z_round_trip_kappa4cv():
     """_kappa_from_Z reproduces kappa4cv base angles to 1e-10.
 
-    Uses (-1,1,1) — accessible in true virtual bisecting on kappa4cv
-    (issue #226) and produces a non-degenerate kappa value (~-60°).
-    The previous literal-motor-bisect approximation accepted (1,1,0)
-    but produced physically incorrect solutions; reflections like
-    (0,1,1) work but yield kappa=0 which is the kappa-decomposition
-    singular point.
+    Uses (2,0,-1) — accessible in true virtual bisecting on kappa4cv
+    under the corrected kappa-axis convention (issue #252) and
+    produces a non-degenerate kappa value.  Previously this test
+    used (-1,1,1), which is no longer reachable now that the kappa
+    axis lies in the transverse-vertical plane.
     """
     from ad_hoc_diffractometer.rotation import rotation_matrix as Rmat
 
     g = _setup(kappa4cv)
-    base = g.forward(-1, 1, 1)[0]
+    base = g.forward(2, 0, -1)[0]
     for name, angle in base.items():
         try:
             g.set_angle(name, angle)
@@ -571,17 +570,16 @@ class TestPsiTrajectory:
     def test_psi_round_trip_kappa4cv(self):
         """BL1967 psi round-trip on kappa4cv (mid-range, avoids arm limits).
 
-        Uses (-1,1,1) instead of (1,1,0) because true virtual bisecting
-        on kappa (issue #226) restricts the bisecting locus to a subset
-        of reciprocal space; (1,1,0) is not accessible in true bisecting
-        on kappa4cv at λ=1.5406, a=4 (the previous literal-motor-bisect
-        approximation accepted it but the solutions were physically
-        incorrect).  (-1,1,1) is accessible and produces non-degenerate
-        kappa values across the psi range.
+        Uses (2,0,-1).  Under the corrected kappa-axis convention
+        (issue #252), the kappa axis lies in the transverse-vertical
+        plane, which restricts the true-bisecting reachable locus
+        differently than the v0.9.1 convention did.  (2,0,-1) is
+        accessible across the psi range and produces non-degenerate
+        kappa values.
         """
         g = _setup(kappa4cv)
         self._psi_round_trip(
-            g, hkl=(-1, 1, 1), targets=list(range(-60, 61, 30)), atol=0.1
+            g, hkl=(2, 0, -1), targets=list(range(-60, 61, 30)), atol=0.1
         )
 
     def test_psi_zero_at_base(self):

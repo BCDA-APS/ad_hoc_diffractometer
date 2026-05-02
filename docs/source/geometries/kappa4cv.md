@@ -2,10 +2,10 @@
 # kappa4cv — Kappa Four-Circle (Synchrotron)
 
 Four-circle kappa diffractometer, vertical scattering plane. The chi
-circle is replaced by a kappa axis tilted at α = 50° **from the
-outer komega axis toward the equivalent Eulerian chi axis** (issue
-#241; see [How the kappa axis is defined](#kappa4cv-axis-definition)
-below).
+circle is replaced by a kappa arm tilted at α = 50° from the
+**transverse** axis toward the **vertical** axis, lying entirely in
+the transverse–vertical plane (see
+[How the kappa axis is defined](#kappa4cv-axis-definition) below).
 
 **Walko (2016) designation:** S3D1 (kappa)
 
@@ -52,44 +52,58 @@ and mode configuration.
 
 | Stage | Axis | Handedness | Parent |
 |---|---|---|---|
-| ``komega`` | −transverse (−x BL) | left-handed | base |
-| ``kappa`` | −x · cos α + ŷ · sin α (α = 50°) | right-handed | ``komega`` |
-| ``kphi`` | −transverse (−x BL) | left-handed | ``kappa`` |
+| ``komega`` | transverse (−x in BL) | left-handed | base |
+| ``kappa`` | (cos α)·transverse + (sin α)·vertical = (cos α)·x̂ + (sin α)·ẑ in BL (α = 50°) | right-handed | ``komega`` |
+| ``kphi`` | transverse (−x in BL) | left-handed | ``kappa`` |
 
 **Detector stages (base first):**
 
 | Stage | Axis | Handedness | Parent |
 |---|---|---|---|
-| ``ttheta`` | −transverse (−x BL) | left-handed | base |
+| ``ttheta`` | transverse (−x in BL) | left-handed | base |
 
 (kappa4cv-axis-definition)=
 ### How the kappa axis is defined
 
-The kappa rotation axis lies in the plane spanned by the outer
-``komega`` axis and the *equivalent Eulerian chi axis*, tilted by
-``α`` from ``komega`` toward the chi-equivalent direction:
+The kappa rotation axis is **inclined by α from the omega axis**,
+lying in the plane that contains both omega and the
+equivalent-Eulerian chi axis, and tilted from omega toward that chi
+direction (Walko 2016 §4.1; ITC Vol. C §2.2.6.2: *"the κ axis is
+inclined at 50° to the ω axis"*).
+
+For ``kappa4cv`` the omega axis lies along the **transverse** line
+and the equivalent-Eulerian chi axis lies along the **vertical**
+direction.  The kappa arm therefore lies in the **transverse–
+vertical plane**, tilted by ``α`` from the transverse line toward
++V:
 
 $$
-\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{n}_{\kappa\omega} \;+\; \sin\alpha \cdot \hat{n}_{\chi,\,\text{eq}}.
+\hat{n}_{\kappa} \;=\; \cos\alpha \cdot \hat{T} \;+\; \sin\alpha \cdot \hat{V}.
 $$
 
-For ``kappa4cv`` (BL convention) this is
+In the BL basis (T=+x̂, V=+ẑ) at α = 50° this is
 
 $$
-\hat{n}_{\kappa} \;=\; \cos 50° \cdot (-\hat{x}) \;+\; \sin 50° \cdot (+\hat{y}) \;=\; (-0.643,\, 0.766,\, 0).
+\hat{n}_{\kappa} \;=\; \cos 50° \cdot \hat{x} \;+\; \sin 50° \cdot \hat{z} \;=\; (0.643,\, 0,\, 0.766).
 $$
 
-This **differs** from earlier versions of the package, which set the
-kappa axis from a textbook formula
-``vertical · cos α + transverse · sin α`` regardless of the actual
-``komega`` orientation.  The earlier formula is correct only when
-``komega`` is along ``+vertical``; it is *not* correct for
-``kappa4cv``, ``kappa4ch``, or ``kappa6c``, all of which encode
-``komega`` along a non-vertical signed axis.  The mismatch caused a
-silent solver gap that returned ``"No solutions"`` for several
-physically reachable reflections; see issue #241 and
-{class}`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention` for
-the full derivation and rationale.
+The longitudinal component is *exactly zero*: the kappa arm rises
+upward and outward in the vertical plane perpendicular to the
+incident beam.
+
+**Published reference figures.**  The kappa-arm orientation
+described above matches Walko (2016) Figure 3 directly and the
+canonical κ-goniostat axes in Thorkildsen *et al.* (2006) Table 1
+and equation (3).  Wyckoff (1985) Figure 2(b) on p. 334 shows the
+analogous 90° rotation onto the horizontal scattering plane (the
+``kappa4ch`` convention).
+
+The omega axis sense (``komega = −transverse`` = left-handed
+rotation about +T) follows Walko's left-handed sign convention.
+ITC Vol. C §2.2.6.2 prefers a right-handed sign convention for
+``omega/chi/phi``; the two are equivalent up to motor-angle sign
+flips.  See the {func}`~ad_hoc_diffractometer.presets` module
+docstring for further discussion.
 
 **Virtual Eulerian angles** ``omega``, ``chi``, ``phi`` are mapped
 to / from the real motors via the geometry-aware decomposition in
@@ -115,7 +129,7 @@ changing constraint values at run time.
 omega pseudoangle.  The kappa motor triple ``(komega, kappa, kphi)``
 satisfies this constraint via the geometry-aware
 {func}`~ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes`
-decomposition (issue #241).
+decomposition.
 
 | | |
 |---|---|
@@ -137,8 +151,8 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 Fix the virtual Eulerian omega at declared value (default 0°).
-Solved analytically via the equivalent-Eulerian dispatch (issue
-#241) — the caller chooses the value by constructing a
+Solved analytically via the equivalent-Eulerian dispatch — the
+caller chooses the value by constructing a
 {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
 
 | | |
@@ -207,5 +221,19 @@ before calling ``forward()``.
 
 ## References
 
-- ITC Vol. C §2.2.6 (2006). DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577)
-- Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016), eq. [16].
+- D.A. Walko, *Multicircle Diffractometry Methods*, in *Reference
+  Module in Materials Science and Materials Engineering* (Elsevier,
+  2016), §4.1, Figure 3, equation [16].
+  DOI: [10.1016/B978-0-12-803581-8.01215-7](https://doi.org/10.1016/B978-0-12-803581-8.01215-7).
+- G. Thorkildsen, H.B. Larsen & J.A. Beukes, *Angle calculations
+  for a three-circle goniostat*, J. Appl. Cryst. **39**, 151–157
+  (2006), Table 1 and equation (3) (canonical κ-goniostat axes).
+  DOI: [10.1107/S0021889805041877](https://doi.org/10.1107/S0021889805041877).
+- W.R. Busing & H.A. Levy, *Angle calculations for 3- and 4-circle
+  X-ray and neutron diffractometers*, Acta Cryst. **22**, 457–464
+  (1967) (BL coordinate basis).
+  DOI: [10.1107/S0365110X67000970](https://doi.org/10.1107/S0365110X67000970).
+- *International Tables for Crystallography*, Vol. C, §2.2.6
+  (2006), p. 36 (α = 50° convention; cites Wyckoff 1985 for the
+  schematic picture).
+  DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577).
