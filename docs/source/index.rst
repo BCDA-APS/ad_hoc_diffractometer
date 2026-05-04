@@ -101,27 +101,6 @@ examples.
       All literature citations — geometry papers, physical constants,
       and numerical methods.
 
-.. remove
-   **Quick start**
-
-   .. code-block:: python
-
-      import ad_hoc_diffractometer as ahd
-
-      # Create a six-circle psic geometry and set the wavelength
-      g = ahd.psic()
-      g.wavelength = 1.0  # Å
-
-      # Define the sample lattice (cubic silicon)
-      g.sample.lattice = ahd.Lattice(a=5.431)
-
-      # Show a summary of the geometry
-      print(g.summary())
-
-   See the :doc:`Quick Start guide <quick_start>` to build a four-circle
-   geometry step by step — choosing a basis, stacking stages, defining modes,
-   and running a forward calculation — without using a factory function.
-
 .. TODO: too many cards below
    Background
    ----------

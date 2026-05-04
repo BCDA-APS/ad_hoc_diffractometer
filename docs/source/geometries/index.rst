@@ -7,6 +7,34 @@ Each geometry demonstrated below returns a fully-configured
 :class:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer` instance.
 Geometries are grouped below by their chi-circle mechanism.
 
+.. _quick-start-demo:
+
+Quick start
+-----------
+
+Pick one of the demo geometries below — for example the
+:ref:`six-circle psic <geometry-psic>` instrument — set a wavelength,
+attach a sample lattice, and print a summary of the diffractometer:
+
+.. code-block:: python
+
+   import ad_hoc_diffractometer as ahd
+
+   # Use the six-circle psic demo geometry
+   g = ahd.psic()
+   g.wavelength = 1.0  # Å
+
+   # Define the sample lattice (cubic silicon)
+   g.sample.lattice = ahd.Lattice(a=5.431)
+
+   # Show a summary of the diffractometer
+   print(g.summary())
+
+To build a four-circle diffractometer step by step — choosing a basis,
+stacking stages, defining diffraction modes, and running a forward
+calculation — without starting from a demo geometry, see the
+:doc:`Quick Start guide </quick_start>`.
+
 .. toctree::
    :hidden:
 

@@ -2,11 +2,19 @@
 # Quick Start
 
 This guide walks through the steps to build a four-circle diffractometer
-geometry by hand — without using the demo geometry.  Building it step by step
-makes the design choices explicit and shows how every geometry in the package is
-constructed.  This builds a diffractometer for the vertical scattering plane.
+by hand — without using a demo geometry.  Building it step by step makes
+the design choices explicit and shows how every diffractometer in the
+package is constructed.  This builds a diffractometer for the vertical
+scattering plane.
 
-The concise factory-function equivalent appears at the end.
+The concise demo geometry equivalent appears at the end.
+
+```{tip}
+If you already have the package installed and just want a five-line
+example that uses one of the demo geometries, see the
+{ref}`Demonstration Geometries Quick start <quick-start-demo>` page
+instead.
+```
 
 ---
 
@@ -193,8 +201,10 @@ See {doc}`geometries/fourcv` for the full geometry reference, or
 
 ## See also
 
-- {doc}`howto/custom_geometry` — how to build a geometry that is not one
-  of the demos
+- {ref}`Demonstration Geometries Quick start <quick-start-demo>` — the
+  five-line demo geometry example
+- {doc}`howto/custom_geometry` — how to build a diffractometer that is
+  not one of the demos
 - {doc}`howto/basis_vectors` — choosing and understanding basis vectors
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.stage.Stage`
