@@ -107,18 +107,18 @@ class ForwardContext:
     """
     Pre-computed intermediates for the forward solver's inner loops.
 
-    Created once per ``compute_forward()`` call, this bundles all constant
-    quantities needed by the Newton-Raphson residual evaluations so they
-    are not recomputed on every call to ``angles_to_phi_vector``.
+    Created once per :func:`~ad_hoc_diffractometer.forward.compute_forward()`
+    call, this bundles all constant quantities needed by the Newton-Raphson
+    residual evaluations so they are not recomputed on every call to
+    :func:`~ad_hoc_diffractometer.orientation.angles_to_phi_vector()`.
 
-    .. duplicated by autoAPI, left here for reference
-        Attributes
-        ----------
-        sample_stages : list of Stage
-        detector_stages : list of Stage
-        two_pi_over_lambda : float
-        y_eff : numpy.ndarray, shape (3,)
-            Effective beam direction (R_inc.T @ y_hat).
+    Attributes
+    ----------
+    sample_stages : list of Stage
+    detector_stages : list of Stage
+    two_pi_over_lambda : float
+    y_eff : numpy.ndarray, shape (3,)
+        Effective beam direction (R_inc.T @ y_hat).
     """
 
     def __init__(self, geometry):
@@ -130,7 +130,7 @@ class ForwardContext:
         y_norm = float(np.linalg.norm(y_hat))
         y_hat = y_hat / y_norm
         R_inc = geometry.inclination_matrix
-        self.y_eff = R_inc.T @ y_hat  # effective beam direction in the lab frame
+        self.y_eff = R_inc.T @ y_hat
 
         # Cached rotation matrices (populated by prepare_bisecting)
         self._cached_Z_prefix: np.ndarray | None = None
