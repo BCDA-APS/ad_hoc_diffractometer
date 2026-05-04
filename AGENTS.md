@@ -43,15 +43,14 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    Issues and PRs may belong to **more than one project board** — add the
    card to every board that tracks the work.
 
-   | Domain | Milestone | Project ID |
-   |---|---|---|
-   | Diffraction / calculation | `Priority 1`, `2`, or `3 — ...` | `PVT_kwHOACLKMM4BULjA` (P3), `PVT_kwHOACLKMM4BULi_` (P2), `PVT_kwHOACLKMM4BULi8` (P1) |
-   | Documentation (Sphinx, content) | `Documentation` | `PVT_kwHOACLKMM4BUWg2` |
-
-   Status field IDs are the same across all project boards:
-   - Field ID: `PVTSSF_lAHOACLKMM4BULjAzhBVdT0` (P3), `PVTSSF_lAHOACLKMM4BUWg2zhBfRCE` (Documentation)
-   - In Progress option ID: `47fc9ee4` (same on every board)
-   - In Review option ID: `df73e18b` (on boards that support it)
+   Status field IDs and the corresponding option IDs are project-
+   specific.  Discover them per board with the GraphQL query
+   `node(id: "<PROJECT_ID>") { ... fields(first: 20) { ... } }` and
+   reuse them where AGENTS.md examples below show `STATUS_FIELD_ID`,
+   `IN_PROGRESS_OPTION_ID`, etc.  In Progress is present on every
+   board; "In review" is present only on boards that have been
+   configured with that status — leave the status at "In Progress"
+   on boards where Todo / In Progress / Done are the only options.
 
    **Match the issue's boards.**  Before creating the PR, query the
    issue's `projectItems` to discover every board it belongs to.  Add the
@@ -65,7 +64,7 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
 
    ```bash
    # Set milestone when creating the PR
-   gh pr create --milestone "Priority N — ..." ...   # or --milestone "Documentation"
+   gh pr create --milestone "Example Milestone" ...
 
    # Add the PR to the project board immediately after creation
    PR_NODE=$(gh api repos/OWNER/REPO/pulls/N --jq '.node_id')
@@ -107,10 +106,7 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    ```
    Examples: `2-motor-limits`, `1-wavelength-energy`, `9-diffraction-modes`
 
-5. **On the feature branch**, if the completed issue corresponds to a section
-   in `docs/roadmap.md`, check its box from `[ ]` to `[x]` as part of the
-   same branch and include it in the PR.  The roadmap update is accepted when
-   the PR is merged — no separate post-merge commit to `main` is needed.
+5. removed
 
 6. **Monitor CI** after the PR is opened.  Watch for test failures, lint
    errors, or coverage gaps reported by the CI checks.  Push additional
@@ -153,16 +149,12 @@ provides:
 
 - A class-based description of diffractometer stages (rotary axes) and
   their stacking order
-- Predefined factory functions for standard synchrotron and laboratory
-  diffractometer geometries
+- Demo geometries for standard synchrotron and laboratory
+  diffractometers
 - Crystallographic lattice calculations (B matrix, reciprocal lattice)
 - Caller-facing axis notation (+x, -z, vertical, transverse, longitudinal)
 - A geometry registry (`list_geometries()`) for all predefined geometries
 - Display precision control at package and instance level
-
-The package is intended to grow toward a full diffraction calculation
-engine (UB matrix, angle calculations, operating modes).  See
-`docs/source/roadmap.md` for the planned feature list.
 
 ---
 
@@ -177,7 +169,6 @@ diffractometer/                  # project root (git repo)
 │   └── source/                  # Sphinx documentation source
 │       ├── conf.py              # Sphinx configuration
 │       ├── index.rst            # root toctree
-│       ├── roadmap.md           # planned features — read before adding features
 │       ├── install.md           # installation instructions
 │       ├── api.rst              # AutoAPI stub
 │       ├── changes.md           # includes CHANGES.md
@@ -187,7 +178,7 @@ diffractometer/                  # project root (git repo)
 │       ├── fourcv_alignment_howto.ipynb
 │       └── _static/
 │           └── switcher.json    # version switcher stub
-├── references/                  # journal articles and reference documents
+├── references/                  # journal articles and reference documents (excluded from repo)
 │   ├── 1967 Busing and Levy a05492.pdf   # foundational four-circle paper
 │   ├── 1999-JAppl-Cryst-32-614-623-H-You-psic-4S+2D/  # You (1999) psic
 │   ├── 1993 J Appl Cryst 26 706 Lohmeier and Vlieg sixc/
@@ -196,7 +187,7 @@ diffractometer/                  # project root (git repo)
 ├── src/
 │   └── ad_hoc_diffractometer/   # package source
 │       ├── __init__.py          # public API (Tier 1 names only)
-│       ├── presets.py           # 10 pre-built geometry factory functions
+│       ├── presets.py           # 10 demo geometries
 │       ├── factories.py         # geometry registry + shared definitions
 │       ├── constants.py         # XHAT, YHAT, ZHAT
 │       ├── axes.py              # parse_axis(), axis_label(), kappa_axis()
@@ -268,6 +259,57 @@ when any of these files change on `main` or in a pull request.
 
 ---
 
+## Documentation build verification
+
+A clean Sphinx build is **necessary but not sufficient** to confirm
+that documentation changes render correctly.  Sphinx will emit "build
+succeeded" even when reStructuredText markup leaks through into the
+HTML as literal text.  Common failure modes:
+
+- A role written inside a Napoleon field-name slot
+  (e.g. ``:attr:`~module.Class.name` : float`` in a NumPy
+  ``Attributes`` section) is pasted verbatim into the
+  ``.. py:attribute::`` directive, so the rendered page shows the raw
+  ``:attr:`~module.Class.name``` text instead of a link.
+- Inline roles that should produce links (``:func:``, ``:class:``,
+  ``:meth:``, ``:attr:``, ``:doc:``, ``:ref:``) silently render as
+  literal text when their target cannot be resolved or when they
+  appear in a context that does not parse RST roles (directive option
+  values, certain table cells, etc.).
+- MyST/Markdown files containing accidentally-mixed RST syntax
+  produce no warning but display the literal markup.
+
+**Required workflow for any change that touches a docstring, a
+``docs/source/**`` file, or an AutoAPI Jinja2 template:**
+
+1. Run ``make -C docs clean html`` and confirm zero warnings.
+2. Open the affected rendered page(s) under ``docs/build/html/`` (or
+   ``grep`` the HTML) and visually verify that every cross-reference
+   appears as a real ``<a>`` link, **not** as literal ``:role:`...``` text.
+3. For any class with a NumPy ``Attributes`` docstring section, also
+   ``grep`` the AutoAPI page for ``&#58;attr&#58;`` /
+   ``&lt;span class="pre"&gt;:`` patterns that would indicate role
+   markup leaking into the HTML.
+
+**Quick check** (from the repository root after rebuilding the docs):
+
+```bash
+# Look for any RST role syntax that has leaked into rendered HTML.
+# Excludes docs/build/html/_modules/ (sphinx.ext.viewcode pages
+# display source code verbatim, so role markup there is expected).
+# Lists offending files when leaks exist; prints the OK line otherwise.
+grep -rE ':(attr|func|class|meth|mod|doc|ref|obj|data|exc):`' \
+     docs/build/html/ --include='*.html' \
+     --exclude-dir=_modules \
+  && echo "FAIL: leaked RST roles found above." \
+  || echo "OK: no leaked RST roles in rendered HTML."
+```
+
+This check belongs alongside the test suite in any pre-PR checklist
+that involves documentation work.
+
+---
+
 ## Generated artefacts
 
 Several documentation files are **generated from source code or other
@@ -277,7 +319,7 @@ these artefacts must be rebuilt and included in the same branch.
 ### Geometry diagrams (SVG + HTML)
 
 Interactive Plotly HTML figures and static SVG fallbacks for all 10
-preset geometries live in
+demo geometries live in
 `docs/source/_static/geometries/<geometry>/<geometry>.{html,svg}`.
 
 They are generated by `tools/generate_geometry_drawings.py`, which
@@ -342,8 +384,9 @@ way: every new algorithm must be implementable with NumPy alone.
 ## Code style guidelines
 
 - **Import alias**: `import ad_hoc_diffractometer as ahd`
-- **Presets**: `g = ahd.presets.fourcv()` — preset geometry factories live
-  in `ahd.presets`, not in the top-level namespace
+- **Demo geometries**: `g = ahd.presets.fourcv()` — the demo
+  geometries live in `ahd.presets`, not in the top-level namespace
+  (the submodule retains the historical name `presets`)
 - **Tier 1 (top-level)**: Only ~23 names are exported from `__init__.py`
   (core classes, orientation, modes, registry).  All other names are
   accessed via their submodule: `ahd.display.fmt()`,
@@ -353,7 +396,7 @@ way: every new algorithm must be implementable with NumPy alone.
 - **Style**: ruff (E, W, F, UP, B rules) + ruff-format, line length 88;
   `E501` ignored (slight overruns tolerated)
 - **Import sorting**: isort with `force_single_line = true`
-- **No `geometry_` prefix** on factory functions
+- **No `geometry_` prefix** on demo-geometry function names
 - **`display.fmt(value, digits)`** for all floating-point display;
   never use f-strings with hardcoded precision for user-facing output
 - **US English spellings** in all code, comments, docstrings, and
@@ -461,9 +504,9 @@ caller-facing interface only.
 
 ---
 
-## Geometry presets
+## Demo geometries
 
-All factory functions live in `presets.py`, are decorated with
+All demo geometries live in `presets.py`, are decorated with
 `@register_geometry` (from `factories.py`), and appear in
 `list_geometries()`.  Access them as `ahd.presets.fourcv()`, etc.
 
@@ -475,7 +518,7 @@ Naming convention:
 | `h` | horizontal scattering plane (laboratory) — ttheta rotates about the vertical axis |
 | no suffix | detector convention unambiguous (psic, sixc) or compound (zaxis, s2d2) |
 
-Current factories: `psic`, `fourcv`, `fourch`, `sixc`, `kappa4cv`,
+Current demo geometries: `psic`, `fourcv`, `fourch`, `sixc`, `kappa4cv`,
 `kappa4ch`, `kappa6c`, `zaxis`, `s2d2`, `fivec`.
 
 Walko (2016) designation system is noted in docstrings (S3D1, S4D2, etc.).
@@ -524,14 +567,3 @@ The B matrix follows the I16 convention: `(b1, b2, b3) = 2π * B.T`.
 | You, J. Appl. Cryst. 32, 614-623 (1999) DOI:10.1107/S0021889899001223 | psic 4S+2D six-circle; axis sign conventions (mixed handedness) |
 | ITC Vol. C, Sec. 2.2.6 (2006) DOI:10.1107/97809553602060000577 | Kappa 50° convention; normal-beam equatorial geometry |
 | Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) | Geometry survey; S/D designation system; kappa, zaxis, s2d2 |
-
----
-
-## Roadmap status
-
-See `roadmap.md` in the repository root for the full feature checklist
-with completion status.  Priorities 1.x and 2.x are fully implemented.
-Priority 3.x is mostly complete; the remaining open items are:
-
-- Detector geometry parameters (Priority 3.3)
-- Alternative calculation engines: Q-space, d-spacing (Priority 3.4)

@@ -21,7 +21,7 @@ All other names are accessible via their submodules::
 
 import logging
 
-from . import presets  # noqa: F401 — triggers @register_geometry for built-ins
+from . import presets  # noqa: F401 — registers the demo geometries
 from ._version import __version__
 from .diffractometer import AdHocDiffractometer
 from .diffractometer import pa

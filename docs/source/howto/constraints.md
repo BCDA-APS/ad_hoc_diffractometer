@@ -138,7 +138,7 @@ g.modes["my_chi"] = ConstraintSet([SampleConstraint("chi", 60.0)])
 sols_new = g.forward(1, 0, 0)   # chi = 60° from here on
 ```
 
-The factory mode `"fixed_chi"` has a default chi = 90°.
+The `"fixed_chi"` mode in the demo geometry has a default chi = 90°.
 Replacing the {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 in `g.modes["fixed_chi"]` changes the value for all subsequent calls
 until it is replaced again.

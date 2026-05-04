@@ -10,16 +10,16 @@ via entry points, and the ``list_geometries()`` / ``get_geometry()`` /
 
 It also defines the shared **basis dictionaries** (``BASIS_YOU``,
 ``BASIS_BL``) and the default **kappa tilt angle** (``KAPPA_ALPHA_DEFAULT``)
-used by the pre-built geometry functions in
+used by the demo geometries in
 :mod:`ad_hoc_diffractometer.presets`.
 
-Pre-built geometries
---------------------
+Demo geometries
+---------------
 
-The 10 pre-built geometry factory functions (``psic``, ``fourcv``,
-``fourch``, ``sixc``, ``kappa4cv``, ``kappa4ch``, ``kappa6c``, ``zaxis``,
-``s2d2``, ``fivec``) live in :mod:`ad_hoc_diffractometer.presets`.
-Access them as::
+The 10 demo geometries (``psic``, ``fourcv``, ``fourch``, ``sixc``,
+``kappa4cv``, ``kappa4ch``, ``kappa6c``, ``zaxis``, ``s2d2``,
+``fivec``) live in :mod:`ad_hoc_diffractometer.presets`.  Access them
+as::
 
     import ad_hoc_diffractometer as ahd
 
@@ -27,14 +27,14 @@ Access them as::
 
 Extension via entry points
 --------------------------
-Third-party packages can contribute additional geometry factories by
+Third-party packages can contribute additional geometries by
 declaring an entry point in the ``"ad_hoc_diffractometer.geometries"``
 group in their ``pyproject.toml``::
 
     [project.entry-points."ad_hoc_diffractometer.geometries"]
-    my_geom = "my_package.module:my_factory_function"
+    my_geom = "my_package.module:my_geometry_function"
 
-The factory function must accept no required arguments (it may accept
+Each geometry function must accept no required arguments (it may accept
 keyword arguments) and return an ``AdHocDiffractometer`` instance.
 Entry-point geometries are discovered and loaded automatically when
 ``list_geometries()`` or ``get_geometry()`` is first called; they do NOT
@@ -48,9 +48,9 @@ This prevents silent shadowing: an external package cannot overwrite
 
 Writing a custom geometry
 -------------------------
-Each factory accepts an optional ``basis`` keyword argument (defaulting to
-the canonical convention for that geometry).  Inside the factory, resolve
-physical-direction aliases locally::
+Each geometry function accepts an optional ``basis`` keyword argument
+(defaulting to the canonical convention for that geometry).  Inside the
+function, resolve physical-direction aliases locally::
 
     from ad_hoc_diffractometer import AdHocDiffractometer, register_geometry
     from ad_hoc_diffractometer.factories import BASIS_YOU
@@ -101,7 +101,8 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 _GEOMETRY_REGISTRY: dict[str, type] = {}
-"""Maps factory function name to factory callable.
+"""Maps geometry name to a callable that returns a configured
+``AdHocDiffractometer``.
 
 Populated first by ``@register_geometry`` at import time, then supplemented
 by installed third-party entry points the first time :func:`list_geometries`
@@ -117,17 +118,17 @@ GEOMETRY_ENTRY_POINT_GROUP = "ad_hoc_diffractometer.geometries"
 
 def register_geometry(func):
     """
-    Decorator that registers a geometry factory in _GEOMETRY_REGISTRY.
+    Decorator that registers a geometry callable in _GEOMETRY_REGISTRY.
 
     The function is stored under its own ``__name__``, so the registry
     key is always identical to the callable's name.  The function is
     returned unchanged; this decorator has no runtime effect on the
-    factory itself.
+    callable itself.
 
     Third-party packages do **not** need to use this decorator — they
     can instead declare an entry point in the
     ``"ad_hoc_diffractometer.geometries"`` group in their
-    ``pyproject.toml`` and the factory will be discovered automatically.
+    ``pyproject.toml`` and the geometry will be discovered automatically.
 
     Example
     -------
@@ -143,11 +144,11 @@ def register_geometry(func):
 
 def _load_entry_point_geometries() -> None:
     """
-    Discover and load geometry factories from installed entry points.
+    Discover and load geometry callables from installed entry points.
 
     Scans the ``"ad_hoc_diffractometer.geometries"`` entry-point group
     for all installed packages (including this package itself) and adds
-    any factories not already present in ``_GEOMETRY_REGISTRY``.
+    any geometry callables not already present in ``_GEOMETRY_REGISTRY``.
 
     This function is called automatically — and only once — by
     ``list_geometries()`` and ``get_geometry()``.  It is idempotent:
@@ -155,11 +156,11 @@ def _load_entry_point_geometries() -> None:
 
     Notes
     -----
-    Built-in factories are registered via ``@register_geometry`` at
-    import time, so they are always present even if entry-point discovery
-    fails.  Entry-point discovery supplements the registry with any
-    third-party plugins that are installed but were not decorated with
-    ``@register_geometry``.
+    Built-in demo geometries are registered via ``@register_geometry``
+    at import time, so they are always present even if entry-point
+    discovery fails.  Entry-point discovery supplements the registry
+    with any third-party plugins that are installed but were not
+    decorated with ``@register_geometry``.
 
     Each geometry name must be unique across all installed packages.  If
     an entry-point name collides with an already-registered name (whether
@@ -215,7 +216,7 @@ def _load_entry_point_geometries() -> None:
 
 def list_geometries() -> dict[str, type]:
     """
-    Return a copy of the geometry registry as {name: factory_callable}.
+    Return a copy of the geometry registry as {name: callable}.
 
     Includes all built-in geometries (registered via ``@register_geometry``
     at import time) plus any third-party geometry plugins installed as
@@ -227,8 +228,9 @@ def list_geometries() -> dict[str, type]:
     Returns
     -------
     dict
-        Keys are factory names (e.g. ``'psic'``, ``'fourcv'``).
-        Values are the callable factory functions.
+        Keys are geometry names (e.g. ``'psic'``, ``'fourcv'``).
+        Values are callables that return a configured
+        ``AdHocDiffractometer``.
 
     Examples
     --------
@@ -245,11 +247,11 @@ def list_geometries() -> dict[str, type]:
 
 def get_geometry(name: str):
     """
-    Return the registered factory function for the named geometry.
+    Return the registered geometry callable by name.
 
-    This is the primitive lookup — it returns the callable factory, not an
-    instance.  Use make_geometry() if you want an AdHocDiffractometer
-    instance directly.
+    This is the primitive lookup — it returns the callable that
+    constructs the geometry, not an instance.  Use make_geometry()
+    if you want an AdHocDiffractometer instance directly.
 
     Parameters
     ----------
@@ -260,7 +262,8 @@ def get_geometry(name: str):
     Returns
     -------
     callable
-        The factory function for the named geometry.
+        A callable that returns a configured AdHocDiffractometer
+        for the named geometry.
 
     Raises
     ------
@@ -271,8 +274,8 @@ def get_geometry(name: str):
     Examples
     --------
     >>> from ad_hoc_diffractometer import get_geometry
-    >>> factory = get_geometry("psic")
-    >>> factory()
+    >>> make_psic = get_geometry("psic")
+    >>> make_psic()
     AdHocDiffractometer(name='psic', ...)
     >>> get_geometry("kappa4cv")(alpha_deg=50)
     AdHocDiffractometer(name='kappa4cv', ...)
@@ -289,10 +292,11 @@ def get_geometry(name: str):
 
 def make_geometry(name: str, **kwargs):
     """
-    Instantiate a geometry by name, passing keyword arguments to its factory.
+    Instantiate a geometry by name, passing keyword arguments to its
+    constructor callable.
 
-    Looks up the factory for the named geometry via get_geometry() and calls
-    it with the supplied kwargs.  This is the most convenient entry point for
+    Looks up the geometry by name via get_geometry() and calls it with
+    the supplied kwargs.  This is the most convenient entry point for
     config-driven or programmatic geometry selection.
 
     Parameters
@@ -300,8 +304,9 @@ def make_geometry(name: str, **kwargs):
     name : str
         Name of the geometry (e.g. 'psic', 'fourcv', 'kappa4cv').
     **kwargs
-        Keyword arguments forwarded to the factory function.  Most factories
-        take no arguments; kappa factories accept alpha_deg.
+        Keyword arguments forwarded to the geometry constructor.  Most
+        demo geometries take no arguments; kappa demo geometries accept
+        alpha_deg.
 
     Returns
     -------

@@ -4,81 +4,43 @@
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://prjemian.github.io/ad_hoc_diffractometer/latest/)
 [![License: CC-BY-4.0](https://img.shields.io/badge/License-CC--BY--4.0-brightgreen)](https://creativecommons.org/licenses/by/4.0/)
 
-`ad_hoc_diffractometer` is a **pure-Python** package for calculating
-multi-circle diffractometer operations in reciprocal space for X-ray and
-neutron crystallography.  It is built around a key design principle: **any
-multi-circle diffractometer geometry can be fully described by the caller** — no
-geometry is hard-coded, and new geometries require no changes to the package
-itself.
+`ad_hoc_diffractometer` is a Python package that lets you describe any
+multi-circle diffractometer geometry and perform X-ray/neutron
+crystallography calculations.
 
-Its only runtime dependency beyond the Python Standard Library is
-[NumPy](https://numpy.org) — no scipy, sympy, or other scientific
-libraries are required.
+See the [**Quick Start
+guide**](https://prjemian.github.io/ad_hoc_diffractometer/latest/quick_start.html)
+for a step-by-step walkthrough building an Eulerian four-circle geometry
+— choosing a coordinate basis, stage stacking, diffraction mode
+definition(s), and running a forward calculation. Common geometries are
+provided as examples.
 
-> **Note:** The package assumes **monochromatic radiation** throughout.
-> All diffraction calculations are performed at a fixed wavelength.
+<table>
 
-## Features
+  <tr>
+    <td><a href="https://prjemian.github.io/ad_hoc_diffractometer/latest/install.html">
+    <b>Get started</b>
+    <br />
+    Install the package and verify the installation.
+    </a></td>
+    <td><a href="https://prjemian.github.io/ad_hoc_diffractometer/latest/user_guide.html">
+    <b>User Guide</b>
+    <br />
+    Concepts, how-to guides, and demonstration geometries.
+    </a></td>
+  </tr>
 
-- A class-based description of diffractometer stages (rotary axes) and
-  their stacking order
-- Predefined factory functions for standard synchrotron and laboratory
-  diffractometer geometries (psic, fourcv, fourch, sixc, kappa families,
-  zaxis, s2d2, fivec)
-- Crystallographic lattice calculations (B matrix, reciprocal lattice)
-- U and UB matrix computation from orienting reflections
-- Forward diffraction calculations (hkl → motor angles), with
-  diffraction modes controlling which stages are free, fixed, or coupled
-- Reciprocal-space trajectory planning
+  <tr>
+    <td><a href="https://prjemian.github.io/ad_hoc_diffractometer/latest/about.html">
+    <b>About ...</b>
+    <br />
+    Features, requirements, use cases, ...
+    </a></td>
+    <td><a href="https://prjemian.github.io/ad_hoc_diffractometer/latest/references.html">
+    <b>References</b>
+    <br />
+    All literature citations — geometry papers, physical constants, and numerical methods.
+    </a></td>
+  </tr>
 
-## Quick start
-
-```python
-import ad_hoc_diffractometer as ahd
-
-# Four-circle geometry (Busing & Levy 1967, vertical scattering plane)
-g = ahd.fourcv()
-g.wavelength = 1.5406          # Å (Cu Kα)
-g.sample.lattice = ahd.Lattice(a=5.431)  # cubic silicon
-
-print(g.summary())
-```
-
-See the
-[Quick Start guide](https://prjemian.github.io/ad_hoc_diffractometer/latest/quick_start.html)
-for a step-by-step walkthrough that builds the same geometry without the
-factory function — choosing a coordinate basis, stacking stages, defining
-diffraction modes, and running a forward calculation.
-
-## Install
-
-```bash
-pip install ad_hoc_diffractometer
-```
-
-For development:
-
-```bash
-git clone https://github.com/prjemian/ad_hoc_diffractometer
-cd ad_hoc_diffractometer
-pip install -e .[dev]
-```
-
-See the [documentation](https://prjemian.github.io/ad_hoc_diffractometer/latest/)
-for full installation options (conda, uv, hatch) and usage guides.
-
-## References
-
-Papers describing the diffractometer geometries provided:
-
-- Busing & Levy (1967) — fourc. *Acta Cryst.* 22, 457–464.
-- Bloch (1985) — zaxis. *J. Appl. Cryst.* 18, 33–36.
-- Vlieg et al. (1987) — fivec. *J. Appl. Cryst.* 20, 330–337.
-- Lohmeier & Vlieg (1993) — sixc. *J. Appl. Cryst.* 26, 706–716.
-- Evans-Lutterodt & Tang (1995) — s2d2. *J. Appl. Cryst.* 28, 318–326.
-- You (1999) — psic. *J. Appl. Cryst.* 32, 614–623.
-  DOI: [10.1107/S0021889899001223](https://doi.org/10.1107/S0021889899001223)
-- ITC Vol. C §2.2.6 (2006) — kappa.
-  DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577)
-- Walko (2016) — geometry survey. *Reference Module in Materials Science
-  and Materials Engineering*, Elsevier.
+</table>

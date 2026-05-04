@@ -1,16 +1,17 @@
 # Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
 # SPDX-License-Identifier: CC-BY-4.0
 """
-presets.py — pre-built diffractometer geometry functions.
+presets.py — Demonstrations of diffractometer geometries.
 
-This module provides **pre-built geometries**: factory functions that
-construct fully configured :class:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
-instances for the most common multi-circle diffractometer designs used in
-synchrotron and laboratory X-ray / neutron crystallography.  They also
-serve as worked examples for defining custom geometries.
+This module demonstrates some of the most common diffractometer
+geometries used in synchrotron and laboratory X-ray / neutron
+crystallography, each fully-configured, using
+:class:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`.
+Together, the demos here serve as worked examples for defining custom
+geometries.
 
-Pre-built geometries
---------------------
+Demo geometries
+---------------
 
 .. list-table::
    :header-rows: 1
@@ -50,11 +51,15 @@ Pre-built geometries
      - Surface / special
      - Evans-Lutterodt & Tang (1995). See :doc:`/geometries/s2d2`.
 
-Each factory is decorated with
+Each demo geometry is decorated with
 :func:`~ad_hoc_diffractometer.factories.register_geometry`, which registers
 it in the geometry registry.  Use
 :func:`~ad_hoc_diffractometer.factories.list_geometries` to retrieve all
 registered geometries as a ``{name: callable}`` dict.
+
+For historical context on diffractometer design and usage that
+predates the closed-form Busing & Levy (1967) angle-setting equations,
+see Arndt & Willis (1966) — listed in the project's :doc:`/references`.
 
 Usage
 -----
@@ -175,6 +180,159 @@ __all__ = [
 # ---------------------------------------------------------------------------
 # Eulerian geometries
 # ---------------------------------------------------------------------------
+
+
+@register_geometry
+def fourcv(basis: dict = BASIS_BL) -> AdHocDiffractometer:
+    """
+    Four-circle Eulerian diffractometer, vertical scattering plane (synchrotron).
+
+    Walko (2016) designation: S3D1.
+
+    Synchrotron configuration: omega and ttheta both rotate about the
+    transverse axis, so the scattering plane is vertical.  This exploits the
+    s-polarisation and tighter vertical collimation of synchrotron radiation
+    (Walko 2016).
+
+    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
+
+    Sample stack (floor first):
+        omega  : transverse,   left-handed
+        chi    : longitudinal, right-handed
+        phi    : transverse,   left-handed
+
+    Detector (floor, mechanically independent of sample stack):
+        ttheta : transverse,   left-handed
+
+    omega and ttheta share the same transverse axis; mechanically independent.
+
+    References: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+    """
+    TRANSVERSE = basis["transverse"]
+    LONGITUDINAL = basis["longitudinal"]
+    stages = [
+        Stage("omega", -TRANSVERSE, parent=None, role="sample"),
+        Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
+        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
+        Stage("ttheta", -TRANSVERSE, parent=None, role="detector"),
+    ]
+    # fourcv: 4 DOF, N-3=1 constraint needed per mode.
+    modes = {
+        "bisecting": ConstraintSet(
+            [BisectConstraint("omega", "ttheta")],
+            computed=["omega", "chi", "phi", "ttheta"],
+        ),
+        "fixed_chi": ConstraintSet(
+            [SampleConstraint("chi", 90.0)],
+            computed=["omega", "phi", "ttheta"],
+        ),
+        "fixed_phi": ConstraintSet(
+            [SampleConstraint("phi", 0.0)],
+            computed=["omega", "chi", "ttheta"],
+        ),
+        "fixed_omega": ConstraintSet(
+            [SampleConstraint("omega", 0.0)],
+            computed=["chi", "phi", "ttheta"],
+        ),
+        "fixed_psi": ConstraintSet(
+            [ReferenceConstraint("psi", 0.0)],
+            computed=["omega", "chi", "phi", "ttheta"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "double_diffraction": ConstraintSet(
+            [],
+            computed=["omega", "chi", "phi", "ttheta"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
+        ),
+    }
+    return AdHocDiffractometer(
+        name=inspect.currentframe().f_code.co_name,
+        stages=stages,
+        basis=BASIS_BL,
+        description=(
+            "Busing & Levy (1967) four-circle Eulerian diffractometer "
+            "(vertical scattering plane, transverse ttheta, synchrotron)"
+        ),
+        modes=modes,
+        default_mode="bisecting",
+    )
+
+
+@register_geometry
+def fourch(basis: dict = BASIS_BL) -> AdHocDiffractometer:
+    """
+    Four-circle Eulerian diffractometer, horizontal scattering plane (laboratory).
+
+    Walko (2016) designation: S3D1.
+
+    Laboratory / default configuration: omega and ttheta both rotate about
+    the vertical axis, so the scattering plane is horizontal.  This is the
+    geometry described in Busing & Levy (1967), Fig. 1b.
+
+    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
+
+    Sample stack (floor first):
+        omega  : vertical,   left-handed
+        chi    : transverse, right-handed
+        phi    : vertical,   left-handed
+
+    Detector (floor, mechanically independent):
+        ttheta : vertical, left-handed
+
+    omega and ttheta share the same vertical axis; mechanically independent.
+
+    Reference: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+               D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+    """
+    VERTICAL = basis["vertical"]
+    LONGITUDINAL = basis["longitudinal"]
+    stages = [
+        Stage("omega", -VERTICAL, parent=None, role="sample"),
+        Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
+        Stage("phi", -VERTICAL, parent="chi", role="sample"),
+        Stage("ttheta", -VERTICAL, parent=None, role="detector"),
+    ]
+    # fourch: 4 DOF, N-3=1 constraint needed per mode.
+    modes = {
+        "bisecting": ConstraintSet(
+            [BisectConstraint("omega", "ttheta")],
+            computed=["omega", "chi", "phi", "ttheta"],
+        ),
+        "fixed_chi": ConstraintSet(
+            [SampleConstraint("chi", 90.0)],
+            computed=["omega", "phi", "ttheta"],
+        ),
+        "fixed_phi": ConstraintSet(
+            [SampleConstraint("phi", 0.0)],
+            computed=["omega", "chi", "ttheta"],
+        ),
+        "fixed_omega": ConstraintSet(
+            [SampleConstraint("omega", 0.0)],
+            computed=["chi", "phi", "ttheta"],
+        ),
+        "fixed_psi": ConstraintSet(
+            [ReferenceConstraint("psi", 0.0)],
+            computed=["omega", "chi", "phi", "ttheta"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "double_diffraction": ConstraintSet(
+            [],
+            computed=["omega", "chi", "phi", "ttheta"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
+        ),
+    }
+    return AdHocDiffractometer(
+        name=inspect.currentframe().f_code.co_name,
+        stages=stages,
+        basis=basis,
+        description=(
+            "Busing & Levy (1967) four-circle Eulerian diffractometer "
+            "(horizontal scattering plane, vertical ttheta, laboratory)"
+        ),
+        modes=modes,
+        default_mode="bisecting",
+    )
 
 
 @register_geometry
@@ -414,159 +572,6 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
         ),
         modes=modes,
         default_mode="bisecting_vertical",
-    )
-
-
-@register_geometry
-def fourcv(basis: dict = BASIS_BL) -> AdHocDiffractometer:
-    """
-    Four-circle Eulerian diffractometer, vertical scattering plane (synchrotron).
-
-    Walko (2016) designation: S3D1.
-
-    Synchrotron configuration: omega and ttheta both rotate about the
-    transverse axis, so the scattering plane is vertical.  This exploits the
-    s-polarisation and tighter vertical collimation of synchrotron radiation
-    (Walko 2016).
-
-    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
-
-    Sample stack (floor first):
-        omega  : transverse,   left-handed
-        chi    : longitudinal, right-handed
-        phi    : transverse,   left-handed
-
-    Detector (floor, mechanically independent of sample stack):
-        ttheta : transverse,   left-handed
-
-    omega and ttheta share the same transverse axis; mechanically independent.
-
-    References: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
-    """
-    TRANSVERSE = basis["transverse"]
-    LONGITUDINAL = basis["longitudinal"]
-    stages = [
-        Stage("omega", -TRANSVERSE, parent=None, role="sample"),
-        Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
-        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
-        Stage("ttheta", -TRANSVERSE, parent=None, role="detector"),
-    ]
-    # fourcv: 4 DOF, N-3=1 constraint needed per mode.
-    modes = {
-        "bisecting": ConstraintSet(
-            [BisectConstraint("omega", "ttheta")],
-            computed=["omega", "chi", "phi", "ttheta"],
-        ),
-        "fixed_chi": ConstraintSet(
-            [SampleConstraint("chi", 90.0)],
-            computed=["omega", "phi", "ttheta"],
-        ),
-        "fixed_phi": ConstraintSet(
-            [SampleConstraint("phi", 0.0)],
-            computed=["omega", "chi", "ttheta"],
-        ),
-        "fixed_omega": ConstraintSet(
-            [SampleConstraint("omega", 0.0)],
-            computed=["chi", "phi", "ttheta"],
-        ),
-        "fixed_psi": ConstraintSet(
-            [ReferenceConstraint("psi", 0.0)],
-            computed=["omega", "chi", "phi", "ttheta"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-        "double_diffraction": ConstraintSet(
-            [],
-            computed=["omega", "chi", "phi", "ttheta"],
-            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=BASIS_BL,
-        description=(
-            "Busing & Levy (1967) four-circle Eulerian diffractometer "
-            "(vertical scattering plane, transverse ttheta, synchrotron)"
-        ),
-        modes=modes,
-        default_mode="bisecting",
-    )
-
-
-@register_geometry
-def fourch(basis: dict = BASIS_BL) -> AdHocDiffractometer:
-    """
-    Four-circle Eulerian diffractometer, horizontal scattering plane (laboratory).
-
-    Walko (2016) designation: S3D1.
-
-    Laboratory / default configuration: omega and ttheta both rotate about
-    the vertical axis, so the scattering plane is horizontal.  This is the
-    geometry described in Busing & Levy (1967), Fig. 1b.
-
-    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
-
-    Sample stack (floor first):
-        omega  : vertical,   left-handed
-        chi    : transverse, right-handed
-        phi    : vertical,   left-handed
-
-    Detector (floor, mechanically independent):
-        ttheta : vertical, left-handed
-
-    omega and ttheta share the same vertical axis; mechanically independent.
-
-    Reference: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-               D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
-    """
-    VERTICAL = basis["vertical"]
-    LONGITUDINAL = basis["longitudinal"]
-    stages = [
-        Stage("omega", -VERTICAL, parent=None, role="sample"),
-        Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
-        Stage("phi", -VERTICAL, parent="chi", role="sample"),
-        Stage("ttheta", -VERTICAL, parent=None, role="detector"),
-    ]
-    # fourch: 4 DOF, N-3=1 constraint needed per mode.
-    modes = {
-        "bisecting": ConstraintSet(
-            [BisectConstraint("omega", "ttheta")],
-            computed=["omega", "chi", "phi", "ttheta"],
-        ),
-        "fixed_chi": ConstraintSet(
-            [SampleConstraint("chi", 90.0)],
-            computed=["omega", "phi", "ttheta"],
-        ),
-        "fixed_phi": ConstraintSet(
-            [SampleConstraint("phi", 0.0)],
-            computed=["omega", "chi", "ttheta"],
-        ),
-        "fixed_omega": ConstraintSet(
-            [SampleConstraint("omega", 0.0)],
-            computed=["chi", "phi", "ttheta"],
-        ),
-        "fixed_psi": ConstraintSet(
-            [ReferenceConstraint("psi", 0.0)],
-            computed=["omega", "chi", "phi", "ttheta"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-        "double_diffraction": ConstraintSet(
-            [],
-            computed=["omega", "chi", "phi", "ttheta"],
-            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=basis,
-        description=(
-            "Busing & Levy (1967) four-circle Eulerian diffractometer "
-            "(horizontal scattering plane, vertical ttheta, laboratory)"
-        ),
-        modes=modes,
-        default_mode="bisecting",
     )
 
 
@@ -940,6 +945,9 @@ def kappa6c(
     Six-circle kappa diffractometer (psic-style outer axes, kappa inner sample).
 
     Walko (2016) designation: S4D2.
+
+    See ESRF for a comprehensive example:
+    https://www.esrf.fr/home/UsersAndScience/Experiments/CRG/BM02/equipment/diffractometer.html#c
 
     Extends the kappa4cv geometry with two additional axes (mu, nu) in
     the style of the psic geometry (You 1999), giving full orientation freedom.

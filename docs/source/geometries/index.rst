@@ -1,11 +1,39 @@
 .. _geometries:
 
-Prebuilt Geometries
-===================
+Demonstration Geometries
+========================
 
-Each factory function returns a fully configured
+Each geometry demonstrated below returns a fully-configured
 :class:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer` instance.
 Geometries are grouped below by their chi-circle mechanism.
+
+.. _quick-start-demo:
+
+Quick start
+-----------
+
+Pick one of the demo geometries below — for example the
+:ref:`six-circle psic <geometry-psic>` instrument — set a wavelength,
+attach a sample lattice, and print a summary of the diffractometer:
+
+.. code-block:: python
+
+   import ad_hoc_diffractometer as ahd
+
+   # Use the six-circle psic demo geometry
+   g = ahd.psic()
+   g.wavelength = 1.0  # Å
+
+   # Define the sample lattice (cubic silicon)
+   g.sample.lattice = ahd.Lattice(a=5.431)
+
+   # Show a summary of the diffractometer
+   print(g.summary())
+
+To build a four-circle diffractometer step by step — choosing a basis,
+stacking stages, defining diffraction modes, and running a forward
+calculation — without starting from a demo geometry, see the
+:doc:`Quick Start guide </quick_start>`.
 
 .. toctree::
    :hidden:
@@ -23,100 +51,30 @@ Geometries are grouped below by their chi-circle mechanism.
 
 .. icons: https://fonts.google.com/icons
 
-Eulerian four-circle
---------------------
-
-The chi circle is a full Eulerian cradle; omega and 2θ share the same
-rotation axis.
-
 .. grid:: 2
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` Synchrotron
-      :link: fourcv
-      :link-type: doc
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Eulerian
 
-      Vertical scattering plane — ω and 2θ rotate about the transverse axis.
+      The chi circle is a full Eulerian cradle.
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` Laboratory
-      :link: fourch
-      :link-type: doc
+      - :ref:`geometry-fourch`
+      - :ref:`geometry-fourcv`
+      - :ref:`geometry-fivec`
+      - :ref:`geometry-psic`
+      - :ref:`geometry-sixc`
 
-      Horizontal scattering plane — ω and 2θ rotate about the vertical axis.
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Kappa
 
-Eulerian five- and six-circle
------------------------------
+      The kappa stage is a replacement for the traditional chi circle.
 
-A four-circle Eulerian sample stack extended with one or two additional
-base or detector stages.
+      - :ref:`geometry-kappa4ch`
+      - :ref:`geometry-kappa4cv`
+      - :ref:`geometry-kappa6c`
 
-.. grid:: 3
+   .. grid-item-card:: :material-outlined:`rotate_right;3em` Inclination
 
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` Five-circle (fivec)
-      :link: fivec
-      :link-type: doc
+      Geometries designed for surface diffraction or with fully decoupled sample
+      and detector axes.
 
-      fourcv on a vertical mu base; sample and detector
-      coupled through mu. Vlieg et al. (1987).
-
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` 4S+2D (psic)
-      :link: psic
-      :link-type: doc
-
-      Four sample stages (mu, eta, chi, and phi) and two independent detector
-      stages (nu, delta). You (1999).
-
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` Shared base (sixc)
-      :link: sixc
-      :link-type: doc
-
-      Sample and detector share a common alpha base stage.
-      Lohmeier & Vlieg (1993).
-
-Kappa
------
-
-The chi circle is replaced by a kappa axis tilted at α = 50° from the
-vertical, giving a larger accessible volume and fewer mechanical
-obstructions.
-
-.. grid:: 3
-
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` Four-circle synchrotron
-      :link: kappa4cv
-      :link-type: doc
-
-      Vertical scattering plane.
-
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` Four-circle laboratory
-      :link: kappa4ch
-      :link-type: doc
-
-      Horizontal scattering plane.
-
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` Six-circle
-      :link: kappa6c
-      :link-type: doc
-
-      Psic-style outer axes (mu, nu) with kappa inner sample stages.
-
-Surface / special
------------------
-
-Geometries designed for surface diffraction or with fully decoupled
-sample and detector axes.
-
-.. grid:: 2
-
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` Z-axis
-      :link: zaxis
-      :link-type: doc
-
-      Surface normal parallel to Z. Sample and detector share an alpha
-      base stage. Bloch (1985).
-
-   .. grid-item-card:: :material-outlined:`rotate_right;3em` Decoupled axes
-      :link: s2d2
-      :link-type: doc
-
-      Two fully independent sample axes (mu, Z) and two detector axes
-      (nu, delta). Evans-Lutterodt & Tang (1995).
+      - :ref:`geometry-s2d2`
+      - :ref:`geometry-zaxis`
