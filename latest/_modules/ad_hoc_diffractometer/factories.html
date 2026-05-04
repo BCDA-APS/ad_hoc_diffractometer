@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=c74d30be"></script>
+    <script src="../../_static/documentation_options.js?v=2b95ae52"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,12 +57,13 @@
             true;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-03 21:13 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-04 18:12 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -431,16 +432,16 @@
 
 <span class="sd">It also defines the shared **basis dictionaries** (``BASIS_YOU``,</span>
 <span class="sd">``BASIS_BL``) and the default **kappa tilt angle** (``KAPPA_ALPHA_DEFAULT``)</span>
-<span class="sd">used by the pre-built geometry functions in</span>
+<span class="sd">used by the demo geometries in</span>
 <span class="sd">:mod:`ad_hoc_diffractometer.presets`.</span>
 
-<span class="sd">Pre-built geometries</span>
-<span class="sd">--------------------</span>
+<span class="sd">Demo geometries</span>
+<span class="sd">---------------</span>
 
-<span class="sd">The 10 pre-built geometry factory functions (``psic``, ``fourcv``,</span>
-<span class="sd">``fourch``, ``sixc``, ``kappa4cv``, ``kappa4ch``, ``kappa6c``, ``zaxis``,</span>
-<span class="sd">``s2d2``, ``fivec``) live in :mod:`ad_hoc_diffractometer.presets`.</span>
-<span class="sd">Access them as::</span>
+<span class="sd">The 10 demo geometries (``psic``, ``fourcv``, ``fourch``, ``sixc``,</span>
+<span class="sd">``kappa4cv``, ``kappa4ch``, ``kappa6c``, ``zaxis``, ``s2d2``,</span>
+<span class="sd">``fivec``) live in :mod:`ad_hoc_diffractometer.presets`.  Access them</span>
+<span class="sd">as::</span>
 
 <span class="sd">    import ad_hoc_diffractometer as ahd</span>
 
@@ -448,14 +449,14 @@
 
 <span class="sd">Extension via entry points</span>
 <span class="sd">--------------------------</span>
-<span class="sd">Third-party packages can contribute additional geometry factories by</span>
+<span class="sd">Third-party packages can contribute additional geometries by</span>
 <span class="sd">declaring an entry point in the ``&quot;ad_hoc_diffractometer.geometries&quot;``</span>
 <span class="sd">group in their ``pyproject.toml``::</span>
 
 <span class="sd">    [project.entry-points.&quot;ad_hoc_diffractometer.geometries&quot;]</span>
-<span class="sd">    my_geom = &quot;my_package.module:my_factory_function&quot;</span>
+<span class="sd">    my_geom = &quot;my_package.module:my_geometry_function&quot;</span>
 
-<span class="sd">The factory function must accept no required arguments (it may accept</span>
+<span class="sd">Each geometry function must accept no required arguments (it may accept</span>
 <span class="sd">keyword arguments) and return an ``AdHocDiffractometer`` instance.</span>
 <span class="sd">Entry-point geometries are discovered and loaded automatically when</span>
 <span class="sd">``list_geometries()`` or ``get_geometry()`` is first called; they do NOT</span>
@@ -469,9 +470,9 @@
 
 <span class="sd">Writing a custom geometry</span>
 <span class="sd">-------------------------</span>
-<span class="sd">Each factory accepts an optional ``basis`` keyword argument (defaulting to</span>
-<span class="sd">the canonical convention for that geometry).  Inside the factory, resolve</span>
-<span class="sd">physical-direction aliases locally::</span>
+<span class="sd">Each geometry function accepts an optional ``basis`` keyword argument</span>
+<span class="sd">(defaulting to the canonical convention for that geometry).  Inside the</span>
+<span class="sd">function, resolve physical-direction aliases locally::</span>
 
 <span class="sd">    from ad_hoc_diffractometer import AdHocDiffractometer, register_geometry</span>
 <span class="sd">    from ad_hoc_diffractometer.factories import BASIS_YOU</span>
@@ -522,7 +523,8 @@
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 <span class="n">_GEOMETRY_REGISTRY</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="sd">&quot;&quot;&quot;Maps factory function name to factory callable.</span>
+<span class="sd">&quot;&quot;&quot;Maps geometry name to a callable that returns a configured</span>
+<span class="sd">``AdHocDiffractometer``.</span>
 
 <span class="sd">Populated first by ``@register_geometry`` at import time, then supplemented</span>
 <span class="sd">by installed third-party entry points the first time :func:`list_geometries`</span>
@@ -540,17 +542,17 @@
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.register_geometry">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_geometry</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decorator that registers a geometry factory in _GEOMETRY_REGISTRY.</span>
+<span class="sd">    Decorator that registers a geometry callable in _GEOMETRY_REGISTRY.</span>
 
 <span class="sd">    The function is stored under its own ``__name__``, so the registry</span>
 <span class="sd">    key is always identical to the callable&#39;s name.  The function is</span>
 <span class="sd">    returned unchanged; this decorator has no runtime effect on the</span>
-<span class="sd">    factory itself.</span>
+<span class="sd">    callable itself.</span>
 
 <span class="sd">    Third-party packages do **not** need to use this decorator — they</span>
 <span class="sd">    can instead declare an entry point in the</span>
 <span class="sd">    ``&quot;ad_hoc_diffractometer.geometries&quot;`` group in their</span>
-<span class="sd">    ``pyproject.toml`` and the factory will be discovered automatically.</span>
+<span class="sd">    ``pyproject.toml`` and the geometry will be discovered automatically.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
@@ -569,11 +571,11 @@
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories._load_entry_point_geometries">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_load_entry_point_geometries</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Discover and load geometry factories from installed entry points.</span>
+<span class="sd">    Discover and load geometry callables from installed entry points.</span>
 
 <span class="sd">    Scans the ``&quot;ad_hoc_diffractometer.geometries&quot;`` entry-point group</span>
 <span class="sd">    for all installed packages (including this package itself) and adds</span>
-<span class="sd">    any factories not already present in ``_GEOMETRY_REGISTRY``.</span>
+<span class="sd">    any geometry callables not already present in ``_GEOMETRY_REGISTRY``.</span>
 
 <span class="sd">    This function is called automatically — and only once — by</span>
 <span class="sd">    ``list_geometries()`` and ``get_geometry()``.  It is idempotent:</span>
@@ -581,11 +583,11 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Built-in factories are registered via ``@register_geometry`` at</span>
-<span class="sd">    import time, so they are always present even if entry-point discovery</span>
-<span class="sd">    fails.  Entry-point discovery supplements the registry with any</span>
-<span class="sd">    third-party plugins that are installed but were not decorated with</span>
-<span class="sd">    ``@register_geometry``.</span>
+<span class="sd">    Built-in demo geometries are registered via ``@register_geometry``</span>
+<span class="sd">    at import time, so they are always present even if entry-point</span>
+<span class="sd">    discovery fails.  Entry-point discovery supplements the registry</span>
+<span class="sd">    with any third-party plugins that are installed but were not</span>
+<span class="sd">    decorated with ``@register_geometry``.</span>
 
 <span class="sd">    Each geometry name must be unique across all installed packages.  If</span>
 <span class="sd">    an entry-point name collides with an already-registered name (whether</span>
@@ -644,7 +646,7 @@
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.list_geometries">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_geometries</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return a copy of the geometry registry as {name: factory_callable}.</span>
+<span class="sd">    Return a copy of the geometry registry as {name: callable}.</span>
 
 <span class="sd">    Includes all built-in geometries (registered via ``@register_geometry``</span>
 <span class="sd">    at import time) plus any third-party geometry plugins installed as</span>
@@ -656,8 +658,9 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    dict</span>
-<span class="sd">        Keys are factory names (e.g. ``&#39;psic&#39;``, ``&#39;fourcv&#39;``).</span>
-<span class="sd">        Values are the callable factory functions.</span>
+<span class="sd">        Keys are geometry names (e.g. ``&#39;psic&#39;``, ``&#39;fourcv&#39;``).</span>
+<span class="sd">        Values are callables that return a configured</span>
+<span class="sd">        ``AdHocDiffractometer``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -677,11 +680,11 @@
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.get_geometry">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return the registered factory function for the named geometry.</span>
+<span class="sd">    Return the registered geometry callable by name.</span>
 
-<span class="sd">    This is the primitive lookup — it returns the callable factory, not an</span>
-<span class="sd">    instance.  Use make_geometry() if you want an AdHocDiffractometer</span>
-<span class="sd">    instance directly.</span>
+<span class="sd">    This is the primitive lookup — it returns the callable that</span>
+<span class="sd">    constructs the geometry, not an instance.  Use make_geometry()</span>
+<span class="sd">    if you want an AdHocDiffractometer instance directly.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -692,7 +695,8 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    callable</span>
-<span class="sd">        The factory function for the named geometry.</span>
+<span class="sd">        A callable that returns a configured AdHocDiffractometer</span>
+<span class="sd">        for the named geometry.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -703,8 +707,8 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from ad_hoc_diffractometer import get_geometry</span>
-<span class="sd">    &gt;&gt;&gt; factory = get_geometry(&quot;psic&quot;)</span>
-<span class="sd">    &gt;&gt;&gt; factory()</span>
+<span class="sd">    &gt;&gt;&gt; make_psic = get_geometry(&quot;psic&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; make_psic()</span>
 <span class="sd">    AdHocDiffractometer(name=&#39;psic&#39;, ...)</span>
 <span class="sd">    &gt;&gt;&gt; get_geometry(&quot;kappa4cv&quot;)(alpha_deg=50)</span>
 <span class="sd">    AdHocDiffractometer(name=&#39;kappa4cv&#39;, ...)</span>
@@ -724,10 +728,11 @@
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.make_geometry">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Instantiate a geometry by name, passing keyword arguments to its factory.</span>
+<span class="sd">    Instantiate a geometry by name, passing keyword arguments to its</span>
+<span class="sd">    constructor callable.</span>
 
-<span class="sd">    Looks up the factory for the named geometry via get_geometry() and calls</span>
-<span class="sd">    it with the supplied kwargs.  This is the most convenient entry point for</span>
+<span class="sd">    Looks up the geometry by name via get_geometry() and calls it with</span>
+<span class="sd">    the supplied kwargs.  This is the most convenient entry point for</span>
 <span class="sd">    config-driven or programmatic geometry selection.</span>
 
 <span class="sd">    Parameters</span>
@@ -735,8 +740,9 @@
 <span class="sd">    name : str</span>
 <span class="sd">        Name of the geometry (e.g. &#39;psic&#39;, &#39;fourcv&#39;, &#39;kappa4cv&#39;).</span>
 <span class="sd">    **kwargs</span>
-<span class="sd">        Keyword arguments forwarded to the factory function.  Most factories</span>
-<span class="sd">        take no arguments; kappa factories accept alpha_deg.</span>
+<span class="sd">        Keyword arguments forwarded to the geometry constructor.  Most</span>
+<span class="sd">        demo geometries take no arguments; kappa demo geometries accept</span>
+<span class="sd">        alpha_deg.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -850,7 +856,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-03 21:13 CDT.
+  Last updated on 2026-05-04 18:12 CDT.
   <br/>
 </p></div>
       

@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=c74d30be"></script>
+    <script src="../../_static/documentation_options.js?v=2b95ae52"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,12 +57,13 @@
             true;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-03 21:13 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-04 18:12 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -433,11 +434,11 @@
 <span class="sd">1. **Geometry-aware (recommended)**.  The functions</span>
 <span class="sd">   :func:`eulerian_to_kappa_axes` and :func:`kappa_to_eulerian_axes`</span>
 <span class="sd">   take a :class:`KappaPseudoAngleConvention` that names the *actual*</span>
-<span class="sd">   stage axis vectors of the kappa preset (``n_komega``, ``n_kappa``,</span>
+<span class="sd">   stage axis vectors of the kappa demo geometry (``n_komega``, ``n_kappa``,</span>
 <span class="sd">   ``n_kphi``) and the *equivalent Eulerian* chi axis (``n_chi_eq``).</span>
 <span class="sd">   The decomposition is derived directly from these axes and is correct</span>
 <span class="sd">   for any signed-axis combination — including the ``ad_hoc_diffractometer``</span>
-<span class="sd">   presets that use mixed handedness or a horizontal scattering plane.</span>
+<span class="sd">   demo geometries that use mixed handedness or a horizontal scattering plane.</span>
 
 <span class="sd">   These are the conversions used internally by the kappa virtual-angle</span>
 <span class="sd">   solver.</span>
@@ -458,7 +459,7 @@
 <span class="sd">   reference implementations of the published formula and for</span>
 <span class="sd">   backward compatibility with users who study Walko&#39;s algebra</span>
 <span class="sd">   directly.  They are **not** used inside the kappa virtual-angle</span>
-<span class="sd">   solver, because no preset in this package matches the textbook</span>
+<span class="sd">   solver, because no demo geometry in this package matches the textbook</span>
 <span class="sd">   convention exactly: ``kappa4cv`` uses BL ``-TRANSVERSE`` for omega</span>
 <span class="sd">   (left-handed); ``kappa4ch`` uses ``-VERTICAL`` (horizontal</span>
 <span class="sd">   scattering plane); ``kappa6c`` uses You ``-TRANSVERSE`` (mixed</span>
@@ -494,7 +495,7 @@
 <span class="sd">:class:`KappaPseudoAngleConvention`</span>
 <span class="sd">    Container holding the four signed unit axes that fully specify</span>
 <span class="sd">    the geometry-aware pseudoangle decomposition for a given kappa</span>
-<span class="sd">    preset.</span>
+<span class="sd">    demo geometry.</span>
 
 <span class="sd">Notes</span>
 <span class="sd">-----</span>
@@ -666,13 +667,13 @@
 <span class="sd">    This formula is **geometry-aware**: the resulting axis is correct</span>
 <span class="sd">    for any signed convention of ``n_komega`` and ``n_chi_eq``,</span>
 <span class="sd">    including the BL ``-TRANSVERSE`` orientation used by the</span>
-<span class="sd">    ``kappa4cv`` preset and the BL ``-VERTICAL`` orientation used by</span>
-<span class="sd">    the ``kappa4ch`` preset.</span>
+<span class="sd">    ``kappa4cv`` demo geometry and the BL ``-VERTICAL`` orientation used by</span>
+<span class="sd">    the ``kappa4ch`` demo geometry.</span>
 
 <span class="sd">    The historic helper :func:`~ad_hoc_diffractometer.axes.kappa_axis`</span>
 <span class="sd">    instead returns ``vertical·cos(α) + transverse·sin(α)``</span>
 <span class="sd">    unconditionally, which assumes ``n_komega = +vertical`` and is</span>
-<span class="sd">    therefore wrong for any preset whose ``n_komega`` is not literally</span>
+<span class="sd">    therefore wrong for any demo geometry whose ``n_komega`` is not literally</span>
 <span class="sd">    ``+vertical``.  See issue #241 for the diagnostic that uncovered</span>
 <span class="sd">    this.</span>
 
@@ -936,7 +937,7 @@
 
     <span class="c1"># Special case: χ = 0 reduces the kappa arm to the identity rotation</span>
     <span class="c1"># (κ = 0).  When ``n_komega`` and ``n_kphi`` are parallel — as they</span>
-    <span class="c1"># are in every preset shipped with the package — the Z matrix</span>
+    <span class="c1"># are in every demo geometry shipped with the package — the Z matrix</span>
     <span class="c1"># ``R(n_kphi, φ) · R(n_komega, ω)`` collapses to a single rotation</span>
     <span class="c1"># ``R(n_komega, ω + φ·sign)`` and the (κω, κφ) split is</span>
     <span class="c1"># one-parameter degenerate.  Pick the natural assignment</span>
@@ -978,7 +979,7 @@
     <span class="c1"># ``R(n_kphi, κφ) · R(n_komega, κω) = R(n_kphi, φ) · R(n_komega, ω)``</span>
     <span class="c1"># has a one-parameter family of solutions whenever ``n_kphi`` is</span>
     <span class="c1"># parallel (or anti-parallel) to ``n_komega`` — and *all* kappa</span>
-    <span class="c1"># presets in this package have that property by design (komega</span>
+    <span class="c1"># demo geometries in this package have that property by design (komega</span>
     <span class="c1"># and kphi share the same physical motor axis).  Pick the</span>
     <span class="c1"># representative that maps ``ω → κω`` and ``φ → κφ`` directly so</span>
     <span class="c1"># the round-trip with :func:`kappa_to_eulerian_axes` is identity.</span>
@@ -1073,7 +1074,7 @@
 <span class="sd">    own signed axes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Special case: κ = 0 ⇒ χ = 0 ⇒ degenerate (ω, φ) split.  In every</span>
-    <span class="c1"># preset shipped with the package ``n_komega`` and ``n_kphi`` are</span>
+    <span class="c1"># demo geometry shipped with the package ``n_komega`` and ``n_kphi`` are</span>
     <span class="c1"># parallel, so any pair satisfying ``ω + φ = κω + κφ`` is a valid</span>
     <span class="c1"># decomposition.  The natural assignment ``ω = κω, φ = κφ`` makes</span>
     <span class="c1"># the round-trip ``eulerian → kappa → eulerian`` an identity at</span>
@@ -1182,9 +1183,9 @@
 <span class="sd">       and is correct only for the axis convention assumed in that</span>
 <span class="sd">       paper (omega and phi about the transverse axis with the</span>
 <span class="sd">       textbook handedness; chi about the longitudinal axis).  No</span>
-<span class="sd">       preset in this package matches that convention exactly.  For</span>
+<span class="sd">       demo geometry in this package matches that convention exactly.  For</span>
 <span class="sd">       any geometry-dependent calculation, use</span>
-<span class="sd">       :func:`kappa_to_eulerian_axes` with the preset&#39;s</span>
+<span class="sd">       :func:`kappa_to_eulerian_axes` with the demo geometry&#39;s</span>
 <span class="sd">       :class:`KappaPseudoAngleConvention` instead.</span>
 
 <span class="sd">       Issue #241 records the diagnostic that uncovered this</span>
@@ -1272,7 +1273,7 @@
 <span class="sd">       and is correct only for the textbook axis convention; see the</span>
 <span class="sd">       warning in :func:`kappa_to_eulerian` and issue #241.  For any</span>
 <span class="sd">       geometry-dependent calculation, use</span>
-<span class="sd">       :func:`eulerian_to_kappa_axes` with the preset&#39;s</span>
+<span class="sd">       :func:`eulerian_to_kappa_axes` with the demo geometry&#39;s</span>
 <span class="sd">       :class:`KappaPseudoAngleConvention` instead.</span>
 
 <span class="sd">    Inverse of Walko (2016), eq. [16].</span>
@@ -1406,7 +1407,7 @@
 <span class="sd">    The synthetic geometry has identical outer and inner stages but</span>
 <span class="sd">    replaces the kappa triple ``(komega, kappa, kphi)`` with the</span>
 <span class="sd">    Eulerian triple ``(omega, chi, phi)`` whose axes come from the</span>
-<span class="sd">    kappa preset&#39;s :class:`KappaPseudoAngleConvention`.  The result</span>
+<span class="sd">    kappa demo geometry&#39;s :class:`KappaPseudoAngleConvention`.  The result</span>
 <span class="sd">    is a standard Eulerian geometry that the existing solvers handle</span>
 <span class="sd">    natively.</span>
 
@@ -1569,7 +1570,7 @@
 
 <span class="sd">    1. Build a synthetic Eulerian-equivalent geometry whose three</span>
 <span class="sd">       sample stages have axes ``(n_komega, n_chi_eq, n_kphi)`` taken</span>
-<span class="sd">       from the kappa preset&#39;s</span>
+<span class="sd">       from the kappa demo geometry&#39;s</span>
 <span class="sd">       :class:`KappaPseudoAngleConvention`.</span>
 <span class="sd">    2. Translate the kappa virtual-angle mode onto the equivalent</span>
 <span class="sd">       geometry (a ``VirtualBisectConstraint`` becomes a plain</span>
@@ -1626,7 +1627,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="s2">&quot;detector_constraint&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">DetectorConstraint</span><span class="p">):</span>
         <span class="n">dc</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_constraint</span>
         <span class="c1"># The qaz-detector branch is never reached from a kappa</span>
-        <span class="c1"># virtual-angle mode in any shipped preset (qaz modes route</span>
+        <span class="c1"># virtual-angle mode in any shipped demo geometry (qaz modes route</span>
         <span class="c1"># through ``_solve_qaz_mode``, not through here).</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="s2">&quot;is_qaz&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">eul_geom</span><span class="o">.</span><span class="n">_stages</span>  <span class="c1"># noqa: SLF001</span>
@@ -1657,7 +1658,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="s2">&quot;detector_constraint&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">DetectorConstraint</span><span class="p">):</span>
         <span class="n">dc</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_constraint</span>
         <span class="c1"># See note above: the qaz branch is unreachable from a</span>
-        <span class="c1"># virtual-angle mode in shipped presets.</span>
+        <span class="c1"># virtual-angle mode in shipped demo geometries.</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="s2">&quot;is_qaz&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span>  <span class="c1"># noqa: SLF001</span>
         <span class="p">):</span>  <span class="c1"># pragma: no branch</span>
@@ -1731,7 +1732,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-03 21:13 CDT.
+  Last updated on 2026-05-04 18:12 CDT.
   <br/>
 </p></div>
       

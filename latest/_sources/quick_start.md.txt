@@ -2,22 +2,30 @@
 # Quick Start
 
 This guide walks through the steps to build a four-circle diffractometer
-geometry by hand — without using the pre-built factory function.  Building
-it step by step makes the design choices explicit and shows how every
-geometry in the package is constructed.
+by hand — without using a demo geometry.  Building it step by step makes
+the design choices explicit and shows how every diffractometer in the
+package is constructed.  This builds a diffractometer for the vertical
+scattering plane.
 
-The concise factory-function equivalent appears at the end.
+The concise demo geometry equivalent appears at the end.
+
+```{tip}
+If you already have the package installed and just want a five-line
+example that uses one of the demo geometries, see the
+{ref}`Demonstration Geometries Quick start <quick-start-demo>` page
+instead.
+```
 
 ---
 
 ## 1. Choose a coordinate basis
 
-Any right-handed orthogonal mapping of the three physical directions
-(vertical, longitudinal, transverse) to Cartesian unit vectors (x, y, z)
-is a valid basis.  The pre-built geometries use two common conventions,
-but you may supply any basis dict that satisfies those constraints:
+Any right-handed orthogonal mapping of the three physical directions (vertical,
+longitudinal, transverse) to Cartesian unit vectors (x, y, z) is a valid basis.
+Two conventions (shown below) are used in the demo examples. You may supply
+**any basis** (dictionary) that satisfies those constraints:
 
-| Basis | vertical | longitudinal | transverse | Used by presets |
+| Basis | vertical | longitudinal | transverse | Used by demos |
 |---|---|---|---|---|
 | {data}`~ad_hoc_diffractometer.factories.BASIS_YOU` | +x | +y | +z | {func}`~ad_hoc_diffractometer.presets.psic`, {func}`~ad_hoc_diffractometer.presets.sixc`, {func}`~ad_hoc_diffractometer.presets.kappa6c`, {func}`~ad_hoc_diffractometer.presets.zaxis`, {func}`~ad_hoc_diffractometer.presets.s2d2`, {func}`~ad_hoc_diffractometer.presets.fivec` |
 | {data}`~ad_hoc_diffractometer.factories.BASIS_BL` | +z | +y | +x | {func}`~ad_hoc_diffractometer.presets.fourcv`, {func}`~ad_hoc_diffractometer.presets.fourch`, {func}`~ad_hoc_diffractometer.presets.kappa4cv`, {func}`~ad_hoc_diffractometer.presets.kappa4ch` |
@@ -172,9 +180,9 @@ for sol in solutions:
 
 ---
 
-## Concise form — the factory function
+## Concise form — using a demo geometry
 
-The code above is exactly what the built-in `fourcv()` factory does.
+The code above is exactly what the built-in `fourcv()` demo geometry does.
 If you do not need to customise anything, use it directly:
 
 ```python
@@ -193,8 +201,10 @@ See {doc}`geometries/fourcv` for the full geometry reference, or
 
 ## See also
 
-- {doc}`howto/custom_geometry` — how to build a geometry that is not one
-  of the presets
+- {ref}`Demonstration Geometries Quick start <quick-start-demo>` — the
+  five-line demo geometry example
+- {doc}`howto/custom_geometry` — how to build a diffractometer that is
+  not one of the demos
 - {doc}`howto/basis_vectors` — choosing and understanding basis vectors
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.stage.Stage`

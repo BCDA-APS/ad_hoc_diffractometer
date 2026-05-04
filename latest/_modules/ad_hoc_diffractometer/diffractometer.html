@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=c74d30be"></script>
+    <script src="../../_static/documentation_options.js?v=2b95ae52"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,12 +57,13 @@
             true;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-03 21:13 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-04 18:12 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -490,7 +491,7 @@
 <span class="sd">    kappa_alpha_deg : float or None, optional</span>
 <span class="sd">        Kappa tilt angle in degrees for kappa geometries (kappa4cv,</span>
 <span class="sd">        kappa4ch, kappa6c).  None for non-kappa geometries.  Set by</span>
-<span class="sd">        the kappa factory functions; not intended to be changed after</span>
+<span class="sd">        the kappa demo geometries; not intended to be changed after</span>
 <span class="sd">        construction.</span>
 <span class="sd">    azimuthal_reference : tuple of float or None, optional</span>
 <span class="sd">        Azimuthal reference direction as Miller indices (h, k, l).  Used</span>
@@ -623,8 +624,8 @@
 <span class="sd">        The basis is a labelled dict; its keys have no defined ordering, so</span>
 <span class="sd">        right-handedness cannot be checked here (the cross product of two</span>
 <span class="sd">        vectors depends on which is &#39;first&#39;).  Right-handedness is the</span>
-<span class="sd">        caller&#39;s responsibility and should be verified by the geometry</span>
-<span class="sd">        factory functions or the user.</span>
+<span class="sd">        caller&#39;s responsibility and should be verified by the demo</span>
+<span class="sd">        geometries or the user.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -929,7 +930,7 @@
 
 <span class="sd">        This is the angle between the kappa rotation axis and the vertical</span>
 <span class="sd">        axis (toward the transverse axis).  Typical value: 50 deg.</span>
-<span class="sd">        Set by kappa factory functions (kappa4cv, kappa4ch, kappa6c).</span>
+<span class="sd">        Set by the kappa demo geometries (kappa4cv, kappa4ch, kappa6c).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kappa_alpha_deg</span>
 
@@ -947,19 +948,20 @@
 <span class="sd">        non-kappa geometries.</span>
 
 <span class="sd">        See :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`</span>
-<span class="sd">        for the semantics.  This attribute is set by the kappa</span>
-<span class="sd">        factory functions (:func:`~ad_hoc_diffractometer.presets.kappa4cv`,</span>
+<span class="sd">        for the semantics.  This attribute is set by the kappa demo</span>
+<span class="sd">        geometries (:func:`~ad_hoc_diffractometer.presets.kappa4cv`,</span>
 <span class="sd">        :func:`~ad_hoc_diffractometer.presets.kappa4ch`,</span>
 <span class="sd">        :func:`~ad_hoc_diffractometer.presets.kappa6c`) and is consumed</span>
 <span class="sd">        by the kappa virtual-angle solver.</span>
 
-<span class="sd">        The convention is declared explicitly per preset because the</span>
-<span class="sd">        physical meaning of the kappa-tilt angle ``α`` (and therefore</span>
+<span class="sd">        The convention is declared explicitly per demo geometry because</span>
+<span class="sd">        the physical meaning of the kappa-tilt angle ``α`` (and therefore</span>
 <span class="sd">        the relation between virtual ``(omega, chi, phi)`` and real</span>
 <span class="sd">        ``(komega, kappa, kphi)``) depends on the orientation of the</span>
 <span class="sd">        outer ``komega`` axis — which differs across vertical-scattering</span>
 <span class="sd">        (``kappa4cv``, ``kappa6c``) and horizontal-scattering</span>
-<span class="sd">        (``kappa4ch``) presets.  See issue #241 for the diagnostic.</span>
+<span class="sd">        (``kappa4ch``) demo geometries.  See issue #241 for the</span>
+<span class="sd">        diagnostic.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kappa_pseudo_angle_convention</span>
 
@@ -2538,10 +2540,10 @@
 <span class="sd">        Samples are restored via :meth:`Sample.from_dict`.  The active</span>
 <span class="sd">        sample is restored by name.</span>
 
-<span class="sd">        The factory-function identity (e.g. ``psic``, ``fourcv``) is **not**</span>
+<span class="sd">        The demo-geometry identity (e.g. ``psic``, ``fourcv``) is **not**</span>
 <span class="sd">        stored; ``from_dict`` always returns a plain</span>
-<span class="sd">        :class:`AdHocDiffractometer` instance.  If you need the factory</span>
-<span class="sd">        function, look it up via ``get_geometry(d[&quot;name&quot;])``.</span>
+<span class="sd">        :class:`AdHocDiffractometer` instance.  If you need the original</span>
+<span class="sd">        demo geometry, look it up via ``get_geometry(d[&quot;name&quot;])``.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -2778,7 +2780,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-03 21:13 CDT.
+  Last updated on 2026-05-04 18:12 CDT.
   <br/>
 </p></div>
       

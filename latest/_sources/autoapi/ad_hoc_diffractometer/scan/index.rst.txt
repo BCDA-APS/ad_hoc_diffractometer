@@ -32,7 +32,7 @@ scan
    will consume these outputs to drive real diffractometers.
 
    The ordering instability of :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward` returns multiple solutions in seed-discovery order, which is
    not reproducible and can switch between the positive-chi and negative-chi
    branches at adjacent trajectory points.  All three trajectory functions
@@ -239,7 +239,7 @@ Module Contents
 
    Decompose ``Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω)`` into
    ``(kω, κ, kφ)`` using a Rodrigues expansion that is **agnostic to
-   the specific signed axis convention** of the kappa preset.
+   the specific signed axis convention** of the kappa demo geometry.
 
    Derivation
    ----------
@@ -451,7 +451,7 @@ Module Contents
 
    :param geometry: Must have ``wavelength`` and ``sample.UB`` set, and an active
                     diffraction mode.  ``kappa_alpha_deg`` must be set for kappa
-                    geometries (it is set automatically by the factory functions).
+                    geometries (it is set automatically by the demo geometries).
    :type geometry: AdHocDiffractometer
    :param h: Miller indices of the fixed reflection.
    :type h: float

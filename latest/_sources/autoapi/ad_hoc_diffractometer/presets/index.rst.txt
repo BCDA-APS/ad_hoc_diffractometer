@@ -7,14 +7,15 @@ presets
 
    Import: ``ad_hoc_diffractometer.presets``
 
-   This module provides **pre-built geometries**: factory functions that
-   construct fully configured :class:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
-   instances for the most common multi-circle diffractometer designs used in
-   synchrotron and laboratory X-ray / neutron crystallography.  They also
-   serve as worked examples for defining custom geometries.
+   This module demonstrates some of the most common diffractometer
+   geometries used in synchrotron and laboratory X-ray / neutron
+   crystallography, each fully-configured, using
+   :class:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`.
+   Together, the demos here serve as worked examples for defining custom
+   geometries.
 
-   Pre-built geometries
-   --------------------
+   Demo geometries
+   ---------------
 
    .. list-table::
       :header-rows: 1
@@ -54,11 +55,15 @@ presets
         - Surface / special
         - Evans-Lutterodt & Tang (1995). See :doc:`/geometries/s2d2`.
 
-   Each factory is decorated with
+   Each demo geometry is decorated with
    :func:`~ad_hoc_diffractometer.factories.register_geometry`, which registers
    it in the geometry registry.  Use
    :func:`~ad_hoc_diffractometer.factories.list_geometries` to retrieve all
    registered geometries as a ``{name: callable}`` dict.
+
+   For historical context on diffractometer design and usage that
+   predates the closed-form Busing & Levy (1967) angle-setting equations,
+   see Arndt & Willis (1966) — listed in the project's :doc:`/references`.
 
    Usage
    -----
@@ -369,6 +374,9 @@ Module Contents
    Six-circle kappa diffractometer (psic-style outer axes, kappa inner sample).
 
    Walko (2016) designation: S4D2.
+
+   See ESRF for a comprehensive example:
+   https://www.esrf.fr/home/UsersAndScience/Experiments/CRG/BM02/equipment/diffractometer.html#c
 
    Extends the kappa4cv geometry with two additional axes (mu, nu) in
    the style of the psic geometry (You 1999), giving full orientation freedom.
