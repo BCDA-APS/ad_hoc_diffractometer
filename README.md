@@ -15,41 +15,32 @@ for a step-by-step walkthrough building an Eulerian four-circle geometry
 definition(s), and running a forward calculation. Common geometries are
 provided as examples.
 
-## Features
+<table>
 
-`ad_hoc_diffractometer` handles the core calculations you need for diffractometer work:
+  <tr>
+    <td><a href="https://prjemian.github.io/ad_hoc_diffractometer/latest/install.html">
+    <b>Get started</b>
+    <br />
+    Install the package and verify the installation.
+    </a></td>
+    <td><a href="https://prjemian.github.io/ad_hoc_diffractometer/latest/user_guide.html">
+    <b>User Guide</b>
+    <br />
+    Concepts, how-to guides, and demonstration geometries.
+    </a></td>
+  </tr>
 
-- **Geometry setup**: Describe your diffractometer using observable
-  physical directions (vertical, longitudinal, lattransverseeral).
-- **Orientation calculations**: Compute orientation matrices from
-  reflections, refine crystal lattice.
-- **Reciprocal space mapping**: Convert from rotation axes to reciprocal
-  space coordinates.
-- **Diffractometer control**: Convert from reciprocal space coordinates
-  to rotation axes.
-- **Mode Definitions**: You define which axes are free, fixed, or
-  coupled when solving kinematics.
+  <tr>
+    <td><a href="https://prjemian.github.io/ad_hoc_diffractometer/latest/about.html">
+    <b>About ...</b>
+    <br />
+    Features, requirements, use cases, ...
+    </a></td>
+    <td><a href="https://prjemian.github.io/ad_hoc_diffractometer/latest/references.html">
+    <b>References</b>
+    <br />
+    All literature citations — geometry papers, physical constants, and numerical methods.
+    </a></td>
+  </tr>
 
-## It's your diffractometer
-
-You get **full control over your setup** — whether you're using a
-standard four-circle geometry or something custom, the package adapts to
-you. No hard-coded configurations mean new geometries require zero
-changes to the code.
-
-## Minimal Requirements
-
-Only [**Python**](https://python.org) with its Standard Library and
-[**NumPy**](https://numpy.org). No scipy, sympy, or other scientific
-dependencies required.
-
-## Use Cases
-
-- Simulating diffractometer behavior.
-- Real-time operations in reciprocal space during beamtime.
-- Planning experiments and trajectories before you run them.
-- Backend support for diffractometer control systems.
-- Creating visualizations of diffractometer geometry.
-
-**Important**: The package assumes **monochromatic radiation**
-throughout — all calculations are at a fixed wavelength.
+</table>
