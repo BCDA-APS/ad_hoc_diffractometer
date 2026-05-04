@@ -31,7 +31,6 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   diffractometer with explicit X/Y/Z coordinate axes and κ-rotation
   NEG/POS sense; the schematic cited by ITC Vol. C §2.2.6 as the
   reference for the kappa goniostat geometry.
-  Local copy: ``references/1985-Wyckhoff-1-s2.0-0076687985140267-main.pdf``.
   Used by: {func}`~ad_hoc_diffractometer.presets.kappa4ch`.
 
 **Bloch (1985)**
@@ -82,7 +81,6 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   κ-axis tilt parameters χ, α (Fig. 2).  Cited by Sønsteby
   *et al.* (2013) as the basic mathematics of the
   six-axis κ instrument.
-  Local copy: ``references/li0302.pdf``.
 
 **You (1999)**
 : H. You.
@@ -107,7 +105,6 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   left-handed for 2θ in Hamilton's choice) — note that the presets
   shipped here follow Walko's left-handed convention for ω/φ/2θ; see
   the {doc}`/concepts` page for the handedness discussion.
-  Local copy: ``references/ITC-vol-c-2004.pdf``.
   Used by: {func}`~ad_hoc_diffractometer.presets.kappa4cv`,
   {func}`~ad_hoc_diffractometer.presets.kappa4ch`,
   {func}`~ad_hoc_diffractometer.presets.kappa6c`.
@@ -124,7 +121,6 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   κ-goniostat axes used by ``kappa4cv``, ``kappa4ch``, and
   ``kappa6c``; §3 last paragraph explicitly notes the extension to
   additional rotation axes.
-  Local copy: ``references/2006 Thorkildsen J Appl Cryst.pdf``.
   Used by: {func}`~ad_hoc_diffractometer.presets.kappa4cv`,
   {func}`~ad_hoc_diffractometer.presets.kappa4ch`,
   {func}`~ad_hoc_diffractometer.presets.kappa6c`.
@@ -142,7 +138,6 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   *et al.* (2006) for the angular-calculation method used by the
   CrysAlis control software.  The reference instrument for the
   ``kappa6c`` preset.
-  Local copy: ``references/vv5059.pdf``.
   Used by: {func}`~ad_hoc_diffractometer.presets.kappa6c`.
 
 **Walko (2016)**

@@ -6,37 +6,61 @@
 
 **Version:** |release|
 
-``ad_hoc_diffractometer`` is a **pure-Python** package for calculating
-multi-circle diffractometer operations in reciprocal space for X-ray and neutron
-crystallography.  It is built around a key design principle: **any multi-circle
-diffractometer geometry can be fully described by the caller** — no geometry is
-hard-coded, and new geometries require no changes to the package itself.
+``ad_hoc_diffractometer`` is a Python package that lets you describe any
+multi-circle diffractometer geometry and perform X-ray/neutron
+crystallography calculations.
 
-Its only runtime dependency beyond the Python Standard Library is
-`NumPy <https://numpy.org>`_ — no scipy, sympy, or other scientific
-libraries are required.
+See the :doc:`Quick Start guide <quick_start>` for a step-by-step
+walkthrough building an Eulerian four-circle geometry — choosing a
+coordinate basis, stage stacking, diffraction mode definition(s), and
+running a forward calculation. Common geometries are provided as
+examples.
 
-.. note::
+.. less narrative on this page, it's the docs' home page
+   This content could be moved to the user guide, perhaps.
+   What It Does
+   ------------
 
-   The package assumes **monochromatic radiation** throughout.  All
-   diffraction calculations (Bragg angles, Q-vector magnitudes,
-   forward/inverse problems) are performed at a fixed wavelength.
+   The package handles the core calculations you need for diffractometer work:
 
-It provides:
+   - **Geometry setup**: Describe your diffractometer using observable
+   physical directions (vertical, longitudinal, lateral).
+   - **Orientation calculations**: Compute orientation matrices from
+   reflections, refine crystal lattice.
+   - **Reciprocal space mapping**: Convert from rotation axes to reciprocal
+   space coordinates.
+   - **Diffractometer control**: Convert from reciprocal space coordinates
+   to rotation axes.
+   - **Mode Definitions**: You define which axes are free, fixed, or
+   coupled when solving kinematics.
 
-- A class-based description of diffractometer stages (rotary axes) and
-  their stacking order
-- Predefined factory functions for standard synchrotron and laboratory
-  diffractometer geometries (psic, fourcv, fourch, sixc, kappa families,
-  zaxis, s2d2, fivec)
-- Crystallographic lattice calculations (B matrix, reciprocal lattice)
-- U and UB matrix computation from orienting reflections
-- Forward diffraction calculations (hkl → motor angles), with
-  diffraction modes controlling which stages are free, fixed, or coupled
-- Wavelength, energy, d-spacing, and Q-vector conversions for X-ray
-  and neutron sources
-- Reciprocal-space operations: Q-vector magnitude, d-spacing, two-theta,
-  and trajectory planning along arbitrary paths in reciprocal space
+   Why This Matters
+   ----------------
+
+   You get **full control over your setup** — whether you're using a
+   standard four-circle geometry or something custom, the package adapts to
+   you. No hard-coded configurations mean new geometries require zero
+   changes to the code.
+
+   What You Need
+   -------------
+
+   Only [**Python**](https://python.org) with its Standard Library and
+   [**NumPy**](https://numpy.org). No scipy, sympy, or other scientific
+   dependencies required.
+
+   Common Use Cases
+   ----------------
+
+   - Real-time operations in reciprocal space during beamtime.
+   - Backend support for diffractometer control systems.
+   - Planning experiments and trajectories before you run them.
+   - Simulating diffractometer behavior.
+   - Building visualizations of diffractometer geometry.
+
+   .. note:: The package assumes **monochromatic radiation** throughout
+      — all calculations are at a fixed wavelength.
+
 
 .. toctree::
    :hidden:
@@ -82,49 +106,51 @@ It provides:
       All literature citations — geometry papers, physical constants,
       and numerical methods.
 
-**Quick start**
+.. remove
+   **Quick start**
 
-.. code-block:: python
+   .. code-block:: python
 
-   import ad_hoc_diffractometer as ahd
+      import ad_hoc_diffractometer as ahd
 
-   # Create a six-circle psic geometry and set the wavelength
-   g = ahd.psic()
-   g.wavelength = 1.0  # Å
+      # Create a six-circle psic geometry and set the wavelength
+      g = ahd.psic()
+      g.wavelength = 1.0  # Å
 
-   # Define the sample lattice (cubic silicon)
-   g.sample.lattice = ahd.Lattice(a=5.431)
+      # Define the sample lattice (cubic silicon)
+      g.sample.lattice = ahd.Lattice(a=5.431)
 
-   # Show a summary of the geometry
-   print(g.summary())
+      # Show a summary of the geometry
+      print(g.summary())
 
-See the :doc:`Quick Start guide <quick_start>` to build a four-circle
-geometry step by step — choosing a basis, stacking stages, defining modes,
-and running a forward calculation — without using a factory function.
+   See the :doc:`Quick Start guide <quick_start>` to build a four-circle
+   geometry step by step — choosing a basis, stacking stages, defining modes,
+   and running a forward calculation — without using a factory function.
 
-Background
-----------
+.. TODO: too many cards below
+   Background
+   ----------
 
-.. grid:: 3
+   .. grid:: 3
 
-   .. grid-item-card:: :material-outlined:`functions;3em` Direct Lattice
-      :link: direct-lattice.html
-      :link-type: url
+      .. grid-item-card:: :material-outlined:`functions;3em` Direct Lattice
+         :link: direct-lattice.html
+         :link-type: url
 
-      Vector mathematics and lattice vector conventions in crystallography.
+         Vector mathematics and lattice vector conventions in crystallography.
 
-   .. grid-item-card:: :material-outlined:`science;3em` Case Study
-      :link: problem1.html
-      :link-type: url
+      .. grid-item-card:: :material-outlined:`science;3em` Case Study
+         :link: problem1.html
+         :link-type: url
 
-      The diffractometer problem that started this project.
+         The diffractometer problem that started this project.
 
-   .. grid-item-card:: :material-outlined:`calculate;3em` Coordinate Convention & UB Matrix
-      :link: problem2.html
-      :link-type: url
+      .. grid-item-card:: :material-outlined:`calculate;3em` Coordinate Convention & UB Matrix
+         :link: problem2.html
+         :link-type: url
 
-      How a basis vector assignment leads to the B, U, and UB matrices, with a
-      worked example using the convention described by H. You (1999.
+         How a basis vector assignment leads to the B, U, and UB matrices, with a
+         worked example using the convention described by H. You (1999.
 
 About
 -----

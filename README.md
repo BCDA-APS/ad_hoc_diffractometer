@@ -4,81 +4,88 @@
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://prjemian.github.io/ad_hoc_diffractometer/latest/)
 [![License: CC-BY-4.0](https://img.shields.io/badge/License-CC--BY--4.0-brightgreen)](https://creativecommons.org/licenses/by/4.0/)
 
-`ad_hoc_diffractometer` is a **pure-Python** package for calculating
-multi-circle diffractometer operations in reciprocal space for X-ray and
-neutron crystallography.  It is built around a key design principle: **any
-multi-circle diffractometer geometry can be fully described by the caller** — no
-geometry is hard-coded, and new geometries require no changes to the package
-itself.
+<!-- 
+TODO: rewrite with user-focus  -- Need short overview
 
-Its only runtime dependency beyond the Python Standard Library is
-[NumPy](https://numpy.org) — no scipy, sympy, or other scientific
-libraries are required.
+`ad_hoc_diffractometer`:
+
+- **any multi-circle diffractometer geometry can be fully described by the caller*
+  - no hard-coded geometries
+  - new geometries require no changes to the package
+  - description based on *observable* directions: vertical, longitudinal, lateral
+  - flexible assignment of xyz axes
+  - several common geometries are demonstrated
+  - user-described *modes* for defining which axes are free, fixed, or coupled when computing angle from *hkl*
+- calculate
+  - B matrix (crystal orientation)
+  - UB orientation matrix from two or three reflections
+  - crystal lattice refinement from three or more reflections
+  - motor angles -> *hkl* coordinates
+  - *hkl* coordinates -> motor angles
+  - reciprocal space coordinates from rotation axes
+  - rotation axes from reciprocal space coordinates
+- a **pure-Python** package
+  - Python Standard Library
+  - [NumPy](https://numpy.org)
+  - not required: scipy, sympy, or other scientific libraries
+- use cases for this package
+  - operations in reciprocal space for X-ray and neutron crystallography
+  - backend library providing kinematic transformations for control system diffractometer
+  - full-featured diffractometer simulation
+  - computation for graphical representation of diffractometer
+  - experiment planning
+  - Reciprocal-space trajectory planning
 
 > **Note:** The package assumes **monochromatic radiation** throughout.
-> All diffraction calculations are performed at a fixed wavelength.
+> All diffraction calculations are performed at a fixed wavelength. 
+-->
 
-## Features
+`ad_hoc_diffractometer` is a Python package that lets you describe any
+multi-circle diffractometer geometry and perform X-ray/neutron
+crystallography calculations.
 
-- A class-based description of diffractometer stages (rotary axes) and
-  their stacking order
-- Predefined factory functions for standard synchrotron and laboratory
-  diffractometer geometries (psic, fourcv, fourch, sixc, kappa families,
-  zaxis, s2d2, fivec)
-- Crystallographic lattice calculations (B matrix, reciprocal lattice)
-- U and UB matrix computation from orienting reflections
-- Forward diffraction calculations (hkl → motor angles), with
-  diffraction modes controlling which stages are free, fixed, or coupled
-- Reciprocal-space trajectory planning
+See the [**Quick Start
+guide**](https://prjemian.github.io/ad_hoc_diffractometer/latest/quick_start.html)
+for a step-by-step walkthrough building an Eulerian four-circle geometry
+— choosing a coordinate basis, stage stacking, diffraction mode
+definition(s), and running a forward calculation. Common geometries are
+provided as examples.
 
-## Quick start
+## What It Does
 
-```python
-import ad_hoc_diffractometer as ahd
+The package handles the core calculations you need for diffractometer work:
 
-# Four-circle geometry (Busing & Levy 1967, vertical scattering plane)
-g = ahd.fourcv()
-g.wavelength = 1.5406          # Å (Cu Kα)
-g.sample.lattice = ahd.Lattice(a=5.431)  # cubic silicon
+- **Geometry setup**: Describe your diffractometer using observable
+  physical directions (vertical, longitudinal, lateral).
+- **Orientation calculations**: Compute orientation matrices from
+  reflections, refine crystal lattice.
+- **Reciprocal space mapping**: Convert from rotation axes to reciprocal
+  space coordinates.
+- **Diffractometer control**: Convert from reciprocal space coordinates
+  to rotation axes.
+- **Mode Definitions**: You define which axes are free, fixed, or
+  coupled when solving kinematics.
 
-print(g.summary())
-```
+## Why This Matters
 
-See the
-[Quick Start guide](https://prjemian.github.io/ad_hoc_diffractometer/latest/quick_start.html)
-for a step-by-step walkthrough that builds the same geometry without the
-factory function — choosing a coordinate basis, stacking stages, defining
-diffraction modes, and running a forward calculation.
+You get **full control over your setup** — whether you're using a
+standard four-circle geometry or something custom, the package adapts to
+you. No hard-coded configurations mean new geometries require zero
+changes to the code.
 
-## Install
+## What You Need
 
-```bash
-pip install ad_hoc_diffractometer
-```
+Only [**Python**](https://python.org) with its Standard Library and
+[**NumPy**](https://numpy.org). No scipy, sympy, or other scientific
+dependencies required.
 
-For development:
+## Common Use Cases
 
-```bash
-git clone https://github.com/prjemian/ad_hoc_diffractometer
-cd ad_hoc_diffractometer
-pip install -e .[dev]
-```
+- Real-time operations in reciprocal space during beamtime.
+- Backend support for diffractometer control systems.
+- Planning experiments and trajectories before you run them.
+- Simulating diffractometer behavior.
+- Building visualizations of diffractometer geometry.
 
-See the [documentation](https://prjemian.github.io/ad_hoc_diffractometer/latest/)
-for full installation options (conda, uv, hatch) and usage guides.
-
-## References
-
-Papers describing the diffractometer geometries provided:
-
-- Busing & Levy (1967) — fourc. *Acta Cryst.* 22, 457–464.
-- Bloch (1985) — zaxis. *J. Appl. Cryst.* 18, 33–36.
-- Vlieg et al. (1987) — fivec. *J. Appl. Cryst.* 20, 330–337.
-- Lohmeier & Vlieg (1993) — sixc. *J. Appl. Cryst.* 26, 706–716.
-- Evans-Lutterodt & Tang (1995) — s2d2. *J. Appl. Cryst.* 28, 318–326.
-- You (1999) — psic. *J. Appl. Cryst.* 32, 614–623.
-  DOI: [10.1107/S0021889899001223](https://doi.org/10.1107/S0021889899001223)
-- ITC Vol. C §2.2.6 (2006) — kappa.
-  DOI: [10.1107/97809553602060000577](https://doi.org/10.1107/97809553602060000577)
-- Walko (2016) — geometry survey. *Reference Module in Materials Science
-  and Materials Engineering*, Elsevier.
+**Important**: The package assumes **monochromatic radiation**
+throughout — all calculations are at a fixed wavelength.

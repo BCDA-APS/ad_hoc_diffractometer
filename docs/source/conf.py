@@ -66,9 +66,6 @@ exclude_patterns = [
     "_build",
     "Thumbs.db",
     ".DS_Store",
-    # roadmap.md lives in the repo root (not docs/source); guard against
-    # accidental inclusion if the file is ever copied back here.
-    "roadmap.md",
 ]
 
 myst_enable_extensions = ["colon_fence", "dollarmath"]

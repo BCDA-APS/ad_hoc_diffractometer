@@ -107,10 +107,7 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    ```
    Examples: `2-motor-limits`, `1-wavelength-energy`, `9-diffraction-modes`
 
-5. **On the feature branch**, if the completed issue corresponds to a section
-   in `docs/roadmap.md`, check its box from `[ ]` to `[x]` as part of the
-   same branch and include it in the PR.  The roadmap update is accepted when
-   the PR is merged — no separate post-merge commit to `main` is needed.
+5. removed
 
 6. **Monitor CI** after the PR is opened.  Watch for test failures, lint
    errors, or coverage gaps reported by the CI checks.  Push additional
@@ -160,10 +157,6 @@ provides:
 - A geometry registry (`list_geometries()`) for all predefined geometries
 - Display precision control at package and instance level
 
-The package is intended to grow toward a full diffraction calculation
-engine (UB matrix, angle calculations, operating modes).  See
-`docs/source/roadmap.md` for the planned feature list.
-
 ---
 
 ## Repository layout
@@ -177,7 +170,6 @@ diffractometer/                  # project root (git repo)
 │   └── source/                  # Sphinx documentation source
 │       ├── conf.py              # Sphinx configuration
 │       ├── index.rst            # root toctree
-│       ├── roadmap.md           # planned features — read before adding features
 │       ├── install.md           # installation instructions
 │       ├── api.rst              # AutoAPI stub
 │       ├── changes.md           # includes CHANGES.md
@@ -187,7 +179,7 @@ diffractometer/                  # project root (git repo)
 │       ├── fourcv_alignment_howto.ipynb
 │       └── _static/
 │           └── switcher.json    # version switcher stub
-├── references/                  # journal articles and reference documents
+├── references/                  # journal articles and reference documents (excluded from repo)
 │   ├── 1967 Busing and Levy a05492.pdf   # foundational four-circle paper
 │   ├── 1999-JAppl-Cryst-32-614-623-H-You-psic-4S+2D/  # You (1999) psic
 │   ├── 1993 J Appl Cryst 26 706 Lohmeier and Vlieg sixc/
@@ -524,14 +516,3 @@ The B matrix follows the I16 convention: `(b1, b2, b3) = 2π * B.T`.
 | You, J. Appl. Cryst. 32, 614-623 (1999) DOI:10.1107/S0021889899001223 | psic 4S+2D six-circle; axis sign conventions (mixed handedness) |
 | ITC Vol. C, Sec. 2.2.6 (2006) DOI:10.1107/97809553602060000577 | Kappa 50° convention; normal-beam equatorial geometry |
 | Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) | Geometry survey; S/D designation system; kappa, zaxis, s2d2 |
-
----
-
-## Roadmap status
-
-See `roadmap.md` in the repository root for the full feature checklist
-with completion status.  Priorities 1.x and 2.x are fully implemented.
-Priority 3.x is mostly complete; the remaining open items are:
-
-- Detector geometry parameters (Priority 3.3)
-- Alternative calculation engines: Q-space, d-spacing (Priority 3.4)
