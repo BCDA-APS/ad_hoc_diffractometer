@@ -2,7 +2,7 @@
 # Build a Custom Diffractometer Geometry
 
 This guide walks through defining a diffractometer geometry that is not
-one of the 10 pre-built presets.  Each design decision is explained as
+one of the demo geometries.  Each design decision is explained as
 it arises, with notes on what happens if you get it wrong.
 
 The worked example builds a **three-circle powder diffractometer** with
@@ -21,6 +21,8 @@ presets.
 ---
 
 ## The instrument
+
+FIXME: Explain why are theta & ttheta axes vertical.   --> horizontal scattering plane
 
 Imagine a laboratory powder diffractometer with three rotary stages:
 

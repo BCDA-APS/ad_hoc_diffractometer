@@ -18,13 +18,14 @@ examples.
 
 .. less narrative on this page, it's the docs' home page
    This content could be moved to the user guide, perhaps.
-   What It Does
+
+   Features
    ------------
 
-   The package handles the core calculations you need for diffractometer work:
+   ``ad_hoc_diffractometer`` handles the core calculations you need for diffractometer work:
 
    - **Geometry setup**: Describe your diffractometer using observable
-   physical directions (vertical, longitudinal, lateral).
+   physical directions (vertical, longitudinal, transverse).
    - **Orientation calculations**: Compute orientation matrices from
    reflections, refine crystal lattice.
    - **Reciprocal space mapping**: Convert from rotation axes to reciprocal
@@ -34,29 +35,29 @@ examples.
    - **Mode Definitions**: You define which axes are free, fixed, or
    coupled when solving kinematics.
 
-   Why This Matters
-   ----------------
+   It's your diffractometer
+   --------------------------
 
    You get **full control over your setup** — whether you're using a
    standard four-circle geometry or something custom, the package adapts to
    you. No hard-coded configurations mean new geometries require zero
    changes to the code.
 
-   What You Need
-   -------------
+   Minimal Requirements
+   -------------------------
 
    Only [**Python**](https://python.org) with its Standard Library and
    [**NumPy**](https://numpy.org). No scipy, sympy, or other scientific
    dependencies required.
 
-   Common Use Cases
+   Use Cases
    ----------------
 
-   - Real-time operations in reciprocal space during beamtime.
-   - Backend support for diffractometer control systems.
-   - Planning experiments and trajectories before you run them.
    - Simulating diffractometer behavior.
-   - Building visualizations of diffractometer geometry.
+   - Real-time operations in reciprocal space during beamtime.
+   - Planning experiments and trajectories before you run them.
+   - Backend support for diffractometer control systems.
+   - Creating visualizations of diffractometer geometry.
 
    .. note:: The package assumes **monochromatic radiation** throughout
       — all calculations are at a fixed wavelength.
@@ -84,7 +85,7 @@ examples.
       :link: user_guide
       :link-type: doc
 
-      Concepts, how-to guides, and a geometry reference.
+      Concepts, how-to guides, and demonstration geometries.
 
    .. grid-item-card:: :material-regular:`api;3em` API Reference
       :link: api
@@ -92,12 +93,6 @@ examples.
 
       Complete auto-generated reference for every public class,
       function, and constant.
-
-   .. grid-item-card:: :material-outlined:`history;3em` Release Notes
-      :link: changes
-      :link-type: doc
-
-      What changed in each release.
 
    .. grid-item-card:: :material-outlined:`library_books;3em` References
       :link: references

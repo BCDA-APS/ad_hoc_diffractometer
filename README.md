@@ -4,7 +4,7 @@
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://prjemian.github.io/ad_hoc_diffractometer/latest/)
 [![License: CC-BY-4.0](https://img.shields.io/badge/License-CC--BY--4.0-brightgreen)](https://creativecommons.org/licenses/by/4.0/)
 
-<!-- 
+<!--
 TODO: rewrite with user-focus  -- Need short overview
 
 `ad_hoc_diffractometer`:
@@ -12,7 +12,7 @@ TODO: rewrite with user-focus  -- Need short overview
 - **any multi-circle diffractometer geometry can be fully described by the caller*
   - no hard-coded geometries
   - new geometries require no changes to the package
-  - description based on *observable* directions: vertical, longitudinal, lateral
+  - description based on *observable* directions: vertical, longitudinal, transverse
   - flexible assignment of xyz axes
   - several common geometries are demonstrated
   - user-described *modes* for defining which axes are free, fixed, or coupled when computing angle from *hkl*
@@ -37,7 +37,7 @@ TODO: rewrite with user-focus  -- Need short overview
   - Reciprocal-space trajectory planning
 
 > **Note:** The package assumes **monochromatic radiation** throughout.
-> All diffraction calculations are performed at a fixed wavelength. 
+> All diffraction calculations are performed at a fixed wavelength.
 -->
 
 `ad_hoc_diffractometer` is a Python package that lets you describe any
@@ -51,12 +51,12 @@ for a step-by-step walkthrough building an Eulerian four-circle geometry
 definition(s), and running a forward calculation. Common geometries are
 provided as examples.
 
-## What It Does
+## Features
 
-The package handles the core calculations you need for diffractometer work:
+`ad_hoc_diffractometer` handles the core calculations you need for diffractometer work:
 
 - **Geometry setup**: Describe your diffractometer using observable
-  physical directions (vertical, longitudinal, lateral).
+  physical directions (vertical, longitudinal, lattransverseeral).
 - **Orientation calculations**: Compute orientation matrices from
   reflections, refine crystal lattice.
 - **Reciprocal space mapping**: Convert from rotation axes to reciprocal
@@ -66,26 +66,26 @@ The package handles the core calculations you need for diffractometer work:
 - **Mode Definitions**: You define which axes are free, fixed, or
   coupled when solving kinematics.
 
-## Why This Matters
+## It's your diffractometer
 
 You get **full control over your setup** — whether you're using a
 standard four-circle geometry or something custom, the package adapts to
 you. No hard-coded configurations mean new geometries require zero
 changes to the code.
 
-## What You Need
+## Minimal Requirements
 
 Only [**Python**](https://python.org) with its Standard Library and
 [**NumPy**](https://numpy.org). No scipy, sympy, or other scientific
 dependencies required.
 
-## Common Use Cases
+## Use Cases
 
-- Real-time operations in reciprocal space during beamtime.
-- Backend support for diffractometer control systems.
-- Planning experiments and trajectories before you run them.
 - Simulating diffractometer behavior.
-- Building visualizations of diffractometer geometry.
+- Real-time operations in reciprocal space during beamtime.
+- Planning experiments and trajectories before you run them.
+- Backend support for diffractometer control systems.
+- Creating visualizations of diffractometer geometry.
 
 **Important**: The package assumes **monochromatic radiation**
 throughout — all calculations are at a fixed wavelength.
