@@ -17,7 +17,7 @@ g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
-## Pre-built geometry definition
+## Demo geometry definition
 
 This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.fourch` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L613) for the complete stage
@@ -80,7 +80,7 @@ Places the sample symmetrically between the incident and diffracted beams.
 ### `fixed_chi`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
-`chi` is held at the value declared in the constraint (factory default: 90°).
+`chi` is held at the value declared in the constraint (default in the demo geometry: 90°).
 The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; the constraint
 persists until replaced — see {doc}`../howto/constraints`.
 
@@ -92,7 +92,7 @@ persists until replaced — see {doc}`../howto/constraints`.
 ### `fixed_phi`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
-`phi` is held at the value declared in the constraint (factory default: 0°).
+`phi` is held at the value declared in the constraint (default in the demo geometry: 0°).
 The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
 
 | | |
@@ -103,7 +103,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 ### `fixed_omega`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
-`omega` is held at the value declared in the constraint (factory default: 0°).
+`omega` is held at the value declared in the constraint (default in the demo geometry: 0°).
 The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
 
 | | |
