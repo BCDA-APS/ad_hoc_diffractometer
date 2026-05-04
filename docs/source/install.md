@@ -40,3 +40,9 @@ make html
 
 The built HTML is written to `docs/build/html/`.
 Open `docs/build/html/index.html` in a browser to view it.
+
+## Verify the installation
+
+After installing, run the short example on the
+{ref}`Demonstration Geometries Quick start <quick-start-demo>` page to
+confirm the package is working end-to-end.

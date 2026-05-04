@@ -2,7 +2,7 @@
 # Build a Custom Diffractometer Geometry
 
 This guide walks through defining a diffractometer geometry that is not
-one of the 10 pre-built presets.  Each design decision is explained as
+one of the demo geometries.  Each design decision is explained as
 it arises, with notes on what happens if you get it wrong.
 
 The worked example builds a **three-circle powder diffractometer** with
@@ -11,18 +11,35 @@ follow but exercises every decision: basis, axis signs, parent chains,
 roles, and modes.
 
 ```{tip}
-If your instrument matches one of the pre-built geometries
+If your instrument matches one of the demo geometries
 ({func}`~ad_hoc_diffractometer.presets.psic`,
-{func}`~ad_hoc_diffractometer.presets.fourcv`, etc.), use the factory
-function instead.  This guide is for instruments that differ from the
-presets.
+{func}`~ad_hoc_diffractometer.presets.fourcv`, etc.), use it directly
+instead.  This guide is for instruments that differ from the
+:ref:`demo geometries <geometries>`.
 ```
 
 ---
 
 ## The instrument
 
-Imagine a laboratory powder diffractometer with three rotary stages:
+Imagine a laboratory powder diffractometer.  The designer has chosen a
+**horizontal scattering plane** geometry (the reasons — whatever they may be —
+are out of scope here).
+
+That single design decision determines the rotation axis of the scattering arm.
+The scattering plane is the plane containing the incident beam k_i, the
+scattered beam k_f, and the scattering vector Q = k_f − k_i.  Because k_f sweeps
+in the plane perpendicular to the 2θ rotation axis, **the scattering plane is
+always perpendicular to the 2θ axis**.  A horizontal scattering plane therefore
+*requires* 2θ — and the matching sample stage θ that tracks half of it — to
+rotate about the **vertical** axis.  (Conversely, the
+{func}`~ad_hoc_diffractometer.presets.fourcv` geometry places 2θ about a
+horizontal/transverse axis to obtain a vertical scattering plane; see
+{doc}`/concepts` for the wider discussion of the ``v`` / ``h`` suffix
+convention.)
+
+With that constraint fixed, the three rotary stages of this instrument
+are:
 
 1. **theta** — rotates the sample about the vertical axis
    (right-handed: positive angles rotate the sample face toward the
@@ -32,10 +49,6 @@ Imagine a laboratory powder diffractometer with three rotary stages:
    points along the beam).  Right-handed.
 3. **ttheta** — the detector arm, rotating about the same vertical axis
    as theta but mechanically independent.  Right-handed.
-
-The scattering plane is **horizontal** (both theta and ttheta rotate
-about the vertical axis, so the scattered beam sweeps through the
-horizontal plane).
 
 ---
 
@@ -282,7 +295,7 @@ floating-point precision, check:
 
 ---
 
-## Optional: register as a factory function
+## Optional: register as a demo (or your own) geometry
 
 To make the geometry available via
 {func}`~ad_hoc_diffractometer.factories.list_geometries` and
@@ -377,8 +390,9 @@ Use this checklist when defining a new geometry:
 - {doc}`constraints` — the full constraint framework
 - {doc}`modes` — switching between diffraction modes
 - {doc}`../problem1` — case study defining the physical reference frame
-- {doc}`../problem2` — worked example of basis assignment and UB
-  derivation
+- {doc}`../problem2` — case study showing that the choice of basis is
+  arbitrary (different basis assignments produce U/UB matrices that
+  differ by a fixed rotation, leaving the physics invariant)
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.stage.Stage`
 - {func}`~ad_hoc_diffractometer.factories.register_geometry`

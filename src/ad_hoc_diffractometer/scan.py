@@ -28,7 +28,7 @@ communicate with hardware.  A future execution layer (not yet planned)
 will consume these outputs to drive real diffractometers.
 
 The ordering instability of :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward` returns multiple solutions in seed-discovery order, which is
 not reproducible and can switch between the positive-chi and negative-chi
 branches at adjacent trajectory points.  All three trajectory functions
@@ -400,7 +400,7 @@ def _kappa_from_Z(
     r"""
     Decompose ``Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω)`` into
     ``(kω, κ, kφ)`` using a Rodrigues expansion that is **agnostic to
-    the specific signed axis convention** of the kappa preset.
+    the specific signed axis convention** of the kappa demo geometry.
 
     Derivation
     ----------
@@ -487,7 +487,7 @@ def _kappa_from_Z(
     kap_pos = ((kap_pos + 180.0) % 360.0) - 180.0
     kap_neg = ((kap_neg + 180.0) % 360.0) - 180.0
     # Order so the smaller |κ| comes first (matches historic ordering).
-    # In every shipped kappa preset the analytic decomposition naturally
+    # In every shipped kappa demo geometry the analytic decomposition naturally
     # returns kap_pos with smaller |κ|, so the swap branch is unreached
     # in practice — retained as a defensive ordering guarantee.
     if abs(kap_pos) > abs(kap_neg):  # pragma: no cover
@@ -772,7 +772,7 @@ def psi_trajectory(
     geometry : AdHocDiffractometer
         Must have ``wavelength`` and ``sample.UB`` set, and an active
         diffraction mode.  ``kappa_alpha_deg`` must be set for kappa
-        geometries (it is set automatically by the factory functions).
+        geometries (it is set automatically by the demo geometries).
     h, k, l : float
         Miller indices of the fixed reflection.
     psi_values : iterable of float

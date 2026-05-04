@@ -1,168 +1,208 @@
-# Case Study: Coordinate Convention and UB Matrix
+(problem2)=
+# Case Study: Choice of Basis and the UB Matrix
 
-This page analyzes the [case study diffractometer](problem1.md) to show
-how a **basis vector assignment** (the mapping of physical directions to
-Cartesian axes) leads to the B, U, and UB matrices used throughout
-`ad_hoc_diffractometer`.
+This page works through the two questions posed at the end of the
+[case study diffractometer](problem1.md) — the six-circle equipment
+described there.  The objective is to demonstrate that the **choice of
+basis is arbitrary**: different basis assignments produce numerically
+different axis vectors and U/UB matrices that are related by a fixed
+rotation, but the underlying physics — the conversion of motor angles
+to (h, k, l) and back — is invariant.  The package's flexibility around
+{data}`~ad_hoc_diffractometer.factories.BASIS_YOU`,
+{data}`~ad_hoc_diffractometer.factories.BASIS_BL`, and any other
+right-handed basis exists because of this invariance, not in spite of
+it.
 
-The worked example below uses the You (1999) convention, but the
-procedure is identical for any right-handed orthogonal basis — only the
-numerical values of the axis vectors change.  See
-{doc}`howto/basis_vectors` for a tutorial on choosing a basis.
+For background on the B, U, UB matrices themselves and the You (1999)
+full diffraction equation cited below, see
+{doc}`concepts`.
 
-**Reference:** H. You, *J. Appl. Cryst.* **32**, 614–623 (1999).
-DOI: [10.1107/S0021889899001223](https://doi.org/10.1107/S0021889899001223)
+**References:**
+- W.R. Busing & H.A. Levy, *Acta Cryst.* **22**, 457–464 (1967).
+  DOI: [10.1107/S0365110X67000970](https://doi.org/10.1107/S0365110X67000970)
+- H. You, *J. Appl. Cryst.* **32**, 614–623 (1999).
+  DOI: [10.1107/S0021889899001223](https://doi.org/10.1107/S0021889899001223)
 
 ---
 
-## Basis vector assignment
+## Question 1 — assignment using the You (1999) basis
 
-Any right-handed orthogonal mapping of the three physical directions to
-Cartesian unit vectors is valid.  The You (1999) convention assigns:
+The You (1999) convention assigns the three observable physical
+directions to Cartesian unit vectors as:
 
 - **xHat**: vertical (along the mu and nu rotation axes)
 - **yHat**: longitudinal (along the incoming beam direction)
 - **zHat**: transverse
 
 This is a valid right-handed system: xHat × yHat = zHat.
-From You (1999) §2: *"the x axis is defined along the vertical mu and nu
-axes and the y axis is defined along the incoming beam direction."*
+From You (1999) §2: *"the x axis is defined along the vertical mu and
+nu axes and the y axis is defined along the incoming beam direction."*
 
-## Correspondence with You (1999)
+The You (1999) paper describes the same 4S+2D six-circle geometry as
+the case-study equipment: four sample-orienting stages (mu, eta, chi,
+phi) and two detector stages (nu, delta).  Mapping the case-study
+stages onto the You convention:
 
-The You (1999) paper describes a 4S+2D six-circle geometry: four
-sample-orienting stages (mu, eta, chi, and phi) and two detector stages (nu,
-delta).  This matches the case study equipment exactly.
+| You angle | You matrix | Case-study stage | Physical axis  | Axis vector |
+|-----------|------------|------------------|----------------|-------------|
+| mu        | U          | sample stage 1   | vertical       | +xHat       |
+| eta       | X          | sample stage 2   | transverse     | −zHat       |
+| chi       | H          | sample stage 3   | longitudinal   | +yHat       |
+| phi       | M          | sample stage 4   | transverse     | −zHat       |
+| nu        | P          | detector stage 1 | vertical       | +xHat       |
+| delta     | D          | detector stage 2 | transverse     | −zHat       |
 
-Using **R** to denote a rotation matrix whose invariant axis is identified
-by a 1 on the diagonal:
-
-- **R xHat**: 1 at position [1,1] — rotation about the vertical axis
-- **R yHat**: 1 at position [2,2] — rotation about the longitudinal axis
-- **R zHat**: 1 at position [3,3] — rotation about the transverse axis
-
-Right-handed rotation places +sin below the diagonal; left-handed rotation
-(equivalently, right-handed rotation about the negated axis) places +sin
-above the diagonal.
-
-| You angle | You matrix | Stage | Physical axis | Axis vector |
-|-----------|------------|-------|---------------|-------------|
-| mu        | U          | S2-1  | vertical      | +xHat       |
-| eta       | X          | S2-2  | transverse       | −zHat       |
-| chi       | H          | S2-3  | longitudinal  | +yHat       |
-| phi       | M          | S2-4  | transverse       | −zHat       |
-| nu        | P          | S1-1  | vertical      | +xHat       |
-| delta     | D          | S1-2  | transverse       | −zHat       |
-
-Notes:
+Notes on this assignment:
 
 - mu and nu share a colinear vertical axis (+xHat) with the same
-  right-handed sense of rotation; the stages are mechanically independent.
-- eta, phi, and delta share the transverse axis (−zHat) with left-handed
-  rotation.
-- chi is the only stage with a longitudinal axis (+yHat), right-handed.
+  right-handed sense of rotation; the stages are mechanically
+  independent.
+- eta, phi, and delta share the transverse axis (−zHat) — that is,
+  left-handed rotation about +zHat.  The signed axis vector encodes
+  the handedness; see {doc}`concepts` for the sign-convention
+  identity.
+- chi is the only stage with a longitudinal axis (+yHat),
+  right-handed.
 
-## Sign convention
+### Computing U in the You basis
 
-A left-handed rotation about an axis is equivalent to a right-handed
-rotation about the negated axis:
+Let $\mathsf{U}_\text{You}$ denote the orthogonal matrix that relates
+the crystal Cartesian frame to the phi-axis frame in this basis (the
+"U matrix" of Busing & Levy 1967, eq. 4).  The procedure to determine
+$\mathsf{U}_\text{You}$ from the geometry above is:
 
-```
-R_left-handed(+nHat, θ) = R_right-handed(−nHat, θ)
-                         = R_right-handed(+nHat, −θ)
-```
+1. Construct the B matrix from the sample lattice parameters
+   $(a, b, c, \alpha, \beta, \gamma)$ as described in
+   {doc}`direct-lattice` and Busing & Levy (1967, eq. 3).  B encodes
+   the reciprocal-lattice metric only and is **independent of the
+   basis assignment** for the diffractometer axes.
+2. Measure two non-collinear reflections at known motor angles —
+   each provides a Q-vector in the phi-axis frame computed from the
+   product of the four sample-stage rotation matrices in the You
+   basis (mu about +xHat, eta about −zHat, chi about +yHat, phi
+   about −zHat) acting on the lab-frame scattering vector.
+3. Solve for the orthogonal $\mathsf{U}_\text{You}$ that aligns the
+   crystal Cartesian frame onto the phi-axis frame using Busing &
+   Levy (1967, eqs. 27–28), or equivalently use the package helper
+   {func}`~ad_hoc_diffractometer.orientation.ub_from_two_reflections`.
 
-For stages where You (1999) uses a left-handed convention (eta, phi,
-delta), the signed axis vector is −zHat rather than +zHat.  The physical
-rotation axes are the same; only the sign convention for positive rotation
-differs.
+The resulting $\mathsf{UB}_\text{You} = \mathsf{U}_\text{You}\,
+\mathsf{B}$ maps Miller indices directly to the phi-axis frame in the
+You basis.
 
-## The B, U, and UB matrices
+---
 
-The introduction of lattice constants a, b, c, α, β, γ and a fixed
-wavelength λ sets up the UB matrix formalism of Busing & Levy (1967).
+## Question 2 — assignment using a different basis
 
-### B matrix
+Any right-handed orthogonal mapping of the three physical directions
+to Cartesian axes is also valid.  The Busing & Levy (1967) convention
+is the natural alternative:
 
-The B matrix (Busing & Levy 1967, eq. 3) transforms Miller indices
-**h** = (h, k, l)ᵀ to the scattering vector in Cartesian crystal-frame
-coordinates:
+- **xHat**: transverse
+- **yHat**: longitudinal
+- **zHat**: vertical
 
-```
-Q_c = B h
-```
+This is again a valid right-handed system: xHat × yHat = zHat.
+This is the convention used in {data}`~ad_hoc_diffractometer.factories.BASIS_BL`
+and in the SPEC control system.
 
-B is constructed from the reciprocal lattice parameters derived from
-a, b, c, α, β, γ.  B is not in general orthonormal.
-See [Direct Lattice](direct-lattice.md) for the explicit construction.
+The **physical equipment is unchanged** — the same six rotation
+stages, the same axes of rotation, the same handedness.  Only the
+labels change.  The same case-study stages now have these axis
+vectors:
 
-### U matrix
+| Stage            | Physical axis  | You-basis vector | BL-basis vector |
+|------------------|----------------|------------------|-----------------|
+| sample stage 1   | vertical       | +xHat (You)      | +zHat (BL)      |
+| sample stage 2   | transverse     | −zHat (You)      | −xHat (BL)      |
+| sample stage 3   | longitudinal   | +yHat (You)      | +yHat (BL)      |
+| sample stage 4   | transverse     | −zHat (You)      | −xHat (BL)      |
+| detector stage 1 | vertical       | +xHat (You)      | +zHat (BL)      |
+| detector stage 2 | transverse     | −zHat (You)      | −xHat (BL)      |
 
-The U matrix (Busing & Levy 1967, eq. 4) is the orthogonal matrix relating
-the phi-axis frame (attached to the innermost sample stage) to the crystal
-Cartesian frame:
+The longitudinal direction is +yHat in both bases (so chi's axis
+vector reads identically as +yHat); only the assignments of the
+vertical and transverse directions to xHat and zHat are swapped.
 
-```
-h_phi = U Q_c = U B h
-```
+### Computing U in the BL basis
 
-U corrects for the misalignment between the crystal axes and the
-diffractometer axes when all motor angles are zero.
+The procedure is structurally identical to Question 1 — same B
+matrix, same two reflections, same package helper — but every sample-
+stage rotation is now constructed about the BL-basis axis vector
+listed in the table above.  Call the resulting orthogonal matrix
+$\mathsf{U}_\text{BL}$ and the product
+$\mathsf{UB}_\text{BL} = \mathsf{U}_\text{BL}\,\mathsf{B}$.
 
-To avoid the ambiguity noted by Walko (2016) — where both U and UB are
-sometimes called the "orientation matrix" — this package uses the
-following unambiguous names:
+Numerically $\mathsf{U}_\text{BL} \neq \mathsf{U}_\text{You}$, and
+$\mathsf{UB}_\text{BL} \neq \mathsf{UB}_\text{You}$.  The two
+matrices differ by exactly the rotation that carries one basis
+into the other — see the next section.
 
-| Symbol | Name | Meaning |
-|--------|------|---------|
-| B | B matrix | Maps Miller indices to crystal Cartesian coords; encodes a, b, c, α, β, γ |
-| U | U matrix | Orthonormal; relates crystal Cartesian frame to the phi-axis frame |
-| UB | UB matrix | Maps Miller indices directly to the phi-axis frame; determinable from reflections alone |
+---
 
-### UB as a practical entity
+## The invariance result
 
-Busing & Levy treat UB as a single practical entity (eqs. 29–31):
+Define $\mathsf{R}_\text{You}^\text{BL}$ as the orthogonal matrix
+that re-expresses any vector from the You Cartesian frame to the
+BL Cartesian frame.  Because both bases are right-handed and assign
+the same three physical directions to *some* permutation of
+$\pm\hat{x}$, $\pm\hat{y}$, $\pm\hat{z}$,
+$\mathsf{R}_\text{You}^\text{BL}$ is a fixed signed-permutation
+matrix that depends only on the two basis dictionaries — not on the
+sample, the lattice, the wavelength, or any motor angle.
 
-```
-UB = Hc H⁻¹
-```
+The U and UB matrices in the two bases are related by a single
+similarity-style transformation:
 
-where **Hc** and **H** are matrices of observed and indexed reflection
-vectors respectively.  This allows UB to be determined even when lattice
-parameters are unknown.
+$$
+\mathsf{U}_\text{BL}
+\;=\;
+\mathsf{R}_\text{You}^\text{BL}\,
+\mathsf{U}_\text{You}\,
+\bigl(\mathsf{R}_\text{You}^\text{BL}\bigr)^{\mathsf{T}}.
+$$
 
-## Full diffraction equation
+The B matrix is unchanged because it depends only on the reciprocal
+lattice, not on the diffractometer-axis basis, so
 
-The full diffraction equation (You 1999, eqs. 10–11) relates Miller indices
-**h** to the sample rotation matrices and the detector position:
+$$
+\mathsf{UB}_\text{BL}
+\;=\;
+\mathsf{R}_\text{You}^\text{BL}\,
+\mathsf{UB}_\text{You}\,
+\bigl(\mathsf{R}_\text{You}^\text{BL}\bigr)^{\mathsf{T}}.
+$$
 
-```
-h^M = M H X U_mu · UB · h
-```
+The physical Bragg condition — the equation
+$\mathsf{h}^M = M\,H\,X\,U_\mu \cdot \mathsf{UB} \cdot \mathsf{h}$
+of You (1999, eqs. 10–11) — is therefore invariant under the basis
+change: every motor rotation matrix on the left-hand side picks up
+the same conjugation by $\mathsf{R}_\text{You}^\text{BL}$, and the
+conjugations cancel.  In words:
 
-where U_mu, X, H, M are the motor rotation matrices for mu, eta, chi, and phi
-respectively, and **h**^M is the diffraction vector in the laboratory frame.
+> **The motor angles produced by `forward(h, k, l)` and the (h, k, l)
+> recovered by `inverse(angles)` are the same regardless of which
+> right-handed basis was used to construct the geometry.**
 
-The detector position is determined by:
+The choice of basis is therefore a representational convenience.  It
+fixes which Cartesian symbols appear in the printed axis vectors and
+in the printed U/UB matrices, but it does not affect the diffraction
+calculation.  This is why
+{class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
+exposes a `basis` constructor argument and ships several pre-made
+choices ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`,
+{data}`~ad_hoc_diffractometer.factories.BASIS_BL`): users can pick
+the convention they are most comfortable comparing against published
+literature, without changing what the package computes.
 
-```
-kf = k P D kf0
-```
+---
 
-where D and P are the rotation matrices for delta and nu, k = 2π/λ is the
-wave number, and **kf0** is the forward beam direction.
+## See also
 
-```{note}
-You (1999) uses the symbol U for both the mu motor rotation matrix and the
-U (orientation) matrix.  This package uses U_mu for the mu motor rotation
-to avoid ambiguity.
-```
-
-## References
-
-- W.R. Busing & H.A. Levy, *Acta Cryst.* **22**, 457–464 (1967).
-  DOI: [10.1107/S0365110X67000970](https://doi.org/10.1107/S0365110X67000970)
-- H. You, *J. Appl. Cryst.* **32**, 614–623 (1999).
-  DOI: [10.1107/S0021889899001223](https://doi.org/10.1107/S0021889899001223)
-- D.A. Walko, *Reference Module in Materials Science and Materials
-  Engineering*, Elsevier (2016).
+- {doc}`problem1` — the case-study equipment described in detail
+- {doc}`concepts` — B, U, UB matrices; sign convention; full
+  diffraction equation
+- {doc}`howto/basis_vectors` — practical tutorial on choosing a basis
+- {data}`~ad_hoc_diffractometer.factories.BASIS_YOU`,
+  {data}`~ad_hoc_diffractometer.factories.BASIS_BL`
+- {func}`~ad_hoc_diffractometer.orientation.ub_from_two_reflections`

@@ -31,6 +31,16 @@ Diffraction mode
    which are coupled to other stages.
    See {class}`~ad_hoc_diffractometer.mode.DiffractionMode` and {doc}`howto/modes`.
 
+Eulerian cradle
+   An Eulerian cradle is a mechanical device used to hold and rotate objects
+   (typically spheres or other symmetric bodies) in three-dimensional space
+   along multiple axes simultaneously. It's named after the mathematician
+   Leonhard Euler and his work on rotational motion. The device consists of
+   a series of nested, rotating rings or gimbals mounted on each other. Each
+   ring can rotate independently around a different axis (typically the x, y,
+   and z axes). This allows an object mounted at the center to be oriented in
+   any direction without mechanical singularities or constraints.
+
 Forward problem
    Given Miller indices (h, k, l) and a UB matrix, find the motor angles
    that satisfy the Bragg condition.  Returns a list of 0 to ~12 solutions
@@ -104,7 +114,10 @@ U matrix
    The orthonormal orientation matrix that relates the Cartesian crystal
    frame to the phi-axis frame.  U encodes how the crystal is mounted on the
    diffractometer; it is determined from one or more orienting reflections.
-   See {doc}`howto/orient` and {doc}`problem2`.
+   U depends on the basis assignment for the diffractometer axes: see
+   {doc}`concepts` for the definition and {doc}`problem2` for the basis-
+   invariance case study.  See {doc}`howto/orient` for the orienting
+   procedure.
 
 UB matrix
    The product U × B.  Maps Miller indices directly to the phi-axis frame

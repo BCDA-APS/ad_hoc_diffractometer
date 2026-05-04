@@ -1,5 +1,5 @@
 (geometry-kappa4ch)=
-# kappa4ch — Kappa Four-Circle (Laboratory)
+# kappa4ch — Kappa Four-Circle (horizontal)
 
 Four-circle kappa diffractometer, horizontal scattering plane.  The
 chi circle is replaced by a kappa arm tilted at α = 50° from the
@@ -21,7 +21,7 @@ g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
-## Pre-built geometry definition
+## Demo geometry definition
 
 This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.kappa4ch` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L964) for the complete stage

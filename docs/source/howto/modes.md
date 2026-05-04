@@ -21,7 +21,7 @@ print(list(g.modes.keys()))
 ## Get and set the active mode
 
 ```python
-# The default mode is set by the factory
+# The default mode is set by the demo geometry
 print(g.mode_name)   # 'bisecting'
 
 # Switch to a different mode
@@ -53,7 +53,7 @@ during a single `forward()` call.  The value is part of the {class}`~ad_hoc_diff
 definition and is constant only for the duration of that call.
 
 ```python
-# fixed_chi: factory default holds chi at 90°
+# fixed_chi: demo geometry holds chi at 90°
 g.mode_name = "fixed_chi"
 solutions = g.forward(1, 0, 0)
 # sol["chi"] == 90.0 for every solution

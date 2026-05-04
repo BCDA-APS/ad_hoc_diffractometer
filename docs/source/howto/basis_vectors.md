@@ -76,18 +76,18 @@ basis must satisfy:
 ```{note}
 The package does **not** check right-handedness.  It is the caller's
 responsibility to ensure that `vertical x longitudinal = transverse`
-(i.e. the three vectors form a right-handed system).  All pre-built
+(i.e. the three vectors form a right-handed system).  All demo
 geometries satisfy this constraint; custom geometries should verify it
 explicitly.
 ```
 
 ---
 
-## Pre-built conventions
+## Conventions used in the demo geometries
 
-The package exports two basis constants used by the preset geometries:
+The package exports two basis constants used by the demo geometries:
 
-| Basis | vertical | longitudinal | transverse | Presets |
+| Basis | vertical | longitudinal | transverse | Demo geometries |
 |---|---|---|---|---|
 | {data}`~ad_hoc_diffractometer.factories.BASIS_YOU` | +x | +y | +z | psic, sixc, kappa6c, zaxis, s2d2, fivec |
 | {data}`~ad_hoc_diffractometer.factories.BASIS_BL` | +z | +y | +x | fourcv, fourch, kappa4cv, kappa4ch |
@@ -185,10 +185,12 @@ frame.
   tabulated basis mappings
 - {doc}`../problem1` — the case study that defines the physical
   reference frame
-- {doc}`../problem2` — worked example deriving B/U/UB from a basis
-  assignment
+- {doc}`../problem2` — case study showing that the choice of basis is
+  arbitrary: two right-handed assignments applied to the same
+  equipment produce U/UB matrices related by a fixed rotation, while
+  the physical motor-angle ↔ (h, k, l) conversion is invariant
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer` — the
   `basis` constructor argument
 - {data}`~ad_hoc_diffractometer.factories.BASIS_YOU`,
-  {data}`~ad_hoc_diffractometer.factories.BASIS_BL` — pre-built basis
-  constants
+  {data}`~ad_hoc_diffractometer.factories.BASIS_BL` — basis constants
+  used by the demo geometries
