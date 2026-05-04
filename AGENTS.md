@@ -260,6 +260,57 @@ when any of these files change on `main` or in a pull request.
 
 ---
 
+## Documentation build verification
+
+A clean Sphinx build is **necessary but not sufficient** to confirm
+that documentation changes render correctly.  Sphinx will emit "build
+succeeded" even when reStructuredText markup leaks through into the
+HTML as literal text.  Common failure modes:
+
+- A role written inside a Napoleon field-name slot
+  (e.g. ``:attr:`~module.Class.name` : float`` in a NumPy
+  ``Attributes`` section) is pasted verbatim into the
+  ``.. py:attribute::`` directive, so the rendered page shows the raw
+  ``:attr:`~module.Class.name``` text instead of a link.
+- Inline roles that should produce links (``:func:``, ``:class:``,
+  ``:meth:``, ``:attr:``, ``:doc:``, ``:ref:``) silently render as
+  literal text when their target cannot be resolved or when they
+  appear in a context that does not parse RST roles (directive option
+  values, certain table cells, etc.).
+- MyST/Markdown files containing accidentally-mixed RST syntax
+  produce no warning but display the literal markup.
+
+**Required workflow for any change that touches a docstring, a
+``docs/source/**`` file, or an AutoAPI Jinja2 template:**
+
+1. Run ``make -C docs clean html`` and confirm zero warnings.
+2. Open the affected rendered page(s) under ``docs/build/html/`` (or
+   ``grep`` the HTML) and visually verify that every cross-reference
+   appears as a real ``<a>`` link, **not** as literal ``:role:`...``` text.
+3. For any class with a NumPy ``Attributes`` docstring section, also
+   ``grep`` the AutoAPI page for ``&#58;attr&#58;`` /
+   ``&lt;span class="pre"&gt;:`` patterns that would indicate role
+   markup leaking into the HTML.
+
+**Quick check** (from the repository root after rebuilding the docs):
+
+```bash
+# Look for any RST role syntax that has leaked into rendered HTML.
+# Excludes docs/build/html/_modules/ (sphinx.ext.viewcode pages
+# display source code verbatim, so role markup there is expected).
+# Lists offending files when leaks exist; prints the OK line otherwise.
+grep -rE ':(attr|func|class|meth|mod|doc|ref|obj|data|exc):`' \
+     docs/build/html/ --include='*.html' \
+     --exclude-dir=_modules \
+  && echo "FAIL: leaked RST roles found above." \
+  || echo "OK: no leaked RST roles in rendered HTML."
+```
+
+This check belongs alongside the test suite in any pre-PR checklist
+that involves documentation work.
+
+---
+
 ## Generated artefacts
 
 Several documentation files are **generated from source code or other
