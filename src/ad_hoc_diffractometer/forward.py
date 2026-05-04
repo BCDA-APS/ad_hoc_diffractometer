@@ -2891,7 +2891,7 @@ def _solve_qaz_mode(
         # Only the sign matching the target qaz is physically valid.
         qaz_sign = 1.0 if abs_qaz_mod < 180.0 else -1.0
         detector_pairs.append((0.0, qaz_sign * abs(ttheta_deg)))
-    else:  # pragma: no cover — no preset currently uses non-90° qaz
+    else:  # pragma: no cover — no demo geometry currently uses non-90° qaz
         # General analytic solution.
         # From Bragg + qaz combined:
         #   cos^2(nu) = cos^2(ttheta) * (1 + sin^2(nu)*tan^2(qaz))

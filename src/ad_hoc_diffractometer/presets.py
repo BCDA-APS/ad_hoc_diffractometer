@@ -10,8 +10,8 @@ crystallography, each fully-configured, using
 Together, the demos here serve as worked examples for defining custom
 geometries.
 
-Pre-built geometries
---------------------
+Demo geometries
+---------------
 
 .. list-table::
    :header-rows: 1
@@ -51,7 +51,7 @@ Pre-built geometries
      - Surface / special
      - Evans-Lutterodt & Tang (1995). See :doc:`/geometries/s2d2`.
 
-Each factory is decorated with
+Each demo geometry is decorated with
 :func:`~ad_hoc_diffractometer.factories.register_geometry`, which registers
 it in the geometry registry.  Use
 :func:`~ad_hoc_diffractometer.factories.list_geometries` to retrieve all

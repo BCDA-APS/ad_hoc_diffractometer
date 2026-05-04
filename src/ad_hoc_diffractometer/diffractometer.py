@@ -67,7 +67,7 @@ class AdHocDiffractometer:
     kappa_alpha_deg : float or None, optional
         Kappa tilt angle in degrees for kappa geometries (kappa4cv,
         kappa4ch, kappa6c).  None for non-kappa geometries.  Set by
-        the kappa factory functions; not intended to be changed after
+        the kappa demo geometries; not intended to be changed after
         construction.
     azimuthal_reference : tuple of float or None, optional
         Azimuthal reference direction as Miller indices (h, k, l).  Used
@@ -198,8 +198,8 @@ class AdHocDiffractometer:
         The basis is a labelled dict; its keys have no defined ordering, so
         right-handedness cannot be checked here (the cross product of two
         vectors depends on which is 'first').  Right-handedness is the
-        caller's responsibility and should be verified by the geometry
-        factory functions or the user.
+        caller's responsibility and should be verified by the demo
+        geometries or the user.
 
         Raises
         ------
@@ -494,7 +494,7 @@ class AdHocDiffractometer:
 
         This is the angle between the kappa rotation axis and the vertical
         axis (toward the transverse axis).  Typical value: 50 deg.
-        Set by kappa factory functions (kappa4cv, kappa4ch, kappa6c).
+        Set by the kappa demo geometries (kappa4cv, kappa4ch, kappa6c).
         """
         return self._kappa_alpha_deg
 
@@ -512,19 +512,20 @@ class AdHocDiffractometer:
         non-kappa geometries.
 
         See :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`
-        for the semantics.  This attribute is set by the kappa
-        factory functions (:func:`~ad_hoc_diffractometer.presets.kappa4cv`,
+        for the semantics.  This attribute is set by the kappa demo
+        geometries (:func:`~ad_hoc_diffractometer.presets.kappa4cv`,
         :func:`~ad_hoc_diffractometer.presets.kappa4ch`,
         :func:`~ad_hoc_diffractometer.presets.kappa6c`) and is consumed
         by the kappa virtual-angle solver.
 
-        The convention is declared explicitly per preset because the
-        physical meaning of the kappa-tilt angle ``α`` (and therefore
+        The convention is declared explicitly per demo geometry because
+        the physical meaning of the kappa-tilt angle ``α`` (and therefore
         the relation between virtual ``(omega, chi, phi)`` and real
         ``(komega, kappa, kphi)``) depends on the orientation of the
         outer ``komega`` axis — which differs across vertical-scattering
         (``kappa4cv``, ``kappa6c``) and horizontal-scattering
-        (``kappa4ch``) presets.  See issue #241 for the diagnostic.
+        (``kappa4ch``) demo geometries.  See issue #241 for the
+        diagnostic.
         """
         return self._kappa_pseudo_angle_convention
 
@@ -2026,10 +2027,10 @@ class AdHocDiffractometer:
         Samples are restored via :meth:`Sample.from_dict`.  The active
         sample is restored by name.
 
-        The factory-function identity (e.g. ``psic``, ``fourcv``) is **not**
+        The demo-geometry identity (e.g. ``psic``, ``fourcv``) is **not**
         stored; ``from_dict`` always returns a plain
-        :class:`AdHocDiffractometer` instance.  If you need the factory
-        function, look it up via ``get_geometry(d["name"])``.
+        :class:`AdHocDiffractometer` instance.  If you need the original
+        demo geometry, look it up via ``get_geometry(d["name"])``.
 
         Examples
         --------

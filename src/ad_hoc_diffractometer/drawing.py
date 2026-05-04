@@ -169,7 +169,7 @@ class StageAxisFigure:  # pragma: no cover
     Parameters
     ----------
     geometry_name : str
-        Name of a preset geometry (e.g. ``'kappa6c'``, ``'zaxis'``).
+        Name of a demo geometry (e.g. ``'kappa6c'``, ``'zaxis'``).
     axis_name : str
         Name of a stage in that geometry (e.g. ``'komega'``, ``'Z'``).
     axis_labels : bool
@@ -513,7 +513,7 @@ class GeometryAxisFigure:  # pragma: no cover
     Parameters
     ----------
     geometry_name : str
-        Name of a preset geometry (e.g. ``'zaxis'``, ``'kappa6c'``).
+        Name of a demo geometry (e.g. ``'zaxis'``, ``'kappa6c'``).
     axis_labels : bool
         If ``True``, label the basis vectors on each sub-plot.
     **kwargs

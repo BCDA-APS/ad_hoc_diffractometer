@@ -12,11 +12,11 @@ pseudoangles ``(omega, chi, phi)``:
 1. **Geometry-aware (recommended)**.  The functions
    :func:`eulerian_to_kappa_axes` and :func:`kappa_to_eulerian_axes`
    take a :class:`KappaPseudoAngleConvention` that names the *actual*
-   stage axis vectors of the kappa preset (``n_komega``, ``n_kappa``,
+   stage axis vectors of the kappa demo geometry (``n_komega``, ``n_kappa``,
    ``n_kphi``) and the *equivalent Eulerian* chi axis (``n_chi_eq``).
    The decomposition is derived directly from these axes and is correct
    for any signed-axis combination — including the ``ad_hoc_diffractometer``
-   presets that use mixed handedness or a horizontal scattering plane.
+   demo geometries that use mixed handedness or a horizontal scattering plane.
 
    These are the conversions used internally by the kappa virtual-angle
    solver.
@@ -37,7 +37,7 @@ pseudoangles ``(omega, chi, phi)``:
    reference implementations of the published formula and for
    backward compatibility with users who study Walko's algebra
    directly.  They are **not** used inside the kappa virtual-angle
-   solver, because no preset in this package matches the textbook
+   solver, because no demo geometry in this package matches the textbook
    convention exactly: ``kappa4cv`` uses BL ``-TRANSVERSE`` for omega
    (left-handed); ``kappa4ch`` uses ``-VERTICAL`` (horizontal
    scattering plane); ``kappa6c`` uses You ``-TRANSVERSE`` (mixed
@@ -73,7 +73,7 @@ Classes
 :class:`KappaPseudoAngleConvention`
     Container holding the four signed unit axes that fully specify
     the geometry-aware pseudoangle decomposition for a given kappa
-    preset.
+    demo geometry.
 
 Notes
 -----
@@ -237,13 +237,13 @@ def kappa_axis_from_eulerian(
     This formula is **geometry-aware**: the resulting axis is correct
     for any signed convention of ``n_komega`` and ``n_chi_eq``,
     including the BL ``-TRANSVERSE`` orientation used by the
-    ``kappa4cv`` preset and the BL ``-VERTICAL`` orientation used by
-    the ``kappa4ch`` preset.
+    ``kappa4cv`` demo geometry and the BL ``-VERTICAL`` orientation used by
+    the ``kappa4ch`` demo geometry.
 
     The historic helper :func:`~ad_hoc_diffractometer.axes.kappa_axis`
     instead returns ``vertical·cos(α) + transverse·sin(α)``
     unconditionally, which assumes ``n_komega = +vertical`` and is
-    therefore wrong for any preset whose ``n_komega`` is not literally
+    therefore wrong for any demo geometry whose ``n_komega`` is not literally
     ``+vertical``.  See issue #241 for the diagnostic that uncovered
     this.
 
@@ -492,7 +492,7 @@ def eulerian_to_kappa_axes(
 
     # Special case: χ = 0 reduces the kappa arm to the identity rotation
     # (κ = 0).  When ``n_komega`` and ``n_kphi`` are parallel — as they
-    # are in every preset shipped with the package — the Z matrix
+    # are in every demo geometry shipped with the package — the Z matrix
     # ``R(n_kphi, φ) · R(n_komega, ω)`` collapses to a single rotation
     # ``R(n_komega, ω + φ·sign)`` and the (κω, κφ) split is
     # one-parameter degenerate.  Pick the natural assignment
@@ -534,7 +534,7 @@ def eulerian_to_kappa_axes(
     # ``R(n_kphi, κφ) · R(n_komega, κω) = R(n_kphi, φ) · R(n_komega, ω)``
     # has a one-parameter family of solutions whenever ``n_kphi`` is
     # parallel (or anti-parallel) to ``n_komega`` — and *all* kappa
-    # presets in this package have that property by design (komega
+    # demo geometries in this package have that property by design (komega
     # and kphi share the same physical motor axis).  Pick the
     # representative that maps ``ω → κω`` and ``φ → κφ`` directly so
     # the round-trip with :func:`kappa_to_eulerian_axes` is identity.
@@ -626,7 +626,7 @@ def kappa_to_eulerian_axes(
     own signed axes.
     """
     # Special case: κ = 0 ⇒ χ = 0 ⇒ degenerate (ω, φ) split.  In every
-    # preset shipped with the package ``n_komega`` and ``n_kphi`` are
+    # demo geometry shipped with the package ``n_komega`` and ``n_kphi`` are
     # parallel, so any pair satisfying ``ω + φ = κω + κφ`` is a valid
     # decomposition.  The natural assignment ``ω = κω, φ = κφ`` makes
     # the round-trip ``eulerian → kappa → eulerian`` an identity at
@@ -729,9 +729,9 @@ def kappa_to_eulerian(
        and is correct only for the axis convention assumed in that
        paper (omega and phi about the transverse axis with the
        textbook handedness; chi about the longitudinal axis).  No
-       preset in this package matches that convention exactly.  For
+       demo geometry in this package matches that convention exactly.  For
        any geometry-dependent calculation, use
-       :func:`kappa_to_eulerian_axes` with the preset's
+       :func:`kappa_to_eulerian_axes` with the demo geometry's
        :class:`KappaPseudoAngleConvention` instead.
 
        Issue #241 records the diagnostic that uncovered this
@@ -816,7 +816,7 @@ def eulerian_to_kappa(
        and is correct only for the textbook axis convention; see the
        warning in :func:`kappa_to_eulerian` and issue #241.  For any
        geometry-dependent calculation, use
-       :func:`eulerian_to_kappa_axes` with the preset's
+       :func:`eulerian_to_kappa_axes` with the demo geometry's
        :class:`KappaPseudoAngleConvention` instead.
 
     Inverse of Walko (2016), eq. [16].
@@ -944,7 +944,7 @@ def _build_eulerian_equivalent_geometry(
     The synthetic geometry has identical outer and inner stages but
     replaces the kappa triple ``(komega, kappa, kphi)`` with the
     Eulerian triple ``(omega, chi, phi)`` whose axes come from the
-    kappa preset's :class:`KappaPseudoAngleConvention`.  The result
+    kappa demo geometry's :class:`KappaPseudoAngleConvention`.  The result
     is a standard Eulerian geometry that the existing solvers handle
     natively.
 
@@ -1101,7 +1101,7 @@ def solve_kappa_virtual(
 
     1. Build a synthetic Eulerian-equivalent geometry whose three
        sample stages have axes ``(n_komega, n_chi_eq, n_kphi)`` taken
-       from the kappa preset's
+       from the kappa demo geometry's
        :class:`KappaPseudoAngleConvention`.
     2. Translate the kappa virtual-angle mode onto the equivalent
        geometry (a ``VirtualBisectConstraint`` becomes a plain
@@ -1158,7 +1158,7 @@ def solve_kappa_virtual(
     if isinstance(getattr(mode, "detector_constraint", None), DetectorConstraint):
         dc = mode.detector_constraint
         # The qaz-detector branch is never reached from a kappa
-        # virtual-angle mode in any shipped preset (qaz modes route
+        # virtual-angle mode in any shipped demo geometry (qaz modes route
         # through ``_solve_qaz_mode``, not through here).
         if (
             not getattr(dc, "is_qaz", False) and dc.name in eul_geom._stages  # noqa: SLF001
@@ -1189,7 +1189,7 @@ def solve_kappa_virtual(
     if isinstance(getattr(mode, "detector_constraint", None), DetectorConstraint):
         dc = mode.detector_constraint
         # See note above: the qaz branch is unreachable from a
-        # virtual-angle mode in shipped presets.
+        # virtual-angle mode in shipped demo geometries.
         if (
             not getattr(dc, "is_qaz", False) and dc.name in geometry._stages  # noqa: SLF001
         ):  # pragma: no branch
