@@ -31,6 +31,16 @@ Diffraction mode
    which are coupled to other stages.
    See {class}`~ad_hoc_diffractometer.mode.DiffractionMode` and {doc}`howto/modes`.
 
+Eulerian cradle
+   An Eulerian cradle is a mechanical device used to hold and rotate objects
+   (typically spheres or other symmetric bodies) in three-dimensional space
+   along multiple axes simultaneously. It's named after the mathematician
+   Leonhard Euler and his work on rotational motion. The device consists of
+   a series of nested, rotating rings or gimbals mounted on each other. Each
+   ring can rotate independently around a different axis (typically the x, y,
+   and z axes). This allows an object mounted at the center to be oriented in
+   any direction without mechanical singularities or constraints.
+
 Forward problem
    Given Miller indices (h, k, l) and a UB matrix, find the motor angles
    that satisfy the Bragg condition.  Returns a list of 0 to ~12 solutions
