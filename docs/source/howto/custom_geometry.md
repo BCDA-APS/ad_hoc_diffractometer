@@ -15,16 +15,31 @@ If your instrument matches one of the pre-built geometries
 ({func}`~ad_hoc_diffractometer.presets.psic`,
 {func}`~ad_hoc_diffractometer.presets.fourcv`, etc.), use the factory
 function instead.  This guide is for instruments that differ from the
-presets.
+:ref:`demo geometries <geometries>`.
 ```
 
 ---
 
 ## The instrument
 
-FIXME: Explain why are theta & ttheta axes vertical.   --> horizontal scattering plane
+Imagine a laboratory powder diffractometer.  The designer has chosen a
+**horizontal scattering plane** geometry (the reasons — whatever they may be —
+are out of scope here).
 
-Imagine a laboratory powder diffractometer with three rotary stages:
+That single design decision determines the rotation axis of the scattering arm.
+The scattering plane is the plane containing the incident beam k_i, the
+scattered beam k_f, and the scattering vector Q = k_f − k_i.  Because k_f sweeps
+in the plane perpendicular to the 2θ rotation axis, **the scattering plane is
+always perpendicular to the 2θ axis**.  A horizontal scattering plane therefore
+*requires* 2θ — and the matching sample stage θ that tracks half of it — to
+rotate about the **vertical** axis.  (Conversely, the
+{func}`~ad_hoc_diffractometer.presets.fourcv` geometry places 2θ about a
+horizontal/transverse axis to obtain a vertical scattering plane; see
+{doc}`/concepts` for the wider discussion of the ``v`` / ``h`` suffix
+convention.)
+
+With that constraint fixed, the three rotary stages of this instrument
+are:
 
 1. **theta** — rotates the sample about the vertical axis
    (right-handed: positive angles rotate the sample face toward the
@@ -34,10 +49,6 @@ Imagine a laboratory powder diffractometer with three rotary stages:
    points along the beam).  Right-handed.
 3. **ttheta** — the detector arm, rotating about the same vertical axis
    as theta but mechanically independent.  Right-handed.
-
-The scattering plane is **horizontal** (both theta and ttheta rotate
-about the vertical axis, so the scattered beam sweeps through the
-horizontal plane).
 
 ---
 

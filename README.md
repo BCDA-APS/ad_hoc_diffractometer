@@ -4,42 +4,6 @@
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://prjemian.github.io/ad_hoc_diffractometer/latest/)
 [![License: CC-BY-4.0](https://img.shields.io/badge/License-CC--BY--4.0-brightgreen)](https://creativecommons.org/licenses/by/4.0/)
 
-<!--
-TODO: rewrite with user-focus  -- Need short overview
-
-`ad_hoc_diffractometer`:
-
-- **any multi-circle diffractometer geometry can be fully described by the caller*
-  - no hard-coded geometries
-  - new geometries require no changes to the package
-  - description based on *observable* directions: vertical, longitudinal, transverse
-  - flexible assignment of xyz axes
-  - several common geometries are demonstrated
-  - user-described *modes* for defining which axes are free, fixed, or coupled when computing angle from *hkl*
-- calculate
-  - B matrix (crystal orientation)
-  - UB orientation matrix from two or three reflections
-  - crystal lattice refinement from three or more reflections
-  - motor angles -> *hkl* coordinates
-  - *hkl* coordinates -> motor angles
-  - reciprocal space coordinates from rotation axes
-  - rotation axes from reciprocal space coordinates
-- a **pure-Python** package
-  - Python Standard Library
-  - [NumPy](https://numpy.org)
-  - not required: scipy, sympy, or other scientific libraries
-- use cases for this package
-  - operations in reciprocal space for X-ray and neutron crystallography
-  - backend library providing kinematic transformations for control system diffractometer
-  - full-featured diffractometer simulation
-  - computation for graphical representation of diffractometer
-  - experiment planning
-  - Reciprocal-space trajectory planning
-
-> **Note:** The package assumes **monochromatic radiation** throughout.
-> All diffraction calculations are performed at a fixed wavelength.
--->
-
 `ad_hoc_diffractometer` is a Python package that lets you describe any
 multi-circle diffractometer geometry and perform X-ray/neutron
 crystallography calculations.

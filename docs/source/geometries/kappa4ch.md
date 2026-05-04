@@ -1,5 +1,5 @@
 (geometry-kappa4ch)=
-# kappa4ch — Kappa Four-Circle (Laboratory)
+# kappa4ch — Kappa Four-Circle (horizontal)
 
 Four-circle kappa diffractometer, horizontal scattering plane.  The
 chi circle is replaced by a kappa arm tilted at α = 50° from the

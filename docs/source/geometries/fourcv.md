@@ -1,5 +1,5 @@
 (geometry-fourcv)=
-# fourcv — Eulerian Four-Circle (Synchrotron)
+# fourcv — Eulerian Four-Circle (vertical)
 
 Busing & Levy (1967) four-circle Eulerian diffractometer, vertical scattering plane. ω and 2θ rotate about the transverse axis. Standard synchrotron convention.
 

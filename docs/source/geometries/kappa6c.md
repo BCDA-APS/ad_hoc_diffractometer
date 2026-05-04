@@ -1,7 +1,9 @@
 (geometry-kappa6c)=
 # kappa6c — Kappa Six-Circle
 
-Six-circle kappa diffractometer with psic-style outer axes (mu, nu). The inner sample axes (komega, kappa, and kphi) replace the Eulerian chi circle. Transverse detector, vertical scattering plane.
+Six-circle kappa diffractometer with psic-style outer axes (mu, nu). The inner
+sample axes (komega, kappa, and kphi) replace the Eulerian chi circle.
+Transverse detector, vertical scattering plane.
 
 **Coordinate basis:** You (1999) ({data}`~ad_hoc_diffractometer.factories.BASIS_YOU`): vertical=+x, longitudinal=+y, transverse=+z.
 

@@ -17,7 +17,7 @@ running a forward calculation. Common geometries are provided as
 examples.
 
 .. less narrative on this page, it's the docs' home page
-   This content could be moved to the user guide, perhaps.
+   TODO: This content could be moved to the user guide, perhaps.
 
    Features
    ------------

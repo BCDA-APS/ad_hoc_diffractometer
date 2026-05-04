@@ -1,5 +1,5 @@
 (geometry-kappa4cv)=
-# kappa4cv — Kappa Four-Circle (Synchrotron)
+# kappa4cv — Kappa Four-Circle (vertical)
 
 Four-circle kappa diffractometer, vertical scattering plane. The chi
 circle is replaced by a kappa arm tilted at α = 50° from the

@@ -1,5 +1,5 @@
 (geometry-fourch)=
-# fourch — Eulerian Four-Circle (Laboratory)
+# fourch — Eulerian Four-Circle (horizontal)
 
 Busing & Levy (1967) four-circle Eulerian diffractometer, horizontal scattering plane. ω and 2θ rotate about the vertical axis. Standard laboratory convention.
 
