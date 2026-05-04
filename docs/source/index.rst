@@ -54,32 +54,6 @@ examples.
       All literature citations — geometry papers, physical constants,
       and numerical methods.
 
-.. TODO: too many cards below
-   Background
-   ----------
-
-   .. grid:: 3
-
-      .. grid-item-card:: :material-outlined:`functions;3em` Direct Lattice
-         :link: direct-lattice.html
-         :link-type: url
-
-         Vector mathematics and lattice vector conventions in crystallography.
-
-      .. grid-item-card:: :material-outlined:`science;3em` Case Study
-         :link: problem1.html
-         :link-type: url
-
-         The diffractometer problem that started this project.
-
-      .. grid-item-card:: :material-outlined:`calculate;3em` Choice of Basis and the UB Matrix
-         :link: problem2.html
-         :link-type: url
-
-         Two basis assignments applied to the same case-study equipment;
-         the U/UB matrices differ by a fixed rotation but the physical
-         angle ↔ (h, k, l) conversion is invariant.
-
 About
 -----
 
