@@ -8,6 +8,17 @@ Geometries, algorithms, and conventions are traced to their primary sources.
 
 ## Diffractometer geometries
 
+**Arndt & Willis (1966)**
+: U.W. Arndt and B.T.M. Willis.
+  *Single Crystal Diffractometry.*
+  Cambridge University Press (1966); online edition 21 May 2010,
+  ISBN 9780511735622.
+  DOI: [10.1017/CBO9780511735622](https://doi.org/10.1017/CBO9780511735622)
+
+  Early monograph on the mechanical design and use of single-crystal
+  diffractometers, including the chapter
+  *[Design of diffractometers](https://www.cambridge.org/core/books/abs/single-crystal-diffractometry/design-of-diffractometers/C522144B857706F4C973B46260FFB3D2)*.
+
 **Busing & Levy (1967)**
 : W.R. Busing and H.A. Levy.
   *Angle calculations for 3- and 4-circle X-ray and neutron diffractometers.*

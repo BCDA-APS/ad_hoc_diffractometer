@@ -57,14 +57,9 @@ it in the geometry registry.  Use
 :func:`~ad_hoc_diffractometer.factories.list_geometries` to retrieve all
 registered geometries as a ``{name: callable}`` dict.
 
-TODO:
-https://www.cambridge.org/core/books/abs/single-crystal-diffractometry/design-of-diffractometers/C522144B857706F4C973B46260FFB3D2
-Single Crystal Diffractometry
-U. W. Arndt, B. T. M. Willis
-Publisher: Cambridge University Press
-Publication date: 21 May 2010
-ISBN: 9780511735622
-DOI: https://doi.org/10.1017/CBO9780511735622
+For historical context on diffractometer design and usage that
+predates the closed-form Busing & Levy (1967) angle-setting equations,
+see Arndt & Willis (1966) — listed in the project's :doc:`/references`.
 
 Usage
 -----
