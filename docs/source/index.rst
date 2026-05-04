@@ -16,53 +16,6 @@ coordinate basis, stage stacking, diffraction mode definition(s), and
 running a forward calculation. Common geometries are provided as
 examples.
 
-.. less narrative on this page, it's the docs' home page
-   TODO: This content could be moved to the user guide, perhaps.
-
-   Features
-   ------------
-
-   ``ad_hoc_diffractometer`` handles the core calculations you need for diffractometer work:
-
-   - **Geometry setup**: Describe your diffractometer using observable
-   physical directions (vertical, longitudinal, transverse).
-   - **Orientation calculations**: Compute orientation matrices from
-   reflections, refine crystal lattice.
-   - **Reciprocal space mapping**: Convert from rotation axes to reciprocal
-   space coordinates.
-   - **Diffractometer control**: Convert from reciprocal space coordinates
-   to rotation axes.
-   - **Mode Definitions**: You define which axes are free, fixed, or
-   coupled when solving kinematics.
-
-   It's your diffractometer
-   --------------------------
-
-   You get **full control over your setup** — whether you're using a
-   standard four-circle geometry or something custom, the package adapts to
-   you. No hard-coded configurations mean new geometries require zero
-   changes to the code.
-
-   Minimal Requirements
-   -------------------------
-
-   Only [**Python**](https://python.org) with its Standard Library and
-   [**NumPy**](https://numpy.org). No scipy, sympy, or other scientific
-   dependencies required.
-
-   Use Cases
-   ----------------
-
-   - Simulating diffractometer behavior.
-   - Real-time operations in reciprocal space during beamtime.
-   - Planning experiments and trajectories before you run them.
-   - Backend support for diffractometer control systems.
-   - Creating visualizations of diffractometer geometry.
-
-   .. note:: The package assumes **monochromatic radiation** throughout
-      — all calculations are at a fixed wavelength.
-
-
 .. toctree::
    :hidden:
 

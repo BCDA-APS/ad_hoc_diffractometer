@@ -6,6 +6,12 @@ User Guide
 
 .. toctree::
    :hidden:
+   :caption: Overview
+
+   about
+
+.. toctree::
+   :hidden:
    :caption: Tutorials
 
    quick_start
@@ -122,3 +128,15 @@ Explanation
 
       How a basis vector assignment leads to the B, U, and UB matrices,
       with a worked example using the You (1999) convention.
+
+Overview
+--------
+
+.. grid:: 2
+
+   .. grid-item-card:: :material-outlined:`info;3em` About ad_hoc_diffractometer
+      :link: about
+      :link-type: doc
+
+      What the package does, what you need to run it, and where it
+      fits in your workflow.
