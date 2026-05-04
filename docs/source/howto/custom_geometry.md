@@ -11,10 +11,10 @@ follow but exercises every decision: basis, axis signs, parent chains,
 roles, and modes.
 
 ```{tip}
-If your instrument matches one of the pre-built geometries
+If your instrument matches one of the demo geometries
 ({func}`~ad_hoc_diffractometer.presets.psic`,
-{func}`~ad_hoc_diffractometer.presets.fourcv`, etc.), use the factory
-function instead.  This guide is for instruments that differ from the
+{func}`~ad_hoc_diffractometer.presets.fourcv`, etc.), use it directly
+instead.  This guide is for instruments that differ from the
 :ref:`demo geometries <geometries>`.
 ```
 
@@ -295,7 +295,7 @@ floating-point precision, check:
 
 ---
 
-## Optional: register as a factory function
+## Optional: register as a demo (or your own) geometry
 
 To make the geometry available via
 {func}`~ad_hoc_diffractometer.factories.list_geometries` and

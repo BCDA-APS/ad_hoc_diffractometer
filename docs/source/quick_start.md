@@ -180,9 +180,9 @@ for sol in solutions:
 
 ---
 
-## Concise form — the factory function
+## Concise form — using a demo geometry
 
-The code above is exactly what the built-in `fourcv()` factory does.
+The code above is exactly what the built-in `fourcv()` demo geometry does.
 If you do not need to customise anything, use it directly:
 
 ```python
