@@ -111,13 +111,14 @@ class ForwardContext:
     quantities needed by the Newton-Raphson residual evaluations so they
     are not recomputed on every call to ``angles_to_phi_vector``.
 
-    Attributes
-    ----------
-    sample_stages : list of Stage
-    detector_stages : list of Stage
-    two_pi_over_lambda : float
-    y_eff : numpy.ndarray, shape (3,)
-        Effective beam direction (R_inc.T @ y_hat).
+    .. duplicated by autoAPI, left here for reference
+        Attributes
+        ----------
+        sample_stages : list of Stage
+        detector_stages : list of Stage
+        two_pi_over_lambda : float
+        y_eff : numpy.ndarray, shape (3,)
+            Effective beam direction (R_inc.T @ y_hat).
     """
 
     def __init__(self, geometry):
@@ -129,7 +130,7 @@ class ForwardContext:
         y_norm = float(np.linalg.norm(y_hat))
         y_hat = y_hat / y_norm
         R_inc = geometry.inclination_matrix
-        self.y_eff = R_inc.T @ y_hat
+        self.y_eff = R_inc.T @ y_hat  # effective beam direction in the lab frame
 
         # Cached rotation matrices (populated by prepare_bisecting)
         self._cached_Z_prefix: np.ndarray | None = None

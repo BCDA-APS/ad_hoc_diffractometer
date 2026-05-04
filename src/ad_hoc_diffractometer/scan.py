@@ -28,7 +28,7 @@ communicate with hardware.  A future execution layer (not yet planned)
 will consume these outputs to drive real diffractometers.
 
 The ordering instability of :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward` returns multiple solutions in seed-discovery order, which is
 not reproducible and can switch between the positive-chi and negative-chi
 branches at adjacent trajectory points.  All three trajectory functions
