@@ -92,6 +92,22 @@ right-handed about the negated axis).  Physical direction names
 (`"vertical"`, `"transverse"`, `"longitudinal"`) are resolved against
 the geometry's basis dict.
 
+The two equivalences in full:
+
+$$
+R_\text{left-handed}(+\hat{n},\,\theta)
+\;=\;
+R_\text{right-handed}(-\hat{n},\,\theta)
+\;=\;
+R_\text{right-handed}(+\hat{n},\,-\theta).
+$$
+
+For stages where a published convention uses a left-handed sense
+(for example eta, phi, and delta in You 1999 about the transverse
+axis), the package stores the signed axis vector as $-\hat{n}$
+rather than $+\hat{n}$.  The physical rotation axes are the same;
+only the sign convention for positive rotation differs.
+
 See {func}`~ad_hoc_diffractometer.axes.parse_axis`.
 
 ---
@@ -132,11 +148,104 @@ Three matrices connect Miller indices to motor angles:
 | **UB** | UB matrix | Maps hkl → phi-axis frame; determined from orienting reflections |
 
 The B matrix is constructed from unit-cell parameters $(a, b, c, \alpha,
-\beta, \gamma)$.  U is determined by measuring two or more Bragg reflections.
-UB = U × B maps Miller indices directly to the lab frame.
+\beta, \gamma)$.  U is determined by measuring two or more Bragg
+reflections.  UB = U × B maps Miller indices directly to the phi-axis
+frame.
 
-See {doc}`howto/orient`, {doc}`howto/lattice`, {doc}`problem2`, and
-{class}`~ad_hoc_diffractometer.lattice.Lattice`.
+### B matrix
+
+The B matrix (Busing & Levy 1967, eq. 3) transforms Miller indices
+$\mathsf{h} = (h, k, l)^{\mathsf{T}}$ to the scattering vector in
+Cartesian crystal-frame coordinates:
+
+$$
+\mathsf{Q}_c \;=\; \mathsf{B}\,\mathsf{h}.
+$$
+
+B is constructed from the reciprocal lattice parameters derived from
+$(a, b, c, \alpha, \beta, \gamma)$ and is not in general orthonormal.
+See {doc}`direct-lattice` for the explicit construction.  Note that
+B depends only on the reciprocal lattice and is **independent of the
+basis assignment** for the diffractometer axes.
+
+### U matrix
+
+The U matrix (Busing & Levy 1967, eq. 4) is the orthogonal matrix
+relating the phi-axis frame (attached to the innermost sample stage)
+to the crystal Cartesian frame:
+
+$$
+\mathsf{h}_\varphi \;=\; \mathsf{U}\,\mathsf{Q}_c \;=\; \mathsf{U}\,\mathsf{B}\,\mathsf{h}.
+$$
+
+U corrects for the misalignment between the crystal axes and the
+diffractometer axes when all motor angles are zero.  Unlike B, U
+**does** depend on the basis assignment — choosing a different
+right-handed basis for the diffractometer axes rotates the U matrix
+by the fixed signed-permutation matrix that relates the two bases.
+The physical Bragg condition is invariant under that change; see
+{doc}`problem2` for the worked case study.
+
+### Nomenclature
+
+To avoid the ambiguity noted by Walko (2016) — where both U and UB
+are sometimes called the "orientation matrix" — this package uses
+the following unambiguous names:
+
+| Symbol | Name | Meaning |
+|---|---|---|
+| **B**  | B matrix  | Maps Miller indices to crystal Cartesian coords; encodes $a, b, c, \alpha, \beta, \gamma$ |
+| **U**  | U matrix  | Orthonormal; relates the crystal Cartesian frame to the phi-axis frame |
+| **UB** | UB matrix | Maps Miller indices directly to the phi-axis frame; determinable from reflections alone |
+
+### UB as a practical entity
+
+Busing & Levy treat UB as a single practical entity (eqs. 29–31):
+
+$$
+\mathsf{UB} \;=\; \mathsf{H}_c\,\mathsf{H}^{-1}
+$$
+
+where $\mathsf{H}_c$ and $\mathsf{H}$ are matrices of observed and
+indexed reflection vectors respectively.  This allows UB to be
+determined even when lattice parameters are unknown.
+
+### Full diffraction equation
+
+The full diffraction equation (You 1999, eqs. 10–11) relates Miller
+indices $\mathsf{h}$ to the sample rotation matrices and the detector
+position:
+
+$$
+\mathsf{h}^M \;=\; M\,H\,X\,U_\mu \cdot \mathsf{UB} \cdot \mathsf{h},
+$$
+
+where $U_\mu$, $X$, $H$, $M$ are the motor rotation matrices for
+mu, eta, chi, and phi respectively, and $\mathsf{h}^M$ is the
+diffraction vector in the laboratory frame.
+
+The detector position is determined by:
+
+$$
+\mathsf{k}_f \;=\; k\,P\,D\,\mathsf{k}_{f0},
+$$
+
+where $D$ and $P$ are the rotation matrices for delta and nu,
+$k = 2\pi/\lambda$ is the wave number, and $\mathsf{k}_{f0}$ is the
+forward beam direction.
+
+```{note}
+You (1999) uses the symbol U for both the mu motor rotation matrix
+and the U (orientation) matrix.  This package writes the mu motor
+rotation as $U_\mu$ to avoid the ambiguity.
+```
+
+See {doc}`howto/orient`, {doc}`howto/lattice`,
+{class}`~ad_hoc_diffractometer.lattice.Lattice`, and the
+{doc}`problem2` case study showing that two different right-handed
+basis assignments applied to the same equipment produce U/UB
+matrices related by a fixed rotation while leaving the physics
+invariant.
 
 ---
 

@@ -6,8 +6,11 @@ diffractometer matching the You (1999) psic geometry; the analysis leads
 directly to the {mod}`~ad_hoc_diffractometer.factories` factory functions and
 the {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer` class.
 
-For a full analysis of how this geometry maps to the convention described by H.
-You (1999), see [Case Study: Coordinate Convention and UB Matrix](problem2.md).
+For a worked example showing that the choice of right-handed basis
+applied to this equipment is arbitrary — different basis assignments
+produce U/UB matrices that differ by a fixed rotation, but the
+physical motor-angle ↔ (h, k, l) conversion is invariant — see
+[Case Study: Choice of Basis and the UB Matrix](problem2.md).
 
 ---
 
@@ -42,7 +45,9 @@ These directions are properties of the physical setup — they do not depend
 on how basis vectors are assigned to Cartesian axes.  The mapping of
 vertical, longitudinal, and transverse to x, y, z (or any other symbol) is a
 separate choice made by the caller and encoded in a basis dict.  Two common
-choices are shown in {doc}`problem2`.
+choices — You (1999) and Busing & Levy (1967) — are applied to this equipment
+in {doc}`problem2`, where they are shown to produce U/UB matrices that
+differ by a fixed rotation without changing the underlying physics.
 
 ## Equipment description
 
@@ -84,5 +89,12 @@ axis at their base.
 2. Is it possible to make different assignments of the basis vectors?  What
    are the resulting stage orientation vectors?  How does the U matrix differ?
 
-The answers to both questions are worked out in [Case Study: Coordinate Convention and UB Matrix](problem2.md),
-which shows how this equipment maps exactly to the six-circle psic geometry.
+Both questions are worked out in
+[Case Study: Choice of Basis and the UB Matrix](problem2.md).  The
+goal there is to show — using two different right-handed basis
+assignments applied to the same physical equipment described above —
+that the choice of basis is arbitrary: it changes the numerical
+values of the axis vectors and the U/UB matrices by a fixed
+rotation, but the physical conversion of motor angles ↔ (h, k, l)
+is invariant.  The equipment also maps exactly to the six-circle
+psic geometry.

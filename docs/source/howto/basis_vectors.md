@@ -185,8 +185,10 @@ frame.
   tabulated basis mappings
 - {doc}`../problem1` — the case study that defines the physical
   reference frame
-- {doc}`../problem2` — worked example deriving B/U/UB from a basis
-  assignment
+- {doc}`../problem2` — case study showing that the choice of basis is
+  arbitrary: two right-handed assignments applied to the same
+  equipment produce U/UB matrices related by a fixed rotation, while
+  the physical motor-angle ↔ (h, k, l) conversion is invariant
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer` — the
   `basis` constructor argument
 - {data}`~ad_hoc_diffractometer.factories.BASIS_YOU`,

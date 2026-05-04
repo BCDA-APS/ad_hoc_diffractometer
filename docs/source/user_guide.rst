@@ -122,12 +122,13 @@ Explanation
 
       The diffractometer problem that started this project.
 
-   .. grid-item-card:: :material-outlined:`calculate;3em` Coordinate Convention & UB Matrix
+   .. grid-item-card:: :material-outlined:`calculate;3em` Choice of Basis and the UB Matrix
       :link: problem2
       :link-type: doc
 
-      How a basis vector assignment leads to the B, U, and UB matrices,
-      with a worked example using the You (1999) convention.
+      Two basis assignments applied to the same case-study equipment;
+      the U/UB matrices differ by a fixed rotation but the physical
+      angle ↔ (h, k, l) conversion is invariant.
 
 Overview
 --------

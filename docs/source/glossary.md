@@ -114,7 +114,10 @@ U matrix
    The orthonormal orientation matrix that relates the Cartesian crystal
    frame to the phi-axis frame.  U encodes how the crystal is mounted on the
    diffractometer; it is determined from one or more orienting reflections.
-   See {doc}`howto/orient` and {doc}`problem2`.
+   U depends on the basis assignment for the diffractometer axes: see
+   {doc}`concepts` for the definition and {doc}`problem2` for the basis-
+   invariance case study.  See {doc}`howto/orient` for the orienting
+   procedure.
 
 UB matrix
    The product U × B.  Maps Miller indices directly to the phi-axis frame

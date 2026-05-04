@@ -390,8 +390,9 @@ Use this checklist when defining a new geometry:
 - {doc}`constraints` — the full constraint framework
 - {doc}`modes` — switching between diffraction modes
 - {doc}`../problem1` — case study defining the physical reference frame
-- {doc}`../problem2` — worked example of basis assignment and UB
-  derivation
+- {doc}`../problem2` — case study showing that the choice of basis is
+  arbitrary (different basis assignments produce U/UB matrices that
+  differ by a fixed rotation, leaving the physics invariant)
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.stage.Stage`
 - {func}`~ad_hoc_diffractometer.factories.register_geometry`
