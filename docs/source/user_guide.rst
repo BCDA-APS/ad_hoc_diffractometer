@@ -6,15 +6,10 @@ User Guide
 
 .. toctree::
    :hidden:
-   :caption: Overview
-
-   about
-
-.. toctree::
-   :hidden:
    :caption: Tutorials
 
    quick_start
+   about
 
 .. toctree::
    :hidden:
@@ -27,6 +22,7 @@ User Guide
    :caption: Reference
 
    geometries/index
+   api
    glossary
    references
 
@@ -41,103 +37,37 @@ User Guide
 
 .. icons: https://fonts.google.com/icons
 
-Tutorials
----------
-
 .. grid:: 2
 
-   .. grid-item-card:: :material-outlined:`rocket_launch;3em` Quick Start
-      :link: quick_start
-      :link-type: doc
+   .. grid-item-card:: :material-outlined:`school;3em` Tutorials
 
-      Build a four-circle diffractometer step by step — without a factory
-      function — and run your first forward calculation.
+      - :doc:`Build new geometry <quick_start>`
+        · :ref:`Use Demo Geometry <quick-start-demo>`
 
-How-to Guides
--------------
-
-.. grid:: 2
+      - :ref:`Project Overview <about>`
 
    .. grid-item-card:: :material-outlined:`directions_run;3em` How-to Guides
-      :link: howto/index
-      :link-type: doc
 
-      Step-by-step guides: set wavelength, define a lattice, orient a
-      crystal, solve the forward problem, switch modes, plan trajectories,
-      and align a crystal end-to-end.
-
-Reference
----------
-
-.. grid:: 2
-
-   .. grid-item-card:: :material-outlined:`format_list_bulleted;3em` Prebuilt Geometries
-      :link: geometries/index
-      :link-type: doc
-
-      Eulerian (4, 5, and 6 circle) · Kappa (4 and 6 circle) ·
-      Surface and special-purpose
-
-   .. grid-item-card:: :material-regular:`menu_book;3em` API Reference
-      :link: api
-      :link-type: doc
-
-      Complete auto-generated reference for every public class,
-      function, and constant.
-
-   .. grid-item-card:: :material-outlined:`abc;3em` Glossary
-      :link: glossary
-      :link-type: doc
-
-      Alphabetised definitions of key terms.
+      :doc:`Overview <howto/index>`
+      · :ref:`set wavelength <howto-wavelength>`
+      · :ref:`define a lattice <howto-lattice>`
+      · :ref:`orient a crystal <howto-orient>`
+      · :ref:`solve the forward problem <howto-forward>`
+      · :ref:`switch modes <howto-modes>`
+      · :ref:`plan trajectories <howto-trajectory>`
+      · :doc:`align a crystal end-to-end <howto/fourcv_alignment_howto>`
 
    .. grid-item-card:: :material-outlined:`library_books;3em` References
-      :link: references
-      :link-type: doc
 
-      All literature citations — geometry papers, physical constants,
-      and numerical methods.
+      :ref:`Demo Geometries <geometries>`
+      · :doc:`API Reference <api>`
+      · :ref:`Glossary <glossary>`
+      · :ref:`Literature References <references>`
 
-Explanation
------------
+   .. grid-item-card:: :material-outlined:`psychology;3em` Explanation
 
-.. grid:: 2
+      - :doc:`Concepts <concepts>`
+        · :doc:`Direct Lattice <direct-lattice>`
 
-   .. grid-item-card:: :material-outlined:`architecture;3em` Concepts
-      :link: concepts
-      :link-type: doc
-
-      Coordinate conventions, axis sign convention, B/U/UB matrices,
-      diffraction modes, and the ψ angle.
-
-   .. grid-item-card:: :material-outlined:`functions;3em` Direct Lattice
-      :link: direct-lattice
-      :link-type: doc
-
-      Vector mathematics and lattice vector conventions in crystallography.
-
-   .. grid-item-card:: :material-outlined:`science;3em` Case Study
-      :link: problem1
-      :link-type: doc
-
-      The diffractometer problem that started this project.
-
-   .. grid-item-card:: :material-outlined:`calculate;3em` Choice of Basis and the UB Matrix
-      :link: problem2
-      :link-type: doc
-
-      Two basis assignments applied to the same case-study equipment;
-      the U/UB matrices differ by a fixed rotation but the physical
-      angle ↔ (h, k, l) conversion is invariant.
-
-Overview
---------
-
-.. grid:: 2
-
-   .. grid-item-card:: :material-outlined:`info;3em` About ad_hoc_diffractometer
-      :link: about
-      :link-type: doc
-
-      What the package does, what you need to run it, and where it
-      fits in your workflow.
+      - **Case Studies**: :doc:`The Diffractometer Problem <problem1>`
+        · :doc:`Choice of Basis and the UB Matrix <problem2>`
