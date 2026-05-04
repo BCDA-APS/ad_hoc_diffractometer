@@ -69,5 +69,5 @@ User Guide
       - :doc:`Concepts <concepts>`
         · :doc:`Direct Lattice <direct-lattice>`
 
-      - **Case Studies**: :doc:`The Diffractometer Problem <problem1>`
+      - **Case Studies**: :doc:`Describing a Diffractometer <problem1>`
         · :doc:`Choice of Basis and the UB Matrix <problem2>`
