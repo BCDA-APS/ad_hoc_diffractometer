@@ -1,22 +1,198 @@
 (howto-custom-geometry)=
 # Build a Custom Diffractometer Geometry
 
-This guide walks through defining a diffractometer geometry that is not
-one of the demo geometries.  Each design decision is explained as
-it arises, with notes on what happens if you get it wrong.
+This guide walks through defining a diffractometer geometry that is
+not already shipped with the package.  There are two paths:
+
+- **Declarative YAML** (recommended) — write a small `.yml` file, no
+  Python required.  Suitable for almost every real beamline.
+- **Python factory** — write a Python function decorated with
+  {func}`~ad_hoc_diffractometer.factories.register_geometry`.  Use this only when
+  you need computed-at-runtime stages or other logic that the
+  declarative schema does not express.
 
 The worked example builds a **three-circle powder diffractometer** with
-a theta-2theta arm and a sample spinner (phi).  This is simple enough to
-follow but exercises every decision: basis, axis signs, parent chains,
+a theta-2theta arm and a sample spinner (phi).  It is simple enough to
+follow yet exercises every decision: basis, axis signs, parent chains,
 roles, and modes.
 
 ```{tip}
-If your instrument matches one of the demo geometries
-({func}`~ad_hoc_diffractometer.presets.psic`,
-{func}`~ad_hoc_diffractometer.presets.fourcv`, etc.), use it directly
-instead.  This guide is for instruments that differ from the
-{ref}`demo geometries <geometries>`.
+The 10 YAML files shipped under
+`src/ad_hoc_diffractometer/geometries/` are **demonstrations** of the
+declarative schema, not authoritative descriptions of any production
+diffractometer.  They are templates for you to copy and adapt.  Open
+the closest demo (e.g. `fourcv.yml`) alongside this guide and edit
+field-by-field.
 ```
+
+(howto-custom-geometry-yaml)=
+## Path A — Declarative YAML (recommended)
+
+This is the recommended workflow for any geometry that fits the
+schema.  The complete schema reference is
+{ref}`declarative-geometry-schema`; this section covers the practical
+steps.
+
+### A.1 — Copy a demo and rename it
+
+Pick the demo geometry whose layout most closely matches your
+instrument and copy it to a working file:
+
+```bash
+cp src/ad_hoc_diffractometer/geometries/fourcv.yml /lab/my_powder3c.yml
+```
+
+Edit the top-level `name:` to match your filename stem
+(`my_powder3c`).  The loader rejects a name/stem mismatch for files in
+the package directory; for ad-hoc files outside the package this is a
+soft convention.
+
+### A.2 — Document the marker, name, and prose
+
+Every file begins with the schema marker (see
+{ref}`decl-marker`):
+
+```yaml
+ad_hoc_diffractometer_geometry:
+    revision: 1
+
+name: my_powder3c
+
+documentation: >-
+    Three-circle powder diffractometer, horizontal scattering plane.
+
+    Theta and ttheta both rotate about the vertical axis (laboratory
+    convention).  Phi is a sample spinner mounted on top of theta.
+```
+
+The first line of `documentation:` is the one-line summary, following
+the Python-docstring convention.
+
+### A.3 — Choose a basis
+
+Three options:
+
+- Shorthand string (`basis: BL`, `basis: YOU`, or `basis: DEFAULT`).
+- Mapping of signed-axis strings.
+- Mapping of numeric unit vectors.
+
+For a laboratory instrument, the Busing & Levy convention is natural:
+
+```yaml
+basis: BL
+```
+
+Omitting the key emits a {class}`UserWarning` and falls back to
+{data}`~ad_hoc_diffractometer.factories.BASIS_DEFAULT` (a neutral
+basis, not aligned with any literature convention).  Real instruments
+should declare `basis:` explicitly.
+
+### A.4 — Declare the stages
+
+Each stage is a four-key mapping (`name`, `axis`, `parent`, `role`):
+
+```yaml
+stages:
+    - {name: theta,  axis: +vertical,     parent: null,   role: sample}
+    - {name: phi,    axis: +longitudinal, parent: theta,  role: sample}
+    - {name: ttheta, axis: +vertical,     parent: null,   role: detector}
+```
+
+The sign on the axis encodes handedness: `+nHat` is a right-handed
+rotation about `nHat`, `-nHat` is left-handed.  See
+{ref}`decl-stages` for the full axis grammar (signed-physical-direction
+strings, signed Cartesian strings, numeric vectors, and the
+`kappa_eulerian` form for kappa geometries).
+
+### A.5 — Declare the modes
+
+A mode is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+expressed in YAML:
+
+```yaml
+modes:
+    theta_ttheta:
+        default: true
+        constraints: []
+        computed: [theta, phi, ttheta]
+```
+
+This 3-circle geometry has zero free DOF (3 stages − 3 from the Bragg
+condition), so the mode needs no constraints.  Higher-DOF geometries
+list constraint specs of one of five `type:` values
+(`bisect`, `virtual_bisect`, `sample`, `detector`, `reference`); see
+{ref}`decl-modes`.
+
+### A.6 — Use the geometry
+
+You can use the file in three ways:
+
+```python
+import ad_hoc_diffractometer as ahd
+
+# (1) One-shot construction without registry mutation:
+g = ahd.load_geometry_file("/lab/my_powder3c.yml")
+
+# (2) Register once, then look up by name:
+ahd.register_geometry_file("/lab/my_powder3c.yml")
+g = ahd.make_geometry("my_powder3c")
+
+# (3) Override declared defaults at call time:
+g = ahd.make_geometry(
+    "my_powder3c",
+    basis=ahd.factories.BASIS_YOU,
+)
+```
+
+To make the YAML available across every Python session at this
+beamline, either:
+
+- ship it inside a Python package and declare it as an entry point in
+  the `ad_hoc_diffractometer.geometries` group (see
+  {func}`~ad_hoc_diffractometer.factories.register_geometry`), or
+- add a small site-startup script that calls
+  {func}`~ad_hoc_diffractometer.geometry_loader.register_geometry_file` for the file's
+  path.
+
+### A.7 — Verify
+
+```python
+g.wavelength = 1.5406  # Cu K-alpha, Å
+g.sample.lattice = ahd.Lattice(a=5.431)  # cubic silicon
+ahd.ub_identity(g.sample)
+
+g.summary()
+solutions = g.forward(1, 1, 1)
+for sol in solutions:
+    hkl = g.inverse(sol)
+    print(sol, "→", hkl)
+```
+
+If `inverse(forward(h, k, l))` does not recover `(h, k, l)` to
+floating-point precision, check axis signs (Step A.4), parent chains
+(stage `parent:` field), and roles (Step A.4 `role:` field) in that
+order.
+
+### A.8 — When the YAML schema is not enough
+
+A few cases require Python:
+
+- Stage axes that depend on a runtime parameter the schema does not
+  express (other than `alpha_deg`).
+- Geometries whose stage layout depends on caller-supplied data
+  (e.g. a stage list whose length varies).
+
+In those cases use {ref}`Path B <howto-custom-geometry-python>` below.
+
+---
+
+(howto-custom-geometry-python)=
+## Path B — Python factory (advanced)
+
+This path is for geometries that the declarative schema cannot
+express.  It walks through the same three-circle powder example
+implemented as a Python factory, with each design decision explained
+as it arises.
 
 ---
 

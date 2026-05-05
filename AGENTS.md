@@ -186,7 +186,14 @@ diffractometer/                  # project root (git repo)
 ├── src/
 │   └── ad_hoc_diffractometer/   # package source
 │       ├── __init__.py          # public API (Tier 1 names only)
-│       ├── presets.py           # 10 demo geometries
+│       ├── geometries/          # declarative YAML demo geometries (#267)
+│       │   ├── __init__.py      # marker for importlib.resources
+│       │   ├── schema.json      # JSON Schema for the declarative format
+│       │   └── *.yml            # one file per declarative demo geometry
+│       ├── geometry_loader.py   # YAML → AdHocDiffractometer loader (#267)
+│       ├── presets.py           # legacy Python factories — being migrated
+│       │                        # to geometries/*.yml (#267); will be deleted
+│       │                        # when migration completes
 │       ├── factories.py         # geometry registry + shared definitions
 │       ├── constants.py         # XHAT, YHAT, ZHAT
 │       ├── axes.py              # parse_axis(), axis_label(), kappa_axis()
@@ -250,7 +257,8 @@ python3 -m pytest -m slow_benchmark --no-cov -q
 Hot path: `forward.py`, `kappa.py`, `mode.py`, `orientation.py`,
 `rotation.py`, `reference.py`, `surface.py`
 
-Geometry construction: `presets.py`, `factories.py`, `diffractometer.py`,
+Geometry construction: `presets.py`, `geometry_loader.py`,
+`geometries/*.yml`, `factories.py`, `diffractometer.py`,
 `stage.py`, `axes.py`, `constants.py`
 
 CI runs these automatically (via `.github/workflows/benchmark.yml`)
@@ -395,10 +403,13 @@ descriptions change.  Sphinx executes it during `make html` via
 
 ## Implementation philosophy
 
-`ad_hoc_diffractometer` is a **pure-Python** package.  The only runtime
-dependency beyond the Python Standard Library is **NumPy**.  There is no
-dependency on scipy, sympy, or any other scientific library.  Keep it that
-way: every new algorithm must be implementable with NumPy alone.
+`ad_hoc_diffractometer` is a **pure-Python** package.  The runtime
+dependencies beyond the Python Standard Library are **NumPy** (numerical
+arrays and linear algebra) and **PyYAML** (parser for the declarative
+geometry files in ``src/ad_hoc_diffractometer/geometries/``; see issue
+#267).  There is no dependency on scipy, sympy, or any other scientific
+library.  Keep it that way: every new algorithm must be implementable
+with NumPy alone.
 
 ---
 
@@ -507,7 +518,13 @@ The default coordinate system follows You (1999):
 The Busing & Levy (1967) convention (used in `fourcv`, `fourch`,
 `kappa4cv`, `kappa4ch`) has x=transverse, y=longitudinal, z=vertical.
 
-Basis dicts (`_BASIS_YOU`, `_BASIS_BL`) in `factories.py` encode these.
+Basis dicts (`BASIS_YOU`, `BASIS_BL`) in `factories.py` encode these.
+A third constant, `BASIS_DEFAULT` (vertical=YHAT, longitudinal=ZHAT,
+transverse=XHAT), is the neutral fallback used by the declarative
+geometry loader when a YAML file omits the `basis:` key.  It is
+deliberately distinct from `BASIS_YOU` and `BASIS_BL` so that the
+package does not appear to espouse either literature convention as a
+"project default."
 
 ---
 

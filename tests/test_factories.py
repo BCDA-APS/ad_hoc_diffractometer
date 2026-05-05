@@ -806,35 +806,31 @@ class TestEntryPointExtensibility:
 
         assert hasattr(fac, "GEOMETRY_ENTRY_POINT_GROUP")
 
-    # --- Built-in factories declared as entry points -----------------------
+    # --- Built-in factories declared via @register_geometry / YAML --------
+    #
+    # Issue #267 removed the entry-point declarations for the 10 demo
+    # geometries from ``pyproject.toml``: built-ins are now registered
+    # either by ``@register_geometry`` decorators in
+    # :mod:`ad_hoc_diffractometer.presets` or, after migration, by the
+    # declarative-YAML loader scanning
+    # :mod:`ad_hoc_diffractometer.geometries`.  The entry-point group
+    # remains supported for *third-party* plugins.
 
-    def test_all_builtins_declared_as_entry_points(self):
-        """All 10 built-in factories must appear in the installed entry points."""
+    def test_no_builtins_declared_as_entry_points(self):
+        """Built-in geometries are no longer declared as entry points."""
         from importlib.metadata import entry_points
 
         from ad_hoc_diffractometer.factories import GEOMETRY_ENTRY_POINT_GROUP
 
         eps = entry_points(group=GEOMETRY_ENTRY_POINT_GROUP)
         names = {ep.name for ep in eps}
-        assert _BUILTIN_NAMES <= names, (
-            f"Missing from entry points: {_BUILTIN_NAMES - names}"
+        # Any of the 10 built-in names appearing here would mean a stale
+        # ``pyproject.toml`` declaration leaked through; a clean install
+        # produces an empty set.
+        assert _BUILTIN_NAMES.isdisjoint(names), (
+            f"Built-in names should not appear as entry points: "
+            f"{sorted(_BUILTIN_NAMES & names)}"
         )
-
-    def test_entry_point_loads_correct_factory(self):
-        """Each built-in entry point must load to the same callable as the module."""
-        from importlib.metadata import entry_points
-
-        import ad_hoc_diffractometer.presets as presets
-        from ad_hoc_diffractometer.factories import GEOMETRY_ENTRY_POINT_GROUP
-
-        eps = {ep.name: ep for ep in entry_points(group=GEOMETRY_ENTRY_POINT_GROUP)}
-        for name in _BUILTIN_NAMES:
-            assert name in eps
-            loaded = eps[name].load()
-            assert loaded is getattr(presets, name), (
-                f"Entry point '{name}' loaded {loaded!r}, "
-                f"expected {getattr(presets, name)!r}"
-            )
 
     # --- list_geometries() discovers entry points --------------------------
 

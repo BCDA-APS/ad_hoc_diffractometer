@@ -21,7 +21,7 @@ All other names are accessible via their submodules::
 
 import logging
 
-from . import presets  # noqa: F401 — registers the demo geometries
+from . import presets  # noqa: F401 — registers the legacy Python demo geometries
 from ._version import __version__
 from .diffractometer import AdHocDiffractometer
 from .diffractometer import pa
@@ -30,6 +30,8 @@ from .factories import get_geometry
 from .factories import list_geometries
 from .factories import make_geometry
 from .factories import register_geometry
+from .geometry_loader import load_geometry_file
+from .geometry_loader import register_geometry_file
 from .lattice import Lattice
 from .mode import REQUIRED
 from .mode import BisectConstraint
@@ -65,6 +67,8 @@ __all__ = [
     "get_geometry",
     "make_geometry",
     "register_geometry",
+    "register_geometry_file",
+    "load_geometry_file",
     # orientation
     "ub_identity",
     "ub_from_one_reflection",
