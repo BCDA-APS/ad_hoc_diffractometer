@@ -299,7 +299,7 @@ Full 4D simultaneous solver in the horizontal scattering plane.
 
 ### `zone_horizontal`
 
-Horizontal-plane analogue of `zone_vertical`.  Locks `eta = 0`,
+Horizontal-plane analog of `zone_vertical`.  Locks `eta = 0`,
 `delta = 0`; the bisecting condition `mu = nu/2` together with chi,
 phi solves any in-plane (h, k, l).
 
@@ -341,7 +341,7 @@ constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
 
 ## Mode cross-reference
 
-Each `psic` mode mapped to its closest analogue in SPEC's `psic` macros,
+Each `psic` mode mapped to its closest analog in SPEC's `psic` macros,
 the Hkl/Soleil `E6C` `hkl` engine, and You (1999).
 
 | mode | SPEC `psic` | Hkl/Soleil E6C | You (1999) |
@@ -374,7 +374,7 @@ reference-angle constraint (0 = none, 1 = α=β, 2 = α-fixed,
 3 = β-fixed, 4 = ψ-fixed), and `g_mode3`–`g_mode5` fix specific motor
 angles.
 
-—: no documented analogue exists in that package.
+—: no documented analog exists in that package.
 
 †: SPEC mode tuples flagged here are listed by the SPEC documentation
 as currently not working (the eta-fixed + chi-fixed and eta-fixed +
