@@ -217,15 +217,16 @@ Vertical / horizontal scattering plane
    about the vertical axis; typical for laboratory instruments.
 
 Zone (crystallographic)
-   A set of crystal lattice planes whose normals (reciprocal-lattice
-   vectors) are coplanar.  Equivalently, a set of planes that share a
-   common direction in direct space — the **zone axis** — which is
-   perpendicular to that common reciprocal-space plane.  Two
-   non-parallel reciprocal-lattice vectors ``z0`` and ``z1`` span the
-   zone plane and uniquely identify the zone; any reflection (h, k, l)
-   for which **Q** lies in that plane belongs to the zone, and the
-   *Weiss zone law* ``h u + k v + l w = 0`` characterises membership
-   in terms of the zone-axis indices ``[u v w]``.
+   A set of crystal lattice planes that all share a common direction
+   in direct space — the **zone axis** ``[u v w]``.  Equivalently, in
+   reciprocal space, a set of reflections whose scattering vectors
+   (the plane normals **g** = h **a*** + k **b*** + l **c***) are all
+   perpendicular to that zone axis and therefore lie in a single
+   plane — the *zone plane* — that passes through the reciprocal
+   origin.  Any two non-parallel reciprocal-lattice vectors ``z0``
+   and ``z1`` in the zone plane span it and uniquely identify the
+   zone, and the *Weiss zone law* ``h u + k v + l w = 0``
+   characterises membership in terms of the zone-axis indices.
 
 Zone (mode)
    A diffraction mode (You 1999, §6; SPEC ``setmode 5``) named after
