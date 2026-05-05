@@ -46,7 +46,10 @@ Demo geometries
      - Lohmeier & Vlieg (1993) surface geometry. See :doc:`/geometries/sixc`.
    * - :func:`kappa4cv`
      - Kappa 4-circle
-     - Vertical scattering plane (synchrotron). See :doc:`/geometries/kappa4cv`.
+     - Vertical scattering plane (synchrotron).  Migrated to declarative
+       YAML (``geometries/kappa4cv.yml``) in #267; the function in this
+       module is a compatibility shim that delegates to the loader.
+       See :doc:`/geometries/kappa4cv`.
    * - :func:`kappa4ch`
      - Kappa 4-circle
      - Horizontal scattering plane (laboratory). See :doc:`/geometries/kappa4ch`.
@@ -376,134 +379,28 @@ def sixc(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
 # ---------------------------------------------------------------------------
 
 
-@register_geometry
+# ``kappa4cv`` was migrated to a declarative YAML file
+# (``geometries/kappa4cv.yml``) in issue #267.  This compatibility shim
+# delegates to the loader so existing imports
+# (``from ad_hoc_diffractometer.presets import kappa4cv``) continue to
+# work during the staged migration.  The shim will be removed when
+# ``presets.py`` is deleted at the end of the migration.
 def kappa4cv(
     alpha_deg: float = KAPPA_ALPHA_DEFAULT,
     basis: dict = BASIS_BL,
 ) -> AdHocDiffractometer:
+    """Return the declarative ``kappa4cv`` geometry (delegates to the YAML loader).
+
+    See ``src/ad_hoc_diffractometer/geometries/kappa4cv.yml`` for the
+    authoritative definition.
     """
-    Four-circle kappa diffractometer, vertical scattering plane (synchrotron).
+    from .geometry_loader import load_geometry_file
 
-    Walko (2016) designation: S3D1.
-
-    The chi circle of a standard Eulerian fourcv is replaced by a kappa arm.
-    The kappa axis lies in the vertical-transverse plane, tilted alpha degrees
-    from the vertical toward the transverse axis.
-
-    komega and ttheta both rotate about the transverse axis; the scattering
-    plane is vertical (synchrotron convention).
-
-    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
-
-    Sample stack (floor first):
-
-    - ``komega`` — transverse, left-handed
-    - ``kappa`` — tilted in the transverse-vertical plane, between +T
-      and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
-      Thorkildsen 2006 Table 1).
-    - ``kphi`` — transverse, left-handed
-
-    Detector (floor, mechanically independent):
-
-    - ``ttheta`` — transverse, left-handed
-
-    komega and ttheta share the same transverse axis; mechanically independent.
-
-    Handedness note: this preset encodes omega/kphi/2theta as left-handed
-    about transverse, following Walko (2016).  ITC Vol. C Sec. 2.2.6.2
-    (2006) prefers a right-handed sign convention for omega/chi/phi.
-    The two conventions are equivalent up to motor-angle sign flips;
-    either yields the same physical orientations.  See the module
-    docstring for further discussion.
-
-    Parameters
-    ----------
-    alpha_deg : float
-        Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
-
-    References
-    ----------
-    * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
-    * G. Thorkildsen, H.B. Larsen & J.A. Beukes, J. Appl. Cryst. 39,
-      151-157 (2006) — Table 1, eqn (3).
-    * W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-    * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
-      Wyckoff (1985, p. 334) for the schematic picture.
-    """
-    TRANSVERSE = basis["transverse"]
-    VERTICAL = basis["vertical"]
-    # Kappa axis per Walko (2016) Fig. 3 and Thorkildsen et al. (2006)
-    # Table 1: the kappa arm lies in the transverse-vertical plane,
-    # tilted ``alpha_deg`` from the (unsigned) transverse direction
-    # toward the (unsigned) vertical direction.  See issue #252.
-    # Note: omega itself is left-handed about transverse (encoded as
-    # ``-TRANSVERSE`` in the Stage line below); the kappa arm extends
-    # into the +T+V quadrant regardless of the omega-handedness sign.
-    kax = kappa_axis_from_eulerian(+TRANSVERSE, +VERTICAL, alpha_deg)
-    stages = [
-        Stage("komega", -TRANSVERSE, parent=None, role="sample"),
-        Stage("kappa", kax, parent="komega", role="sample"),
-        Stage("kphi", -TRANSVERSE, parent="kappa", role="sample"),
-        Stage("ttheta", -TRANSVERSE, parent=None, role="detector"),
-    ]
-    # kappa4cv: 4 DOF, N-3=1 constraint needed per mode.
-    # Virtual Eulerian angles (omega, chi, phi) are mapped to / from
-    # real kappa motors via the geometry-aware decomposition in
-    # ad_hoc_diffractometer.kappa.  The ``bisecting`` mode uses
-    # ``VirtualBisectConstraint`` to enforce *true* bisecting in the
-    # virtual Eulerian frame: ``omega_virtual = ttheta/2``.  See
-    # issues #226 and #241.
-    convention = KappaPseudoAngleConvention(
-        n_komega=-TRANSVERSE,
-        n_kappa=kax,
-        n_kphi=-TRANSVERSE,
-        n_chi_eq=+VERTICAL,
+    pkg_path = resources.files("ad_hoc_diffractometer.geometries").joinpath(
+        "kappa4cv.yml"
     )
-    modes = {
-        "bisecting": ConstraintSet(
-            [VirtualBisectConstraint("omega", "ttheta")],
-            computed=["komega", "kappa", "kphi", "ttheta"],
-        ),
-        "fixed_kphi": ConstraintSet(
-            [SampleConstraint("kphi", 0.0)],
-            computed=["komega", "kappa", "ttheta"],
-        ),
-        "fixed_omega": ConstraintSet(
-            [SampleConstraint("omega", 0.0)],
-            computed=["komega", "kappa", "kphi", "ttheta"],
-        ),
-        "fixed_chi": ConstraintSet(
-            [SampleConstraint("chi", 90.0)],
-            computed=["komega", "kappa", "kphi", "ttheta"],
-        ),
-        "fixed_phi": ConstraintSet(
-            [SampleConstraint("phi", 0.0)],
-            computed=["komega", "kappa", "kphi", "ttheta"],
-        ),
-        "fixed_psi": ConstraintSet(
-            [ReferenceConstraint("psi", 0.0)],
-            computed=["komega", "kappa", "kphi", "ttheta"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-        "double_diffraction": ConstraintSet(
-            [],
-            computed=["komega", "kappa", "kphi", "ttheta"],
-            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=basis,
-        description=(
-            f"Four-circle kappa diffractometer, vertical scattering plane "
-            f"(synchrotron). Kappa alpha = {alpha_deg} deg."
-        ),
-        kappa_alpha_deg=alpha_deg,
-        kappa_pseudo_angle_convention=convention,
-        modes=modes,
-        default_mode="bisecting",
-    )
+    with resources.as_file(pkg_path) as p:
+        return load_geometry_file(p, alpha_deg=alpha_deg, basis=basis)
 
 
 @register_geometry

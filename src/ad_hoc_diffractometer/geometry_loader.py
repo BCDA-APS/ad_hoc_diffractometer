@@ -802,7 +802,7 @@ def _construct_from_doc(
                 f"{source_label}: kappa parameters declared but the stage "
                 f"list does not contain the canonical kappa stage names "
                 f"'komega', 'kappa', 'kphi'.  The declarative loader "
-                f"synthesises the KappaPseudoAngleConvention from these "
+                f"synthesizes the KappaPseudoAngleConvention from these "
                 f"names; rename your stages accordingly or omit the "
                 f"'kappa_chi_eq' / 'parameters.alpha_deg' fields."
             ) from None
