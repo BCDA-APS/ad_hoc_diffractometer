@@ -416,6 +416,167 @@ def _reference_kappa4cv(
     )
 
 
+def _reference_kappa6c(
+    alpha_deg: float = KAPPA_ALPHA_DEFAULT,
+) -> AdHocDiffractometer:
+    """Hand-built kappa6c (the pre-#267 ``presets.kappa6c`` body verbatim).
+
+    Reproduces the legacy factory exactly, including the synthesized
+    :class:`KappaPseudoAngleConvention`.  Same kappa-axis convention
+    as kappa4cv (tilted from +TRANSVERSE toward +VERTICAL); the only
+    structural difference is the addition of the psic-style ``mu``
+    sample outer axis and ``nu`` detector outer axis.
+    """
+    basis = BASIS_YOU
+    VERTICAL = basis["vertical"]
+    TRANSVERSE = basis["transverse"]
+    kax = kappa_axis_from_eulerian(+TRANSVERSE, +VERTICAL, alpha_deg)
+    stages = [
+        Stage("mu", +VERTICAL, parent=None, role="sample"),
+        Stage("komega", -TRANSVERSE, parent="mu", role="sample"),
+        Stage("kappa", kax, parent="komega", role="sample"),
+        Stage("kphi", -TRANSVERSE, parent="kappa", role="sample"),
+        Stage("nu", +VERTICAL, parent=None, role="detector"),
+        Stage("delta", -TRANSVERSE, parent="nu", role="detector"),
+    ]
+    convention = KappaPseudoAngleConvention(
+        n_komega=-TRANSVERSE,
+        n_kappa=kax,
+        n_kphi=-TRANSVERSE,
+        n_chi_eq=+VERTICAL,
+    )
+    modes = {
+        "bisecting_vertical": ConstraintSet(
+            [
+                VirtualBisectConstraint("omega", "delta"),
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
+        ),
+        "bisecting_horizontal": ConstraintSet(
+            [
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("komega", 0.0),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "kappa", "kphi", "nu"],
+        ),
+        "fixed_kphi": ConstraintSet(
+            [
+                SampleConstraint("kphi", 0.0),
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["komega", "kappa", "delta"],
+        ),
+        "fixed_mu": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                VirtualBisectConstraint("omega", "delta"),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
+        ),
+        "fixed_nu": ConstraintSet(
+            [
+                DetectorConstraint("nu", 0.0),
+                VirtualBisectConstraint("omega", "delta"),
+                SampleConstraint("mu", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
+        ),
+        "fixed_delta": ConstraintSet(
+            [
+                DetectorConstraint("delta", 0.0),
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("komega", 0.0),
+            ],
+            computed=["mu", "kappa", "kphi", "nu"],
+        ),
+        "lifting_detector_mu": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                SampleConstraint("komega", 0.0),
+                DetectorConstraint("qaz", 90.0),
+            ],
+            computed=["mu", "nu", "delta"],
+        ),
+        "lifting_detector_kphi": ConstraintSet(
+            [
+                SampleConstraint("kphi", 0.0),
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("qaz", 90.0),
+            ],
+            computed=["kphi", "nu", "delta"],
+        ),
+        "fixed_psi_vertical": ConstraintSet(
+            [
+                VirtualBisectConstraint("omega", "delta"),
+                SampleConstraint("mu", 0.0),
+                ReferenceConstraint("psi", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "fixed_psi_horizontal": ConstraintSet(
+            [
+                BisectConstraint("mu", "nu"),
+                SampleConstraint("komega", 0.0),
+                ReferenceConstraint("psi", 0.0),
+            ],
+            computed=["mu", "kappa", "kphi", "nu"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "double_diffraction_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
+        ),
+        "double_diffraction_horizontal": ConstraintSet(
+            [
+                SampleConstraint("komega", 0.0),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "kappa", "kphi", "nu"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
+        ),
+        "zone_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
+            extras={"z0": REQUIRED, "z1": REQUIRED, "in_plane_residual": None},
+        ),
+        "zone_horizontal": ConstraintSet(
+            [
+                SampleConstraint("komega", 0.0),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "kappa", "kphi", "nu"],
+            extras={"z0": REQUIRED, "z1": REQUIRED, "in_plane_residual": None},
+        ),
+    }
+    return AdHocDiffractometer(
+        name="kappa6c",
+        stages=stages,
+        basis=basis,
+        description=(
+            f"Six-circle kappa diffractometer, psic-style outer axes "
+            f"(transverse detector, synchrotron). "
+            f"Kappa alpha = {alpha_deg} deg."
+        ),
+        kappa_alpha_deg=alpha_deg,
+        kappa_pseudo_angle_convention=convention,
+        modes=modes,
+        default_mode="bisecting_vertical",
+    )
+
+
 # ---------------------------------------------------------------------------
 # Equivalence checker
 # ---------------------------------------------------------------------------
@@ -501,6 +662,7 @@ def _assert_geometries_equivalent(
         pytest.param("fourch", _reference_fourch, id="fourch"),
         pytest.param("psic", _reference_psic, id="psic"),
         pytest.param("kappa4cv", _reference_kappa4cv, id="kappa4cv"),
+        pytest.param("kappa6c", _reference_kappa6c, id="kappa6c"),
     ],
 )
 def test_declarative_matches_reference(geom_name, reference_factory):
@@ -517,6 +679,7 @@ def test_declarative_matches_reference(geom_name, reference_factory):
         pytest.param("fourch", id="fourch"),
         pytest.param("psic", id="psic"),
         pytest.param("kappa4cv", id="kappa4cv"),
+        pytest.param("kappa6c", id="kappa6c"),
     ],
 )
 def test_declarative_basis_override_round_trips(geom_name):
@@ -545,6 +708,7 @@ def test_declarative_basis_override_round_trips(geom_name):
     "geom_name, reference_factory",
     [
         pytest.param("kappa4cv", _reference_kappa4cv, id="kappa4cv"),
+        pytest.param("kappa6c", _reference_kappa6c, id="kappa6c"),
     ],
 )
 @pytest.mark.parametrize(

@@ -55,7 +55,10 @@ Demo geometries
      - Horizontal scattering plane (laboratory). See :doc:`/geometries/kappa4ch`.
    * - :func:`kappa6c`
      - Kappa 6-circle
-     - Psic-style outer axes. See :doc:`/geometries/kappa6c`.
+     - Psic-style outer axes.  Migrated to declarative YAML
+       (``geometries/kappa6c.yml``) in #267; the function in this
+       module is a compatibility shim that delegates to the loader.
+       See :doc:`/geometries/kappa6c`.
    * - :func:`zaxis`
      - Surface / special
      - Bloch (1985) Z-axis geometry. See :doc:`/geometries/zaxis`.
@@ -519,242 +522,28 @@ def kappa4ch(
     )
 
 
-@register_geometry
+# ``kappa6c`` was migrated to a declarative YAML file
+# (``geometries/kappa6c.yml``) in issue #267.  This compatibility shim
+# delegates to the loader so existing imports
+# (``from ad_hoc_diffractometer.presets import kappa6c``) continue to
+# work during the staged migration.  The shim will be removed when
+# ``presets.py`` is deleted at the end of the migration.
 def kappa6c(
     alpha_deg: float = KAPPA_ALPHA_DEFAULT,
     basis: dict = BASIS_YOU,
 ) -> AdHocDiffractometer:
+    """Return the declarative ``kappa6c`` geometry (delegates to the YAML loader).
+
+    See ``src/ad_hoc_diffractometer/geometries/kappa6c.yml`` for the
+    authoritative definition.
     """
-    Six-circle kappa diffractometer (psic-style outer axes, kappa inner sample).
+    from .geometry_loader import load_geometry_file
 
-    Walko (2016) designation: S4D2.
-
-    See ESRF for a comprehensive example:
-    https://www.esrf.fr/home/UsersAndScience/Experiments/CRG/BM02/equipment/diffractometer.html#c
-
-    Extends the kappa4cv geometry with two additional axes (mu, nu) in
-    the style of the psic geometry (You 1999), giving full orientation freedom.
-    This is the synchrotron configuration with a transverse detector.
-
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
-
-    Sample stack (floor first):
-
-    - ``mu`` — vertical, right-handed (outermost)
-    - ``komega`` — transverse, left-handed
-    - ``kappa`` — tilted in the transverse-vertical plane, between +T
-      and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
-      Thorkildsen 2006 Table 1).
-    - ``kphi`` — transverse, left-handed
-
-    Detector stack (floor first):
-
-    - ``nu`` — vertical, right-handed
-    - ``delta`` — transverse, left-handed
-
-    mu and nu share the same vertical axis; mechanically independent.
-
-    Handedness note: this preset encodes komega/kphi/delta as left-handed
-    about transverse and mu/nu as right-handed about vertical, following
-    Walko (2016) and You (1999) respectively.  ITC Vol. C Sec. 2.2.6.2
-    (2006) prefers a right-handed sign convention for omega/chi/phi.
-    The two conventions are equivalent up to motor-angle sign flips;
-    either yields the same physical orientations.  See the module
-    docstring for further discussion.
-
-    Parameters
-    ----------
-    alpha_deg : float
-        Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
-
-    References
-    ----------
-    * H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen & H. Fjellvåg,
-      J. Synchrotron Rad. 20, 644-647 (2013) — six-axis κ
-      diffractometer (KUMA6 at SNBL/ESRF).
-    * G. Thorkildsen, H.B. Larsen & J.A. Beukes, J. Appl. Cryst. 39,
-      151-157 (2006) — Table 1, eqn (3); extends to additional
-      rotation axes (§3 last paragraph).
-    * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
-    * H. You, J. Appl. Cryst. 32, 614-623 (1999) — outer-axis layout
-      (psic 4S+2D) and You coordinate basis.
-    * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
-      Wyckoff (1985, p. 334) for the schematic picture.
-    """
-    VERTICAL = basis["vertical"]
-    TRANSVERSE = basis["transverse"]
-    # Kappa axis per Walko (2016) Fig. 3 and Thorkildsen et al. (2006)
-    # Table 1 (same as kappa4cv): the kappa arm lies in the
-    # transverse-vertical plane, tilted ``alpha_deg`` from the
-    # (unsigned) transverse direction toward the (unsigned) vertical
-    # direction.  kappa6c = kappa4cv sample stack mounted on top of
-    # the You (1999) ``mu`` outer axis.  See issue #252.
-    kax = kappa_axis_from_eulerian(+TRANSVERSE, +VERTICAL, alpha_deg)
-    stages = [
-        Stage("mu", +VERTICAL, parent=None, role="sample"),
-        Stage("komega", -TRANSVERSE, parent="mu", role="sample"),
-        Stage("kappa", kax, parent="komega", role="sample"),
-        Stage("kphi", -TRANSVERSE, parent="kappa", role="sample"),
-        Stage("nu", +VERTICAL, parent=None, role="detector"),
-        Stage("delta", -TRANSVERSE, parent="nu", role="detector"),
-    ]
-    # kappa6c: 6 DOF, N-3=3 constraints needed per mode.
-    # Vertical bisect pair (kappa-omega bisect): VirtualBisectConstraint
-    #   enforces ``omega_virtual = delta/2`` — the physically correct
-    #   bisecting condition for a kappa diffractometer (issues #226 and
-    #   #241).
-    # Horizontal bisect pair: mu(vertical) <-> nu(vertical) => mu = nu/2
-    #   (literal motor bisect; mu is a real outer stage, not a kappa motor).
-    convention = KappaPseudoAngleConvention(
-        n_komega=-TRANSVERSE,
-        n_kappa=kax,
-        n_kphi=-TRANSVERSE,
-        n_chi_eq=+VERTICAL,
+    pkg_path = resources.files("ad_hoc_diffractometer.geometries").joinpath(
+        "kappa6c.yml"
     )
-    modes = {
-        # ── Implemented (generic solver) ────────────────────────────────────
-        "bisecting_vertical": ConstraintSet(
-            [
-                VirtualBisectConstraint("omega", "delta"),
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["komega", "kappa", "kphi", "delta"],
-        ),
-        "bisecting_horizontal": ConstraintSet(
-            [
-                BisectConstraint("mu", "nu"),
-                SampleConstraint("komega", 0.0),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "kappa", "kphi", "nu"],
-        ),
-        "fixed_kphi": ConstraintSet(
-            [
-                SampleConstraint("kphi", 0.0),
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["komega", "kappa", "delta"],
-        ),
-        "fixed_mu": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                VirtualBisectConstraint("omega", "delta"),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["komega", "kappa", "kphi", "delta"],
-        ),
-        "fixed_nu": ConstraintSet(
-            [
-                DetectorConstraint("nu", 0.0),
-                VirtualBisectConstraint("omega", "delta"),
-                SampleConstraint("mu", 0.0),
-            ],
-            computed=["komega", "kappa", "kphi", "delta"],
-        ),
-        "fixed_delta": ConstraintSet(
-            [
-                DetectorConstraint("delta", 0.0),
-                BisectConstraint("mu", "nu"),
-                SampleConstraint("komega", 0.0),
-            ],
-            computed=["mu", "kappa", "kphi", "nu"],
-        ),
-        # ── Stubs: solver not yet implemented ───────────────────────────────
-        "lifting_detector_mu": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                SampleConstraint("komega", 0.0),
-                DetectorConstraint("qaz", 90.0),
-            ],
-            computed=["mu", "nu", "delta"],
-        ),
-        "lifting_detector_kphi": ConstraintSet(
-            [
-                SampleConstraint("kphi", 0.0),
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("qaz", 90.0),
-            ],
-            computed=["kphi", "nu", "delta"],
-        ),
-        "fixed_psi_vertical": ConstraintSet(
-            [
-                VirtualBisectConstraint("omega", "delta"),
-                SampleConstraint("mu", 0.0),
-                ReferenceConstraint("psi", 0.0),
-            ],
-            computed=["komega", "kappa", "kphi", "delta"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-        "fixed_psi_horizontal": ConstraintSet(
-            [
-                BisectConstraint("mu", "nu"),
-                SampleConstraint("komega", 0.0),
-                ReferenceConstraint("psi", 0.0),
-            ],
-            computed=["mu", "kappa", "kphi", "nu"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-        "double_diffraction_vertical": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["komega", "kappa", "kphi", "delta"],
-            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
-        ),
-        "double_diffraction_horizontal": ConstraintSet(
-            [
-                SampleConstraint("komega", 0.0),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "kappa", "kphi", "nu"],
-            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
-        ),
-        # ── Zone modes (You 1999 §6, SPEC `setmode 5`) ──────────────────────
-        # Q is confined to the plane defined by two reciprocal-lattice
-        # vectors z0 and z1.  Same dispatch pattern as psic — see psic
-        # ``zone_vertical`` / ``zone_horizontal`` for details.
-        "zone_vertical": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["komega", "kappa", "kphi", "delta"],
-            extras={
-                "z0": REQUIRED,
-                "z1": REQUIRED,
-                "in_plane_residual": None,
-            },
-        ),
-        "zone_horizontal": ConstraintSet(
-            [
-                SampleConstraint("komega", 0.0),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "kappa", "kphi", "nu"],
-            extras={
-                "z0": REQUIRED,
-                "z1": REQUIRED,
-                "in_plane_residual": None,
-            },
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=basis,
-        description=(
-            f"Six-circle kappa diffractometer, psic-style outer axes "
-            f"(transverse detector, synchrotron). "
-            f"Kappa alpha = {alpha_deg} deg."
-        ),
-        kappa_alpha_deg=alpha_deg,
-        kappa_pseudo_angle_convention=convention,
-        modes=modes,
-        default_mode="bisecting_vertical",
-    )
+    with resources.as_file(pkg_path) as p:
+        return load_geometry_file(p, alpha_deg=alpha_deg, basis=basis)
 
 
 # ---------------------------------------------------------------------------
