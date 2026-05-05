@@ -45,18 +45,24 @@ These four modes were removed in the same PR.  See
 Note on ``fixed_chi_horizontal``
 --------------------------------
 
-After the fix, ``fixed_chi_horizontal`` (chi held at 90°, eta = 0,
-delta = 0) is kinematically infeasible on the cubic ``UB = B`` test
-crystal: ``chi = 90`` rotates Q out of the horizontal scattering
-plane, conflicting with ``delta = 0``.  This is a separate concern
-from the bisect-vs-plane-lock fix in #243 (the constraint structure
-is now correct; only the *value* of chi appears wrong, suggesting
-the SPEC convention is ``chi = 0``).  Resolution of the correct
-default chi value (and the full audit of psic modes against SPEC
-``psic`` and Hkl/Soleil ``E6C``) is tracked in **issue #259**.  This
-file therefore does not parametrise ``fixed_chi_horizontal`` for
-the round-trip / plane-lock value tests; the test row will be added
-when #259 lands the corrected default.
+After the #243 fix the constraint *structure* of
+``fixed_chi_horizontal`` was correct (``eta = 0``, ``delta = 0``,
+``chi`` fixed) but the *value* of chi was wrong: it carried over the
+``chi = 90`` default from ``fixed_chi_vertical`` and from the
+four-circle ``fixed_chi`` modes, where 90° is the canonical
+"spinning Q" symmetry value.  In the horizontal-scattering psic
+sub-geometry ``chi = 90`` instead tilts the phi axis out of the
+horizontal plane, conflicting with ``delta = 0`` and rendering every
+low-index hkl unreachable on a cubic ``UB = B`` crystal.
+
+Issue #259 audited the psic modes against SPEC ``psic`` and Hkl/Soleil
+``E6C`` and resolved the default to ``chi = 0`` — the value that keeps
+the phi axis in the horizontal scattering plane (the chi-circle axis
+in the residual sub-geometry lies along the longitudinal/beam
+direction with ``eta = 0``).  This file now parametrises
+``fixed_chi_horizontal`` for the eta-lock, round-trip and full
+plane-lock invariant tests using hkl that are reachable with the new
+default.
 
 This file lives at the cross-module regression level rather than in
 ``tests/test_presets.py`` because the symptom is visible only after
@@ -160,9 +166,7 @@ _HKL_VERTICAL = [
     pytest.param(1, 1, 1, id="111"),
 ]
 
-# fixed_phi_horizontal is reachable on cubic UB=B for the hkl below;
-# fixed_chi_horizontal is *not* reachable for any low-index hkl on this
-# crystal (see module docstring for why).
+# fixed_phi_horizontal is reachable on cubic UB=B for the hkl below.
 _HKL_HORIZONTAL = [
     pytest.param(0, 1, 0, id="010"),
     pytest.param(0, 0, 1, id="001"),
@@ -170,6 +174,19 @@ _HKL_HORIZONTAL = [
     pytest.param(1, 0, 1, id="101"),
     pytest.param(1, 1, 0, id="110"),
     pytest.param(1, 1, 1, id="111"),
+]
+
+# fixed_chi_horizontal at the new (#259) default chi = 0 is reachable
+# only for hkl with h = 0 on cubic UB = B, because chi = 0 leaves the
+# phi-circle axis along the longitudinal (beam) direction so phi
+# rotations cannot move the h-component of Q out of the beam plane.
+_HKL_FIXED_CHI_HORIZONTAL = [
+    pytest.param(0, 1, 0, id="010"),
+    pytest.param(0, 0, 1, id="001"),
+    pytest.param(0, 1, 1, id="011"),
+    pytest.param(0, 0, 2, id="002"),
+    pytest.param(0, 2, 1, id="021"),
+    pytest.param(0, 1, 2, id="012"),
 ]
 
 
@@ -202,12 +219,7 @@ def test_fixed_vertical_modes_lock_mu(mode_name, locked_stage, h, k, l):  # noqa
 
 @pytest.mark.parametrize("h, k, l", _HKL_HORIZONTAL)
 def test_fixed_phi_horizontal_locks_eta(h, k, l):  # noqa: E741
-    """``eta`` is exactly zero in every forward solution for fixed_phi_horizontal.
-
-    fixed_chi_horizontal is omitted: see module docstring (chi=90 is
-    kinematically infeasible on cubic UB=B; deferred to the audit
-    follow-up issue).
-    """
+    """``eta`` is exactly zero in every forward solution for fixed_phi_horizontal."""
     g = _setup_psic_cubic()
     g.mode_name = "fixed_phi_horizontal"
     solutions = g.forward(h, k, l)
@@ -217,6 +229,28 @@ def test_fixed_phi_horizontal_locks_eta(h, k, l):  # noqa: E741
     for sol in solutions:
         assert sol["eta"] == pytest.approx(0.0, abs=1e-8), (
             f"fixed_phi_horizontal: eta={sol['eta']!r} (expected 0)"
+        )
+
+
+@pytest.mark.parametrize("h, k, l", _HKL_FIXED_CHI_HORIZONTAL)
+def test_fixed_chi_horizontal_locks_eta(h, k, l):  # noqa: E741
+    """``eta`` is exactly zero in every forward solution for fixed_chi_horizontal.
+
+    Resolved in issue #259: the default chi value was corrected from
+    90° (the four-circle "spinning Q" value, kinematically infeasible
+    here) to 0° (which keeps the phi axis in the horizontal scattering
+    plane).  Reachable hkl on cubic UB = B all have h = 0; see the
+    ``_HKL_FIXED_CHI_HORIZONTAL`` list.
+    """
+    g = _setup_psic_cubic()
+    g.mode_name = "fixed_chi_horizontal"
+    solutions = g.forward(h, k, l)
+    assert len(solutions) > 0, (
+        f"forward({h},{k},{l}) returned no solutions for fixed_chi_horizontal"
+    )
+    for sol in solutions:
+        assert sol["eta"] == pytest.approx(0.0, abs=1e-8), (
+            f"fixed_chi_horizontal: eta={sol['eta']!r} (expected 0)"
         )
 
 
@@ -235,6 +269,9 @@ def test_fixed_phi_horizontal_locks_eta(h, k, l):  # noqa: E741
         pytest.param("fixed_phi_horizontal", 0, 0, 1, id="fixed_phi_horizontal-001"),
         pytest.param("fixed_phi_horizontal", 0, 1, 1, id="fixed_phi_horizontal-011"),
         pytest.param("fixed_phi_horizontal", 1, 1, 1, id="fixed_phi_horizontal-111"),
+        pytest.param("fixed_chi_horizontal", 0, 1, 0, id="fixed_chi_horizontal-010"),
+        pytest.param("fixed_chi_horizontal", 0, 0, 1, id="fixed_chi_horizontal-001"),
+        pytest.param("fixed_chi_horizontal", 0, 1, 1, id="fixed_chi_horizontal-011"),
     ],
 )
 def test_round_trip_forward_inverse(mode_name, h, k, l):  # noqa: E741
@@ -291,6 +328,17 @@ def test_round_trip_forward_inverse(mode_name, h, k, l):  # noqa: E741
             0,
             1,
             id="fixed_phi_horizontal-001",
+        ),
+        pytest.param(
+            "fixed_chi_horizontal",
+            "eta",
+            "delta",
+            "chi",
+            0.0,
+            0,
+            0,
+            1,
+            id="fixed_chi_horizontal-001",
         ),
     ],
 )
