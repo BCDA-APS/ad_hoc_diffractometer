@@ -461,8 +461,17 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             computed=["mu", "chi", "nu"],
         ),
         "fixed_chi_horizontal": ConstraintSet(
+            # Default chi = 0 (issue #259).  In the horizontal scattering
+            # plane (eta = 0, delta = 0) the residual psic sub-geometry
+            # places the chi-circle axis along the longitudinal (beam)
+            # direction; chi = 0 keeps the phi axis along that same
+            # direction so phi rotations stay in the horizontal plane.
+            # chi = 90 (the four-circle "spinning Q" symmetry value used
+            # in fourcv/fourch and in the *vertical* counterpart
+            # fixed_chi_vertical) tilts the phi axis out of the
+            # horizontal plane and is kinematically infeasible here.
             [
-                SampleConstraint("chi", 90.0),
+                SampleConstraint("chi", 0.0),
                 SampleConstraint("eta", 0.0),
                 DetectorConstraint("delta", 0.0),
             ],
