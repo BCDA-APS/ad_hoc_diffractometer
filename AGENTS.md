@@ -57,10 +57,9 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    PR to **all** of those boards — not just the one implied by the domain
    table above.
 
-   **Set "In review" when code is complete.**  Once the PR is pushed and
-   no further code changes are anticipated, set its project board status
-   to **"In review"** (on boards that have that status; leave "In
-   Progress" where only Todo / In Progress / Done exist).
+   **Set "In review" when code is complete.**  Once the PR is pushed, set its
+   project board status to **"In review"** (on boards that have that status;
+   leave "In Progress" where only Todo / In Progress / Done exist).
 
    ```bash
    # Set milestone when creating the PR
