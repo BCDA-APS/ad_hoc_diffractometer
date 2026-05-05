@@ -37,7 +37,10 @@ Demo geometries
      - Vlieg et al. (1987), fourcv on a mu base. See :doc:`/geometries/fivec`.
    * - :func:`psic`
      - Eulerian 6-circle
-     - You (1999) 4S+2D. See :doc:`/geometries/psic`.
+     - You (1999) 4S+2D.  Migrated to declarative YAML
+       (``geometries/psic.yml``) in #267; the function in this module
+       is a compatibility shim that delegates to the loader.
+       See :doc:`/geometries/psic`.
    * - :func:`sixc`
      - Eulerian 6-circle
      - Lohmeier & Vlieg (1993) surface geometry. See :doc:`/geometries/sixc`.
@@ -239,251 +242,23 @@ def fourch(basis: dict = BASIS_BL) -> AdHocDiffractometer:
         return load_geometry_file(p, basis=basis)
 
 
-@register_geometry
+# ``psic`` was migrated to a declarative YAML file
+# (``geometries/psic.yml``) in issue #267.  This compatibility shim
+# delegates to the loader so existing imports
+# (``from ad_hoc_diffractometer.presets import psic``) continue to
+# work during the staged migration.  The shim will be removed when
+# ``presets.py`` is deleted at the end of the migration.
 def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
+    """Return the declarative ``psic`` geometry (delegates to the YAML loader).
+
+    See ``src/ad_hoc_diffractometer/geometries/psic.yml`` for the
+    authoritative definition.
     """
-    You (1999) '4S+2D' six-circle diffractometer (psic geometry).
+    from .geometry_loader import load_geometry_file
 
-    Walko (2016) designation: S4D2.
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
-    Detector axis: transverse.  Vertical scattering plane.
-
-    Sample stack (floor first):
-        mu  : vertical,     right-handed
-        eta : transverse,   left-handed
-        chi : longitudinal, right-handed
-        phi : transverse,   left-handed
-
-    Detector stack (floor first):
-        nu    : vertical,   right-handed
-        delta : transverse, left-handed
-
-    mu and nu share the same vertical rotation axis; mechanically independent.
-
-    Reference: H. You, J. Appl. Cryst. 32, 614-623 (1999).
-               DOI: 10.1107/S0021889899001223
-    """
-    VERTICAL = basis["vertical"]
-    TRANSVERSE = basis["transverse"]
-    LONGITUDINAL = basis["longitudinal"]
-    stages = [
-        Stage("mu", +VERTICAL, parent=None, role="sample"),
-        Stage("eta", -TRANSVERSE, parent="mu", role="sample"),
-        Stage("chi", +LONGITUDINAL, parent="eta", role="sample"),
-        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
-        Stage("nu", +VERTICAL, parent=None, role="detector"),
-        Stage("delta", -TRANSVERSE, parent="nu", role="detector"),
-    ]
-    # psic: 6 DOF, N-3=3 constraints needed per mode (You 1999, S4D2).
-    # Vertical bisect pair: eta(transverse) <-> delta(transverse)  => eta = delta/2
-    # Horizontal bisect pair: mu(vertical) <-> nu(vertical)  => mu = nu/2
-    modes = {
-        # ── Vertical scattering plane ───────────────────────────────────────
-        "bisecting_vertical": ConstraintSet(
-            [
-                BisectConstraint("eta", "delta"),
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
-        ),
-        "fixed_phi_vertical": ConstraintSet(
-            [
-                SampleConstraint("phi", 0.0),
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["eta", "chi", "delta"],
-        ),
-        "fixed_chi_vertical": ConstraintSet(
-            [
-                SampleConstraint("chi", 90.0),
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["eta", "phi", "delta"],
-        ),
-        "fixed_alpha_i_vertical": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-                ReferenceConstraint("alpha_i", 0.0),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-        "fixed_beta_out_vertical": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-                ReferenceConstraint("beta_out", 0.0),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-        "alpha_eq_beta_vertical": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-                ReferenceConstraint("a_eq_b", True),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-        "fixed_psi_vertical": ConstraintSet(
-            [
-                BisectConstraint("eta", "delta"),
-                SampleConstraint("mu", 0.0),
-                ReferenceConstraint("psi", 0.0),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-        "double_diffraction_vertical": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
-            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
-        ),
-        # ── Horizontal scattering plane ─────────────────────────────────────
-        "bisecting_horizontal": ConstraintSet(
-            [
-                BisectConstraint("mu", "nu"),
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-        ),
-        "fixed_phi_horizontal": ConstraintSet(
-            [
-                SampleConstraint("phi", 0.0),
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "chi", "nu"],
-        ),
-        "fixed_chi_horizontal": ConstraintSet(
-            # Default chi = 0 (issue #259).  In the horizontal scattering
-            # plane (eta = 0, delta = 0) the residual psic sub-geometry
-            # places the chi-circle axis along the longitudinal (beam)
-            # direction; chi = 0 keeps the phi axis along that same
-            # direction so phi rotations stay in the horizontal plane.
-            # chi = 90 (the four-circle "spinning Q" symmetry value used
-            # in fourcv/fourch and in the *vertical* counterpart
-            # fixed_chi_vertical) tilts the phi axis out of the
-            # horizontal plane and is kinematically infeasible here.
-            [
-                SampleConstraint("chi", 0.0),
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "phi", "nu"],
-        ),
-        "fixed_alpha_i_horizontal": ConstraintSet(
-            [
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("delta", 0.0),
-                ReferenceConstraint("alpha_i", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-        "fixed_beta_out_horizontal": ConstraintSet(
-            [
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("delta", 0.0),
-                ReferenceConstraint("beta_out", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-        "alpha_eq_beta_horizontal": ConstraintSet(
-            [
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("delta", 0.0),
-                ReferenceConstraint("a_eq_b", True),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-        "fixed_psi_horizontal": ConstraintSet(
-            [
-                BisectConstraint("mu", "nu"),
-                SampleConstraint("eta", 0.0),
-                ReferenceConstraint("psi", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-        "double_diffraction_horizontal": ConstraintSet(
-            [
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
-        ),
-        # ── Zone modes (You 1999 §6, SPEC `setmode 5`) ──────────────────────
-        # Q is confined to the plane defined by two reciprocal-lattice
-        # vectors z0 and z1.  The caller still requests forward(h, k, l);
-        # if the requested Q does not lie in the zone plane (within
-        # tolerance) the solver returns an empty list with a warning.
-        # See SPEC `sz`, `cz`, `mz` macros.
-        "zone_vertical": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
-            extras={
-                "z0": REQUIRED,
-                "z1": REQUIRED,
-                "in_plane_residual": None,
-            },
-        ),
-        "zone_horizontal": ConstraintSet(
-            [
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-            extras={
-                "z0": REQUIRED,
-                "z1": REQUIRED,
-                "in_plane_residual": None,
-            },
-        ),
-        # ── Lifting detector (out-of-plane) ─────────────────────────────────
-        "lifting_detector_phi": ConstraintSet(
-            [
-                SampleConstraint("phi", 0.0),
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("qaz", 90.0),
-            ],
-            computed=["phi", "nu", "delta"],
-        ),
-        "lifting_detector_mu": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("qaz", 90.0),
-            ],
-            computed=["mu", "nu", "delta"],
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=BASIS_YOU,
-        description=(
-            "You (1999) 4S+2D six-circle diffractometer "
-            "(transverse detector, vertical scattering plane, synchrotron)"
-        ),
-        modes=modes,
-        default_mode="bisecting_vertical",
-    )
+    pkg_path = resources.files("ad_hoc_diffractometer.geometries").joinpath("psic.yml")
+    with resources.as_file(pkg_path) as p:
+        return load_geometry_file(p, basis=basis)
 
 
 @register_geometry
