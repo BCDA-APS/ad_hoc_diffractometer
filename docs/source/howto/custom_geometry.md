@@ -15,7 +15,7 @@ If your instrument matches one of the demo geometries
 ({func}`~ad_hoc_diffractometer.presets.psic`,
 {func}`~ad_hoc_diffractometer.presets.fourcv`, etc.), use it directly
 instead.  This guide is for instruments that differ from the
-:ref:`demo geometries <geometries>`.
+{ref}`demo geometries <geometries>`.
 ```
 
 ---
