@@ -327,9 +327,6 @@ reference-angle constraint (0 = none, 4 = ψ-fixed), and
 
 —: no documented analog exists in that package.
 
-†: none of the kappa6c modes listed here trigger SPEC's not-working
-set (see the dagger note on the psic page).
-
 References:
 [SPEC `kappa6c` macros](https://certif.com/spec_help/kappa6c.html);
 [Hkl/Soleil K6C](https://people.debian.org/~picca/hkl/hkl.html);
