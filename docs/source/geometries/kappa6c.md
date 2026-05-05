@@ -261,7 +261,7 @@ Full 4D simultaneous solver in the horizontal scattering plane.
 
 ### `zone_horizontal`
 
-Horizontal-plane analogue of `zone_vertical`.  Locks `komega = 0`,
+Horizontal-plane analog of `zone_vertical`.  Locks `komega = 0`,
 `delta = 0`; the bisecting condition `mu = nu/2` together with the
 kappa motor pair solves any in-plane (h, k, l).
 
@@ -297,7 +297,7 @@ constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
 ## Mode cross-reference
 
 Each `kappa6c` mode mapped to its equivalent psic mode (the kappa6c
-geometry shares the psic outer-axis ordering), the closest analogue in
+geometry shares the psic outer-axis ordering), the closest analog in
 SPEC's `kappa6c` macros, and the Hkl/Soleil `K6C` `hkl` engine.  Modes
 are grouped by scattering plane: vertical first, then horizontal, then
 the out-of-plane lifting-detector family.
@@ -325,7 +325,7 @@ where `g_mode1` selects the scattering plane (1 = horizontal,
 reference-angle constraint (0 = none, 4 = ψ-fixed), and
 `g_mode3`–`g_mode5` fix specific motor angles.
 
-—: no documented analogue exists in that package.
+—: no documented analog exists in that package.
 
 †: none of the kappa6c modes listed here trigger SPEC's not-working
 set (see the dagger note on the psic page).
