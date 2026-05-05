@@ -87,6 +87,58 @@ def _reference_fourcv() -> AdHocDiffractometer:
     )
 
 
+def _reference_fourch() -> AdHocDiffractometer:
+    """Hand-built fourch (the pre-#267 ``presets.fourch`` body verbatim)."""
+    basis = BASIS_BL
+    VERTICAL = basis["vertical"]
+    LONGITUDINAL = basis["longitudinal"]
+    stages = [
+        Stage("omega", -VERTICAL, parent=None, role="sample"),
+        Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
+        Stage("phi", -VERTICAL, parent="chi", role="sample"),
+        Stage("ttheta", -VERTICAL, parent=None, role="detector"),
+    ]
+    modes = {
+        "bisecting": ConstraintSet(
+            [BisectConstraint("omega", "ttheta")],
+            computed=["omega", "chi", "phi", "ttheta"],
+        ),
+        "fixed_chi": ConstraintSet(
+            [SampleConstraint("chi", 90.0)],
+            computed=["omega", "phi", "ttheta"],
+        ),
+        "fixed_phi": ConstraintSet(
+            [SampleConstraint("phi", 0.0)],
+            computed=["omega", "chi", "ttheta"],
+        ),
+        "fixed_omega": ConstraintSet(
+            [SampleConstraint("omega", 0.0)],
+            computed=["chi", "phi", "ttheta"],
+        ),
+        "fixed_psi": ConstraintSet(
+            [ReferenceConstraint("psi", 0.0)],
+            computed=["omega", "chi", "phi", "ttheta"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "double_diffraction": ConstraintSet(
+            [],
+            computed=["omega", "chi", "phi", "ttheta"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
+        ),
+    }
+    return AdHocDiffractometer(
+        name="fourch",
+        stages=stages,
+        basis=basis,
+        description=(
+            "Busing & Levy (1967) four-circle Eulerian diffractometer "
+            "(horizontal scattering plane, vertical ttheta, laboratory)"
+        ),
+        modes=modes,
+        default_mode="bisecting",
+    )
+
+
 # ---------------------------------------------------------------------------
 # Equivalence checker
 # ---------------------------------------------------------------------------
@@ -148,6 +200,7 @@ def _assert_geometries_equivalent(
     "geom_name, reference_factory",
     [
         pytest.param("fourcv", _reference_fourcv, id="fourcv"),
+        pytest.param("fourch", _reference_fourch, id="fourch"),
     ],
 )
 def test_declarative_matches_reference(geom_name, reference_factory):
@@ -161,6 +214,7 @@ def test_declarative_matches_reference(geom_name, reference_factory):
     "geom_name",
     [
         pytest.param("fourcv", id="fourcv"),
+        pytest.param("fourch", id="fourch"),
     ],
 )
 def test_declarative_basis_override_round_trips(geom_name):

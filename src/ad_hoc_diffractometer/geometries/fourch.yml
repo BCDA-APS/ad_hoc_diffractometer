@@ -1,0 +1,106 @@
+# fourch — four-circle Eulerian diffractometer, horizontal scattering plane.
+#
+# This file is a *demonstration* of the declarative geometry schema
+# (issue #267).  It reproduces the legacy
+# ``ad_hoc_diffractometer.presets.fourch`` Python factory exactly.  Real
+# beamlines should copy a file like this and adapt it to their own
+# instrument; do not assume the values here describe any production
+# diffractometer.
+#
+# Schema reference: docs/source/reference/declarative_geometry_schema.md
+# How-to:           docs/source/howto/custom_geometry.md
+
+ad_hoc_diffractometer_geometry:
+    revision: 1
+
+name: fourch
+
+documentation: >-
+    Busing & Levy (1967) four-circle Eulerian diffractometer (horizontal
+    scattering plane, vertical ttheta, laboratory).
+
+
+    Walko (2016) designation: S3D1.
+
+
+    Laboratory / default configuration: omega and ttheta both rotate
+    about the vertical axis, so the scattering plane is horizontal.
+    This is the geometry described in Busing & Levy (1967), Fig. 1b.
+
+
+    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y,
+    vertical=+z.
+
+
+    Sample stack (floor first):
+        omega : vertical,     left-handed
+        chi   : longitudinal, right-handed (mounted on omega)
+        phi   : vertical,     left-handed (mounted on chi)
+
+
+    Detector (floor, mechanically independent of sample stack):
+        ttheta : vertical, left-handed
+
+
+    omega and ttheta share the same vertical axis; they are
+    mechanically independent.
+
+
+    Note: in the original Busing & Levy convention the chi cradle
+    rotates about the longitudinal axis (along the beam) when omega is
+    at zero.  The "transverse" mention in some older docstrings refers
+    to the chi-circle plane rather than the chi-axis itself.
+
+
+    References
+
+    - W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967), Fig. 1b.
+
+    - D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
+basis: BL
+
+stages:
+    - {name: omega,  axis: -vertical,     parent: null,  role: sample}
+    - {name: chi,    axis: +longitudinal, parent: omega, role: sample}
+    - {name: phi,    axis: -vertical,     parent: chi,   role: sample}
+    - {name: ttheta, axis: -vertical,     parent: null,  role: detector}
+
+# fourch: 4 DOF, N - 3 = 1 constraint needed per mode.
+modes:
+    bisecting:
+        default: true
+        constraints:
+            - {type: bisect, stage1: omega, stage2: ttheta}
+        computed: [omega, chi, phi, ttheta]
+
+    fixed_chi:
+        constraints:
+            - {type: sample, stage: chi, value: 90.0}
+        computed: [omega, phi, ttheta]
+
+    fixed_phi:
+        constraints:
+            - {type: sample, stage: phi, value: 0.0}
+        computed: [omega, chi, ttheta]
+
+    fixed_omega:
+        constraints:
+            - {type: sample, stage: omega, value: 0.0}
+        computed: [chi, phi, ttheta]
+
+    fixed_psi:
+        constraints:
+            - {type: reference, name: psi, value: 0.0}
+        computed: [omega, chi, phi, ttheta]
+        extras:
+            n_hat: REQUIRED
+            psi: null
+
+    double_diffraction:
+        constraints: []
+        computed: [omega, chi, phi, ttheta]
+        extras:
+            h2: REQUIRED
+            k2: REQUIRED
+            l2: REQUIRED
