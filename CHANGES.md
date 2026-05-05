@@ -5,6 +5,12 @@ Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues) for the full
 issue tracker.  The initial project development roadmap is documented here:
 [roadmap](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/roadmap.md).
 
+## Unreleased
+
+### Added
+
+- psic and kappa6c zone modes (You §6, SPEC `setmode 5`) (#262)
+
 ## Release v0.9.3
 
 Released 2026-05-04.
