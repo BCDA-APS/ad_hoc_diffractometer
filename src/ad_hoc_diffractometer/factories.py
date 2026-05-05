@@ -116,30 +116,80 @@ GEOMETRY_ENTRY_POINT_GROUP = "ad_hoc_diffractometer.geometries"
 """Entry-point group name for geometry plugins."""
 
 
-def register_geometry(func):
+def get_geometry(name: str):
     """
-    Decorator that registers a geometry callable in _GEOMETRY_REGISTRY.
+    Return the registered geometry callable by name.
 
-    The function is stored under its own ``__name__``, so the registry
-    key is always identical to the callable's name.  The function is
-    returned unchanged; this decorator has no runtime effect on the
-    callable itself.
+    This is the primitive lookup — it returns the callable that
+    constructs the geometry, not an instance.  Use make_geometry()
+    if you want an AdHocDiffractometer instance directly.
 
-    Third-party packages do **not** need to use this decorator — they
-    can instead declare an entry point in the
-    ``"ad_hoc_diffractometer.geometries"`` group in their
-    ``pyproject.toml`` and the geometry will be discovered automatically.
+    Parameters
+    ----------
+    name : str
+        Name of the geometry, as registered by @register_geometry
+        (e.g. 'psic', 'fourcv', 'kappa4cv').
 
-    Example
+    Returns
     -------
-    ::
+    callable
+        A callable that returns a configured AdHocDiffractometer
+        for the named geometry.
 
-        @register_geometry
-        def psic() -> AdHocDiffractometer:
-            ...
+    Raises
+    ------
+    ValueError
+        If no geometry with that name is registered, with a message listing
+        the available names.
+
+    Examples
+    --------
+    >>> from ad_hoc_diffractometer import get_geometry
+    >>> make_psic = get_geometry("psic")
+    >>> make_psic()
+    AdHocDiffractometer(name='psic', ...)
+    >>> get_geometry("kappa4cv")(alpha_deg=50)
+    AdHocDiffractometer(name='kappa4cv', ...)
     """
-    _GEOMETRY_REGISTRY[func.__name__] = func
-    return func
+    _load_entry_point_geometries()
+    if name not in _GEOMETRY_REGISTRY:
+        available = sorted(_GEOMETRY_REGISTRY.keys())
+        raise ValueError(
+            f"No geometry named {name!r} is registered. "
+            f"Available geometries: {available}."
+        )
+    return _GEOMETRY_REGISTRY[name]
+
+
+def list_geometries() -> dict[str, type]:
+    """
+    Return a copy of the geometry registry as {name: callable}.
+
+    Includes all built-in geometries (registered via ``@register_geometry``
+    at import time) plus any third-party geometry plugins installed as
+    entry points in the ``"ad_hoc_diffractometer.geometries"`` group.
+
+    Entry-point discovery runs automatically the first time this function
+    is called; subsequent calls use the already-populated registry.
+
+    Returns
+    -------
+    dict
+        Keys are geometry names (e.g. ``'psic'``, ``'fourcv'``).
+        Values are callables that return a configured
+        ``AdHocDiffractometer``.
+
+    Examples
+    --------
+    >>> from ad_hoc_diffractometer import list_geometries
+    >>> sorted(list_geometries())
+    ['fivec', 'fourch', 'fourcv', 'kappa4ch', 'kappa4cv', 'kappa6c',
+     'psic', 's2d2', 'sixc', 'zaxis']
+    >>> list_geometries()['psic']()   # instantiate by name
+    AdHocDiffractometer(name='psic', ...)
+    """
+    _load_entry_point_geometries()
+    return dict(_GEOMETRY_REGISTRY)
 
 
 def _load_entry_point_geometries() -> None:
@@ -214,82 +264,6 @@ def _load_entry_point_geometries() -> None:
         logger.debug("entry_points() failed; no plugins loaded: %s", exc)
 
 
-def list_geometries() -> dict[str, type]:
-    """
-    Return a copy of the geometry registry as {name: callable}.
-
-    Includes all built-in geometries (registered via ``@register_geometry``
-    at import time) plus any third-party geometry plugins installed as
-    entry points in the ``"ad_hoc_diffractometer.geometries"`` group.
-
-    Entry-point discovery runs automatically the first time this function
-    is called; subsequent calls use the already-populated registry.
-
-    Returns
-    -------
-    dict
-        Keys are geometry names (e.g. ``'psic'``, ``'fourcv'``).
-        Values are callables that return a configured
-        ``AdHocDiffractometer``.
-
-    Examples
-    --------
-    >>> from ad_hoc_diffractometer import list_geometries
-    >>> sorted(list_geometries())
-    ['fivec', 'fourch', 'fourcv', 'kappa4ch', 'kappa4cv', 'kappa6c',
-     'psic', 's2d2', 'sixc', 'zaxis']
-    >>> list_geometries()['psic']()   # instantiate by name
-    AdHocDiffractometer(name='psic', ...)
-    """
-    _load_entry_point_geometries()
-    return dict(_GEOMETRY_REGISTRY)
-
-
-def get_geometry(name: str):
-    """
-    Return the registered geometry callable by name.
-
-    This is the primitive lookup — it returns the callable that
-    constructs the geometry, not an instance.  Use make_geometry()
-    if you want an AdHocDiffractometer instance directly.
-
-    Parameters
-    ----------
-    name : str
-        Name of the geometry, as registered by @register_geometry
-        (e.g. 'psic', 'fourcv', 'kappa4cv').
-
-    Returns
-    -------
-    callable
-        A callable that returns a configured AdHocDiffractometer
-        for the named geometry.
-
-    Raises
-    ------
-    ValueError
-        If no geometry with that name is registered, with a message listing
-        the available names.
-
-    Examples
-    --------
-    >>> from ad_hoc_diffractometer import get_geometry
-    >>> make_psic = get_geometry("psic")
-    >>> make_psic()
-    AdHocDiffractometer(name='psic', ...)
-    >>> get_geometry("kappa4cv")(alpha_deg=50)
-    AdHocDiffractometer(name='kappa4cv', ...)
-    """
-    _load_entry_point_geometries()
-    if name not in _GEOMETRY_REGISTRY:
-        available = sorted(_GEOMETRY_REGISTRY.keys())
-        raise ValueError(
-            f"No geometry named {name!r} is registered. "
-            f"Available geometries: {available}."
-        )
-    return _GEOMETRY_REGISTRY[name]
-
-
 def make_geometry(name: str, **kwargs):
     """
     Instantiate a geometry by name, passing keyword arguments to its
@@ -329,6 +303,32 @@ def make_geometry(name: str, **kwargs):
     AdHocDiffractometer(name='kappa6c', ...)
     """
     return get_geometry(name)(**kwargs)
+
+
+def register_geometry(func):
+    """
+    Decorator that registers a geometry callable in _GEOMETRY_REGISTRY.
+
+    The function is stored under its own ``__name__``, so the registry
+    key is always identical to the callable's name.  The function is
+    returned unchanged; this decorator has no runtime effect on the
+    callable itself.
+
+    Third-party packages do **not** need to use this decorator — they
+    can instead declare an entry point in the
+    ``"ad_hoc_diffractometer.geometries"`` group in their
+    ``pyproject.toml`` and the geometry will be discovered automatically.
+
+    Example
+    -------
+    ::
+
+        @register_geometry
+        def psic() -> AdHocDiffractometer:
+            ...
+    """
+    _GEOMETRY_REGISTRY[func.__name__] = func
+    return func
 
 
 # ---------------------------------------------------------------------------
