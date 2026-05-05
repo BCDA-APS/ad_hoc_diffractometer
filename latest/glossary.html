@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=3f16f5ed"></script>
+    <script src="_static/documentation_options.js?v=a1ca3f14"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 14:27 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 15:01 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -524,6 +524,15 @@
 <span id="id1"></span><h1>Glossary<a class="headerlink" href="#glossary" title="Link to this heading">#</a></h1>
 <p>Key terms used throughout <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code>, in alphabetical order.</p>
 <dl class="simple glossary">
+<dt id="term-Azimuth">Azimuth<a class="headerlink" href="#term-Azimuth" title="Link to this term">#</a></dt><dd><p>An angle measured around a chosen reference axis, in the plane
+perpendicular to that axis.  In <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code> the relevant
+azimuth angles are <strong>ψ</strong> (rotation of a reference vector around <strong>Q</strong>;
+see <em>ψ angle</em>) and <strong>qaz</strong>/<strong>naz</strong> (lab-frame azimuth of <strong>Q</strong> or of the
+surface normal in the plane spanned by the vertical and transverse
+axes; You 1999, eq. 18).  See
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a> and
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a>.</p>
+</dd>
 <dt id="term-B-matrix">B matrix<a class="headerlink" href="#term-B-matrix" title="Link to this term">#</a></dt><dd><p>The matrix that encodes the reciprocal lattice and maps Miller indices
 <strong>h</strong> = (h, k, l)ᵀ to the scattering vector in Cartesian crystal-frame
 coordinates: <strong>Q</strong>_c = B <strong>h</strong>.  Constructed from unit-cell parameters
@@ -531,10 +540,47 @@ coordinates: <strong>Q</strong>_c = B <strong>h</strong>.  Constructed from unit
 See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/lattice/index.html#ad_hoc_diffractometer.lattice.Lattice" title="ad_hoc_diffractometer.lattice.Lattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lattice</span></code></a> and
 <a class="reference internal" href="direct-lattice.html"><span class="doc">Direct Lattice in Crystallography</span></a>.</p>
 </dd>
-<dt id="term-Bisecting-condition">Bisecting condition<a class="headerlink" href="#term-Bisecting-condition" title="Link to this term">#</a></dt><dd><p>A diffraction mode constraint in which the sample stage angle equals half
-the detector angle (ω = 2θ/2, or equivalently η = δ/2 for psic).  Places
-the sample symmetrically between the incident and diffracted beams.
-See <code class="xref py py-class docutils literal notranslate"><span class="pre">BisectingMode</span></code>.</p>
+<dt id="term-Basis">Basis<a class="headerlink" href="#term-Basis" title="Link to this term">#</a></dt><dd><p>The three-vector dictionary that maps the physical direction names
+<code class="docutils literal notranslate"><span class="pre">&quot;vertical&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;longitudinal&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;transverse&quot;</span></code> to Cartesian unit
+vectors.  Each preset geometry carries a basis attribute; the package
+ships two standard choices,
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a> (You 1999:
+vertical=+x, longitudinal=+y, transverse=+z) and
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a> (Busing &amp; Levy
+1967: transverse=+x, longitudinal=+y, vertical=+z).  Switching the
+basis re-expresses every stage axis in a different lab frame without
+changing the physics; see <a class="reference internal" href="problem2.html"><span class="doc">Case Study: Choice of Basis and the UB Matrix</span></a> for the basis-invariance
+case study.</p>
+</dd>
+<dt id="term-Bisecting-condition">Bisecting condition<a class="headerlink" href="#term-Bisecting-condition" title="Link to this term">#</a></dt><dd><p>A diffraction-mode constraint in which a sample stage angle is driven
+to half the detector angle (e.g. <code class="docutils literal notranslate"><span class="pre">omega</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code> for fourcv,
+<code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">delta/2</span></code> for psic).  This places the sample symmetrically
+between the incident and diffracted beams.  Encoded as a
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a>; on kappa
+geometries the physically correct version is the
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.VirtualBisectConstraint" title="ad_hoc_diffractometer.mode.VirtualBisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">VirtualBisectConstraint</span></code></a>, which
+bisects on the <em>virtual</em> Eulerian omega pseudoangle rather than the
+literal kappa motor.</p>
+</dd>
+<dt id="term-Constraint">Constraint<a class="headerlink" href="#term-Constraint" title="Link to this term">#</a></dt><dd><p>An equation that fixes one of the geometry’s free degrees of freedom
+during a forward calculation.  Four kinds are recognised:
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a> (fix one sample
+angle), <a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a> (fix
+one detector angle, including the special <code class="docutils literal notranslate"><span class="pre">&quot;qaz&quot;</span></code> pseudo-angle),
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a> (relate one
+sample stage to one detector stage), and
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a> (constrain a
+pseudo-angle between <strong>Q</strong> and an external reference vector).  A
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a> is a fully-defined
+collection that resolves N − 3 free angles for an N-stage geometry.
+See <a class="reference internal" href="howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.</p>
+</dd>
+<dt id="term-Cut-point">Cut point<a class="headerlink" href="#term-Cut-point" title="Link to this term">#</a></dt><dd><p>A SPEC #G4 convention that selects the canonical 360°-window of an
+angle solution.  A cut-point <code class="docutils literal notranslate"><span class="pre">C</span></code> for stage X means returned values
+for that stage lie in <code class="docutils literal notranslate"><span class="pre">[C,</span> <span class="pre">C</span> <span class="pre">+</span> <span class="pre">360°)</span></code>.  Cut-points may be set
+per-geometry on the diffractometer or per-mode on a
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>; mode-level
+cut-points override geometry-level cut-points when both are present.</p>
 </dd>
 <dt id="term-d-spacing">d-spacing<a class="headerlink" href="#term-d-spacing" title="Link to this term">#</a></dt><dd><p>The interplanar spacing d_{hkl} for the reflection (h, k, l), related to
 the scattering vector magnitude by |<strong>Q</strong>| = 2π / d_{hkl} and to the
@@ -543,8 +589,21 @@ Bragg angle by 2d sin θ = λ.</p>
 <dt id="term-Diffraction-mode">Diffraction mode<a class="headerlink" href="#term-Diffraction-mode" title="Link to this term">#</a></dt><dd><p>A named set of constraints that describes how
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>
 computes motor angles: which stages are free, which are held fixed, and
-which are coupled to other stages.
-See <code class="xref py py-class docutils literal notranslate"><span class="pre">DiffractionMode</span></code> and <a class="reference internal" href="howto/modes.html"><span class="doc">Switch Diffraction Modes</span></a>.</p>
+which are coupled to other stages.  Implemented as a
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>; a few specialised
+modes (double-diffraction, zone) are dispatched by their
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">extras</span></code> schema rather
+than by their constraint composition.  See <a class="reference internal" href="howto/modes.html"><span class="doc">Switch Diffraction Modes</span></a>.</p>
+</dd>
+<dt id="term-Double-diffraction">Double diffraction<a class="headerlink" href="#term-Double-diffraction" title="Link to this term">#</a></dt><dd><p>A diffraction mode that solves for motor angles at which a primary
+reflection (h₁, k₁, l₁) and a secondary reflection (h₂, k₂, l₂)
+simultaneously satisfy the Ewald sphere condition.  Useful for
+measuring multi-beam interference effects.  The secondary reflection
+is supplied through the mode
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">extras</span></code> dict
+(<code class="docutils literal notranslate"><span class="pre">h2</span></code>, <code class="docutils literal notranslate"><span class="pre">k2</span></code>, <code class="docutils literal notranslate"><span class="pre">l2</span></code>).  Available on psic and kappa6c as
+<code class="docutils literal notranslate"><span class="pre">double_diffraction_vertical</span></code> and <code class="docutils literal notranslate"><span class="pre">double_diffraction_horizontal</span></code>;
+on the four-circle geometries simply as <code class="docutils literal notranslate"><span class="pre">double_diffraction</span></code>.</p>
 </dd>
 <dt id="term-Eulerian-cradle">Eulerian cradle<a class="headerlink" href="#term-Eulerian-cradle" title="Link to this term">#</a></dt><dd><p>An Eulerian cradle is a mechanical device used to hold and rotate objects
 (typically spheres or other symmetric bodies) in three-dimensional space
@@ -554,6 +613,16 @@ a series of nested, rotating rings or gimbals mounted on each other. Each
 ring can rotate independently around a different axis (typically the x, y,
 and z axes). This allows an object mounted at the center to be oriented in
 any direction without mechanical singularities or constraints.</p>
+</dd>
+<dt id="term-Extras">Extras<a class="headerlink" href="#term-Extras" title="Link to this term">#</a></dt><dd><p>The mode-attached dictionary of additional inputs and outputs needed
+beyond (h, k, l) for a forward calculation.  Inputs that the caller
+must supply (a secondary reflection for double diffraction, the
+reciprocal-lattice vectors that span a zone plane, a surface normal
+for surface modes) are pre-populated with the
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.REQUIRED" title="ad_hoc_diffractometer.mode.REQUIRED"><code class="xref py py-data docutils literal notranslate"><span class="pre">REQUIRED</span></code></a> sentinel; outputs that
+the solver writes back (computed ψ, in-plane residual, etc.) are
+pre-populated with <code class="docutils literal notranslate"><span class="pre">None</span></code>.  Stored as
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ConstraintSet.extras</span></code></a>.</p>
 </dd>
 <dt id="term-Forward-problem">Forward problem<a class="headerlink" href="#term-Forward-problem" title="Link to this term">#</a></dt><dd><p>Given Miller indices (h, k, l) and a UB matrix, find the motor angles
 that satisfy the Bragg condition.  Returns a list of 0 to ~12 solutions
@@ -609,8 +678,17 @@ one below it (its parent).  The combined rotation matrix is the ordered
 product of individual stage matrices, from the base-mounted (outermost)
 stage to the innermost.</p>
 </dd>
-<dt id="term-Two-theta">Two-theta<a class="headerlink" href="#term-Two-theta" title="Link to this term">#</a></dt><dd><p>The total scattering angle 2θ between the incident and diffracted beams,
-related to d-spacing and wavelength by Bragg’s law: 2d sin θ = λ.</p>
+<dt id="term-Two-theta">Two-theta<a class="headerlink" href="#term-Two-theta" title="Link to this term">#</a></dt><dd><p>The total scattering angle 2θ between the incident and diffracted
+beams, related to d-spacing and wavelength by Bragg’s law:
+2 d sin θ = λ.  In simple geometries the detector arm rotates by 2θ
+directly, and the corresponding stage carries that name (<code class="docutils literal notranslate"><span class="pre">ttheta</span></code>
+on fourcv, fourch, kappa4cv, kappa4ch, fivec).  In multi-detector-
+axis geometries the detector position is a compound of two motors
+and 2θ is <em>computed</em> rather than directly motorised — for example
+psic, sixc, and kappa6c reach the angle <code class="docutils literal notranslate"><span class="pre">2θ</span></code> via the (nu, delta)
+pair (You 1999, eq. 17), and zaxis via (gamma, delta, alpha)
+(Walko 2016, eq. 17).  <code class="docutils literal notranslate"><span class="pre">2θ</span></code> itself is geometry-independent; the
+<em>stage name</em> that holds it (or computes to it) is not.</p>
 </dd>
 <dt id="term-U-matrix">U matrix<a class="headerlink" href="#term-U-matrix" title="Link to this term">#</a></dt><dd><p>The orthonormal orientation matrix that relates the Cartesian crystal
 frame to the phi-axis frame.  U encodes how the crystal is mounted on the
@@ -630,6 +708,28 @@ beam.  <em>Vertical</em> — the scattering plane is vertical, the two-theta arm
 rotates about the transverse (horizontal) axis; typical for synchrotrons.
 <em>Horizontal</em> — the scattering plane is horizontal, two-theta rotates
 about the vertical axis; typical for laboratory instruments.</p>
+</dd>
+<dt id="term-Zone-crystallographic">Zone (crystallographic)<a class="headerlink" href="#term-Zone-crystallographic" title="Link to this term">#</a></dt><dd><p>A set of crystal lattice planes that all share a common direction
+in direct space — the <strong>zone axis</strong> <code class="docutils literal notranslate"><span class="pre">[u</span> <span class="pre">v</span> <span class="pre">w]</span></code>.  Equivalently, in
+reciprocal space, a set of reflections whose scattering vectors
+(the plane normals <strong>g</strong> = h <strong>a</strong>* + k <strong>b</strong>* + l <strong>c</strong>*) are all
+perpendicular to that zone axis and therefore lie in a single
+plane — the <em>zone plane</em> — that passes through the reciprocal
+origin.  Any two non-parallel reciprocal-lattice vectors <code class="docutils literal notranslate"><span class="pre">z0</span></code>
+and <code class="docutils literal notranslate"><span class="pre">z1</span></code> in the zone plane span it and uniquely identify the
+zone, and the <em>Weiss zone law</em> <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">u</span> <span class="pre">+</span> <span class="pre">k</span> <span class="pre">v</span> <span class="pre">+</span> <span class="pre">l</span> <span class="pre">w</span> <span class="pre">=</span> <span class="pre">0</span></code>
+characterises membership in terms of the zone-axis indices.</p>
+</dd>
+<dt id="term-Zone-mode">Zone (mode)<a class="headerlink" href="#term-Zone-mode" title="Link to this term">#</a></dt><dd><p>A diffraction mode (You 1999, §6; SPEC <code class="docutils literal notranslate"><span class="pre">setmode</span> <span class="pre">5</span></code>) named after
+the crystallographic zone above: the scattering vector <strong>Q</strong> is
+confined to the plane spanned by two reciprocal-lattice vectors
+<code class="docutils literal notranslate"><span class="pre">z0</span></code> and <code class="docutils literal notranslate"><span class="pre">z1</span></code> supplied through the mode
+<a class="reference internal" href="#term-Extras"><span class="xref std std-term">extras</span></a> dict.  A <code class="docutils literal notranslate"><span class="pre">forward(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> call on a
+zone mode verifies that the requested <strong>Q</strong> lies in that plane and
+returns bisecting solutions; off-plane requests yield an empty
+list with a warning.  Available on psic and kappa6c as
+<code class="docutils literal notranslate"><span class="pre">zone_vertical</span></code> and <code class="docutils literal notranslate"><span class="pre">zone_horizontal</span></code>; see the per-geometry
+pages for usage.</p>
 </dd>
 <dt id="term-psi-angle">ψ (psi) angle<a class="headerlink" href="#term-psi-angle" title="Link to this term">#</a></dt><dd><p>Two definitions appear in the literature:
 (1) <strong>You (1999)</strong>: azimuthal angle of a reference vector about <strong>Q</strong> —
@@ -712,7 +812,7 @@ See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractom
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 14:27 CDT.
+  Last updated on 2026-05-05 15:01 CDT.
   <br/>
 </p></div>
       
