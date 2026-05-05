@@ -22,7 +22,10 @@ Demo geometries
      - Description
    * - :func:`fourcv`
      - Eulerian 4-circle
-     - Vertical scattering plane (synchrotron). See :doc:`/geometries/fourcv`.
+     - Vertical scattering plane (synchrotron).  Migrated to declarative
+       YAML (``geometries/fourcv.yml``) in #267; the function in this
+       module is a compatibility shim that delegates to the loader.
+       See :doc:`/geometries/fourcv`.
    * - :func:`fourch`
      - Eulerian 4-circle
      - Horizontal scattering plane (laboratory). See :doc:`/geometries/fourch`.
@@ -147,6 +150,7 @@ References
 from __future__ import annotations
 
 import inspect
+from importlib import resources
 
 from .diffractometer import AdHocDiffractometer
 from .factories import BASIS_BL
@@ -176,87 +180,39 @@ __all__ = [
     "sixc",
     "zaxis",
 ]
+# ``fourcv`` has been migrated to a declarative YAML file
+# (``geometries/fourcv.yml``) — see issue #267.  A compatibility shim
+# named ``fourcv`` remains in this module to keep the legacy import
+# path ``from ad_hoc_diffractometer.presets import fourcv`` working
+# during the staged migration; it delegates to the loader.
 
 # ---------------------------------------------------------------------------
 # Eulerian geometries
 # ---------------------------------------------------------------------------
 
 
-@register_geometry
+# ``fourcv`` was the first demo geometry migrated from a Python factory
+# to a declarative YAML file (``geometries/fourcv.yml``); see issue #267.
+# This compatibility shim delegates to the loader so existing imports
+# (``from ad_hoc_diffractometer.presets import fourcv``) continue to
+# work during the staged migration.  The shim will be removed when
+# ``presets.py`` is deleted at the end of the migration.
 def fourcv(basis: dict = BASIS_BL) -> AdHocDiffractometer:
+    """Return the declarative ``fourcv`` geometry (delegates to the YAML loader).
+
+    See ``src/ad_hoc_diffractometer/geometries/fourcv.yml`` for the
+    authoritative definition.
     """
-    Four-circle Eulerian diffractometer, vertical scattering plane (synchrotron).
+    from .geometry_loader import load_geometry_file
 
-    Walko (2016) designation: S3D1.
-
-    Synchrotron configuration: omega and ttheta both rotate about the
-    transverse axis, so the scattering plane is vertical.  This exploits the
-    s-polarisation and tighter vertical collimation of synchrotron radiation
-    (Walko 2016).
-
-    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
-
-    Sample stack (floor first):
-        omega  : transverse,   left-handed
-        chi    : longitudinal, right-handed
-        phi    : transverse,   left-handed
-
-    Detector (floor, mechanically independent of sample stack):
-        ttheta : transverse,   left-handed
-
-    omega and ttheta share the same transverse axis; mechanically independent.
-
-    References: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-                D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
-    """
-    TRANSVERSE = basis["transverse"]
-    LONGITUDINAL = basis["longitudinal"]
-    stages = [
-        Stage("omega", -TRANSVERSE, parent=None, role="sample"),
-        Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
-        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
-        Stage("ttheta", -TRANSVERSE, parent=None, role="detector"),
-    ]
-    # fourcv: 4 DOF, N-3=1 constraint needed per mode.
-    modes = {
-        "bisecting": ConstraintSet(
-            [BisectConstraint("omega", "ttheta")],
-            computed=["omega", "chi", "phi", "ttheta"],
-        ),
-        "fixed_chi": ConstraintSet(
-            [SampleConstraint("chi", 90.0)],
-            computed=["omega", "phi", "ttheta"],
-        ),
-        "fixed_phi": ConstraintSet(
-            [SampleConstraint("phi", 0.0)],
-            computed=["omega", "chi", "ttheta"],
-        ),
-        "fixed_omega": ConstraintSet(
-            [SampleConstraint("omega", 0.0)],
-            computed=["chi", "phi", "ttheta"],
-        ),
-        "fixed_psi": ConstraintSet(
-            [ReferenceConstraint("psi", 0.0)],
-            computed=["omega", "chi", "phi", "ttheta"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-        "double_diffraction": ConstraintSet(
-            [],
-            computed=["omega", "chi", "phi", "ttheta"],
-            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=BASIS_BL,
-        description=(
-            "Busing & Levy (1967) four-circle Eulerian diffractometer "
-            "(vertical scattering plane, transverse ttheta, synchrotron)"
-        ),
-        modes=modes,
-        default_mode="bisecting",
+    pkg_path = resources.files("ad_hoc_diffractometer.geometries").joinpath(
+        "fourcv.yml"
     )
+    # ``importlib.resources`` may return a MultiplexedPath / Traversable
+    # rather than a real Path; round-trip via ``as_file`` to obtain a
+    # filesystem path the loader can read.
+    with resources.as_file(pkg_path) as p:
+        return load_geometry_file(p, basis=basis)
 
 
 @register_geometry

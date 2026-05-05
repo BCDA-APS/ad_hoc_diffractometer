@@ -123,6 +123,32 @@ See {class}`~ad_hoc_diffractometer.stage.Stage`.
 
 ---
 
+## Declarative geometries
+
+A diffractometer geometry can be described in two ways:
+
+- **Declaratively**, as a YAML file that lists the basis, the stages, and
+  the diffraction modes.  This is the recommended approach for any
+  geometry that fits the schema.  The 10 demo geometries shipped under
+  `src/ad_hoc_diffractometer/geometries/` are written in this form;
+  they are *demonstrations* of the schema rather than authoritative
+  descriptions of any production diffractometer.
+- **Programmatically**, as a Python factory function that returns an
+  {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`.
+  Use this when stage axes depend on a runtime parameter the schema
+  does not express, or when the stage layout itself is computed.
+
+Every declarative file begins with the schema marker
+``ad_hoc_diffractometer_geometry: {revision: 1}``, which identifies the
+document and selects the schema revision.  The loader
+({func}`~ad_hoc_diffractometer.geometry_loader.load_geometry_file` and
+{func}`~ad_hoc_diffractometer.geometry_loader.register_geometry_file`)
+parses the YAML, validates it, and constructs the geometry.  See
+{ref}`declarative-geometry-schema` for the complete reference and
+{ref}`howto-custom-geometry` for a task-oriented walkthrough.
+
+---
+
 ## Monochromatic radiation
 
 The package assumes **monochromatic radiation** throughout — all
@@ -313,7 +339,7 @@ DetectorConstraint("qaz", 90.0)     # Q in the vertical plane
 ```
 
 **Reference constraints** express a condition between Q and an external
-reference vector n̂ (surface normal, polarisation axis, etc.):
+reference vector n̂ (surface normal, polarization axis, etc.):
 
 ```python
 from ad_hoc_diffractometer import ReferenceConstraint

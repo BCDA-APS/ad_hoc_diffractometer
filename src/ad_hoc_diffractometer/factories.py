@@ -234,6 +234,16 @@ def _load_entry_point_geometries() -> None:
         return
     _EP_LOADED = True
 
+    # Register the packaged declarative-YAML geometries (issue #267)
+    # before consulting third-party entry points, so plugin name
+    # collisions surface against the canonical names.
+    try:
+        from .geometry_loader import _register_packaged_geometries
+
+        _register_packaged_geometries()
+    except Exception as exc:  # noqa: BLE001 — non-fatal at import time
+        logger.debug("packaged geometry loader failed: %s", exc)
+
     try:
         eps = entry_points(group=GEOMETRY_ENTRY_POINT_GROUP)
         for ep in eps:
@@ -352,9 +362,6 @@ Default basis used by ``psic``, ``sixc``, ``kappa6c``,
 ``zaxis``, ``s2d2``, and ``fivec`` (in :mod:`ad_hoc_diffractometer.presets`).
 """
 
-_BASIS_YOU = BASIS_YOU
-"""Alias for :data:`BASIS_YOU` (backward compatibility)."""
-
 BASIS_BL = {
     "vertical": ZHAT,
     "longitudinal": YHAT,
@@ -372,8 +379,38 @@ Used by ``fourcv``, ``fourch``, ``kappa4cv``, and ``kappa4ch``
 (in :mod:`ad_hoc_diffractometer.presets`).
 """
 
-_BASIS_BL = BASIS_BL
-"""Alias for :data:`BASIS_BL` (backward compatibility)."""
+BASIS_DEFAULT = {
+    "vertical": YHAT,
+    "longitudinal": ZHAT,
+    "transverse": XHAT,
+}
+"""Neutral basis used by the declarative geometry loader when a YAML file
+omits the ``basis:`` key (issue #267).
+
+Maps physical direction names to Cartesian unit vectors:
+
+- ``"vertical"`` → ``YHAT`` (+y)
+- ``"longitudinal"`` → ``ZHAT`` (+z)
+- ``"transverse"`` → ``XHAT`` (+x)
+
+This basis is **deliberately distinct** from both :data:`BASIS_YOU` (You
+1999) and :data:`BASIS_BL` (Busing & Levy 1967) so that the package
+does not appear to espouse either literature convention as a "project
+default."  YAML files that should match a literature convention must
+declare the basis explicitly (``basis: BL``, ``basis: YOU``, or an
+explicit mapping); files that omit the key opt into this neutral
+fallback.
+
+The Cartesian basis ``(XHAT, YHAT, ZHAT)`` is right-handed; the
+mapping above is one of three possible cyclic permutations of physical
+names onto those axes.  Compare:
+
+- :data:`BASIS_YOU` uses ``(vertical, longitudinal, transverse) = (X, Y, Z)``.
+- :data:`BASIS_BL` uses ``(transverse, longitudinal, vertical) = (X, Y, Z)``.
+- ``BASIS_DEFAULT`` uses ``(transverse, vertical, longitudinal) = (X, Y, Z)``,
+  i.e. ``(vertical, longitudinal, transverse) = (Y, Z, X)`` — the
+  remaining cyclic permutation.
+"""
 
 # ---------------------------------------------------------------------------
 # Kappa angle default

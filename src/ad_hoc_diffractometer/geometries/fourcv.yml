@@ -1,0 +1,101 @@
+# fourcv — four-circle Eulerian diffractometer, vertical scattering plane.
+#
+# This file is a *demonstration* of the declarative geometry schema
+# (issue #267).  It reproduces the legacy
+# ``ad_hoc_diffractometer.presets.fourcv`` Python factory exactly.  Real
+# beamlines should copy a file like this and adapt it to their own
+# instrument; do not assume the values here describe any production
+# diffractometer.
+#
+# Schema reference: docs/source/reference/declarative_geometry_schema.md
+# How-to:           docs/source/howto/custom_geometry.md
+
+ad_hoc_diffractometer_geometry:
+    revision: 1
+
+name: fourcv
+
+documentation: >-
+    Busing & Levy (1967) four-circle Eulerian diffractometer (vertical
+    scattering plane, transverse ttheta, synchrotron).
+
+
+    Walko (2016) designation: S3D1.
+
+
+    Synchrotron configuration: omega and ttheta both rotate about the
+    transverse axis, so the scattering plane is vertical.  This exploits
+    the s-polarization and tighter vertical collimation of synchrotron
+    radiation (Walko 2016).
+
+
+    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y,
+    vertical=+z.
+
+
+    Sample stack (floor first):
+        omega : transverse,   left-handed
+        chi   : longitudinal, right-handed
+        phi   : transverse,   left-handed
+
+
+    Detector (floor, mechanically independent of sample stack):
+        ttheta : transverse, left-handed
+
+
+    omega and ttheta share the same transverse axis; they are
+    mechanically independent.
+
+
+    References
+
+    - W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+
+    - D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
+basis: BL
+
+stages:
+    - {name: omega,  axis: -transverse,   parent: null,  role: sample}
+    - {name: chi,    axis: +longitudinal, parent: omega, role: sample}
+    - {name: phi,    axis: -transverse,   parent: chi,   role: sample}
+    - {name: ttheta, axis: -transverse,   parent: null,  role: detector}
+
+# fourcv: 4 DOF, N - 3 = 1 constraint needed per mode.
+modes:
+    bisecting:
+        default: true
+        constraints:
+            - {type: bisect, stage1: omega, stage2: ttheta}
+        computed: [omega, chi, phi, ttheta]
+
+    fixed_chi:
+        constraints:
+            - {type: sample, stage: chi, value: 90.0}
+        computed: [omega, phi, ttheta]
+
+    fixed_phi:
+        constraints:
+            - {type: sample, stage: phi, value: 0.0}
+        computed: [omega, chi, ttheta]
+
+    fixed_omega:
+        constraints:
+            - {type: sample, stage: omega, value: 0.0}
+        computed: [chi, phi, ttheta]
+
+    fixed_psi:
+        constraints:
+            - {type: reference, name: psi, value: 0.0}
+        computed: [omega, chi, phi, ttheta]
+        extras:
+            n_hat: REQUIRED
+            psi: null
+
+    double_diffraction:
+        constraints: []
+        computed: [omega, chi, phi, ttheta]
+        extras:
+            h2: REQUIRED
+            k2: REQUIRED
+            l2: REQUIRED
