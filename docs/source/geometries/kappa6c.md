@@ -294,34 +294,38 @@ kappa motor pair solves any in-plane (h, k, l).
 | **Extras (input)** | z0, z1 (Miller-index 3-tuples) |
 | **Extras (output)** | in_plane_residual |
 
-## Cross-reference table
+## Mode cross-reference
 
-The table below maps each `kappa6c` mode to its closest analogue in
-SPEC's `kappa6c` macros and the Hkl/Soleil `K6C` `hkl` engine.  The
-psic mode column shows the equivalent psic mode (kappa6c shares the
-psic outer-axis ordering and most named modes correspond directly).
+Each `kappa6c` mode mapped to its equivalent psic mode (the kappa6c
+geometry shares the psic outer-axis ordering), the closest analogue in
+SPEC's `kappa6c` macros, and the Hkl/Soleil `K6C` `hkl` engine.
 
-| `ad_hoc_diffractometer` mode | Equivalent psic mode | SPEC `kappa6c` analogue | Hkl/Soleil K6C `hkl` engine |
+| mode | psic equivalent | SPEC `kappa6c` | Hkl/Soleil K6C |
 |---|---|---|---|
-| `bisecting_vertical` | `bisecting_vertical` | nu-fixed + omega=del/2 (virtual) | `bissector_vertical` |
-| `bisecting_horizontal` | `bisecting_horizontal` | delta-fixed + mu=nu/2 | `bissector_horizontal` |
-| `fixed_kphi` | `fixed_phi_vertical` (analogue) | nu-fixed + kphi-fixed + mu-fixed | `constant_phi_vertical` |
-| `fixed_mu` | (specific to kappa6c) | nu-fixed + omega=del/2 + mu-fixed | (no analogue) |
-| `fixed_nu` | (specific to kappa6c) | nu-fixed + omega=del/2 + mu-fixed | (no analogue) |
-| `fixed_delta` | (specific to kappa6c) | delta-fixed + mu=nu/2 + komega-fixed | (no analogue) |
-| `lifting_detector_mu` | `lifting_detector_mu` | qaz-fixed + mu-fixed + komega-fixed | `lifting_detector_mu` |
-| `lifting_detector_kphi` | `lifting_detector_phi` | qaz-fixed + kphi-fixed + mu-fixed | `lifting_detector_kphi` |
-| `fixed_psi_vertical` | `fixed_psi_vertical` | nu-fixed + psi-fixed + omega=del/2 | `psi_constant_vertical` |
-| `fixed_psi_horizontal` | `fixed_psi_horizontal` | delta-fixed + psi-fixed + mu=nu/2 | `psi_constant_horizontal` |
-| `double_diffraction_vertical` | `double_diffraction_vertical` | (no SPEC analogue) | `double_diffraction_vertical` |
-| `double_diffraction_horizontal` | `double_diffraction_horizontal` | (no SPEC analogue) | `double_diffraction_horizontal` |
-| `zone_vertical` | `zone_vertical` | `setmode 5` (zone) | (`HklEngine "zone"` — TODO) |
-| `zone_horizontal` | `zone_horizontal` | `setmode 5` (zone) | (`HklEngine "zone"` — TODO) |
+| `bisecting_vertical` | `bisecting_vertical` | `(2,0,5,0,0)` | `bissector_vertical` |
+| `bisecting_horizontal` | `bisecting_horizontal` | `(1,0,6,0,0)` | `bissector_horizontal` |
+| `fixed_kphi` | `fixed_phi_vertical` | `(2,0,4,2,0)` | `constant_phi_vertical` |
+| `fixed_mu` | — | `(2,0,5,2,0)` | — |
+| `fixed_nu` | — | `(2,0,5,2,0)` | — |
+| `fixed_delta` | — | `(1,0,6,2,0)` | — |
+| `lifting_detector_mu` | `lifting_detector_mu` | `(3,0,1,2,0)` | `lifting_detector_mu` |
+| `lifting_detector_kphi` | `lifting_detector_phi` | `(3,0,4,2,0)` | `lifting_detector_kphi` |
+| `fixed_psi_vertical` | `fixed_psi_vertical` | `(2,4,5,0,0)` | `psi_constant_vertical` |
+| `fixed_psi_horizontal` | `fixed_psi_horizontal` | `(1,4,6,0,0)` | `psi_constant_horizontal` |
+| `double_diffraction_vertical` | `double_diffraction_vertical` | — | `double_diffraction_vertical` |
+| `double_diffraction_horizontal` | `double_diffraction_horizontal` | — | `double_diffraction_horizontal` |
+| `zone_vertical` | `zone_vertical` | `setmode 5` | (TODO `HklEngine "zone"`) |
+| `zone_horizontal` | `zone_horizontal` | `setmode 5` | (TODO `HklEngine "zone"`) |
 
-References:
-- SPEC `kappa6c` macros: <https://certif.com/spec_help/kappa6c.html>
-- Hkl/Soleil K6C: <https://people.debian.org/~picca/hkl/hkl.html>
-- Hkl source (`TODO HklEngine "zone"`): <https://repo.or.cz/hkl.git>
+The SPEC tuple is `(g_mode1, g_mode2, g_mode3, g_mode4, g_mode5)`,
+where `g_mode1` selects the scattering plane (1 = horizontal,
+2 = vertical, 3 = qaz/lifting-detector), `g_mode2` selects an optional
+reference-angle constraint (0 = none, 4 = ψ-fixed), and
+`g_mode3`–`g_mode5` fix specific motor angles. A dash (—) means no
+documented analogue exists in that package. References:
+[SPEC `kappa6c` macros](https://certif.com/spec_help/kappa6c.html);
+[Hkl/Soleil K6C](https://people.debian.org/~picca/hkl/hkl.html);
+[Hkl source](https://repo.or.cz/hkl.git).
 
 ## API reference
 
