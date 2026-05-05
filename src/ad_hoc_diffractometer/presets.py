@@ -521,6 +521,36 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
             computed=["mu", "chi", "phi", "nu"],
             extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
         ),
+        # ── Zone modes (You 1999 §6, SPEC `setmode 5`) ──────────────────────
+        # Q is confined to the plane defined by two reciprocal-lattice
+        # vectors z0 and z1.  The caller still requests forward(h, k, l);
+        # if the requested Q does not lie in the zone plane (within
+        # tolerance) the solver returns an empty list with a warning.
+        # See SPEC `sz`, `cz`, `mz` macros.
+        "zone_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+            extras={
+                "z0": REQUIRED,
+                "z1": REQUIRED,
+                "in_plane_residual": None,
+            },
+        ),
+        "zone_horizontal": ConstraintSet(
+            [
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+            extras={
+                "z0": REQUIRED,
+                "z1": REQUIRED,
+                "in_plane_residual": None,
+            },
+        ),
         # ── Lifting detector (out-of-plane) ─────────────────────────────────
         "lifting_detector_phi": ConstraintSet(
             [
@@ -1105,6 +1135,34 @@ def kappa6c(
             ],
             computed=["mu", "kappa", "kphi", "nu"],
             extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
+        ),
+        # ── Zone modes (You 1999 §6, SPEC `setmode 5`) ──────────────────────
+        # Q is confined to the plane defined by two reciprocal-lattice
+        # vectors z0 and z1.  Same dispatch pattern as psic — see psic
+        # ``zone_vertical`` / ``zone_horizontal`` for details.
+        "zone_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+            ],
+            computed=["komega", "kappa", "kphi", "delta"],
+            extras={
+                "z0": REQUIRED,
+                "z1": REQUIRED,
+                "in_plane_residual": None,
+            },
+        ),
+        "zone_horizontal": ConstraintSet(
+            [
+                SampleConstraint("komega", 0.0),
+                DetectorConstraint("delta", 0.0),
+            ],
+            computed=["mu", "kappa", "kphi", "nu"],
+            extras={
+                "z0": REQUIRED,
+                "z1": REQUIRED,
+                "in_plane_residual": None,
+            },
         ),
     }
     return AdHocDiffractometer(

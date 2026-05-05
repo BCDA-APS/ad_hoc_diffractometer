@@ -260,6 +260,69 @@ Full 4D simultaneous solver in the horizontal scattering plane.
 | **Constant during** `forward()` | komega = 0, delta = 0 |
 | **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
 
+### `zone_vertical`
+
+Zone mode (You 1999 §6, SPEC `setmode 5`).  Q is confined to the plane
+spanned by two reciprocal-lattice vectors `z0` and `z1`.  Structurally
+identical to the psic `zone_vertical` mode, with the bisecting condition
+enforced on the **virtual** Eulerian omega pseudoangle (Walko 2016
+eq. [16]) rather than the literal `komega` motor.  Off-plane requests
+return an empty list with a warning.
+
+```python
+g.modes['zone_vertical'].extras['z0'] = (1, 0, 0)
+g.modes['zone_vertical'].extras['z1'] = (0, 1, 0)
+```
+
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | z0, z1 (Miller-index 3-tuples) |
+| **Extras (output)** | in_plane_residual |
+
+### `zone_horizontal`
+
+Horizontal-plane analogue of `zone_vertical`.  Locks `komega = 0`,
+`delta = 0`; the bisecting condition `mu = nu/2` together with the
+kappa motor pair solves any in-plane (h, k, l).
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | komega = 0, delta = 0 |
+| **Extras (input)** | z0, z1 (Miller-index 3-tuples) |
+| **Extras (output)** | in_plane_residual |
+
+## Cross-reference table
+
+The table below maps each `kappa6c` mode to its closest analogue in
+SPEC's `kappa6c` macros and the Hkl/Soleil `K6C` `hkl` engine.  The
+psic mode column shows the equivalent psic mode (kappa6c shares the
+psic outer-axis ordering and most named modes correspond directly).
+
+| `ad_hoc_diffractometer` mode | Equivalent psic mode | SPEC `kappa6c` analogue | Hkl/Soleil K6C `hkl` engine |
+|---|---|---|---|
+| `bisecting_vertical` | `bisecting_vertical` | nu-fixed + omega=del/2 (virtual) | `bissector_vertical` |
+| `bisecting_horizontal` | `bisecting_horizontal` | delta-fixed + mu=nu/2 | `bissector_horizontal` |
+| `fixed_kphi` | `fixed_phi_vertical` (analogue) | nu-fixed + kphi-fixed + mu-fixed | `constant_phi_vertical` |
+| `fixed_mu` | (specific to kappa6c) | nu-fixed + omega=del/2 + mu-fixed | (no analogue) |
+| `fixed_nu` | (specific to kappa6c) | nu-fixed + omega=del/2 + mu-fixed | (no analogue) |
+| `fixed_delta` | (specific to kappa6c) | delta-fixed + mu=nu/2 + komega-fixed | (no analogue) |
+| `lifting_detector_mu` | `lifting_detector_mu` | qaz-fixed + mu-fixed + komega-fixed | `lifting_detector_mu` |
+| `lifting_detector_kphi` | `lifting_detector_phi` | qaz-fixed + kphi-fixed + mu-fixed | `lifting_detector_kphi` |
+| `fixed_psi_vertical` | `fixed_psi_vertical` | nu-fixed + psi-fixed + omega=del/2 | `psi_constant_vertical` |
+| `fixed_psi_horizontal` | `fixed_psi_horizontal` | delta-fixed + psi-fixed + mu=nu/2 | `psi_constant_horizontal` |
+| `double_diffraction_vertical` | `double_diffraction_vertical` | (no SPEC analogue) | `double_diffraction_vertical` |
+| `double_diffraction_horizontal` | `double_diffraction_horizontal` | (no SPEC analogue) | `double_diffraction_horizontal` |
+| `zone_vertical` | `zone_vertical` | `setmode 5` (zone) | (`HklEngine "zone"` — TODO) |
+| `zone_horizontal` | `zone_horizontal` | `setmode 5` (zone) | (`HklEngine "zone"` — TODO) |
+
+References:
+- SPEC `kappa6c` macros: <https://certif.com/spec_help/kappa6c.html>
+- Hkl/Soleil K6C: <https://people.debian.org/~picca/hkl/hkl.html>
+- Hkl source (`TODO HklEngine "zone"`): <https://repo.or.cz/hkl.git>
+
 ## API reference
 
 - {func}`~ad_hoc_diffractometer.presets.kappa6c`

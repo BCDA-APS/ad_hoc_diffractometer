@@ -99,6 +99,7 @@ def _prepare_mode(geometry, mode_name: str) -> None:
 
     - fixed_psi modes: sets ``azimuthal_reference``
     - double_diffraction modes: sets h2/k2/l2 extras
+    - zone modes: sets z0/z1 extras to a generic (h,k,0) plane
     - surface/reference modes (alpha_i, beta_out, a_eq_b):
       sets ``surface_normal``
     """
@@ -110,6 +111,11 @@ def _prepare_mode(geometry, mode_name: str) -> None:
         if key in cs.extras and cs.extras[key] is REQUIRED:
             defaults = {"h2": 0.0, "k2": 1.0, "l2": 0.0}
             cs.extras[key] = defaults[key]
+
+    # Zone modes: replace REQUIRED z0/z1 sentinels with a generic plane
+    for key, default in (("z0", (1, 0, 0)), ("z1", (0, 1, 0))):
+        if key in cs.extras and cs.extras[key] is REQUIRED:
+            cs.extras[key] = default
 
     # Reference-vector modes: set azimuthal_reference if needed
     for c in cs._constraints:
