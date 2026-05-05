@@ -120,7 +120,7 @@ sample_dict = g.sample.to_dict()
 ## ConstraintSet round-trip
 
 Diffraction modes ({class}`~ad_hoc_diffractometer.mode.ConstraintSet`) are
-serialised as part of the geometry dict.  They can also be inspected and
+serialized as part of the geometry dict.  They can also be inspected and
 round-tripped independently:
 
 ```python

@@ -37,7 +37,7 @@ over-constrain the scattered beam direction.
 
 **Reference constraints** (:class:`ReferenceConstraint`) express a
 condition between Q and an external reference vector n̂ (surface normal,
-polarisation axis, etc.) stored on the geometry.  The named options are
+polarization axis, etc.) stored on the geometry.  The named options are
 physical pseudo-angles from You (1999) and Lohmeier & Vlieg (1993):
 ``"psi"``, ``"alpha_i"``, ``"beta_out"``, ``"a_eq_b"``, ``"naz"``.  At
 most one reference constraint is allowed.
@@ -72,7 +72,7 @@ Cut-points control which branch of a multi-valued angle solution is
 returned (SPEC #G4 convention).  They are stored on :class:`ConstraintSet`
 and applied by the forward solver.
 
-A few specialised modes are dispatched not by their constraint composition
+A few specialized modes are dispatched not by their constraint composition
 but by the keys present in :attr:`ConstraintSet.extras`:
 
 - **double_diffraction** modes carry ``h2``, ``k2``, ``l2`` extras and are

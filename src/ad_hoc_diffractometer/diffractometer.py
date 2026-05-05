@@ -195,7 +195,7 @@ class AdHocDiffractometer:
         Validate that the basis contains exactly three mutually orthogonal,
         non-zero, 3-dimensional vectors.
 
-        The basis is a labelled dict; its keys have no defined ordering, so
+        The basis is a labeled dict; its keys have no defined ordering, so
         right-handedness cannot be checked here (the cross product of two
         vectors depends on which is 'first').  Right-handedness is the
         caller's responsibility and should be verified by the demo

@@ -204,7 +204,7 @@ def make_kappa_pseudo_angle_convention(
     Parameters
     ----------
     n_komega, n_kappa, n_kphi, n_chi_eq : array-like, shape (3,)
-        Signed axis vectors.  Will be normalised internally.
+        Signed axis vectors.  Will be normalized internally.
 
     Returns
     -------
@@ -250,10 +250,10 @@ def kappa_axis_from_eulerian(
     Parameters
     ----------
     n_komega : array-like, shape (3,)
-        Outer kappa stage axis.  Need not be normalised.
+        Outer kappa stage axis.  Need not be normalized.
     n_chi_eq : array-like, shape (3,)
         Equivalent Eulerian chi axis (perpendicular to ``n_komega``).
-        Need not be normalised.
+        Need not be normalized.
     alpha_deg : float
         Kappa tilt angle in degrees, measured from ``n_komega``
         toward ``n_chi_eq``.  Typical value 50° (Enraf-Nonius
@@ -592,7 +592,7 @@ def kappa_to_eulerian_axes(
     Algorithm
     ---------
     Let ``R = R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)`` be
-    the realised rotation.  By the same reasoning as in
+    the realized rotation.  By the same reasoning as in
     :func:`eulerian_to_kappa_axes` (applied to the Eulerian-equivalent
     triple):
 

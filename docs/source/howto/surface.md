@@ -138,9 +138,9 @@ for sol in solutions:
     print(f"specular: {g.is_specular()}")
 ```
 
-## Serialisation
+## Serialization
 
-`surface_normal` and `azimuthal_reference` are serialised in `to_dict()`
+`surface_normal` and `azimuthal_reference` are serialized in `to_dict()`
 and restored by `from_dict()`:
 
 ```python

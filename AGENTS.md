@@ -431,13 +431,104 @@ with NumPy alone.
 - **No `geometry_` prefix** on demo-geometry function names
 - **`display.fmt(value, digits)`** for all floating-point display;
   never use f-strings with hardcoded precision for user-facing output
-- **US English spellings** in all code, comments, docstrings, and
-  documentation.  Use American spellings such as `analyzer`, `polarizer`,
-  `color`, `center`, `normalized`, `minimize`, `optimize`, `generalize`,
-  `recognize`, `characterized`, `millimeters`, `honor` — not their British
-  equivalents (`analyser`, `polariser`, `colour`, `centre`, `normalised`,
-  `minimise`, `optimise`, `generalise`, `recognise`, `characterised`,
-  `millimetres`, `honour`)
+- **US English spellings** — see the dedicated section
+  [US English spelling (mandatory)](#us-english-spelling-mandatory) below.
+
+---
+
+## US English spelling (mandatory)
+
+**Every word you write — in code, comments, docstrings, error
+messages, log messages, exception text, type names, identifiers,
+filenames, branch names, commit messages, PR descriptions, issue
+comments, YAML strings, JSON descriptions, and Markdown / reST
+documentation — must use US (American) English spelling.**  This rule
+is non-negotiable and is checked at review time.
+
+This applies even when paraphrasing or summarizing material that uses
+British spellings (e.g. literature references): retype the prose into
+US English when incorporating it into the project.  Verbatim quotations
+inside quotation marks may preserve the source's spelling; everything
+else must conform.
+
+### Mandatory substitutions
+
+| Use (US) | NOT (British) |
+|---|---|
+| `analyze`, `analyzer`, `analyzed`, `analyzing` | `analyse`, `analyser`, `analysed`, `analysing` |
+| `behavior`, `behaviors` | `behaviour`, `behaviours` |
+| `center`, `centers`, `centered`, `centering` | `centre`, `centres`, `centred`, `centring` |
+| `color`, `colors`, `colored`, `coloring` | `colour`, `colours`, `coloured`, `colouring` |
+| `characterize`, `characterized`, `characterizing` | `characterise`, `characterised`, `characterising` |
+| `customize`, `customized` | `customise`, `customised` |
+| `defense`, `defensive` | `defence`, `defencive` |
+| `emphasize`, `emphasized` | `emphasise`, `emphasised` |
+| `factorize`, `factorized` | `factorise`, `factorised` |
+| `favor`, `favorite` | `favour`, `favourite` |
+| `fiber`, `fibers` | `fibre`, `fibres` |
+| `fulfill`, `fulfilled` | `fulfil`, `fulfilled` (British single-l) |
+| `generalize`, `generalized`, `generalizing` | `generalise`, `generalised`, `generalising` |
+| `gray` | `grey` |
+| `honor`, `honors`, `honored`, `honoring` | `honour`, `honours`, `honoured`, `honouring` |
+| `initialize`, `initialized`, `initializing` | `initialise`, `initialised`, `initialising` |
+| `labeled`, `labeling` | `labelled`, `labelling` |
+| `liter`, `liters` | `litre`, `litres` |
+| `maximize`, `maximized` | `maximise`, `maximised` |
+| `meter`, `meters` (the unit) | `metre`, `metres` |
+| `millimeter`, `millimeters` | `millimetre`, `millimetres` |
+| `minimize`, `minimized`, `minimizing` | `minimise`, `minimised`, `minimising` |
+| `modeled`, `modeling` | `modelled`, `modelling` |
+| `normalize`, `normalized`, `normalizing` | `normalise`, `normalised`, `normalising` |
+| `optimize`, `optimized`, `optimizing` | `optimise`, `optimised`, `optimising` |
+| `organization` | `organisation` |
+| `parameterize`, `parameterized` | `parameterise`, `parameterised` |
+| `polarization`, `polarized`, `polarizer` | `polarisation`, `polarised`, `polariser` |
+| `practice` (verb) | `practise` |
+| `program` | `programme` (in software contexts) |
+| `realize`, `realized` | `realise`, `realised` |
+| `recognize`, `recognized`, `recognizing` | `recognise`, `recognised`, `recognising` |
+| `serialize`, `serialized`, `serializing` | `serialise`, `serialised`, `serialising` |
+| `signaled`, `signaling` | `signalled`, `signalling` |
+| `specialized`, `specializing` | `specialised`, `specialising` |
+| `stabilize`, `stabilized` | `stabilise`, `stabilised` |
+| `summarize`, `summarized` | `summarise`, `summarised` |
+| `synthesize`, `synthesized` | `synthesise`, `synthesised` |
+| `theater` | `theatre` |
+| `traveled`, `traveling`, `traveler` | `travelled`, `travelling`, `traveller` |
+| `utilize`, `utilized` | `utilise`, `utilised` |
+| `visualize`, `visualized`, `visualizing` | `visualise`, `visualised`, `visualising` |
+
+The list above is illustrative, not exhaustive.  Whenever you are
+unsure, prefer the spelling used by the *Merriam-Webster* dictionary
+or the OED's "US" tag.  The rule applies to **every variant** of the
+listed roots (`-ize / -ization / -izing / -ized` etc.).
+
+### Enforcement check
+
+Before opening a pull request — and again after addressing reviewer
+comments — run this check on every file you have added or modified
+(replace `$FILES` with `git diff --name-only main...HEAD` or an
+equivalent list, **excluding `AGENTS.md` itself** because the
+substitution table above intentionally contains British spellings as
+negative examples):
+
+```bash
+grep -EnH "\b(honour|honours|honoured|honouring|colour|colours|coloured|colouring|behaviour|behaviours|analyse|analysed|analyser|analysers|analyses|analysing|polariser|polarisers|polarisation|polarised|polarising|normalise|normalised|normalises|normalising|minimise|minimised|minimises|minimising|maximise|maximised|maximises|maximising|optimise|optimised|optimises|optimising|generalise|generalised|generalises|generalising|recognise|recognised|recognises|recognising|characteris|millimetre|centre|centres|centred|centring|customise|customised|emphasise|emphasised|factorise|factorised|fibre|fibres|favour|favourite|grey|initialise|initialised|labelled|labelling|litre|litres|metre|metres|modelled|modelling|organisation|parameterise|parameterised|realise|realised|serialise|serialised|signalled|signalling|specialised|specialising|stabilise|stabilised|summarise|summarised|synthesise|synthesised|theatre|travelled|travelling|traveller|utilise|utilised|visualise|visualised|visualising|programme)\b" $FILES
+```
+
+The check must produce **no output** (other than expected hits inside
+the AGENTS.md substitution table, which should be excluded from
+`$FILES`).  Any hit elsewhere must be corrected before review.  This
+check belongs alongside `pytest`, `pre-commit`, and the documentation
+grep checks in your pre-PR checklist.
+
+### Pre-existing British spellings
+
+A small number of British spellings remain in pre-existing files that
+were authored before this rule was tightened.  Do not silently fix
+them in unrelated PRs — open a dedicated cleanup PR (or include them
+explicitly in a PR whose scope already touches those files) so the
+diff is reviewable.
 
 ---
 

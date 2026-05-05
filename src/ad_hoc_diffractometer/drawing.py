@@ -162,7 +162,7 @@ def _scene_domain(col, row, n_cols, n_rows, title_frac):  # pragma: no cover
 class StageAxisFigure:  # pragma: no cover
     """Interactive Plotly figure for a single stage rotation-axis diagram.
 
-    Draws the geometry's basis vectors (grey, semi-transparent) and the
+    Draws the geometry's basis vectors (gray, semi-transparent) and the
     stage's rotation axis (red) with a direction arc, in a 3-D interactive
     Plotly scene.
 
@@ -278,9 +278,9 @@ class StageAxisFigure:  # pragma: no cover
         basis_length = 0.5
 
         for name, vec, color in [
-            ("V", ver_d, "grey"),
-            ("L", lon_d, "grey"),
-            ("T", lat_d, "grey"),
+            ("V", ver_d, "gray"),
+            ("L", lon_d, "gray"),
+            ("T", lat_d, "gray"),
         ]:
             v = vec * basis_length
             self._fig.add_trace(

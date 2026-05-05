@@ -1810,7 +1810,7 @@ def test_inclination_matrix_round_trip():
 
 
 def test_identity_inclination_round_trip():
-    """Identity inclination_matrix is serialised and restored."""
+    """Identity inclination_matrix is serialized and restored."""
     import numpy as np
 
     from ad_hoc_diffractometer import AdHocDiffractometer
@@ -1910,7 +1910,7 @@ def test_geometry_to_dict_stages():
 
 
 def test_geometry_to_dict_stage_angle_preserved():
-    """The omega angle set before to_dict() is present in the serialised stages."""
+    """The omega angle set before to_dict() is present in the serialized stages."""
     d = _sapphire_fourcv().to_dict()
     stages = {s["name"]: s for s in d["stages"]}
     assert stages["omega"]["angle"] == pytest.approx(20.97)
