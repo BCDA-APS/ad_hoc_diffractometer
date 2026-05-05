@@ -1,0 +1,560 @@
+presets
+=======
+
+.. py:module:: ad_hoc_diffractometer.presets
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.presets``
+
+   This module demonstrates some of the most common diffractometer
+   geometries used in synchrotron and laboratory X-ray / neutron
+   crystallography, each fully-configured, using
+   :class:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`.
+   Together, the demos here serve as worked examples for defining custom
+   geometries.
+
+   Demo geometries
+   ---------------
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 15 20 50
+
+      * - Name
+        - Type
+        - Description
+      * - :func:`fourcv`
+        - Eulerian 4-circle
+        - Vertical scattering plane (synchrotron). See :doc:`/geometries/fourcv`.
+      * - :func:`fourch`
+        - Eulerian 4-circle
+        - Horizontal scattering plane (laboratory). See :doc:`/geometries/fourch`.
+      * - :func:`fivec`
+        - Eulerian 5-circle
+        - Vlieg et al. (1987), fourcv on a mu base. See :doc:`/geometries/fivec`.
+      * - :func:`psic`
+        - Eulerian 6-circle
+        - You (1999) 4S+2D. See :doc:`/geometries/psic`.
+      * - :func:`sixc`
+        - Eulerian 6-circle
+        - Lohmeier & Vlieg (1993) surface geometry. See :doc:`/geometries/sixc`.
+      * - :func:`kappa4cv`
+        - Kappa 4-circle
+        - Vertical scattering plane (synchrotron). See :doc:`/geometries/kappa4cv`.
+      * - :func:`kappa4ch`
+        - Kappa 4-circle
+        - Horizontal scattering plane (laboratory). See :doc:`/geometries/kappa4ch`.
+      * - :func:`kappa6c`
+        - Kappa 6-circle
+        - Psic-style outer axes. See :doc:`/geometries/kappa6c`.
+      * - :func:`zaxis`
+        - Surface / special
+        - Bloch (1985) Z-axis geometry. See :doc:`/geometries/zaxis`.
+      * - :func:`s2d2`
+        - Surface / special
+        - Evans-Lutterodt & Tang (1995). See :doc:`/geometries/s2d2`.
+
+   Each demo geometry is decorated with
+   :func:`~ad_hoc_diffractometer.factories.register_geometry`, which registers
+   it in the geometry registry.  Use
+   :func:`~ad_hoc_diffractometer.factories.list_geometries` to retrieve all
+   registered geometries as a ``{name: callable}`` dict.
+
+   For historical context on diffractometer design and usage that
+   predates the closed-form Busing & Levy (1967) angle-setting equations,
+   see Arndt & Willis (1966) — listed in the project's :doc:`/references`.
+
+   Usage
+   -----
+   ::
+
+       import ad_hoc_diffractometer as ahd
+
+       g = ahd.presets.fourcv()
+       g.wavelength = 1.54
+
+   Naming convention:
+
+   - Eulerian geometries: ``fourcv``, ``fourch``, ``fivec``, ``psic``, ``sixc``
+   - Kappa geometries: ``kappa4cv``, ``kappa4ch``, ``kappa6c``
+   - Surface / special geometries: ``zaxis``, ``s2d2``
+
+   Scattering-plane suffix convention (``v`` / ``h``):
+
+   - ``v`` — vertical scattering plane (synchrotron): ttheta rotates about the transverse axis
+   - ``h`` — horizontal scattering plane (laboratory): ttheta rotates about the vertical axis
+
+   Where no suffix is given, the detector convention is unambiguous (psic, sixc)
+   or the geometry uses a non-standard detector arrangement (zaxis, s2d2, fivec).
+
+       fourch  (horizontal scattering plane) matches Busing & Levy (1967) Fig. 1b.
+       fourcv  (vertical   scattering plane) is the synchrotron convention.
+       kappa4ch and kappa4cv follow the same convention as fourch and fourcv.
+
+   Kappa angle (alpha) convention
+   (Walko 2016 Fig. 3; Wyckoff 1985 Fig. 2(b); Thorkildsen 2006 Table 1;
+   Enraf-Nonius; ITC Vol. C Sec. 2.2.6):
+   The kappa axis is inclined by alpha degrees from the omega axis,
+   lying in the plane that contains both omega and the equivalent-
+   Eulerian chi axis, and tilted from omega toward that chi direction.
+   Per preset (with omega and chi-equivalent shown as physical
+   basis-direction lines, ignoring sign of handedness):
+
+   - kappa4cv: omega along transverse, chi-eq along vertical;
+     kappa lies in the T-V plane between +T and +V.
+   - kappa4ch: omega along vertical, chi-eq along longitudinal;
+     kappa lies in the V-L plane between +V and +L.
+   - kappa6c:  same as kappa4cv (mounted on top of mu and nu).
+
+   Typical value: alpha = 50 deg.
+
+   Handedness convention:
+       These presets follow Walko (2016) and encode omega/kappa/phi/2theta as
+       *left-handed* about their respective signed-axis vectors (e.g.
+       ``-TRANSVERSE`` for kappa4cv komega).  ITC Vol. C Sec. 2.2.6.2 (2006)
+       instead specifies the standard signs of omega/chi/phi as right-handed
+       (only 2theta is left-handed in Hamilton's choice).  Either convention
+       is internally consistent; users who prefer the ITC convention can
+       construct their own geometry by negating the relevant Stage axis
+       vectors.  See ``factories.py`` for how to build a custom geometry.
+
+   Walko (2016) designations:
+       S3D1      fourcv, fourch, kappa4cv, kappa4ch
+       S4D2      psic, kappa6c
+       (S3D2)1   sixc   (sample and detector share base stage)
+       (S3D1)1   fivec  (fourcv mounted on vertical base)
+       (S1D2)1   zaxis  (sample and detector share alpha base stage)
+       S2D2      s2d2   (fully decoupled sample/detector pairs)
+
+   .. rubric:: References
+
+   * W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967) — fourcv / fourch
+   * J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985) — zaxis
+   * E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987) — fivec
+   * M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993) — sixc
+   * K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995) — s2d2
+   * H. You, J. Appl. Cryst. 32, 614-623 (1999)
+     DOI:10.1107/S0021889899001223 — psic
+   * ITC Vol. C, Sec. 2.2.6 (2006), p. 36
+     DOI:10.1107/97809553602060000577 — kappa goniostat;
+     cites Wyckoff (1985, p. 334) for the schematic picture and
+     states "the κ axis is inclined at 50° to the ω axis".
+   * H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
+     kappa diffractometer, Fig. 2(b) on p. 334
+   * G. Thorkildsen, H.B. Larsen & J.A. Beukes,
+     J. Appl. Cryst. 39, 151-157 (2006) — three-circle goniostat
+     angle calculations, Table 1 (kappa axes)
+   * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — kappa, zaxis, s2d2, fivec
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.presets.fivec
+   ad_hoc_diffractometer.presets.fourch
+   ad_hoc_diffractometer.presets.fourcv
+   ad_hoc_diffractometer.presets.kappa4ch
+   ad_hoc_diffractometer.presets.kappa4cv
+   ad_hoc_diffractometer.presets.kappa6c
+   ad_hoc_diffractometer.presets.psic
+   ad_hoc_diffractometer.presets.s2d2
+   ad_hoc_diffractometer.presets.sixc
+   ad_hoc_diffractometer.presets.zaxis
+
+
+Module Contents
+---------------
+
+.. py:function:: fivec(basis: dict = BASIS_YOU) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.presets.fivec``
+
+
+   Five-circle diffractometer (fourcv mounted on a vertical base).
+
+   Walko (2016) designation: (S3D1)1.
+   Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
+
+   A standard Eulerian four-circle (fourcv) is mounted on a fifth vertical
+   rotation stage (mu) as a base.  The sample and detector motions are coupled
+   through mu.  This provides an additional degree of freedom for accessing
+   wider regions of reciprocal space, particularly at synchrotron sources.
+
+   Stack (floor first)::
+
+       mu (shared base): vertical,     right-handed
+         --> omega (sample): transverse,   left-handed
+               --> chi:      longitudinal, right-handed
+                     --> phi: transverse,  left-handed
+         --> ttheta (detector): transverse, left-handed
+
+   References:
+   E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
+   D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
+
+.. py:function:: fourch(basis: dict = BASIS_BL) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.presets.fourch``
+
+
+   Four-circle Eulerian diffractometer, horizontal scattering plane (laboratory).
+
+   Walko (2016) designation: S3D1.
+
+   Laboratory / default configuration: omega and ttheta both rotate about
+   the vertical axis, so the scattering plane is horizontal.  This is the
+   geometry described in Busing & Levy (1967), Fig. 1b.
+
+   Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
+
+   Sample stack (floor first):
+       omega  : vertical,   left-handed
+       chi    : transverse, right-handed
+       phi    : vertical,   left-handed
+
+   Detector (floor, mechanically independent):
+       ttheta : vertical, left-handed
+
+   omega and ttheta share the same vertical axis; mechanically independent.
+
+   Reference: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+              D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
+
+.. py:function:: fourcv(basis: dict = BASIS_BL) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.presets.fourcv``
+
+
+   Four-circle Eulerian diffractometer, vertical scattering plane (synchrotron).
+
+   Walko (2016) designation: S3D1.
+
+   Synchrotron configuration: omega and ttheta both rotate about the
+   transverse axis, so the scattering plane is vertical.  This exploits the
+   s-polarisation and tighter vertical collimation of synchrotron radiation
+   (Walko 2016).
+
+   Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
+
+   Sample stack (floor first):
+       omega  : transverse,   left-handed
+       chi    : longitudinal, right-handed
+       phi    : transverse,   left-handed
+
+   Detector (floor, mechanically independent of sample stack):
+       ttheta : transverse,   left-handed
+
+   omega and ttheta share the same transverse axis; mechanically independent.
+
+   References: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+               D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
+
+.. py:function:: kappa4ch(alpha_deg: float = KAPPA_ALPHA_DEFAULT, basis: dict = BASIS_BL) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.presets.kappa4ch``
+
+
+   Four-circle kappa diffractometer, horizontal scattering plane (laboratory).
+
+   Walko (2016) designation: S3D1.
+
+   Identical to kappa4cv() but komega and ttheta rotate about the vertical
+   axis, giving a horizontal scattering plane (laboratory convention).
+
+   Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
+
+   Sample stack (floor first):
+
+   - ``komega`` — vertical, left-handed
+   - ``kappa`` — tilted in the vertical-longitudinal plane, between +V
+     and +L; α from +V toward +L (per Wyckoff 1985 Fig. 2(b)).
+   - ``kphi`` — vertical, left-handed
+
+   Detector (floor, mechanically independent):
+
+   - ``ttheta`` — vertical, left-handed
+
+   komega and ttheta share the same vertical axis; mechanically independent.
+
+   Handedness note: this preset encodes omega/kphi/2theta as left-handed
+   about vertical, following Walko (2016).  ITC Vol. C Sec. 2.2.6.2
+   (2006) prefers a right-handed sign convention for omega/chi/phi.
+   The two conventions are equivalent up to motor-angle sign flips;
+   either yields the same physical orientations.  See the module
+   docstring for further discussion.
+
+   :param alpha_deg: Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
+   :type alpha_deg: float
+
+   .. rubric:: References
+
+   * H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
+     Fig. 2(b) on p. 334 (kappa diffractometer).
+   * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+   * W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+   * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+     Wyckoff (1985, p. 334) for the schematic picture.
+
+
+.. py:function:: kappa4cv(alpha_deg: float = KAPPA_ALPHA_DEFAULT, basis: dict = BASIS_BL) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.presets.kappa4cv``
+
+
+   Four-circle kappa diffractometer, vertical scattering plane (synchrotron).
+
+   Walko (2016) designation: S3D1.
+
+   The chi circle of a standard Eulerian fourcv is replaced by a kappa arm.
+   The kappa axis lies in the vertical-transverse plane, tilted alpha degrees
+   from the vertical toward the transverse axis.
+
+   komega and ttheta both rotate about the transverse axis; the scattering
+   plane is vertical (synchrotron convention).
+
+   Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
+
+   Sample stack (floor first):
+
+   - ``komega`` — transverse, left-handed
+   - ``kappa`` — tilted in the transverse-vertical plane, between +T
+     and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
+     Thorkildsen 2006 Table 1).
+   - ``kphi`` — transverse, left-handed
+
+   Detector (floor, mechanically independent):
+
+   - ``ttheta`` — transverse, left-handed
+
+   komega and ttheta share the same transverse axis; mechanically independent.
+
+   Handedness note: this preset encodes omega/kphi/2theta as left-handed
+   about transverse, following Walko (2016).  ITC Vol. C Sec. 2.2.6.2
+   (2006) prefers a right-handed sign convention for omega/chi/phi.
+   The two conventions are equivalent up to motor-angle sign flips;
+   either yields the same physical orientations.  See the module
+   docstring for further discussion.
+
+   :param alpha_deg: Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
+   :type alpha_deg: float
+
+   .. rubric:: References
+
+   * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
+   * G. Thorkildsen, H.B. Larsen & J.A. Beukes, J. Appl. Cryst. 39,
+     151-157 (2006) — Table 1, eqn (3).
+   * W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+   * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+     Wyckoff (1985, p. 334) for the schematic picture.
+
+
+.. py:function:: kappa6c(alpha_deg: float = KAPPA_ALPHA_DEFAULT, basis: dict = BASIS_YOU) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.presets.kappa6c``
+
+
+   Six-circle kappa diffractometer (psic-style outer axes, kappa inner sample).
+
+   Walko (2016) designation: S4D2.
+
+   See ESRF for a comprehensive example:
+   https://www.esrf.fr/home/UsersAndScience/Experiments/CRG/BM02/equipment/diffractometer.html#c
+
+   Extends the kappa4cv geometry with two additional axes (mu, nu) in
+   the style of the psic geometry (You 1999), giving full orientation freedom.
+   This is the synchrotron configuration with a transverse detector.
+
+   Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
+
+   Sample stack (floor first):
+
+   - ``mu`` — vertical, right-handed (outermost)
+   - ``komega`` — transverse, left-handed
+   - ``kappa`` — tilted in the transverse-vertical plane, between +T
+     and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
+     Thorkildsen 2006 Table 1).
+   - ``kphi`` — transverse, left-handed
+
+   Detector stack (floor first):
+
+   - ``nu`` — vertical, right-handed
+   - ``delta`` — transverse, left-handed
+
+   mu and nu share the same vertical axis; mechanically independent.
+
+   Handedness note: this preset encodes komega/kphi/delta as left-handed
+   about transverse and mu/nu as right-handed about vertical, following
+   Walko (2016) and You (1999) respectively.  ITC Vol. C Sec. 2.2.6.2
+   (2006) prefers a right-handed sign convention for omega/chi/phi.
+   The two conventions are equivalent up to motor-angle sign flips;
+   either yields the same physical orientations.  See the module
+   docstring for further discussion.
+
+   :param alpha_deg: Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
+   :type alpha_deg: float
+
+   .. rubric:: References
+
+   * H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen & H. Fjellvåg,
+     J. Synchrotron Rad. 20, 644-647 (2013) — six-axis κ
+     diffractometer (KUMA6 at SNBL/ESRF).
+   * G. Thorkildsen, H.B. Larsen & J.A. Beukes, J. Appl. Cryst. 39,
+     151-157 (2006) — Table 1, eqn (3); extends to additional
+     rotation axes (§3 last paragraph).
+   * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
+   * H. You, J. Appl. Cryst. 32, 614-623 (1999) — outer-axis layout
+     (psic 4S+2D) and You coordinate basis.
+   * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+     Wyckoff (1985, p. 334) for the schematic picture.
+
+
+.. py:function:: psic(basis: dict = BASIS_YOU) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.presets.psic``
+
+
+   You (1999) '4S+2D' six-circle diffractometer (psic geometry).
+
+   Walko (2016) designation: S4D2.
+   Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
+   Detector axis: transverse.  Vertical scattering plane.
+
+   Sample stack (floor first):
+       mu  : vertical,     right-handed
+       eta : transverse,   left-handed
+       chi : longitudinal, right-handed
+       phi : transverse,   left-handed
+
+   Detector stack (floor first):
+       nu    : vertical,   right-handed
+       delta : transverse, left-handed
+
+   mu and nu share the same vertical rotation axis; mechanically independent.
+
+   Reference: H. You, J. Appl. Cryst. 32, 614-623 (1999).
+              DOI: 10.1107/S0021889899001223
+
+
+.. py:function:: s2d2(basis: dict = BASIS_YOU) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.presets.s2d2``
+
+
+   S2D2 four-circle diffractometer (general-inclination geometry).
+
+   Walko (2016) designation: S2D2.
+   Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
+
+   Two independent sample axes (mu, Z) and two independent detector axes
+   (nu, delta), all mechanically decoupled.  The angle of incidence is the
+   mu angle; the surface normal is parallel to Z.
+
+   Sample stack (floor first)::
+
+       mu    : vertical,     right-handed
+         --> Z : longitudinal, right-handed
+
+   Detector stack (floor first)::
+
+       nu    : vertical,     right-handed
+         --> delta : transverse, left-handed
+
+   mu and nu share the same vertical axis; mechanically independent.
+
+   The total scattering angle is (Walko 2016, eq. 18)::
+
+       ttheta = arccos(cos(nu) * cos(delta))
+
+   References:
+   K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995).
+   D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.
+
+
+.. py:function:: sixc(basis: dict = BASIS_YOU) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.presets.sixc``
+
+
+   Lohmeier & Vlieg (1993) six-circle surface diffractometer (sixc geometry).
+
+   Also known as the IUCr six-circle diffractometer.
+   Walko (2016) designation: (S3D2)1.
+   Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
+
+   Sample and detector stacks share the alpha (rotary table) base stage,
+   making this a coupled geometry.  Useful for surface diffraction.
+
+   From Fig. 1 and §2.1 of Lohmeier & Vlieg (1993):
+   alpha and gamma rotate about the vertical axis (x in LV convention).
+   omega, phi, and delta all rotate about the transverse axis (z in LV).
+   chi rotates about the longitudinal axis (y in LV).
+
+   Stack (floor first)::
+
+       alpha (shared base): vertical,     right-handed  [rotary table]
+         --> omega (sample):  transverse,   left-handed
+               --> chi:       longitudinal, right-handed
+                     --> phi: transverse,   left-handed
+         --> delta (detector): transverse,  left-handed
+               --> gamma:      vertical,    right-handed
+
+   Reference: M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993).
+
+
+.. py:function:: zaxis(basis: dict = BASIS_YOU) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.presets.zaxis``
+
+
+   Z-axis four-circle diffractometer (general-inclination geometry).
+
+   Walko (2016) designation: (S1D2)1.
+   Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
+
+   Designed for surface diffraction.  The sample surface normal is aligned
+   parallel to the Z-axis, so the angle of incidence equals the alpha angle.
+   The detector and sample both rotate about the shared alpha (base) axis.
+
+   Stack (floor first)::
+
+       alpha (shared base): vertical,     right-handed
+         --> Z     (sample)  : longitudinal, right-handed
+         --> delta (detector): transverse,   left-handed
+               --> gamma :     vertical,     right-handed
+
+   The total scattering angle is a compound of gamma, delta, and alpha
+   (Walko 2016, eq. 17)::
+
+       ttheta = arccos(cos(gamma)*cos(delta)*cos(alpha) + sin(alpha)*sin(gamma))
+
+   References:
+   J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).
+   D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.
+
+
