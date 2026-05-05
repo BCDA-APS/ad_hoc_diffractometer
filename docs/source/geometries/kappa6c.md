@@ -323,10 +323,12 @@ The SPEC tuple is `(g_mode1, g_mode2, g_mode3, g_mode4, g_mode5)`,
 where `g_mode1` selects the scattering plane (1 = horizontal,
 2 = vertical, 3 = qaz/lifting-detector), `g_mode2` selects an optional
 reference-angle constraint (0 = none, 4 = ψ-fixed), and
-`g_mode3`–`g_mode5` fix specific motor angles. A dash (—) means no
-documented analogue exists in that package; none of the kappa6c modes
-listed here trigger SPEC's not-working set (see the dagger note on the
-psic page).
+`g_mode3`–`g_mode5` fix specific motor angles.
+
+—: no documented analogue exists in that package.
+
+†: none of the kappa6c modes listed here trigger SPEC's not-working
+set (see the dagger note on the psic page).
 
 References:
 [SPEC `kappa6c` macros](https://certif.com/spec_help/kappa6c.html);
