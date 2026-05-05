@@ -665,7 +665,7 @@ def _solve_bisecting_analytic(
     C = float(np.dot(n_phi, v))
 
     R_chi_amp = math.sqrt(A * A + B * B)
-    if R_chi_amp < 1e-12:
+    if R_chi_amp < 1e-12:  # pragma: no cover
         return []  # degenerate: q ∥ n_chi
 
     cos_arg_chi = C / R_chi_amp
@@ -1094,7 +1094,8 @@ def _solve_bisecting(
         phi_seed_deg = math.degrees(
             math.atan2(float(q_in_plane[1]), float(q_in_plane[0]))
         )
-    else:
+    else:  # pragma: no cover
+        # Degenerate: q parallel to chi axis (q_in_plane ≈ 0).
         phi_seed_deg = 0.0
 
     # Seed (chi, phi) pairs.  Analytic seeds are tried first (most likely

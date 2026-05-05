@@ -84,7 +84,9 @@ Vertical scattering plane bisecting condition (You 1999, §5.3).
 
 ### `fixed_phi_vertical`
 
-`phi` held at declared value (default 0°), `eta = delta/2`, `nu = 0`.
+`phi` held at declared value (default 0°), `mu = 0`, `nu = 0`.
+The scattering plane is locked vertical by `mu = 0` and `nu = 0`;
+`eta`, `chi`, and `delta` are solved from the hkl equations.
 
 | | |
 |---|---|
@@ -93,31 +95,15 @@ Vertical scattering plane bisecting condition (You 1999, §5.3).
 
 ### `fixed_chi_vertical`
 
-`chi` held at declared value (default 90°), `eta = delta/2`, `nu = 0`.
+`chi` held at declared value (default 90°), `mu = 0`, `nu = 0`.
 The caller chooses the chi value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` — see {doc}`../howto/constraints`.
+The scattering plane is locked vertical by `mu = 0` and `nu = 0`;
+`eta`, `phi`, and `delta` are solved from the hkl equations.
 
 | | |
 |---|---|
 | **Computed** | eta, phi, delta |
 | **Constant during** `forward()` | chi, mu = 0, nu = 0 |
-
-### `fixed_mu_vertical`
-
-`mu` held at declared value (default 0°), `eta = delta/2`, `nu = 0`.
-
-| | |
-|---|---|
-| **Computed** | eta, chi, phi, delta |
-| **Constant during** `forward()` | mu, nu = 0 |
-
-### `fixed_nu_vertical`
-
-`nu` held at declared value (default 0°), `eta = delta/2`, `mu = 0`.
-
-| | |
-|---|---|
-| **Computed** | eta, chi, phi, delta |
-| **Constant during** `forward()` | nu, mu = 0 |
 
 ### `fixed_alpha_i_vertical`
 
@@ -194,7 +180,9 @@ Horizontal scattering plane bisecting condition (You 1999, §5.1).
 
 ### `fixed_phi_horizontal`
 
-`phi` held at declared value (default 0°), `mu = nu/2`, `delta = 0`.
+`phi` held at declared value (default 0°), `eta = 0`, `delta = 0`.
+The scattering plane is locked horizontal by `eta = 0` and `delta = 0`;
+`mu`, `chi`, and `nu` are solved from the hkl equations.
 
 | | |
 |---|---|
@@ -203,30 +191,14 @@ Horizontal scattering plane bisecting condition (You 1999, §5.1).
 
 ### `fixed_chi_horizontal`
 
-`chi` held at declared value (default 90°), `mu = nu/2`, `delta = 0`.
+`chi` held at declared value (default 90°), `eta = 0`, `delta = 0`.
+The scattering plane is locked horizontal by `eta = 0` and `delta = 0`;
+`mu`, `phi`, and `nu` are solved from the hkl equations.
 
 | | |
 |---|---|
 | **Computed** | mu, phi, nu |
 | **Constant during** `forward()` | chi, eta = 0, delta = 0 |
-
-### `fixed_eta_horizontal`
-
-`eta` held at declared value (default 0°), `mu = nu/2`, `delta = 0`.
-
-| | |
-|---|---|
-| **Computed** | mu, chi, phi, nu |
-| **Constant during** `forward()` | eta, delta = 0 |
-
-### `fixed_delta_horizontal`
-
-`delta` held at declared value (default 0°), `mu = nu/2`, `eta = 0`.
-
-| | |
-|---|---|
-| **Computed** | mu, chi, phi, nu |
-| **Constant during** `forward()` | delta, eta = 0 |
 
 ### `fixed_alpha_i_horizontal`
 
