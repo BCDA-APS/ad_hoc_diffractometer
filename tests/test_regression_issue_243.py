@@ -343,3 +343,27 @@ def test_removed_redundant_modes_absent(removed_mode):
         f"{removed_mode!r} was an exact duplicate of bisecting_vertical/"
         f"bisecting_horizontal and must have been removed in #243"
     )
+
+
+# ---------------------------------------------------------------------------
+# Coverage: exercise the analytic-empty fallthrough in _solve_bisecting.
+#
+# Removing the four redundant bisecting modes also removed the only test
+# path that exercised the ``if analytic_results: ... else: fall through``
+# branch in :func:`ad_hoc_diffractometer.forward._solve_bisecting`
+# (line 1052).  The fallthrough is hit when the scattering vector is
+# kinematically inaccessible in the analytic solver but Newton fallback
+# must still be invoked (and ultimately also returns no solutions).
+#
+# ``psic bisecting_horizontal`` with the inaccessible reflection
+# ``(-2, -2, 0)`` reproduces this branch on a cubic ``UB = B`` test
+# crystal.
+# ---------------------------------------------------------------------------
+
+
+def test_bisecting_horizontal_analytic_empty_fallthrough():
+    """Inaccessible hkl returns 0 solutions and exercises the Newton fallback."""
+    g = _setup_psic_cubic()
+    g.mode_name = "bisecting_horizontal"
+    solutions = g.forward(-2, -2, 0)
+    assert solutions == []
