@@ -28,7 +28,10 @@ Demo geometries
        See :doc:`/geometries/fourcv`.
    * - :func:`fourch`
      - Eulerian 4-circle
-     - Horizontal scattering plane (laboratory). See :doc:`/geometries/fourch`.
+     - Horizontal scattering plane (laboratory).  Migrated to declarative
+       YAML (``geometries/fourch.yml``) in #267; the function in this
+       module is a compatibility shim that delegates to the loader.
+       See :doc:`/geometries/fourch`.
    * - :func:`fivec`
      - Eulerian 5-circle
      - Vlieg et al. (1987), fourcv on a mu base. See :doc:`/geometries/fivec`.
@@ -215,80 +218,25 @@ def fourcv(basis: dict = BASIS_BL) -> AdHocDiffractometer:
         return load_geometry_file(p, basis=basis)
 
 
-@register_geometry
+# ``fourch`` was migrated to a declarative YAML file
+# (``geometries/fourch.yml``) in issue #267.  This compatibility shim
+# delegates to the loader so existing imports
+# (``from ad_hoc_diffractometer.presets import fourch``) continue to
+# work during the staged migration.  The shim will be removed when
+# ``presets.py`` is deleted at the end of the migration.
 def fourch(basis: dict = BASIS_BL) -> AdHocDiffractometer:
+    """Return the declarative ``fourch`` geometry (delegates to the YAML loader).
+
+    See ``src/ad_hoc_diffractometer/geometries/fourch.yml`` for the
+    authoritative definition.
     """
-    Four-circle Eulerian diffractometer, horizontal scattering plane (laboratory).
+    from .geometry_loader import load_geometry_file
 
-    Walko (2016) designation: S3D1.
-
-    Laboratory / default configuration: omega and ttheta both rotate about
-    the vertical axis, so the scattering plane is horizontal.  This is the
-    geometry described in Busing & Levy (1967), Fig. 1b.
-
-    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
-
-    Sample stack (floor first):
-        omega  : vertical,   left-handed
-        chi    : transverse, right-handed
-        phi    : vertical,   left-handed
-
-    Detector (floor, mechanically independent):
-        ttheta : vertical, left-handed
-
-    omega and ttheta share the same vertical axis; mechanically independent.
-
-    Reference: W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-               D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
-    """
-    VERTICAL = basis["vertical"]
-    LONGITUDINAL = basis["longitudinal"]
-    stages = [
-        Stage("omega", -VERTICAL, parent=None, role="sample"),
-        Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
-        Stage("phi", -VERTICAL, parent="chi", role="sample"),
-        Stage("ttheta", -VERTICAL, parent=None, role="detector"),
-    ]
-    # fourch: 4 DOF, N-3=1 constraint needed per mode.
-    modes = {
-        "bisecting": ConstraintSet(
-            [BisectConstraint("omega", "ttheta")],
-            computed=["omega", "chi", "phi", "ttheta"],
-        ),
-        "fixed_chi": ConstraintSet(
-            [SampleConstraint("chi", 90.0)],
-            computed=["omega", "phi", "ttheta"],
-        ),
-        "fixed_phi": ConstraintSet(
-            [SampleConstraint("phi", 0.0)],
-            computed=["omega", "chi", "ttheta"],
-        ),
-        "fixed_omega": ConstraintSet(
-            [SampleConstraint("omega", 0.0)],
-            computed=["chi", "phi", "ttheta"],
-        ),
-        "fixed_psi": ConstraintSet(
-            [ReferenceConstraint("psi", 0.0)],
-            computed=["omega", "chi", "phi", "ttheta"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-        "double_diffraction": ConstraintSet(
-            [],
-            computed=["omega", "chi", "phi", "ttheta"],
-            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=basis,
-        description=(
-            "Busing & Levy (1967) four-circle Eulerian diffractometer "
-            "(horizontal scattering plane, vertical ttheta, laboratory)"
-        ),
-        modes=modes,
-        default_mode="bisecting",
+    pkg_path = resources.files("ad_hoc_diffractometer.geometries").joinpath(
+        "fourch.yml"
     )
+    with resources.as_file(pkg_path) as p:
+        return load_geometry_file(p, basis=basis)
 
 
 @register_geometry
