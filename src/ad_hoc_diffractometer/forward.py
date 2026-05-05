@@ -499,6 +499,13 @@ def _solve_constraint_set(
     if _is_double_diffraction_mode(geometry, mode):
         return _solve_double_diffraction(geometry, Q_phi, ttheta_deg, mode)
 
+    # Zone mode (You 1999 §6, SPEC `setmode 5`):  Q is confined to the
+    # plane spanned by two reciprocal-lattice vectors z0, z1.  Like
+    # double_diffraction, this is dispatched by extras keys, not by a
+    # dedicated constraint type.
+    if _is_zone_mode(geometry, mode):
+        return _solve_zone(geometry, Q_phi, ttheta_deg, mode)
+
     if mode.has_bisect:
         return _solve_bisecting(geometry, Q_phi, ttheta_deg, mode)
 
@@ -2616,6 +2623,187 @@ def _collect_dd_solution(
     _apply_cut_points(sol, mode, geometry)
     if _check_limits(geometry, sol):  # pragma: no branch
         found_solutions.append(sol)
+
+
+# ---------------------------------------------------------------------------
+# Zone-mode solver (You 1999 §6, SPEC `setmode 5`)
+# ---------------------------------------------------------------------------
+
+
+def _is_zone_mode(geometry: AdHocDiffractometer, mode) -> bool:
+    """Return True when ``mode.extras`` contains both ``z0`` and ``z1`` keys.
+
+    Zone modes confine the scattering vector Q to the plane spanned by two
+    reciprocal-lattice vectors z0 and z1.  Like double-diffraction modes,
+    zone modes are dispatched by their ``extras`` schema rather than by a
+    dedicated constraint class.
+    """
+    extras = mode.extras
+    return extras is not None and ("z0" in extras and "z1" in extras)
+
+
+def _solve_zone(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+) -> list[dict[str, float]]:
+    """Forward solver for zone modes.
+
+    The zone plane is fixed by two reciprocal-lattice vectors ``z0`` and
+    ``z1`` supplied via ``mode.extras``.  For a single ``forward(h, k, l)``
+    call the in-plane condition is a property of the requested (h, k, l)
+    and the orientation matrix only — it does not constrain the motor
+    angles directly.  The solver therefore:
+
+    1. Validates ``z0``, ``z1`` are concrete and non-degenerate.
+    2. Computes the zone-plane normal in the φ frame:
+       ``n_zone_phi = (UB @ z0) × (UB @ z1)``.
+    3. Verifies that the requested ``Q_phi`` lies in the plane.  If not,
+       returns ``[]`` and emits a warning (matching the soft-failure
+       pattern adopted for ``fixed_psi`` in #176).
+    4. Records the in-plane residual in ``mode.extras['in_plane_residual']``.
+    5. Builds a synthetic :class:`~mode.ConstraintSet` that adds a
+       :class:`~mode.BisectConstraint` (or
+       :class:`~mode.VirtualBisectConstraint` for kappa6c) so the system
+       is fully constrained, then delegates to the existing bisecting
+       solver.  Bisecting is the canonical SPEC-zone "br" position; the
+       remaining azimuthal DOF can be exercised by a separate scan
+       function (``cz``/``mz`` macros in SPEC), which is out of scope for
+       a single ``forward()`` call.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+    Q_phi : numpy.ndarray, shape (3,)
+        Target scattering vector in the φ frame: ``UB @ (h, k, l)``.
+    ttheta_deg : float
+        Two-theta angle from Bragg's law.
+    mode : ConstraintSet
+        Active mode with ``extras['z0']``, ``extras['z1']`` set.
+
+    Returns
+    -------
+    list of dict[str, float]
+        Bisecting solutions filtered for plane membership.  Empty list when
+        the requested (h, k, l) does not lie in the zone plane.
+
+    Raises
+    ------
+    ValueError
+        If ``z0`` or ``z1`` are still :data:`~mode.REQUIRED` placeholders,
+        or if they are zero vectors, or if they are parallel (so the plane
+        normal is undefined).
+    """
+    from .mode import REQUIRED
+    from .mode import BisectConstraint
+    from .mode import ConstraintSet
+    from .mode import VirtualBisectConstraint
+
+    extras = mode.extras
+    z0_raw = extras.get("z0")
+    z1_raw = extras.get("z1")
+
+    # --- Validate z0/z1 -------------------------------------------------
+    if z0_raw is REQUIRED or z1_raw is REQUIRED:
+        raise ValueError(
+            "zone mode requires z0 and z1 to be set in mode.extras "
+            "before calling forward(). "
+            "Set them with e.g. "
+            "g.modes['zone_vertical'].extras['z0'] = (1, 0, 0); "
+            "g.modes['zone_vertical'].extras['z1'] = (0, 1, 0)"
+        )
+    try:
+        z0 = np.asarray(z0_raw, dtype=float).reshape(3)
+        z1 = np.asarray(z1_raw, dtype=float).reshape(3)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            f"zone mode: z0 and z1 must each be a 3-element sequence of "
+            f"Miller indices; got z0={z0_raw!r}, z1={z1_raw!r}."
+        ) from exc
+
+    if float(np.linalg.norm(z0)) < 1e-12 or float(np.linalg.norm(z1)) < 1e-12:
+        raise ValueError(
+            "zone mode: z0 and z1 must be non-zero reciprocal-lattice vectors; "
+            f"got z0={z0_raw!r}, z1={z1_raw!r}."
+        )
+
+    # --- Compute the zone-plane normal in the φ frame -------------------
+    UB = geometry.sample.UB
+    z0_phi = UB @ z0
+    z1_phi = UB @ z1
+    n_zone_phi = np.cross(z0_phi, z1_phi)
+    n_zone_norm = float(np.linalg.norm(n_zone_phi))
+    if n_zone_norm < 1e-12:
+        raise ValueError(
+            "zone mode: z0 and z1 are parallel (or one is zero) so the "
+            "zone-plane normal is undefined; "
+            f"got z0={z0_raw!r}, z1={z1_raw!r}."
+        )
+    n_zone_hat = n_zone_phi / n_zone_norm
+
+    # --- Plane-membership prefilter -------------------------------------
+    in_plane_residual = float(abs(np.dot(Q_phi, n_zone_hat)))
+    extras["in_plane_residual"] = in_plane_residual
+
+    q_norm = float(np.linalg.norm(Q_phi))
+    # Tolerance scaled by |Q| so the test is meaningful for both
+    # short and long reciprocal vectors.
+    tol = max(1e-8, 1e-6 * q_norm)
+    if in_plane_residual > tol:
+        logger.warning(
+            "zone mode: requested Q (|Q|=%.6g) is not in the zone plane "
+            "defined by z0=%s, z1=%s "
+            "(|Q · n_zone| = %.3e > tolerance %.3e); returning no solutions.",
+            q_norm,
+            tuple(z0_raw) if hasattr(z0_raw, "__iter__") else z0_raw,
+            tuple(z1_raw) if hasattr(z1_raw, "__iter__") else z1_raw,
+            in_plane_residual,
+            tol,
+        )
+        return []
+
+    # --- Build the synthetic bisecting ConstraintSet --------------------
+    # Vertical zone modes: bisect = (sample-stage rotating about transverse,
+    #   detector-stage rotating about transverse) i.e. (eta or komega, delta).
+    # Horizontal zone modes: bisect = (mu, nu).  ``mu`` is a real motor on
+    #   both psic and kappa6c, so a literal BisectConstraint suffices.
+    sample_names = {s.name for s in geometry.sample_stages}
+    is_vertical = "nu" in {c.name for c in mode.constraints if hasattr(c, "name")}
+    # ``mode.constraints`` for zone_vertical contains DetectorConstraint("nu",0)
+    # and SampleConstraint("mu",0); for zone_horizontal it has
+    # DetectorConstraint("delta",0) and SampleConstraint("eta"/"komega",0).
+    # Distinguish on the detector-side fixed name:
+    det_c = mode.detector_constraint
+    is_vertical = det_c is not None and det_c.name == "nu"
+
+    if is_vertical:
+        # Vertical: bisect detector "delta" with the sample stage that
+        # rotates about the same axis (transverse).  On psic that is
+        # "eta"; on kappa6c true bisecting is on the *virtual* omega.
+        if "komega" in sample_names and geometry.kappa_alpha_deg is not None:
+            bisect_cs = VirtualBisectConstraint("omega", "delta")
+        else:
+            bisect_cs = BisectConstraint("eta", "delta")
+        synth_constraints = [bisect_cs] + list(mode.constraints)
+    else:
+        # Horizontal: bisect detector "nu" with sample "mu" (a real motor
+        # on both psic and kappa6c, rotating about the vertical axis).
+        bisect_cs = BisectConstraint("mu", "nu")
+        synth_constraints = [bisect_cs] + list(mode.constraints)
+
+    synth_mode = ConstraintSet(
+        synth_constraints,
+        computed=mode.computed,
+        cut_points=mode.cut_points,
+    )
+
+    # --- Delegate to the existing bisecting solver ----------------------
+    # ``_solve_bisecting`` itself dispatches to the kappa-virtual solver
+    # when the BisectConstraint is a VirtualBisectConstraint, so the
+    # single call covers both psic (literal bisect) and kappa6c (virtual
+    # bisect) zone modes uniformly.
+    return _solve_bisecting(geometry, Q_phi, ttheta_deg, synth_mode)
 
 
 # ---------------------------------------------------------------------------

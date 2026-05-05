@@ -2219,6 +2219,8 @@ _KAPPA6C_MODES = {
     "fixed_psi_horizontal",
     "double_diffraction_vertical",
     "double_diffraction_horizontal",
+    "zone_vertical",
+    "zone_horizontal",
 }
 
 _KAPPA6C_IMPLEMENTED = {
@@ -2232,6 +2234,8 @@ _KAPPA6C_IMPLEMENTED = {
     "lifting_detector_kphi",
     "double_diffraction_vertical",
     "double_diffraction_horizontal",
+    "zone_vertical",
+    "zone_horizontal",
 }
 _KAPPA6C_STUBS = _KAPPA6C_MODES - _KAPPA6C_IMPLEMENTED  # fixed_psi_*
 

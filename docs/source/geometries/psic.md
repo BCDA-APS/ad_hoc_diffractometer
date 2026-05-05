@@ -287,6 +287,92 @@ constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
 | **Computed** | mu, nu, delta |
 | **Constant during** `forward()` | mu = 0, eta = 0 |
 
+### `zone_vertical`
+
+Zone mode (You 1999 §6, SPEC `setmode 5`).  The scattering vector Q is
+confined to the plane spanned by two reciprocal-lattice vectors `z0`
+and `z1`.  A `forward(h, k, l)` call:
+
+1. Verifies the requested (h, k, l) lies in the zone plane (within
+   `1e-6 · |Q|`).  Off-plane requests return an empty solution list and
+   emit a warning.
+2. Records the in-plane residual ``|Q · n_zone|`` in
+   ``mode.extras['in_plane_residual']``.
+3. Returns the bisecting solutions for in-plane reflections (mu = 0,
+   nu = 0, eta = delta/2; chi and phi orient Q within the plane).
+
+The remaining azimuthal degree of freedom around Q is the canonical
+SPEC zone-mode scan (`cz`/`mz` macros) and is not exercised by a single
+`forward()` call.
+
+Set the zone-plane vectors before calling `forward()`:
+
+```python
+g.modes['zone_vertical'].extras['z0'] = (1, 0, 0)
+g.modes['zone_vertical'].extras['z1'] = (0, 1, 0)
+```
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | z0, z1 (Miller-index 3-tuples) |
+| **Extras (output)** | in_plane_residual |
+
+### `zone_horizontal`
+
+Horizontal-plane analogue of `zone_vertical`.  Locks `eta = 0`,
+`delta = 0`; the bisecting condition `mu = nu/2` together with chi,
+phi solves any in-plane (h, k, l).
+
+Note that horizontal-plane reachability depends on the orientation of
+the zone plane relative to the lab frame.  The `(h, k, 0)` reciprocal
+plane (z0=(1,0,0), z1=(0,1,0)) is generally not reachable in the
+horizontal scattering geometry under the You (1999) basis convention;
+choose a plane that contains a vertical reciprocal direction
+(e.g. z0=(1,0,0), z1=(0,0,1)) for reachable horizontal-plane work.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0 |
+| **Extras (input)** | z0, z1 (Miller-index 3-tuples) |
+| **Extras (output)** | in_plane_residual |
+
+## Cross-reference table
+
+The table below maps each `psic` mode to the closest analogue in SPEC's
+`psic` macros and the Hkl/Soleil `E6C` `hkl` engine, together with the
+relevant section of You (1999).
+
+| `ad_hoc_diffractometer` mode | SPEC `psic` (`g_mode1`–`g_mode5`) | Hkl/Soleil E6C `hkl` engine | You (1999) section |
+|---|---|---|---|
+| `bisecting_vertical` | `(2, 0, 5, 0, 0)` nu-fixed + eta=del/2 | `bissector_vertical` | §5.1 |
+| `fixed_phi_vertical` | `(2, 0, 4, 2, 0)` nu-fixed + phi-fixed + mu-fixed | `constant_phi_vertical` | §5.2 |
+| `fixed_chi_vertical` | `(2, 0, 3, 2, 0)` nu-fixed + chi-fixed + mu-fixed | `constant_chi_vertical` | §5.2 |
+| `fixed_alpha_i_vertical` | `(2, 2, 5, 0, 0)` nu-fixed + alpha-fixed + eta=del/2 | (no analogue) | §6.1 |
+| `fixed_beta_out_vertical` | `(2, 3, 5, 0, 0)` nu-fixed + beta-fixed + eta=del/2 | (no analogue) | §6.2 |
+| `alpha_eq_beta_vertical` | `(2, 1, 5, 0, 0)` nu-fixed + alpha=beta + eta=del/2 | (no analogue) | §6.3 |
+| `fixed_psi_vertical` | `(2, 4, 5, 0, 0)` nu-fixed + psi-fixed + eta=del/2 | `psi_constant_vertical` | §6.4 |
+| `double_diffraction_vertical` | (no SPEC analogue) | `double_diffraction_vertical` | §6.5 |
+| `zone_vertical` | `setmode 5` (zone) | (`HklEngine "zone"` — TODO) | §6 |
+| `bisecting_horizontal` | `(1, 0, 6, 0, 0)` delta-fixed + mu=nu/2 | `bissector_horizontal` | §5.1 |
+| `fixed_phi_horizontal` | `(1, 0, 4, 1, 0)` delta-fixed + phi-fixed + eta-fixed | (no E6C analogue) | §5.2 |
+| `fixed_chi_horizontal` | `(1, 0, 3, 1, 0)` delta-fixed + chi-fixed + eta-fixed | (no E6C analogue) | §5.2 |
+| `fixed_alpha_i_horizontal` | `(1, 2, 6, 0, 0)` | (no analogue) | §6.1 |
+| `fixed_beta_out_horizontal` | `(1, 3, 6, 0, 0)` | (no analogue) | §6.2 |
+| `alpha_eq_beta_horizontal` | `(1, 1, 6, 0, 0)` | (no analogue) | §6.3 |
+| `fixed_psi_horizontal` | `(1, 4, 6, 0, 0)` | `psi_constant_horizontal` | §6.4 |
+| `double_diffraction_horizontal` | (no SPEC analogue) | `double_diffraction_horizontal` | §6.5 |
+| `zone_horizontal` | `setmode 5` (zone) | (`HklEngine "zone"` — TODO) | §6 |
+| `lifting_detector_phi` | `(3, 0, 4, 2, 0)` qaz-fixed + phi-fixed + mu-fixed | `lifting_detector_phi` | §5.4 |
+| `lifting_detector_mu` | `(3, 0, 1, 2, 0)` qaz-fixed + eta-fixed + mu-fixed | `lifting_detector_mu` | §5.4 |
+
+References:
+- SPEC `psic` macros: <https://certif.com/spec_help/psic.html>
+- Hkl/Soleil E6C: <https://people.debian.org/~picca/hkl/hkl.html>
+- Hkl source (`TODO HklEngine "zone"`): <https://repo.or.cz/hkl.git>
+
 ## API reference
 
 - {func}`~ad_hoc_diffractometer.presets.psic`

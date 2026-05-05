@@ -120,6 +120,24 @@ class TestPrepareMode:
     @pytest.mark.parametrize(
         "geometry_name, mode_name",
         [
+            pytest.param("psic", "zone_vertical", id="psic-zone-vert"),
+            pytest.param("psic", "zone_horizontal", id="psic-zone-horiz"),
+            pytest.param("kappa6c", "zone_vertical", id="kappa6c-zone-vert"),
+            pytest.param("kappa6c", "zone_horizontal", id="kappa6c-zone-horiz"),
+        ],
+    )
+    def test_zone_extras_replaced(self, geometry_name, mode_name):
+        """Zone modes get z0/z1 REQUIRED sentinels replaced with the
+        default (1,0,0)/(0,1,0) plane."""
+        g = _setup_geometry(geometry_name)
+        _prepare_mode(g, mode_name)
+        cs = g.modes[mode_name]
+        assert cs.extras["z0"] == (1, 0, 0)
+        assert cs.extras["z1"] == (0, 1, 0)
+
+    @pytest.mark.parametrize(
+        "geometry_name, mode_name",
+        [
             pytest.param("sixc", "fixed_alpha_zaxis", id="sixc-alpha-zaxis"),
             pytest.param("sixc", "fixed_beta_zaxis", id="sixc-beta-zaxis"),
             pytest.param("sixc", "alpha_eq_beta_zaxis", id="sixc-a-eq-b"),
