@@ -270,7 +270,7 @@ def test_kappa_axis_bad_basis():
 
 
 def test_kappa_axis_with_explicit_basis():
-    """``kappa_axis`` honours an explicit basis dict (covers the
+    """``kappa_axis`` honors an explicit basis dict (covers the
     happy path that no longer goes through ``presets.py`` after
     issue #241).
     """

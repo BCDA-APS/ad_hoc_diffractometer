@@ -183,7 +183,7 @@ for sol in solutions:
 ## Concise form — using a demo geometry
 
 The code above is exactly what the built-in `fourcv()` demo geometry does.
-If you do not need to customise anything, use it directly:
+If you do not need to customize anything, use it directly:
 
 ```python
 import ad_hoc_diffractometer as ahd

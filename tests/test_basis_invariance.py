@@ -12,7 +12,7 @@ label, but every basis-invariant quantity (``|Q|``, ``|2θ|``,
 ``d``-spacing, …) must come out the same.
 
 These tests guard against any future leak of internal-basis
-choice into user-visible behaviour, including from work in issue
+choice into user-visible behavior, including from work in issue
 #252 that re-derived the kappa-axis convention.
 """
 

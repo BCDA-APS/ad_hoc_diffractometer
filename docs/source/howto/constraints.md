@@ -2,7 +2,7 @@
 # Work with Constraints and Diffraction Modes
 
 This guide explains the constraint system in detail: how modes are defined,
-how to customise constraint values, how to build entirely new modes, and how
+how to customize constraint values, how to build entirely new modes, and how
 to work with the `extras` dict for advanced modes.
 
 ## Background: degrees of freedom
@@ -60,7 +60,7 @@ This is implemented for all geometries with two or more detector stages
 (psic, kappa6c) and used by the ``lifting_detector_*`` mode family.
 
 **Reference constraint** — expresses a condition between Q and a reference
-vector n̂ (surface normal, polarisation axis, etc.).
+vector n̂ (surface normal, polarization axis, etc.).
 The incidence/exit-angle constraints (``alpha_i``, ``beta_out``,
 ``a_eq_b``) are implemented when ``surface_normal`` is set;
 ``psi`` and ``naz`` are not yet implemented as forward constraints.

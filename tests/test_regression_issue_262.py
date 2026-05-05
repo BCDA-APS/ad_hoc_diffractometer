@@ -10,7 +10,7 @@ Q to the plane spanned by two reciprocal-lattice vectors ``z0`` and
 
 - The mode definition lives in :mod:`presets` (zone_vertical and
   zone_horizontal on both psic and kappa6c).
-- The dispatcher :func:`forward._is_zone_mode` recognises modes whose
+- The dispatcher :func:`forward._is_zone_mode` recognizes modes whose
   ``extras`` carry both ``z0`` and ``z1`` keys.
 - :func:`forward._solve_zone` validates inputs, computes the zone-plane
   normal in the φ frame, applies the in-plane prefilter, and delegates
