@@ -23,12 +23,16 @@ import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer.factories import BASIS_BL
 from ad_hoc_diffractometer.factories import BASIS_YOU
+from ad_hoc_diffractometer.factories import KAPPA_ALPHA_DEFAULT
+from ad_hoc_diffractometer.kappa import KappaPseudoAngleConvention
+from ad_hoc_diffractometer.kappa import kappa_axis_from_eulerian
 from ad_hoc_diffractometer.mode import REQUIRED
 from ad_hoc_diffractometer.mode import BisectConstraint
 from ad_hoc_diffractometer.mode import ConstraintSet
 from ad_hoc_diffractometer.mode import DetectorConstraint
 from ad_hoc_diffractometer.mode import ReferenceConstraint
 from ad_hoc_diffractometer.mode import SampleConstraint
+from ad_hoc_diffractometer.mode import VirtualBisectConstraint
 from ad_hoc_diffractometer.stage import Stage
 
 # ---------------------------------------------------------------------------
@@ -341,6 +345,77 @@ def _reference_psic() -> AdHocDiffractometer:
     )
 
 
+def _reference_kappa4cv(
+    alpha_deg: float = KAPPA_ALPHA_DEFAULT,
+) -> AdHocDiffractometer:
+    """Hand-built kappa4cv (the pre-#267 ``presets.kappa4cv`` body verbatim).
+
+    Reproduces the legacy factory exactly, including the synthesized
+    :class:`KappaPseudoAngleConvention`.
+    """
+    basis = BASIS_BL
+    TRANSVERSE = basis["transverse"]
+    VERTICAL = basis["vertical"]
+    kax = kappa_axis_from_eulerian(+TRANSVERSE, +VERTICAL, alpha_deg)
+    stages = [
+        Stage("komega", -TRANSVERSE, parent=None, role="sample"),
+        Stage("kappa", kax, parent="komega", role="sample"),
+        Stage("kphi", -TRANSVERSE, parent="kappa", role="sample"),
+        Stage("ttheta", -TRANSVERSE, parent=None, role="detector"),
+    ]
+    convention = KappaPseudoAngleConvention(
+        n_komega=-TRANSVERSE,
+        n_kappa=kax,
+        n_kphi=-TRANSVERSE,
+        n_chi_eq=+VERTICAL,
+    )
+    modes = {
+        "bisecting": ConstraintSet(
+            [VirtualBisectConstraint("omega", "ttheta")],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "fixed_kphi": ConstraintSet(
+            [SampleConstraint("kphi", 0.0)],
+            computed=["komega", "kappa", "ttheta"],
+        ),
+        "fixed_omega": ConstraintSet(
+            [SampleConstraint("omega", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "fixed_chi": ConstraintSet(
+            [SampleConstraint("chi", 90.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "fixed_phi": ConstraintSet(
+            [SampleConstraint("phi", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "fixed_psi": ConstraintSet(
+            [ReferenceConstraint("psi", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
+        "double_diffraction": ConstraintSet(
+            [],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+            extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
+        ),
+    }
+    return AdHocDiffractometer(
+        name="kappa4cv",
+        stages=stages,
+        basis=basis,
+        description=(
+            f"Four-circle kappa diffractometer, vertical scattering plane "
+            f"(synchrotron). Kappa alpha = {alpha_deg} deg."
+        ),
+        kappa_alpha_deg=alpha_deg,
+        kappa_pseudo_angle_convention=convention,
+        modes=modes,
+        default_mode="bisecting",
+    )
+
+
 # ---------------------------------------------------------------------------
 # Equivalence checker
 # ---------------------------------------------------------------------------
@@ -391,6 +466,27 @@ def _assert_geometries_equivalent(
             ), f"mode {mname!r} extras[{ek!r}] differs"
     # default mode
     assert declarative.mode_name == reference.mode_name
+    # Kappa attributes (None for non-kappa geometries; populated for kappa)
+    assert declarative.kappa_alpha_deg == reference.kappa_alpha_deg, (
+        "kappa_alpha_deg differs"
+    )
+    decl_conv = declarative.kappa_pseudo_angle_convention
+    ref_conv = reference.kappa_pseudo_angle_convention
+    if ref_conv is None:
+        assert decl_conv is None, (
+            "reference has no kappa_pseudo_angle_convention but declarative does"
+        )
+    else:
+        assert decl_conv is not None, (
+            "reference has a kappa_pseudo_angle_convention but declarative does not"
+        )
+        for axis_name in ("n_komega", "n_kappa", "n_kphi", "n_chi_eq"):
+            np.testing.assert_allclose(
+                getattr(decl_conv, axis_name),
+                getattr(ref_conv, axis_name),
+                atol=1e-12,
+                err_msg=f"kappa_pseudo_angle_convention.{axis_name} differs",
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -404,6 +500,7 @@ def _assert_geometries_equivalent(
         pytest.param("fourcv", _reference_fourcv, id="fourcv"),
         pytest.param("fourch", _reference_fourch, id="fourch"),
         pytest.param("psic", _reference_psic, id="psic"),
+        pytest.param("kappa4cv", _reference_kappa4cv, id="kappa4cv"),
     ],
 )
 def test_declarative_matches_reference(geom_name, reference_factory):
@@ -419,6 +516,7 @@ def test_declarative_matches_reference(geom_name, reference_factory):
         pytest.param("fourcv", id="fourcv"),
         pytest.param("fourch", id="fourch"),
         pytest.param("psic", id="psic"),
+        pytest.param("kappa4cv", id="kappa4cv"),
     ],
 )
 def test_declarative_basis_override_round_trips(geom_name):
@@ -436,3 +534,29 @@ def test_declarative_basis_override_round_trips(geom_name):
     g_override = ahd.make_geometry(geom_name, basis=other)
     for k in ("vertical", "longitudinal", "transverse"):
         np.testing.assert_array_equal(g_override.basis[k], other[k])
+
+
+# ---------------------------------------------------------------------------
+# Kappa-specific overrides
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "geom_name, reference_factory",
+    [
+        pytest.param("kappa4cv", _reference_kappa4cv, id="kappa4cv"),
+    ],
+)
+@pytest.mark.parametrize(
+    "alpha_deg",
+    [
+        pytest.param(30.0, id="alpha-30"),
+        pytest.param(50.0, id="alpha-50-default"),
+        pytest.param(67.5, id="alpha-67.5"),
+    ],
+)
+def test_declarative_alpha_deg_override(geom_name, reference_factory, alpha_deg):
+    """The kappa tilt angle override flows through the loader correctly."""
+    declarative = ahd.make_geometry(geom_name, alpha_deg=alpha_deg)
+    reference = reference_factory(alpha_deg=alpha_deg)
+    _assert_geometries_equivalent(declarative, reference)

@@ -172,7 +172,7 @@ Currently the only recognized key is:
 | `alpha_deg` | float | Kappa tilt angle (degrees); used by `kappa_eulerian` axis specs |
 
 When `parameters.alpha_deg` is declared, the loader also requires
-{ref}`decl-kappa-chi-eq` and synthesises a
+{ref}`decl-kappa-chi-eq` and synthesizes a
 {class}`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention` from
 the stages named `komega`, `kappa`, `kphi`.
 
