@@ -136,17 +136,6 @@ Vertical scattering plane (psic-style).
 | **Computed** | komega, kappa, kphi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 
-### `bisecting_horizontal`
-
-{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
-`mu = nu/2`, `komega = 0`, `delta = 0`.
-Horizontal scattering plane.
-
-| | |
-|---|---|
-| **Computed** | mu, kappa, kphi, nu |
-| **Constant during** `forward()` | komega = 0, delta = 0 |
-
 ### `fixed_kphi`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
@@ -178,6 +167,64 @@ Analogous to psic `fixed_nu`.
 | **Computed** | komega, kappa, kphi, delta |
 | **Constant during** `forward()` | nu, mu = 0 |
 
+### `fixed_psi_vertical`
+
+Vertical bisecting with azimuthal angle ψ validation.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+The solver returns bisecting solutions only when the natural ψ for the
+requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
+
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (output)** | psi (computed azimuth) |
+
+### `double_diffraction_vertical`
+
+Full 4D simultaneous solver in the vertical scattering plane: finds motor
+angles where both the primary (h₁,k₁,l₁) and secondary (h₂,k₂,l₂)
+reflections satisfy the Ewald sphere condition.
+
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
+
+### `zone_vertical`
+
+Zone mode (You 1999 §6, SPEC `setmode 5`).  Q is confined to the plane
+spanned by two reciprocal-lattice vectors `z0` and `z1`.  Structurally
+identical to the psic `zone_vertical` mode, with the bisecting condition
+enforced on the **virtual** Eulerian omega pseudoangle (Walko 2016
+eq. [16]) rather than the literal `komega` motor.  Off-plane requests
+return an empty list with a warning.
+
+```python
+g.modes['zone_vertical'].extras['z0'] = (1, 0, 0)
+g.modes['zone_vertical'].extras['z1'] = (0, 1, 0)
+```
+
+| | |
+|---|---|
+| **Computed** | komega, kappa, kphi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Extras (input)** | z0, z1 (Miller-index 3-tuples) |
+| **Extras (output)** | in_plane_residual |
+
+### `bisecting_horizontal`
+
+{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+`mu = nu/2`, `komega = 0`, `delta = 0`.
+Horizontal scattering plane.
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | komega = 0, delta = 0 |
+
 ### `fixed_delta`
 
 {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
@@ -188,6 +235,42 @@ Horizontal plane with delta frozen.
 |---|---|
 | **Computed** | mu, kappa, kphi, nu |
 | **Constant during** `forward()` | delta, komega = 0 |
+
+### `fixed_psi_horizontal`
+
+Horizontal bisecting with azimuthal angle ψ validation.
+Symmetric with `fixed_psi_vertical` in the horizontal plane.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | komega = 0, delta = 0 |
+| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (output)** | psi (computed azimuth) |
+
+### `double_diffraction_horizontal`
+
+Full 4D simultaneous solver in the horizontal scattering plane.
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | komega = 0, delta = 0 |
+| **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
+
+### `zone_horizontal`
+
+Horizontal-plane analog of `zone_vertical`.  Locks `komega = 0`,
+`delta = 0`; the bisecting condition `mu = nu/2` together with the
+kappa motor pair solves any in-plane (h, k, l).
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | komega = 0, delta = 0 |
+| **Extras (input)** | z0, z1 (Miller-index 3-tuples) |
+| **Extras (output)** | in_plane_residual |
 
 ### `lifting_detector_mu`
 
@@ -211,54 +294,43 @@ constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
 | **Computed** | kphi, nu, delta |
 | **Constant during** `forward()` | kphi = 0, mu = 0 |
 
-### `fixed_psi_vertical`
+## Mode cross-reference
 
-Vertical bisecting with azimuthal angle ψ validation.
-Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
-The solver returns bisecting solutions only when the natural ψ for the
-requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
+Each `kappa6c` mode mapped to its equivalent psic mode (the kappa6c
+geometry shares the psic outer-axis ordering), the closest analog in
+SPEC's `kappa6c` macros, and the Hkl/Soleil `K6C` `hkl` engine.  Modes
+are grouped by scattering plane: vertical first, then horizontal, then
+the out-of-plane lifting-detector family.
 
-| | |
-|---|---|
-| **Computed** | komega, kappa, kphi, delta |
-| **Constant during** `forward()` | mu = 0, nu = 0 |
-| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
-| **Extras (output)** | psi (computed azimuth) |
+| mode | psic equivalent | SPEC `kappa6c` | Hkl/Soleil K6C |
+|---|---|---|---|
+| `bisecting_vertical` | `bisecting_vertical` | `(2,0,5,0,0)` | `bissector_vertical` |
+| `fixed_kphi` | `fixed_phi_vertical` | `(2,0,4,2,0)` | `constant_phi_vertical` |
+| `fixed_mu` | — | `(2,0,5,2,0)` | — |
+| `fixed_nu` | — | `(2,0,5,2,0)` | — |
+| `fixed_psi_vertical` | `fixed_psi_vertical` | `(2,4,5,0,0)` | `psi_constant_vertical` |
+| `double_diffraction_vertical` | `double_diffraction_vertical` | — | `double_diffraction_vertical` |
+| `zone_vertical` | `zone_vertical` | `setmode 5` | (TODO `HklEngine "zone"`) |
+| `bisecting_horizontal` | `bisecting_horizontal` | `(1,0,6,0,0)` | `bissector_horizontal` |
+| `fixed_delta` | — | `(1,0,6,2,0)` | — |
+| `fixed_psi_horizontal` | `fixed_psi_horizontal` | `(1,4,6,0,0)` | `psi_constant_horizontal` |
+| `double_diffraction_horizontal` | `double_diffraction_horizontal` | — | `double_diffraction_horizontal` |
+| `zone_horizontal` | `zone_horizontal` | `setmode 5` | (TODO `HklEngine "zone"`) |
+| `lifting_detector_mu` | `lifting_detector_mu` | `(3,0,1,2,0)` | `lifting_detector_mu` |
+| `lifting_detector_kphi` | `lifting_detector_phi` | `(3,0,4,2,0)` | `lifting_detector_kphi` |
 
-### `fixed_psi_horizontal`
+The SPEC tuple is `(g_mode1, g_mode2, g_mode3, g_mode4, g_mode5)`,
+where `g_mode1` selects the scattering plane (1 = horizontal,
+2 = vertical, 3 = qaz/lifting-detector), `g_mode2` selects an optional
+reference-angle constraint (0 = none, 4 = ψ-fixed), and
+`g_mode3`–`g_mode5` fix specific motor angles.
 
-Horizontal bisecting with azimuthal angle ψ validation.
-Symmetric with `fixed_psi_vertical` in the horizontal plane.
-Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+—: no documented analog exists in that package.
 
-| | |
-|---|---|
-| **Computed** | mu, kappa, kphi, nu |
-| **Constant during** `forward()` | komega = 0, delta = 0 |
-| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
-| **Extras (output)** | psi (computed azimuth) |
-
-### `double_diffraction_vertical`
-
-Full 4D simultaneous solver in the vertical scattering plane: finds motor
-angles where both the primary (h₁,k₁,l₁) and secondary (h₂,k₂,l₂)
-reflections satisfy the Ewald sphere condition.
-
-| | |
-|---|---|
-| **Computed** | komega, kappa, kphi, delta |
-| **Constant during** `forward()` | mu = 0, nu = 0 |
-| **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
-
-### `double_diffraction_horizontal`
-
-Full 4D simultaneous solver in the horizontal scattering plane.
-
-| | |
-|---|---|
-| **Computed** | mu, kappa, kphi, nu |
-| **Constant during** `forward()` | komega = 0, delta = 0 |
-| **Extras (input)** | h₂, k₂, l₂ (secondary reflection Miller indices) |
+References:
+[SPEC `kappa6c` macros](https://certif.com/spec_help/kappa6c.html);
+[Hkl/Soleil K6C](https://people.debian.org/~picca/hkl/hkl.html);
+[Hkl source](https://repo.or.cz/hkl.git).
 
 ## API reference
 

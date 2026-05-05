@@ -1383,6 +1383,8 @@ _PSIC_MODES_ALL = {
     "fixed_alpha_i_horizontal",
     "fixed_beta_out_horizontal",
     "alpha_eq_beta_horizontal",
+    "zone_vertical",
+    "zone_horizontal",
 }
 
 _PSIC_MODES_IMPLEMENTED = {
@@ -1396,6 +1398,8 @@ _PSIC_MODES_IMPLEMENTED = {
     "double_diffraction_horizontal",
     "lifting_detector_mu",
     "lifting_detector_phi",
+    "zone_vertical",
+    "zone_horizontal",
 }
 
 _PSIC_MODES_STUBS = _PSIC_MODES_ALL - _PSIC_MODES_IMPLEMENTED
