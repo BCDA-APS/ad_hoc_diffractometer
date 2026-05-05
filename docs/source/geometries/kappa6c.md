@@ -136,17 +136,6 @@ Vertical scattering plane (psic-style).
 | **Computed** | komega, kappa, kphi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 
-### `bisecting_horizontal`
-
-{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
-`mu = nu/2`, `komega = 0`, `delta = 0`.
-Horizontal scattering plane.
-
-| | |
-|---|---|
-| **Computed** | mu, kappa, kphi, nu |
-| **Constant during** `forward()` | komega = 0, delta = 0 |
-
 ### `fixed_kphi`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
@@ -178,39 +167,6 @@ Analogous to psic `fixed_nu`.
 | **Computed** | komega, kappa, kphi, delta |
 | **Constant during** `forward()` | nu, mu = 0 |
 
-### `fixed_delta`
-
-{class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
-`delta` held at declared value (default 0°), `mu = nu/2`, `komega = 0`.
-Horizontal plane with delta frozen.
-
-| | |
-|---|---|
-| **Computed** | mu, kappa, kphi, nu |
-| **Constant during** `forward()` | delta, komega = 0 |
-
-### `lifting_detector_mu`
-
-Out-of-plane mode: mu and komega frozen, nu and delta solved via the qaz
-constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
-``qaz = 90°`` constrains the scattering to the vertical plane.
-
-| | |
-|---|---|
-| **Computed** | mu, nu, delta |
-| **Constant during** `forward()` | mu = 0, komega = 0 |
-
-### `lifting_detector_kphi`
-
-Out-of-plane mode: kphi and mu frozen, nu and delta solved via the qaz
-constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
-``qaz = 90°`` constrains the scattering to the vertical plane.
-
-| | |
-|---|---|
-| **Computed** | kphi, nu, delta |
-| **Constant during** `forward()` | kphi = 0, mu = 0 |
-
 ### `fixed_psi_vertical`
 
 Vertical bisecting with azimuthal angle ψ validation.
@@ -222,19 +178,6 @@ requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
 |---|---|
 | **Computed** | komega, kappa, kphi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
-| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
-| **Extras (output)** | psi (computed azimuth) |
-
-### `fixed_psi_horizontal`
-
-Horizontal bisecting with azimuthal angle ψ validation.
-Symmetric with `fixed_psi_vertical` in the horizontal plane.
-Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
-
-| | |
-|---|---|
-| **Computed** | mu, kappa, kphi, nu |
-| **Constant during** `forward()` | komega = 0, delta = 0 |
 | **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
 | **Extras (output)** | psi (computed azimuth) |
 
@@ -271,6 +214,41 @@ g.modes['zone_vertical'].extras['z1'] = (0, 1, 0)
 | **Extras (input)** | z0, z1 (Miller-index 3-tuples) |
 | **Extras (output)** | in_plane_residual |
 
+### `bisecting_horizontal`
+
+{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
+`mu = nu/2`, `komega = 0`, `delta = 0`.
+Horizontal scattering plane.
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | komega = 0, delta = 0 |
+
+### `fixed_delta`
+
+{class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
+`delta` held at declared value (default 0°), `mu = nu/2`, `komega = 0`.
+Horizontal plane with delta frozen.
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | delta, komega = 0 |
+
+### `fixed_psi_horizontal`
+
+Horizontal bisecting with azimuthal angle ψ validation.
+Symmetric with `fixed_psi_vertical` in the horizontal plane.
+Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | mu, kappa, kphi, nu |
+| **Constant during** `forward()` | komega = 0, delta = 0 |
+| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (output)** | psi (computed azimuth) |
+
 ### `double_diffraction_horizontal`
 
 Full 4D simultaneous solver in the horizontal scattering plane.
@@ -293,6 +271,28 @@ kappa motor pair solves any in-plane (h, k, l).
 | **Constant during** `forward()` | komega = 0, delta = 0 |
 | **Extras (input)** | z0, z1 (Miller-index 3-tuples) |
 | **Extras (output)** | in_plane_residual |
+
+### `lifting_detector_mu`
+
+Out-of-plane mode: mu and komega frozen, nu and delta solved via the qaz
+constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
+``qaz = 90°`` constrains the scattering to the vertical plane.
+
+| | |
+|---|---|
+| **Computed** | mu, nu, delta |
+| **Constant during** `forward()` | mu = 0, komega = 0 |
+
+### `lifting_detector_kphi`
+
+Out-of-plane mode: kphi and mu frozen, nu and delta solved via the qaz
+constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
+``qaz = 90°`` constrains the scattering to the vertical plane.
+
+| | |
+|---|---|
+| **Computed** | kphi, nu, delta |
+| **Constant during** `forward()` | kphi = 0, mu = 0 |
 
 ## Mode cross-reference
 
@@ -324,9 +324,11 @@ where `g_mode1` selects the scattering plane (1 = horizontal,
 2 = vertical, 3 = qaz/lifting-detector), `g_mode2` selects an optional
 reference-angle constraint (0 = none, 4 = ψ-fixed), and
 `g_mode3`–`g_mode5` fix specific motor angles. A dash (—) means no
-documented analogue exists in that package; SPEC's not-working modes
-(see the dagger note on the psic page) do not affect any mode listed
-here. References:
+documented analogue exists in that package; none of the kappa6c modes
+listed here trigger SPEC's not-working set (see the dagger note on the
+psic page).
+
+References:
 [SPEC `kappa6c` macros](https://certif.com/spec_help/kappa6c.html);
 [Hkl/Soleil K6C](https://people.debian.org/~picca/hkl/hkl.html);
 [Hkl source](https://repo.or.cz/hkl.git).

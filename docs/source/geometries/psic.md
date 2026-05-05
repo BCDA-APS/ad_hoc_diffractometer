@@ -373,11 +373,15 @@ where `g_mode1` selects the scattering plane (1 = horizontal,
 reference-angle constraint (0 = none, 1 = α=β, 2 = α-fixed,
 3 = β-fixed, 4 = ψ-fixed), and `g_mode3`–`g_mode5` fix specific motor
 angles. A dash (—) means no documented analogue exists in that
-package. The dagger (†) marks SPEC mode tuples that the SPEC
-documentation lists as currently not working (the eta-fixed + chi-fixed
-and eta-fixed + phi-fixed combinations under `setmode d1 0 s1 s2`); the
+package.
+
+†: SPEC mode tuples flagged here are listed by the SPEC documentation
+as currently not working (the eta-fixed + chi-fixed and eta-fixed +
+phi-fixed combinations under `setmode d1 0 s1 s2`); the
 `ad_hoc_diffractometer` implementation of these modes is independent of
-SPEC and works as documented above. References:
+SPEC and works as documented above.
+
+References:
 [SPEC `psic` macros](https://certif.com/spec_help/psic.html);
 [Hkl/Soleil E6C](https://people.debian.org/~picca/hkl/hkl.html);
 [Hkl source](https://repo.or.cz/hkl.git).
