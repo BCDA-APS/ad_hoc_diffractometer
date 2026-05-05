@@ -81,7 +81,7 @@ Diffraction mode
    which are coupled to other stages.  Implemented as a
    {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; a few specialised
    modes (double-diffraction, zone) are dispatched by their
-   :attr:`~ad_hoc_diffractometer.mode.ConstraintSet.extras` schema rather
+   {attr}`~ad_hoc_diffractometer.mode.ConstraintSet.extras` schema rather
    than by their constraint composition.  See {doc}`howto/modes`.
 
 Double diffraction
@@ -90,7 +90,7 @@ Double diffraction
    simultaneously satisfy the Ewald sphere condition.  Useful for
    measuring multi-beam interference effects.  The secondary reflection
    is supplied through the mode
-   :attr:`~ad_hoc_diffractometer.mode.ConstraintSet.extras` dict
+   {attr}`~ad_hoc_diffractometer.mode.ConstraintSet.extras` dict
    (``h2``, ``k2``, ``l2``).  Available on psic and kappa6c as
    ``double_diffraction_vertical`` and ``double_diffraction_horizontal``;
    on the four-circle geometries simply as ``double_diffraction``.
@@ -111,7 +111,7 @@ Extras
    must supply (a secondary reflection for double diffraction, the
    reciprocal-lattice vectors that span a zone plane, a surface normal
    for surface modes) are pre-populated with the
-   :data:`~ad_hoc_diffractometer.mode.REQUIRED` sentinel; outputs that
+   {data}`~ad_hoc_diffractometer.mode.REQUIRED` sentinel; outputs that
    the solver writes back (computed ψ, in-plane residual, etc.) are
    pre-populated with ``None``.  Stored as
    {attr}`ConstraintSet.extras <ad_hoc_diffractometer.mode.ConstraintSet>`.
