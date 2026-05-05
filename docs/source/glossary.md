@@ -5,6 +5,16 @@ Key terms used throughout `ad_hoc_diffractometer`, in alphabetical order.
 
 ```{glossary}
 
+Azimuth
+   An angle measured around a chosen reference axis, in the plane
+   perpendicular to that axis.  In `ad_hoc_diffractometer` the relevant
+   azimuth angles are **ψ** (rotation of a reference vector around **Q**;
+   see *ψ angle*) and **qaz**/**naz** (lab-frame azimuth of **Q** or of the
+   surface normal in the plane spanned by the vertical and transverse
+   axes; You 1999, eq. 18).  See
+   {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint` and
+   {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`.
+
 B matrix
    The matrix that encodes the reciprocal lattice and maps Miller indices
    **h** = (h, k, l)ᵀ to the scattering vector in Cartesian crystal-frame
@@ -13,11 +23,51 @@ B matrix
    See {class}`~ad_hoc_diffractometer.lattice.Lattice` and
    {doc}`direct-lattice`.
 
+Basis
+   The three-vector dictionary that maps the physical direction names
+   ``"vertical"``, ``"longitudinal"``, ``"transverse"`` to Cartesian unit
+   vectors.  Each preset geometry carries a basis attribute; the package
+   ships two standard choices,
+   {data}`~ad_hoc_diffractometer.factories.BASIS_YOU` (You 1999:
+   vertical=+x, longitudinal=+y, transverse=+z) and
+   {data}`~ad_hoc_diffractometer.factories.BASIS_BL` (Busing & Levy
+   1967: transverse=+x, longitudinal=+y, vertical=+z).  Switching the
+   basis re-expresses every stage axis in a different lab frame without
+   changing the physics; see {doc}`problem2` for the basis-invariance
+   case study.
+
 Bisecting condition
-   A diffraction mode constraint in which the sample stage angle equals half
-   the detector angle (ω = 2θ/2, or equivalently η = δ/2 for psic).  Places
-   the sample symmetrically between the incident and diffracted beams.
-   See {class}`~ad_hoc_diffractometer.mode.BisectingMode`.
+   A diffraction-mode constraint in which a sample stage angle is driven
+   to half the detector angle (e.g. ``omega = ttheta/2`` for fourcv,
+   ``eta = delta/2`` for psic).  This places the sample symmetrically
+   between the incident and diffracted beams.  Encoded as a
+   {class}`~ad_hoc_diffractometer.mode.BisectConstraint`; on kappa
+   geometries the physically correct version is the
+   {class}`~ad_hoc_diffractometer.mode.VirtualBisectConstraint`, which
+   bisects on the *virtual* Eulerian omega pseudoangle rather than the
+   literal kappa motor.
+
+Constraint
+   An equation that fixes one of the geometry's free degrees of freedom
+   during a forward calculation.  Four kinds are recognised:
+   {class}`~ad_hoc_diffractometer.mode.SampleConstraint` (fix one sample
+   angle), {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` (fix
+   one detector angle, including the special ``"qaz"`` pseudo-angle),
+   {class}`~ad_hoc_diffractometer.mode.BisectConstraint` (relate one
+   sample stage to one detector stage), and
+   {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint` (constrain a
+   pseudo-angle between **Q** and an external reference vector).  A
+   {class}`~ad_hoc_diffractometer.mode.ConstraintSet` is a fully-defined
+   collection that resolves N − 3 free angles for an N-stage geometry.
+   See {doc}`howto/constraints`.
+
+Cut point
+   A SPEC #G4 convention that selects the canonical 360°-window of an
+   angle solution.  A cut-point ``C`` for stage X means returned values
+   for that stage lie in ``[C, C + 360°)``.  Cut-points may be set
+   per-geometry on the diffractometer or per-mode on a
+   {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; mode-level
+   cut-points override geometry-level cut-points when both are present.
 
 d-spacing
    The interplanar spacing d_{hkl} for the reflection (h, k, l), related to
@@ -28,8 +78,22 @@ Diffraction mode
    A named set of constraints that describes how
    {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`
    computes motor angles: which stages are free, which are held fixed, and
-   which are coupled to other stages.
-   See {class}`~ad_hoc_diffractometer.mode.DiffractionMode` and {doc}`howto/modes`.
+   which are coupled to other stages.  Implemented as a
+   {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; a few specialised
+   modes (double-diffraction, zone) are dispatched by their
+   {attr}`~ad_hoc_diffractometer.mode.ConstraintSet.extras` schema rather
+   than by their constraint composition.  See {doc}`howto/modes`.
+
+Double diffraction
+   A diffraction mode that solves for motor angles at which a primary
+   reflection (h₁, k₁, l₁) and a secondary reflection (h₂, k₂, l₂)
+   simultaneously satisfy the Ewald sphere condition.  Useful for
+   measuring multi-beam interference effects.  The secondary reflection
+   is supplied through the mode
+   {attr}`~ad_hoc_diffractometer.mode.ConstraintSet.extras` dict
+   (``h2``, ``k2``, ``l2``).  Available on psic and kappa6c as
+   ``double_diffraction_vertical`` and ``double_diffraction_horizontal``;
+   on the four-circle geometries simply as ``double_diffraction``.
 
 Eulerian cradle
    An Eulerian cradle is a mechanical device used to hold and rotate objects
@@ -40,6 +104,17 @@ Eulerian cradle
    ring can rotate independently around a different axis (typically the x, y,
    and z axes). This allows an object mounted at the center to be oriented in
    any direction without mechanical singularities or constraints.
+
+Extras
+   The mode-attached dictionary of additional inputs and outputs needed
+   beyond (h, k, l) for a forward calculation.  Inputs that the caller
+   must supply (a secondary reflection for double diffraction, the
+   reciprocal-lattice vectors that span a zone plane, a surface normal
+   for surface modes) are pre-populated with the
+   {data}`~ad_hoc_diffractometer.mode.REQUIRED` sentinel; outputs that
+   the solver writes back (computed ψ, in-plane residual, etc.) are
+   pre-populated with ``None``.  Stored as
+   {attr}`ConstraintSet.extras <ad_hoc_diffractometer.mode.ConstraintSet>`.
 
 Forward problem
    Given Miller indices (h, k, l) and a UB matrix, find the motor angles
@@ -107,8 +182,17 @@ Stack
    stage to the innermost.
 
 Two-theta
-   The total scattering angle 2θ between the incident and diffracted beams,
-   related to d-spacing and wavelength by Bragg's law: 2d sin θ = λ.
+   The total scattering angle 2θ between the incident and diffracted
+   beams, related to d-spacing and wavelength by Bragg's law:
+   2 d sin θ = λ.  In simple geometries the detector arm rotates by 2θ
+   directly, and the corresponding stage carries that name (``ttheta``
+   on fourcv, fourch, kappa4cv, kappa4ch, fivec).  In multi-detector-
+   axis geometries the detector position is a compound of two motors
+   and 2θ is *computed* rather than directly motorised — for example
+   psic, sixc, and kappa6c reach the angle ``2θ`` via the (nu, delta)
+   pair (You 1999, eq. 17), and zaxis via (gamma, delta, alpha)
+   (Walko 2016, eq. 17).  ``2θ`` itself is geometry-independent; the
+   *stage name* that holds it (or computes to it) is not.
 
 U matrix
    The orthonormal orientation matrix that relates the Cartesian crystal
@@ -131,6 +215,30 @@ Vertical / horizontal scattering plane
    rotates about the transverse (horizontal) axis; typical for synchrotrons.
    *Horizontal* — the scattering plane is horizontal, two-theta rotates
    about the vertical axis; typical for laboratory instruments.
+
+Zone (crystallographic)
+   A set of crystal lattice planes that all share a common direction
+   in direct space — the **zone axis** ``[u v w]``.  Equivalently, in
+   reciprocal space, a set of reflections whose scattering vectors
+   (the plane normals **g** = h **a*** + k **b*** + l **c***) are all
+   perpendicular to that zone axis and therefore lie in a single
+   plane — the *zone plane* — that passes through the reciprocal
+   origin.  Any two non-parallel reciprocal-lattice vectors ``z0``
+   and ``z1`` in the zone plane span it and uniquely identify the
+   zone, and the *Weiss zone law* ``h u + k v + l w = 0``
+   characterises membership in terms of the zone-axis indices.
+
+Zone (mode)
+   A diffraction mode (You 1999, §6; SPEC ``setmode 5``) named after
+   the crystallographic zone above: the scattering vector **Q** is
+   confined to the plane spanned by two reciprocal-lattice vectors
+   ``z0`` and ``z1`` supplied through the mode
+   {term}`extras <Extras>` dict.  A ``forward(h, k, l)`` call on a
+   zone mode verifies that the requested **Q** lies in that plane and
+   returns bisecting solutions; off-plane requests yield an empty
+   list with a warning.  Available on psic and kappa6c as
+   ``zone_vertical`` and ``zone_horizontal``; see the per-geometry
+   pages for usage.
 
 ψ (psi) angle
    Two definitions appear in the literature:

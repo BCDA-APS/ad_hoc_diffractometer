@@ -290,22 +290,44 @@ HTML as literal text.  Common failure modes:
    ``&lt;span class="pre"&gt;:`` patterns that would indicate role
    markup leaking into the HTML.
 
-**Quick check** (from the repository root after rebuilding the docs):
+**Quick check** (from the repository root after rebuilding the docs).
+Run **both** patterns — they catch different leak shapes:
 
 ```bash
-# Look for any RST role syntax that has leaked into rendered HTML.
-# Excludes docs/build/html/_modules/ (sphinx.ext.viewcode pages
-# display source code verbatim, so role markup there is expected).
-# Lists offending files when leaks exist; prints the OK line otherwise.
-grep -rE ':(attr|func|class|meth|mod|doc|ref|obj|data|exc):`' \
+# Pattern 1: literal :role:`...` (RST role text passed straight through).
+# Catches leaks in .rst files and in MyST contexts where backticks were
+# preserved verbatim.  Excludes docs/build/html/_modules/ (sphinx.ext.viewcode
+# pages display source code verbatim, so role markup there is expected).
+grep -rE ':(attr|func|class|meth|mod|doc|ref|obj|data|exc|term):`' \
      docs/build/html/ --include='*.html' \
      --exclude-dir=_modules \
-  && echo "FAIL: leaked RST roles found above." \
-  || echo "OK: no leaked RST roles in rendered HTML."
+     --exclude-dir=_static \
+  && echo "FAIL: literal RST role leak — see above." \
+  || echo "OK: no literal RST role leaks."
+
+# Pattern 2: bare :role: prefix that survived even when MyST rewrote the
+# backticked content into <code>.  This is the failure mode when an RST
+# role (e.g. :attr:`~mod.Class.member`) appears in a MyST/Markdown file —
+# the MyST parser strips the backticks but leaves the role prefix as
+# literal text in front of an inline-code element.  Filter out legitimate
+# href/title attributes and proper xref/reference link bodies; what
+# remains is leaked role-prefix text.
+grep -rhE ':(attr|func|class|meth|mod|doc|ref|obj|data|exc|term):' \
+     docs/build/html/ --include='*.html' \
+     --exclude-dir=_modules \
+     --exclude-dir=_static \
+  | grep -vE 'href=|title=|<title>|class="reference|class="xref' \
+  | grep -E ':(attr|func|class|meth|mod|doc|ref|obj|data|exc|term):' \
+  | head -10
+# (above prints any leak lines; empty output = OK.)
 ```
 
 This check belongs alongside the test suite in any pre-PR checklist
 that involves documentation work.
+
+In MyST/Markdown files use the brace form ``{role}\`target\``` (for
+example ``{attr}`~mod.Class.member```) — never the colon form, which
+is silently passed through as literal text.
 
 ---
 
