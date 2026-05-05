@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=54942d0d"></script>
+    <script src="../_static/documentation_options.js?v=8ca61b82"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-04 22:14 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 09:57 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -598,7 +598,7 @@ property returns the current 3×3 matrix.  The default is the identity
 <h2>How inclination affects calculations<a class="headerlink" href="#how-inclination-affects-calculations" title="Link to this heading">#</a></h2>
 <p>The inclination matrix <strong>R</strong> modifies the effective incident-beam
 direction.  Instead of using the longitudinal basis vector <strong>ŷ</strong>
-directly, the calculation uses <strong>R</strong>\ :sup:<code class="docutils literal notranslate"><span class="pre">T</span></code> <strong>ŷ</strong> as the beam
+directly, the calculation uses <span class="math notranslate nohighlight">\(R^{T}\,\hat{y}\)</span> as the beam
 direction:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -648,7 +648,7 @@ longitudinal axis.</p>
 <p>The inclination matrix must be a <strong>proper rotation</strong>:</p>
 <ul class="simple">
 <li><p>Shape (3, 3)</p></li>
-<li><p>Orthonormal: <em>R</em>\ :sup:<code class="docutils literal notranslate"><span class="pre">T</span></code> <em>R</em> = <em>I</em>  (within 10\ :sup:<code class="docutils literal notranslate"><span class="pre">-8</span></code>)</p></li>
+<li><p>Orthonormal: <span class="math notranslate nohighlight">\(R^{T} R = I\)</span> (within <span class="math notranslate nohighlight">\(10^{-8}\)</span>)</p></li>
 <li><p>det(<em>R</em>) = +1  (no reflections)</p></li>
 </ul>
 <p>Assigning an invalid matrix raises <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>:</p>
@@ -788,7 +788,7 @@ general-inclination geometries</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-04 22:14 CDT.
+  Last updated on 2026-05-05 09:57 CDT.
   <br/>
 </p></div>
       
