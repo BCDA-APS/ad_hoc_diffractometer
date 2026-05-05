@@ -76,6 +76,22 @@ mode
    returned (SPEC #G4 convention).  They are stored on :class:`ConstraintSet`
    and applied by the forward solver.
 
+   A few specialised modes are dispatched not by their constraint composition
+   but by the keys present in :attr:`ConstraintSet.extras`:
+
+   - **double_diffraction** modes carry ``h2``, ``k2``, ``l2`` extras and are
+     routed to a 4-DOF simultaneous Bragg solver.
+   - **zone** modes (You 1999 §6, SPEC ``setmode 5``) carry ``z0`` and ``z1``
+     extras (each a Miller-index 3-tuple) and confine the scattering vector
+     Q to the plane spanned by ``UB @ z0`` and ``UB @ z1``.  The solver
+     validates that the requested (h, k, l) lies in the plane and then
+     returns the bisecting solutions; off-plane requests yield an empty
+     list with a warning.
+
+   This extras-driven dispatch keeps the constraint taxonomy small while
+   allowing modes whose distinguishing input is a parameter (a secondary
+   reflection or a zone plane) rather than a fixed motor angle.
+
    The DOF rule is geometry-dependent:
 
    - 4-circle (N=4): 1 constraint needed

@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=7ee10cc2"></script>
+    <script src="../../_static/documentation_options.js?v=3f16f5ed"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 11:42 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 14:27 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -940,6 +940,13 @@
     <span class="c1"># BisectConstraint but use a 4D solver instead of plain bisecting.</span>
     <span class="k">if</span> <span class="n">_is_double_diffraction_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_solve_double_diffraction</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+    <span class="c1"># Zone mode (You 1999 §6, SPEC `setmode 5`):  Q is confined to the</span>
+    <span class="c1"># plane spanned by two reciprocal-lattice vectors z0, z1.  Like</span>
+    <span class="c1"># double_diffraction, this is dispatched by extras keys, not by a</span>
+    <span class="c1"># dedicated constraint type.</span>
+    <span class="k">if</span> <span class="n">_is_zone_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_solve_zone</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">has_bisect</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_solve_bisecting</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
@@ -3113,6 +3120,193 @@
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Zone-mode solver (You 1999 §6, SPEC `setmode 5`)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="_is_zone_mode">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/forward/index.html#ad_hoc_diffractometer.forward._is_zone_mode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_zone_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return True when ``mode.extras`` contains both ``z0`` and ``z1`` keys.</span>
+
+<span class="sd">    Zone modes confine the scattering vector Q to the plane spanned by two</span>
+<span class="sd">    reciprocal-lattice vectors z0 and z1.  Like double-diffraction modes,</span>
+<span class="sd">    zone modes are dispatched by their ``extras`` schema rather than by a</span>
+<span class="sd">    dedicated constraint class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">extras</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">extras</span>
+    <span class="k">return</span> <span class="n">extras</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;z0&quot;</span> <span class="ow">in</span> <span class="n">extras</span> <span class="ow">and</span> <span class="s2">&quot;z1&quot;</span> <span class="ow">in</span> <span class="n">extras</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_solve_zone">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/forward/index.html#ad_hoc_diffractometer.forward._solve_zone">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_zone</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ttheta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Forward solver for zone modes.</span>
+
+<span class="sd">    The zone plane is fixed by two reciprocal-lattice vectors ``z0`` and</span>
+<span class="sd">    ``z1`` supplied via ``mode.extras``.  For a single ``forward(h, k, l)``</span>
+<span class="sd">    call the in-plane condition is a property of the requested (h, k, l)</span>
+<span class="sd">    and the orientation matrix only — it does not constrain the motor</span>
+<span class="sd">    angles directly.  The solver therefore:</span>
+
+<span class="sd">    1. Validates ``z0``, ``z1`` are concrete and non-degenerate.</span>
+<span class="sd">    2. Computes the zone-plane normal in the φ frame:</span>
+<span class="sd">       ``n_zone_phi = (UB @ z0) × (UB @ z1)``.</span>
+<span class="sd">    3. Verifies that the requested ``Q_phi`` lies in the plane.  If not,</span>
+<span class="sd">       returns ``[]`` and emits a warning (matching the soft-failure</span>
+<span class="sd">       pattern adopted for ``fixed_psi`` in #176).</span>
+<span class="sd">    4. Records the in-plane residual in ``mode.extras[&#39;in_plane_residual&#39;]``.</span>
+<span class="sd">    5. Builds a synthetic :class:`~mode.ConstraintSet` that adds a</span>
+<span class="sd">       :class:`~mode.BisectConstraint` (or</span>
+<span class="sd">       :class:`~mode.VirtualBisectConstraint` for kappa6c) so the system</span>
+<span class="sd">       is fully constrained, then delegates to the existing bisecting</span>
+<span class="sd">       solver.  Bisecting is the canonical SPEC-zone &quot;br&quot; position; the</span>
+<span class="sd">       remaining azimuthal DOF can be exercised by a separate scan</span>
+<span class="sd">       function (``cz``/``mz`` macros in SPEC), which is out of scope for</span>
+<span class="sd">       a single ``forward()`` call.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">    Q_phi : numpy.ndarray, shape (3,)</span>
+<span class="sd">        Target scattering vector in the φ frame: ``UB @ (h, k, l)``.</span>
+<span class="sd">    ttheta_deg : float</span>
+<span class="sd">        Two-theta angle from Bragg&#39;s law.</span>
+<span class="sd">    mode : ConstraintSet</span>
+<span class="sd">        Active mode with ``extras[&#39;z0&#39;]``, ``extras[&#39;z1&#39;]`` set.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">        Bisecting solutions filtered for plane membership.  Empty list when</span>
+<span class="sd">        the requested (h, k, l) does not lie in the zone plane.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``z0`` or ``z1`` are still :data:`~mode.REQUIRED` placeholders,</span>
+<span class="sd">        or if they are zero vectors, or if they are parallel (so the plane</span>
+<span class="sd">        normal is undefined).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">REQUIRED</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectConstraint</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">VirtualBisectConstraint</span>
+
+    <span class="n">extras</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">extras</span>
+    <span class="n">z0_raw</span> <span class="o">=</span> <span class="n">extras</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;z0&quot;</span><span class="p">)</span>
+    <span class="n">z1_raw</span> <span class="o">=</span> <span class="n">extras</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;z1&quot;</span><span class="p">)</span>
+
+    <span class="c1"># --- Validate z0/z1 -------------------------------------------------</span>
+    <span class="k">if</span> <span class="n">z0_raw</span> <span class="ow">is</span> <span class="n">REQUIRED</span> <span class="ow">or</span> <span class="n">z1_raw</span> <span class="ow">is</span> <span class="n">REQUIRED</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;zone mode requires z0 and z1 to be set in mode.extras &quot;</span>
+            <span class="s2">&quot;before calling forward(). &quot;</span>
+            <span class="s2">&quot;Set them with e.g. &quot;</span>
+            <span class="s2">&quot;g.modes[&#39;zone_vertical&#39;].extras[&#39;z0&#39;] = (1, 0, 0); &quot;</span>
+            <span class="s2">&quot;g.modes[&#39;zone_vertical&#39;].extras[&#39;z1&#39;] = (0, 1, 0)&quot;</span>
+        <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">z0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z0_raw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">z1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z1_raw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;zone mode: z0 and z1 must each be a 3-element sequence of &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Miller indices; got z0=</span><span class="si">{</span><span class="n">z0_raw</span><span class="si">!r}</span><span class="s2">, z1=</span><span class="si">{</span><span class="n">z1_raw</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+    <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">z0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">or</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">z1</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;zone mode: z0 and z1 must be non-zero reciprocal-lattice vectors; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got z0=</span><span class="si">{</span><span class="n">z0_raw</span><span class="si">!r}</span><span class="s2">, z1=</span><span class="si">{</span><span class="n">z1_raw</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># --- Compute the zone-plane normal in the φ frame -------------------</span>
+    <span class="n">UB</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span>
+    <span class="n">z0_phi</span> <span class="o">=</span> <span class="n">UB</span> <span class="o">@</span> <span class="n">z0</span>
+    <span class="n">z1_phi</span> <span class="o">=</span> <span class="n">UB</span> <span class="o">@</span> <span class="n">z1</span>
+    <span class="n">n_zone_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">z0_phi</span><span class="p">,</span> <span class="n">z1_phi</span><span class="p">)</span>
+    <span class="n">n_zone_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_zone_phi</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">n_zone_norm</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;zone mode: z0 and z1 are parallel (or one is zero) so the &quot;</span>
+            <span class="s2">&quot;zone-plane normal is undefined; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got z0=</span><span class="si">{</span><span class="n">z0_raw</span><span class="si">!r}</span><span class="s2">, z1=</span><span class="si">{</span><span class="n">z1_raw</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">n_zone_hat</span> <span class="o">=</span> <span class="n">n_zone_phi</span> <span class="o">/</span> <span class="n">n_zone_norm</span>
+
+    <span class="c1"># --- Plane-membership prefilter -------------------------------------</span>
+    <span class="n">in_plane_residual</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Q_phi</span><span class="p">,</span> <span class="n">n_zone_hat</span><span class="p">)))</span>
+    <span class="n">extras</span><span class="p">[</span><span class="s2">&quot;in_plane_residual&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">in_plane_residual</span>
+
+    <span class="n">q_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Q_phi</span><span class="p">))</span>
+    <span class="c1"># Tolerance scaled by |Q| so the test is meaningful for both</span>
+    <span class="c1"># short and long reciprocal vectors.</span>
+    <span class="n">tol</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1e-8</span><span class="p">,</span> <span class="mf">1e-6</span> <span class="o">*</span> <span class="n">q_norm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">in_plane_residual</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;zone mode: requested Q (|Q|=</span><span class="si">%.6g</span><span class="s2">) is not in the zone plane &quot;</span>
+            <span class="s2">&quot;defined by z0=</span><span class="si">%s</span><span class="s2">, z1=</span><span class="si">%s</span><span class="s2"> &quot;</span>
+            <span class="s2">&quot;(|Q · n_zone| = </span><span class="si">%.3e</span><span class="s2"> &gt; tolerance </span><span class="si">%.3e</span><span class="s2">); returning no solutions.&quot;</span><span class="p">,</span>
+            <span class="n">q_norm</span><span class="p">,</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">z0_raw</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">z0_raw</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">z0_raw</span><span class="p">,</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">z1_raw</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">z1_raw</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">z1_raw</span><span class="p">,</span>
+            <span class="n">in_plane_residual</span><span class="p">,</span>
+            <span class="n">tol</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># --- Build the synthetic bisecting ConstraintSet --------------------</span>
+    <span class="c1"># Vertical zone modes: bisect = (sample-stage rotating about transverse,</span>
+    <span class="c1">#   detector-stage rotating about transverse) i.e. (eta or komega, delta).</span>
+    <span class="c1"># Horizontal zone modes: bisect = (mu, nu).  ``mu`` is a real motor on</span>
+    <span class="c1">#   both psic and kappa6c, so a literal BisectConstraint suffices.</span>
+    <span class="n">sample_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">}</span>
+    <span class="n">is_vertical</span> <span class="o">=</span> <span class="s2">&quot;nu&quot;</span> <span class="ow">in</span> <span class="p">{</span><span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)}</span>
+    <span class="c1"># ``mode.constraints`` for zone_vertical contains DetectorConstraint(&quot;nu&quot;,0)</span>
+    <span class="c1"># and SampleConstraint(&quot;mu&quot;,0); for zone_horizontal it has</span>
+    <span class="c1"># DetectorConstraint(&quot;delta&quot;,0) and SampleConstraint(&quot;eta&quot;/&quot;komega&quot;,0).</span>
+    <span class="c1"># Distinguish on the detector-side fixed name:</span>
+    <span class="n">det_c</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_constraint</span>
+    <span class="n">is_vertical</span> <span class="o">=</span> <span class="n">det_c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">det_c</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nu&quot;</span>
+
+    <span class="k">if</span> <span class="n">is_vertical</span><span class="p">:</span>
+        <span class="c1"># Vertical: bisect detector &quot;delta&quot; with the sample stage that</span>
+        <span class="c1"># rotates about the same axis (transverse).  On psic that is</span>
+        <span class="c1"># &quot;eta&quot;; on kappa6c true bisecting is on the *virtual* omega.</span>
+        <span class="k">if</span> <span class="s2">&quot;komega&quot;</span> <span class="ow">in</span> <span class="n">sample_names</span> <span class="ow">and</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bisect_cs</span> <span class="o">=</span> <span class="n">VirtualBisectConstraint</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bisect_cs</span> <span class="o">=</span> <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">)</span>
+        <span class="n">synth_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">bisect_cs</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">constraints</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Horizontal: bisect detector &quot;nu&quot; with sample &quot;mu&quot; (a real motor</span>
+        <span class="c1"># on both psic and kappa6c, rotating about the vertical axis).</span>
+        <span class="n">bisect_cs</span> <span class="o">=</span> <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">)</span>
+        <span class="n">synth_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">bisect_cs</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">constraints</span><span class="p">)</span>
+
+    <span class="n">synth_mode</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+        <span class="n">synth_constraints</span><span class="p">,</span>
+        <span class="n">computed</span><span class="o">=</span><span class="n">mode</span><span class="o">.</span><span class="n">computed</span><span class="p">,</span>
+        <span class="n">cut_points</span><span class="o">=</span><span class="n">mode</span><span class="o">.</span><span class="n">cut_points</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># --- Delegate to the existing bisecting solver ----------------------</span>
+    <span class="c1"># ``_solve_bisecting`` itself dispatches to the kappa-virtual solver</span>
+    <span class="c1"># when the BisectConstraint is a VirtualBisectConstraint, so the</span>
+    <span class="c1"># single call covers both psic (literal bisect) and kappa6c (virtual</span>
+    <span class="c1"># bisect) zone modes uniformly.</span>
+    <span class="k">return</span> <span class="n">_solve_bisecting</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">synth_mode</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
 <span class="c1"># Surface diffraction solvers (ReferenceConstraint modes)</span>
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
@@ -3848,7 +4042,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 11:42 CDT.
+  Last updated on 2026-05-05 14:27 CDT.
   <br/>
 </p></div>
       

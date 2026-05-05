@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=7ee10cc2"></script>
+    <script src="../../../_static/documentation_options.js?v=3f16f5ed"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 11:42 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 14:27 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -667,47 +667,53 @@ of Q_phi.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_surface_mode" title="ad_hoc_diffractometer.forward._is_surface_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_surface_mode</span></code></a>(→ bool)</p></td>
 <td><p>Return True when mode has a surface ReferenceConstraint and surface_normal is set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._refine_dd_outer_seeded" title="ad_hoc_diffractometer.forward._refine_dd_outer_seeded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_refine_dd_outer_seeded</span></code></a>(→ dict[str, float] | None)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_zone_mode" title="ad_hoc_diffractometer.forward._is_zone_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_zone_mode</span></code></a>(→ bool)</p></td>
+<td><p>Return True when <code class="docutils literal notranslate"><span class="pre">mode.extras</span></code> contains both <code class="docutils literal notranslate"><span class="pre">z0</span></code> and <code class="docutils literal notranslate"><span class="pre">z1</span></code> keys.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._refine_dd_outer_seeded" title="ad_hoc_diffractometer.forward._refine_dd_outer_seeded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_refine_dd_outer_seeded</span></code></a>(→ dict[str, float] | None)</p></td>
 <td><p>1D Newton refinement on the outer sample angle to satisfy the Ewald</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_bisecting" title="ad_hoc_diffractometer.forward._solve_bisecting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_bisecting</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_bisecting" title="ad_hoc_diffractometer.forward._solve_bisecting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_bisecting</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Bisecting-mode forward solver for ConstraintSet.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_bisecting_analytic" title="ad_hoc_diffractometer.forward._solve_bisecting_analytic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_bisecting_analytic</span></code></a>(→ list[tuple[float, float]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_bisecting_analytic" title="ad_hoc_diffractometer.forward._solve_bisecting_analytic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_bisecting_analytic</span></code></a>(→ list[tuple[float, float]])</p></td>
 <td><p>Analytic solver for bisecting with two free Eulerian angles.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual" title="ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_bisecting_kappa_virtual</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual" title="ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_bisecting_kappa_virtual</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>True virtual bisecting solver for kappa geometries.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_constraint_set" title="ad_hoc_diffractometer.forward._solve_constraint_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_constraint_set</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_constraint_set" title="ad_hoc_diffractometer.forward._solve_constraint_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_constraint_set</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Dispatch to the appropriate analytic or numeric solver based on the</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_double_diffraction" title="ad_hoc_diffractometer.forward._solve_double_diffraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_double_diffraction</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_double_diffraction" title="ad_hoc_diffractometer.forward._solve_double_diffraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_double_diffraction</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Decomposed solver for double-diffraction modes.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_fixed_sample" title="ad_hoc_diffractometer.forward._solve_fixed_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_fixed_sample</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_fixed_sample" title="ad_hoc_diffractometer.forward._solve_fixed_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_fixed_sample</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Fixed-sample-angle solver (no bisect condition).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_kappa_virtual" title="ad_hoc_diffractometer.forward._solve_kappa_virtual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_kappa_virtual</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_kappa_virtual" title="ad_hoc_diffractometer.forward._solve_kappa_virtual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_kappa_virtual</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Kappa virtual-angle dispatcher.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_one_free_angle" title="ad_hoc_diffractometer.forward._solve_one_free_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_one_free_angle</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_one_free_angle" title="ad_hoc_diffractometer.forward._solve_one_free_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_one_free_angle</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Numerically solve for one free stage angle such that</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_one_free_angle_analytic" title="ad_hoc_diffractometer.forward._solve_one_free_angle_analytic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_one_free_angle_analytic</span></code></a>(→ float | None)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_one_free_angle_analytic" title="ad_hoc_diffractometer.forward._solve_one_free_angle_analytic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_one_free_angle_analytic</span></code></a>(→ float | None)</p></td>
 <td><p>Analytic single-<code class="docutils literal notranslate"><span class="pre">atan2</span></code> solver for one free sample-stage rotation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_psi_mode" title="ad_hoc_diffractometer.forward._solve_psi_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_psi_mode</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_psi_mode" title="ad_hoc_diffractometer.forward._solve_psi_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_psi_mode</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Forward solver for psi-constant modes (validation filter).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_qaz_mode" title="ad_hoc_diffractometer.forward._solve_qaz_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_qaz_mode</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_qaz_mode" title="ad_hoc_diffractometer.forward._solve_qaz_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_qaz_mode</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Forward solver for modes with a <code class="docutils literal notranslate"><span class="pre">DetectorConstraint(&quot;qaz&quot;,</span> <span class="pre">value)</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_surface" title="ad_hoc_diffractometer.forward._solve_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_surface</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_surface" title="ad_hoc_diffractometer.forward._solve_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_surface</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Surface diffraction forward solver.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_two_angles" title="ad_hoc_diffractometer.forward._solve_two_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_two_angles</span></code></a>(→ tuple[float, float] | None)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_two_angles" title="ad_hoc_diffractometer.forward._solve_two_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_two_angles</span></code></a>(→ tuple[float, float] | None)</p></td>
 <td><p>Numerically solve for one or two free stage angles such that</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_zone" title="ad_hoc_diffractometer.forward._solve_zone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_zone</span></code></a>(→ list[dict[str, float]])</p></td>
+<td><p>Forward solver for zone modes.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._surface_residual" title="ad_hoc_diffractometer.forward._surface_residual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_surface_residual</span></code></a>(→ float)</p></td>
 <td><p>Compute the surface constraint residual for the given angles.</p></td>
@@ -987,6 +993,19 @@ use the Newton fallback.</p>
 <p>Return True when mode has a surface ReferenceConstraint and surface_normal is set.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code> ReferenceConstraint is NOT a surface mode — it is handled
 by <a class="reference internal" href="#ad_hoc_diffractometer.forward._is_psi_mode" title="ad_hoc_diffractometer.forward._is_psi_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">_is_psi_mode()</span></code></a> / <a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_psi_mode" title="ad_hoc_diffractometer.forward._solve_psi_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_psi_mode()</span></code></a> instead.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._is_zone_mode">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_is_zone_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_is_zone_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._is_zone_mode" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._is_zone_mode</span></code></p>
+</div>
+<p>Return True when <code class="docutils literal notranslate"><span class="pre">mode.extras</span></code> contains both <code class="docutils literal notranslate"><span class="pre">z0</span></code> and <code class="docutils literal notranslate"><span class="pre">z1</span></code> keys.</p>
+<p>Zone modes confine the scattering vector Q to the plane spanned by two
+reciprocal-lattice vectors z0 and z1.  Like double-diffraction modes,
+zone modes are dispatched by their <code class="docutils literal notranslate"><span class="pre">extras</span></code> schema rather than by a
+dedicated constraint class.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1577,6 +1596,59 @@ matrices instead.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._solve_zone">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_solve_zone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttheta_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_solve_zone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._solve_zone" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._solve_zone</span></code></p>
+</div>
+<p>Forward solver for zone modes.</p>
+<p>The zone plane is fixed by two reciprocal-lattice vectors <code class="docutils literal notranslate"><span class="pre">z0</span></code> and
+<code class="docutils literal notranslate"><span class="pre">z1</span></code> supplied via <code class="docutils literal notranslate"><span class="pre">mode.extras</span></code>.  For a single <code class="docutils literal notranslate"><span class="pre">forward(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>
+call the in-plane condition is a property of the requested (h, k, l)
+and the orientation matrix only — it does not constrain the motor
+angles directly.  The solver therefore:</p>
+<ol class="arabic simple">
+<li><p>Validates <code class="docutils literal notranslate"><span class="pre">z0</span></code>, <code class="docutils literal notranslate"><span class="pre">z1</span></code> are concrete and non-degenerate.</p></li>
+<li><p>Computes the zone-plane normal in the φ frame:
+<code class="docutils literal notranslate"><span class="pre">n_zone_phi</span> <span class="pre">=</span> <span class="pre">(UB</span> <span class="pre">&#64;</span> <span class="pre">z0)</span> <span class="pre">×</span> <span class="pre">(UB</span> <span class="pre">&#64;</span> <span class="pre">z1)</span></code>.</p></li>
+<li><p>Verifies that the requested <code class="docutils literal notranslate"><span class="pre">Q_phi</span></code> lies in the plane.  If not,
+returns <code class="docutils literal notranslate"><span class="pre">[]</span></code> and emits a warning (matching the soft-failure
+pattern adopted for <code class="docutils literal notranslate"><span class="pre">fixed_psi</span></code> in #176).</p></li>
+<li><p>Records the in-plane residual in <code class="docutils literal notranslate"><span class="pre">mode.extras['in_plane_residual']</span></code>.</p></li>
+<li><p>Builds a synthetic <code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code> that adds a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code> (or
+<code class="xref py py-class docutils literal notranslate"><span class="pre">VirtualBisectConstraint</span></code> for kappa6c) so the system
+is fully constrained, then delegates to the existing bisecting
+solver.  Bisecting is the canonical SPEC-zone “br” position; the
+remaining azimuthal DOF can be exercised by a separate scan
+function (<code class="docutils literal notranslate"><span class="pre">cz</span></code>/<code class="docutils literal notranslate"><span class="pre">mz</span></code> macros in SPEC), which is out of scope for
+a single <code class="docutils literal notranslate"><span class="pre">forward()</span></code> call.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>)</p></li>
+<li><p><strong>Q_phi</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Target scattering vector in the φ frame: <code class="docutils literal notranslate"><span class="pre">UB</span> <span class="pre">&#64;</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>.</p></li>
+<li><p><strong>ttheta_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Two-theta angle from Bragg’s law.</p></li>
+<li><p><strong>mode</strong> (<a class="reference internal" href="../mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><em>ConstraintSet</em></a>) – Active mode with <code class="docutils literal notranslate"><span class="pre">extras['z0']</span></code>, <code class="docutils literal notranslate"><span class="pre">extras['z1']</span></code> set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Bisecting solutions filtered for plane membership.  Empty list when
+the requested (h, k, l) does not lie in the zone plane.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">z0</span></code> or <code class="docutils literal notranslate"><span class="pre">z1</span></code> are still <code class="xref py py-data docutils literal notranslate"><span class="pre">REQUIRED</span></code> placeholders,
+or if they are zero vectors, or if they are parallel (so the plane
+normal is undefined).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._surface_residual">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_surface_residual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_value</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_surface_residual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._surface_residual" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
@@ -1736,6 +1808,7 @@ for this geometry.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_qaz_mode"><code class="docutils literal notranslate"><span class="pre">_is_qaz_mode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_standard_eulerian_pair"><code class="docutils literal notranslate"><span class="pre">_is_standard_eulerian_pair()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_surface_mode"><code class="docutils literal notranslate"><span class="pre">_is_surface_mode()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_zone_mode"><code class="docutils literal notranslate"><span class="pre">_is_zone_mode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._refine_dd_outer_seeded"><code class="docutils literal notranslate"><span class="pre">_refine_dd_outer_seeded()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_bisecting"><code class="docutils literal notranslate"><span class="pre">_solve_bisecting()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_bisecting_analytic"><code class="docutils literal notranslate"><span class="pre">_solve_bisecting_analytic()</span></code></a></li>
@@ -1750,6 +1823,7 @@ for this geometry.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_qaz_mode"><code class="docutils literal notranslate"><span class="pre">_solve_qaz_mode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_surface"><code class="docutils literal notranslate"><span class="pre">_solve_surface()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_two_angles"><code class="docutils literal notranslate"><span class="pre">_solve_two_angles()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_zone"><code class="docutils literal notranslate"><span class="pre">_solve_zone()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._surface_residual"><code class="docutils literal notranslate"><span class="pre">_surface_residual()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._validate_solutions"><code class="docutils literal notranslate"><span class="pre">_validate_solutions()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward.compute_forward"><code class="docutils literal notranslate"><span class="pre">compute_forward()</span></code></a></li>
@@ -1789,7 +1863,7 @@ for this geometry.</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 11:42 CDT.
+  Last updated on 2026-05-05 14:27 CDT.
   <br/>
 </p></div>
       

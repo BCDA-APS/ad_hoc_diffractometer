@@ -105,6 +105,7 @@ Functions
    ad_hoc_diffractometer.forward._is_qaz_mode
    ad_hoc_diffractometer.forward._is_standard_eulerian_pair
    ad_hoc_diffractometer.forward._is_surface_mode
+   ad_hoc_diffractometer.forward._is_zone_mode
    ad_hoc_diffractometer.forward._refine_dd_outer_seeded
    ad_hoc_diffractometer.forward._solve_bisecting
    ad_hoc_diffractometer.forward._solve_bisecting_analytic
@@ -119,6 +120,7 @@ Functions
    ad_hoc_diffractometer.forward._solve_qaz_mode
    ad_hoc_diffractometer.forward._solve_surface
    ad_hoc_diffractometer.forward._solve_two_angles
+   ad_hoc_diffractometer.forward._solve_zone
    ad_hoc_diffractometer.forward._surface_residual
    ad_hoc_diffractometer.forward._validate_solutions
    ad_hoc_diffractometer.forward.compute_forward
@@ -379,6 +381,21 @@ Module Contents
 
    The ``"psi"`` ReferenceConstraint is NOT a surface mode — it is handled
    by :func:`_is_psi_mode` / :func:`_solve_psi_mode` instead.
+
+
+.. py:function:: _is_zone_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_zone_mode``
+
+
+   Return True when ``mode.extras`` contains both ``z0`` and ``z1`` keys.
+
+   Zone modes confine the scattering vector Q to the plane spanned by two
+   reciprocal-lattice vectors z0 and z1.  Like double-diffraction modes,
+   zone modes are dispatched by their ``extras`` schema rather than by a
+   dedicated constraint class.
 
 
 .. py:function:: _refine_dd_outer_seeded(outer_deg: float, candidate: dict[str, float], chi_hint: float, phi_hint: float, chi_name: str, phi_name: str, solve_inner_seeded_fn, ewald_fn, max_iter: int = 20, h: float = 0.0001) -> dict[str, float] | None
@@ -982,6 +999,55 @@ Module Contents
 
    :returns: **(angle_1, angle_2)** -- When ``_one_dimensional=True``, ``angle_2`` equals ``start_2``.
    :rtype: tuple of float, or None if no convergence.
+
+
+.. py:function:: _solve_zone(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_zone``
+
+
+   Forward solver for zone modes.
+
+   The zone plane is fixed by two reciprocal-lattice vectors ``z0`` and
+   ``z1`` supplied via ``mode.extras``.  For a single ``forward(h, k, l)``
+   call the in-plane condition is a property of the requested (h, k, l)
+   and the orientation matrix only — it does not constrain the motor
+   angles directly.  The solver therefore:
+
+   1. Validates ``z0``, ``z1`` are concrete and non-degenerate.
+   2. Computes the zone-plane normal in the φ frame:
+      ``n_zone_phi = (UB @ z0) × (UB @ z1)``.
+   3. Verifies that the requested ``Q_phi`` lies in the plane.  If not,
+      returns ``[]`` and emits a warning (matching the soft-failure
+      pattern adopted for ``fixed_psi`` in #176).
+   4. Records the in-plane residual in ``mode.extras['in_plane_residual']``.
+   5. Builds a synthetic :class:`~mode.ConstraintSet` that adds a
+      :class:`~mode.BisectConstraint` (or
+      :class:`~mode.VirtualBisectConstraint` for kappa6c) so the system
+      is fully constrained, then delegates to the existing bisecting
+      solver.  Bisecting is the canonical SPEC-zone "br" position; the
+      remaining azimuthal DOF can be exercised by a separate scan
+      function (``cz``/``mz`` macros in SPEC), which is out of scope for
+      a single ``forward()`` call.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Q_phi: Target scattering vector in the φ frame: ``UB @ (h, k, l)``.
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg: Two-theta angle from Bragg's law.
+   :type ttheta_deg: float
+   :param mode: Active mode with ``extras['z0']``, ``extras['z1']`` set.
+   :type mode: ConstraintSet
+
+   :returns: Bisecting solutions filtered for plane membership.  Empty list when
+             the requested (h, k, l) does not lie in the zone plane.
+   :rtype: list of dict[str, float]
+
+   :raises ValueError: If ``z0`` or ``z1`` are still :data:`~mode.REQUIRED` placeholders,
+       or if they are zero vectors, or if they are parallel (so the plane
+       normal is undefined).
 
 
 .. py:function:: _surface_residual(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, target_name: str, target_value) -> float

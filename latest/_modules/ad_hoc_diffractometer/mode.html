@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=7ee10cc2"></script>
+    <script src="../../_static/documentation_options.js?v=3f16f5ed"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 11:42 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 14:27 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -493,6 +493,22 @@
 <span class="sd">Cut-points control which branch of a multi-valued angle solution is</span>
 <span class="sd">returned (SPEC #G4 convention).  They are stored on :class:`ConstraintSet`</span>
 <span class="sd">and applied by the forward solver.</span>
+
+<span class="sd">A few specialised modes are dispatched not by their constraint composition</span>
+<span class="sd">but by the keys present in :attr:`ConstraintSet.extras`:</span>
+
+<span class="sd">- **double_diffraction** modes carry ``h2``, ``k2``, ``l2`` extras and are</span>
+<span class="sd">  routed to a 4-DOF simultaneous Bragg solver.</span>
+<span class="sd">- **zone** modes (You 1999 §6, SPEC ``setmode 5``) carry ``z0`` and ``z1``</span>
+<span class="sd">  extras (each a Miller-index 3-tuple) and confine the scattering vector</span>
+<span class="sd">  Q to the plane spanned by ``UB @ z0`` and ``UB @ z1``.  The solver</span>
+<span class="sd">  validates that the requested (h, k, l) lies in the plane and then</span>
+<span class="sd">  returns the bisecting solutions; off-plane requests yield an empty</span>
+<span class="sd">  list with a warning.</span>
+
+<span class="sd">This extras-driven dispatch keeps the constraint taxonomy small while</span>
+<span class="sd">allowing modes whose distinguishing input is a parameter (a secondary</span>
+<span class="sd">reflection or a zone plane) rather than a fixed motor angle.</span>
 
 <span class="sd">The DOF rule is geometry-dependent:</span>
 
@@ -2055,7 +2071,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 11:42 CDT.
+  Last updated on 2026-05-05 14:27 CDT.
   <br/>
 </p></div>
       
