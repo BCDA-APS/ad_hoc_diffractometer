@@ -78,7 +78,7 @@ g.inclination_matrix = np.eye(3)
 
 The inclination matrix **R** modifies the effective incident-beam
 direction.  Instead of using the longitudinal basis vector **ŷ**
-directly, the calculation uses **R**\ :sup:`T` **ŷ** as the beam
+directly, the calculation uses $R^{T}\,\hat{y}$ as the beam
 direction:
 
 $$
@@ -132,7 +132,7 @@ longitudinal axis.
 The inclination matrix must be a **proper rotation**:
 
 - Shape (3, 3)
-- Orthonormal: *R*\ :sup:`T` *R* = *I*  (within 10\ :sup:`-8`)
+- Orthonormal: $R^{T} R = I$ (within $10^{-8}$)
 - det(*R*) = +1  (no reflections)
 
 Assigning an invalid matrix raises {class}`ValueError`:
