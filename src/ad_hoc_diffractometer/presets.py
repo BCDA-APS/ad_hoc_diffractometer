@@ -386,7 +386,7 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
         "fixed_phi_vertical": ConstraintSet(
             [
                 SampleConstraint("phi", 0.0),
-                BisectConstraint("eta", "delta"),
+                SampleConstraint("mu", 0.0),
                 DetectorConstraint("nu", 0.0),
             ],
             computed=["eta", "chi", "delta"],
@@ -394,26 +394,10 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
         "fixed_chi_vertical": ConstraintSet(
             [
                 SampleConstraint("chi", 90.0),
-                BisectConstraint("eta", "delta"),
+                SampleConstraint("mu", 0.0),
                 DetectorConstraint("nu", 0.0),
             ],
             computed=["eta", "phi", "delta"],
-        ),
-        "fixed_mu_vertical": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                BisectConstraint("eta", "delta"),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
-        ),
-        "fixed_nu_vertical": ConstraintSet(
-            [
-                DetectorConstraint("nu", 0.0),
-                BisectConstraint("eta", "delta"),
-                SampleConstraint("mu", 0.0),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
         ),
         "fixed_alpha_i_vertical": ConstraintSet(
             [
@@ -471,7 +455,7 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
         "fixed_phi_horizontal": ConstraintSet(
             [
                 SampleConstraint("phi", 0.0),
-                BisectConstraint("mu", "nu"),
+                SampleConstraint("eta", 0.0),
                 DetectorConstraint("delta", 0.0),
             ],
             computed=["mu", "chi", "nu"],
@@ -479,26 +463,10 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
         "fixed_chi_horizontal": ConstraintSet(
             [
                 SampleConstraint("chi", 90.0),
-                BisectConstraint("mu", "nu"),
+                SampleConstraint("eta", 0.0),
                 DetectorConstraint("delta", 0.0),
             ],
             computed=["mu", "phi", "nu"],
-        ),
-        "fixed_eta_horizontal": ConstraintSet(
-            [
-                SampleConstraint("eta", 0.0),
-                BisectConstraint("mu", "nu"),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-        ),
-        "fixed_delta_horizontal": ConstraintSet(
-            [
-                DetectorConstraint("delta", 0.0),
-                BisectConstraint("mu", "nu"),
-                SampleConstraint("eta", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
         ),
         "fixed_alpha_i_horizontal": ConstraintSet(
             [
