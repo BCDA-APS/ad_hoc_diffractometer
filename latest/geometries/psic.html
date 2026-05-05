@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=4a9ccdbd"></script>
+    <script src="../_static/documentation_options.js?v=7ee10cc2"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 11:17 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 11:42 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -865,9 +865,16 @@ The scattering plane is locked horizontal by <code class="docutils literal notra
 </section>
 <section id="fixed-chi-horizontal">
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_chi_horizontal</span></code><a class="headerlink" href="#fixed-chi-horizontal" title="Link to this heading">#</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">chi</span></code> held at declared value (default 90°), <code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">delta</span> <span class="pre">=</span> <span class="pre">0</span></code>.
+<p><code class="docutils literal notranslate"><span class="pre">chi</span></code> held at declared value (default 0°), <code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">delta</span> <span class="pre">=</span> <span class="pre">0</span></code>.
 The scattering plane is locked horizontal by <code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">delta</span> <span class="pre">=</span> <span class="pre">0</span></code>;
 <code class="docutils literal notranslate"><span class="pre">mu</span></code>, <code class="docutils literal notranslate"><span class="pre">phi</span></code>, and <code class="docutils literal notranslate"><span class="pre">nu</span></code> are solved from the hkl equations.</p>
+<p>The default chi value differs from the vertical counterpart
+(<code class="docutils literal notranslate"><span class="pre">fixed_chi_vertical</span></code>, default 90°): with <code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">0</span></code> the residual
+psic sub-geometry places the chi-circle axis along the longitudinal
+(beam) direction, so <code class="docutils literal notranslate"><span class="pre">chi</span> <span class="pre">=</span> <span class="pre">0</span></code> is the value that keeps the phi axis
+in the horizontal scattering plane.  The four-circle “spinning Q”
+value <code class="docutils literal notranslate"><span class="pre">chi</span> <span class="pre">=</span> <span class="pre">90°</span></code> tilts the phi axis out of the horizontal plane and
+is kinematically infeasible in this mode.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p></p></th>
@@ -1184,7 +1191,7 @@ constraint (<code class="docutils literal notranslate"><span class="pre">tan(qaz
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 11:17 CDT.
+  Last updated on 2026-05-05 11:42 CDT.
   <br/>
 </p></div>
       

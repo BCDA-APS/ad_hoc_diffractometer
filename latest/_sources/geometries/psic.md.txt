@@ -191,9 +191,17 @@ The scattering plane is locked horizontal by `eta = 0` and `delta = 0`;
 
 ### `fixed_chi_horizontal`
 
-`chi` held at declared value (default 90°), `eta = 0`, `delta = 0`.
+`chi` held at declared value (default 0°), `eta = 0`, `delta = 0`.
 The scattering plane is locked horizontal by `eta = 0` and `delta = 0`;
 `mu`, `phi`, and `nu` are solved from the hkl equations.
+
+The default chi value differs from the vertical counterpart
+(`fixed_chi_vertical`, default 90°): with `eta = 0` the residual
+psic sub-geometry places the chi-circle axis along the longitudinal
+(beam) direction, so `chi = 0` is the value that keeps the phi axis
+in the horizontal scattering plane.  The four-circle "spinning Q"
+value `chi = 90°` tilts the phi axis out of the horizontal plane and
+is kinematically infeasible in this mode.
 
 | | |
 |---|---|
