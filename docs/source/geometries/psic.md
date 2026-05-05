@@ -372,8 +372,9 @@ where `g_mode1` selects the scattering plane (1 = horizontal,
 2 = vertical, 3 = qaz/lifting-detector), `g_mode2` selects an optional
 reference-angle constraint (0 = none, 1 = α=β, 2 = α-fixed,
 3 = β-fixed, 4 = ψ-fixed), and `g_mode3`–`g_mode5` fix specific motor
-angles. A dash (—) means no documented analogue exists in that
-package.
+angles.
+
+—: no documented analogue exists in that package.
 
 †: SPEC mode tuples flagged here are listed by the SPEC documentation
 as currently not working (the eta-fixed + chi-fixed and eta-fixed +
