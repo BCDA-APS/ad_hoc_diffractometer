@@ -1,0 +1,288 @@
+# psic — You (1999) "4S+2D" six-circle diffractometer.
+#
+# This file is a *demonstration* of the declarative geometry schema
+# (issue #267).  It reproduces the legacy
+# ``ad_hoc_diffractometer.presets.psic`` Python factory exactly.  Real
+# beamlines should copy a file like this and adapt it to their own
+# instrument; do not assume the values here describe any production
+# diffractometer.
+#
+# Schema reference: docs/source/reference/declarative_geometry_schema.md
+# How-to:           docs/source/howto/custom_geometry.md
+
+ad_hoc_diffractometer_geometry:
+    revision: 1
+
+name: psic
+
+documentation: >-
+    You (1999) 4S+2D six-circle diffractometer (transverse detector,
+    vertical scattering plane, synchrotron).
+
+
+    Walko (2016) designation: S4D2.
+
+
+    Default basis: You (1999) — vertical=+x, longitudinal=+y,
+    transverse=+z.
+
+
+    Sample stack (floor first):
+        mu  : vertical,     right-handed
+        eta : transverse,   left-handed (mounted on mu)
+        chi : longitudinal, right-handed (mounted on eta)
+        phi : transverse,   left-handed (mounted on chi)
+
+
+    Detector stack (floor first):
+        nu    : vertical,   right-handed
+        delta : transverse, left-handed (mounted on nu)
+
+
+    mu and nu share the same vertical rotation axis; they are
+    mechanically independent.
+
+
+    Mode families (20 modes total):
+
+    - 8 vertical-scattering-plane modes (mu = nu = 0): bisecting,
+      fixed_phi, fixed_chi, fixed_alpha_i, fixed_beta_out,
+      alpha_eq_beta, fixed_psi, double_diffraction.
+
+    - 8 horizontal-scattering-plane mirror modes (eta = delta = 0).
+
+    - 2 zone modes (You 1999 §6, SPEC ``setmode 5``): scattering vector
+      Q is confined to the plane defined by two reciprocal-lattice
+      vectors z0 and z1.
+
+    - 2 lifting-detector modes (out-of-plane geometry).
+
+
+    The fixed_chi_horizontal mode uses chi = 0 (not chi = 90 as in the
+    vertical counterpart): in the horizontal scattering plane the
+    chi-circle axis is along the longitudinal direction, and chi = 0
+    keeps the phi axis along the beam so phi rotations stay in the
+    horizontal plane.  chi = 90 would tilt phi out of plane and is
+    kinematically infeasible.  See issue #259.
+
+
+    References
+
+    - H. You, J. Appl. Cryst. 32, 614-623 (1999).
+      DOI: 10.1107/S0021889899001223
+
+    - D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
+basis: YOU
+
+stages:
+    - {name: mu,    axis: +vertical,     parent: null,  role: sample}
+    - {name: eta,   axis: -transverse,   parent: mu,    role: sample}
+    - {name: chi,   axis: +longitudinal, parent: eta,   role: sample}
+    - {name: phi,   axis: -transverse,   parent: chi,   role: sample}
+    - {name: nu,    axis: +vertical,     parent: null,  role: detector}
+    - {name: delta, axis: -transverse,   parent: nu,    role: detector}
+
+# psic: 6 DOF, N - 3 = 3 constraints needed per mode (You 1999, S4D2).
+# Vertical bisect pair:   eta(transverse) <-> delta(transverse)  => eta = delta/2
+# Horizontal bisect pair: mu(vertical)    <-> nu(vertical)       => mu  = nu/2
+modes:
+    # ── Vertical scattering plane ───────────────────────────────────────
+    bisecting_vertical:
+        default: true
+        constraints:
+            - {type: bisect,   stage1: eta, stage2: delta}
+            - {type: sample,   stage: mu, value: 0.0}
+            - {type: detector, stage: nu, value: 0.0}
+        computed: [eta, chi, phi, delta]
+
+    fixed_phi_vertical:
+        constraints:
+            - {type: sample,   stage: phi, value: 0.0}
+            - {type: sample,   stage: mu,  value: 0.0}
+            - {type: detector, stage: nu,  value: 0.0}
+        computed: [eta, chi, delta]
+
+    fixed_chi_vertical:
+        constraints:
+            - {type: sample,   stage: chi, value: 90.0}
+            - {type: sample,   stage: mu,  value: 0.0}
+            - {type: detector, stage: nu,  value: 0.0}
+        computed: [eta, phi, delta]
+
+    fixed_alpha_i_vertical:
+        constraints:
+            - {type: sample,    stage: mu, value: 0.0}
+            - {type: detector,  stage: nu, value: 0.0}
+            - {type: reference, name: alpha_i, value: 0.0}
+        computed: [eta, chi, phi, delta]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
+
+    fixed_beta_out_vertical:
+        constraints:
+            - {type: sample,    stage: mu, value: 0.0}
+            - {type: detector,  stage: nu, value: 0.0}
+            - {type: reference, name: beta_out, value: 0.0}
+        computed: [eta, chi, phi, delta]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
+
+    alpha_eq_beta_vertical:
+        constraints:
+            - {type: sample,    stage: mu, value: 0.0}
+            - {type: detector,  stage: nu, value: 0.0}
+            - {type: reference, name: a_eq_b, value: true}
+        computed: [eta, chi, phi, delta]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
+
+    fixed_psi_vertical:
+        constraints:
+            - {type: bisect,    stage1: eta, stage2: delta}
+            - {type: sample,    stage: mu, value: 0.0}
+            - {type: reference, name: psi, value: 0.0}
+        computed: [eta, chi, phi, delta]
+        extras:
+            n_hat: REQUIRED
+            psi: null
+
+    double_diffraction_vertical:
+        constraints:
+            - {type: sample,   stage: mu, value: 0.0}
+            - {type: detector, stage: nu, value: 0.0}
+        computed: [eta, chi, phi, delta]
+        extras:
+            h2: REQUIRED
+            k2: REQUIRED
+            l2: REQUIRED
+
+    # ── Horizontal scattering plane ─────────────────────────────────────
+    bisecting_horizontal:
+        constraints:
+            - {type: bisect,   stage1: mu, stage2: nu}
+            - {type: sample,   stage: eta,   value: 0.0}
+            - {type: detector, stage: delta, value: 0.0}
+        computed: [mu, chi, phi, nu]
+
+    fixed_phi_horizontal:
+        constraints:
+            - {type: sample,   stage: phi,   value: 0.0}
+            - {type: sample,   stage: eta,   value: 0.0}
+            - {type: detector, stage: delta, value: 0.0}
+        computed: [mu, chi, nu]
+
+    # Default chi = 0 (issue #259).  In the horizontal scattering plane
+    # (eta = 0, delta = 0) the residual psic sub-geometry places the
+    # chi-circle axis along the longitudinal (beam) direction; chi = 0
+    # keeps the phi axis along that same direction so phi rotations stay
+    # in the horizontal plane.  chi = 90 (the four-circle "spinning Q"
+    # symmetry value used in fourcv/fourch and in the *vertical*
+    # counterpart fixed_chi_vertical) tilts the phi axis out of the
+    # horizontal plane and is kinematically infeasible here.
+    fixed_chi_horizontal:
+        constraints:
+            - {type: sample,   stage: chi,   value: 0.0}
+            - {type: sample,   stage: eta,   value: 0.0}
+            - {type: detector, stage: delta, value: 0.0}
+        computed: [mu, phi, nu]
+
+    fixed_alpha_i_horizontal:
+        constraints:
+            - {type: sample,    stage: eta,   value: 0.0}
+            - {type: detector,  stage: delta, value: 0.0}
+            - {type: reference, name: alpha_i, value: 0.0}
+        computed: [mu, chi, phi, nu]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
+
+    fixed_beta_out_horizontal:
+        constraints:
+            - {type: sample,    stage: eta,   value: 0.0}
+            - {type: detector,  stage: delta, value: 0.0}
+            - {type: reference, name: beta_out, value: 0.0}
+        computed: [mu, chi, phi, nu]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
+
+    alpha_eq_beta_horizontal:
+        constraints:
+            - {type: sample,    stage: eta,   value: 0.0}
+            - {type: detector,  stage: delta, value: 0.0}
+            - {type: reference, name: a_eq_b, value: true}
+        computed: [mu, chi, phi, nu]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
+
+    fixed_psi_horizontal:
+        constraints:
+            - {type: bisect,    stage1: mu, stage2: nu}
+            - {type: sample,    stage: eta, value: 0.0}
+            - {type: reference, name: psi, value: 0.0}
+        computed: [mu, chi, phi, nu]
+        extras:
+            n_hat: REQUIRED
+            psi: null
+
+    double_diffraction_horizontal:
+        constraints:
+            - {type: sample,   stage: eta,   value: 0.0}
+            - {type: detector, stage: delta, value: 0.0}
+        computed: [mu, chi, phi, nu]
+        extras:
+            h2: REQUIRED
+            k2: REQUIRED
+            l2: REQUIRED
+
+    # ── Zone modes (You 1999 §6, SPEC `setmode 5`) ──────────────────────
+    # Q is confined to the plane defined by two reciprocal-lattice
+    # vectors z0 and z1.  The caller still requests forward(h, k, l);
+    # if the requested Q does not lie in the zone plane (within
+    # tolerance) the solver returns an empty list with a warning.
+    # See SPEC `sz`, `cz`, `mz` macros.
+    zone_vertical:
+        constraints:
+            - {type: sample,   stage: mu, value: 0.0}
+            - {type: detector, stage: nu, value: 0.0}
+        computed: [eta, chi, phi, delta]
+        extras:
+            z0: REQUIRED
+            z1: REQUIRED
+            in_plane_residual: null
+
+    zone_horizontal:
+        constraints:
+            - {type: sample,   stage: eta,   value: 0.0}
+            - {type: detector, stage: delta, value: 0.0}
+        computed: [mu, chi, phi, nu]
+        extras:
+            z0: REQUIRED
+            z1: REQUIRED
+            in_plane_residual: null
+
+    # ── Lifting detector (out-of-plane) ─────────────────────────────────
+    lifting_detector_phi:
+        constraints:
+            - {type: sample,   stage: phi, value: 0.0}
+            - {type: sample,   stage: mu,  value: 0.0}
+            - {type: detector, stage: qaz, value: 90.0}
+        computed: [phi, nu, delta]
+
+    lifting_detector_mu:
+        constraints:
+            - {type: sample,   stage: mu,  value: 0.0}
+            - {type: sample,   stage: eta, value: 0.0}
+            - {type: detector, stage: qaz, value: 90.0}
+        computed: [mu, nu, delta]
