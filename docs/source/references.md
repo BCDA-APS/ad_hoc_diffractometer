@@ -27,10 +27,10 @@ Geometries, algorithms, and conventions are traced to their primary sources.
 
   Foundational reference for the four-circle geometry, B matrix, U matrix,
   and UB matrix.  Defines the orientation refinement least-squares procedure.
-  Used by: {func}`~ad_hoc_diffractometer.presets.fourcv`,
-  {func}`~ad_hoc_diffractometer.presets.fourch`,
-  {func}`~ad_hoc_diffractometer.presets.kappa4cv`,
-  {func}`~ad_hoc_diffractometer.presets.kappa4ch`.
+  Used by: {ref}`geometry-fourcv`,
+  {ref}`geometry-fourch`,
+  {ref}`geometry-kappa4cv`,
+  {ref}`geometry-kappa4ch`.
 
 **Wyckoff (1985)**
 : H.W. Wyckoff.
@@ -42,7 +42,7 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   diffractometer with explicit X/Y/Z coordinate axes and κ-rotation
   NEG/POS sense; the schematic cited by ITC Vol. C §2.2.6 as the
   reference for the kappa goniostat geometry.
-  Used by: {func}`~ad_hoc_diffractometer.presets.kappa4ch`.
+  Used by: {ref}`geometry-kappa4ch`.
 
 **Bloch (1985)**
 : J.M. Bloch.
@@ -52,7 +52,7 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   DOI: [10.1107/S0021889885009858](https://doi.org/10.1107/S0021889885009858)
 
   Defines the Z-axis diffractometer geometry.
-  Used by: {func}`~ad_hoc_diffractometer.presets.zaxis`.
+  Used by: {ref}`geometry-zaxis`.
 
 **Vlieg et al. (1987)**
 : E. Vlieg, A.E.M.J. Fischer, J.F. van der Veen, B.N. Dev, and G. Materlik.
@@ -61,7 +61,7 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   DOI: [10.1107/S0021889887087266](https://doi.org/10.1107/S0021889887087266)
 
   Defines the five-circle geometry.
-  Used by: {func}`~ad_hoc_diffractometer.presets.fivec`.
+  Used by: {ref}`geometry-fivec`.
 
 **Lohmeier & Vlieg (1993)**
 : M. Lohmeier and E. Vlieg.
@@ -70,7 +70,7 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   DOI: [10.1107/S0021889893006198](https://doi.org/10.1107/S0021889893006198)
 
   Defines the six-circle surface diffractometer geometry.
-  Used by: {func}`~ad_hoc_diffractometer.presets.sixc`.
+  Used by: {ref}`geometry-sixc`.
 
 **Evans-Lutterodt & Tang (1995)**
 : K.W. Evans-Lutterodt and M.-T. Tang.
@@ -79,7 +79,7 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   DOI: [10.1107/S0021889895001063](https://doi.org/10.1107/S0021889895001063)
 
   Defines the S2D2 (2+2) diffractometer geometry.
-  Used by: {func}`~ad_hoc_diffractometer.presets.s2d2`.
+  Used by: {ref}`geometry-s2d2`.
 
 **Paciorek, Meyer & Chapuis (1999)**
 : W.A. Paciorek, M. Meyer, and G. Chapuis.
@@ -101,8 +101,8 @@ Geometries, algorithms, and conventions are traced to their primary sources.
 
   Defines the psic (4S+2D) six-circle geometry; axis sign conventions
   (mixed handedness); ψ angle definitions (eqs. 10–11).
-   Used by: {func}`~ad_hoc_diffractometer.presets.psic`,
-   {func}`~ad_hoc_diffractometer.presets.kappa6c`.
+   Used by: {ref}`geometry-psic`,
+   {ref}`geometry-kappa6c`.
 
 **ITC Vol. C §2.2.6 (2006)**
 : International Tables for Crystallography, Volume C, Section 2.2.6,
@@ -116,9 +116,9 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   left-handed for 2θ in Hamilton's choice) — note that the presets
   shipped here follow Walko's left-handed convention for ω/φ/2θ; see
   the {doc}`/concepts` page for the handedness discussion.
-  Used by: {func}`~ad_hoc_diffractometer.presets.kappa4cv`,
-  {func}`~ad_hoc_diffractometer.presets.kappa4ch`,
-  {func}`~ad_hoc_diffractometer.presets.kappa6c`.
+  Used by: {ref}`geometry-kappa4cv`,
+  {ref}`geometry-kappa4ch`,
+  {ref}`geometry-kappa6c`.
 
 **Thorkildsen, Larsen & Beukes (2006)**
 : G. Thorkildsen, H.B. Larsen, and J.A. Beukes.
@@ -132,9 +132,9 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   κ-goniostat axes used by ``kappa4cv``, ``kappa4ch``, and
   ``kappa6c``; §3 last paragraph explicitly notes the extension to
   additional rotation axes.
-  Used by: {func}`~ad_hoc_diffractometer.presets.kappa4cv`,
-  {func}`~ad_hoc_diffractometer.presets.kappa4ch`,
-  {func}`~ad_hoc_diffractometer.presets.kappa6c`.
+  Used by: {ref}`geometry-kappa4cv`,
+  {ref}`geometry-kappa4ch`,
+  {ref}`geometry-kappa6c`.
 
 **Sønsteby et al. (2013)**
 : H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen, and H. Fjellvåg.
@@ -149,7 +149,7 @@ Geometries, algorithms, and conventions are traced to their primary sources.
   *et al.* (2006) for the angular-calculation method used by the
   CrysAlis control software.  The reference instrument for the
   ``kappa6c`` preset.
-  Used by: {func}`~ad_hoc_diffractometer.presets.kappa6c`.
+  Used by: {ref}`geometry-kappa6c`.
 
 **Walko (2016)**
 : D.A. Walko.

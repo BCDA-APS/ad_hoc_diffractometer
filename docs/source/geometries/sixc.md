@@ -12,14 +12,14 @@ Six-circle surface diffractometer. Sample and detector share a common alpha (rot
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.sixc()
+g = ahd.make_geometry("sixc")
 g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
 ## Demo geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.sixc` factory
+This geometry is defined by the {ref}`geometry-sixc` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L689) for the complete stage
 and mode configuration.
 
@@ -144,7 +144,7 @@ Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Requires ``g.surfac
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.presets.sixc`
+- {ref}`geometry-sixc`
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`

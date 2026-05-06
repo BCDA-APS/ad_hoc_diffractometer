@@ -56,7 +56,7 @@ print(sapphire.crystal_system) # 'hexagonal'
 ## Assign the lattice to a sample
 
 ```python
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 g.sample.lattice = silicon
 ```
 

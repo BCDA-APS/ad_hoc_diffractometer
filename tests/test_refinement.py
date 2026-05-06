@@ -27,12 +27,12 @@ import re
 
 import numpy as np
 import pytest
+from helpers import fourcv
+from helpers import psic
 
 from ad_hoc_diffractometer import Lattice
 from ad_hoc_diffractometer import ub_from_three_reflections_bl1967
 from ad_hoc_diffractometer import ub_from_two_reflections_bl1967
-from ad_hoc_diffractometer.presets import fourcv
-from ad_hoc_diffractometer.presets import psic
 from ad_hoc_diffractometer.refinement import _active_cell_params
 from ad_hoc_diffractometer.refinement import _free_params_for_system
 from ad_hoc_diffractometer.refinement import refine_lattice_bl1967

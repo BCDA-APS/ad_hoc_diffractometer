@@ -287,9 +287,9 @@ class TestBenchmarkGeometry:
 
     def test_returns_all_modes(self):
         """Returns one result per declared mode."""
-        from ad_hoc_diffractometer import presets
+        from helpers import fourcv
 
-        g = presets.fourcv()
+        g = fourcv()
         n_modes = len(g.modes)
         results = benchmark_geometry(
             "fourcv", reflections=[(1, 0, 0)], n_iter=1, verbose=False

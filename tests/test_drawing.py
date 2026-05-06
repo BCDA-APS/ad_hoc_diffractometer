@@ -95,8 +95,7 @@ def _build_arc_params():
     """Generate (geometry_name, stage_name) pairs for all presets."""
     params = []
     for geom_name in ahd.list_geometries():
-        factory = getattr(ahd.presets, geom_name)
-        geometry = factory()
+        geometry = ahd.make_geometry(geom_name)
         for stage_name in geometry._stages:
             params.append(
                 pytest.param(
@@ -117,8 +116,7 @@ def test_arc_direction_handedness(geometry_name, stage_name, context):
     Plotly) and checks the handedness invariant for every preset stage.
     """
     with context:
-        factory = getattr(ahd.presets, geometry_name)
-        geometry = factory()
+        geometry = ahd.make_geometry(geometry_name)
         stage = geometry._stages[stage_name]
         basis = geometry.basis
 

@@ -20,12 +20,12 @@ import pytest
 from helpers import Rx
 from helpers import Ry
 from helpers import Rz
+from helpers import fourcv
 
 from ad_hoc_diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
-from ad_hoc_diffractometer.presets import fourcv
 from ad_hoc_diffractometer.stage import Stage
 
 # ---------------------------------------------------------------------------

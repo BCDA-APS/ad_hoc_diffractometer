@@ -192,13 +192,12 @@ class StageAxisFigure:  # pragma: no cover
         **kwargs,
     ):
         go = _require_plotly()
-        import ad_hoc_diffractometer.presets as _presets
+        from ad_hoc_diffractometer import make_geometry
 
         self._go = go
         self._fig = go.Figure(**kwargs)
 
-        factory = getattr(_presets, geometry_name)
-        self.geometry = factory()
+        self.geometry = make_geometry(geometry_name)
         self.stage = self.geometry._stages[axis_name]
         self.R = None  # set in _draw_basis_vectors
         logger.debug("StageAxisFigure: %s / %s", geometry_name, axis_name)
@@ -533,13 +532,12 @@ class GeometryAxisFigure:  # pragma: no cover
         **kwargs,
     ):
         go = _require_plotly()
-        import ad_hoc_diffractometer.presets as _presets
+        from ad_hoc_diffractometer import make_geometry
 
         self._go = go
         self._fig = go.Figure(**kwargs)
 
-        factory = getattr(_presets, geometry_name)
-        geometry = factory()
+        geometry = make_geometry(geometry_name)
         stages = geometry._stages
         logger.debug(
             "GeometryAxisFigure: %s  stages=%s",

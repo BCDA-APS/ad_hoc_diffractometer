@@ -25,7 +25,7 @@ More reflections give a more reliable result; six or more are recommended.
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 g.wavelength = 1.5498   # Å
 g.sample.lattice = ahd.Lattice(a=4.785, c=12.991, gamma=120.0)  # sapphire
 

@@ -49,8 +49,7 @@ _PRESETS = [
 
 def _setup(preset_name, basis, mode_name=None, a=4.0, wavelength=1.0):
     """Build a preset under the given basis with a cubic UB=identity."""
-    factory = getattr(ahd.presets, preset_name)
-    g = factory(basis=basis)
+    g = ahd.make_geometry(preset_name, basis=basis)
     g.wavelength = wavelength
     g.sample.lattice = ahd.Lattice(a=a)
     ahd.ub_identity(g.sample)

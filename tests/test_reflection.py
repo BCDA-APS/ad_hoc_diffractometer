@@ -17,10 +17,10 @@ import re
 from contextlib import nullcontext as does_not_raise
 
 import pytest
+from helpers import kappa6c
+from helpers import psic
 
 from ad_hoc_diffractometer import Reflection
-from ad_hoc_diffractometer.presets import kappa6c
-from ad_hoc_diffractometer.presets import psic
 from ad_hoc_diffractometer.reflection import ReflectionList
 
 # ---------------------------------------------------------------------------

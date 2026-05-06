@@ -209,7 +209,7 @@ in the plane perpendicular to the 2θ rotation axis, **the scattering plane is
 always perpendicular to the 2θ axis**.  A horizontal scattering plane therefore
 *requires* 2θ — and the matching sample stage θ that tracks half of it — to
 rotate about the **vertical** axis.  (Conversely, the
-{func}`~ad_hoc_diffractometer.presets.fourcv` geometry places 2θ about a
+{ref}`geometry-fourcv` geometry places 2θ about a
 horizontal/transverse axis to obtain a vertical scattering plane; see
 {doc}`/concepts` for the wider discussion of the ``v`` / ``h`` suffix
 convention.)
@@ -313,7 +313,7 @@ another stage, the forward solver will treat them as independent and
 compute incorrect angles.
 
 Conversely, if two stacks share a common base stage (as in the
-{func}`~ad_hoc_diffractometer.presets.zaxis` geometry, where the
+{ref}`geometry-zaxis` geometry, where the
 sample and detector both sit on the alpha stage), then both stacks
 must list that shared stage as their parent.
 ```
@@ -517,7 +517,7 @@ be unique — duplicates raise `ValueError`.
 ## Advanced: shared base stages
 
 Some geometries have sample and detector stages that share a common base
-(e.g. the {func}`~ad_hoc_diffractometer.presets.zaxis` geometry, where
+(e.g. the {ref}`geometry-zaxis` geometry, where
 both the sample Z stage and the detector delta stage sit on the alpha
 stage).  In this pattern:
 

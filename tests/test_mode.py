@@ -32,6 +32,15 @@ import re
 from contextlib import nullcontext as does_not_raise
 
 import pytest
+from helpers import fivec
+from helpers import fourch
+from helpers import fourcv
+from helpers import kappa4ch
+from helpers import kappa4cv
+from helpers import kappa6c
+from helpers import s2d2
+from helpers import sixc
+from helpers import zaxis
 
 from ad_hoc_diffractometer import REQUIRED
 from ad_hoc_diffractometer import AdHocDiffractometer
@@ -47,15 +56,6 @@ from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
 from ad_hoc_diffractometer.mode import OPTIONAL
 from ad_hoc_diffractometer.mode import ModeDict
-from ad_hoc_diffractometer.presets import fivec
-from ad_hoc_diffractometer.presets import fourch
-from ad_hoc_diffractometer.presets import fourcv
-from ad_hoc_diffractometer.presets import kappa4ch
-from ad_hoc_diffractometer.presets import kappa4cv
-from ad_hoc_diffractometer.presets import kappa6c
-from ad_hoc_diffractometer.presets import s2d2
-from ad_hoc_diffractometer.presets import sixc
-from ad_hoc_diffractometer.presets import zaxis
 from ad_hoc_diffractometer.stage import Stage
 
 # ---------------------------------------------------------------------------
@@ -572,9 +572,10 @@ def test_virtual_bisect_constraint_evaluate_kappa_geometry():
     functions because every preset's signed axis convention can
     differ from the Walko (2016) textbook frame (issue #241).
     """
+    from helpers import kappa4cv
+
     from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
     from ad_hoc_diffractometer.kappa import kappa_to_eulerian_axes
-    from ad_hoc_diffractometer.presets import kappa4cv
 
     g = kappa4cv()
     vbc = VirtualBisectConstraint("omega", "ttheta")
@@ -596,7 +597,7 @@ def test_virtual_bisect_constraint_evaluate_kappa_geometry():
 
 def test_virtual_bisect_constraint_evaluate_nonzero_residual():
     """evaluate() returns nonzero when motors do not satisfy bisecting."""
-    from ad_hoc_diffractometer.presets import kappa4cv
+    from helpers import kappa4cv
 
     g = kappa4cv()
     vbc = VirtualBisectConstraint("omega", "ttheta")
@@ -609,7 +610,7 @@ def test_virtual_bisect_constraint_evaluate_nonzero_residual():
 
 def test_virtual_bisect_constraint_evaluate_requires_kappa_geometry():
     """evaluate() raises ValueError on a non-kappa geometry."""
-    from ad_hoc_diffractometer.presets import fourcv
+    from helpers import fourcv
 
     g = fourcv()
     vbc = VirtualBisectConstraint("omega", "ttheta")
@@ -647,9 +648,9 @@ def test_virtual_bisect_constraint_is_implemented(
     geometry_factory, sample_stage, detector_stage, expected
 ):
     """is_implemented() requires kappa_alpha_deg, komega/kappa/kphi, detector."""
-    from ad_hoc_diffractometer import presets
+    import ad_hoc_diffractometer as ahd
 
-    g = getattr(presets, geometry_factory)()
+    g = ahd.make_geometry(geometry_factory)
     vbc = VirtualBisectConstraint(sample_stage, detector_stage)
     assert vbc.is_implemented(g) is expected
 

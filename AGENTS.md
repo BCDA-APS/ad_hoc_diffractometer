@@ -191,9 +191,6 @@ diffractometer/                  # project root (git repo)
 │       │   ├── schema.json      # JSON Schema for the declarative format
 │       │   └── *.yml            # one file per declarative demo geometry
 │       ├── geometry_loader.py   # YAML → AdHocDiffractometer loader (#267)
-│       ├── presets.py           # legacy Python factories — being migrated
-│       │                        # to geometries/*.yml (#267); will be deleted
-│       │                        # when migration completes
 │       ├── factories.py         # geometry registry + shared definitions
 │       ├── constants.py         # XHAT, YHAT, ZHAT
 │       ├── axes.py              # parse_axis(), axis_label(), kappa_axis()
@@ -257,9 +254,9 @@ python3 -m pytest -m slow_benchmark --no-cov -q
 Hot path: `forward.py`, `kappa.py`, `mode.py`, `orientation.py`,
 `rotation.py`, `reference.py`, `surface.py`
 
-Geometry construction: `presets.py`, `geometry_loader.py`,
-`geometries/*.yml`, `factories.py`, `diffractometer.py`,
-`stage.py`, `axes.py`, `constants.py`
+Geometry construction: `geometry_loader.py`, `geometries/*.yml`,
+`factories.py`, `diffractometer.py`, `stage.py`, `axes.py`,
+`constants.py`
 
 CI runs these automatically (via `.github/workflows/benchmark.yml`)
 when any of these files change on `main` or in a pull request.
@@ -362,9 +359,10 @@ and calls `write_html()` and `write_image()`.
 python tools/generate_geometry_drawings.py
 ```
 
-**When to rebuild**: any change to `drawing.py`, `presets.py`,
-`factories.py`, `stage.py`, or `axes.py` that affects stage names, axis
-labels, physical direction names, basis dicts, or the drawing layout.
+**When to rebuild**: any change to `drawing.py`, `geometries/*.yml`,
+`geometry_loader.py`, `factories.py`, `stage.py`, or `axes.py` that
+affects stage names, axis labels, physical direction names, basis
+dicts, or the drawing layout.
 
 **Dependencies**: `plotly` and `kaleido` (for SVG export).  These are
 not declared in `pyproject.toml` runtime deps — install them manually:
@@ -416,15 +414,17 @@ with NumPy alone.
 ## Code style guidelines
 
 - **Import alias**: `import ad_hoc_diffractometer as ahd`
-- **Demo geometries**: `g = ahd.presets.fourcv()` — the demo
-  geometries live in `ahd.presets`, not in the top-level namespace
-  (the submodule retains the historical name `presets`)
+- **Demo geometries**: `g = ahd.make_geometry("fourcv")` — the demo
+  geometries are declarative YAML files under
+  `ad_hoc_diffractometer/geometries/`, registered automatically by the
+  loader at import time and discoverable via
+  `ad_hoc_diffractometer.list_geometries()`
 - **Tier 1 (top-level)**: Only ~23 names are exported from `__init__.py`
   (core classes, orientation, modes, registry).  All other names are
   accessed via their submodule: `ahd.display.fmt()`,
   `ahd.radiation.energy_to_wavelength()`, `ahd.conversions.hkl_to_d()`, etc.
 - **Python**: ≥ 3.10 (uses `X | Y` union types)
-- **Dependencies**: `numpy` only; no scipy, no sympy
+- **Dependencies**: `numpy` and `pyyaml` only; no scipy, no sympy
 - **Style**: ruff (E, W, F, UP, B rules) + ruff-format, line length 88;
   `E501` ignored (slight overruns tolerated)
 - **Import sorting**: isort with `force_single_line = true`
@@ -635,9 +635,11 @@ caller-facing interface only.
 
 ## Demo geometries
 
-All demo geometries live in `presets.py`, are decorated with
-`@register_geometry` (from `factories.py`), and appear in
-`list_geometries()`.  Access them as `ahd.presets.fourcv()`, etc.
+All demo geometries are declarative YAML files in
+`src/ad_hoc_diffractometer/geometries/`, parsed at import time by
+`geometry_loader.py` and registered in the geometry registry; they
+appear in `list_geometries()`.  Access them as
+`ahd.make_geometry("fourcv")`, etc.
 
 Naming convention:
 

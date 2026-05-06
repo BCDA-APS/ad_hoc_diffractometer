@@ -9,7 +9,7 @@ All other names are accessible via their submodules::
     import ad_hoc_diffractometer as ahd
 
     # Tier 1 — always available as ahd.<name>
-    g = ahd.presets.fourcv()
+    g = ahd.make_geometry("fourcv")
     lat = ahd.Lattice(a=5.43)
     ahd.ub_identity(g.sample)
 
@@ -21,7 +21,6 @@ All other names are accessible via their submodules::
 
 import logging
 
-from . import presets  # noqa: F401 — registers the legacy Python demo geometries
 from ._version import __version__
 from .diffractometer import AdHocDiffractometer
 from .diffractometer import pa

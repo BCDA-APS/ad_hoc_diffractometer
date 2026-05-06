@@ -35,6 +35,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
+from helpers import fourcv
 
 import ad_hoc_diffractometer as ahd
 
@@ -131,7 +132,7 @@ def test_sapphire_forward_2theta_matches_hkl_soleil():
     solvers); it uses ``ub_identity`` and verifies that the resulting 2θ
     for (1, 0, 0) matches the analytical Bragg value.
     """
-    g = ahd.presets.fourcv()
+    g = fourcv()
     g.wavelength = 1.5498
     g.sample.lattice = ahd.Lattice(**SAPPHIRE_KWARGS)
     ahd.ub_identity(g.sample)

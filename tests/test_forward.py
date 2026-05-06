@@ -22,6 +22,15 @@ from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
+from helpers import fivec
+from helpers import fourch
+from helpers import fourcv
+from helpers import kappa4ch
+from helpers import kappa4cv
+from helpers import kappa6c
+from helpers import psic
+from helpers import s2d2
+from helpers import sixc
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import BisectConstraint
@@ -35,14 +44,6 @@ from ad_hoc_diffractometer.constants import ZHAT
 from ad_hoc_diffractometer.forward import _apply_cut_points
 from ad_hoc_diffractometer.forward import _check_limits
 from ad_hoc_diffractometer.forward import compute_forward
-from ad_hoc_diffractometer.presets import fivec
-from ad_hoc_diffractometer.presets import fourch
-from ad_hoc_diffractometer.presets import fourcv
-from ad_hoc_diffractometer.presets import kappa4ch
-from ad_hoc_diffractometer.presets import kappa4cv
-from ad_hoc_diffractometer.presets import kappa6c
-from ad_hoc_diffractometer.presets import psic
-from ad_hoc_diffractometer.presets import sixc
 from ad_hoc_diffractometer.stage import Stage
 
 # ---------------------------------------------------------------------------
@@ -451,7 +452,7 @@ def test_fourcv_fixed_chi_round_trip():
 
 def test_psic_fixed_chi_uses_constraint_value():
     """fixed_chi_vertical on psic: chi=90°, mu=0, nu=0 from constraint values."""
-    from ad_hoc_diffractometer.presets import psic
+    from helpers import psic
 
     g = _setup_cubic(psic, a=4.0)
     g.mode_name = "fixed_chi_vertical"
@@ -1196,8 +1197,9 @@ def test_fixed_sample_one_free():
 
 def test_fixed_sample_with_detector_constraint():
     """_solve_fixed_sample: DetectorConstraint branch (line 617-624) is exercised."""
+    from helpers import psic
+
     from ad_hoc_diffractometer.forward import _solve_fixed_sample
-    from ad_hoc_diffractometer.presets import psic
 
     g = psic()
     g.wavelength = WAVELENGTH
@@ -2511,7 +2513,7 @@ def test_one_free_angle_analytic_returns_none_when_unreachable():
     # Use s2d2 fixed_mu, which has Z (rotation about +y) as the only free
     # sample stage.  For a reflection like (1,0,0) the parallel components
     # of q and u disagree → the helper must return None.
-    g = ahd.presets.s2d2()
+    g = s2d2()
     g.wavelength = WAVELENGTH
     g.sample.lattice = ahd.Lattice(a=4.0)
     ub_identity(g.sample)
@@ -2716,8 +2718,9 @@ def test_solve_bisecting_analytic_dedup_branch(monkeypatch):
     identical candidates so the dedup loop's ``duplicate = True;
     break`` path is exercised.
     """
+    from helpers import fourcv
+
     from ad_hoc_diffractometer import forward as fmod
-    from ad_hoc_diffractometer.presets import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406

@@ -76,10 +76,10 @@ from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
+from helpers import psic
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import ub_identity
-from ad_hoc_diffractometer.presets import psic
 
 # Cu Ka wavelength — matches the rest of the test suite.
 WAVELENGTH = 1.5406
