@@ -815,7 +815,7 @@ def _solve_bisecting_kappa_virtual(
     True virtual bisecting solver for kappa geometries.
 
     On a kappa diffractometer the real motor triple
-    ``(komega, kappa, kphi)`` is parameterised by *virtual Eulerian
+    ``(komega, kappa, kphi)`` is parameterized by *virtual Eulerian
     pseudoangles* ``(omega, chi, phi)``.  *True* virtual bisecting
     means the **virtual** ``omega`` equals ``ttheta/2`` — not the
     previous approximation ``komega = ttheta/2``, which only coincides

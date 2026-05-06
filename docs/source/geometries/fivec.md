@@ -1,7 +1,7 @@
 (geometry-fivec)=
 # fivec — Eulerian Five-Circle (Vlieg et al. 1987)
 
-Five-circle diffractometer: a standard {func}`~ad_hoc_diffractometer.presets.fourcv` (Eulerian four-circle) mounted on a vertical mu base stage. Sample and detector are coupled through mu.
+Five-circle diffractometer: a standard {ref}`geometry-fourcv` (Eulerian four-circle) mounted on a vertical mu base stage. Sample and detector are coupled through mu.
 
 **Walko (2016) designation:** (S3D1)1
 
@@ -12,14 +12,14 @@ Five-circle diffractometer: a standard {func}`~ad_hoc_diffractometer.presets.fou
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.fivec()
+g = ahd.make_geometry("fivec")
 g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
 ## Demo geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.fivec` factory
+This geometry is defined by the {ref}`geometry-fivec` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L1147) for the complete stage
 and mode configuration.
 
@@ -66,7 +66,7 @@ and mode configuration.
 Set the active mode with `g.mode_name = "<mode>"`.
 Each mode is a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` of 2 constraints
 (N − 3 = 2 for N = 5 DOF).
-With mu = 0, {func}`~ad_hoc_diffractometer.presets.fivec` reduces identically to {func}`~ad_hoc_diffractometer.presets.fourcv`.
+With mu = 0, {ref}`geometry-fivec` reduces identically to {ref}`geometry-fourcv`.
 See {doc}`../howto/modes` for usage and {doc}`../howto/constraints` for
 changing constraint values at run time.
 
@@ -133,7 +133,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.presets.fivec`
+- {ref}`geometry-fivec`
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`

@@ -1,0 +1,147 @@
+# kappa4cv — four-circle kappa diffractometer, vertical scattering plane.
+#
+# This file is a *demonstration* of the declarative geometry schema
+# (issue #267).  Real beamlines should copy a file like this and
+# adapt it to their own instrument; do not assume the values here
+# describe any production diffractometer.
+#
+# Schema reference: docs/source/reference/declarative_geometry_schema.md
+# How-to:           docs/source/howto/custom_geometry.md
+
+ad_hoc_diffractometer_geometry:
+    schema_revision: 1
+
+name: kappa4cv
+
+documentation: |
+    Kappa Four-Circle (vertical).
+
+    The chi circle of a standard Eulerian fourcv is replaced by a kappa
+    arm; komega and ttheta both rotate about the transverse axis,
+    giving a vertical scattering plane (synchrotron convention).
+
+
+    Walko (2016) designation: S3D1.
+
+
+    The chi circle of a standard Eulerian fourcv is replaced by a kappa
+    arm.  The kappa axis lies in the transverse-vertical plane, tilted
+    ``alpha_deg`` from the (unsigned) transverse direction toward the
+    (unsigned) vertical direction (per Walko 2016 Fig. 3 and
+    Thorkildsen 2006 Table 1).  Default alpha = 50°.
+
+
+    komega and ttheta both rotate about the transverse axis; the
+    scattering plane is vertical (synchrotron convention).
+
+
+    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y,
+    vertical=+z.
+
+
+    Sample stack (floor first):
+        komega : transverse,                left-handed
+        kappa  : tilted in transverse-vertical plane, between +T and +V
+        kphi   : transverse,                left-handed (mounted on kappa)
+
+
+    Detector (floor, mechanically independent of sample stack):
+        ttheta : transverse, left-handed
+
+
+    komega and ttheta share the same transverse axis; they are
+    mechanically independent.
+
+
+    The bisecting mode uses VirtualBisectConstraint, which enforces
+    *true* virtual bisecting in the equivalent-Eulerian frame
+    (omega_virtual = ttheta/2).  Virtual Eulerian sample-angle names
+    ``omega``, ``chi``, ``phi`` are accepted in SampleConstraint and
+    are mapped to / from the real motors (komega, kappa, kphi) by the
+    geometry-aware decomposition in
+    :mod:`ad_hoc_diffractometer.kappa`.  See issues #226 and #241.
+
+
+    Handedness note: this preset encodes komega/kphi/2theta as
+    left-handed about transverse, following Walko (2016).  ITC Vol. C
+    Sec. 2.2.6.2 (2006) prefers a right-handed sign convention for
+    omega/chi/phi.  The two conventions are equivalent up to
+    motor-angle sign flips; either yields the same physical
+    orientations.
+
+
+    References
+
+    - D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
+
+    - G. Thorkildsen, H.B. Larsen & J.A. Beukes, J. Appl. Cryst. 39,
+      151-157 (2006) — Table 1, eqn (3).
+
+    - W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+
+    - ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+      Wyckoff (1985, p. 334) for the schematic picture.
+
+basis: BL
+
+parameters:
+    alpha_deg: 50.0
+
+# Equivalent-Eulerian chi axis: +vertical for kappa4cv.  This (together
+# with parameters.alpha_deg and the kappa-stage axis spec below) drives
+# the synthesized KappaPseudoAngleConvention attached to the
+# constructed geometry.
+kappa_chi_eq: +vertical
+
+stages:
+    - {name: komega, axis: -transverse, parent: null, role: sample}
+    # The kappa arm: tilted alpha_deg from +transverse toward +vertical.
+    # The single argument to ``kappa_eulerian`` is the *unsigned* outer
+    # axis direction (from which the kappa arm tilts toward kappa_chi_eq).
+    - {name: kappa,  axis: {kappa_eulerian: +transverse}, parent: komega, role: sample}
+    - {name: kphi,   axis: -transverse, parent: kappa,    role: sample}
+    - {name: ttheta, axis: -transverse, parent: null,     role: detector}
+
+# kappa4cv: 4 DOF, N - 3 = 1 constraint needed per mode.
+modes:
+    bisecting:
+        default: true
+        constraints:
+            - {type: virtual_bisect, stage1: omega, stage2: ttheta}
+        computed: [komega, kappa, kphi, ttheta]
+
+    fixed_kphi:
+        constraints:
+            - {type: sample, stage: kphi, value: 0.0}
+        computed: [komega, kappa, ttheta]
+
+    fixed_omega:
+        constraints:
+            - {type: sample, stage: omega, value: 0.0}
+        computed: [komega, kappa, kphi, ttheta]
+
+    fixed_chi:
+        constraints:
+            - {type: sample, stage: chi, value: 90.0}
+        computed: [komega, kappa, kphi, ttheta]
+
+    fixed_phi:
+        constraints:
+            - {type: sample, stage: phi, value: 0.0}
+        computed: [komega, kappa, kphi, ttheta]
+
+    fixed_psi:
+        constraints:
+            - {type: reference, name: psi, value: 0.0}
+        computed: [komega, kappa, kphi, ttheta]
+        extras:
+            n_hat: REQUIRED
+            psi: null
+
+    double_diffraction:
+        constraints: []
+        computed: [komega, kappa, kphi, ttheta]
+        extras:
+            h2: REQUIRED
+            k2: REQUIRED
+            l2: REQUIRED

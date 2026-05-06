@@ -12,14 +12,14 @@ Busing & Levy (1967) four-circle Eulerian diffractometer, vertical scattering pl
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
 ## Demo geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.fourcv` factory
+This geometry is defined by the {ref}`geometry-fourcv` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L536) for the complete stage
 and mode configuration.
 
@@ -138,7 +138,7 @@ before calling ``forward()``.
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.presets.fourcv`
+- {ref}`geometry-fourcv`
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`

@@ -26,19 +26,21 @@ classifiers = [
 ]
 dependencies = [
     "numpy",
+    "pyyaml",
 ]
 
-[project.entry-points."ad_hoc_diffractometer.geometries"]
-fivec    = "ad_hoc_diffractometer.presets:fivec"
-fourch   = "ad_hoc_diffractometer.presets:fourch"
-fourcv   = "ad_hoc_diffractometer.presets:fourcv"
-kappa4ch = "ad_hoc_diffractometer.presets:kappa4ch"
-kappa4cv = "ad_hoc_diffractometer.presets:kappa4cv"
-kappa6c  = "ad_hoc_diffractometer.presets:kappa6c"
-psic     = "ad_hoc_diffractometer.presets:psic"
-s2d2     = "ad_hoc_diffractometer.presets:s2d2"
-sixc     = "ad_hoc_diffractometer.presets:sixc"
-zaxis    = "ad_hoc_diffractometer.presets:zaxis"
+# Note: the demonstration geometries (fourcv, psic, kappa4cv, ...) are
+# declarative YAML files shipped under
+# ``src/ad_hoc_diffractometer/geometries/``.  They are auto-registered by
+# ``ad_hoc_diffractometer.geometry_loader`` at import time and do **not**
+# need to be listed as entry points here.
+#
+# Third-party packages may still contribute Python-callable factories via
+# the ``ad_hoc_diffractometer.geometries`` entry-point group, or
+# additional declarative YAML files via run-time
+# :func:`ad_hoc_diffractometer.register_geometry_file`.
+# See ``docs/source/reference/declarative_geometry_schema.md`` and
+# ``docs/source/howto/custom_geometry.md``.
 
 [project.optional-dependencies]
 dev = [
@@ -79,6 +81,12 @@ version-file = "src/ad_hoc_diffractometer/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ad_hoc_diffractometer"]
+# Ship the declarative geometry YAML files (and the JSON schema) as
+# package data so they can be discovered via ``importlib.resources``.
+include = [
+    "src/ad_hoc_diffractometer/geometries/*.yml",
+    "src/ad_hoc_diffractometer/geometries/*.json",
+]
 
 [tool.hatch.envs.default]
 features = ["dev"]

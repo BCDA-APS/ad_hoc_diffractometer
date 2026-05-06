@@ -12,7 +12,7 @@ label, but every basis-invariant quantity (``|Q|``, ``|2θ|``,
 ``d``-spacing, …) must come out the same.
 
 These tests guard against any future leak of internal-basis
-choice into user-visible behaviour, including from work in issue
+choice into user-visible behavior, including from work in issue
 #252 that re-derived the kappa-axis convention.
 """
 
@@ -49,8 +49,7 @@ _PRESETS = [
 
 def _setup(preset_name, basis, mode_name=None, a=4.0, wavelength=1.0):
     """Build a preset under the given basis with a cubic UB=identity."""
-    factory = getattr(ahd.presets, preset_name)
-    g = factory(basis=basis)
+    g = ahd.make_geometry(preset_name, basis=basis)
     g.wavelength = wavelength
     g.sample.lattice = ahd.Lattice(a=a)
     ahd.ub_identity(g.sample)

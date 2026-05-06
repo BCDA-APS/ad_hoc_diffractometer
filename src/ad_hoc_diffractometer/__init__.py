@@ -9,7 +9,7 @@ All other names are accessible via their submodules::
     import ad_hoc_diffractometer as ahd
 
     # Tier 1 — always available as ahd.<name>
-    g = ahd.presets.fourcv()
+    g = ahd.make_geometry("fourcv")
     lat = ahd.Lattice(a=5.43)
     ahd.ub_identity(g.sample)
 
@@ -21,7 +21,6 @@ All other names are accessible via their submodules::
 
 import logging
 
-from . import presets  # noqa: F401 — registers the demo geometries
 from ._version import __version__
 from .diffractometer import AdHocDiffractometer
 from .diffractometer import pa
@@ -30,6 +29,8 @@ from .factories import get_geometry
 from .factories import list_geometries
 from .factories import make_geometry
 from .factories import register_geometry
+from .geometry_loader import load_geometry_file
+from .geometry_loader import register_geometry_file
 from .lattice import Lattice
 from .mode import REQUIRED
 from .mode import BisectConstraint
@@ -65,6 +66,8 @@ __all__ = [
     "get_geometry",
     "make_geometry",
     "register_geometry",
+    "register_geometry_file",
+    "load_geometry_file",
     # orientation
     "ub_identity",
     "ub_from_one_reflection",

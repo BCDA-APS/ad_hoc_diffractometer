@@ -23,6 +23,16 @@ from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
+from helpers import fivec
+from helpers import fourch
+from helpers import fourcv
+from helpers import kappa4ch
+from helpers import kappa4cv
+from helpers import kappa6c
+from helpers import psic
+from helpers import s2d2
+from helpers import sixc
+from helpers import zaxis
 
 from ad_hoc_diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer import get_geometry
@@ -31,16 +41,6 @@ from ad_hoc_diffractometer import make_geometry
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
-from ad_hoc_diffractometer.presets import fivec
-from ad_hoc_diffractometer.presets import fourch
-from ad_hoc_diffractometer.presets import fourcv
-from ad_hoc_diffractometer.presets import kappa4ch
-from ad_hoc_diffractometer.presets import kappa4cv
-from ad_hoc_diffractometer.presets import kappa6c
-from ad_hoc_diffractometer.presets import psic
-from ad_hoc_diffractometer.presets import s2d2
-from ad_hoc_diffractometer.presets import sixc
-from ad_hoc_diffractometer.presets import zaxis
 
 # ---------------------------------------------------------------------------
 # list_geometries()
@@ -806,35 +806,30 @@ class TestEntryPointExtensibility:
 
         assert hasattr(fac, "GEOMETRY_ENTRY_POINT_GROUP")
 
-    # --- Built-in factories declared as entry points -----------------------
+    # --- Built-in factories declared via the declarative-YAML loader -----
+    #
+    # Issue #267 removed the entry-point declarations for the 10 demo
+    # geometries from ``pyproject.toml`` and replaced the legacy
+    # ``ad_hoc_diffractometer.presets`` Python factories with declarative
+    # YAML files.  Built-ins are now registered exclusively by the
+    # loader scanning :mod:`ad_hoc_diffractometer.geometries`.  The
+    # entry-point group remains supported for *third-party* plugins.
 
-    def test_all_builtins_declared_as_entry_points(self):
-        """All 10 built-in factories must appear in the installed entry points."""
+    def test_no_builtins_declared_as_entry_points(self):
+        """Built-in geometries are no longer declared as entry points."""
         from importlib.metadata import entry_points
 
         from ad_hoc_diffractometer.factories import GEOMETRY_ENTRY_POINT_GROUP
 
         eps = entry_points(group=GEOMETRY_ENTRY_POINT_GROUP)
         names = {ep.name for ep in eps}
-        assert _BUILTIN_NAMES <= names, (
-            f"Missing from entry points: {_BUILTIN_NAMES - names}"
+        # Any of the 10 built-in names appearing here would mean a stale
+        # ``pyproject.toml`` declaration leaked through; a clean install
+        # produces an empty set.
+        assert _BUILTIN_NAMES.isdisjoint(names), (
+            f"Built-in names should not appear as entry points: "
+            f"{sorted(_BUILTIN_NAMES & names)}"
         )
-
-    def test_entry_point_loads_correct_factory(self):
-        """Each built-in entry point must load to the same callable as the module."""
-        from importlib.metadata import entry_points
-
-        import ad_hoc_diffractometer.presets as presets
-        from ad_hoc_diffractometer.factories import GEOMETRY_ENTRY_POINT_GROUP
-
-        eps = {ep.name: ep for ep in entry_points(group=GEOMETRY_ENTRY_POINT_GROUP)}
-        for name in _BUILTIN_NAMES:
-            assert name in eps
-            loaded = eps[name].load()
-            assert loaded is getattr(presets, name), (
-                f"Entry point '{name}' loaded {loaded!r}, "
-                f"expected {getattr(presets, name)!r}"
-            )
 
     # --- list_geometries() discovers entry points --------------------------
 
@@ -853,8 +848,9 @@ class TestEntryPointExtensibility:
         from unittest.mock import MagicMock
         from unittest.mock import patch
 
+        from helpers import fourcv
+
         import ad_hoc_diffractometer.factories as fac
-        from ad_hoc_diffractometer.presets import fourcv
 
         # Build a fake entry point that loads a trivial factory
         fake_factory = fourcv  # reuse an existing factory as the "plugin"
@@ -933,8 +929,9 @@ class TestEntryPointExtensibility:
         from unittest.mock import MagicMock
         from unittest.mock import patch
 
+        from helpers import fourcv
+
         import ad_hoc_diffractometer.factories as fac
-        from ad_hoc_diffractometer.presets import fourcv
 
         impostor_ep = MagicMock()
         impostor_ep.name = "psic"  # same name as built-in
@@ -969,9 +966,10 @@ class TestEntryPointExtensibility:
         from unittest.mock import MagicMock
         from unittest.mock import patch
 
+        from helpers import fourch
+        from helpers import fourcv
+
         import ad_hoc_diffractometer.factories as fac
-        from ad_hoc_diffractometer.presets import fourch
-        from ad_hoc_diffractometer.presets import fourcv
 
         ep1 = MagicMock()
         ep1.name = "my_custom_geom"
@@ -1054,3 +1052,82 @@ class TestEntryPointExtensibility:
             _fac._EP_LOADED = original_ep_loaded
             _fac._GEOMETRY_REGISTRY.clear()
             _fac._GEOMETRY_REGISTRY.update(original_registry)
+
+
+def test_packaged_geometry_loader_failure_is_non_fatal(monkeypatch):
+    """If `_register_packaged_geometries` raises, registry init should
+    not crash; the broken-loader exception is logged at debug level and
+    swallowed (covers the broad except in factories.py)."""
+    import ad_hoc_diffractometer.factories as fac
+
+    fac._EP_LOADED = False  # noqa: SLF001 — force re-discovery
+    original_registry = dict(fac._GEOMETRY_REGISTRY)  # noqa: SLF001
+    try:
+        # Monkey-patch the loader function the factories module imports
+        # to raise when called.
+        from ad_hoc_diffractometer import geometry_loader
+
+        def _broken(*args, **kwargs):
+            raise RuntimeError("simulated loader failure")
+
+        monkeypatch.setattr(geometry_loader, "_register_packaged_geometries", _broken)
+        # Also patch entry_points to an empty list so the rest of the
+        # function runs without raising.
+        monkeypatch.setattr(fac, "entry_points", lambda group: [])
+        # Trigger the discovery path:
+        fac._load_entry_point_geometries()  # noqa: SLF001
+        # Built-ins from before this test must still be present
+        # (the swallowed-exception branch did not corrupt the registry).
+        for name in ("fourcv", "psic"):
+            assert name in fac._GEOMETRY_REGISTRY  # noqa: SLF001
+    finally:
+        fac._EP_LOADED = True  # noqa: SLF001
+        fac._GEOMETRY_REGISTRY.clear()  # noqa: SLF001
+        fac._GEOMETRY_REGISTRY.update(original_registry)  # noqa: SLF001
+
+
+def test_entry_point_redeclaring_existing_factory_is_skipped_silently():
+    """An entry point whose .load() returns the same callable already in
+    the registry is treated as a non-conflict and skipped (covers the
+    dedup `continue` branch in _load_entry_point_geometries)."""
+    from unittest.mock import MagicMock
+    from unittest.mock import patch
+
+    import ad_hoc_diffractometer.factories as fac
+    from ad_hoc_diffractometer import geometry_loader
+
+    # Trigger registry population (no-op if already populated).
+    fac.list_geometries()
+    original_ep_loaded = fac._EP_LOADED  # noqa: SLF001
+    original_registry = dict(fac._GEOMETRY_REGISTRY)  # noqa: SLF001
+    fac._EP_LOADED = False  # noqa: SLF001
+
+    # Capture the existing registry callable for ``fourcv``.  The mock
+    # entry point will return that exact callable, so the dedup
+    # ``existing is factory`` check fires and the loop ``continue``s.
+    duplicate_factory = fac._GEOMETRY_REGISTRY["fourcv"]
+    fake_ep = MagicMock()
+    fake_ep.name = "fourcv"
+    fake_ep.value = "ad_hoc_diffractometer.geometries:fourcv.yml"
+    fake_ep.load.return_value = duplicate_factory
+
+    try:
+        # Patch _register_packaged_geometries to a no-op so the
+        # second invocation does not rebuild a new closure for fourcv;
+        # we want the entry-point loop to see the original callable.
+        with (
+            patch.object(
+                geometry_loader, "_register_packaged_geometries", lambda: None
+            ),
+            patch(
+                "ad_hoc_diffractometer.factories.entry_points",
+                return_value=[fake_ep],
+            ),
+        ):
+            fac.list_geometries()  # triggers _load_entry_point_geometries
+        # Registry still has fourcv pointing at the same factory
+        assert fac._GEOMETRY_REGISTRY["fourcv"] is duplicate_factory
+    finally:
+        fac._EP_LOADED = original_ep_loaded
+        fac._GEOMETRY_REGISTRY.clear()
+        fac._GEOMETRY_REGISTRY.update(original_registry)

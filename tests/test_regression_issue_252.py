@@ -31,6 +31,9 @@ from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
+from helpers import kappa4ch
+from helpers import kappa4cv
+from helpers import kappa6c
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
@@ -59,21 +62,21 @@ def _setup_cubic(factory, a=4.0, wavelength=1.5406):
     "factory, plane_directions, alpha_deg, context",
     [
         pytest.param(
-            ahd.presets.kappa4cv,
+            kappa4cv,
             ("transverse", "vertical"),
             50.0,
             does_not_raise(),
             id="kappa4cv-walko2016-fig3",
         ),
         pytest.param(
-            ahd.presets.kappa4ch,
+            kappa4ch,
             ("vertical", "longitudinal"),
             50.0,
             does_not_raise(),
             id="kappa4ch-wyckoff1985-fig2b",
         ),
         pytest.param(
-            ahd.presets.kappa6c,
+            kappa6c,
             ("transverse", "vertical"),
             50.0,
             does_not_raise(),
@@ -82,21 +85,21 @@ def _setup_cubic(factory, a=4.0, wavelength=1.5406):
         # Custom alpha values — the kappa axis must still lie in the
         # documented basis-direction plane for any α in (0, 90°).
         pytest.param(
-            ahd.presets.kappa4cv,
+            kappa4cv,
             ("transverse", "vertical"),
             45.0,
             does_not_raise(),
             id="kappa4cv-alpha45",
         ),
         pytest.param(
-            ahd.presets.kappa4ch,
+            kappa4ch,
             ("vertical", "longitudinal"),
             35.0,
             does_not_raise(),
             id="kappa4ch-alpha35",
         ),
         pytest.param(
-            ahd.presets.kappa6c,
+            kappa6c,
             ("transverse", "vertical"),
             55.0,
             does_not_raise(),
@@ -139,21 +142,21 @@ def test_kappa_axis_matches_published_literature(
     "factory, plane_directions, normal_direction, context",
     [
         pytest.param(
-            ahd.presets.kappa4cv,
+            kappa4cv,
             ("transverse", "vertical"),
             "longitudinal",
             does_not_raise(),
             id="kappa4cv-normal-to-L",
         ),
         pytest.param(
-            ahd.presets.kappa4ch,
+            kappa4ch,
             ("vertical", "longitudinal"),
             "transverse",
             does_not_raise(),
             id="kappa4ch-normal-to-T",
         ),
         pytest.param(
-            ahd.presets.kappa6c,
+            kappa6c,
             ("transverse", "vertical"),
             "longitudinal",
             does_not_raise(),
@@ -191,9 +194,9 @@ def test_kappa_axis_orthogonal_to_third_basis_direction(
 @pytest.mark.parametrize(
     "factory",
     [
-        pytest.param(ahd.presets.kappa4cv, id="kappa4cv"),
-        pytest.param(ahd.presets.kappa4ch, id="kappa4ch"),
-        pytest.param(ahd.presets.kappa6c, id="kappa6c"),
+        pytest.param(kappa4cv, id="kappa4cv"),
+        pytest.param(kappa4ch, id="kappa4ch"),
+        pytest.param(kappa6c, id="kappa6c"),
     ],
 )
 @pytest.mark.parametrize(
@@ -252,10 +255,10 @@ def test_eulerian_kappa_round_trip(factory, omega, chi, phi, branch):
 @pytest.mark.parametrize(
     "factory, mode_name",
     [
-        pytest.param(ahd.presets.kappa4cv, "bisecting", id="kappa4cv-bisecting"),
-        pytest.param(ahd.presets.kappa4ch, "bisecting", id="kappa4ch-bisecting"),
+        pytest.param(kappa4cv, "bisecting", id="kappa4cv-bisecting"),
+        pytest.param(kappa4ch, "bisecting", id="kappa4ch-bisecting"),
         pytest.param(
-            ahd.presets.kappa6c,
+            kappa6c,
             "bisecting_vertical",
             id="kappa6c-bisecting_vertical",
         ),
@@ -320,7 +323,7 @@ def test_sapphire_002_kappa4cv_bisecting_solves():
 
     Sapphire: a=4.785 Å, c=12.991 Å, γ=120°; λ=1.5498 Å; UB=identity.
     """
-    g = ahd.presets.kappa4cv()
+    g = kappa4cv()
     g.wavelength = 1.5498
     g.sample.lattice = ahd.Lattice(
         a=4.785, b=4.785, c=12.991, alpha=90.0, beta=90.0, gamma=120.0

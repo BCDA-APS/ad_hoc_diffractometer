@@ -1,0 +1,250 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://prjemian.github.io/ad_hoc_diffractometer/schemas/geometry-revision-1.json",
+    "title": "ad_hoc_diffractometer declarative geometry (revision 1)",
+    "description": "Schema for declarative diffractometer geometry files consumed by ad_hoc_diffractometer.geometry_loader (issue #267). The authoritative reference is docs/source/reference/declarative_geometry_schema.md; this JSON Schema is the machine-readable equivalent and is shipped alongside the package for editor tooling and documentation.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "ad_hoc_diffractometer_geometry",
+        "name",
+        "stages",
+        "modes"
+    ],
+    "properties": {
+        "ad_hoc_diffractometer_geometry": {
+            "description": "Document marker. Its presence identifies the file as an ad_hoc_diffractometer geometry; the integer schema_revision selects which version of this schema the file conforms to.  schema_revision is a fixed property of the schema, not a per-file edit counter; users should treat the value verbatim.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["schema_revision"],
+            "properties": {
+                "schema_revision": {
+                    "description": "Schema revision (currently must equal 1).  Independent of the package version; treat this as a verbatim identifier of the schema this file conforms to, not a per-file edit counter.",
+                    "type": "integer",
+                    "enum": [1]
+                }
+            }
+        },
+        "name": {
+            "description": "Registry key. For files inside src/ad_hoc_diffractometer/geometries/, this MUST equal the filename stem.",
+            "type": "string",
+            "minLength": 1
+        },
+        "documentation": {
+            "description": "Free-form prose. The first line is the one-line summary (Python-docstring convention).",
+            "type": "string"
+        },
+        "basis": {
+            "description": "Coordinate basis. Three accepted forms: (1) shorthand string ('BL', 'YOU', 'DEFAULT'); (2) mapping of signed-axis or signed-physical-direction strings (e.g. {vertical: '+z', longitudinal: '+y', transverse: '+x'}); (3) mapping of length-3 numeric unit vectors, including non-axis-aligned bases such as {vertical: [0.7071, 0.7071, 0.0], longitudinal: [-0.7071, 0.7071, 0.0], transverse: [0.0, 0.0, 1.0]}. The three vectors must be orthonormal (each unit length, mutually orthogonal); the loader validates this within tolerance 1e-9 and rejects degenerate or non-orthonormal bases. Either chirality of the (vertical, longitudinal, transverse) ordering is accepted. Caller-supplied basis= overrides whatever is declared here. When omitted, the loader uses BASIS_DEFAULT (vertical=YHAT, longitudinal=ZHAT, transverse=XHAT) and emits a UserWarning.",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": ["BL", "YOU", "DEFAULT"]
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["vertical", "longitudinal", "transverse"],
+                    "properties": {
+                        "vertical": { "$ref": "#/$defs/basis_vector" },
+                        "longitudinal": { "$ref": "#/$defs/basis_vector" },
+                        "transverse": { "$ref": "#/$defs/basis_vector" }
+                    }
+                }
+            ]
+        },
+        "parameters": {
+            "description": "Caller-tunable defaults. Currently only alpha_deg is recognized.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "alpha_deg": {
+                    "description": "Kappa tilt angle in degrees. Must be in (0, 90).",
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "exclusiveMaximum": 90
+                }
+            }
+        },
+        "kappa_chi_eq": {
+            "description": "Equivalent-Eulerian chi axis. Required when parameters.alpha_deg is declared. Used by axis fields of the form {kappa_eulerian: ...}.",
+            "$ref": "#/$defs/axis_value"
+        },
+        "stages": {
+            "description": "Ordered list of rotary stages. Order in this list is informational; mechanical stacking is determined by the parent field of each stage.",
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/$defs/stage" }
+        },
+        "modes": {
+            "description": "Mapping of mode-name to mode-spec. At most one mode may set 'default: true'.",
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": { "$ref": "#/$defs/mode" }
+        }
+    },
+    "$defs": {
+        "basis_vector": {
+            "description": "One basis vector. Two accepted forms: (1) a signed-axis or signed-physical-direction string (e.g. '+x', '-z', '+vertical', '-transverse') -- when this form is used inside the 'basis:' mapping itself, only the signed Cartesian forms ('+x', '-y', '+z', ...) are meaningful, since physical-direction names cannot be self-referential; (2) a length-3 numeric vector. Numeric vectors need not be axis-aligned -- any orthonormal triple is accepted, e.g. {vertical: [0.7071, 0.7071, 0.0], longitudinal: [-0.7071, 0.7071, 0.0], transverse: [0.0, 0.0, 1.0]}. The loader validates that the three vectors form an orthonormal frame within tolerance 1e-9. Unlike a stage 'axis:' field, a basis vector cannot use the {kappa_eulerian: ...} mapping form.",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "minLength": 1
+                },
+                {
+                    "type": "array",
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "items": { "type": "number" }
+                }
+            ]
+        },
+        "axis_value": {
+            "description": "A stage axis specification. Three accepted forms: (1) signed physical-direction or Cartesian string ('+transverse', '-vertical', '+x', '-z'); (2) length-3 numeric vector (sign included; the Stage constructor handles normalisation for rotation calculations); (3) kappa-tilt mapping {kappa_eulerian: <axis>}, valid only when parameters.alpha_deg and the top-level kappa_chi_eq are both declared.",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "minLength": 1
+                },
+                {
+                    "type": "array",
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "items": { "type": "number" }
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["kappa_eulerian"],
+                    "properties": {
+                        "kappa_eulerian": {
+                            "oneOf": [
+                                { "type": "string", "minLength": 1 },
+                                {
+                                    "type": "array",
+                                    "minItems": 3,
+                                    "maxItems": 3,
+                                    "items": { "type": "number" }
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "stage": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "axis", "parent", "role"],
+            "properties": {
+                "name": {
+                    "description": "Stage name; unique within the geometry.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "axis": { "$ref": "#/$defs/axis_value" },
+                "parent": {
+                    "description": "Name of the stage this one sits on, or null for the lab frame.",
+                    "type": ["string", "null"]
+                },
+                "role": {
+                    "description": "Conventional values are 'sample' and 'detector'. Any other string is accepted (e.g. 'analyzer', 'polarizer') but is ignored by the forward/inverse solvers.",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "mode": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["constraints"],
+            "properties": {
+                "default": {
+                    "description": "Mark this mode as the geometry's default. At most one mode per file may set this to true.",
+                    "type": "boolean"
+                },
+                "constraints": {
+                    "description": "List of constraint specs. May be empty.",
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/constraint" }
+                },
+                "computed": {
+                    "description": "Stage names the solver writes (informational).",
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "extras": {
+                    "description": "Additional inputs and output slots. The literal string 'REQUIRED' is mapped to the ad_hoc_diffractometer.mode.REQUIRED sentinel; YAML null is preserved as Python None.",
+                    "type": "object"
+                },
+                "cut_points": {
+                    "description": "Per-stage SPEC #G4 cut-points. Maps stage name to a float; the returned angle lies in [C, C + 360 deg).",
+                    "type": "object",
+                    "additionalProperties": { "type": "number" }
+                }
+            }
+        },
+        "constraint": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["type", "stage1", "stage2"],
+                    "properties": {
+                        "type": { "const": "bisect" },
+                        "stage1": { "type": "string", "minLength": 1 },
+                        "stage2": { "type": "string", "minLength": 1 }
+                    }
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["type", "stage1", "stage2"],
+                    "properties": {
+                        "type": { "const": "virtual_bisect" },
+                        "stage1": { "type": "string", "minLength": 1 },
+                        "stage2": { "type": "string", "minLength": 1 }
+                    }
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["type", "stage", "value"],
+                    "properties": {
+                        "type": { "const": "sample" },
+                        "stage": { "type": "string", "minLength": 1 },
+                        "value": { "type": "number" }
+                    }
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["type", "stage", "value"],
+                    "properties": {
+                        "type": { "const": "detector" },
+                        "stage": { "type": "string", "minLength": 1 },
+                        "value": { "type": "number" }
+                    }
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["type", "name", "value"],
+                    "properties": {
+                        "type": { "const": "reference" },
+                        "name": {
+                            "type": "string",
+                            "enum": ["psi", "alpha_i", "beta_out", "a_eq_b", "naz"]
+                        },
+                        "value": {
+                            "oneOf": [
+                                { "type": "number" },
+                                { "type": "boolean" }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

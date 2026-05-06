@@ -16,14 +16,14 @@ Laboratory convention.
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.kappa4ch()
+g = ahd.make_geometry("kappa4ch")
 g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
 ## Demo geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.kappa4ch` factory
+This geometry is defined by the {ref}`geometry-kappa4ch` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L964) for the complete stage
 and mode configuration.
 
@@ -182,7 +182,7 @@ the stored target.  See {doc}`../howto/surface`.
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.presets.kappa4ch`
+- {ref}`geometry-kappa4ch`
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`

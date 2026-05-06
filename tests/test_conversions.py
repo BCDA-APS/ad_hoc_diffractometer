@@ -23,6 +23,7 @@ from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
+from helpers import fourcv
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import Lattice
@@ -37,7 +38,6 @@ from ad_hoc_diffractometer.conversions import hkl_to_Q
 from ad_hoc_diffractometer.conversions import hkl_to_two_theta
 from ad_hoc_diffractometer.conversions import two_theta_to_d
 from ad_hoc_diffractometer.conversions import two_theta_to_Q_mag
-from ad_hoc_diffractometer.presets import fourcv
 
 # ---------------------------------------------------------------------------
 # Helpers

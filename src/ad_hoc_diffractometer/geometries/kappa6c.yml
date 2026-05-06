@@ -1,0 +1,251 @@
+# kappa6c — six-circle kappa diffractometer (psic-style outer axes,
+# kappa inner sample stack).
+#
+# This file is a *demonstration* of the declarative geometry schema
+# (issue #267).  Real beamlines should copy a file like this and
+# adapt it to their own instrument; do not assume the values here
+# describe any production diffractometer.
+#
+# Schema reference: docs/source/reference/declarative_geometry_schema.md
+# How-to:           docs/source/howto/custom_geometry.md
+
+ad_hoc_diffractometer_geometry:
+    schema_revision: 1
+
+name: kappa6c
+
+documentation: |
+    Kappa Six-Circle.
+
+    Six-circle kappa diffractometer; transverse detector, synchrotron
+    convention.  Extends kappa4cv with the psic-style outer axes
+    ``mu`` (sample) and ``nu`` (detector).
+
+
+    Walko (2016) designation: S4D2.
+
+
+    See ESRF for a comprehensive example:
+    https://www.esrf.fr/home/UsersAndScience/Experiments/CRG/BM02/equipment/diffractometer.html#c
+
+
+    Extends the kappa4cv geometry with two additional axes (mu, nu) in
+    the style of the psic geometry (You 1999), giving full orientation
+    freedom.  This is the synchrotron configuration with a transverse
+    detector.
+
+
+    Default basis: You (1999) — vertical=+x, longitudinal=+y,
+    transverse=+z.
+
+
+    Sample stack (floor first):
+        mu     : vertical,   right-handed (outermost)
+        komega : transverse, left-handed (mounted on mu)
+        kappa  : tilted in the transverse-vertical plane, between +T
+                 and +V; α from +T toward +V (per Walko 2016 Fig. 3 and
+                 Thorkildsen 2006 Table 1).
+        kphi   : transverse, left-handed (mounted on kappa)
+
+
+    Detector stack (floor first):
+        nu    : vertical,   right-handed
+        delta : transverse, left-handed (mounted on nu)
+
+
+    mu and nu share the same vertical axis; they are mechanically
+    independent.
+
+
+    Mode families (13 modes total):
+
+    - Vertical scattering plane (mu = nu = 0): ``bisecting_vertical``
+      (uses VirtualBisectConstraint with omega/delta), ``fixed_kphi``,
+      ``fixed_mu``, ``fixed_nu``, ``fixed_psi_vertical``,
+      ``double_diffraction_vertical``.
+
+    - Horizontal scattering plane (komega = delta = 0):
+      ``bisecting_horizontal`` (literal mu/nu motor bisect),
+      ``fixed_delta``, ``fixed_psi_horizontal``,
+      ``double_diffraction_horizontal``.
+
+    - 2 zone modes: scattering vector Q is confined to the plane
+      defined by two reciprocal-lattice vectors z0 and z1.
+
+    - 2 lifting-detector modes (out-of-plane geometry).
+
+
+    Handedness note: this preset encodes komega/kphi/delta as
+    left-handed about transverse and mu/nu as right-handed about
+    vertical, following Walko (2016) and You (1999) respectively.
+    ITC Vol. C Sec. 2.2.6.2 (2006) prefers a right-handed sign
+    convention for omega/chi/phi.  The two conventions are equivalent
+    up to motor-angle sign flips; either yields the same physical
+    orientations.
+
+
+    References
+
+    - H.H. Sønsteby, D. Chernyshov, M. Getz, O. Nilsen & H. Fjellvåg,
+      J. Synchrotron Rad. 20, 644-647 (2013) — six-axis κ
+      diffractometer (KUMA6 at SNBL/ESRF).
+
+    - G. Thorkildsen, H.B. Larsen & J.A. Beukes, J. Appl. Cryst. 39,
+      151-157 (2006) — Table 1, eqn (3); extends to additional
+      rotation axes (§3 last paragraph).
+
+    - D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) — Fig. 3.
+
+    - H. You, J. Appl. Cryst. 32, 614-623 (1999) — outer-axis layout
+      (psic 4S+2D) and You coordinate basis.
+
+    - ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+      Wyckoff (1985, p. 334) for the schematic picture.
+
+basis: YOU
+
+parameters:
+    alpha_deg: 50.0
+
+# Equivalent-Eulerian chi axis: +vertical (same as kappa4cv).
+kappa_chi_eq: +vertical
+
+stages:
+    - {name: mu,     axis: +vertical,                       parent: null,   role: sample}
+    - {name: komega, axis: -transverse,                     parent: mu,     role: sample}
+    # The kappa arm: tilted alpha_deg from +transverse toward +vertical
+    # (same as kappa4cv).
+    - {name: kappa,  axis: {kappa_eulerian: +transverse},   parent: komega, role: sample}
+    - {name: kphi,   axis: -transverse,                     parent: kappa,  role: sample}
+    - {name: nu,     axis: +vertical,                       parent: null,   role: detector}
+    - {name: delta,  axis: -transverse,                     parent: nu,     role: detector}
+
+# kappa6c: 6 DOF, N - 3 = 3 constraints needed per mode.
+# Vertical bisect pair (kappa-omega bisect): VirtualBisectConstraint
+#   enforces ``omega_virtual = delta/2`` — the physically correct
+#   bisecting condition for a kappa diffractometer (issues #226 and #241).
+# Horizontal bisect pair: mu(vertical) <-> nu(vertical) => mu = nu/2
+#   (literal motor bisect; mu is a real outer stage, not a kappa motor).
+modes:
+    # ── Implemented (generic solver) ────────────────────────────────────
+    bisecting_vertical:
+        default: true
+        constraints:
+            - {type: virtual_bisect, stage1: omega, stage2: delta}
+            - {type: sample,         stage: mu, value: 0.0}
+            - {type: detector,       stage: nu, value: 0.0}
+        computed: [komega, kappa, kphi, delta]
+
+    bisecting_horizontal:
+        constraints:
+            - {type: bisect,   stage1: mu, stage2: nu}
+            - {type: sample,   stage: komega, value: 0.0}
+            - {type: detector, stage: delta,  value: 0.0}
+        computed: [mu, kappa, kphi, nu]
+
+    fixed_kphi:
+        constraints:
+            - {type: sample,   stage: kphi, value: 0.0}
+            - {type: sample,   stage: mu,   value: 0.0}
+            - {type: detector, stage: nu,   value: 0.0}
+        computed: [komega, kappa, delta]
+
+    fixed_mu:
+        constraints:
+            - {type: sample,         stage: mu, value: 0.0}
+            - {type: virtual_bisect, stage1: omega, stage2: delta}
+            - {type: detector,       stage: nu, value: 0.0}
+        computed: [komega, kappa, kphi, delta]
+
+    fixed_nu:
+        constraints:
+            - {type: detector,       stage: nu, value: 0.0}
+            - {type: virtual_bisect, stage1: omega, stage2: delta}
+            - {type: sample,         stage: mu, value: 0.0}
+        computed: [komega, kappa, kphi, delta]
+
+    fixed_delta:
+        constraints:
+            - {type: detector, stage: delta,  value: 0.0}
+            - {type: bisect,   stage1: mu, stage2: nu}
+            - {type: sample,   stage: komega, value: 0.0}
+        computed: [mu, kappa, kphi, nu]
+
+    # ── Stubs: solver not yet implemented ───────────────────────────────
+    lifting_detector_mu:
+        constraints:
+            - {type: sample,   stage: mu,     value: 0.0}
+            - {type: sample,   stage: komega, value: 0.0}
+            - {type: detector, stage: qaz,    value: 90.0}
+        computed: [mu, nu, delta]
+
+    lifting_detector_kphi:
+        constraints:
+            - {type: sample,   stage: kphi, value: 0.0}
+            - {type: sample,   stage: mu,   value: 0.0}
+            - {type: detector, stage: qaz,  value: 90.0}
+        computed: [kphi, nu, delta]
+
+    fixed_psi_vertical:
+        constraints:
+            - {type: virtual_bisect, stage1: omega, stage2: delta}
+            - {type: sample,         stage: mu, value: 0.0}
+            - {type: reference,      name: psi, value: 0.0}
+        computed: [komega, kappa, kphi, delta]
+        extras:
+            n_hat: REQUIRED
+            psi: null
+
+    fixed_psi_horizontal:
+        constraints:
+            - {type: bisect,    stage1: mu, stage2: nu}
+            - {type: sample,    stage: komega, value: 0.0}
+            - {type: reference, name: psi, value: 0.0}
+        computed: [mu, kappa, kphi, nu]
+        extras:
+            n_hat: REQUIRED
+            psi: null
+
+    double_diffraction_vertical:
+        constraints:
+            - {type: sample,   stage: mu, value: 0.0}
+            - {type: detector, stage: nu, value: 0.0}
+        computed: [komega, kappa, kphi, delta]
+        extras:
+            h2: REQUIRED
+            k2: REQUIRED
+            l2: REQUIRED
+
+    double_diffraction_horizontal:
+        constraints:
+            - {type: sample,   stage: komega, value: 0.0}
+            - {type: detector, stage: delta,  value: 0.0}
+        computed: [mu, kappa, kphi, nu]
+        extras:
+            h2: REQUIRED
+            k2: REQUIRED
+            l2: REQUIRED
+
+    # ── Zone modes (You 1999 §6, SPEC `setmode 5`) ──────────────────────
+    # Q is confined to the plane defined by two reciprocal-lattice
+    # vectors z0 and z1.  Same dispatch pattern as psic — see psic
+    # zone_vertical / zone_horizontal for details.
+    zone_vertical:
+        constraints:
+            - {type: sample,   stage: mu, value: 0.0}
+            - {type: detector, stage: nu, value: 0.0}
+        computed: [komega, kappa, kphi, delta]
+        extras:
+            z0: REQUIRED
+            z1: REQUIRED
+            in_plane_residual: null
+
+    zone_horizontal:
+        constraints:
+            - {type: sample,   stage: komega, value: 0.0}
+            - {type: detector, stage: delta,  value: 0.0}
+        computed: [mu, kappa, kphi, nu]
+        extras:
+            z0: REQUIRED
+            z1: REQUIRED
+            in_plane_residual: null
