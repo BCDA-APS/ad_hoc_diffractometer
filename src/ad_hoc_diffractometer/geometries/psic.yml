@@ -153,6 +153,35 @@ modes:
             n_hat: REQUIRED
             psi: null
 
+    # Per @jwkim-anl, issue #264: a useful psic mode that fixes chi and
+    # phi and the incidence angle alpha_i, leaving mu, eta, nu, delta
+    # to be determined from the Bragg condition + the alpha_i target.
+    # Two free sample stages and two free detector stages — solved by a
+    # dedicated 4-D Newton.
+    fixed_alpha_i_fixed_chi_fixed_phi:
+        constraints:
+            - {type: sample,    stage: chi, value: 0.0}
+            - {type: sample,    stage: phi, value: 0.0}
+            - {type: reference, name: alpha_i, value: 0.0}
+        computed: [mu, eta, nu, delta]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
+
+    # SPEC ``setmode d1 0 0 0`` family — issue #264.
+    # OMEGA = angle between Q and the plane of the chi circle
+    # (SPEC psic ``def OMEGA 'Q[6]'``).  At OMEGA = 0 the mode reduces
+    # to bisecting_vertical.
+    fixed_omega_vertical:
+        constraints:
+            - {type: sample,    stage: mu, value: 0.0}
+            - {type: detector,  stage: nu, value: 0.0}
+            - {type: reference, name: omega, value: 0.0}
+        computed: [eta, chi, phi, delta]
+        extras:
+            omega: null
+
     double_diffraction_vertical:
         constraints:
             - {type: sample,   stage: mu, value: 0.0}
@@ -236,6 +265,18 @@ modes:
             n_hat: REQUIRED
             psi: null
 
+    # SPEC ``setmode d1 0 0 0`` family — issue #264 (horizontal mirror).
+    # OMEGA = angle between Q and the plane of the chi circle.
+    # At OMEGA = 0 the mode reduces to bisecting_horizontal.
+    fixed_omega_horizontal:
+        constraints:
+            - {type: sample,    stage: eta,   value: 0.0}
+            - {type: detector,  stage: delta, value: 0.0}
+            - {type: reference, name: omega,  value: 0.0}
+        computed: [mu, chi, phi, nu]
+        extras:
+            omega: null
+
     double_diffraction_horizontal:
         constraints:
             - {type: sample,   stage: eta,   value: 0.0}
@@ -286,3 +327,16 @@ modes:
             - {type: sample,   stage: eta, value: 0.0}
             - {type: detector, stage: qaz, value: 90.0}
         computed: [mu, nu, delta]
+
+    # Per @jwkim-anl, issue #264: symmetric to the C3/C4 revisions of
+    # lifting_detector_mu and lifting_detector_phi, fixing every sample
+    # stage except eta.  No qaz constraint — the detector is left free
+    # (both nu and delta are computed from the Bragg condition along
+    # with eta), giving the "lifting detector" effect (nu generally
+    # non-zero) automatically.
+    lifting_detector_eta:
+        constraints:
+            - {type: sample,   stage: mu,  value: 0.0}
+            - {type: sample,   stage: chi, value: 0.0}
+            - {type: sample,   stage: phi, value: 0.0}
+        computed: [eta, nu, delta]
