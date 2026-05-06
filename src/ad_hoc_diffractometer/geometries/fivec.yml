@@ -1,0 +1,95 @@
+# fivec — five-circle diffractometer (fourcv on a vertical mu base).
+#
+# This file is a *demonstration* of the declarative geometry schema
+# (issue #267).  It reproduces the legacy
+# ``ad_hoc_diffractometer.presets.fivec`` Python factory exactly.
+# Real beamlines should copy a file like this and adapt it to their own
+# instrument; do not assume the values here describe any production
+# diffractometer.
+#
+# Schema reference: docs/source/reference/declarative_geometry_schema.md
+# How-to:           docs/source/howto/custom_geometry.md
+
+ad_hoc_diffractometer_geometry:
+    revision: 1
+
+name: fivec
+
+documentation: |
+    Eulerian Five-Circle (Vlieg et al. 1987).
+
+    A standard Eulerian four-circle (fourcv) is mounted on a fifth
+    vertical rotation stage (mu) as a base.  The sample and detector
+    motions are coupled through mu.  This provides an additional
+    degree of freedom for accessing wider regions of reciprocal space,
+    particularly at synchrotron sources.
+
+
+    Walko (2016) designation: (S3D1)1.
+
+
+    Default basis: You (1999) — vertical=+x, longitudinal=+y,
+    transverse=+z.
+
+
+    Stack (floor first):
+        mu (shared base)         : vertical,     right-handed
+          --> omega (sample)     : transverse,   left-handed (mounted on mu)
+                --> chi          : longitudinal, right-handed (mounted on omega)
+                       --> phi   : transverse,   left-handed (mounted on chi)
+          --> ttheta (detector)  : transverse,   left-handed (mounted on mu)
+
+
+    With ``mu = 0`` the geometry reduces to fourcv; the bisecting
+    solver handles this case identically to fourcv bisecting.  Modes
+    where ``mu != 0`` require a tilted-plane solver (not yet
+    implemented).
+
+
+    References
+
+    - E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
+
+    - D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
+basis: YOU
+
+stages:
+    - {name: mu,     axis: +vertical,     parent: null,  role: sample}
+    - {name: omega,  axis: -transverse,   parent: mu,    role: sample}
+    - {name: chi,    axis: +longitudinal, parent: omega, role: sample}
+    - {name: phi,    axis: -transverse,   parent: chi,   role: sample}
+    - {name: ttheta, axis: -transverse,   parent: mu,    role: detector}
+
+# fivec: 5 DOF, N - 3 = 2 constraints needed per mode.
+modes:
+    bisecting_4c:
+        default: true
+        constraints:
+            - {type: sample, stage: mu, value: 0.0}
+            - {type: bisect, stage1: omega, stage2: ttheta}
+        computed: [omega, chi, phi, ttheta]
+
+    fixed_chi:
+        constraints:
+            - {type: sample, stage: mu,  value: 0.0}
+            - {type: sample, stage: chi, value: 90.0}
+        computed: [omega, phi, ttheta]
+
+    fixed_phi:
+        constraints:
+            - {type: sample, stage: mu,  value: 0.0}
+            - {type: sample, stage: phi, value: 0.0}
+        computed: [omega, chi, ttheta]
+
+    fixed_mu:
+        constraints:
+            - {type: sample, stage: mu, value: 0.0}
+            - {type: bisect, stage1: omega, stage2: ttheta}
+        computed: [omega, chi, phi, ttheta]
+
+    fixed_omega_noncoplanar:
+        constraints:
+            - {type: sample, stage: mu,    value: 0.0}
+            - {type: sample, stage: omega, value: 0.0}
+        computed: [mu, chi, phi, ttheta]

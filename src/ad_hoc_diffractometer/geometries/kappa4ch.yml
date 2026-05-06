@@ -1,0 +1,125 @@
+# kappa4ch — four-circle kappa diffractometer, horizontal scattering plane.
+#
+# This file is a *demonstration* of the declarative geometry schema
+# (issue #267).  It reproduces the legacy
+# ``ad_hoc_diffractometer.presets.kappa4ch`` Python factory exactly.
+# Real beamlines should copy a file like this and adapt it to their own
+# instrument; do not assume the values here describe any production
+# diffractometer.
+#
+# Schema reference: docs/source/reference/declarative_geometry_schema.md
+# How-to:           docs/source/howto/custom_geometry.md
+
+ad_hoc_diffractometer_geometry:
+    revision: 1
+
+name: kappa4ch
+
+documentation: |
+    Kappa Four-Circle (horizontal).
+
+    Identical to kappa4cv except komega and ttheta rotate about the
+    vertical axis, giving a horizontal scattering plane (laboratory
+    convention).
+
+
+    Walko (2016) designation: S3D1.
+
+
+    Identical to kappa4cv except komega and ttheta rotate about the
+    vertical axis, giving a horizontal scattering plane (laboratory
+    convention).  The kappa arm lies in the vertical-longitudinal
+    plane, tilted ``alpha_deg`` from the (unsigned) vertical direction
+    toward the (unsigned) longitudinal direction (toward the X-ray
+    source / sample), per Wyckoff (1985) Fig. 2(b).  Default α = 50°.
+
+
+    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y,
+    vertical=+z.
+
+
+    Sample stack (floor first):
+        komega : vertical, left-handed
+        kappa  : tilted in vertical-longitudinal plane, between +V and +L
+        kphi   : vertical, left-handed (mounted on kappa)
+
+
+    Detector (floor, mechanically independent of sample stack):
+        ttheta : vertical, left-handed
+
+
+    komega and ttheta share the same vertical axis; they are
+    mechanically independent.
+
+
+    Handedness note: this preset encodes komega/kphi/2theta as
+    left-handed about vertical, following Walko (2016).  ITC Vol. C
+    Sec. 2.2.6.2 (2006) prefers a right-handed sign convention for
+    omega/chi/phi.  The two conventions are equivalent up to
+    motor-angle sign flips; either yields the same physical
+    orientations.
+
+
+    References
+
+    - H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
+      Fig. 2(b) on p. 334 (kappa diffractometer).
+
+    - D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
+    - W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+
+    - ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
+      Wyckoff (1985, p. 334) for the schematic picture.
+
+basis: BL
+
+parameters:
+    alpha_deg: 50.0
+
+# Equivalent-Eulerian chi axis: +longitudinal for kappa4ch (the kappa
+# arm tilts in the vertical-longitudinal plane).
+kappa_chi_eq: +longitudinal
+
+stages:
+    - {name: komega, axis: -vertical,                       parent: null,    role: sample}
+    # The kappa arm: tilted alpha_deg from +vertical toward +longitudinal.
+    - {name: kappa,  axis: {kappa_eulerian: +vertical},     parent: komega,  role: sample}
+    - {name: kphi,   axis: -vertical,                       parent: kappa,   role: sample}
+    - {name: ttheta, axis: -vertical,                       parent: null,    role: detector}
+
+# kappa4ch: 4 DOF, N - 3 = 1 constraint needed per mode.
+modes:
+    bisecting:
+        default: true
+        constraints:
+            - {type: virtual_bisect, stage1: omega, stage2: ttheta}
+        computed: [komega, kappa, kphi, ttheta]
+
+    fixed_kphi:
+        constraints:
+            - {type: sample, stage: kphi, value: 0.0}
+        computed: [komega, kappa, ttheta]
+
+    fixed_omega:
+        constraints:
+            - {type: sample, stage: omega, value: 0.0}
+        computed: [komega, kappa, kphi, ttheta]
+
+    fixed_chi:
+        constraints:
+            - {type: sample, stage: chi, value: 90.0}
+        computed: [komega, kappa, kphi, ttheta]
+
+    fixed_phi:
+        constraints:
+            - {type: sample, stage: phi, value: 0.0}
+        computed: [komega, kappa, kphi, ttheta]
+
+    fixed_psi:
+        constraints:
+            - {type: reference, name: psi, value: 0.0}
+        computed: [komega, kappa, kphi, ttheta]
+        extras:
+            n_hat: REQUIRED
+            psi: null

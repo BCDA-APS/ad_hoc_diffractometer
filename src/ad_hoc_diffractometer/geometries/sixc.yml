@@ -1,0 +1,119 @@
+# sixc — Lohmeier & Vlieg (1993) six-circle surface diffractometer
+# (IUCr six-circle).
+#
+# This file is a *demonstration* of the declarative geometry schema
+# (issue #267).  It reproduces the legacy
+# ``ad_hoc_diffractometer.presets.sixc`` Python factory exactly.
+# Real beamlines should copy a file like this and adapt it to their own
+# instrument; do not assume the values here describe any production
+# diffractometer.
+#
+# Schema reference: docs/source/reference/declarative_geometry_schema.md
+# How-to:           docs/source/howto/custom_geometry.md
+
+ad_hoc_diffractometer_geometry:
+    revision: 1
+
+name: sixc
+
+documentation: |
+    Eulerian Six-Circle, Surface (Lohmeier & Vlieg 1993).
+
+    Sample and detector stacks share the ``alpha`` base stage, making
+    this a coupled geometry.  Useful for surface diffraction.
+
+    Walko (2016) designation: (S3D2)1.
+
+
+    From Fig. 1 and §2.1 of Lohmeier & Vlieg (1993):
+    alpha and gamma rotate about the vertical axis (x in LV
+    convention).  omega, phi, and delta all rotate about the
+    transverse axis (z in LV).  chi rotates about the longitudinal
+    axis (y in LV).
+
+
+    Default basis: You (1999) — vertical=+x, longitudinal=+y,
+    transverse=+z.
+
+
+    Stack (floor first):
+        alpha (shared base) : vertical,     right-handed  [rotary table]
+          --> omega (sample): transverse,   left-handed
+                --> chi      : longitudinal, right-handed (mounted on omega)
+                       --> phi : transverse, left-handed (mounted on chi)
+          --> delta (detector): transverse, left-handed (mounted on alpha)
+                --> gamma   : vertical,    right-handed (mounted on delta)
+
+
+    Reference: M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993).
+
+basis: YOU
+
+stages:
+    - {name: alpha, axis: +vertical,     parent: null,  role: sample}
+    - {name: omega, axis: -transverse,   parent: alpha, role: sample}
+    - {name: chi,   axis: +longitudinal, parent: omega, role: sample}
+    - {name: phi,   axis: -transverse,   parent: chi,   role: sample}
+    - {name: delta, axis: -transverse,   parent: alpha, role: detector}
+    - {name: gamma, axis: +vertical,     parent: delta, role: detector}
+
+# sixc: 6 DOF, N - 3 = 3 constraints needed per mode.
+# four-circle: alpha = 0, gamma = 0 frozen; bisect on omega/delta.
+# Reduces to fourcv bisecting — the generic bisecting solver handles it.
+# Surface modes (five_circle_*, zaxis_*) require reference infrastructure
+# (Issue J).
+modes:
+    bisecting_4c:
+        default: true
+        constraints:
+            - {type: sample,   stage: alpha, value: 0.0}
+            - {type: detector, stage: gamma, value: 0.0}
+            - {type: bisect,   stage1: omega, stage2: delta}
+        computed: [omega, chi, phi, delta]
+
+    fixed_gamma_5c:
+        constraints:
+            - {type: detector, stage: gamma, value: 0.0}
+            - {type: sample,   stage: alpha, value: 0.0}
+            - {type: bisect,   stage1: omega, stage2: delta}
+        computed: [omega, chi, phi, delta, alpha]
+
+    fixed_alpha_5c:
+        constraints:
+            - {type: sample,   stage: alpha, value: 0.0}
+            - {type: bisect,   stage1: omega, stage2: delta}
+            - {type: detector, stage: gamma, value: 0.0}
+        computed: [omega, chi, phi, delta, gamma]
+
+    fixed_alpha_zaxis:
+        constraints:
+            - {type: sample,    stage: alpha, value: 0.0}
+            - {type: sample,    stage: chi,   value: 0.0}
+            - {type: reference, name: alpha_i, value: 0.0}
+        computed: [omega, delta, gamma]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
+
+    fixed_beta_zaxis:
+        constraints:
+            - {type: detector,  stage: gamma, value: 0.0}
+            - {type: sample,    stage: chi,   value: 0.0}
+            - {type: reference, name: beta_out, value: 0.0}
+        computed: [omega, delta, alpha]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
+
+    alpha_eq_beta_zaxis:
+        constraints:
+            - {type: sample,    stage: chi, value: 0.0}
+            - {type: sample,    stage: phi, value: 0.0}
+            - {type: reference, name: a_eq_b, value: true}
+        computed: [omega, delta, alpha, gamma]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
