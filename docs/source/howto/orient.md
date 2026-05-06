@@ -18,7 +18,7 @@ Crystal orientation requires:
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 g.wavelength = 1.5406   # Å  (Cu Kα)
 g.sample.lattice = ahd.Lattice(a=5.431)  # cubic silicon
 ```

@@ -21,6 +21,9 @@ import re
 from contextlib import nullcontext as does_not_raise
 
 import pytest
+from helpers import fourcv
+from helpers import kappa4cv
+from helpers import psic
 
 from ad_hoc_diffractometer.kappa import eulerian_to_kappa
 from ad_hoc_diffractometer.kappa import kappa_to_eulerian
@@ -366,24 +369,22 @@ def test_default_alpha_inverse():
 
 def test_is_kappa_virtual_mode_no_kappa_alpha():
     """is_kappa_virtual_mode returns False when geometry has no kappa_alpha_deg."""
-    import ad_hoc_diffractometer as ahd
     from ad_hoc_diffractometer import ConstraintSet
     from ad_hoc_diffractometer import SampleConstraint
     from ad_hoc_diffractometer.kappa import is_kappa_virtual_mode
 
-    g = ahd.presets.fourcv()  # no kappa_alpha_deg
+    g = fourcv()  # no kappa_alpha_deg
     mode = ConstraintSet([SampleConstraint("omega", 0.0)])
     assert is_kappa_virtual_mode(g, mode) is False
 
 
 def test_is_kappa_virtual_mode_kappa_alpha_but_no_kappa_stage():
     """is_kappa_virtual_mode returns False when kappa_alpha_deg is set but no 'kappa' stage."""
-    import ad_hoc_diffractometer as ahd
     from ad_hoc_diffractometer import ConstraintSet
     from ad_hoc_diffractometer import SampleConstraint
     from ad_hoc_diffractometer.kappa import is_kappa_virtual_mode
 
-    g = ahd.presets.fourcv()
+    g = fourcv()
     g._kappa_alpha_deg = 50.0  # noqa: SLF001  — set kappa_alpha_deg manually
     mode = ConstraintSet([SampleConstraint("omega", 0.0)])
     # Has kappa_alpha_deg but no stage named "kappa" → False (line 247)
@@ -392,12 +393,11 @@ def test_is_kappa_virtual_mode_kappa_alpha_but_no_kappa_stage():
 
 def test_is_kappa_virtual_mode_no_virtual_constraint():
     """is_kappa_virtual_mode returns False when mode has no virtual angle."""
-    import ad_hoc_diffractometer as ahd
     from ad_hoc_diffractometer import ConstraintSet
     from ad_hoc_diffractometer import SampleConstraint
     from ad_hoc_diffractometer.kappa import is_kappa_virtual_mode
 
-    g = ahd.presets.kappa4cv()
+    g = kappa4cv()
     # fixed_kphi uses real stage name — not virtual
     mode = ConstraintSet([SampleConstraint("kphi", 0.0)])
     assert is_kappa_virtual_mode(g, mode) is False
@@ -415,7 +415,7 @@ def test_solve_kappa_virtual_no_kappa_stage_returns_empty():
     from ad_hoc_diffractometer.kappa import solve_kappa_virtual
 
     # Build a fake geometry with no "kappa" stage
-    g = ahd.presets.fourcv()
+    g = fourcv()
     g.wavelength = 1.5406
     g.sample.lattice = ahd.Lattice(a=4.0)
     ahd.ub_identity(g.sample)
@@ -434,22 +434,20 @@ def test_solve_kappa_virtual_no_kappa_stage_returns_empty():
 
 def test_sample_constraint_is_implemented_kappa_geometry():
     """SampleConstraint with virtual name returns True on kappa geometry."""
-    import ad_hoc_diffractometer as ahd
     from ad_hoc_diffractometer import SampleConstraint
 
-    g = ahd.presets.kappa4cv()
+    g = kappa4cv()
     for vname in ("omega", "chi", "phi"):
         assert SampleConstraint(vname, 0.0).is_implemented(g) is True
 
 
 def test_sample_constraint_is_implemented_virtual_on_non_kappa():
     """Virtual kappa names not in a non-kappa geometry return False if not real stages."""
-    import ad_hoc_diffractometer as ahd
     from ad_hoc_diffractometer import SampleConstraint
 
     # psic has mu, eta, chi, phi — 'omega' is NOT a real stage, and psic
     # has no kappa_alpha_deg, so SampleConstraint('omega') returns False.
-    g = ahd.presets.psic()
+    g = psic()
     assert SampleConstraint("omega", 0.0).is_implemented(g) is False
 
 
@@ -523,7 +521,7 @@ def test_solve_kappa_virtual_early_termination(
     from ad_hoc_diffractometer.kappa import solve_kappa_virtual
 
     with context:
-        g = ahd.presets.kappa4cv()
+        g = kappa4cv()
         g.wavelength = 1.5406
         g.sample.lattice = ahd.Lattice(a=5.431)
         ahd.ub_identity(g.sample)
@@ -617,10 +615,9 @@ def test_kappa_axis_from_eulerian_correct_tilt():
 )
 def test_eulerian_to_kappa_axes_invalid_branch(branch, context):
     """``eulerian_to_kappa_axes`` rejects branch values other than ±1."""
-    import ad_hoc_diffractometer as ahd
     from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
 
-    g = ahd.presets.kappa4cv()
+    g = kappa4cv()
     convention = g.kappa_pseudo_angle_convention
     with context:
         eulerian_to_kappa_axes(0.0, 30.0, 0.0, convention, branch=branch)
@@ -629,10 +626,9 @@ def test_eulerian_to_kappa_axes_invalid_branch(branch, context):
 def test_eulerian_to_kappa_axes_unreachable_chi_raises():
     """``eulerian_to_kappa_axes`` raises when the requested chi is
     outside the kappa-arm reachable range."""
-    import ad_hoc_diffractometer as ahd
     from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
 
-    g = ahd.presets.kappa4cv()
+    g = kappa4cv()
     convention = g.kappa_pseudo_angle_convention
     # The kappa-arm reachable chi range is |chi| ≤ 2·α = 100° for
     # α = 50°.  chi = 120° is outside.
@@ -642,10 +638,9 @@ def test_eulerian_to_kappa_axes_unreachable_chi_raises():
 
 def test_kappa_pseudo_angle_convention_set_via_property():
     """The convention can be set after construction via the property setter."""
-    import ad_hoc_diffractometer as ahd
     from ad_hoc_diffractometer.kappa import KappaPseudoAngleConvention
 
-    g = ahd.presets.fourcv()  # non-kappa geometry
+    g = fourcv()  # non-kappa geometry
     assert g.kappa_pseudo_angle_convention is None
     new_conv = KappaPseudoAngleConvention(
         n_komega=[-1.0, 0.0, 0.0],
@@ -682,10 +677,9 @@ def test_eulerian_to_kappa_axes_chi_zero_degenerate():
     """``eulerian_to_kappa_axes`` collapses ``ω → κω, φ → κφ`` at
     χ = 0 with parallel komega/kphi (kappa.py line 548 — degenerate
     short-circuit)."""
-    import ad_hoc_diffractometer as ahd
     from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
 
-    g = ahd.presets.kappa4cv()
+    g = kappa4cv()
     convention = g.kappa_pseudo_angle_convention
     # Trigger the chi=0 + parallel-axes short-circuit explicitly
     # (the function returns immediately before computing R_eul).

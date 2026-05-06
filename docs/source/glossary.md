@@ -26,15 +26,18 @@ B matrix
 Basis
    The three-vector dictionary that maps the physical direction names
    ``"vertical"``, ``"longitudinal"``, ``"transverse"`` to Cartesian unit
-   vectors.  Each preset geometry carries a basis attribute; the package
-   ships two standard choices,
+   vectors.  Each demo geometry carries a basis attribute; the package
+   ships three named choices,
    {data}`~ad_hoc_diffractometer.factories.BASIS_YOU` (You 1999:
-   vertical=+x, longitudinal=+y, transverse=+z) and
+   vertical=+x, longitudinal=+y, transverse=+z),
    {data}`~ad_hoc_diffractometer.factories.BASIS_BL` (Busing & Levy
-   1967: transverse=+x, longitudinal=+y, vertical=+z).  Switching the
-   basis re-expresses every stage axis in a different lab frame without
-   changing the physics; see {doc}`problem2` for the basis-invariance
-   case study.
+   1967: transverse=+x, longitudinal=+y, vertical=+z), and
+   {data}`~ad_hoc_diffractometer.factories.BASIS_DEFAULT` — a neutral
+   third assignment (vertical=+y, longitudinal=+z, transverse=+x) used
+   by the declarative geometry loader as the fallback when a YAML file
+   omits the ``basis:`` key.  Switching the basis re-expresses every
+   stage axis in a different lab frame without changing the physics;
+   see {doc}`problem2` for the basis-invariance case study.
 
 Bisecting condition
    A diffraction-mode constraint in which a sample stage angle is driven
@@ -49,7 +52,7 @@ Bisecting condition
 
 Constraint
    An equation that fixes one of the geometry's free degrees of freedom
-   during a forward calculation.  Four kinds are recognised:
+   during a forward calculation.  Four kinds are recognized:
    {class}`~ad_hoc_diffractometer.mode.SampleConstraint` (fix one sample
    angle), {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` (fix
    one detector angle, including the special ``"qaz"`` pseudo-angle),
@@ -74,12 +77,37 @@ d-spacing
    the scattering vector magnitude by |**Q**| = 2π / d_{hkl} and to the
    Bragg angle by 2d sin θ = λ.
 
+Declarative geometry
+   A diffractometer geometry described in a YAML file rather than as a
+   Python factory function.  Loaded by
+   {func}`~ad_hoc_diffractometer.geometry_loader.load_geometry_file` and
+   {func}`~ad_hoc_diffractometer.geometry_loader.register_geometry_file`.
+   Every declarative geometry file must declare the
+   ``ad_hoc_diffractometer_geometry`` schema marker (see *Schema marker*
+   below) and follow the format documented in
+   {ref}`declarative-geometry-schema`.  The 10 demo geometries shipped
+   under ``src/ad_hoc_diffractometer/geometries/`` are written in this
+   form; user instruments should follow the same pattern.  See
+   {ref}`howto-custom-geometry`.
+
+Demo geometry
+   One of the 10 YAML files shipped under
+   ``src/ad_hoc_diffractometer/geometries/``: ``fourcv``, ``fourch``,
+   ``psic``, ``sixc``, ``kappa4cv``, ``kappa4ch``, ``kappa6c``,
+   ``zaxis``, ``s2d2``, ``fivec``.  These files are **demonstrations**
+   of the declarative geometry schema, not authoritative descriptions
+   of any production diffractometer.  Real instruments at real
+   beamlines should copy the closest demo and adapt it.  Listed by
+   {func}`~ad_hoc_diffractometer.factories.list_geometries`;
+   instantiated by
+   {func}`~ad_hoc_diffractometer.factories.make_geometry`.
+
 Diffraction mode
    A named set of constraints that describes how
    {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`
    computes motor angles: which stages are free, which are held fixed, and
    which are coupled to other stages.  Implemented as a
-   {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; a few specialised
+   {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; a few specialized
    modes (double-diffraction, zone) are dispatched by their
    {attr}`~ad_hoc_diffractometer.mode.ConstraintSet.extras` schema rather
    than by their constraint composition.  See {doc}`howto/modes`.
@@ -157,13 +185,27 @@ Q (scattering vector)
    **k**_f are the incident and scattered wave vectors.  For elastic scattering
    |**Q**| = (4π/λ) sin θ = 2π / d_{hkl}.
 
+Schema marker (declarative geometry)
+   The top-level mapping
+   ``ad_hoc_diffractometer_geometry: {schema_revision: <int>}`` that
+   every declarative geometry YAML file must declare.  Its presence
+   identifies the document as a geometry declaration; the integer
+   ``schema_revision`` selects which version of the declarative-
+   geometry schema the file conforms to.  ``schema_revision`` is a
+   fixed property of the schema, not a per-file edit counter.
+   Independent of the package version: schema revisions are deliberate
+   editorial events that change far less often than package releases.
+   The currently supported revision is
+   {data}`~ad_hoc_diffractometer.geometry_loader.CURRENT_REVISION`.
+   See {ref}`decl-marker`.
+
 Sphere of confusion
    The small three-dimensional volume swept out by the nominal sample position
    as all diffractometer stages rotate.  Caused by mechanical tolerances;
    ideally a point but in practice a sphere of finite radius.
 
 Stage
-   A single rotary axis of the diffractometer.  Characterised by its axis
+   A single rotary axis of the diffractometer.  Characterized by its axis
    direction (signed unit vector), parent stage, role (sample or detector),
    and optional motor limits.
    See {class}`~ad_hoc_diffractometer.stage.Stage`.

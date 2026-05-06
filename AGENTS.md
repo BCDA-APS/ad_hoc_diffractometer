@@ -186,7 +186,11 @@ diffractometer/                  # project root (git repo)
 ├── src/
 │   └── ad_hoc_diffractometer/   # package source
 │       ├── __init__.py          # public API (Tier 1 names only)
-│       ├── presets.py           # 10 demo geometries
+│       ├── geometries/          # declarative YAML demo geometries (#267)
+│       │   ├── __init__.py      # marker for importlib.resources
+│       │   ├── schema.json      # JSON Schema for the declarative format
+│       │   └── *.yml            # one file per declarative demo geometry
+│       ├── geometry_loader.py   # YAML → AdHocDiffractometer loader (#267)
 │       ├── factories.py         # geometry registry + shared definitions
 │       ├── constants.py         # XHAT, YHAT, ZHAT
 │       ├── axes.py              # parse_axis(), axis_label(), kappa_axis()
@@ -250,8 +254,9 @@ python3 -m pytest -m slow_benchmark --no-cov -q
 Hot path: `forward.py`, `kappa.py`, `mode.py`, `orientation.py`,
 `rotation.py`, `reference.py`, `surface.py`
 
-Geometry construction: `presets.py`, `factories.py`, `diffractometer.py`,
-`stage.py`, `axes.py`, `constants.py`
+Geometry construction: `geometry_loader.py`, `geometries/*.yml`,
+`factories.py`, `diffractometer.py`, `stage.py`, `axes.py`,
+`constants.py`
 
 CI runs these automatically (via `.github/workflows/benchmark.yml`)
 when any of these files change on `main` or in a pull request.
@@ -354,9 +359,10 @@ and calls `write_html()` and `write_image()`.
 python tools/generate_geometry_drawings.py
 ```
 
-**When to rebuild**: any change to `drawing.py`, `presets.py`,
-`factories.py`, `stage.py`, or `axes.py` that affects stage names, axis
-labels, physical direction names, basis dicts, or the drawing layout.
+**When to rebuild**: any change to `drawing.py`, `geometries/*.yml`,
+`geometry_loader.py`, `factories.py`, `stage.py`, or `axes.py` that
+affects stage names, axis labels, physical direction names, basis
+dicts, or the drawing layout.
 
 **Dependencies**: `plotly` and `kaleido` (for SVG export).  These are
 not declared in `pyproject.toml` runtime deps — install them manually:
@@ -395,38 +401,134 @@ descriptions change.  Sphinx executes it during `make html` via
 
 ## Implementation philosophy
 
-`ad_hoc_diffractometer` is a **pure-Python** package.  The only runtime
-dependency beyond the Python Standard Library is **NumPy**.  There is no
-dependency on scipy, sympy, or any other scientific library.  Keep it that
-way: every new algorithm must be implementable with NumPy alone.
+`ad_hoc_diffractometer` is a **pure-Python** package.  The runtime
+dependencies beyond the Python Standard Library are **NumPy** (numerical
+arrays and linear algebra) and **PyYAML** (parser for the declarative
+geometry files in ``src/ad_hoc_diffractometer/geometries/``; see issue
+#267).  There is no dependency on scipy, sympy, or any other scientific
+library.  Keep it that way: every new algorithm must be implementable
+with NumPy alone.
 
 ---
 
 ## Code style guidelines
 
 - **Import alias**: `import ad_hoc_diffractometer as ahd`
-- **Demo geometries**: `g = ahd.presets.fourcv()` — the demo
-  geometries live in `ahd.presets`, not in the top-level namespace
-  (the submodule retains the historical name `presets`)
+- **Demo geometries**: `g = ahd.make_geometry("fourcv")` — the demo
+  geometries are declarative YAML files under
+  `ad_hoc_diffractometer/geometries/`, registered automatically by the
+  loader at import time and discoverable via
+  `ad_hoc_diffractometer.list_geometries()`
 - **Tier 1 (top-level)**: Only ~23 names are exported from `__init__.py`
   (core classes, orientation, modes, registry).  All other names are
   accessed via their submodule: `ahd.display.fmt()`,
   `ahd.radiation.energy_to_wavelength()`, `ahd.conversions.hkl_to_d()`, etc.
 - **Python**: ≥ 3.10 (uses `X | Y` union types)
-- **Dependencies**: `numpy` only; no scipy, no sympy
+- **Dependencies**: `numpy` and `pyyaml` only; no scipy, no sympy
 - **Style**: ruff (E, W, F, UP, B rules) + ruff-format, line length 88;
   `E501` ignored (slight overruns tolerated)
 - **Import sorting**: isort with `force_single_line = true`
 - **No `geometry_` prefix** on demo-geometry function names
 - **`display.fmt(value, digits)`** for all floating-point display;
   never use f-strings with hardcoded precision for user-facing output
-- **US English spellings** in all code, comments, docstrings, and
-  documentation.  Use American spellings such as `analyzer`, `polarizer`,
-  `color`, `center`, `normalized`, `minimize`, `optimize`, `generalize`,
-  `recognize`, `characterized`, `millimeters`, `honor` — not their British
-  equivalents (`analyser`, `polariser`, `colour`, `centre`, `normalised`,
-  `minimise`, `optimise`, `generalise`, `recognise`, `characterised`,
-  `millimetres`, `honour`)
+- **US English spellings** — see the dedicated section
+  [US English spelling (mandatory)](#us-english-spelling-mandatory) below.
+
+---
+
+## US English spelling (mandatory)
+
+**Every word you write — in code, comments, docstrings, error
+messages, log messages, exception text, type names, identifiers,
+filenames, branch names, commit messages, PR descriptions, issue
+comments, YAML strings, JSON descriptions, and Markdown / reST
+documentation — must use US (American) English spelling.**  This rule
+is non-negotiable and is checked at review time.
+
+This applies even when paraphrasing or summarizing material that uses
+British spellings (e.g. literature references): retype the prose into
+US English when incorporating it into the project.  Verbatim quotations
+inside quotation marks may preserve the source's spelling; everything
+else must conform.
+
+### Mandatory substitutions
+
+| Use (US) | NOT (British) |
+|---|---|
+| `analyze`, `analyzer`, `analyzed`, `analyzing` | `analyse`, `analyser`, `analysed`, `analysing` |
+| `behavior`, `behaviors` | `behaviour`, `behaviours` |
+| `center`, `centers`, `centered`, `centering` | `centre`, `centres`, `centred`, `centring` |
+| `color`, `colors`, `colored`, `coloring` | `colour`, `colours`, `coloured`, `colouring` |
+| `characterize`, `characterized`, `characterizing` | `characterise`, `characterised`, `characterising` |
+| `customize`, `customized` | `customise`, `customised` |
+| `defense`, `defensive` | `defence`, `defencive` |
+| `emphasize`, `emphasized` | `emphasise`, `emphasised` |
+| `factorize`, `factorized` | `factorise`, `factorised` |
+| `favor`, `favorite` | `favour`, `favourite` |
+| `fiber`, `fibers` | `fibre`, `fibres` |
+| `fulfill`, `fulfilled` | `fulfil`, `fulfilled` (British single-l) |
+| `generalize`, `generalized`, `generalizing` | `generalise`, `generalised`, `generalising` |
+| `gray` | `grey` |
+| `honor`, `honors`, `honored`, `honoring` | `honour`, `honours`, `honoured`, `honouring` |
+| `initialize`, `initialized`, `initializing` | `initialise`, `initialised`, `initialising` |
+| `labeled`, `labeling` | `labelled`, `labelling` |
+| `liter`, `liters` | `litre`, `litres` |
+| `maximize`, `maximized` | `maximise`, `maximised` |
+| `meter`, `meters` (the unit) | `metre`, `metres` |
+| `millimeter`, `millimeters` | `millimetre`, `millimetres` |
+| `minimize`, `minimized`, `minimizing` | `minimise`, `minimised`, `minimising` |
+| `modeled`, `modeling` | `modelled`, `modelling` |
+| `normalize`, `normalized`, `normalizing` | `normalise`, `normalised`, `normalising` |
+| `optimize`, `optimized`, `optimizing` | `optimise`, `optimised`, `optimising` |
+| `organization` | `organisation` |
+| `parameterize`, `parameterized` | `parameterise`, `parameterised` |
+| `polarization`, `polarized`, `polarizer` | `polarisation`, `polarised`, `polariser` |
+| `practice` (verb) | `practise` |
+| `program` | `programme` (in software contexts) |
+| `realize`, `realized` | `realise`, `realised` |
+| `recognize`, `recognized`, `recognizing` | `recognise`, `recognised`, `recognising` |
+| `serialize`, `serialized`, `serializing` | `serialise`, `serialised`, `serialising` |
+| `signaled`, `signaling` | `signalled`, `signalling` |
+| `specialized`, `specializing` | `specialised`, `specialising` |
+| `stabilize`, `stabilized` | `stabilise`, `stabilised` |
+| `summarize`, `summarized` | `summarise`, `summarised` |
+| `synthesize`, `synthesized` | `synthesise`, `synthesised` |
+| `theater` | `theatre` |
+| `traveled`, `traveling`, `traveler` | `travelled`, `travelling`, `traveller` |
+| `utilize`, `utilized` | `utilise`, `utilised` |
+| `visualize`, `visualized`, `visualizing` | `visualise`, `visualised`, `visualising` |
+
+The list above is illustrative, not exhaustive.  Whenever you are
+unsure, prefer the spelling used by the *Merriam-Webster* dictionary
+or the OED's "US" tag.  The rule applies to **every variant** of the
+listed roots (`-ize / -ization / -izing / -ized` etc.).
+
+### Enforcement check
+
+Before opening a pull request — and again after addressing reviewer
+comments — run this check on every file you have added or modified
+(replace `$FILES` with `git diff --name-only main...HEAD` or an
+equivalent list, **excluding `AGENTS.md` itself** because the
+substitution table above intentionally contains British spellings as
+negative examples):
+
+```bash
+grep -EnH "\b(honour|honours|honoured|honouring|colour|colours|coloured|colouring|behaviour|behaviours|analyse|analysed|analyser|analysers|analyses|analysing|polariser|polarisers|polarisation|polarised|polarising|normalise|normalised|normalises|normalising|minimise|minimised|minimises|minimising|maximise|maximised|maximises|maximising|optimise|optimised|optimises|optimising|generalise|generalised|generalises|generalising|recognise|recognised|recognises|recognising|characteris|millimetre|centre|centres|centred|centring|customise|customised|emphasise|emphasised|factorise|factorised|fibre|fibres|favour|favourite|grey|initialise|initialised|labelled|labelling|litre|litres|metre|metres|modelled|modelling|organisation|parameterise|parameterised|realise|realised|serialise|serialised|signalled|signalling|specialised|specialising|stabilise|stabilised|summarise|summarised|synthesise|synthesised|theatre|travelled|travelling|traveller|utilise|utilised|visualise|visualised|visualising|programme)\b" $FILES
+```
+
+The check must produce **no output** (other than expected hits inside
+the AGENTS.md substitution table, which should be excluded from
+`$FILES`).  Any hit elsewhere must be corrected before review.  This
+check belongs alongside `pytest`, `pre-commit`, and the documentation
+grep checks in your pre-PR checklist.
+
+### Pre-existing British spellings
+
+A small number of British spellings remain in pre-existing files that
+were authored before this rule was tightened.  Do not silently fix
+them in unrelated PRs — open a dedicated cleanup PR (or include them
+explicitly in a PR whose scope already touches those files) so the
+diff is reviewable.
 
 ---
 
@@ -507,7 +609,13 @@ The default coordinate system follows You (1999):
 The Busing & Levy (1967) convention (used in `fourcv`, `fourch`,
 `kappa4cv`, `kappa4ch`) has x=transverse, y=longitudinal, z=vertical.
 
-Basis dicts (`_BASIS_YOU`, `_BASIS_BL`) in `factories.py` encode these.
+Basis dicts (`BASIS_YOU`, `BASIS_BL`) in `factories.py` encode these.
+A third constant, `BASIS_DEFAULT` (vertical=YHAT, longitudinal=ZHAT,
+transverse=XHAT), is the neutral fallback used by the declarative
+geometry loader when a YAML file omits the `basis:` key.  It is
+deliberately distinct from `BASIS_YOU` and `BASIS_BL` so that the
+package does not appear to espouse either literature convention as a
+"project default."
 
 ---
 
@@ -527,9 +635,11 @@ caller-facing interface only.
 
 ## Demo geometries
 
-All demo geometries live in `presets.py`, are decorated with
-`@register_geometry` (from `factories.py`), and appear in
-`list_geometries()`.  Access them as `ahd.presets.fourcv()`, etc.
+All demo geometries are declarative YAML files in
+`src/ad_hoc_diffractometer/geometries/`, parsed at import time by
+`geometry_loader.py` and registered in the geometry registry; they
+appear in `list_geometries()`.  Access them as
+`ahd.make_geometry("fourcv")`, etc.
 
 Naming convention:
 

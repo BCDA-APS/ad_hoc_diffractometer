@@ -28,9 +28,9 @@ import re
 from contextlib import nullcontext as does_not_raise
 
 import pytest
+from helpers import fourcv
 
 import ad_hoc_diffractometer as ahd
-from ad_hoc_diffractometer.presets import fourcv
 from ad_hoc_diffractometer.radiation import HC_KEV_ANGSTROM
 from ad_hoc_diffractometer.radiation import HC_KEV_ANGSTROM_UNCERTAINTY
 from ad_hoc_diffractometer.radiation import NEUTRON_MEV_ANGSTROM2

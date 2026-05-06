@@ -10,7 +10,7 @@ Q to the plane spanned by two reciprocal-lattice vectors ``z0`` and
 
 - The mode definition lives in :mod:`presets` (zone_vertical and
   zone_horizontal on both psic and kappa6c).
-- The dispatcher :func:`forward._is_zone_mode` recognises modes whose
+- The dispatcher :func:`forward._is_zone_mode` recognizes modes whose
   ``extras`` carry both ``z0`` and ``z1`` keys.
 - :func:`forward._solve_zone` validates inputs, computes the zone-plane
   normal in the φ frame, applies the in-plane prefilter, and delegates
@@ -30,6 +30,8 @@ from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
+from helpers import kappa6c
+from helpers import psic
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.forward import _is_zone_mode
@@ -62,28 +64,28 @@ def _activate_zone(geom, mode_name, z0, z1):
 # (vertical = +x), so its tests use the (h, 0, l) plane instead.
 _GEOM_MODES = [
     pytest.param(
-        ahd.presets.psic,
+        psic,
         "zone_vertical",
         (1, 0, 0),
         (0, 1, 0),
         id="psic-vertical-hk0",
     ),
     pytest.param(
-        ahd.presets.psic,
+        psic,
         "zone_horizontal",
         (1, 0, 0),
         (0, 0, 1),
         id="psic-horizontal-h0l",
     ),
     pytest.param(
-        ahd.presets.kappa6c,
+        kappa6c,
         "zone_vertical",
         (1, 0, 0),
         (0, 1, 0),
         id="kappa6c-vertical-hk0",
     ),
     pytest.param(
-        ahd.presets.kappa6c,
+        kappa6c,
         "zone_horizontal",
         (1, 0, 0),
         (0, 1, 0),
@@ -101,25 +103,25 @@ _GEOM_MODES = [
     "factory, mode_name, context",
     [
         pytest.param(
-            ahd.presets.psic,
+            psic,
             "zone_vertical",
             does_not_raise(),
             id="psic-zone_vertical-registered",
         ),
         pytest.param(
-            ahd.presets.psic,
+            psic,
             "zone_horizontal",
             does_not_raise(),
             id="psic-zone_horizontal-registered",
         ),
         pytest.param(
-            ahd.presets.kappa6c,
+            kappa6c,
             "zone_vertical",
             does_not_raise(),
             id="kappa6c-zone_vertical-registered",
         ),
         pytest.param(
-            ahd.presets.kappa6c,
+            kappa6c,
             "zone_horizontal",
             does_not_raise(),
             id="kappa6c-zone_horizontal-registered",
@@ -207,7 +209,7 @@ def test_zone_extras_validation(z0, z1, context):
     """The zone solver rejects malformed, zero, or parallel z0/z1
     inputs with a descriptive ``ValueError``.
     """
-    g = _setup_cubic(ahd.presets.psic)
+    g = _setup_cubic(psic)
     g.mode_name = "zone_vertical"
     if z0 is not None:
         g.modes["zone_vertical"].extras["z0"] = z0
@@ -276,7 +278,7 @@ def test_zone_in_plane_round_trip(factory, mode_name, z0, z1, hkl):
     "factory, mode_name, z0, z1, off_plane_hkl",
     [
         pytest.param(
-            ahd.presets.psic,
+            psic,
             "zone_vertical",
             (1, 0, 0),
             (0, 1, 0),
@@ -284,7 +286,7 @@ def test_zone_in_plane_round_trip(factory, mode_name, z0, z1, hkl):
             id="psic-vertical-off-001",
         ),
         pytest.param(
-            ahd.presets.psic,
+            psic,
             "zone_horizontal",
             (1, 0, 0),
             (0, 0, 1),
@@ -292,7 +294,7 @@ def test_zone_in_plane_round_trip(factory, mode_name, z0, z1, hkl):
             id="psic-horizontal-off-010",
         ),
         pytest.param(
-            ahd.presets.kappa6c,
+            kappa6c,
             "zone_vertical",
             (1, 0, 0),
             (0, 1, 0),
@@ -300,7 +302,7 @@ def test_zone_in_plane_round_trip(factory, mode_name, z0, z1, hkl):
             id="kappa6c-vertical-off-001",
         ),
         pytest.param(
-            ahd.presets.kappa6c,
+            kappa6c,
             "zone_horizontal",
             (1, 0, 0),
             (0, 1, 0),
@@ -341,7 +343,7 @@ def test_zone_off_plane_returns_empty_with_warning(
     "factory, mode_name, z0, z1, in_plane_hkl, constant_stage_values",
     [
         pytest.param(
-            ahd.presets.psic,
+            psic,
             "zone_vertical",
             (1, 0, 0),
             (0, 1, 0),
@@ -350,7 +352,7 @@ def test_zone_off_plane_returns_empty_with_warning(
             id="psic-vertical-mu0-nu0",
         ),
         pytest.param(
-            ahd.presets.psic,
+            psic,
             "zone_horizontal",
             (1, 0, 0),
             (0, 0, 1),
@@ -359,7 +361,7 @@ def test_zone_off_plane_returns_empty_with_warning(
             id="psic-horizontal-eta0-delta0",
         ),
         pytest.param(
-            ahd.presets.kappa6c,
+            kappa6c,
             "zone_vertical",
             (1, 0, 0),
             (0, 1, 0),
@@ -368,7 +370,7 @@ def test_zone_off_plane_returns_empty_with_warning(
             id="kappa6c-vertical-mu0-nu0",
         ),
         pytest.param(
-            ahd.presets.kappa6c,
+            kappa6c,
             "zone_horizontal",
             (1, 0, 0),
             (0, 1, 0),

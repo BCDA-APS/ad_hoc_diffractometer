@@ -2,7 +2,7 @@
 # Work with Constraints and Diffraction Modes
 
 This guide explains the constraint system in detail: how modes are defined,
-how to customise constraint values, how to build entirely new modes, and how
+how to customize constraint values, how to build entirely new modes, and how
 to work with the `extras` dict for advanced modes.
 
 ## Background: degrees of freedom
@@ -15,15 +15,15 @@ by exactly one constraint.
 
 | Geometry family | N | N − 3 |
 |---|---|---|
-| {func}`~ad_hoc_diffractometer.presets.fourcv`, {func}`~ad_hoc_diffractometer.presets.fourch`, {func}`~ad_hoc_diffractometer.presets.zaxis`, {func}`~ad_hoc_diffractometer.presets.s2d2` | 4 | 1 |
-| {func}`~ad_hoc_diffractometer.presets.fivec` | 5 | 2 |
-| {func}`~ad_hoc_diffractometer.presets.psic`, {func}`~ad_hoc_diffractometer.presets.kappa6c`, {func}`~ad_hoc_diffractometer.presets.sixc` | 6 | 3 |
+| {ref}`geometry-fourcv`, {ref}`geometry-fourch`, {ref}`geometry-zaxis`, {ref}`geometry-s2d2` | 4 | 1 |
+| {ref}`geometry-fivec` | 5 | 2 |
+| {ref}`geometry-psic`, {ref}`geometry-kappa6c`, {ref}`geometry-sixc` | 6 | 3 |
 
 ```python
 import ad_hoc_diffractometer as ahd
 
-print(ahd.presets.fourcv().free_dof_after_bragg)   # 1
-print(ahd.presets.psic().free_dof_after_bragg)     # 3
+print(ahd.make_geometry("fourcv").free_dof_after_bragg)   # 1
+print(ahd.make_geometry("psic").free_dof_after_bragg)     # 3
 ```
 
 ## Constraint categories
@@ -60,7 +60,7 @@ This is implemented for all geometries with two or more detector stages
 (psic, kappa6c) and used by the ``lifting_detector_*`` mode family.
 
 **Reference constraint** — expresses a condition between Q and a reference
-vector n̂ (surface normal, polarisation axis, etc.).
+vector n̂ (surface normal, polarization axis, etc.).
 The incidence/exit-angle constraints (``alpha_i``, ``beta_out``,
 ``a_eq_b``) are implemented when ``surface_normal`` is set;
 ``psi`` and ``naz`` are not yet implemented as forward constraints.
@@ -107,7 +107,7 @@ at run time without any knowledge of geometry internals.
 ## Use a factory-defined mode
 
 ```python
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 g.mode_name = "bisecting"   # 1 BisectConstraint (N-3=1)
 solutions = g.forward(1, 0, 0)
 ```
@@ -123,7 +123,7 @@ value does not change between calls.
 ```python
 from ad_hoc_diffractometer import ConstraintSet, SampleConstraint
 
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 
 # Set once — all subsequent forward() calls use chi = 45°
 g.modes["my_chi"] = ConstraintSet([SampleConstraint("chi", 45.0)])
@@ -156,7 +156,7 @@ from ad_hoc_diffractometer import (
     ConstraintSet, BisectConstraint, SampleConstraint, DetectorConstraint
 )
 
-g = ahd.presets.psic()
+g = ahd.make_geometry("psic")
 
 # Custom bisecting mode with mu=5° (non-zero mu)
 g.modes["bisecting_mu5"] = ConstraintSet(
@@ -225,7 +225,7 @@ set on the geometry (e.g. ``azimuthal_reference`` for psi modes,
 the prerequisite is met:
 
 ```python
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 g.mode_name = "fixed_psi"
 
 # Without azimuthal_reference: not implemented
@@ -244,7 +244,7 @@ print(g.modes["fixed_psi"].is_implemented(g))  # True
 import json
 from ad_hoc_diffractometer import AdHocDiffractometer
 
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 d = g.to_dict()
 json.dumps(d)   # JSON-serialisable
 

@@ -137,6 +137,7 @@ from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
+from helpers import fourcv
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
@@ -223,7 +224,7 @@ def _compute_labradorite_seeds(wavelength: float) -> tuple:
     consistently with the lattice without depending on any external
     measurement.
     """
-    g = ahd.presets.fourcv()
+    g = fourcv()
     g.wavelength = wavelength
     g.add_sample("labradorite", lattice=ahd.Lattice(**LABRADORITE))
     g.sample = "labradorite"
@@ -348,8 +349,7 @@ def _hklpy2_ub_h_magnitude(sim, hkl) -> float:
 
 def _ahd_setup_eulerian(factory_name: str, mode: str, crystal_name: str):
     """Build an oriented ad_hoc Eulerian (or psic) geometry."""
-    factory = getattr(ahd.presets, factory_name)
-    g = factory()
+    g = ahd.make_geometry(factory_name)
     crystal = CRYSTALS[crystal_name]
     g.wavelength = crystal["wavelength"]
     g.add_sample("c", lattice=ahd.Lattice(**crystal["kwargs"]))
@@ -383,8 +383,7 @@ def _ahd_setup_kappa(factory_name: str, mode: str, crystal_name: str):
     Converts the Eulerian seed reflections into the kappa preset's
     geometry-aware pseudoangle convention.
     """
-    factory = getattr(ahd.presets, factory_name)
-    g = factory()
+    g = ahd.make_geometry(factory_name)
     crystal = CRYSTALS[crystal_name]
     g.wavelength = crystal["wavelength"]
     g.add_sample("c", lattice=ahd.Lattice(**crystal["kwargs"]))
@@ -456,7 +455,7 @@ def _hklpy2_setup_kappa(
     """
     crystal = CRYSTALS[crystal_name]
     sim = _hklpy2_setup(geometry, mode, crystal["kwargs"], crystal["wavelength"])
-    g = getattr(ahd.presets, ahd_factory_name)()
+    g = ahd.make_geometry(ahd_factory_name)
     convention = g.kappa_pseudo_angle_convention
     for i, (hkl, eul) in enumerate(crystal["seeds"], start=1):
         ko, k, kp = eulerian_to_kappa_axes(

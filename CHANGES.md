@@ -7,9 +7,20 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+### Breaking changes
+
+- Replace `ad_hoc_diffractometer.presets.<geom>()` factories with declarative YAML; use `ahd.make_geometry(<name>, **kwargs)` instead. (#267)
+
 ### Added
 
+- `BASIS_DEFAULT` neutral basis used when a YAML file omits `basis:`. (#267)
+- Declarative YAML geometry definitions and a loader. (#267)
 - psic and kappa6c zone modes (You §6, SPEC `setmode 5`) (#262)
+- `register_geometry_file()` and `load_geometry_file()`. (#267)
+
+### Changed
+
+- `pyyaml` is now a runtime dependency. (#267)
 
 ## Release v0.9.3
 
@@ -308,7 +319,7 @@ References), AutoAPI fixes, and a set of API quality improvements.
 - `ahd.wh(geometry)` and `ahd.pa(geometry)` top-level convenience
   functions (SPEC-familiar status commands). (#131)
 - `AdHocDiffractometer.stages_by_role(role)` — query stages with any
-  arbitrary role string (enables analysers, polarisers, slits, etc.). (#129)
+  arbitrary role string (enables analyzers, polarizers, slits, etc.). (#129)
 - How-to guide: save/restore diffractometer configuration to JSON or YAML
   via `to_dict()` / `from_dict()`. (#132)
 - `sphinx-tabs` extension; coordinate-convention tabs in `concepts.md`
@@ -480,7 +491,7 @@ Released 2026-04-10.
 - `status.py` — SPEC-style status commands (#38):
   - `wh(geometry)`: terse position report — current HKL, λ, motor table
   - `pa(geometry)`: verbose parameters — geometry, reflections, lattice
-    constants (real + reciprocal), λ; modelled on Align4Pete.log output
+    constants (real + reciprocal), λ; modeled on Align4Pete.log output
 
 ### Changed
 

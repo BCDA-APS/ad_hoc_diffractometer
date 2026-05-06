@@ -29,7 +29,7 @@ reference) or different.
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.psic()
+g = ahd.make_geometry("psic")
 g.wavelength = 1.0  # Å
 g.sample.lattice = ahd.Lattice(a=4.0, c=6.5)
 ahd.ub_identity(g.sample)
@@ -138,9 +138,9 @@ for sol in solutions:
     print(f"specular: {g.is_specular()}")
 ```
 
-## Serialisation
+## Serialization
 
-`surface_normal` and `azimuthal_reference` are serialised in `to_dict()`
+`surface_normal` and `azimuthal_reference` are serialized in `to_dict()`
 and restored by `from_dict()`:
 
 ```python

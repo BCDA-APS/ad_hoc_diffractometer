@@ -20,7 +20,7 @@ one by one, or `list(func(...))` to collect all points at once.
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 g.wavelength = 1.5406
 g.sample.lattice = ahd.Lattice(a=5.431)
 ahd.ub_identity(g.sample)

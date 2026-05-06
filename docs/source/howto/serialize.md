@@ -28,7 +28,7 @@ loss.
 import ad_hoc_diffractometer as ahd
 
 # Set up a geometry
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 g.wavelength = 1.5406                       # Å  (Cu Kα)
 g.sample.lattice = ahd.Lattice(a=5.431)     # cubic silicon
 ahd.ub_identity(g.sample)
@@ -120,7 +120,7 @@ sample_dict = g.sample.to_dict()
 ## ConstraintSet round-trip
 
 Diffraction modes ({class}`~ad_hoc_diffractometer.mode.ConstraintSet`) are
-serialised as part of the geometry dict.  They can also be inspected and
+serialized as part of the geometry dict.  They can also be inspected and
 round-tripped independently:
 
 ```python
@@ -166,7 +166,7 @@ and cut points:
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.psic()
+g = ahd.make_geometry("psic")
 g.mode_name = "bisecting_vertical"
 
 d = g.to_dict()
@@ -197,7 +197,7 @@ def restore_session():
         return ahd.AdHocDiffractometer.from_dict(json.load(f))
 
 # End of session: save
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 # ... do alignment ...
 save_session(g)
 

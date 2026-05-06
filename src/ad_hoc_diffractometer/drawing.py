@@ -162,7 +162,7 @@ def _scene_domain(col, row, n_cols, n_rows, title_frac):  # pragma: no cover
 class StageAxisFigure:  # pragma: no cover
     """Interactive Plotly figure for a single stage rotation-axis diagram.
 
-    Draws the geometry's basis vectors (grey, semi-transparent) and the
+    Draws the geometry's basis vectors (gray, semi-transparent) and the
     stage's rotation axis (red) with a direction arc, in a 3-D interactive
     Plotly scene.
 
@@ -192,13 +192,12 @@ class StageAxisFigure:  # pragma: no cover
         **kwargs,
     ):
         go = _require_plotly()
-        import ad_hoc_diffractometer.presets as _presets
+        from ad_hoc_diffractometer import make_geometry
 
         self._go = go
         self._fig = go.Figure(**kwargs)
 
-        factory = getattr(_presets, geometry_name)
-        self.geometry = factory()
+        self.geometry = make_geometry(geometry_name)
         self.stage = self.geometry._stages[axis_name]
         self.R = None  # set in _draw_basis_vectors
         logger.debug("StageAxisFigure: %s / %s", geometry_name, axis_name)
@@ -278,9 +277,9 @@ class StageAxisFigure:  # pragma: no cover
         basis_length = 0.5
 
         for name, vec, color in [
-            ("V", ver_d, "grey"),
-            ("L", lon_d, "grey"),
-            ("T", lat_d, "grey"),
+            ("V", ver_d, "gray"),
+            ("L", lon_d, "gray"),
+            ("T", lat_d, "gray"),
         ]:
             v = vec * basis_length
             self._fig.add_trace(
@@ -533,13 +532,12 @@ class GeometryAxisFigure:  # pragma: no cover
         **kwargs,
     ):
         go = _require_plotly()
-        import ad_hoc_diffractometer.presets as _presets
+        from ad_hoc_diffractometer import make_geometry
 
         self._go = go
         self._fig = go.Figure(**kwargs)
 
-        factory = getattr(_presets, geometry_name)
-        geometry = factory()
+        geometry = make_geometry(geometry_name)
         stages = geometry._stages
         logger.debug(
             "GeometryAxisFigure: %s  stages=%s",

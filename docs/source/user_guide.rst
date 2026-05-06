@@ -22,6 +22,7 @@ User Guide
    :caption: Reference
 
    geometries/index
+   reference/declarative_geometry_schema
    api
    glossary
    references
@@ -60,6 +61,7 @@ User Guide
    .. grid-item-card:: :material-outlined:`library_books;3em` References
 
       :ref:`Demo Geometries <geometries>`
+      · :ref:`Declarative Geometry Schema <declarative-geometry-schema>`
       · :doc:`API Reference <api>`
       · :ref:`Glossary <glossary>`
       · :ref:`Literature References <references>`
