@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=a1ca3f14"></script>
+    <script src="../../../_static/documentation_options.js?v=a4909c8d"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 15:01 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 23:20 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -422,6 +422,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/declarative_geometry_schema.html">Declarative Geometry Schema</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../../../api.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="../index.html">ad_hoc_diffractometer</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../axes/index.html">axes</a></li>
@@ -433,11 +434,12 @@
 <li class="toctree-l3"><a class="reference internal" href="../drawing/index.html">drawing</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">factories</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../forward/index.html">forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../geometries/index.html">geometries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../geometry_loader/index.html">geometry_loader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../kappa/index.html">kappa</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../lattice/index.html">lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../mode/index.html">mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../orientation/index.html">orientation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../presets/index.html">presets</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../radiation/index.html">radiation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/index.html">reference</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../refinement/index.html">refinement</a></li>
@@ -534,18 +536,19 @@
 via entry points, and the <code class="docutils literal notranslate"><span class="pre">list_geometries()</span></code> / <code class="docutils literal notranslate"><span class="pre">get_geometry()</span></code> /
 <code class="docutils literal notranslate"><span class="pre">make_geometry()</span></code> lookup functions.</p>
 <p>It also defines the shared <strong>basis dictionaries</strong> (<code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code>,
-<code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code>) and the default <strong>kappa tilt angle</strong> (<code class="docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code>)
-used by the demo geometries in
-<a class="reference internal" href="../presets/index.html#module-ad_hoc_diffractometer.presets" title="ad_hoc_diffractometer.presets"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.presets</span></code></a>.</p>
+<code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code>, <code class="docutils literal notranslate"><span class="pre">BASIS_DEFAULT</span></code>) and the default <strong>kappa tilt angle</strong>
+(<code class="docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code>) used by the demo geometries shipped under
+<a class="reference internal" href="../geometries/index.html#module-ad_hoc_diffractometer.geometries" title="ad_hoc_diffractometer.geometries"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.geometries</span></code></a>.</p>
 <section id="demo-geometries">
 <h2>Demo geometries<a class="headerlink" href="#demo-geometries" title="Link to this heading">#</a></h2>
 <p>The 10 demo geometries (<code class="docutils literal notranslate"><span class="pre">psic</span></code>, <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">fourch</span></code>, <code class="docutils literal notranslate"><span class="pre">sixc</span></code>,
 <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code>, <code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">s2d2</span></code>,
-<code class="docutils literal notranslate"><span class="pre">fivec</span></code>) live in <a class="reference internal" href="../presets/index.html#module-ad_hoc_diffractometer.presets" title="ad_hoc_diffractometer.presets"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.presets</span></code></a>.  Access them
-as:</p>
+<code class="docutils literal notranslate"><span class="pre">fivec</span></code>) are declarative YAML files in
+<a class="reference internal" href="../geometries/index.html#module-ad_hoc_diffractometer.geometries" title="ad_hoc_diffractometer.geometries"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.geometries</span></code></a>.  Access them via the
+registry:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
 
-<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;fourcv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -614,13 +617,16 @@ DOI:10.1107/97809553602060000577</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a></p></td>
 <td><p>Basis vector dictionary for the Busing &amp; Levy (1967) coordinate convention.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_DEFAULT" title="ad_hoc_diffractometer.factories.BASIS_DEFAULT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BASIS_DEFAULT</span></code></a></p></td>
+<td><p>Neutral basis used by the declarative geometry loader when a YAML file</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a></p></td>
 <td><p>Basis vector dictionary for the You (1999) coordinate convention.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP" title="ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP" title="ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code></a></p></td>
 <td><p>Entry-point group name for geometry plugins.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT" title="ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT" title="ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code></a></p></td>
 <td><p>Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C).</p></td>
 </tr>
 </tbody>
@@ -663,7 +669,37 @@ DOI:10.1107/97809553602060000577</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;vertical&quot;</span></code> → +z (opposite to gravitational acceleration)</p></li>
 </ul>
 <p>Used by <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">fourch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, and <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>
-(in <a class="reference internal" href="../presets/index.html#module-ad_hoc_diffractometer.presets" title="ad_hoc_diffractometer.presets"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.presets</span></code></a>).</p>
+(in <a class="reference internal" href="../geometries/index.html#module-ad_hoc_diffractometer.geometries" title="ad_hoc_diffractometer.geometries"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.geometries</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.factories.BASIS_DEFAULT">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.factories.</span></span><span class="sig-name descname"><span class="pre">BASIS_DEFAULT</span></span><a class="headerlink" href="#ad_hoc_diffractometer.factories.BASIS_DEFAULT" title="Link to this definition">#</a></dt>
+<dd><p>Neutral basis used by the declarative geometry loader when a YAML file
+omits the <code class="docutils literal notranslate"><span class="pre">basis:</span></code> key (issue #267).</p>
+<p>Maps physical direction names to Cartesian unit vectors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;vertical&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">YHAT</span></code> (+y)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;longitudinal&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">ZHAT</span></code> (+z)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;transverse&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">XHAT</span></code> (+x)</p></li>
+</ul>
+<p>This basis is <strong>deliberately distinct</strong> from both <a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a> (You
+1999) and <a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a> (Busing &amp; Levy 1967) so that the package
+does not appear to espouse either literature convention as a “project
+default.”  YAML files that should match a literature convention must
+declare the basis explicitly (<code class="docutils literal notranslate"><span class="pre">basis:</span> <span class="pre">BL</span></code>, <code class="docutils literal notranslate"><span class="pre">basis:</span> <span class="pre">YOU</span></code>, or an
+explicit mapping); files that omit the key opt into this neutral
+fallback.</p>
+<p>The Cartesian basis <code class="docutils literal notranslate"><span class="pre">(XHAT,</span> <span class="pre">YHAT,</span> <span class="pre">ZHAT)</span></code> is right-handed; the
+mapping above is one of three possible cyclic permutations of physical
+names onto those axes.  Compare:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a> uses <code class="docutils literal notranslate"><span class="pre">(vertical,</span> <span class="pre">longitudinal,</span> <span class="pre">transverse)</span> <span class="pre">=</span> <span class="pre">(X,</span> <span class="pre">Y,</span> <span class="pre">Z)</span></code>.</p></li>
+<li><p><a class="reference internal" href="#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a> uses <code class="docutils literal notranslate"><span class="pre">(transverse,</span> <span class="pre">longitudinal,</span> <span class="pre">vertical)</span> <span class="pre">=</span> <span class="pre">(X,</span> <span class="pre">Y,</span> <span class="pre">Z)</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BASIS_DEFAULT</span></code> uses <code class="docutils literal notranslate"><span class="pre">(transverse,</span> <span class="pre">vertical,</span> <span class="pre">longitudinal)</span> <span class="pre">=</span> <span class="pre">(X,</span> <span class="pre">Y,</span> <span class="pre">Z)</span></code>,
+i.e. <code class="docutils literal notranslate"><span class="pre">(vertical,</span> <span class="pre">longitudinal,</span> <span class="pre">transverse)</span> <span class="pre">=</span> <span class="pre">(Y,</span> <span class="pre">Z,</span> <span class="pre">X)</span></code> — the
+remaining cyclic permutation.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py data">
@@ -677,7 +713,7 @@ DOI:10.1107/97809553602060000577</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;transverse&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">ZHAT</span></code> (+z, completes the right-handed system: vertical × longitudinal)</p></li>
 </ul>
 <p>Default basis used by <code class="docutils literal notranslate"><span class="pre">psic</span></code>, <code class="docutils literal notranslate"><span class="pre">sixc</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code>,
-<code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">s2d2</span></code>, and <code class="docutils literal notranslate"><span class="pre">fivec</span></code> (in <a class="reference internal" href="../presets/index.html#module-ad_hoc_diffractometer.presets" title="ad_hoc_diffractometer.presets"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.presets</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">s2d2</span></code>, and <code class="docutils literal notranslate"><span class="pre">fivec</span></code> (in <a class="reference internal" href="../geometries/index.html#module-ad_hoc_diffractometer.geometries" title="ad_hoc_diffractometer.geometries"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.geometries</span></code></a>).</p>
 </dd></dl>
 
 <dl class="py data">
@@ -921,6 +957,7 @@ can instead declare an entry point in the
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.BASIS_BL"><code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.BASIS_DEFAULT"><code class="docutils literal notranslate"><span class="pre">BASIS_DEFAULT</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.BASIS_YOU"><code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP"><code class="docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT"><code class="docutils literal notranslate"><span class="pre">KAPPA_ALPHA_DEFAULT</span></code></a></li>
@@ -965,7 +1002,7 @@ can instead declare an entry point in the
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 15:01 CDT.
+  Last updated on 2026-05-05 23:20 CDT.
   <br/>
 </p></div>
       

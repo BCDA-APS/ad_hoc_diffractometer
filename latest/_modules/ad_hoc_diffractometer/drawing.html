@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=a1ca3f14"></script>
+    <script src="../../_static/documentation_options.js?v=a4909c8d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 15:01 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 23:20 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -598,7 +598,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">StageAxisFigure</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Interactive Plotly figure for a single stage rotation-axis diagram.</span>
 
-<span class="sd">    Draws the geometry&#39;s basis vectors (grey, semi-transparent) and the</span>
+<span class="sd">    Draws the geometry&#39;s basis vectors (gray, semi-transparent) and the</span>
 <span class="sd">    stage&#39;s rotation axis (red) with a direction arc, in a 3-D interactive</span>
 <span class="sd">    Plotly scene.</span>
 
@@ -628,13 +628,12 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">go</span> <span class="o">=</span> <span class="n">_require_plotly</span><span class="p">()</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.presets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_presets</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_geometry</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_go</span> <span class="o">=</span> <span class="n">go</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="n">factory</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_presets</span><span class="p">,</span> <span class="n">geometry_name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">factory</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">make_geometry</span><span class="p">(</span><span class="n">geometry_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">[</span><span class="n">axis_name</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># set in _draw_basis_vectors</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;StageAxisFigure: </span><span class="si">%s</span><span class="s2"> / </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">geometry_name</span><span class="p">,</span> <span class="n">axis_name</span><span class="p">)</span>
@@ -731,9 +730,9 @@
         <span class="n">basis_length</span> <span class="o">=</span> <span class="mf">0.5</span>
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">vec</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="n">ver_d</span><span class="p">,</span> <span class="s2">&quot;grey&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="n">lon_d</span><span class="p">,</span> <span class="s2">&quot;grey&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">lat_d</span><span class="p">,</span> <span class="s2">&quot;grey&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="n">ver_d</span><span class="p">,</span> <span class="s2">&quot;gray&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="n">lon_d</span><span class="p">,</span> <span class="s2">&quot;gray&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">lat_d</span><span class="p">,</span> <span class="s2">&quot;gray&quot;</span><span class="p">),</span>
         <span class="p">]:</span>
             <span class="n">v</span> <span class="o">=</span> <span class="n">vec</span> <span class="o">*</span> <span class="n">basis_length</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
@@ -1005,13 +1004,12 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">go</span> <span class="o">=</span> <span class="n">_require_plotly</span><span class="p">()</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.presets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_presets</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_geometry</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_go</span> <span class="o">=</span> <span class="n">go</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="n">factory</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_presets</span><span class="p">,</span> <span class="n">geometry_name</span><span class="p">)</span>
-        <span class="n">geometry</span> <span class="o">=</span> <span class="n">factory</span><span class="p">()</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">make_geometry</span><span class="p">(</span><span class="n">geometry_name</span><span class="p">)</span>
         <span class="n">stages</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;GeometryAxisFigure: </span><span class="si">%s</span><span class="s2">  stages=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -1226,7 +1224,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 15:01 CDT.
+  Last updated on 2026-05-05 23:20 CDT.
   <br/>
 </p></div>
       

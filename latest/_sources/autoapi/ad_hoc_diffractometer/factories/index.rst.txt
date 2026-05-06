@@ -13,21 +13,22 @@ factories
    ``make_geometry()`` lookup functions.
 
    It also defines the shared **basis dictionaries** (``BASIS_YOU``,
-   ``BASIS_BL``) and the default **kappa tilt angle** (``KAPPA_ALPHA_DEFAULT``)
-   used by the demo geometries in
-   :mod:`ad_hoc_diffractometer.presets`.
+   ``BASIS_BL``, ``BASIS_DEFAULT``) and the default **kappa tilt angle**
+   (``KAPPA_ALPHA_DEFAULT``) used by the demo geometries shipped under
+   :mod:`ad_hoc_diffractometer.geometries`.
 
    Demo geometries
    ---------------
 
    The 10 demo geometries (``psic``, ``fourcv``, ``fourch``, ``sixc``,
    ``kappa4cv``, ``kappa4ch``, ``kappa6c``, ``zaxis``, ``s2d2``,
-   ``fivec``) live in :mod:`ad_hoc_diffractometer.presets`.  Access them
-   as::
+   ``fivec``) are declarative YAML files in
+   :mod:`ad_hoc_diffractometer.geometries`.  Access them via the
+   registry::
 
        import ad_hoc_diffractometer as ahd
 
-       g = ahd.presets.fourcv()
+       g = ahd.make_geometry("fourcv")
 
    Extension via entry points
    --------------------------
@@ -95,6 +96,7 @@ Attributes
 .. autoapisummary::
 
    ad_hoc_diffractometer.factories.BASIS_BL
+   ad_hoc_diffractometer.factories.BASIS_DEFAULT
    ad_hoc_diffractometer.factories.BASIS_YOU
    ad_hoc_diffractometer.factories.GEOMETRY_ENTRY_POINT_GROUP
    ad_hoc_diffractometer.factories.KAPPA_ALPHA_DEFAULT
@@ -126,7 +128,36 @@ Module Contents
    - ``"vertical"`` → +z (opposite to gravitational acceleration)
 
    Used by ``fourcv``, ``fourch``, ``kappa4cv``, and ``kappa4ch``
-   (in :mod:`ad_hoc_diffractometer.presets`).
+   (in :mod:`ad_hoc_diffractometer.geometries`).
+
+.. py:data:: BASIS_DEFAULT
+
+   Neutral basis used by the declarative geometry loader when a YAML file
+   omits the ``basis:`` key (issue #267).
+
+   Maps physical direction names to Cartesian unit vectors:
+
+   - ``"vertical"`` → ``YHAT`` (+y)
+   - ``"longitudinal"`` → ``ZHAT`` (+z)
+   - ``"transverse"`` → ``XHAT`` (+x)
+
+   This basis is **deliberately distinct** from both :data:`BASIS_YOU` (You
+   1999) and :data:`BASIS_BL` (Busing & Levy 1967) so that the package
+   does not appear to espouse either literature convention as a "project
+   default."  YAML files that should match a literature convention must
+   declare the basis explicitly (``basis: BL``, ``basis: YOU``, or an
+   explicit mapping); files that omit the key opt into this neutral
+   fallback.
+
+   The Cartesian basis ``(XHAT, YHAT, ZHAT)`` is right-handed; the
+   mapping above is one of three possible cyclic permutations of physical
+   names onto those axes.  Compare:
+
+   - :data:`BASIS_YOU` uses ``(vertical, longitudinal, transverse) = (X, Y, Z)``.
+   - :data:`BASIS_BL` uses ``(transverse, longitudinal, vertical) = (X, Y, Z)``.
+   - ``BASIS_DEFAULT`` uses ``(transverse, vertical, longitudinal) = (X, Y, Z)``,
+     i.e. ``(vertical, longitudinal, transverse) = (Y, Z, X)`` — the
+     remaining cyclic permutation.
 
 .. py:data:: BASIS_YOU
 
@@ -139,7 +170,7 @@ Module Contents
    - ``"transverse"`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)
 
    Default basis used by ``psic``, ``sixc``, ``kappa6c``,
-   ``zaxis``, ``s2d2``, and ``fivec`` (in :mod:`ad_hoc_diffractometer.presets`).
+   ``zaxis``, ``s2d2``, and ``fivec`` (in :mod:`ad_hoc_diffractometer.geometries`).
 
 .. py:data:: GEOMETRY_ENTRY_POINT_GROUP
    :value: 'ad_hoc_diffractometer.geometries'

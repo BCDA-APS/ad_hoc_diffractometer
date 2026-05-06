@@ -92,7 +92,7 @@ Modules are grouped by layer.
               fontsize=10, margin="0.15,0.08"]
        edge  [color="#555555", arrowsize=0.7]
 
-       // ── Foundation (grey) ──────────────────────────────────
+       // ── Foundation (gray) ──────────────────────────────────
        subgraph cluster_foundation {
            label="Foundation"
            style=filled fillcolor="#f0f0f0" color="#aaaaaa"

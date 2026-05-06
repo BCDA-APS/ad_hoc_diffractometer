@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=a1ca3f14"></script>
+    <script src="../_static/documentation_options.js?v=a4909c8d"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 15:01 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 23:20 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -422,6 +422,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/declarative_geometry_schema.html">Declarative Geometry Schema</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/index.html">ad_hoc_diffractometer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/axes/index.html">axes</a></li>
@@ -433,11 +434,12 @@
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/drawing/index.html">drawing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html">factories</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/forward/index.html">forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometries/index.html">geometries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html">geometry_loader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/kappa/index.html">kappa</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/lattice/index.html">lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html">mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html">orientation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/presets/index.html">presets</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/radiation/index.html">radiation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/reference/index.html">reference</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/refinement/index.html">refinement</a></li>
@@ -525,21 +527,183 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="build-a-custom-diffractometer-geometry">
 <span id="howto-custom-geometry"></span><h1>Build a Custom Diffractometer Geometry<a class="headerlink" href="#build-a-custom-diffractometer-geometry" title="Link to this heading">#</a></h1>
-<p>This guide walks through defining a diffractometer geometry that is not
-one of the demo geometries.  Each design decision is explained as
-it arises, with notes on what happens if you get it wrong.</p>
+<p>This guide walks through defining a diffractometer geometry that is
+not already shipped with the package.  There are two paths:</p>
+<ul class="simple">
+<li><p><strong>Declarative YAML</strong> (recommended) — write a small <code class="docutils literal notranslate"><span class="pre">.yml</span></code> file, no
+Python required.  Suitable for almost every real beamline.</p></li>
+<li><p><strong>Python factory</strong> — write a Python function decorated with
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.register_geometry" title="ad_hoc_diffractometer.factories.register_geometry"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_geometry()</span></code></a>.  Use this only when
+you need computed-at-runtime stages or other logic that the
+declarative schema does not express.</p></li>
+</ul>
 <p>The worked example builds a <strong>three-circle powder diffractometer</strong> with
-a theta-2theta arm and a sample spinner (phi).  This is simple enough to
-follow but exercises every decision: basis, axis signs, parent chains,
+a theta-2theta arm and a sample spinner (phi).  It is simple enough to
+follow yet exercises every decision: basis, axis signs, parent chains,
 roles, and modes.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>If your instrument matches one of the demo geometries
-(<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.psic" title="ad_hoc_diffractometer.presets.psic"><code class="xref py py-func docutils literal notranslate"><span class="pre">psic()</span></code></a>,
-<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.fourcv" title="ad_hoc_diffractometer.presets.fourcv"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourcv()</span></code></a>, etc.), use it directly
-instead.  This guide is for instruments that differ from the
-<a class="reference internal" href="../geometries/index.html#geometries"><span class="std std-ref">demo geometries</span></a>.</p>
+<p>The 10 YAML files shipped under
+<code class="docutils literal notranslate"><span class="pre">src/ad_hoc_diffractometer/geometries/</span></code> are <strong>demonstrations</strong> of the
+declarative schema, not authoritative descriptions of any production
+diffractometer.  They are templates for you to copy and adapt.  Open
+the closest demo (e.g. <code class="docutils literal notranslate"><span class="pre">fourcv.yml</span></code>) alongside this guide and edit
+field-by-field.</p>
 </div>
+<section id="path-a-declarative-yaml-recommended">
+<span id="howto-custom-geometry-yaml"></span><h2>Path A — Declarative YAML (recommended)<a class="headerlink" href="#path-a-declarative-yaml-recommended" title="Link to this heading">#</a></h2>
+<p>This is the recommended workflow for any geometry that fits the
+schema.  The complete schema reference is
+<a class="reference internal" href="../reference/declarative_geometry_schema.html#declarative-geometry-schema"><span class="std std-ref">Declarative Geometry Schema</span></a>; this section covers the practical
+steps.</p>
+<section id="a-1-copy-a-demo-and-rename-it">
+<h3>A.1 — Copy a demo and rename it<a class="headerlink" href="#a-1-copy-a-demo-and-rename-it" title="Link to this heading">#</a></h3>
+<p>Pick the demo geometry whose layout most closely matches your
+instrument and copy it to a working file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>src/ad_hoc_diffractometer/geometries/fourcv.yml<span class="w"> </span>/lab/my_powder3c.yml
+</pre></div>
+</div>
+<p>Edit the top-level <code class="docutils literal notranslate"><span class="pre">name:</span></code> to match your filename stem
+(<code class="docutils literal notranslate"><span class="pre">my_powder3c</span></code>).  The loader rejects a name/stem mismatch for files in
+the package directory; for ad-hoc files outside the package this is a
+soft convention.</p>
+</section>
+<section id="a-2-document-the-marker-name-and-prose">
+<h3>A.2 — Document the marker, name, and prose<a class="headerlink" href="#a-2-document-the-marker-name-and-prose" title="Link to this heading">#</a></h3>
+<p>Every file begins with the schema marker (see
+<a class="reference internal" href="../reference/declarative_geometry_schema.html#decl-marker"><span class="std std-ref">Document marker</span></a>):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">ad_hoc_diffractometer_geometry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">schema_revision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_powder3c</span>
+
+<span class="nt">documentation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+<span class="w">    </span><span class="no">Three-circle powder diffractometer, horizontal scattering plane.</span>
+
+<span class="w">    </span><span class="no">Theta and ttheta both rotate about the vertical axis (laboratory</span>
+<span class="w">    </span><span class="no">convention).  Phi is a sample spinner mounted on top of theta.</span>
+</pre></div>
+</div>
+<p>The first line of <code class="docutils literal notranslate"><span class="pre">documentation:</span></code> is the one-line summary, following
+the Python-docstring convention.</p>
+</section>
+<section id="a-3-choose-a-basis">
+<h3>A.3 — Choose a basis<a class="headerlink" href="#a-3-choose-a-basis" title="Link to this heading">#</a></h3>
+<p>Three options:</p>
+<ul class="simple">
+<li><p>Shorthand string (<code class="docutils literal notranslate"><span class="pre">basis:</span> <span class="pre">BL</span></code>, <code class="docutils literal notranslate"><span class="pre">basis:</span> <span class="pre">YOU</span></code>, or <code class="docutils literal notranslate"><span class="pre">basis:</span> <span class="pre">DEFAULT</span></code>).</p></li>
+<li><p>Mapping of signed-axis strings.</p></li>
+<li><p>Mapping of numeric unit vectors.</p></li>
+</ul>
+<p>For a laboratory instrument, the Busing &amp; Levy convention is natural:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">basis</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">BL</span>
+</pre></div>
+</div>
+<p>Omitting the key emits a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#UserWarning" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserWarning</span></code></a> and falls back to
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_DEFAULT" title="ad_hoc_diffractometer.factories.BASIS_DEFAULT"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_DEFAULT</span></code></a> (a neutral
+basis, not aligned with any literature convention).  Real instruments
+should declare <code class="docutils literal notranslate"><span class="pre">basis:</span></code> explicitly.</p>
+</section>
+<section id="a-4-declare-the-stages">
+<h3>A.4 — Declare the stages<a class="headerlink" href="#a-4-declare-the-stages" title="Link to this heading">#</a></h3>
+<p>Each stage is a four-key mapping (<code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">axis</span></code>, <code class="docutils literal notranslate"><span class="pre">parent</span></code>, <code class="docutils literal notranslate"><span class="pre">role</span></code>):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">stages</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">theta</span><span class="p p-Indicator">,</span><span class="nt">  axis</span><span class="p">:</span><span class="w"> </span><span class="nv">+vertical</span><span class="p p-Indicator">,</span><span class="nt">     parent</span><span class="p">:</span><span class="w"> </span><span class="nv">null</span><span class="p p-Indicator">,</span><span class="nt">   role</span><span class="p">:</span><span class="w"> </span><span class="nv">sample</span><span class="p p-Indicator">}</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">phi</span><span class="p p-Indicator">,</span><span class="nt">    axis</span><span class="p">:</span><span class="w"> </span><span class="nv">+longitudinal</span><span class="p p-Indicator">,</span><span class="nt"> parent</span><span class="p">:</span><span class="w"> </span><span class="nv">theta</span><span class="p p-Indicator">,</span><span class="nt">  role</span><span class="p">:</span><span class="w"> </span><span class="nv">sample</span><span class="p p-Indicator">}</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">ttheta</span><span class="p p-Indicator">,</span><span class="nt"> axis</span><span class="p">:</span><span class="w"> </span><span class="nv">+vertical</span><span class="p p-Indicator">,</span><span class="nt">     parent</span><span class="p">:</span><span class="w"> </span><span class="nv">null</span><span class="p p-Indicator">,</span><span class="nt">   role</span><span class="p">:</span><span class="w"> </span><span class="nv">detector</span><span class="p p-Indicator">}</span>
+</pre></div>
+</div>
+<p>The sign on the axis encodes handedness: <code class="docutils literal notranslate"><span class="pre">+nHat</span></code> is a right-handed
+rotation about <code class="docutils literal notranslate"><span class="pre">nHat</span></code>, <code class="docutils literal notranslate"><span class="pre">-nHat</span></code> is left-handed.  See
+<a class="reference internal" href="../reference/declarative_geometry_schema.html#decl-stages"><span class="std std-ref">stages</span></a> for the full axis grammar (signed-physical-direction
+strings, signed Cartesian strings, numeric vectors, and the
+<code class="docutils literal notranslate"><span class="pre">kappa_eulerian</span></code> form for kappa geometries).</p>
+</section>
+<section id="a-5-declare-the-modes">
+<h3>A.5 — Declare the modes<a class="headerlink" href="#a-5-declare-the-modes" title="Link to this heading">#</a></h3>
+<p>A mode is a <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>
+expressed in YAML:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">modes</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">theta_ttheta</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">constraints</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">        </span><span class="nt">computed</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">theta</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">phi</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ttheta</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>This 3-circle geometry has zero free DOF (3 stages − 3 from the Bragg
+condition), so the mode needs no constraints.  Higher-DOF geometries
+list constraint specs of one of five <code class="docutils literal notranslate"><span class="pre">type:</span></code> values
+(<code class="docutils literal notranslate"><span class="pre">bisect</span></code>, <code class="docutils literal notranslate"><span class="pre">virtual_bisect</span></code>, <code class="docutils literal notranslate"><span class="pre">sample</span></code>, <code class="docutils literal notranslate"><span class="pre">detector</span></code>, <code class="docutils literal notranslate"><span class="pre">reference</span></code>); see
+<a class="reference internal" href="../reference/declarative_geometry_schema.html#decl-modes"><span class="std std-ref">modes</span></a>.</p>
+</section>
+<section id="a-6-use-the-geometry">
+<h3>A.6 — Use the geometry<a class="headerlink" href="#a-6-use-the-geometry" title="Link to this heading">#</a></h3>
+<p>You can use the file in three ways:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+
+<span class="c1"># (1) One-shot construction without registry mutation:</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">load_geometry_file</span><span class="p">(</span><span class="s2">&quot;/lab/my_powder3c.yml&quot;</span><span class="p">)</span>
+
+<span class="c1"># (2) Register once, then look up by name:</span>
+<span class="n">ahd</span><span class="o">.</span><span class="n">register_geometry_file</span><span class="p">(</span><span class="s2">&quot;/lab/my_powder3c.yml&quot;</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;my_powder3c&quot;</span><span class="p">)</span>
+
+<span class="c1"># (3) Override declared defaults at call time:</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span>
+    <span class="s2">&quot;my_powder3c&quot;</span><span class="p">,</span>
+    <span class="n">basis</span><span class="o">=</span><span class="n">ahd</span><span class="o">.</span><span class="n">factories</span><span class="o">.</span><span class="n">BASIS_YOU</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>To make the YAML available across every Python session at this
+beamline, either:</p>
+<ul class="simple">
+<li><p>ship it inside a Python package and declare it as an entry point in
+the <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.geometries</span></code> group (see
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.register_geometry" title="ad_hoc_diffractometer.factories.register_geometry"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_geometry()</span></code></a>), or</p></li>
+<li><p>add a small site-startup script that calls
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.register_geometry_file" title="ad_hoc_diffractometer.geometry_loader.register_geometry_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_geometry_file()</span></code></a> for the file’s
+path.</p></li>
+</ul>
+</section>
+<section id="a-7-verify">
+<h3>A.7 — Verify<a class="headerlink" href="#a-7-verify" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>  <span class="c1"># Cu K-alpha, Å</span>
+<span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.431</span><span class="p">)</span>  <span class="c1"># cubic silicon</span>
+<span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
+
+<span class="n">g</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="n">solutions</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">solutions</span><span class="p">:</span>
+    <span class="n">hkl</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="s2">&quot;→&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">inverse(forward(h,</span> <span class="pre">k,</span> <span class="pre">l))</span></code> does not recover <code class="docutils literal notranslate"><span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> to
+floating-point precision, check axis signs (Step A.4), parent chains
+(stage <code class="docutils literal notranslate"><span class="pre">parent:</span></code> field), and roles (Step A.4 <code class="docutils literal notranslate"><span class="pre">role:</span></code> field) in that
+order.</p>
+</section>
+<section id="a-8-when-the-yaml-schema-is-not-enough">
+<h3>A.8 — When the YAML schema is not enough<a class="headerlink" href="#a-8-when-the-yaml-schema-is-not-enough" title="Link to this heading">#</a></h3>
+<p>A few cases require Python:</p>
+<ul class="simple">
+<li><p>Stage axes that depend on a runtime parameter the schema does not
+express (other than <code class="docutils literal notranslate"><span class="pre">alpha_deg</span></code>).</p></li>
+<li><p>Geometries whose stage layout depends on caller-supplied data
+(e.g. a stage list whose length varies).</p></li>
+</ul>
+<p>In those cases use <a class="reference internal" href="#howto-custom-geometry-python"><span class="std std-ref">Path B</span></a> below.</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="path-b-python-factory-advanced">
+<span id="howto-custom-geometry-python"></span><h2>Path B — Python factory (advanced)<a class="headerlink" href="#path-b-python-factory-advanced" title="Link to this heading">#</a></h2>
+<p>This path is for geometries that the declarative schema cannot
+express.  It walks through the same three-circle powder example
+implemented as a Python factory, with each design decision explained
+as it arises.</p>
+</section>
 <hr class="docutils" />
 <section id="the-instrument">
 <h2>The instrument<a class="headerlink" href="#the-instrument" title="Link to this heading">#</a></h2>
@@ -553,7 +717,7 @@ in the plane perpendicular to the 2θ rotation axis, <strong>the scattering plan
 always perpendicular to the 2θ axis</strong>.  A horizontal scattering plane therefore
 <em>requires</em> 2θ — and the matching sample stage θ that tracks half of it — to
 rotate about the <strong>vertical</strong> axis.  (Conversely, the
-<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.fourcv" title="ad_hoc_diffractometer.presets.fourcv"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourcv()</span></code></a> geometry places 2θ about a
+<a class="reference internal" href="../geometries/fourcv.html#geometry-fourcv"><span class="std std-ref">fourcv — Eulerian Four-Circle (vertical)</span></a> geometry places 2θ about a
 horizontal/transverse axis to obtain a vertical scattering plane; see
 <a class="reference internal" href="../concepts.html"><span class="doc">Concepts</span></a> for the wider discussion of the <code class="docutils literal notranslate"><span class="pre">v</span></code> / <code class="docutils literal notranslate"><span class="pre">h</span></code> suffix
 convention.)</p>
@@ -672,7 +836,7 @@ If you set <code class="docutils literal notranslate"><span class="pre">parent=N
 another stage, the forward solver will treat them as independent and
 compute incorrect angles.</p>
 <p>Conversely, if two stacks share a common base stage (as in the
-<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.zaxis" title="ad_hoc_diffractometer.presets.zaxis"><code class="xref py py-func docutils literal notranslate"><span class="pre">zaxis()</span></code></a> geometry, where the
+<a class="reference internal" href="../geometries/zaxis.html#geometry-zaxis"><span class="std std-ref">zaxis — Z-Axis Four-Circle (Surface)</span></a> geometry, where the
 sample and detector both sit on the alpha stage), then both stacks
 must list that shared stage as their parent.</p>
 </div>
@@ -874,7 +1038,7 @@ be unique — duplicates raise <code class="docutils literal notranslate"><span 
 <section id="advanced-shared-base-stages">
 <h2>Advanced: shared base stages<a class="headerlink" href="#advanced-shared-base-stages" title="Link to this heading">#</a></h2>
 <p>Some geometries have sample and detector stages that share a common base
-(e.g. the <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.zaxis" title="ad_hoc_diffractometer.presets.zaxis"><code class="xref py py-func docutils literal notranslate"><span class="pre">zaxis()</span></code></a> geometry, where
+(e.g. the <a class="reference internal" href="../geometries/zaxis.html#geometry-zaxis"><span class="std std-ref">zaxis — Z-Axis Four-Circle (Surface)</span></a> geometry, where
 both the sample Z stage and the detector delta stage sit on the alpha
 stage).  In this pattern:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stages</span> <span class="o">=</span> <span class="p">[</span>
@@ -977,6 +1141,18 @@ differ by a fixed rotation, leaving the physics invariant)</p></li>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#path-a-declarative-yaml-recommended">Path A — Declarative YAML (recommended)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-1-copy-a-demo-and-rename-it">A.1 — Copy a demo and rename it</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-2-document-the-marker-name-and-prose">A.2 — Document the marker, name, and prose</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-3-choose-a-basis">A.3 — Choose a basis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-4-declare-the-stages">A.4 — Declare the stages</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-5-declare-the-modes">A.5 — Declare the modes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-6-use-the-geometry">A.6 — Use the geometry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-7-verify">A.7 — Verify</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-8-when-the-yaml-schema-is-not-enough">A.8 — When the YAML schema is not enough</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#path-b-python-factory-advanced">Path B — Python factory (advanced)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-instrument">The instrument</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-choose-a-basis">Step 1 — Choose a basis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-determine-axis-vectors-from-physical-observation">Step 2 — Determine axis vectors from physical observation</a></li>
@@ -1024,7 +1200,7 @@ differ by a fixed rotation, leaving the physics invariant)</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 15:01 CDT.
+  Last updated on 2026-05-05 23:20 CDT.
   <br/>
 </p></div>
       

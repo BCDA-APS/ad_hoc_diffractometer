@@ -1,0 +1,1478 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Declarative Geometry Schema &#8212; ad_hoc_diffractometer 0.9</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=91f10d53" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=a4909c8d"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/declarative_geometry_schema';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API" href="../api.html" />
+    <link rel="prev" title="s2d2 — S2D2 General-Inclination Four-Circle" href="../geometries/s2d2.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.9" />
+    <meta name="docbuild:last-update" content="2026-05-05 23:20 CDT"/>
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.9</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/prjemian/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code></a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../howto/index.html">How-to Guides</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/basis_vectors.html">Choose and Understand Basis Vectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/custom_geometry.html">Build a Custom Diffractometer Geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/wavelength.html">Set Wavelength / Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/lattice.html">Define the Sample Lattice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/orient.html">Orient a Crystal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/forward.html">Forward and Inverse Computations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/modes.html">Switch Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/constraints.html">Work with Constraints and Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/surface.html">Surface Geometry and the Reference Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/trajectory.html">Plan a Trajectory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/refine_lattice.html">Refine the Lattice Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serialize.html">Save and Restore a Diffractometer Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/inclination.html">Set Diffractometer Inclination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/performance.html">Measure Forward/Inverse Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/fourcv_alignment_howto.html">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../geometries/index.html">Demonstration Geometries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/fourcv.html">fourcv — Eulerian Four-Circle (vertical)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/fourch.html">fourch — Eulerian Four-Circle (horizontal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/fivec.html">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/psic.html">psic — Eulerian Six-Circle, 4S+2D (You 1999)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/sixc.html">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/kappa4cv.html">kappa4cv — Kappa Four-Circle (vertical)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/kappa4ch.html">kappa4ch — Kappa Four-Circle (horizontal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/kappa6c.html">kappa6c — Kappa Six-Circle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/zaxis.html">zaxis — Z-Axis Four-Circle (Surface)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Declarative Geometry Schema</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/index.html">ad_hoc_diffractometer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/axes/index.html">axes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/benchmark/index.html">benchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/constants/index.html">constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/conversions/index.html">conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/diffractometer/index.html">diffractometer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/display/index.html">display</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/drawing/index.html">drawing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html">factories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/forward/index.html">forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometries/index.html">geometries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html">geometry_loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/kappa/index.html">kappa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/lattice/index.html">lattice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html">mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html">orientation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/radiation/index.html">radiation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/reference/index.html">reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/refinement/index.html">refinement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/reflection/index.html">reflection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/rotation/index.html">rotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/sample/index.html">sample</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/scan/index.html">scan</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/stage/index.html">stage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/surface/index.html">surface</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../direct-lattice.html">Direct Lattice in Crystallography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem1.html">Case Study: Describing a Diffractometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem2.html">Case Study: Choice of Basis and the UB Matrix</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../user_guide.html" class="nav-link">User Guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Declarative Geometry Schema</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="declarative-geometry-schema">
+<span id="id1"></span><h1>Declarative Geometry Schema<a class="headerlink" href="#declarative-geometry-schema" title="Link to this heading">#</a></h1>
+<p>Authoritative reference for the YAML schema used by
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.load_geometry_file" title="ad_hoc_diffractometer.geometry_loader.load_geometry_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.geometry_loader.load_geometry_file()</span></code></a> and
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.register_geometry_file" title="ad_hoc_diffractometer.geometry_loader.register_geometry_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.geometry_loader.register_geometry_file()</span></code></a>.
+See the <a class="reference internal" href="../howto/custom_geometry.html#howto-custom-geometry"><span class="std std-ref">how-to</span></a> for a task-oriented
+walkthrough.</p>
+<p>The 10 YAML files shipped under
+<code class="docutils literal notranslate"><span class="pre">src/ad_hoc_diffractometer/geometries/</span></code> are <strong>demonstrations</strong> of this
+schema, not authoritative descriptions of any production
+diffractometer.  Real instruments at real beamlines should ship their
+own YAML — copy the closest demo file and adapt it.</p>
+<hr class="docutils" />
+<section id="top-level-structure">
+<h2>Top-level structure<a class="headerlink" href="#top-level-structure" title="Link to this heading">#</a></h2>
+<p>Every declarative geometry file is a single YAML document (one mapping
+at the top level) with the following keys.  The strict
+<a class="reference internal" href="#decl-strict-keys"><span class="std std-ref">unknown-key policy</span></a> rejects any key not listed
+here.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer_geometry</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>mapping</p></td>
+<td><p>Document marker (see below)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>non-empty string</p></td>
+<td><p>Registry key (must equal filename stem for files in the package directory)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">documentation</span></code></p></td>
+<td><p>recommended</p></td>
+<td><p>string</p></td>
+<td><p>Free-form prose; the <strong>first line is the one-line summary</strong> (Python-docstring convention)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">basis</span></code></p></td>
+<td><p>optional</p></td>
+<td><p>string or mapping</p></td>
+<td><p>Coordinate basis (see <a class="reference internal" href="#decl-basis"><span class="std std-ref">basis</span></a>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code></p></td>
+<td><p>optional</p></td>
+<td><p>mapping</p></td>
+<td><p>Caller-tunable defaults; currently only <code class="docutils literal notranslate"><span class="pre">alpha_deg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kappa_chi_eq</span></code></p></td>
+<td><p>conditional</p></td>
+<td><p>string or 3-vector</p></td>
+<td><p>Equivalent-Eulerian chi axis; required for kappa geometries</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stages</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>non-empty list</p></td>
+<td><p>Rotary stages (see <a class="reference internal" href="#decl-stages"><span class="std std-ref">stages</span></a>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">modes</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>non-empty mapping</p></td>
+<td><p>Diffraction modes (see <a class="reference internal" href="#decl-modes"><span class="std std-ref">modes</span></a>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+</section>
+<section id="document-marker">
+<span id="decl-marker"></span><h2>Document marker<a class="headerlink" href="#document-marker" title="Link to this heading">#</a></h2>
+<p>Every file must begin with the marker that identifies it as an
+<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code> geometry declaration:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">ad_hoc_diffractometer_geometry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">schema_revision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre></div>
+</div>
+<p>The presence of the <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer_geometry</span></code> top-level key is
+the unambiguous signal that the document is a geometry declaration.
+The <code class="docutils literal notranslate"><span class="pre">schema_revision</span></code> integer selects which version of <em>this schema</em>
+the file conforms to.  It is a fixed property of the schema, not a
+per-file edit counter — users should treat the value verbatim and
+only change it when migrating the file to a different declarative-
+geometry schema revision.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Loader constant</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.KIND_KEY" title="ad_hoc_diffractometer.geometry_loader.KIND_KEY"><code class="xref py py-data docutils literal notranslate"><span class="pre">KIND_KEY</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;ad_hoc_diffractometer_geometry&quot;</span></code></p></td>
+<td><p>The marker key name</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.SUPPORTED_REVISIONS" title="ad_hoc_diffractometer.geometry_loader.SUPPORTED_REVISIONS"><code class="xref py py-data docutils literal notranslate"><span class="pre">SUPPORTED_REVISIONS</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">frozenset({1})</span></code></p></td>
+<td><p>Schema revisions this build can parse</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.CURRENT_REVISION" title="ad_hoc_diffractometer.geometry_loader.CURRENT_REVISION"><code class="xref py py-data docutils literal notranslate"><span class="pre">CURRENT_REVISION</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Revision newly-authored YAML files SHOULD declare</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The schema revision is independent of the package version; schema
+revisions are deliberate editorial events that change far less often
+than package releases.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>When a string passed to
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.load_geometry_file" title="ad_hoc_diffractometer.geometry_loader.load_geometry_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_geometry_file()</span></code></a>
+<strong>lacks</strong> the marker, the loader treats the string as a filesystem
+path rather than as YAML text.  When the marker is <strong>present</strong> but
+malformed (wrong type for the value, unsupported <code class="docutils literal notranslate"><span class="pre">schema_revision</span></code>,
+unknown sub-key, …) the loader raises <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a> immediately and
+does <strong>not</strong> retry as a path — once the document declares itself a
+geometry, the loader honors that declaration by reporting what is
+wrong with it.</p>
+</div>
+<hr class="docutils" />
+</section>
+<section id="basis">
+<span id="decl-basis"></span><h2><code class="docutils literal notranslate"><span class="pre">basis</span></code><a class="headerlink" href="#basis" title="Link to this heading">#</a></h2>
+<p>Optional.  Specifies the coordinate basis used to resolve physical
+direction names (<code class="docutils literal notranslate"><span class="pre">vertical</span></code>, <code class="docutils literal notranslate"><span class="pre">longitudinal</span></code>, <code class="docutils literal notranslate"><span class="pre">transverse</span></code>) in stage
+axis fields and elsewhere.</p>
+<p>Three accepted forms:</p>
+<ol class="arabic">
+<li><p><strong>Shorthand string</strong> — one of:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;BL&quot;</span></code> → <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a>
+(Busing &amp; Levy 1967: vertical=Z, longitudinal=Y, transverse=X)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;YOU&quot;</span></code> → <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a>
+(You 1999: vertical=X, longitudinal=Y, transverse=Z)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;DEFAULT&quot;</span></code> → <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_DEFAULT" title="ad_hoc_diffractometer.factories.BASIS_DEFAULT"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_DEFAULT</span></code></a>
+(vertical=Y, longitudinal=Z, transverse=X)</p></li>
+</ul>
+</li>
+<li><p><strong>Mapping of signed-axis strings</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">basis</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">vertical</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;+z&#39;</span>
+<span class="w">    </span><span class="nt">longitudinal</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;+y&#39;</span>
+<span class="w">    </span><span class="nt">transverse</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;+x&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Mapping of numeric unit vectors</strong> — axis-aligned:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">basis</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">vertical</span><span class="p">:</span><span class="w">     </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">longitudinal</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">transverse</span><span class="p">:</span><span class="w">   </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>…or any orthonormal triple, including non-axis-aligned bases.  For
+example, a 45° rotation of the (vertical, longitudinal) pair within
+the X-Y plane:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">basis</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">vertical</span><span class="p">:</span><span class="w">     </span><span class="p p-Indicator">[</span><span class="nv">0.7071</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.7071</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">longitudinal</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.7071</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.7071</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">transverse</span><span class="p">:</span><span class="w">   </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>The loader validates orthonormality (each vector has unit length and
+the three are mutually orthogonal, both within tolerance <code class="docutils literal notranslate"><span class="pre">1e-9</span></code>).  A
+defensive <code class="docutils literal notranslate"><span class="pre">|det([v,</span> <span class="pre">l,</span> <span class="pre">t])|</span> <span class="pre">≈</span> <span class="pre">1</span></code> cross-check rejects degenerate or
+co-planar inputs.  Either chirality of the
+<code class="docutils literal notranslate"><span class="pre">(vertical,</span> <span class="pre">longitudinal,</span> <span class="pre">transverse)</span></code> ordering is accepted because
+both BL and YOU conventions are physically meaningful right-handed
+frames in their own canonical orderings.</p>
+<section id="precedence">
+<h3>Precedence<a class="headerlink" href="#precedence" title="Link to this heading">#</a></h3>
+<p>A geometry’s basis is resolved in this order (first match wins):</p>
+<ol class="arabic simple">
+<li><p><strong>Caller-supplied <code class="docutils literal notranslate"><span class="pre">basis=</span></code></strong> keyword to
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.make_geometry" title="ad_hoc_diffractometer.factories.make_geometry"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_geometry()</span></code></a>,
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.load_geometry_file" title="ad_hoc_diffractometer.geometry_loader.load_geometry_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_geometry_file()</span></code></a>, or
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.register_geometry_file" title="ad_hoc_diffractometer.geometry_loader.register_geometry_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_geometry_file()</span></code></a>.</p></li>
+<li><p><strong>YAML file’s <code class="docutils literal notranslate"><span class="pre">basis:</span></code></strong> key (any of the three forms above).</p></li>
+<li><p><strong><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_DEFAULT" title="ad_hoc_diffractometer.factories.BASIS_DEFAULT"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_DEFAULT</span></code></a></strong> — the
+neutral fallback.</p></li>
+</ol>
+<p>Omitting the YAML key emits a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#UserWarning" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserWarning</span></code></a> (“does not declare a
+basis; using BASIS_DEFAULT …”) so accidental omission is visible.  Real
+instruments should declare <code class="docutils literal notranslate"><span class="pre">basis:</span></code> explicitly.</p>
+<section id="worked-example-of-the-precedence-rule">
+<h4>Worked example of the precedence rule<a class="headerlink" href="#worked-example-of-the-precedence-rule" title="Link to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">BASIS_BL</span><span class="p">,</span> <span class="n">BASIS_YOU</span>
+
+<span class="c1"># (1) Caller wins over YAML default.</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;fourcv&quot;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">BASIS_YOU</span><span class="p">)</span>
+<span class="k">assert</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">BASIS_YOU</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<span class="c1"># (2) No kwarg → YAML&#39;s `basis: BL` wins.</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;fourcv&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">BASIS_BL</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+</section>
+<section id="parameters">
+<span id="decl-parameters"></span><h2><code class="docutils literal notranslate"><span class="pre">parameters</span></code><a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<p>Optional mapping of caller-tunable parameters with their defaults.
+Currently the only recognized key is:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">alpha_deg</span></code></p></td>
+<td><p>float</p></td>
+<td><p>Kappa tilt angle (degrees); used by <code class="docutils literal notranslate"><span class="pre">kappa_eulerian</span></code> axis specs</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>When <code class="docutils literal notranslate"><span class="pre">parameters.alpha_deg</span></code> is declared, the loader also requires
+<a class="reference internal" href="#decl-kappa-chi-eq"><span class="std std-ref">kappa_chi_eq</span></a> and synthesizes a
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention" title="ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention"><code class="xref py py-class docutils literal notranslate"><span class="pre">KappaPseudoAngleConvention</span></code></a> from
+the stages named <code class="docutils literal notranslate"><span class="pre">komega</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa</span></code>, <code class="docutils literal notranslate"><span class="pre">kphi</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A caller can override <code class="docutils literal notranslate"><span class="pre">alpha_deg</span></code> at call time:
+<code class="docutils literal notranslate"><span class="pre">ahd.make_geometry(&quot;kappa4cv&quot;,</span> <span class="pre">alpha_deg=55)</span></code>.</p>
+</div>
+<hr class="docutils" />
+</section>
+<section id="kappa-chi-eq">
+<span id="decl-kappa-chi-eq"></span><h2><code class="docutils literal notranslate"><span class="pre">kappa_chi_eq</span></code><a class="headerlink" href="#kappa-chi-eq" title="Link to this heading">#</a></h2>
+<p>Required when the file declares <code class="docutils literal notranslate"><span class="pre">parameters.alpha_deg</span></code>.  Specifies the
+equivalent-Eulerian chi axis used by <code class="docutils literal notranslate"><span class="pre">kappa_axis_from_eulerian</span></code>.
+Accepts the same forms as a stage axis: a signed-axis string
+(<code class="docutils literal notranslate"><span class="pre">'+vertical'</span></code>, <code class="docutils literal notranslate"><span class="pre">'-x'</span></code>, …) or a length-3 numeric vector.</p>
+<hr class="docutils" />
+</section>
+<section id="stages">
+<span id="decl-stages"></span><h2><code class="docutils literal notranslate"><span class="pre">stages</span></code><a class="headerlink" href="#stages" title="Link to this heading">#</a></h2>
+<p>A non-empty list.  Each entry is a mapping with <strong>all four</strong> keys:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>string</p></td>
+<td><p>Stage name (e.g. <code class="docutils literal notranslate"><span class="pre">omega</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa</span></code>, <code class="docutils literal notranslate"><span class="pre">mu</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">axis</span></code></p></td>
+<td><p>see below</p></td>
+<td><p>Rotation axis (signed)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">parent</span></code></p></td>
+<td><p>string or null</p></td>
+<td><p>Name of the stage this one sits on, or <code class="docutils literal notranslate"><span class="pre">null</span></code> for the lab frame</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">role</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;sample&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;detector&quot;</span></code>, or any other role label</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="axis-grammar">
+<h3>Axis grammar<a class="headerlink" href="#axis-grammar" title="Link to this heading">#</a></h3>
+<p>Three accepted forms:</p>
+<ol class="arabic">
+<li><p><strong>Signed physical-direction string</strong> — resolved against the active
+basis:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">axis</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-transverse</span>
+<span class="nt">axis</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+longitudinal</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Signed Cartesian string</strong> — resolved directly against <code class="docutils literal notranslate"><span class="pre">XHAT</span></code>,
+<code class="docutils literal notranslate"><span class="pre">YHAT</span></code>, <code class="docutils literal notranslate"><span class="pre">ZHAT</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">axis</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;+x&#39;</span>
+<span class="nt">axis</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;-z&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Length-3 numeric vector</strong> (used as-is, sign included; no automatic
+normalisation other than what the
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stage</span></code></a> constructor performs):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">axis</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.866</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Kappa-tilt mapping</strong> — only meaningful when
+<code class="docutils literal notranslate"><span class="pre">parameters.alpha_deg</span></code> and <code class="docutils literal notranslate"><span class="pre">kappa_chi_eq</span></code> are declared.  The
+single argument is the outer (komega) axis:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">axis</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">kappa_eulerian</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;+transverse&#39;</span><span class="p p-Indicator">}</span>
+</pre></div>
+</div>
+<p>The loader resolves this via
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian" title="ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa_axis_from_eulerian()</span></code></a>.</p>
+</li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The sign of the axis vector encodes handedness: <code class="docutils literal notranslate"><span class="pre">+nHat</span></code> is
+right-handed rotation about <code class="docutils literal notranslate"><span class="pre">nHat</span></code>; <code class="docutils literal notranslate"><span class="pre">-nHat</span></code> is left-handed.  The
+<code class="docutils literal notranslate"><span class="pre">rotation:</span> <span class="pre">left/right</span></code> shorthand discussed in early issue drafts is
+<strong>not</strong> part of the schema — use signed-axis strings instead.</p>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="modes">
+<span id="decl-modes"></span><h2><code class="docutils literal notranslate"><span class="pre">modes</span></code><a class="headerlink" href="#modes" title="Link to this heading">#</a></h2>
+<p>A non-empty mapping of mode-name → mode-spec.  Each mode-spec is a
+mapping with these keys:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>optional</p></td>
+<td><p>bool</p></td>
+<td><p>When <code class="docutils literal notranslate"><span class="pre">true</span></code>, this is the geometry’s default mode.  At most one mode per file may set this.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">constraints</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>list</p></td>
+<td><p>Constraint specs (may be empty)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">computed</span></code></p></td>
+<td><p>optional</p></td>
+<td><p>list of strings</p></td>
+<td><p>Stage names the solver writes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">extras</span></code></p></td>
+<td><p>optional</p></td>
+<td><p>mapping</p></td>
+<td><p>Additional inputs/outputs (see below)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cut_points</span></code></p></td>
+<td><p>optional</p></td>
+<td><p>mapping</p></td>
+<td><p>Per-stage SPEC <code class="docutils literal notranslate"><span class="pre">#G4</span></code> cut-points</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="constraint-specs">
+<h3>Constraint specs<a class="headerlink" href="#constraint-specs" title="Link to this heading">#</a></h3>
+<p>Each entry of <code class="docutils literal notranslate"><span class="pre">constraints:</span></code> is a mapping with a <code class="docutils literal notranslate"><span class="pre">type:</span></code> key selecting
+one of five constraint classes.  Each type accepts a fixed set of
+sibling keys; the <a class="reference internal" href="#decl-strict-keys"><span class="std std-ref">unknown-key policy</span></a> rejects
+any others.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">type</span></code></p></th>
+<th class="head"><p>Required keys</p></th>
+<th class="head"><p>Constraint class</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bisect</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stage1</span></code>, <code class="docutils literal notranslate"><span class="pre">stage2</span></code></p></td>
+<td><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint" title="ad_hoc_diffractometer.mode.BisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">BisectConstraint</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">virtual_bisect</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stage1</span></code>, <code class="docutils literal notranslate"><span class="pre">stage2</span></code></p></td>
+<td><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.VirtualBisectConstraint" title="ad_hoc_diffractometer.mode.VirtualBisectConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">VirtualBisectConstraint</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sample</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stage</span></code>, <code class="docutils literal notranslate"><span class="pre">value</span></code></p></td>
+<td><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">detector</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stage</span></code>, <code class="docutils literal notranslate"><span class="pre">value</span></code></p></td>
+<td><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reference</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">value</span></code></p></td>
+<td><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For <code class="docutils literal notranslate"><span class="pre">reference</span></code>, <code class="docutils literal notranslate"><span class="pre">name</span></code> is one of <code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;alpha_i&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;naz&quot;</span></code>; <code class="docutils literal notranslate"><span class="pre">value</span></code> is a float for the angular constraints
+and the literal <code class="docutils literal notranslate"><span class="pre">true</span></code> for <code class="docutils literal notranslate"><span class="pre">a_eq_b</span></code>.</p>
+</section>
+<section id="extras-and-the-required-sentinel">
+<h3><code class="docutils literal notranslate"><span class="pre">extras</span></code> and the <code class="docutils literal notranslate"><span class="pre">REQUIRED</span></code> sentinel<a class="headerlink" href="#extras-and-the-required-sentinel" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">extras</span></code> accepts arbitrary key→value pairs.  Two special values:</p>
+<ul class="simple">
+<li><p>The literal string <code class="docutils literal notranslate"><span class="pre">REQUIRED</span></code> is mapped to the
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.REQUIRED" title="ad_hoc_diffractometer.mode.REQUIRED"><code class="xref py py-data docutils literal notranslate"><span class="pre">REQUIRED</span></code></a> sentinel; the solver
+checks for the sentinel before running and raises if the caller
+didn’t supply a real value.</p></li>
+<li><p>YAML <code class="docutils literal notranslate"><span class="pre">null</span></code> → Python <code class="docutils literal notranslate"><span class="pre">None</span></code>.  Used for output slots that the solver
+populates after <code class="docutils literal notranslate"><span class="pre">forward()</span></code> runs.</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extras</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">n_hat</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REQUIRED</span><span class="w">        </span><span class="c1"># caller must supply; solver refuses if absent</span>
+<span class="w">    </span><span class="nt">psi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w">              </span><span class="c1"># output slot; solver writes to it</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="strict-unknown-key-policy">
+<span id="decl-strict-keys"></span><h2>Strict unknown-key policy<a class="headerlink" href="#strict-unknown-key-policy" title="Link to this heading">#</a></h2>
+<p>The loader rejects any key it does not recognize at every nesting
+level: top level, marker mapping, <code class="docutils literal notranslate"><span class="pre">parameters</span></code> mapping, each stage
+entry, each mode entry, and each constraint spec.  The error names
+the offending key, the containing context, and the accepted-key set,
+so misspellings (<code class="docutils literal notranslate"><span class="pre">documantation:</span></code> for <code class="docutils literal notranslate"><span class="pre">documentation:</span></code>) surface
+immediately.</p>
+<p>Future schema revisions may relax this policy if a use case justifies
+extension keys; revision 1 is strict.</p>
+</section>
+<hr class="docutils" />
+<section id="what-load-geometry-file-accepts">
+<h2>What <code class="docutils literal notranslate"><span class="pre">load_geometry_file()</span></code> accepts<a class="headerlink" href="#what-load-geometry-file-accepts" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.load_geometry_file" title="ad_hoc_diffractometer.geometry_loader.load_geometry_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_geometry_file()</span></code></a> accepts
+either a filesystem path <strong>or</strong> YAML text held in a Python string.  The
+two cases work as follows:</p>
+<ul class="simple">
+<li><p><strong>A filesystem path</strong> — passed as a <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>, any
+<a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">os.PathLike</span></code></a>, or a path string.  The loader reads the file
+and parses its contents.  <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> if the file
+does not exist.</p></li>
+<li><p><strong>YAML text in memory</strong> — passed as a string that begins (after
+optional leading whitespace) with the
+<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer_geometry:</span></code> schema marker.  The loader
+parses the string directly without touching the filesystem.</p></li>
+</ul>
+<p>A string that does not contain the marker is interpreted as a path,
+not as YAML text.  If neither attempt succeeds, the
+<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> message names both (“first attempted as
+YAML text … then attempted as a path …”) so you can tell what went
+wrong.</p>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+
+<span class="c1"># (1) Path object</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">load_geometry_file</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/lab/diffr.yml&quot;</span><span class="p">))</span>
+
+<span class="c1"># (2) Path string</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">load_geometry_file</span><span class="p">(</span><span class="s2">&quot;/lab/diffr.yml&quot;</span><span class="p">)</span>
+
+<span class="c1"># (3) YAML text in memory</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">load_geometry_file</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">ad_hoc_diffractometer_geometry:</span>
+<span class="s2">    schema_revision: 1</span>
+<span class="s2">name: my_diffr</span>
+<span class="s2">basis: BL</span>
+<span class="s2">stages:</span>
+<span class="s2">    - {name: omega,  axis: -transverse, parent: null,  role: sample}</span>
+<span class="s2">    - {name: ttheta, axis: -transverse, parent: null,  role: detector}</span>
+<span class="s2">modes:</span>
+<span class="s2">    bisecting:</span>
+<span class="s2">        default: true</span>
+<span class="s2">        constraints:</span>
+<span class="s2">            - {type: bisect, stage1: omega, stage2: ttheta}</span>
+<span class="s2">        computed: [omega, ttheta]</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="run-time-registration">
+<h2>Run-time registration<a class="headerlink" href="#run-time-registration" title="Link to this heading">#</a></h2>
+<p>To make a user-authored YAML file available via
+<a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.make_geometry" title="ad_hoc_diffractometer.factories.make_geometry"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_geometry()</span></code></a>, register it once:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">register_geometry_file</span><span class="p">(</span><span class="s2">&quot;/lab/diffr.yml&quot;</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>        <span class="c1"># name is the filename stem</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">ahd</span><span class="o">.</span><span class="n">factories</span><span class="o">.</span><span class="n">BASIS_YOU</span><span class="p">)</span>  <span class="c1"># override</span>
+</pre></div>
+</div>
+<p>A second call with a colliding name raises <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>; pass
+<code class="docutils literal notranslate"><span class="pre">name=&quot;my_lab_diffr&quot;</span></code> to register under a different name.  The
+registry stores a wrapper that re-reads the file on each call, so
+on-disk edits are picked up without re-registration.</p>
+</section>
+<hr class="docutils" />
+<section id="migrating-between-schema-revisions">
+<h2>Migrating between schema revisions<a class="headerlink" href="#migrating-between-schema-revisions" title="Link to this heading">#</a></h2>
+<p>No migrations are required at this time.  This section will be
+populated when a new schema revision is introduced.</p>
+<hr class="docutils" />
+</section>
+<section id="json-schema-revision-1">
+<span id="decl-json-schema"></span><h2>JSON Schema (revision 1)<a class="headerlink" href="#json-schema-revision-1" title="Link to this heading">#</a></h2>
+<p>A machine-readable JSON Schema is shipped alongside the package at
+<code class="docutils literal notranslate"><span class="pre">src/ad_hoc_diffractometer/geometries/schema.json</span></code> and is accessible at
+runtime via:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.geometry_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_schema</span><span class="p">,</span> <span class="n">get_schema_text</span>
+
+<span class="n">schema</span> <span class="o">=</span> <span class="n">get_schema</span><span class="p">()</span>      <span class="c1"># parsed dict</span>
+<span class="n">text</span> <span class="o">=</span> <span class="n">get_schema_text</span><span class="p">()</span>   <span class="c1"># raw JSON string</span>
+</pre></div>
+</div>
+<p>The loader <strong>does not</strong> consume this schema at runtime — its
+hand-written validator enforces the same rules in pure Python and
+produces context-rich error messages.  The JSON Schema exists for
+three audiences:</p>
+<ol class="arabic simple">
+<li><p><strong>Editor tooling.</strong>  VS Code, JetBrains, and other editors can
+validate <code class="docutils literal notranslate"><span class="pre">.yml</span></code> files against a JSON Schema for autocomplete and
+live linting.  Point your editor at the file above (or at the
+<code class="docutils literal notranslate"><span class="pre">$id</span></code> URL once published).</p></li>
+<li><p><strong>Documentation.</strong>  The page you are reading is generated from the
+same schema source.</p></li>
+<li><p><strong>Human readers</strong> who want a single dense source of truth.</p></li>
+</ol>
+<p>The full schema:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://prjemian.github.io/ad_hoc_diffractometer/schemas/geometry-revision-1.json&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ad_hoc_diffractometer declarative geometry (revision 1)&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Schema for declarative diffractometer geometry files consumed by ad_hoc_diffractometer.geometry_loader (issue #267). The authoritative reference is docs/source/reference/declarative_geometry_schema.md; this JSON Schema is the machine-readable equivalent and is shipped alongside the package for editor tooling and documentation.&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;ad_hoc_diffractometer_geometry&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;stages&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;modes&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;ad_hoc_diffractometer_geometry&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Document marker. Its presence identifies the file as an ad_hoc_diffractometer geometry; the integer schema_revision selects which version of this schema the file conforms to.  schema_revision is a fixed property of the schema, not a per-file edit counter; users should treat the value verbatim.&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;schema_revision&quot;</span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;schema_revision&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Schema revision (currently must equal 1).  Independent of the package version; treat this as a verbatim identifier of the schema this file conforms to, not a per-file edit counter.&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Registry key. For files inside src/ad_hoc_diffractometer/geometries/, this MUST equal the filename stem.&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;documentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Free-form prose. The first line is the one-line summary (Python-docstring convention).&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;basis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Coordinate basis. Three accepted forms: (1) shorthand string (&#39;BL&#39;, &#39;YOU&#39;, &#39;DEFAULT&#39;); (2) mapping of signed-axis or signed-physical-direction strings (e.g. {vertical: &#39;+z&#39;, longitudinal: &#39;+y&#39;, transverse: &#39;+x&#39;}); (3) mapping of length-3 numeric unit vectors, including non-axis-aligned bases such as {vertical: [0.7071, 0.7071, 0.0], longitudinal: [-0.7071, 0.7071, 0.0], transverse: [0.0, 0.0, 1.0]}. The three vectors must be orthonormal (each unit length, mutually orthogonal); the loader validates this within tolerance 1e-9 and rejects degenerate or non-orthonormal bases. Either chirality of the (vertical, longitudinal, transverse) ordering is accepted. Caller-supplied basis= overrides whatever is declared here. When omitted, the loader uses BASIS_DEFAULT (vertical=YHAT, longitudinal=ZHAT, transverse=XHAT) and emits a UserWarning.&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;oneOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;BL&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;YOU&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">]</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;longitudinal&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;transverse&quot;</span><span class="p">],</span>
+<span class="w">                    </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;vertical&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/basis_vector&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;longitudinal&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/basis_vector&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;transverse&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/basis_vector&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Caller-tunable defaults. Currently only alpha_deg is recognized.&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;alpha_deg&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Kappa tilt angle in degrees. Must be in (0, 90).&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;exclusiveMinimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;exclusiveMaximum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">90</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;kappa_chi_eq&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Equivalent-Eulerian chi axis. Required when parameters.alpha_deg is declared. Used by axis fields of the form {kappa_eulerian: ...}.&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/axis_value&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;stages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ordered list of rotary stages. Order in this list is informational; mechanical stacking is determined by the parent field of each stage.&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/stage&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;modes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Mapping of mode-name to mode-spec. At most one mode may set &#39;default: true&#39;.&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;minProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/mode&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;$defs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;basis_vector&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;One basis vector. Two accepted forms: (1) a signed-axis or signed-physical-direction string (e.g. &#39;+x&#39;, &#39;-z&#39;, &#39;+vertical&#39;, &#39;-transverse&#39;) -- when this form is used inside the &#39;basis:&#39; mapping itself, only the signed Cartesian forms (&#39;+x&#39;, &#39;-y&#39;, &#39;+z&#39;, ...) are meaningful, since physical-direction names cannot be self-referential; (2) a length-3 numeric vector. Numeric vectors need not be axis-aligned -- any orthonormal triple is accepted, e.g. {vertical: [0.7071, 0.7071, 0.0], longitudinal: [-0.7071, 0.7071, 0.0], transverse: [0.0, 0.0, 1.0]}. The loader validates that the three vectors form an orthonormal frame within tolerance 1e-9. Unlike a stage &#39;axis:&#39; field, a basis vector cannot use the {kappa_eulerian: ...} mapping form.&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;oneOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;maxItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;axis_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A stage axis specification. Three accepted forms: (1) signed physical-direction or Cartesian string (&#39;+transverse&#39;, &#39;-vertical&#39;, &#39;+x&#39;, &#39;-z&#39;); (2) length-3 numeric vector (sign included; the Stage constructor handles normalisation for rotation calculations); (3) kappa-tilt mapping {kappa_eulerian: &lt;axis&gt;}, valid only when parameters.alpha_deg and the top-level kappa_chi_eq are both declared.&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;oneOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;maxItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;kappa_eulerian&quot;</span><span class="p">],</span>
+<span class="w">                    </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;kappa_eulerian&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;oneOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                                </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                                </span><span class="p">{</span>
+<span class="w">                                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">                                    </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">                                    </span><span class="nt">&quot;maxItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">                                    </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                                </span><span class="p">}</span>
+<span class="w">                            </span><span class="p">]</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;axis&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;parent&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;role&quot;</span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Stage name; unique within the geometry.&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;axis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/axis_value&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;parent&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Name of the stage this one sits on, or null for the lab frame.&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;null&quot;</span><span class="p">]</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Conventional values are &#39;sample&#39; and &#39;detector&#39;. Any other string is accepted (e.g. &#39;analyzer&#39;, &#39;polarizer&#39;) but is ignored by the forward/inverse solvers.&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;constraints&quot;</span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Mark this mode as the geometry&#39;s default. At most one mode per file may set this to true.&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;constraints&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;List of constraint specs. May be empty.&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/constraint&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;computed&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Stage names the solver writes (informational).&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;extras&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Additional inputs and output slots. The literal string &#39;REQUIRED&#39; is mapped to the ad_hoc_diffractometer.mode.REQUIRED sentinel; YAML null is preserved as Python None.&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;cut_points&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Per-stage SPEC #G4 cut-points. Maps stage name to a float; the returned angle lies in [C, C + 360 deg).&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;constraint&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;oneOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;stage1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;stage2&quot;</span><span class="p">],</span>
+<span class="w">                    </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bisect&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;stage1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;stage2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;stage1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;stage2&quot;</span><span class="p">],</span>
+<span class="w">                    </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;virtual_bisect&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;stage1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;stage2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;stage&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;value&quot;</span><span class="p">],</span>
+<span class="w">                    </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sample&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;stage&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;value&quot;</span><span class="p">],</span>
+<span class="w">                    </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;detector&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;value&quot;</span><span class="p">],</span>
+<span class="w">                    </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reference&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;alpha_i&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;beta_out&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;a_eq_b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;naz&quot;</span><span class="p">]</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;oneOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                                </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                                </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                            </span><span class="p">]</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../howto/custom_geometry.html#howto-custom-geometry"><span class="std std-ref">How-to: build a custom geometry</span></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.load_geometry_file" title="ad_hoc_diffractometer.geometry_loader.load_geometry_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_geometry_file()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.register_geometry_file" title="ad_hoc_diffractometer.geometry_loader.register_geometry_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_geometry_file()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.make_geometry" title="ad_hoc_diffractometer.factories.make_geometry"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_geometry()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a></p></li>
+<li><p><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_DEFAULT" title="ad_hoc_diffractometer.factories.BASIS_DEFAULT"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_DEFAULT</span></code></a></p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../geometries/s2d2.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">s2d2 — S2D2 General-Inclination Four-Circle</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-level-structure">Top-level structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#document-marker">Document marker</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basis"><code class="docutils literal notranslate"><span class="pre">basis</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#precedence">Precedence</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#worked-example-of-the-precedence-rule">Worked example of the precedence rule</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters"><code class="docutils literal notranslate"><span class="pre">parameters</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kappa-chi-eq"><code class="docutils literal notranslate"><span class="pre">kappa_chi_eq</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stages"><code class="docutils literal notranslate"><span class="pre">stages</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axis-grammar">Axis grammar</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modes"><code class="docutils literal notranslate"><span class="pre">modes</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constraint-specs">Constraint specs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extras-and-the-required-sentinel"><code class="docutils literal notranslate"><span class="pre">extras</span></code> and the <code class="docutils literal notranslate"><span class="pre">REQUIRED</span></code> sentinel</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#strict-unknown-key-policy">Strict unknown-key policy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-load-geometry-file-accepts">What <code class="docutils literal notranslate"><span class="pre">load_geometry_file()</span></code> accepts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-time-registration">Run-time registration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#migrating-between-schema-revisions">Migrating between schema revisions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#json-schema-revision-1">JSON Schema (revision 1)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/reference/declarative_geometry_schema.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-05-05 23:20 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Pete Jemian.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

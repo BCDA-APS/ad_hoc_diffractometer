@@ -15,7 +15,7 @@ ad_hoc_diffractometer
        import ad_hoc_diffractometer as ahd
 
        # Tier 1 — always available as ahd.<name>
-       g = ahd.presets.fourcv()
+       g = ahd.make_geometry("fourcv")
        lat = ahd.Lattice(a=5.43)
        ahd.ub_identity(g.sample)
 
@@ -40,11 +40,12 @@ Submodules
    /autoapi/ad_hoc_diffractometer/drawing/index
    /autoapi/ad_hoc_diffractometer/factories/index
    /autoapi/ad_hoc_diffractometer/forward/index
+   /autoapi/ad_hoc_diffractometer/geometries/index
+   /autoapi/ad_hoc_diffractometer/geometry_loader/index
    /autoapi/ad_hoc_diffractometer/kappa/index
    /autoapi/ad_hoc_diffractometer/lattice/index
    /autoapi/ad_hoc_diffractometer/mode/index
    /autoapi/ad_hoc_diffractometer/orientation/index
-   /autoapi/ad_hoc_diffractometer/presets/index
    /autoapi/ad_hoc_diffractometer/radiation/index
    /autoapi/ad_hoc_diffractometer/reference/index
    /autoapi/ad_hoc_diffractometer/refinement/index

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=a1ca3f14"></script>
+    <script src="_static/documentation_options.js?v=a4909c8d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,11 +62,11 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="ad_hoc_diffractometer" href="autoapi/ad_hoc_diffractometer/index.html" />
-    <link rel="prev" title="s2d2 — S2D2 General-Inclination Four-Circle" href="geometries/s2d2.html" />
+    <link rel="prev" title="Declarative Geometry Schema" href="reference/declarative_geometry_schema.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 15:01 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 23:20 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -422,6 +422,7 @@
 <li class="toctree-l2"><a class="reference internal" href="geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/declarative_geometry_schema.html">Declarative Geometry Schema</a></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/index.html">ad_hoc_diffractometer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/axes/index.html">axes</a></li>
@@ -433,11 +434,12 @@
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/drawing/index.html">drawing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html">factories</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/forward/index.html">forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometries/index.html">geometries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry_loader/index.html">geometry_loader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html">kappa</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/lattice/index.html">lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html">mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/orientation/index.html">orientation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html">presets</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/radiation/index.html">radiation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/reference/index.html">reference</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/refinement/index.html">refinement</a></li>
@@ -610,14 +612,14 @@ auto-generated from source docstrings.</p>
 Arrows point from a module to the modules it imports.
 Modules are grouped by layer.</p>
 <figure class="align-center" id="id2">
-<div class="graphviz"><img src="_images/graphviz-2532c711860b32f4273c9e706bd48fa9969ef68a.png" alt="digraph deps {
+<div class="graphviz"><img src="_images/graphviz-c640512bc5bb06680ee231797688be7c451f7d18.png" alt="digraph deps {
     graph [rankdir=TB, fontname=&quot;sans-serif&quot;, fontsize=11,
            bgcolor=&quot;transparent&quot;, splines=ortho, nodesep=0.4, ranksep=0.6]
     node  [shape=box, style=&quot;rounded,filled&quot;, fontname=&quot;sans-serif&quot;,
            fontsize=10, margin=&quot;0.15,0.08&quot;]
     edge  [color=&quot;#555555&quot;, arrowsize=0.7]
 
-    // ── Foundation (grey) ──────────────────────────────────
+    // ── Foundation (gray) ──────────────────────────────────
     subgraph cluster_foundation {
         label=&quot;Foundation&quot;
         style=filled fillcolor=&quot;#f0f0f0&quot; color=&quot;#aaaaaa&quot;
@@ -749,12 +751,12 @@ body or guarded by <code class="docutils literal notranslate"><span class="pre">
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="geometries/s2d2.html"
+       href="reference/declarative_geometry_schema.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">s2d2 — S2D2 General-Inclination Four-Circle</p>
+        <p class="prev-next-title">Declarative Geometry Schema</p>
       </div>
     </a>
     <a class="right-next"
@@ -821,7 +823,7 @@ body or guarded by <code class="docutils literal notranslate"><span class="pre">
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 15:01 CDT.
+  Last updated on 2026-05-05 23:20 CDT.
   <br/>
 </p></div>
       

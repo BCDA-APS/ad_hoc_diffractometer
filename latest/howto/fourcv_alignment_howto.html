@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=a1ca3f14"></script>
+    <script src="../_static/documentation_options.js?v=a4909c8d"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 15:01 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 23:20 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -424,6 +424,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/declarative_geometry_schema.html">Declarative Geometry Schema</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/index.html">ad_hoc_diffractometer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/axes/index.html">axes</a></li>
@@ -435,11 +436,12 @@
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/drawing/index.html">drawing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html">factories</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/forward/index.html">forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometries/index.html">geometries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/geometry_loader/index.html">geometry_loader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/kappa/index.html">kappa</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/lattice/index.html">lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html">mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/orientation/index.html">orientation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/presets/index.html">presets</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/radiation/index.html">radiation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/reference/index.html">reference</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/refinement/index.html">refinement</a></li>
@@ -533,7 +535,7 @@
 <h1>Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)<a class="headerlink" href="#align-a-four-circle-diffractometer-fourcv" title="Link to this heading">#</a></h1>
 <p>This notebook is a <strong>how-to guide</strong> for aligning a crystal on a four-circle
 Eulerian diffractometer in the <strong>vertical scattering plane</strong>
-(<a class="reference internal" href="../geometries/fourcv.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">ahd.presets.fourcv</span></code></span></a>),
+(<a class="reference internal" href="../geometries/fourcv.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">ahd.make_geometry(&quot;fourcv&quot;)</span></code></span></a>),
 the synchrotron convention where ω and 2θ rotate about the transverse axis.</p>
 <p>The example uses <strong>sapphire (α-Al₂O₃)</strong> with the (001) axis pre-aligned
 along the φ-axis — a common starting configuration at synchrotron beamlines.
@@ -556,9 +558,9 @@ The motor-angle values are drawn from a real alignment session at APS
 <hr class="docutils" />
 <section id="before-you-begin">
 <h2>Before you begin<a class="headerlink" href="#before-you-begin" title="Link to this heading">#</a></h2>
-<p>This guide uses <code class="docutils literal notranslate"><span class="pre">ahd.presets.fourcv()</span></code> — the synchrotron four-circle with ω and 2θ
+<p>This guide uses <code class="docutils literal notranslate"><span class="pre">ahd.make_geometry(&quot;fourcv&quot;)</span></code> — the synchrotron four-circle with ω and 2θ
 both rotating about the transverse axis (vertical scattering plane).
-Users familiar with SPEC will recognise the workflow: the steps parallel
+Users familiar with SPEC will recognize the workflow: the steps parallel
 SPEC’s <code class="docutils literal notranslate"><span class="pre">setor0</span></code>/<code class="docutils literal notranslate"><span class="pre">setor0</span></code>, <code class="docutils literal notranslate"><span class="pre">pa</span></code>, <code class="docutils literal notranslate"><span class="pre">ca</span></code>, and <code class="docutils literal notranslate"><span class="pre">wh</span></code> commands,
 but everything runs in pure Python with no hardware connection.</p>
 </section>
@@ -593,7 +595,7 @@ APS 7-ID-C sapphire alignment session</p></li>
 <hr class="docutils" />
 <section id="step-1-create-the-geometry-and-set-the-wavelength">
 <h2>Step 1 — Create the geometry and set the wavelength<a class="headerlink" href="#step-1-create-the-geometry-and-set-the-wavelength" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">ahd.presets.fourcv()</span></code> creates a four-circle Eulerian diffractometer in the
+<p><code class="docutils literal notranslate"><span class="pre">ahd.make_geometry(&quot;fourcv&quot;)</span></code> creates a four-circle Eulerian diffractometer in the
 <strong>vertical scattering plane</strong> (synchrotron convention).  ω and 2θ both
 rotate about the <strong>transverse</strong> axis (−x in the Busing &amp; Levy coordinate
 system), so the scattering plane is vertical.</p>
@@ -635,7 +637,7 @@ system), so the scattering plane is vertical.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer.axes</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd_axes</span>
 
-<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;fourcv&quot;</span><span class="p">)</span>
 
 <span class="c1"># Wavelength from the beamline monochromator at APS 7-ID-C</span>
 <span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5498</span>  <span class="c1"># Angstroms</span>
@@ -656,7 +658,45 @@ system), so the scattering plane is vertical.</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Geometry  : fourcv
 Wavelength: 1.5498 Å
-Description: Busing &amp; Levy (1967) four-circle Eulerian diffractometer (vertical scattering plane, transverse ttheta, synchrotron)
+Description: Eulerian Four-Circle (vertical).
+
+Busing &amp; Levy (1967) four-circle Eulerian diffractometer; vertical
+scattering plane, transverse ttheta, synchrotron convention.
+
+
+Walko (2016) designation: S3D1.
+
+
+Synchrotron configuration: omega and ttheta both rotate about the
+transverse axis, so the scattering plane is vertical.  This exploits
+the s-polarization and tighter vertical collimation of synchrotron
+radiation (Walko 2016).
+
+
+Default basis: Busing &amp; Levy (1967) — transverse=+x, longitudinal=+y,
+vertical=+z.
+
+
+Sample stack (floor first):
+    omega : transverse,   left-handed
+    chi   : longitudinal, right-handed
+    phi   : transverse,   left-handed
+
+
+Detector (floor, mechanically independent of sample stack):
+    ttheta : transverse, left-handed
+
+
+omega and ttheta share the same transverse axis; they are
+mechanically independent.
+
+
+References
+
+- W.R. Busing &amp; H.A. Levy, Acta Cryst. 22, 457-464 (1967).
+
+- D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
+
 
 Sample stages:
   omega     axis = -x
@@ -1055,7 +1095,7 @@ for (1,0,0) of sapphire.  This is expected for a geometric placeholder.
 <ol class="arabic simple">
 <li><p>Move motors to the predicted (006) position.</p></li>
 <li><p>Scan ω (theta) to find the peak.</p></li>
-<li><p>Scan χ to centre the peak.</p></li>
+<li><p>Scan χ to center the peak.</p></li>
 <li><p>Scan 2θ to confirm the peak position.</p></li>
 <li><p>Enter the measured peak position as the updated primary reflection.</p></li>
 </ol>
@@ -1535,7 +1575,7 @@ The saved state can be restored later with:
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 15:01 CDT.
+  Last updated on 2026-05-05 23:20 CDT.
   <br/>
 </p></div>
       

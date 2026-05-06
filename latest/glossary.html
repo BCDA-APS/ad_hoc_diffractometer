@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=a1ca3f14"></script>
+    <script src="_static/documentation_options.js?v=a4909c8d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 15:01 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 23:20 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -422,6 +422,7 @@
 <li class="toctree-l2"><a class="reference internal" href="geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/declarative_geometry_schema.html">Declarative Geometry Schema</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/index.html">ad_hoc_diffractometer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/axes/index.html">axes</a></li>
@@ -433,11 +434,12 @@
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/drawing/index.html">drawing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html">factories</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/forward/index.html">forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometries/index.html">geometries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry_loader/index.html">geometry_loader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html">kappa</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/lattice/index.html">lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html">mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/orientation/index.html">orientation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html">presets</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/radiation/index.html">radiation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/reference/index.html">reference</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/refinement/index.html">refinement</a></li>
@@ -542,15 +544,18 @@ See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/lattice/in
 </dd>
 <dt id="term-Basis">Basis<a class="headerlink" href="#term-Basis" title="Link to this term">#</a></dt><dd><p>The three-vector dictionary that maps the physical direction names
 <code class="docutils literal notranslate"><span class="pre">&quot;vertical&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;longitudinal&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;transverse&quot;</span></code> to Cartesian unit
-vectors.  Each preset geometry carries a basis attribute; the package
-ships two standard choices,
+vectors.  Each demo geometry carries a basis attribute; the package
+ships three named choices,
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_YOU" title="ad_hoc_diffractometer.factories.BASIS_YOU"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_YOU</span></code></a> (You 1999:
-vertical=+x, longitudinal=+y, transverse=+z) and
+vertical=+x, longitudinal=+y, transverse=+z),
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a> (Busing &amp; Levy
-1967: transverse=+x, longitudinal=+y, vertical=+z).  Switching the
-basis re-expresses every stage axis in a different lab frame without
-changing the physics; see <a class="reference internal" href="problem2.html"><span class="doc">Case Study: Choice of Basis and the UB Matrix</span></a> for the basis-invariance
-case study.</p>
+1967: transverse=+x, longitudinal=+y, vertical=+z), and
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_DEFAULT" title="ad_hoc_diffractometer.factories.BASIS_DEFAULT"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_DEFAULT</span></code></a> — a neutral
+third assignment (vertical=+y, longitudinal=+z, transverse=+x) used
+by the declarative geometry loader as the fallback when a YAML file
+omits the <code class="docutils literal notranslate"><span class="pre">basis:</span></code> key.  Switching the basis re-expresses every
+stage axis in a different lab frame without changing the physics;
+see <a class="reference internal" href="problem2.html"><span class="doc">Case Study: Choice of Basis and the UB Matrix</span></a> for the basis-invariance case study.</p>
 </dd>
 <dt id="term-Bisecting-condition">Bisecting condition<a class="headerlink" href="#term-Bisecting-condition" title="Link to this term">#</a></dt><dd><p>A diffraction-mode constraint in which a sample stage angle is driven
 to half the detector angle (e.g. <code class="docutils literal notranslate"><span class="pre">omega</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code> for fourcv,
@@ -563,7 +568,7 @@ bisects on the <em>virtual</em> Eulerian omega pseudoangle rather than the
 literal kappa motor.</p>
 </dd>
 <dt id="term-Constraint">Constraint<a class="headerlink" href="#term-Constraint" title="Link to this term">#</a></dt><dd><p>An equation that fixes one of the geometry’s free degrees of freedom
-during a forward calculation.  Four kinds are recognised:
+during a forward calculation.  Four kinds are recognized:
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a> (fix one sample
 angle), <a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a> (fix
 one detector angle, including the special <code class="docutils literal notranslate"><span class="pre">&quot;qaz&quot;</span></code> pseudo-angle),
@@ -586,11 +591,34 @@ cut-points override geometry-level cut-points when both are present.</p>
 the scattering vector magnitude by |<strong>Q</strong>| = 2π / d_{hkl} and to the
 Bragg angle by 2d sin θ = λ.</p>
 </dd>
+<dt id="term-Declarative-geometry">Declarative geometry<a class="headerlink" href="#term-Declarative-geometry" title="Link to this term">#</a></dt><dd><p>A diffractometer geometry described in a YAML file rather than as a
+Python factory function.  Loaded by
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.load_geometry_file" title="ad_hoc_diffractometer.geometry_loader.load_geometry_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_geometry_file()</span></code></a> and
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.register_geometry_file" title="ad_hoc_diffractometer.geometry_loader.register_geometry_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_geometry_file()</span></code></a>.
+Every declarative geometry file must declare the
+<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer_geometry</span></code> schema marker (see <em>Schema marker</em>
+below) and follow the format documented in
+<a class="reference internal" href="reference/declarative_geometry_schema.html#declarative-geometry-schema"><span class="std std-ref">Declarative Geometry Schema</span></a>.  The 10 demo geometries shipped
+under <code class="docutils literal notranslate"><span class="pre">src/ad_hoc_diffractometer/geometries/</span></code> are written in this
+form; user instruments should follow the same pattern.  See
+<a class="reference internal" href="howto/custom_geometry.html#howto-custom-geometry"><span class="std std-ref">Build a Custom Diffractometer Geometry</span></a>.</p>
+</dd>
+<dt id="term-Demo-geometry">Demo geometry<a class="headerlink" href="#term-Demo-geometry" title="Link to this term">#</a></dt><dd><p>One of the 10 YAML files shipped under
+<code class="docutils literal notranslate"><span class="pre">src/ad_hoc_diffractometer/geometries/</span></code>: <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">fourch</span></code>,
+<code class="docutils literal notranslate"><span class="pre">psic</span></code>, <code class="docutils literal notranslate"><span class="pre">sixc</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code>,
+<code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">s2d2</span></code>, <code class="docutils literal notranslate"><span class="pre">fivec</span></code>.  These files are <strong>demonstrations</strong>
+of the declarative geometry schema, not authoritative descriptions
+of any production diffractometer.  Real instruments at real
+beamlines should copy the closest demo and adapt it.  Listed by
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.list_geometries" title="ad_hoc_diffractometer.factories.list_geometries"><code class="xref py py-func docutils literal notranslate"><span class="pre">list_geometries()</span></code></a>;
+instantiated by
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.make_geometry" title="ad_hoc_diffractometer.factories.make_geometry"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_geometry()</span></code></a>.</p>
+</dd>
 <dt id="term-Diffraction-mode">Diffraction mode<a class="headerlink" href="#term-Diffraction-mode" title="Link to this term">#</a></dt><dd><p>A named set of constraints that describes how
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>
 computes motor angles: which stages are free, which are held fixed, and
 which are coupled to other stages.  Implemented as a
-<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>; a few specialised
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>; a few specialized
 modes (double-diffraction, zone) are dispatched by their
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">extras</span></code> schema rather
 than by their constraint composition.  See <a class="reference internal" href="howto/modes.html"><span class="doc">Switch Diffraction Modes</span></a>.</p>
@@ -658,11 +686,24 @@ Miller indices to scattering vectors expressed in the phi frame.</p>
 <strong>k</strong><em>f are the incident and scattered wave vectors.  For elastic scattering
 |<strong>Q</strong>| = (4π/λ) sin θ = 2π / d</em>{hkl}.</p>
 </dd>
+<dt id="term-Schema-marker-declarative-geometry">Schema marker (declarative geometry)<a class="headerlink" href="#term-Schema-marker-declarative-geometry" title="Link to this term">#</a></dt><dd><p>The top-level mapping
+<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer_geometry:</span> <span class="pre">{schema_revision:</span> <span class="pre">&lt;int&gt;}</span></code> that
+every declarative geometry YAML file must declare.  Its presence
+identifies the document as a geometry declaration; the integer
+<code class="docutils literal notranslate"><span class="pre">schema_revision</span></code> selects which version of the declarative-
+geometry schema the file conforms to.  <code class="docutils literal notranslate"><span class="pre">schema_revision</span></code> is a
+fixed property of the schema, not a per-file edit counter.
+Independent of the package version: schema revisions are deliberate
+editorial events that change far less often than package releases.
+The currently supported revision is
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.CURRENT_REVISION" title="ad_hoc_diffractometer.geometry_loader.CURRENT_REVISION"><code class="xref py py-data docutils literal notranslate"><span class="pre">CURRENT_REVISION</span></code></a>.
+See <a class="reference internal" href="reference/declarative_geometry_schema.html#decl-marker"><span class="std std-ref">Document marker</span></a>.</p>
+</dd>
 <dt id="term-Sphere-of-confusion">Sphere of confusion<a class="headerlink" href="#term-Sphere-of-confusion" title="Link to this term">#</a></dt><dd><p>The small three-dimensional volume swept out by the nominal sample position
 as all diffractometer stages rotate.  Caused by mechanical tolerances;
 ideally a point but in practice a sphere of finite radius.</p>
 </dd>
-<dt id="term-Stage">Stage<a class="headerlink" href="#term-Stage" title="Link to this term">#</a></dt><dd><p>A single rotary axis of the diffractometer.  Characterised by its axis
+<dt id="term-Stage">Stage<a class="headerlink" href="#term-Stage" title="Link to this term">#</a></dt><dd><p>A single rotary axis of the diffractometer.  Characterized by its axis
 direction (signed unit vector), parent stage, role (sample or detector),
 and optional motor limits.
 See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stage</span></code></a>.</p>
@@ -812,7 +853,7 @@ See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractom
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 15:01 CDT.
+  Last updated on 2026-05-05 23:20 CDT.
   <br/>
 </p></div>
       

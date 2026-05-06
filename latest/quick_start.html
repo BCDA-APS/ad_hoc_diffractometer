@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=a1ca3f14"></script>
+    <script src="_static/documentation_options.js?v=a4909c8d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 15:01 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-05 23:20 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -422,6 +422,7 @@
 <li class="toctree-l2"><a class="reference internal" href="geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/declarative_geometry_schema.html">Declarative Geometry Schema</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/index.html">ad_hoc_diffractometer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/axes/index.html">axes</a></li>
@@ -433,11 +434,12 @@
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/drawing/index.html">drawing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html">factories</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/forward/index.html">forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometries/index.html">geometries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/geometry_loader/index.html">geometry_loader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/kappa/index.html">kappa</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/lattice/index.html">lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html">mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/orientation/index.html">orientation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html">presets</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/radiation/index.html">radiation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/reference/index.html">reference</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/ad_hoc_diffractometer/refinement/index.html">refinement</a></li>
@@ -556,13 +558,13 @@ Two conventions (shown below) are used in the demo examples. You may supply
 <td><p>+x</p></td>
 <td><p>+y</p></td>
 <td><p>+z</p></td>
-<td><p><a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.psic" title="ad_hoc_diffractometer.presets.psic"><code class="xref py py-func docutils literal notranslate"><span class="pre">psic()</span></code></a>, <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.sixc" title="ad_hoc_diffractometer.presets.sixc"><code class="xref py py-func docutils literal notranslate"><span class="pre">sixc()</span></code></a>, <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa6c" title="ad_hoc_diffractometer.presets.kappa6c"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa6c()</span></code></a>, <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.zaxis" title="ad_hoc_diffractometer.presets.zaxis"><code class="xref py py-func docutils literal notranslate"><span class="pre">zaxis()</span></code></a>, <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.s2d2" title="ad_hoc_diffractometer.presets.s2d2"><code class="xref py py-func docutils literal notranslate"><span class="pre">s2d2()</span></code></a>, <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.fivec" title="ad_hoc_diffractometer.presets.fivec"><code class="xref py py-func docutils literal notranslate"><span class="pre">fivec()</span></code></a></p></td>
+<td><p><a class="reference internal" href="geometries/psic.html#geometry-psic"><span class="std std-ref">psic — Eulerian Six-Circle, 4S+2D (You 1999)</span></a>, <a class="reference internal" href="geometries/sixc.html#geometry-sixc"><span class="std std-ref">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</span></a>, <a class="reference internal" href="geometries/kappa6c.html#geometry-kappa6c"><span class="std std-ref">kappa6c — Kappa Six-Circle</span></a>, <a class="reference internal" href="geometries/zaxis.html#geometry-zaxis"><span class="std std-ref">zaxis — Z-Axis Four-Circle (Surface)</span></a>, <a class="reference internal" href="geometries/s2d2.html#geometry-s2d2"><span class="std std-ref">s2d2 — S2D2 General-Inclination Four-Circle</span></a>, <a class="reference internal" href="geometries/fivec.html#geometry-fivec"><span class="std std-ref">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</span></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_BL" title="ad_hoc_diffractometer.factories.BASIS_BL"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_BL</span></code></a></p></td>
 <td><p>+z</p></td>
 <td><p>+y</p></td>
 <td><p>+x</p></td>
-<td><p><a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.fourcv" title="ad_hoc_diffractometer.presets.fourcv"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourcv()</span></code></a>, <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.fourch" title="ad_hoc_diffractometer.presets.fourch"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourch()</span></code></a>, <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa4cv" title="ad_hoc_diffractometer.presets.kappa4cv"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4cv()</span></code></a>, <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.kappa4ch" title="ad_hoc_diffractometer.presets.kappa4ch"><code class="xref py py-func docutils literal notranslate"><span class="pre">kappa4ch()</span></code></a></p></td>
+<td><p><a class="reference internal" href="geometries/fourcv.html#geometry-fourcv"><span class="std std-ref">fourcv — Eulerian Four-Circle (vertical)</span></a>, <a class="reference internal" href="geometries/fourch.html#geometry-fourch"><span class="std std-ref">fourch — Eulerian Four-Circle (horizontal)</span></a>, <a class="reference internal" href="geometries/kappa4cv.html#geometry-kappa4cv"><span class="std std-ref">kappa4cv — Kappa Four-Circle (vertical)</span></a>, <a class="reference internal" href="geometries/kappa4ch.html#geometry-kappa4ch"><span class="std std-ref">kappa4ch — Kappa Four-Circle (horizontal)</span></a></p></td>
 </tr>
 </tbody>
 </table>
@@ -606,7 +608,7 @@ Each <a class="reference internal" href="autoapi/ad_hoc_diffractometer/stage/ind
 <p><code class="docutils literal notranslate"><span class="pre">omega</span></code> and <code class="docutils literal notranslate"><span class="pre">ttheta</span></code> both rotate about the transverse axis, so their scattering
 plane is <strong>vertical</strong> (the synchrotron convention).  For the laboratory
 (horizontal scattering plane) convention swap every <code class="docutils literal notranslate"><span class="pre">TRANSVERSE</span></code> for <code class="docutils literal notranslate"><span class="pre">VERTICAL</span></code>
-and every <code class="docutils literal notranslate"><span class="pre">LONGITUDINAL</span></code> for <code class="docutils literal notranslate"><span class="pre">TRANSVERSE</span></code> — that is the <a class="reference internal" href="autoapi/ad_hoc_diffractometer/presets/index.html#ad_hoc_diffractometer.presets.fourch" title="ad_hoc_diffractometer.presets.fourch"><code class="xref py py-func docutils literal notranslate"><span class="pre">fourch()</span></code></a> geometry.</p>
+and every <code class="docutils literal notranslate"><span class="pre">LONGITUDINAL</span></code> for <code class="docutils literal notranslate"><span class="pre">TRANSVERSE</span></code> — that is the <a class="reference internal" href="geometries/fourch.html#geometry-fourch"><span class="std std-ref">fourch — Eulerian Four-Circle (horizontal)</span></a> geometry.</p>
 </section>
 <hr class="docutils" />
 <section id="define-diffraction-modes">
@@ -704,10 +706,10 @@ First orient the crystal (see <a class="reference internal" href="howto/orient.h
 <section id="concise-form-using-a-demo-geometry">
 <h2>Concise form — using a demo geometry<a class="headerlink" href="#concise-form-using-a-demo-geometry" title="Link to this heading">#</a></h2>
 <p>The code above is exactly what the built-in <code class="docutils literal notranslate"><span class="pre">fourcv()</span></code> demo geometry does.
-If you do not need to customise anything, use it directly:</p>
+If you do not need to customize anything, use it directly:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
 
-<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">presets</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>       <span class="c1"># Busing &amp; Levy (1967) four-circle, vertical plane</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;fourcv&quot;</span><span class="p">)</span>       <span class="c1"># Busing &amp; Levy (1967) four-circle, vertical plane</span>
 <span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>          <span class="c1"># Å</span>
 <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.431</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
@@ -830,7 +832,7 @@ not one of the demos</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 15:01 CDT.
+  Last updated on 2026-05-05 23:20 CDT.
   <br/>
 </p></div>
       

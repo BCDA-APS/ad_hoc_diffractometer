@@ -3,7 +3,7 @@
 This case study presents the diffractometer geometry problem that started the
 `ad_hoc_diffractometer` project.  The equipment described here is a six-circle
 diffractometer matching the You (1999) psic geometry; the analysis leads
-directly to the demo geometries in {mod}`~ad_hoc_diffractometer.presets` and
+directly to the demo geometries in {mod}`~ad_hoc_diffractometer.geometries` and
 the {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer` class.
 
 For a worked example showing that the choice of right-handed basis
