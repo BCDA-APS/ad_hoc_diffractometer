@@ -1702,6 +1702,23 @@ def test_kappa6c_lifting_detector_qaz_satisfied(mode_name, h, k, l):  # noqa: E7
         )
 
 
+def test_kappa6c_lifting_detector_qaz_filters_by_detector_limits():
+    """The qaz solver drops candidates whose nu/delta angles exceed limits.
+
+    Replaces an equivalent psic test that no longer applies after the
+    issue #264 C3/C4 revision dropped the qaz constraint from psic
+    ``lifting_detector_*``.  kappa6c still uses qaz, so this is the
+    remaining qaz-limits coverage.
+    """
+    g = _setup_cubic(kappa6c, a=4.0)
+    g.mode_name = "lifting_detector_mu"
+    # qaz=90 forces nu = 0 and delta = ±ttheta on kappa6c.  Excluding
+    # nu = 0 from the limits drops every detector candidate.
+    g.stage("nu").limits = (1.0, 180.0)
+    solutions = g.forward(1, 0, 0)
+    assert solutions == []
+
+
 # ---------------------------------------------------------------------------
 # Issue #176 — fixed_psi forward solver (validation filter)
 # ---------------------------------------------------------------------------
