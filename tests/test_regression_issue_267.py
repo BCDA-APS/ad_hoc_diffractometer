@@ -344,17 +344,17 @@ def _reference_psic() -> AdHocDiffractometer:
         # ── Lifting detector (out-of-plane) ────────────────────────────
         "lifting_detector_phi": ConstraintSet(
             [
-                SampleConstraint("phi", 0.0),
                 SampleConstraint("mu", 0.0),
-                DetectorConstraint("qaz", 90.0),
+                SampleConstraint("eta", 0.0),
+                SampleConstraint("chi", 0.0),
             ],
             computed=["phi", "nu", "delta"],
         ),
         "lifting_detector_mu": ConstraintSet(
             [
-                SampleConstraint("mu", 0.0),
                 SampleConstraint("eta", 0.0),
-                DetectorConstraint("qaz", 90.0),
+                SampleConstraint("chi", 0.0),
+                SampleConstraint("phi", 0.0),
             ],
             computed=["mu", "nu", "delta"],
         ),
