@@ -1,0 +1,79 @@
+# s2d2 — S2D2 four-circle diffractometer (general-inclination geometry).
+#
+# This file is a *demonstration* of the declarative geometry schema
+# (issue #267).  It reproduces the legacy
+# ``ad_hoc_diffractometer.presets.s2d2`` Python factory exactly.
+# Real beamlines should copy a file like this and adapt it to their own
+# instrument; do not assume the values here describe any production
+# diffractometer.
+#
+# Schema reference: docs/source/reference/declarative_geometry_schema.md
+# How-to:           docs/source/howto/custom_geometry.md
+
+ad_hoc_diffractometer_geometry:
+    revision: 1
+
+name: s2d2
+
+documentation: |
+    S2D2 General-Inclination Four-Circle.
+
+    Two independent sample axes (mu, Z) and two independent detector
+    axes (nu, delta), all mechanically decoupled.  The angle of
+    incidence is the mu angle; the surface normal is parallel to Z
+    (Evans-Lutterodt & Tang 1995; Walko 2016 S2D2).
+
+
+    Default basis: You (1999) — vertical=+x, longitudinal=+y,
+    transverse=+z.
+
+
+    Sample stack (floor first):
+        mu : vertical,     right-handed
+          --> Z : longitudinal, right-handed (mounted on mu)
+
+
+    Detector stack (floor first):
+        nu : vertical,     right-handed
+          --> delta : transverse, left-handed (mounted on nu)
+
+
+    mu and nu share the same vertical axis; they are mechanically
+    independent.
+
+
+    The total scattering angle is (Walko 2016, eq. 18):
+
+        ttheta = arccos(cos(nu) * cos(delta))
+
+
+    References
+
+    - K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28,
+      318-326 (1995).
+
+    - D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.
+
+basis: YOU
+
+stages:
+    - {name: mu,    axis: +vertical,     parent: null, role: sample}
+    - {name: Z,     axis: +longitudinal, parent: mu,   role: sample}
+    - {name: nu,    axis: +vertical,     parent: null, role: detector}
+    - {name: delta, axis: -transverse,   parent: nu,   role: detector}
+
+# s2d2: 4 DOF, N - 3 = 1 constraint needed per mode.  No default mode.
+modes:
+    fixed_mu:
+        constraints:
+            - {type: sample, stage: mu, value: 0.0}
+        computed: [Z, nu, delta]
+
+    reflectivity:
+        constraints:
+            - {type: reference, name: a_eq_b, value: true}
+        computed: [mu, Z, nu, delta]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null

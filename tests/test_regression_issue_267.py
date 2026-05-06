@@ -577,6 +577,286 @@ def _reference_kappa6c(
     )
 
 
+def _reference_kappa4ch(
+    alpha_deg: float = KAPPA_ALPHA_DEFAULT,
+) -> AdHocDiffractometer:
+    """Hand-built kappa4ch (the pre-#267 ``presets.kappa4ch`` body verbatim)."""
+    basis = BASIS_BL
+    VERTICAL = basis["vertical"]
+    LONGITUDINAL = basis["longitudinal"]
+    kax = kappa_axis_from_eulerian(+VERTICAL, +LONGITUDINAL, alpha_deg)
+    stages = [
+        Stage("komega", -VERTICAL, parent=None, role="sample"),
+        Stage("kappa", kax, parent="komega", role="sample"),
+        Stage("kphi", -VERTICAL, parent="kappa", role="sample"),
+        Stage("ttheta", -VERTICAL, parent=None, role="detector"),
+    ]
+    convention = KappaPseudoAngleConvention(
+        n_komega=-VERTICAL,
+        n_kappa=kax,
+        n_kphi=-VERTICAL,
+        n_chi_eq=+LONGITUDINAL,
+    )
+    modes = {
+        "bisecting": ConstraintSet(
+            [VirtualBisectConstraint("omega", "ttheta")],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "fixed_kphi": ConstraintSet(
+            [SampleConstraint("kphi", 0.0)],
+            computed=["komega", "kappa", "ttheta"],
+        ),
+        "fixed_omega": ConstraintSet(
+            [SampleConstraint("omega", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "fixed_chi": ConstraintSet(
+            [SampleConstraint("chi", 90.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "fixed_phi": ConstraintSet(
+            [SampleConstraint("phi", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+        ),
+        "fixed_psi": ConstraintSet(
+            [ReferenceConstraint("psi", 0.0)],
+            computed=["komega", "kappa", "kphi", "ttheta"],
+            extras={"n_hat": REQUIRED, "psi": None},
+        ),
+    }
+    return AdHocDiffractometer(
+        name="kappa4ch",
+        stages=stages,
+        basis=basis,
+        description=(
+            f"Four-circle kappa diffractometer, horizontal scattering plane "
+            f"(laboratory). Kappa alpha = {alpha_deg} deg."
+        ),
+        kappa_alpha_deg=alpha_deg,
+        kappa_pseudo_angle_convention=convention,
+        modes=modes,
+        default_mode="bisecting",
+    )
+
+
+def _reference_sixc() -> AdHocDiffractometer:
+    """Hand-built sixc (the pre-#267 ``presets.sixc`` body verbatim)."""
+    basis = BASIS_YOU
+    VERTICAL = basis["vertical"]
+    TRANSVERSE = basis["transverse"]
+    LONGITUDINAL = basis["longitudinal"]
+    stages = [
+        Stage("alpha", +VERTICAL, parent=None, role="sample"),
+        Stage("omega", -TRANSVERSE, parent="alpha", role="sample"),
+        Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
+        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
+        Stage("delta", -TRANSVERSE, parent="alpha", role="detector"),
+        Stage("gamma", +VERTICAL, parent="delta", role="detector"),
+    ]
+    modes = {
+        "bisecting_4c": ConstraintSet(
+            [
+                SampleConstraint("alpha", 0.0),
+                DetectorConstraint("gamma", 0.0),
+                BisectConstraint("omega", "delta"),
+            ],
+            computed=["omega", "chi", "phi", "delta"],
+        ),
+        "fixed_gamma_5c": ConstraintSet(
+            [
+                DetectorConstraint("gamma", 0.0),
+                SampleConstraint("alpha", 0.0),
+                BisectConstraint("omega", "delta"),
+            ],
+            computed=["omega", "chi", "phi", "delta", "alpha"],
+        ),
+        "fixed_alpha_5c": ConstraintSet(
+            [
+                SampleConstraint("alpha", 0.0),
+                BisectConstraint("omega", "delta"),
+                DetectorConstraint("gamma", 0.0),
+            ],
+            computed=["omega", "chi", "phi", "delta", "gamma"],
+        ),
+        "fixed_alpha_zaxis": ConstraintSet(
+            [
+                SampleConstraint("alpha", 0.0),
+                SampleConstraint("chi", 0.0),
+                ReferenceConstraint("alpha_i", 0.0),
+            ],
+            computed=["omega", "delta", "gamma"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "fixed_beta_zaxis": ConstraintSet(
+            [
+                DetectorConstraint("gamma", 0.0),
+                SampleConstraint("chi", 0.0),
+                ReferenceConstraint("beta_out", 0.0),
+            ],
+            computed=["omega", "delta", "alpha"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "alpha_eq_beta_zaxis": ConstraintSet(
+            [
+                SampleConstraint("chi", 0.0),
+                SampleConstraint("phi", 0.0),
+                ReferenceConstraint("a_eq_b", True),
+            ],
+            computed=["omega", "delta", "alpha", "gamma"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+    }
+    return AdHocDiffractometer(
+        name="sixc",
+        stages=stages,
+        basis=basis,
+        description=(
+            "Lohmeier & Vlieg (1993) six-circle surface diffractometer "
+            "(IUCr six-circle; Walko S(3D2)1). "
+            "Sample and detector share the alpha (rotary table) base stage."
+        ),
+        modes=modes,
+        default_mode="bisecting_4c",
+    )
+
+
+def _reference_zaxis() -> AdHocDiffractometer:
+    """Hand-built zaxis (the pre-#267 ``presets.zaxis`` body verbatim)."""
+    basis = BASIS_YOU
+    VERTICAL = basis["vertical"]
+    TRANSVERSE = basis["transverse"]
+    LONGITUDINAL = basis["longitudinal"]
+    stages = [
+        Stage("alpha", +VERTICAL, parent=None, role="sample"),
+        Stage("Z", +LONGITUDINAL, parent="alpha", role="sample"),
+        Stage("delta", -TRANSVERSE, parent="alpha", role="detector"),
+        Stage("gamma", +VERTICAL, parent="delta", role="detector"),
+    ]
+    modes = {
+        "zaxis": ConstraintSet(
+            [ReferenceConstraint("alpha_i", 0.0)],
+            computed=["Z", "delta", "gamma"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "reflectivity": ConstraintSet(
+            [ReferenceConstraint("a_eq_b", True)],
+            computed=["Z", "delta", "alpha", "gamma"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+    }
+    return AdHocDiffractometer(
+        name="zaxis",
+        stages=stages,
+        basis=basis,
+        description=(
+            "Z-axis four-circle diffractometer (Bloch 1985; Walko 2016 (S1D2)1). "
+            "Surface normal parallel to Z-axis. "
+            "Sample and detector share the alpha (base) stage."
+        ),
+        modes=modes,
+    )
+
+
+def _reference_s2d2() -> AdHocDiffractometer:
+    """Hand-built s2d2 (the pre-#267 ``presets.s2d2`` body verbatim)."""
+    basis = BASIS_YOU
+    VERTICAL = basis["vertical"]
+    TRANSVERSE = basis["transverse"]
+    LONGITUDINAL = basis["longitudinal"]
+    stages = [
+        Stage("mu", +VERTICAL, parent=None, role="sample"),
+        Stage("Z", +LONGITUDINAL, parent="mu", role="sample"),
+        Stage("nu", +VERTICAL, parent=None, role="detector"),
+        Stage("delta", -TRANSVERSE, parent="nu", role="detector"),
+    ]
+    modes = {
+        "fixed_mu": ConstraintSet(
+            [SampleConstraint("mu", 0.0)],
+            computed=["Z", "nu", "delta"],
+        ),
+        "reflectivity": ConstraintSet(
+            [ReferenceConstraint("a_eq_b", True)],
+            computed=["mu", "Z", "nu", "delta"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+    }
+    return AdHocDiffractometer(
+        name="s2d2",
+        stages=stages,
+        basis=basis,
+        description=(
+            "S2D2 four-circle diffractometer (Evans-Lutterodt & Tang 1995; "
+            "Walko 2016 S2D2). "
+            "Fully decoupled sample (mu, Z) and detector (nu, delta) axes."
+        ),
+        modes=modes,
+    )
+
+
+def _reference_fivec() -> AdHocDiffractometer:
+    """Hand-built fivec (the pre-#267 ``presets.fivec`` body verbatim)."""
+    basis = BASIS_YOU
+    VERTICAL = basis["vertical"]
+    TRANSVERSE = basis["transverse"]
+    LONGITUDINAL = basis["longitudinal"]
+    stages = [
+        Stage("mu", +VERTICAL, parent=None, role="sample"),
+        Stage("omega", -TRANSVERSE, parent="mu", role="sample"),
+        Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
+        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
+        Stage("ttheta", -TRANSVERSE, parent="mu", role="detector"),
+    ]
+    modes = {
+        "bisecting_4c": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                BisectConstraint("omega", "ttheta"),
+            ],
+            computed=["omega", "chi", "phi", "ttheta"],
+        ),
+        "fixed_chi": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                SampleConstraint("chi", 90.0),
+            ],
+            computed=["omega", "phi", "ttheta"],
+        ),
+        "fixed_phi": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                SampleConstraint("phi", 0.0),
+            ],
+            computed=["omega", "chi", "ttheta"],
+        ),
+        "fixed_mu": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                BisectConstraint("omega", "ttheta"),
+            ],
+            computed=["omega", "chi", "phi", "ttheta"],
+        ),
+        "fixed_omega_noncoplanar": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                SampleConstraint("omega", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "ttheta"],
+        ),
+    }
+    return AdHocDiffractometer(
+        name="fivec",
+        stages=stages,
+        basis=basis,
+        description=(
+            "Five-circle diffractometer: fourcv on vertical mu base "
+            "(Vlieg et al. 1987; Walko 2016 (S3D1)1). "
+            "Sample and detector coupled through mu."
+        ),
+        modes=modes,
+        default_mode="bisecting_4c",
+    )
+
+
 # ---------------------------------------------------------------------------
 # Equivalence checker
 # ---------------------------------------------------------------------------
@@ -663,6 +943,11 @@ def _assert_geometries_equivalent(
         pytest.param("psic", _reference_psic, id="psic"),
         pytest.param("kappa4cv", _reference_kappa4cv, id="kappa4cv"),
         pytest.param("kappa6c", _reference_kappa6c, id="kappa6c"),
+        pytest.param("kappa4ch", _reference_kappa4ch, id="kappa4ch"),
+        pytest.param("sixc", _reference_sixc, id="sixc"),
+        pytest.param("zaxis", _reference_zaxis, id="zaxis"),
+        pytest.param("s2d2", _reference_s2d2, id="s2d2"),
+        pytest.param("fivec", _reference_fivec, id="fivec"),
     ],
 )
 def test_declarative_matches_reference(geom_name, reference_factory):
@@ -680,6 +965,11 @@ def test_declarative_matches_reference(geom_name, reference_factory):
         pytest.param("psic", id="psic"),
         pytest.param("kappa4cv", id="kappa4cv"),
         pytest.param("kappa6c", id="kappa6c"),
+        pytest.param("kappa4ch", id="kappa4ch"),
+        pytest.param("sixc", id="sixc"),
+        pytest.param("zaxis", id="zaxis"),
+        pytest.param("s2d2", id="s2d2"),
+        pytest.param("fivec", id="fivec"),
     ],
 )
 def test_declarative_basis_override_round_trips(geom_name):
@@ -708,6 +998,7 @@ def test_declarative_basis_override_round_trips(geom_name):
     "geom_name, reference_factory",
     [
         pytest.param("kappa4cv", _reference_kappa4cv, id="kappa4cv"),
+        pytest.param("kappa4ch", _reference_kappa4ch, id="kappa4ch"),
         pytest.param("kappa6c", _reference_kappa6c, id="kappa6c"),
     ],
 )

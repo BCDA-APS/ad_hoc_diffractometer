@@ -1,0 +1,83 @@
+# zaxis — Z-axis four-circle diffractometer (general-inclination geometry).
+#
+# This file is a *demonstration* of the declarative geometry schema
+# (issue #267).  It reproduces the legacy
+# ``ad_hoc_diffractometer.presets.zaxis`` Python factory exactly.
+# Real beamlines should copy a file like this and adapt it to their own
+# instrument; do not assume the values here describe any production
+# diffractometer.
+#
+# Schema reference: docs/source/reference/declarative_geometry_schema.md
+# How-to:           docs/source/howto/custom_geometry.md
+
+ad_hoc_diffractometer_geometry:
+    revision: 1
+
+name: zaxis
+
+documentation: |
+    Z-Axis Four-Circle (Surface).
+
+    Designed for surface diffraction (Bloch 1985; Walko 2016 (S1D2)1).
+    The sample surface normal is aligned parallel to the Z-axis, so
+    the angle of incidence equals the alpha angle.  The detector and
+    sample both rotate about the shared alpha (base) axis.
+
+
+    Default basis: You (1999) — vertical=+x, longitudinal=+y,
+    transverse=+z.
+
+
+    Stack (floor first):
+        alpha (shared base)  : vertical,     right-handed
+          --> Z     (sample)  : longitudinal, right-handed (mounted on alpha)
+          --> delta (detector): transverse,   left-handed (mounted on alpha)
+                --> gamma     : vertical,     right-handed (mounted on delta)
+
+
+    The total scattering angle is a compound of gamma, delta, and
+    alpha (Walko 2016, eq. 17):
+
+        ttheta = arccos(cos(gamma)*cos(delta)*cos(alpha) +
+                        sin(alpha)*sin(gamma))
+
+
+    Both modes require the reference vector n̂ (Issue J / #157).
+
+
+    References
+
+    - J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).
+
+    - D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.
+
+basis: YOU
+
+stages:
+    - {name: alpha, axis: +vertical,     parent: null,  role: sample}
+    - {name: Z,     axis: +longitudinal, parent: alpha, role: sample}
+    - {name: delta, axis: -transverse,   parent: alpha, role: detector}
+    - {name: gamma, axis: +vertical,     parent: delta, role: detector}
+
+# zaxis: 4 DOF, N - 3 = 1 constraint needed per mode.  No default mode
+# (the original Python factory did not pass default_mode= to
+# AdHocDiffractometer either, so the geometry's mode_name is None and
+# the caller must select a mode before forward()).
+modes:
+    zaxis:
+        constraints:
+            - {type: reference, name: alpha_i, value: 0.0}
+        computed: [Z, delta, gamma]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
+
+    reflectivity:
+        constraints:
+            - {type: reference, name: a_eq_b, value: true}
+        computed: [Z, delta, alpha, gamma]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null

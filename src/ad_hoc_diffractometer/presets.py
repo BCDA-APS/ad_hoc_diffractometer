@@ -34,7 +34,10 @@ Demo geometries
        See :doc:`/geometries/fourch`.
    * - :func:`fivec`
      - Eulerian 5-circle
-     - Vlieg et al. (1987), fourcv on a mu base. See :doc:`/geometries/fivec`.
+     - Vlieg et al. (1987), fourcv on a mu base.  Migrated to declarative
+       YAML (``geometries/fivec.yml``) in #267; the function in this module
+       is a compatibility shim that delegates to the loader.
+       See :doc:`/geometries/fivec`.
    * - :func:`psic`
      - Eulerian 6-circle
      - You (1999) 4S+2D.  Migrated to declarative YAML
@@ -43,7 +46,10 @@ Demo geometries
        See :doc:`/geometries/psic`.
    * - :func:`sixc`
      - Eulerian 6-circle
-     - Lohmeier & Vlieg (1993) surface geometry. See :doc:`/geometries/sixc`.
+     - Lohmeier & Vlieg (1993) surface geometry.  Migrated to declarative
+       YAML (``geometries/sixc.yml``) in #267; the function in this module
+       is a compatibility shim that delegates to the loader.
+       See :doc:`/geometries/sixc`.
    * - :func:`kappa4cv`
      - Kappa 4-circle
      - Vertical scattering plane (synchrotron).  Migrated to declarative
@@ -52,7 +58,10 @@ Demo geometries
        See :doc:`/geometries/kappa4cv`.
    * - :func:`kappa4ch`
      - Kappa 4-circle
-     - Horizontal scattering plane (laboratory). See :doc:`/geometries/kappa4ch`.
+     - Horizontal scattering plane (laboratory).  Migrated to declarative
+       YAML (``geometries/kappa4ch.yml``) in #267; the function in this
+       module is a compatibility shim that delegates to the loader.
+       See :doc:`/geometries/kappa4ch`.
    * - :func:`kappa6c`
      - Kappa 6-circle
      - Psic-style outer axes.  Migrated to declarative YAML
@@ -61,10 +70,16 @@ Demo geometries
        See :doc:`/geometries/kappa6c`.
    * - :func:`zaxis`
      - Surface / special
-     - Bloch (1985) Z-axis geometry. See :doc:`/geometries/zaxis`.
+     - Bloch (1985) Z-axis geometry.  Migrated to declarative YAML
+       (``geometries/zaxis.yml``) in #267; the function in this module
+       is a compatibility shim that delegates to the loader.
+       See :doc:`/geometries/zaxis`.
    * - :func:`s2d2`
      - Surface / special
-     - Evans-Lutterodt & Tang (1995). See :doc:`/geometries/s2d2`.
+     - Evans-Lutterodt & Tang (1995).  Migrated to declarative YAML
+       (``geometries/s2d2.yml``) in #267; the function in this module
+       is a compatibility shim that delegates to the loader.
+       See :doc:`/geometries/s2d2`.
 
 Each demo geometry is decorated with
 :func:`~ad_hoc_diffractometer.factories.register_geometry`, which registers
@@ -161,24 +176,12 @@ References
 
 from __future__ import annotations
 
-import inspect
 from importlib import resources
 
 from .diffractometer import AdHocDiffractometer
 from .factories import BASIS_BL
 from .factories import BASIS_YOU
 from .factories import KAPPA_ALPHA_DEFAULT
-from .factories import register_geometry
-from .kappa import KappaPseudoAngleConvention
-from .kappa import kappa_axis_from_eulerian
-from .mode import REQUIRED
-from .mode import BisectConstraint
-from .mode import ConstraintSet
-from .mode import DetectorConstraint
-from .mode import ReferenceConstraint
-from .mode import SampleConstraint
-from .mode import VirtualBisectConstraint
-from .stage import Stage
 
 __all__ = [
     "fivec",
@@ -267,114 +270,23 @@ def psic(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
         return load_geometry_file(p, basis=basis)
 
 
-@register_geometry
+# ``sixc`` was migrated to a declarative YAML file
+# (``geometries/sixc.yml``) in issue #267.  This compatibility shim
+# delegates to the loader so existing imports
+# (``from ad_hoc_diffractometer.presets import sixc``) continue to
+# work during the staged migration.  The shim will be removed when
+# ``presets.py`` is deleted at the end of the migration.
 def sixc(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
+    """Return the declarative ``sixc`` geometry (delegates to the YAML loader).
+
+    See ``src/ad_hoc_diffractometer/geometries/sixc.yml`` for the
+    authoritative definition.
     """
-    Lohmeier & Vlieg (1993) six-circle surface diffractometer (sixc geometry).
+    from .geometry_loader import load_geometry_file
 
-    Also known as the IUCr six-circle diffractometer.
-    Walko (2016) designation: (S3D2)1.
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
-
-    Sample and detector stacks share the alpha (rotary table) base stage,
-    making this a coupled geometry.  Useful for surface diffraction.
-
-    From Fig. 1 and §2.1 of Lohmeier & Vlieg (1993):
-    alpha and gamma rotate about the vertical axis (x in LV convention).
-    omega, phi, and delta all rotate about the transverse axis (z in LV).
-    chi rotates about the longitudinal axis (y in LV).
-
-    Stack (floor first)::
-
-        alpha (shared base): vertical,     right-handed  [rotary table]
-          --> omega (sample):  transverse,   left-handed
-                --> chi:       longitudinal, right-handed
-                      --> phi: transverse,   left-handed
-          --> delta (detector): transverse,  left-handed
-                --> gamma:      vertical,    right-handed
-
-    Reference: M. Lohmeier & E. Vlieg, J. Appl. Cryst. 26, 706-716 (1993).
-    """
-    VERTICAL = basis["vertical"]
-    TRANSVERSE = basis["transverse"]
-    LONGITUDINAL = basis["longitudinal"]
-    stages = [
-        Stage("alpha", +VERTICAL, parent=None, role="sample"),
-        Stage("omega", -TRANSVERSE, parent="alpha", role="sample"),
-        Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
-        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
-        Stage("delta", -TRANSVERSE, parent="alpha", role="detector"),
-        Stage("gamma", +VERTICAL, parent="delta", role="detector"),
-    ]
-    # sixc: 6 DOF, N-3=3 constraints needed per mode.
-    # four_circle: alpha=0, gamma=0 frozen; bisect on omega/delta.
-    # Reduces to fourcv bisecting — the generic bisecting solver handles it.
-    # Surface modes (five_circle_*, zaxis_*) require reference infrastructure (Issue J).
-    modes = {
-        "bisecting_4c": ConstraintSet(
-            [
-                SampleConstraint("alpha", 0.0),
-                DetectorConstraint("gamma", 0.0),
-                BisectConstraint("omega", "delta"),
-            ],
-            computed=["omega", "chi", "phi", "delta"],
-        ),
-        "fixed_gamma_5c": ConstraintSet(
-            [
-                DetectorConstraint("gamma", 0.0),
-                SampleConstraint("alpha", 0.0),
-                BisectConstraint("omega", "delta"),
-            ],
-            computed=["omega", "chi", "phi", "delta", "alpha"],
-        ),
-        "fixed_alpha_5c": ConstraintSet(
-            [
-                SampleConstraint("alpha", 0.0),
-                BisectConstraint("omega", "delta"),
-                DetectorConstraint("gamma", 0.0),
-            ],
-            computed=["omega", "chi", "phi", "delta", "gamma"],
-        ),
-        "fixed_alpha_zaxis": ConstraintSet(
-            [
-                SampleConstraint("alpha", 0.0),
-                SampleConstraint("chi", 0.0),
-                ReferenceConstraint("alpha_i", 0.0),
-            ],
-            computed=["omega", "delta", "gamma"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-        "fixed_beta_zaxis": ConstraintSet(
-            [
-                DetectorConstraint("gamma", 0.0),
-                SampleConstraint("chi", 0.0),
-                ReferenceConstraint("beta_out", 0.0),
-            ],
-            computed=["omega", "delta", "alpha"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-        "alpha_eq_beta_zaxis": ConstraintSet(
-            [
-                SampleConstraint("chi", 0.0),
-                SampleConstraint("phi", 0.0),
-                ReferenceConstraint("a_eq_b", True),
-            ],
-            computed=["omega", "delta", "alpha", "gamma"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=basis,
-        description=(
-            "Lohmeier & Vlieg (1993) six-circle surface diffractometer "
-            "(IUCr six-circle; Walko S(3D2)1). "
-            "Sample and detector share the alpha (rotary table) base stage."
-        ),
-        modes=modes,
-        default_mode="bisecting_4c",
-    )
+    pkg_path = resources.files("ad_hoc_diffractometer.geometries").joinpath("sixc.yml")
+    with resources.as_file(pkg_path) as p:
+        return load_geometry_file(p, basis=basis)
 
 
 # ---------------------------------------------------------------------------
@@ -406,120 +318,28 @@ def kappa4cv(
         return load_geometry_file(p, alpha_deg=alpha_deg, basis=basis)
 
 
-@register_geometry
+# ``kappa4ch`` was migrated to a declarative YAML file
+# (``geometries/kappa4ch.yml``) in issue #267.  This compatibility shim
+# delegates to the loader so existing imports
+# (``from ad_hoc_diffractometer.presets import kappa4ch``) continue to
+# work during the staged migration.  The shim will be removed when
+# ``presets.py`` is deleted at the end of the migration.
 def kappa4ch(
     alpha_deg: float = KAPPA_ALPHA_DEFAULT,
     basis: dict = BASIS_BL,
 ) -> AdHocDiffractometer:
+    """Return the declarative ``kappa4ch`` geometry (delegates to the YAML loader).
+
+    See ``src/ad_hoc_diffractometer/geometries/kappa4ch.yml`` for the
+    authoritative definition.
     """
-    Four-circle kappa diffractometer, horizontal scattering plane (laboratory).
+    from .geometry_loader import load_geometry_file
 
-    Walko (2016) designation: S3D1.
-
-    Identical to kappa4cv() but komega and ttheta rotate about the vertical
-    axis, giving a horizontal scattering plane (laboratory convention).
-
-    Default basis: Busing & Levy (1967) — transverse=+x, longitudinal=+y, vertical=+z.
-
-    Sample stack (floor first):
-
-    - ``komega`` — vertical, left-handed
-    - ``kappa`` — tilted in the vertical-longitudinal plane, between +V
-      and +L; α from +V toward +L (per Wyckoff 1985 Fig. 2(b)).
-    - ``kphi`` — vertical, left-handed
-
-    Detector (floor, mechanically independent):
-
-    - ``ttheta`` — vertical, left-handed
-
-    komega and ttheta share the same vertical axis; mechanically independent.
-
-    Handedness note: this preset encodes omega/kphi/2theta as left-handed
-    about vertical, following Walko (2016).  ITC Vol. C Sec. 2.2.6.2
-    (2006) prefers a right-handed sign convention for omega/chi/phi.
-    The two conventions are equivalent up to motor-angle sign flips;
-    either yields the same physical orientations.  See the module
-    docstring for further discussion.
-
-    Parameters
-    ----------
-    alpha_deg : float
-        Kappa tilt angle in degrees (default 50).  Must be in (0, 90).
-
-    References
-    ----------
-    * H.W. Wyckoff, Methods in Enzymology 114, 330-386 (1985) —
-      Fig. 2(b) on p. 334 (kappa diffractometer).
-    * D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
-    * W.R. Busing & H.A. Levy, Acta Cryst. 22, 457-464 (1967).
-    * ITC Vol. C, Sec. 2.2.6 (2006), p. 36 — α = 50°; cites
-      Wyckoff (1985, p. 334) for the schematic picture.
-    """
-    VERTICAL = basis["vertical"]
-    LONGITUDINAL = basis["longitudinal"]
-    # Kappa axis per Wyckoff (1985) Fig. 2(b): the kappa arm lies in
-    # the vertical-longitudinal plane, tilted ``alpha_deg`` from the
-    # (unsigned) vertical direction toward the (unsigned) longitudinal
-    # direction (toward the X-ray source/sample).  See issue #252.
-    # Note: omega itself is left-handed about vertical (encoded as
-    # ``-VERTICAL`` in the Stage line below); the kappa arm extends
-    # into the +V+L quadrant regardless of the omega-handedness sign.
-    kax = kappa_axis_from_eulerian(+VERTICAL, +LONGITUDINAL, alpha_deg)
-    stages = [
-        Stage("komega", -VERTICAL, parent=None, role="sample"),
-        Stage("kappa", kax, parent="komega", role="sample"),
-        Stage("kphi", -VERTICAL, parent="kappa", role="sample"),
-        Stage("ttheta", -VERTICAL, parent=None, role="detector"),
-    ]
-    # kappa4ch: 4 DOF, N-3=1 constraint needed per mode.
-    # Same mode set as kappa4cv; ``bisecting`` uses VirtualBisectConstraint
-    # to enforce true virtual bisecting (omega_virtual = ttheta/2).
-    convention = KappaPseudoAngleConvention(
-        n_komega=-VERTICAL,
-        n_kappa=kax,
-        n_kphi=-VERTICAL,
-        n_chi_eq=+LONGITUDINAL,
+    pkg_path = resources.files("ad_hoc_diffractometer.geometries").joinpath(
+        "kappa4ch.yml"
     )
-    modes = {
-        "bisecting": ConstraintSet(
-            [VirtualBisectConstraint("omega", "ttheta")],
-            computed=["komega", "kappa", "kphi", "ttheta"],
-        ),
-        "fixed_kphi": ConstraintSet(
-            [SampleConstraint("kphi", 0.0)],
-            computed=["komega", "kappa", "ttheta"],
-        ),
-        "fixed_omega": ConstraintSet(
-            [SampleConstraint("omega", 0.0)],
-            computed=["komega", "kappa", "kphi", "ttheta"],
-        ),
-        "fixed_chi": ConstraintSet(
-            [SampleConstraint("chi", 90.0)],
-            computed=["komega", "kappa", "kphi", "ttheta"],
-        ),
-        "fixed_phi": ConstraintSet(
-            [SampleConstraint("phi", 0.0)],
-            computed=["komega", "kappa", "kphi", "ttheta"],
-        ),
-        "fixed_psi": ConstraintSet(
-            [ReferenceConstraint("psi", 0.0)],
-            computed=["komega", "kappa", "kphi", "ttheta"],
-            extras={"n_hat": REQUIRED, "psi": None},
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=basis,
-        description=(
-            f"Four-circle kappa diffractometer, horizontal scattering plane "
-            f"(laboratory). Kappa alpha = {alpha_deg} deg."
-        ),
-        kappa_alpha_deg=alpha_deg,
-        kappa_pseudo_angle_convention=convention,
-        modes=modes,
-        default_mode="bisecting",
-    )
+    with resources.as_file(pkg_path) as p:
+        return load_geometry_file(p, alpha_deg=alpha_deg, basis=basis)
 
 
 # ``kappa6c`` was migrated to a declarative YAML file
@@ -551,221 +371,58 @@ def kappa6c(
 # ---------------------------------------------------------------------------
 
 
-@register_geometry
+# ``zaxis`` was migrated to a declarative YAML file
+# (``geometries/zaxis.yml``) in issue #267.  This compatibility shim
+# delegates to the loader so existing imports
+# (``from ad_hoc_diffractometer.presets import zaxis``) continue to
+# work during the staged migration.  The shim will be removed when
+# ``presets.py`` is deleted at the end of the migration.
 def zaxis(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
+    """Return the declarative ``zaxis`` geometry (delegates to the YAML loader).
+
+    See ``src/ad_hoc_diffractometer/geometries/zaxis.yml`` for the
+    authoritative definition.
     """
-    Z-axis four-circle diffractometer (general-inclination geometry).
+    from .geometry_loader import load_geometry_file
 
-    Walko (2016) designation: (S1D2)1.
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
-
-    Designed for surface diffraction.  The sample surface normal is aligned
-    parallel to the Z-axis, so the angle of incidence equals the alpha angle.
-    The detector and sample both rotate about the shared alpha (base) axis.
-
-    Stack (floor first)::
-
-        alpha (shared base): vertical,     right-handed
-          --> Z     (sample)  : longitudinal, right-handed
-          --> delta (detector): transverse,   left-handed
-                --> gamma :     vertical,     right-handed
-
-    The total scattering angle is a compound of gamma, delta, and alpha
-    (Walko 2016, eq. 17)::
-
-        ttheta = arccos(cos(gamma)*cos(delta)*cos(alpha) + sin(alpha)*sin(gamma))
-
-    References:
-    J.M. Bloch, J. Appl. Cryst. 18, 33-36 (1985).
-    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 17.
-    """
-    VERTICAL = basis["vertical"]
-    TRANSVERSE = basis["transverse"]
-    LONGITUDINAL = basis["longitudinal"]
-    stages = [
-        Stage("alpha", +VERTICAL, parent=None, role="sample"),
-        Stage("Z", +LONGITUDINAL, parent="alpha", role="sample"),
-        Stage("delta", -TRANSVERSE, parent="alpha", role="detector"),
-        Stage("gamma", +VERTICAL, parent="delta", role="detector"),
-    ]
-    # zaxis: 4 DOF, N-3=1 constraint needed per mode.
-    # All modes require reference vector n̂ (Issue J / #157).
-    modes = {
-        "zaxis": ConstraintSet(
-            [ReferenceConstraint("alpha_i", 0.0)],
-            computed=["Z", "delta", "gamma"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-        "reflectivity": ConstraintSet(
-            [ReferenceConstraint("a_eq_b", True)],
-            computed=["Z", "delta", "alpha", "gamma"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=basis,
-        description=(
-            "Z-axis four-circle diffractometer (Bloch 1985; Walko 2016 (S1D2)1). "
-            "Surface normal parallel to Z-axis. "
-            "Sample and detector share the alpha (base) stage."
-        ),
-        modes=modes,
-    )
+    pkg_path = resources.files("ad_hoc_diffractometer.geometries").joinpath("zaxis.yml")
+    with resources.as_file(pkg_path) as p:
+        return load_geometry_file(p, basis=basis)
 
 
-@register_geometry
+# ``s2d2`` was migrated to a declarative YAML file
+# (``geometries/s2d2.yml``) in issue #267.  This compatibility shim
+# delegates to the loader so existing imports
+# (``from ad_hoc_diffractometer.presets import s2d2``) continue to
+# work during the staged migration.  The shim will be removed when
+# ``presets.py`` is deleted at the end of the migration.
 def s2d2(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
+    """Return the declarative ``s2d2`` geometry (delegates to the YAML loader).
+
+    See ``src/ad_hoc_diffractometer/geometries/s2d2.yml`` for the
+    authoritative definition.
     """
-    S2D2 four-circle diffractometer (general-inclination geometry).
+    from .geometry_loader import load_geometry_file
 
-    Walko (2016) designation: S2D2.
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
-
-    Two independent sample axes (mu, Z) and two independent detector axes
-    (nu, delta), all mechanically decoupled.  The angle of incidence is the
-    mu angle; the surface normal is parallel to Z.
-
-    Sample stack (floor first)::
-
-        mu    : vertical,     right-handed
-          --> Z : longitudinal, right-handed
-
-    Detector stack (floor first)::
-
-        nu    : vertical,     right-handed
-          --> delta : transverse, left-handed
-
-    mu and nu share the same vertical axis; mechanically independent.
-
-    The total scattering angle is (Walko 2016, eq. 18)::
-
-        ttheta = arccos(cos(nu) * cos(delta))
-
-    References:
-    K.W. Evans-Lutterodt & M.-T. Tang, J. Appl. Cryst. 28, 318-326 (1995).
-    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), eq. 18.
-    """
-    VERTICAL = basis["vertical"]
-    TRANSVERSE = basis["transverse"]
-    LONGITUDINAL = basis["longitudinal"]
-    stages = [
-        Stage("mu", +VERTICAL, parent=None, role="sample"),
-        Stage("Z", +LONGITUDINAL, parent="mu", role="sample"),
-        Stage("nu", +VERTICAL, parent=None, role="detector"),
-        Stage("delta", -TRANSVERSE, parent="nu", role="detector"),
-    ]
-    # s2d2: 4 DOF, N-3=1 constraint needed per mode.
-    modes = {
-        "fixed_mu": ConstraintSet(
-            [SampleConstraint("mu", 0.0)],
-            computed=["Z", "nu", "delta"],
-        ),
-        "reflectivity": ConstraintSet(
-            [ReferenceConstraint("a_eq_b", True)],
-            computed=["mu", "Z", "nu", "delta"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=basis,
-        description=(
-            "S2D2 four-circle diffractometer (Evans-Lutterodt & Tang 1995; "
-            "Walko 2016 S2D2). "
-            "Fully decoupled sample (mu, Z) and detector (nu, delta) axes."
-        ),
-        modes=modes,
-    )
+    pkg_path = resources.files("ad_hoc_diffractometer.geometries").joinpath("s2d2.yml")
+    with resources.as_file(pkg_path) as p:
+        return load_geometry_file(p, basis=basis)
 
 
-@register_geometry
+# ``fivec`` was migrated to a declarative YAML file
+# (``geometries/fivec.yml``) in issue #267.  This compatibility shim
+# delegates to the loader so existing imports
+# (``from ad_hoc_diffractometer.presets import fivec``) continue to
+# work during the staged migration.  The shim will be removed when
+# ``presets.py`` is deleted at the end of the migration.
 def fivec(basis: dict = BASIS_YOU) -> AdHocDiffractometer:
+    """Return the declarative ``fivec`` geometry (delegates to the YAML loader).
+
+    See ``src/ad_hoc_diffractometer/geometries/fivec.yml`` for the
+    authoritative definition.
     """
-    Five-circle diffractometer (fourcv mounted on a vertical base).
+    from .geometry_loader import load_geometry_file
 
-    Walko (2016) designation: (S3D1)1.
-    Default basis: You (1999) — vertical=+x, longitudinal=+y, transverse=+z.
-
-    A standard Eulerian four-circle (fourcv) is mounted on a fifth vertical
-    rotation stage (mu) as a base.  The sample and detector motions are coupled
-    through mu.  This provides an additional degree of freedom for accessing
-    wider regions of reciprocal space, particularly at synchrotron sources.
-
-    Stack (floor first)::
-
-        mu (shared base): vertical,     right-handed
-          --> omega (sample): transverse,   left-handed
-                --> chi:      longitudinal, right-handed
-                      --> phi: transverse,  left-handed
-          --> ttheta (detector): transverse, left-handed
-
-    References:
-    E. Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987).
-    D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016).
-    """
-    VERTICAL = basis["vertical"]
-    TRANSVERSE = basis["transverse"]
-    LONGITUDINAL = basis["longitudinal"]
-    stages = [
-        Stage("mu", +VERTICAL, parent=None, role="sample"),
-        Stage("omega", -TRANSVERSE, parent="mu", role="sample"),
-        Stage("chi", +LONGITUDINAL, parent="omega", role="sample"),
-        Stage("phi", -TRANSVERSE, parent="chi", role="sample"),
-        Stage("ttheta", -TRANSVERSE, parent="mu", role="detector"),
-    ]
-    # fivec: 5 DOF, N-3=2 constraints needed per mode.
-    # With mu=0 the geometry reduces to fourcv; the bisecting solver
-    # handles this case identically to fourcv bisecting.
-    # Modes where mu != 0 require a tilted-plane solver (not yet implemented).
-    modes = {
-        "bisecting_4c": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                BisectConstraint("omega", "ttheta"),
-            ],
-            computed=["omega", "chi", "phi", "ttheta"],
-        ),
-        "fixed_chi": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                SampleConstraint("chi", 90.0),
-            ],
-            computed=["omega", "phi", "ttheta"],
-        ),
-        "fixed_phi": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                SampleConstraint("phi", 0.0),
-            ],
-            computed=["omega", "chi", "ttheta"],
-        ),
-        "fixed_mu": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                BisectConstraint("omega", "ttheta"),
-            ],
-            computed=["omega", "chi", "phi", "ttheta"],
-        ),
-        "fixed_omega_noncoplanar": ConstraintSet(
-            [
-                SampleConstraint("mu", 0.0),
-                SampleConstraint("omega", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "ttheta"],
-        ),
-    }
-    return AdHocDiffractometer(
-        name=inspect.currentframe().f_code.co_name,
-        stages=stages,
-        basis=basis,
-        description=(
-            "Five-circle diffractometer: fourcv on vertical mu base "
-            "(Vlieg et al. 1987; Walko 2016 (S3D1)1). "
-            "Sample and detector coupled through mu."
-        ),
-        modes=modes,
-        default_mode="bisecting_4c",
-    )
+    pkg_path = resources.files("ad_hoc_diffractometer.geometries").joinpath("fivec.yml")
+    with resources.as_file(pkg_path) as p:
+        return load_geometry_file(p, basis=basis)
