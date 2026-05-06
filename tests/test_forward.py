@@ -1595,16 +1595,26 @@ def test_qaz_residual(nu_deg, delta_deg, target_qaz_deg, expected_residual):
     assert residual == pytest.approx(expected_residual, abs=1e-6)
 
 
-def test_psic_lifting_detector_mu_limits_exclude_nu_zero():
-    """If nu stage limits exclude nu=0, qaz=90 solutions are filtered out."""
+def test_psic_lifting_detector_mu_limits_filter_solutions():
+    """Stage limits filter out solutions whose computed angles fall outside.
+
+    After the issue #264 C3/C4 revision, ``lifting_detector_mu`` no longer
+    pins ``nu=0`` (the qaz=90 detector pseudo-constraint was dropped).
+    The mu stage is the only free sample stage, so restricting its
+    limits gives a clean filter that drops every solution that lands
+    outside the allowed mu range.
+    """
     g = _setup_cubic(psic, a=4.0)
     g.mode_name = "lifting_detector_mu"
-    # Default solution for qaz=90 uses nu=0; excluding nu=0 gives no solutions.
-    nu_stage = g.stage("nu")
-    nu_stage.limits = (1.0, 180.0)
-    solutions = g.forward(1, 0, 0)
-    # All detector solutions use nu=0 which is now outside limits
-    assert len(solutions) == 0
+    # (0, 1, 1) reaches at mu ~= ±70°
+    sols_unrestricted = g.forward(0, 1, 1)
+    assert len(sols_unrestricted) > 0
+    # Restrict mu to the positive range — the negative-mu solutions drop out
+    g.stage("mu").limits = (0.0, 90.0)
+    sols_restricted = g.forward(0, 1, 1)
+    assert 0 < len(sols_restricted) < len(sols_unrestricted)
+    for sol in sols_restricted:
+        assert 0.0 <= sol["mu"] <= 90.0
 
 
 def test_qaz_residual_two_detector_stages_required():
@@ -1637,26 +1647,34 @@ def test_qaz_residual_two_detector_stages_required():
 @pytest.mark.parametrize(
     "mode_name, h, k, l",
     [
-        pytest.param("lifting_detector_mu", 1, 0, 0, id="psic-liftmu-100"),
-        pytest.param("lifting_detector_mu", 0, 0, 1, id="psic-liftmu-001"),
+        # Issue #264 C3/C4 revision: psic lifting_detector_phi/mu now fix
+        # three sample stages and let both detector stages float to satisfy
+        # the Bragg condition.  The qaz pseudo-angle is no longer pinned;
+        # the test verifies forward/inverse round-trip and the expected
+        # frozen sample angles instead.
+        pytest.param("lifting_detector_mu", 0, 1, 0, id="psic-liftmu-010"),
+        pytest.param("lifting_detector_mu", 1, 1, 1, id="psic-liftmu-111"),
         pytest.param("lifting_detector_phi", 1, 0, 0, id="psic-liftphi-100"),
-        pytest.param("lifting_detector_phi", 0, 1, 0, id="psic-liftphi-010"),
+        pytest.param("lifting_detector_phi", 1, 1, 1, id="psic-liftphi-111"),
     ],
 )
-def test_psic_lifting_detector_qaz_satisfied(mode_name, h, k, l):  # noqa: E741
-    """lifting_detector_* modes: qaz = 90.0 verified in all solutions."""
+def test_psic_lifting_detector_round_trip(mode_name, h, k, l):  # noqa: E741
+    """lifting_detector_phi / lifting_detector_mu round-trip after #264 revision."""
     g = _setup_cubic(psic, a=4.0)
     g.mode_name = mode_name
     solutions = g.forward(h, k, l)
     assert len(solutions) > 0, f"No solutions for {mode_name} ({h},{k},{l})"
+    # Identify which sample stage is the "free" one based on the mode name
+    free_sample = mode_name.split("_")[-1]  # "phi" or "mu"
+    fixed_samples = {"mu", "eta", "chi", "phi"} - {free_sample}
     for sol in solutions:
-        nu_deg = sol["nu"]
-        delta_deg = sol["delta"]
-        qaz_computed = _qaz_from_angles(nu_deg, delta_deg)
-        assert qaz_computed == pytest.approx(90.0, abs=1e-4), (
-            f"{mode_name}: expected qaz=90, got {qaz_computed:.6f} "
-            f"(nu={nu_deg:.4f}, delta={delta_deg:.4f})"
-        )
+        for stage in fixed_samples:
+            assert sol[stage] == pytest.approx(0.0, abs=1e-6), (
+                f"{mode_name}: sample stage {stage!r} should be fixed at 0, "
+                f"got {sol[stage]:.6f}"
+            )
+        hkl_back = g.inverse(sol)
+        assert np.allclose(hkl_back, [h, k, l], atol=1e-5)
 
 
 @pytest.mark.parametrize(

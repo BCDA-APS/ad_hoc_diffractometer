@@ -314,26 +314,27 @@ modes:
             in_plane_residual: null
 
     # ── Lifting detector (out-of-plane) ─────────────────────────────────
+    # Per @jwkim-anl, issue #264: drop the qaz=90 detector pseudo-
+    # constraint and fix every sample stage except the named one.  Both
+    # detector stages float jointly to satisfy the Bragg condition,
+    # producing the "lifting detector" effect (nu generally non-zero)
+    # naturally for any (h, k, l) that requires out-of-plane scattering.
     lifting_detector_phi:
         constraints:
-            - {type: sample,   stage: phi, value: 0.0}
             - {type: sample,   stage: mu,  value: 0.0}
-            - {type: detector, stage: qaz, value: 90.0}
+            - {type: sample,   stage: eta, value: 0.0}
+            - {type: sample,   stage: chi, value: 0.0}
         computed: [phi, nu, delta]
 
     lifting_detector_mu:
         constraints:
-            - {type: sample,   stage: mu,  value: 0.0}
             - {type: sample,   stage: eta, value: 0.0}
-            - {type: detector, stage: qaz, value: 90.0}
+            - {type: sample,   stage: chi, value: 0.0}
+            - {type: sample,   stage: phi, value: 0.0}
         computed: [mu, nu, delta]
 
-    # Per @jwkim-anl, issue #264: symmetric to the C3/C4 revisions of
-    # lifting_detector_mu and lifting_detector_phi, fixing every sample
-    # stage except eta.  No qaz constraint — the detector is left free
-    # (both nu and delta are computed from the Bragg condition along
-    # with eta), giving the "lifting detector" effect (nu generally
-    # non-zero) automatically.
+    # Symmetric counterpart (issue #264 B4): fix every sample stage
+    # except eta; both detector stages float.
     lifting_detector_eta:
         constraints:
             - {type: sample,   stage: mu,  value: 0.0}
