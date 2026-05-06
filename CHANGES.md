@@ -13,10 +13,10 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ### Added
 
-- psic and kappa6c zone modes (You §6, SPEC `setmode 5`) (#262)
-- Declarative YAML geometry definitions and a loader. (#267)
 - `BASIS_DEFAULT` neutral basis used when a YAML file omits `basis:`. (#267)
-- `register_geometry_file()` and `load_geometry_file()` for run-time loading of user-authored YAML. (#267)
+- Declarative YAML geometry definitions and a loader. (#267)
+- psic and kappa6c zone modes (You §6, SPEC `setmode 5`) (#262)
+- `register_geometry_file()` and `load_geometry_file()`. (#267)
 
 ### Changed
 

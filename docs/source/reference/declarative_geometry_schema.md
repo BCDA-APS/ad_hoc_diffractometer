@@ -43,12 +43,16 @@ Every file must begin with the marker that identifies it as an
 
 ```yaml
 ad_hoc_diffractometer_geometry:
-    revision: 1
+    schema_revision: 1
 ```
 
 The presence of the `ad_hoc_diffractometer_geometry` top-level key is
 the unambiguous signal that the document is a geometry declaration.
-The `revision` integer selects which schema version the loader applies.
+The `schema_revision` integer selects which version of *this schema*
+the file conforms to.  It is a fixed property of the schema, not a
+per-file edit counter — users should treat the value verbatim and
+only change it when migrating the file to a different declarative-
+geometry schema revision.
 
 | Loader constant | Value | Meaning |
 |---|---|---|
@@ -65,8 +69,8 @@ When a string passed to
 {func}`~ad_hoc_diffractometer.geometry_loader.load_geometry_file`
 **lacks** the marker, the loader treats the string as a filesystem
 path rather than as YAML text.  When the marker is **present** but
-malformed (wrong type for the value, unsupported `revision`, unknown
-sub-key, …) the loader raises {class}`ValueError` immediately and
+malformed (wrong type for the value, unsupported `schema_revision`,
+unknown sub-key, …) the loader raises {class}`ValueError` immediately and
 does **not** retry as a path — once the document declares itself a
 geometry, the loader honors that declaration by reporting what is
 wrong with it.
@@ -348,7 +352,7 @@ g = ahd.load_geometry_file("/lab/diffr.yml")
 # (3) YAML text in memory
 g = ahd.load_geometry_file("""
 ad_hoc_diffractometer_geometry:
-    revision: 1
+    schema_revision: 1
 name: my_diffr
 basis: BL
 stages:

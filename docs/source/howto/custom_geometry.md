@@ -54,7 +54,7 @@ Every file begins with the schema marker (see
 
 ```yaml
 ad_hoc_diffractometer_geometry:
-    revision: 1
+    schema_revision: 1
 
 name: my_powder3c
 
