@@ -43,19 +43,24 @@ documentation: |
     mechanically independent.
 
 
-    Mode families (20 modes total):
+    Mode families (24 modes total):
 
-    - 8 vertical-scattering-plane modes (mu = nu = 0): bisecting,
+    - 9 vertical-scattering-plane modes (mu = nu = 0): bisecting,
       fixed_phi, fixed_chi, fixed_alpha_i, fixed_beta_out,
-      alpha_eq_beta, fixed_psi, double_diffraction.
+      alpha_eq_beta, fixed_psi, fixed_omega (#264),
+      double_diffraction.
 
-    - 8 horizontal-scattering-plane mirror modes (eta = delta = 0).
+    - 9 horizontal-scattering-plane mirror modes (eta = delta = 0).
+
+    - 1 hybrid mode fixed_alpha_i_fixed_chi_fixed_phi (#264) that
+      fixes chi, phi, and alpha_i and lets every other angle float.
 
     - 2 zone modes (You 1999 §6, SPEC ``setmode 5``): scattering vector
       Q is confined to the plane defined by two reciprocal-lattice
       vectors z0 and z1.
 
-    - 2 lifting-detector modes (out-of-plane geometry).
+    - 3 lifting-detector modes (out-of-plane geometry; #264 dropped
+      the qaz constraint and added lifting_detector_eta).
 
 
     The fixed_chi_horizontal mode uses chi = 0 (not chi = 90 as in the
