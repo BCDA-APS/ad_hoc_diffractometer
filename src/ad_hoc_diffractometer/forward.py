@@ -517,6 +517,13 @@ def _solve_constraint_set(
     if _is_surface_mode(geometry, mode):
         return _solve_surface(geometry, Q_phi, ttheta_deg, mode)
 
+    # OMEGA pseudo-angle mode (SPEC psic ``omega-fixed`` family, #264).
+    # Must be checked after _is_surface_mode (whose predicate explicitly
+    # excludes the "omega" reference name) and before the qaz/fallback
+    # branches.
+    if _is_omega_mode(geometry, mode):
+        return _solve_omega_mode(geometry, Q_phi, ttheta_deg, mode)
+
     # qaz detector constraint mode (lifting_detector_* family).
     if _is_qaz_mode(geometry, mode):
         return _solve_qaz_mode(geometry, Q_phi, ttheta_deg, mode)
@@ -2814,13 +2821,15 @@ def _solve_zone(
 def _is_surface_mode(geometry: AdHocDiffractometer, mode) -> bool:
     """Return True when mode has a surface ReferenceConstraint and surface_normal is set.
 
-    The ``"psi"`` ReferenceConstraint is NOT a surface mode — it is handled
-    by :func:`_is_psi_mode` / :func:`_solve_psi_mode` instead.
+    The ``"psi"`` and ``"omega"`` ReferenceConstraints are NOT surface modes —
+    they are handled by :func:`_is_psi_mode` / :func:`_solve_psi_mode` and
+    :func:`_is_omega_mode` / :func:`_solve_omega_mode` respectively.
     """
     from .mode import ReferenceConstraint
 
     return geometry.surface_normal is not None and any(
-        isinstance(c, ReferenceConstraint) and c.name != "psi" for c in mode.constraints
+        isinstance(c, ReferenceConstraint) and c.name not in {"psi", "omega"}
+        for c in mode.constraints
     )
 
 
@@ -2975,6 +2984,298 @@ def _surface_residual(
     ai = _alpha_i(geometry, angles=angles)
     bo = _beta_out(geometry, angles=angles)
     return ai - bo
+
+
+# ---------------------------------------------------------------------------
+# OMEGA pseudo-angle solver (SPEC psic omega-fixed family)
+# ---------------------------------------------------------------------------
+
+
+def _is_omega_mode(geometry: AdHocDiffractometer, mode) -> bool:
+    """
+    Return True when the mode has an ``"omega"`` ReferenceConstraint and the
+    geometry implements the OMEGA pseudo-angle (i.e. has a ``chi`` stage).
+
+    OMEGA is the SPEC ``Q[6]`` pseudo-angle: angle between Q and the plane
+    of the chi circle.  See
+    :func:`~ad_hoc_diffractometer.reference.omega_pseudo`.
+    """
+    from .mode import ReferenceConstraint
+
+    has_chi = any(s.name == "chi" for s in geometry.sample_stages)
+    if not has_chi:
+        return False
+    return any(
+        isinstance(c, ReferenceConstraint) and c.name == "omega"
+        for c in mode.constraints
+    )
+
+
+def _solve_omega_mode(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+) -> list[dict[str, float]]:
+    """
+    Forward solver for ``ReferenceConstraint("omega", value)`` modes.
+
+    OMEGA is the SPEC ``Q[6]`` pseudo-angle — the angle between the
+    scattering vector Q and the plane of the chi circle.  When the
+    target value is zero, OMEGA = 0 means Q lies in the chi-circle
+    plane and the diffractometer is in the bisecting condition; non-zero
+    OMEGA tilts Q out of that plane.
+
+    Strategy
+    --------
+    The OMEGA pseudo-angle depends only on the **outer** sample stages
+    (those below chi in the stack — ``mu`` and ``eta`` in psic) and the
+    detector stages.  In each of the supported psic mode topologies
+    exactly one outer stage is fixed and the other is free; we drive
+    that free outer stage to satisfy ``OMEGA = target`` using a 1-D
+    Newton root-find.  The inner sample stages ``(chi, phi)`` and the
+    active detector angle are determined at each Newton step by the
+    Bragg condition through the ordinary fixed-sample solver.
+
+    For the special case ``target = 0`` the bisecting condition (``OMEGA
+    = 0 ⇔ Q in the chi-circle plane``) is exact and the solver
+    short-circuits to ``_solve_bisecting`` via a synthetic
+    ``BisectConstraint``.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+    Q_phi : numpy.ndarray, shape (3,)
+    ttheta_deg : float
+    mode : ConstraintSet
+
+    Returns
+    -------
+    list of dict[str, float]
+    """
+    from .mode import ConstraintSet
+    from .mode import ReferenceConstraint
+    from .mode import SampleConstraint
+    from .reference import omega_pseudo
+
+    # Extract the omega target value
+    rc = next(
+        c
+        for c in mode.constraints
+        if isinstance(c, ReferenceConstraint) and c.name == "omega"
+    )
+    omega_target = float(rc.value)
+
+    # Identify the outer (pre-chi) sample stages and which of them is
+    # currently free under the mode's SampleConstraints.
+    fixed_names = {c.name for c in mode.fixed_sample_constraints}
+    sample_stages = list(geometry.sample_stages)
+    chi_index = next((i for i, s in enumerate(sample_stages) if s.name == "chi"), None)
+    if chi_index is None:  # pragma: no cover
+        return []  # _is_omega_mode would have rejected this geometry
+    outer_stages = sample_stages[:chi_index]
+    outer_free = [s for s in outer_stages if s.name not in fixed_names]
+
+    # ---- Special case: target = 0 ⇒ exact bisecting --------------------
+    if abs(omega_target) < 1e-9 and outer_free:
+        synth = _synthetic_bisecting_for_omega(mode, geometry)
+        if synth is not None:
+            return _solve_bisecting(geometry, Q_phi, ttheta_deg, synth)
+
+    # ---- All outer stages fixed: OMEGA is determined; verify only ------
+    if not outer_free:
+        # The mode supplies enough fixed sample constraints to pin OMEGA
+        # entirely; reduce to a fixed-sample solve and accept solutions
+        # that match the requested target.
+        synth = _omega_to_fixed_sample_mode(mode)
+        candidates = _solve_constraint_set_no_omega(geometry, Q_phi, ttheta_deg, synth)
+        return [
+            cand
+            for cand in candidates
+            if abs(omega_pseudo(geometry, angles=cand) - omega_target) < 1e-3
+        ]
+
+    # ---- General case: 1-D Newton on the free outer stage --------------
+    rocking = outer_free[0]
+    base_constraints = [
+        c
+        for c in mode.constraints
+        if not (isinstance(c, ReferenceConstraint) and c.name == "omega")
+    ]
+
+    def trial_solutions(xi: float) -> list[dict[str, float]]:
+        """Solve the Bragg condition with ``rocking`` fixed at ``xi``."""
+        trial_constraints = list(base_constraints)
+        trial_constraints.append(SampleConstraint(rocking.name, xi))
+        trial_mode = ConstraintSet(trial_constraints, computed=mode.computed)
+        return _solve_constraint_set_no_omega(geometry, Q_phi, ttheta_deg, trial_mode)
+
+    # Seed sweep across the rocking stage's range
+    lim_lo, lim_hi = rocking.limits
+    span = lim_hi - lim_lo
+    n_seeds = 24
+    seed_step = span / n_seeds
+    seeds = [lim_lo + (i + 0.5) * seed_step for i in range(n_seeds)]
+
+    solutions: list[dict[str, float]] = []
+    seen_x: list[float] = []
+
+    for seed in seeds:
+        x = float(seed)
+        sols = trial_solutions(x)
+        if not sols:
+            continue
+        # Pick the solution that minimizes the chi-axis sign-flip
+        sol = sols[0]
+        r0 = omega_pseudo(geometry, angles=sol) - omega_target
+        # Newton iteration with a numerical derivative
+        for _ in range(50):
+            if abs(r0) < 1e-7:
+                break
+            h = 1e-3
+            sols_p = trial_solutions(x + h)
+            sols_m = trial_solutions(x - h)
+            if not sols_p or not sols_m:
+                break
+            r_p = omega_pseudo(geometry, angles=sols_p[0]) - omega_target
+            r_m = omega_pseudo(geometry, angles=sols_m[0]) - omega_target
+            dr = (r_p - r_m) / (2 * h)
+            if abs(dr) < 1e-12:
+                break
+            dx = -r0 / dr
+            dx = float(np.clip(dx, -15.0, 15.0))
+            x += dx
+            sols = trial_solutions(x)
+            if not sols:
+                break
+            sol = sols[0]
+            r0 = omega_pseudo(geometry, angles=sol) - omega_target
+        if abs(r0) > 1e-4:
+            continue
+        if not (lim_lo <= x <= lim_hi):
+            continue
+        # Deduplicate by rocking-stage value
+        if any(abs(x - xs) < 1e-3 for xs in seen_x):
+            continue
+        seen_x.append(x)
+        if not _check_limits(geometry, sol):
+            continue
+        _apply_cut_points(sol, mode, geometry)
+        solutions.append(sol)
+
+    return solutions
+
+
+def _solve_constraint_set_no_omega(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+) -> list[dict[str, float]]:
+    """Run the constraint-set dispatcher on ``mode`` after stripping any
+    ``ReferenceConstraint("omega", ...)`` so the inner solve cannot recurse.
+
+    The omega solver re-enters the dispatcher to handle the inner Bragg
+    solve; without this guard the dispatcher would route the recursive
+    call back into :func:`_solve_omega_mode` and loop forever.
+    """
+    from .mode import ConstraintSet
+    from .mode import ReferenceConstraint
+
+    if not any(
+        isinstance(c, ReferenceConstraint) and c.name == "omega"
+        for c in mode.constraints
+    ):
+        # Already free of omega — call the dispatcher directly
+        return _solve_constraint_set(geometry, Q_phi, ttheta_deg, mode)
+
+    stripped = ConstraintSet(
+        [
+            c
+            for c in mode.constraints
+            if not (isinstance(c, ReferenceConstraint) and c.name == "omega")
+        ],
+        computed=mode.computed,
+        extras=mode.extras,
+        cut_points=mode.cut_points,
+    )
+    return _solve_constraint_set(geometry, Q_phi, ttheta_deg, stripped)
+
+
+def _omega_to_fixed_sample_mode(mode):
+    """Return ``mode`` with the omega ReferenceConstraint stripped."""
+    from .mode import ConstraintSet
+    from .mode import ReferenceConstraint
+
+    return ConstraintSet(
+        [
+            c
+            for c in mode.constraints
+            if not (isinstance(c, ReferenceConstraint) and c.name == "omega")
+        ],
+        computed=mode.computed,
+        extras=mode.extras,
+        cut_points=mode.cut_points,
+    )
+
+
+def _synthetic_bisecting_for_omega(mode, geometry):
+    """
+    Build a synthetic ConstraintSet that replaces the omega ReferenceConstraint
+    with a BisectConstraint on the geometry's chi-circle bisect pair.
+
+    Returns ``None`` if no bisect pair can be identified for this mode.
+    """
+    from .mode import ConstraintSet
+    from .mode import DetectorConstraint
+    from .mode import ReferenceConstraint
+
+    bisect = _bisect_pair_for(geometry, mode)
+    if bisect is None:
+        return None
+    others = [
+        c
+        for c in mode.constraints
+        if not (isinstance(c, ReferenceConstraint) and c.name == "omega")
+    ]
+    # Drop any DetectorConstraint on the same detector stage that the
+    # bisect would constrain — bisect drives that stage analytically.
+    others = [
+        c
+        for c in others
+        if not (
+            isinstance(c, DetectorConstraint)
+            and getattr(c, "name", None) == bisect.detector_stage
+        )
+    ]
+    return ConstraintSet(
+        [bisect] + others,
+        computed=mode.computed,
+        extras=mode.extras,
+        cut_points=mode.cut_points,
+    )
+
+
+def _bisect_pair_for(geometry, mode):
+    """
+    Return a ``BisectConstraint`` on the geometry's chi-circle bisect pair.
+
+    For psic the bisect pair is determined by which sample stage is fixed:
+
+    - If ``mu`` is fixed at 0 (vertical scattering plane): ``eta ↔ delta``.
+    - If ``eta`` is fixed at 0 (horizontal scattering plane): ``mu ↔ nu``.
+
+    Returns ``None`` if neither condition is satisfied (e.g. an unsupported
+    psic-like geometry).
+    """
+    from .mode import BisectConstraint
+
+    fixed = {c.name: c.value for c in mode.fixed_sample_constraints}
+    if fixed.get("mu") == 0.0:
+        return BisectConstraint("eta", "delta")
+    if fixed.get("eta") == 0.0:
+        return BisectConstraint("mu", "nu")
+    return None
 
 
 def _is_qaz_mode(geometry: AdHocDiffractometer, mode) -> bool:
