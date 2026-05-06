@@ -16,14 +16,14 @@ the transverse–vertical plane (see
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.kappa4cv()
+g = ahd.make_geometry("kappa4cv")
 g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
 ## Demo geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.kappa4cv` factory
+This geometry is defined by the {ref}`geometry-kappa4cv` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L871) for the complete stage
 and mode configuration.
 
@@ -102,7 +102,7 @@ The omega axis sense (``komega = −transverse`` = left-handed
 rotation about +T) follows Walko's left-handed sign convention.
 ITC Vol. C §2.2.6.2 prefers a right-handed sign convention for
 ``omega/chi/phi``; the two are equivalent up to motor-angle sign
-flips.  See the {func}`~ad_hoc_diffractometer.presets` module
+flips.  See the {mod}`~ad_hoc_diffractometer.geometries` module
 docstring for further discussion.
 
 **Virtual Eulerian angles** ``omega``, ``chi``, ``phi`` are mapped
@@ -210,7 +210,7 @@ before calling ``forward()``.
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.presets.kappa4cv`
+- {ref}`geometry-kappa4cv`
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`

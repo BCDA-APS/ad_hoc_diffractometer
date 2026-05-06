@@ -27,8 +27,8 @@ Two conventions (shown below) are used in the demo examples. You may supply
 
 | Basis | vertical | longitudinal | transverse | Used by demos |
 |---|---|---|---|---|
-| {data}`~ad_hoc_diffractometer.factories.BASIS_YOU` | +x | +y | +z | {func}`~ad_hoc_diffractometer.presets.psic`, {func}`~ad_hoc_diffractometer.presets.sixc`, {func}`~ad_hoc_diffractometer.presets.kappa6c`, {func}`~ad_hoc_diffractometer.presets.zaxis`, {func}`~ad_hoc_diffractometer.presets.s2d2`, {func}`~ad_hoc_diffractometer.presets.fivec` |
-| {data}`~ad_hoc_diffractometer.factories.BASIS_BL` | +z | +y | +x | {func}`~ad_hoc_diffractometer.presets.fourcv`, {func}`~ad_hoc_diffractometer.presets.fourch`, {func}`~ad_hoc_diffractometer.presets.kappa4cv`, {func}`~ad_hoc_diffractometer.presets.kappa4ch` |
+| {data}`~ad_hoc_diffractometer.factories.BASIS_YOU` | +x | +y | +z | {ref}`geometry-psic`, {ref}`geometry-sixc`, {ref}`geometry-kappa6c`, {ref}`geometry-zaxis`, {ref}`geometry-s2d2`, {ref}`geometry-fivec` |
+| {data}`~ad_hoc_diffractometer.factories.BASIS_BL` | +z | +y | +x | {ref}`geometry-fourcv`, {ref}`geometry-fourch`, {ref}`geometry-kappa4cv`, {ref}`geometry-kappa4ch` |
 
 See {doc}`howto/basis_vectors` for a full tutorial on choosing and
 understanding basis vectors.
@@ -74,7 +74,7 @@ stages = [
 `omega` and `ttheta` both rotate about the transverse axis, so their scattering
 plane is **vertical** (the synchrotron convention).  For the laboratory
 (horizontal scattering plane) convention swap every `TRANSVERSE` for `VERTICAL`
-and every `LONGITUDINAL` for `TRANSVERSE` — that is the {func}`~ad_hoc_diffractometer.presets.fourch` geometry.
+and every `LONGITUDINAL` for `TRANSVERSE` — that is the {ref}`geometry-fourch` geometry.
 
 ---
 
@@ -188,7 +188,7 @@ If you do not need to customize anything, use it directly:
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.fourcv()       # Busing & Levy (1967) four-circle, vertical plane
+g = ahd.make_geometry("fourcv")       # Busing & Levy (1967) four-circle, vertical plane
 g.wavelength = 1.5406          # Å
 g.sample.lattice = ahd.Lattice(a=5.431)
 print(g.summary())

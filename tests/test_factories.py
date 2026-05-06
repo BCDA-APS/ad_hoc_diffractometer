@@ -23,6 +23,16 @@ from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
+from helpers import fivec
+from helpers import fourch
+from helpers import fourcv
+from helpers import kappa4ch
+from helpers import kappa4cv
+from helpers import kappa6c
+from helpers import psic
+from helpers import s2d2
+from helpers import sixc
+from helpers import zaxis
 
 from ad_hoc_diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer import get_geometry
@@ -31,16 +41,6 @@ from ad_hoc_diffractometer import make_geometry
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
-from ad_hoc_diffractometer.presets import fivec
-from ad_hoc_diffractometer.presets import fourch
-from ad_hoc_diffractometer.presets import fourcv
-from ad_hoc_diffractometer.presets import kappa4ch
-from ad_hoc_diffractometer.presets import kappa4cv
-from ad_hoc_diffractometer.presets import kappa6c
-from ad_hoc_diffractometer.presets import psic
-from ad_hoc_diffractometer.presets import s2d2
-from ad_hoc_diffractometer.presets import sixc
-from ad_hoc_diffractometer.presets import zaxis
 
 # ---------------------------------------------------------------------------
 # list_geometries()
@@ -806,15 +806,14 @@ class TestEntryPointExtensibility:
 
         assert hasattr(fac, "GEOMETRY_ENTRY_POINT_GROUP")
 
-    # --- Built-in factories declared via @register_geometry / YAML --------
+    # --- Built-in factories declared via the declarative-YAML loader -----
     #
     # Issue #267 removed the entry-point declarations for the 10 demo
-    # geometries from ``pyproject.toml``: built-ins are now registered
-    # either by ``@register_geometry`` decorators in
-    # :mod:`ad_hoc_diffractometer.presets` or, after migration, by the
-    # declarative-YAML loader scanning
-    # :mod:`ad_hoc_diffractometer.geometries`.  The entry-point group
-    # remains supported for *third-party* plugins.
+    # geometries from ``pyproject.toml`` and replaced the legacy
+    # ``ad_hoc_diffractometer.presets`` Python factories with declarative
+    # YAML files.  Built-ins are now registered exclusively by the
+    # loader scanning :mod:`ad_hoc_diffractometer.geometries`.  The
+    # entry-point group remains supported for *third-party* plugins.
 
     def test_no_builtins_declared_as_entry_points(self):
         """Built-in geometries are no longer declared as entry points."""
@@ -849,8 +848,9 @@ class TestEntryPointExtensibility:
         from unittest.mock import MagicMock
         from unittest.mock import patch
 
+        from helpers import fourcv
+
         import ad_hoc_diffractometer.factories as fac
-        from ad_hoc_diffractometer.presets import fourcv
 
         # Build a fake entry point that loads a trivial factory
         fake_factory = fourcv  # reuse an existing factory as the "plugin"
@@ -929,8 +929,9 @@ class TestEntryPointExtensibility:
         from unittest.mock import MagicMock
         from unittest.mock import patch
 
+        from helpers import fourcv
+
         import ad_hoc_diffractometer.factories as fac
-        from ad_hoc_diffractometer.presets import fourcv
 
         impostor_ep = MagicMock()
         impostor_ep.name = "psic"  # same name as built-in
@@ -965,9 +966,10 @@ class TestEntryPointExtensibility:
         from unittest.mock import MagicMock
         from unittest.mock import patch
 
+        from helpers import fourch
+        from helpers import fourcv
+
         import ad_hoc_diffractometer.factories as fac
-        from ad_hoc_diffractometer.presets import fourch
-        from ad_hoc_diffractometer.presets import fourcv
 
         ep1 = MagicMock()
         ep1.name = "my_custom_geom"

@@ -14,9 +14,9 @@ helpers.py — import those explicitly with `from helpers import ...`.
 """
 
 import pytest
+from helpers import psic
 
 from ad_hoc_diffractometer.display import set_precision
-from ad_hoc_diffractometer.presets import psic
 
 _DISPLAY_DEFAULT = 6  # matches display._DEFAULT_PRECISION
 

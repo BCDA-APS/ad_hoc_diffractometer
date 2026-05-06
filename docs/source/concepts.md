@@ -284,11 +284,11 @@ Available modes depend on the geometry.
 
 ```python
 # Four-circle geometries use "bisecting"
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 g.mode_name = "bisecting"
 
 # Six-circle psic uses named variants
-g = ahd.presets.psic()
+g = ahd.make_geometry("psic")
 g.mode_name = "bisecting_vertical"   # vertical scattering plane
 g.mode_name = "bisecting_horizontal" # horizontal scattering plane
 ```
@@ -399,7 +399,7 @@ from ad_hoc_diffractometer.kappa import (
     eulerian_to_kappa_axes, kappa_to_eulerian_axes,
 )
 
-g = ahd.presets.kappa4cv()
+g = ahd.make_geometry("kappa4cv")
 convention = g.kappa_pseudo_angle_convention
 
 # Virtual Eulerian angles → real kappa motor angles (two branches)
@@ -495,7 +495,7 @@ Kappa modes accept the virtual angle names directly in
 ```python
 from ad_hoc_diffractometer import ConstraintSet, SampleConstraint
 
-g = ahd.presets.kappa4cv()
+g = ahd.make_geometry("kappa4cv")
 # "chi" is a virtual angle — the kappa inversion solver handles it
 g.modes["fixed_chi"] = ConstraintSet([SampleConstraint("chi", 90.0)])
 ```

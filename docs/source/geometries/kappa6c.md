@@ -12,14 +12,14 @@ Transverse detector, vertical scattering plane.
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.kappa6c()
+g = ahd.make_geometry("kappa6c")
 g.wavelength = 1.0  # Å
 print(g.summary())
 ```
 
 ## Demo geometry definition
 
-This geometry is defined by the {func}`~ad_hoc_diffractometer.presets.kappa6c` factory
+This geometry is defined by the {ref}`geometry-kappa6c` factory
 function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L1049) for the complete stage
 and mode configuration.
 
@@ -334,7 +334,7 @@ References:
 
 ## API reference
 
-- {func}`~ad_hoc_diffractometer.presets.kappa6c`
+- {ref}`geometry-kappa6c`
 - {class}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
 - {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
 - {class}`~ad_hoc_diffractometer.mode.BisectConstraint`

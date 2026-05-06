@@ -23,13 +23,13 @@ from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
+from helpers import fourcv
+from helpers import kappa4cv
+from helpers import psic
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import Lattice
 from ad_hoc_diffractometer import ub_identity
-from ad_hoc_diffractometer.presets import fourcv
-from ad_hoc_diffractometer.presets import kappa4cv
-from ad_hoc_diffractometer.presets import psic
 from ad_hoc_diffractometer.scan import NEAREST_ANGLES
 from ad_hoc_diffractometer.scan import _euler_from_Z_standard
 from ad_hoc_diffractometer.scan import _hkl_points

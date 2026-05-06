@@ -29,7 +29,7 @@ reference) or different.
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.psic()
+g = ahd.make_geometry("psic")
 g.wavelength = 1.0  # Å
 g.sample.lattice = ahd.Lattice(a=4.0, c=6.5)
 ahd.ub_identity(g.sample)

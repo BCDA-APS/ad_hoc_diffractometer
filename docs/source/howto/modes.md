@@ -12,7 +12,7 @@ See [Concepts](../concepts.md) for background, and
 ```python
 import ad_hoc_diffractometer as ahd
 
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 print(list(g.modes.keys()))
 # ['bisecting', 'fixed_chi', 'fixed_phi', 'fixed_omega',
 #  'fixed_psi', 'double_diffraction']
@@ -91,7 +91,7 @@ solutions = g.forward(1, 0, 0)
 ## Inspect a mode's constraints
 
 ```python
-g = ahd.presets.fourcv()
+g = ahd.make_geometry("fourcv")
 cs = g.modes["fixed_chi"]
 
 print(cs)

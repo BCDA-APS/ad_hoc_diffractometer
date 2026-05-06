@@ -512,11 +512,11 @@ class AdHocDiffractometer:
         non-kappa geometries.
 
         See :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`
-        for the semantics.  This attribute is set by the kappa demo
-        geometries (:func:`~ad_hoc_diffractometer.presets.kappa4cv`,
-        :func:`~ad_hoc_diffractometer.presets.kappa4ch`,
-        :func:`~ad_hoc_diffractometer.presets.kappa6c`) and is consumed
-        by the kappa virtual-angle solver.
+        for the semantics.  This attribute is synthesized by the
+        declarative geometry loader from the canonical kappa stage
+        names (``komega``, ``kappa``, ``kphi``) for the kappa demo
+        geometries (``kappa4cv``, ``kappa4ch``, ``kappa6c``) and is
+        consumed by the kappa virtual-angle solver.
 
         The convention is declared explicitly per demo geometry because
         the physical meaning of the kappa-tilt angle ``α`` (and therefore

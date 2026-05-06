@@ -9,21 +9,22 @@ via entry points, and the ``list_geometries()`` / ``get_geometry()`` /
 ``make_geometry()`` lookup functions.
 
 It also defines the shared **basis dictionaries** (``BASIS_YOU``,
-``BASIS_BL``) and the default **kappa tilt angle** (``KAPPA_ALPHA_DEFAULT``)
-used by the demo geometries in
-:mod:`ad_hoc_diffractometer.presets`.
+``BASIS_BL``, ``BASIS_DEFAULT``) and the default **kappa tilt angle**
+(``KAPPA_ALPHA_DEFAULT``) used by the demo geometries shipped under
+:mod:`ad_hoc_diffractometer.geometries`.
 
 Demo geometries
 ---------------
 
 The 10 demo geometries (``psic``, ``fourcv``, ``fourch``, ``sixc``,
 ``kappa4cv``, ``kappa4ch``, ``kappa6c``, ``zaxis``, ``s2d2``,
-``fivec``) live in :mod:`ad_hoc_diffractometer.presets`.  Access them
-as::
+``fivec``) are declarative YAML files in
+:mod:`ad_hoc_diffractometer.geometries`.  Access them via the
+registry::
 
     import ad_hoc_diffractometer as ahd
 
-    g = ahd.presets.fourcv()
+    g = ahd.make_geometry("fourcv")
 
 Extension via entry points
 --------------------------
@@ -359,7 +360,7 @@ Maps physical direction names to Cartesian unit vectors:
 - ``"transverse"`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)
 
 Default basis used by ``psic``, ``sixc``, ``kappa6c``,
-``zaxis``, ``s2d2``, and ``fivec`` (in :mod:`ad_hoc_diffractometer.presets`).
+``zaxis``, ``s2d2``, and ``fivec`` (in :mod:`ad_hoc_diffractometer.geometries`).
 """
 
 BASIS_BL = {
@@ -376,7 +377,7 @@ Maps physical direction names to Cartesian unit vectors:
 - ``"vertical"`` → +z (opposite to gravitational acceleration)
 
 Used by ``fourcv``, ``fourch``, ``kappa4cv``, and ``kappa4ch``
-(in :mod:`ad_hoc_diffractometer.presets`).
+(in :mod:`ad_hoc_diffractometer.geometries`).
 """
 
 BASIS_DEFAULT = {
