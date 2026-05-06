@@ -154,6 +154,44 @@ requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
 | **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
 | **Extras (output)** | psi (computed azimuth) |
 
+### `fixed_alpha_i_fixed_chi_fixed_phi`
+
+Issue #264.  Two sample stages (`chi`, `phi`) and the incidence angle
+α_i are all fixed; the four remaining angles `mu`, `eta`, `nu`, `delta`
+are solved jointly from the Bragg condition plus the α_i target.
+This is a 4-D Newton solve that routes through the
+``_solve_free_detectors`` solver (both detector stages float to lift
+the detector arm out of plane as needed).
+
+Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
+
+| | |
+|---|---|
+| **Computed** | mu, eta, nu, delta |
+| **Constant during** `forward()` | chi, phi, α_i = target |
+| **Extras (input)** | n̂ (surface normal) |
+
+### `fixed_omega_vertical`
+
+Issue #264.  SPEC ``omega-fixed`` family in the vertical scattering
+plane (`mu = 0`, `nu = 0`).  ``omega`` here is the SPEC ``OMEGA``
+**pseudo-angle** (`def OMEGA 'Q[6]'`) — the angle between the
+scattering vector Q and the plane of the chi circle — *not* the
+four-circle stage of the same name.  See
+{func}`~ad_hoc_diffractometer.reference.omega_pseudo`.
+
+The default target is ``omega = 0``; in that special case the mode
+reduces exactly to ``bisecting_vertical`` (above) because OMEGA = 0
+⇔ Q lies in the chi-circle plane ⇔ bisecting condition.  Non-zero
+targets tilt Q out of the chi-circle plane and are solved by a 1-D
+Newton refinement on the free outer sample stage (`eta`).
+
+| | |
+|---|---|
+| **Computed** | eta, chi, phi, delta |
+| **Constant during** `forward()` | mu = 0, nu = 0, OMEGA = target |
+| **Extras (output)** | omega (computed pseudo-angle) |
+
 ### `double_diffraction_vertical`
 
 Full 4D simultaneous solver in the vertical scattering plane: finds motor
@@ -287,6 +325,20 @@ Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
 | **Extras (input)** | n̂, ψ |
 | **Extras (output)** | psi |
 
+### `fixed_omega_horizontal`
+
+Issue #264.  SPEC ``omega-fixed`` family in the horizontal scattering
+plane (`eta = 0`, `delta = 0`).  Same OMEGA pseudo-angle definition as
+``fixed_omega_vertical`` above; at ``omega = 0`` the mode reduces
+exactly to ``bisecting_horizontal``.  The free outer sample stage
+rocked by the 1-D Newton is `mu`.
+
+| | |
+|---|---|
+| **Computed** | mu, chi, phi, nu |
+| **Constant during** `forward()` | eta = 0, delta = 0, OMEGA = target |
+| **Extras (output)** | omega (computed pseudo-angle) |
+
 ### `double_diffraction_horizontal`
 
 Full 4D simultaneous solver in the horizontal scattering plane.
@@ -319,25 +371,45 @@ choose a plane that contains a vertical reciprocal direction
 
 ### `lifting_detector_phi`
 
-Out-of-plane mode: phi and mu frozen, nu and delta solved via the qaz
-constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
-``qaz = 90°`` constrains the scattering to the vertical plane.
+Issue #264 revision.  Out-of-plane mode: every sample stage except
+`phi` is fixed at zero (`mu`, `eta`, `chi`); both detector stages
+(`nu`, `delta`) float jointly to satisfy the Bragg condition.  The
+"lifting detector" effect (`nu` generally non-zero) emerges naturally
+for any `(h, k, l)` requiring out-of-plane scattering — no explicit
+qaz constraint is used.
+
+The free sample DOF is `phi`, so reflections whose Q lies along the
+sample's `phi` rotation axis (transverse direction in the rest pose)
+are kinematically inaccessible.
 
 | | |
 |---|---|
 | **Computed** | phi, nu, delta |
-| **Constant during** `forward()` | phi = 0, mu = 0 |
+| **Constant during** `forward()` | mu = 0, eta = 0, chi = 0 |
 
 ### `lifting_detector_mu`
 
-Out-of-plane mode: mu and eta frozen, nu and delta solved via the qaz
-constraint (``tan(qaz) = tan(delta) / sin(nu)``, You 1999 eq. 18).
-``qaz = 90°`` constrains the scattering to the vertical plane.
+Issue #264 revision.  Symmetric counterpart fixing every sample stage
+except `mu` (`eta`, `chi`, `phi` all at zero); `mu`, `nu`, `delta`
+float.  Reflections with Q along `mu`'s rotation axis (vertical) are
+kinematically inaccessible.
 
 | | |
 |---|---|
 | **Computed** | mu, nu, delta |
-| **Constant during** `forward()` | mu = 0, eta = 0 |
+| **Constant during** `forward()` | eta = 0, chi = 0, phi = 0 |
+
+### `lifting_detector_eta`
+
+Issue #264.  Symmetric counterpart fixing every sample stage except
+`eta` (`mu`, `chi`, `phi` all at zero); `eta`, `nu`, `delta` float
+under the Bragg condition.  Reflections with Q along `eta`'s rotation
+axis are kinematically inaccessible.
+
+| | |
+|---|---|
+| **Computed** | eta, nu, delta |
+| **Constant during** `forward()` | mu = 0, chi = 0, phi = 0 |
 
 ## Mode cross-reference
 
@@ -353,6 +425,8 @@ the Hkl/Soleil `E6C` `hkl` engine, and You (1999).
 | `fixed_beta_out_vertical` | `(2,3,5,0,0)` | — | §6.2 |
 | `alpha_eq_beta_vertical` | `(2,1,5,0,0)` | — | §6.3 |
 | `fixed_psi_vertical` | `(2,4,5,0,0)` | `psi_constant_vertical` | §6.4 |
+| `fixed_alpha_i_fixed_chi_fixed_phi` | `(2,2,3,4,0)` ‡ | — | §6.1 |
+| `fixed_omega_vertical` | `setmode d1 0 0 0` | — | §5 (Q[6]) |
 | `double_diffraction_vertical` | — | `double_diffraction_vertical` | §6.5 |
 | `zone_vertical` | `setmode 5` | (TODO `HklEngine "zone"`) | §6 |
 | `bisecting_horizontal` | `(1,0,6,0,0)` | `bissector_horizontal` | §5.1 |
@@ -362,10 +436,12 @@ the Hkl/Soleil `E6C` `hkl` engine, and You (1999).
 | `fixed_beta_out_horizontal` | `(1,3,6,0,0)` | — | §6.2 |
 | `alpha_eq_beta_horizontal` | `(1,1,6,0,0)` | — | §6.3 |
 | `fixed_psi_horizontal` | `(1,4,6,0,0)` | `psi_constant_horizontal` | §6.4 |
+| `fixed_omega_horizontal` | `setmode d1 0 0 0` | — | §5 (Q[6]) |
 | `double_diffraction_horizontal` | — | `double_diffraction_horizontal` | §6.5 |
 | `zone_horizontal` | `setmode 5` | (TODO `HklEngine "zone"`) | §6 |
-| `lifting_detector_phi` | `(3,0,4,2,0)` | `lifting_detector_phi` | §5.4 |
-| `lifting_detector_mu` | `(3,0,1,2,0)` | `lifting_detector_mu` | §5.4 |
+| `lifting_detector_phi` | `setmode 0 0 2 3 5` ‡ | `lifting_detector_phi` | §5.4 |
+| `lifting_detector_mu` | `setmode 0 0 1 3 4` ‡ | `lifting_detector_mu` | §5.4 |
+| `lifting_detector_eta` | `setmode 0 0 1 3 5` ‡ | — | §5.4 |
 
 The SPEC tuple is `(g_mode1, g_mode2, g_mode3, g_mode4, g_mode5)`,
 where `g_mode1` selects the scattering plane (1 = horizontal,
@@ -381,6 +457,13 @@ as currently not working (the eta-fixed + chi-fixed and eta-fixed +
 phi-fixed combinations under `setmode d1 0 s1 s2`); the
 `ad_hoc_diffractometer` implementation of these modes is independent of
 SPEC and works as documented above.
+
+‡: SPEC mode tuples flagged here are reconstructed from the
+`setmode 0 0 s1 s2 s3` ("three-sample-fixed") and `setmode 0 d2 …`
+families used in @jwkim-anl's review on issue #264.  They map to the
+revised psic modes (no `qaz` constraint, three sample stages frozen,
+both detector stages free); SPEC's exact tuple may differ slightly
+depending on the specific instrument's `setmode` macro selectors.
 
 References:
 [SPEC `psic` macros](https://certif.com/spec_help/psic.html);
