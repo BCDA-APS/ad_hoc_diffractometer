@@ -13,13 +13,13 @@
     ],
     "properties": {
         "ad_hoc_diffractometer_geometry": {
-            "description": "Document marker. Its presence identifies the file as an ad_hoc_diffractometer geometry; the integer revision selects the schema version.",
+            "description": "Document marker. Its presence identifies the file as an ad_hoc_diffractometer geometry; the integer schema_revision selects which version of this schema the file conforms to.  schema_revision is a fixed property of the schema, not a per-file edit counter; users should treat the value verbatim.",
             "type": "object",
             "additionalProperties": false,
-            "required": ["revision"],
+            "required": ["schema_revision"],
             "properties": {
-                "revision": {
-                    "description": "Schema revision (currently must equal 1).",
+                "schema_revision": {
+                    "description": "Schema revision (currently must equal 1).  Independent of the package version; treat this as a verbatim identifier of the schema this file conforms to, not a per-file edit counter.",
                     "type": "integer",
                     "enum": [1]
                 }

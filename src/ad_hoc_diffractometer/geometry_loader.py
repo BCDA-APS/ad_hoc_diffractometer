@@ -34,13 +34,16 @@ Schema marker
 Every declarative geometry file must declare itself at the top level::
 
     ad_hoc_diffractometer_geometry:
-        revision: 1
+        schema_revision: 1
 
 The presence of this key (with a well-formed mapping value containing a
-supported integer ``revision``) is the signal that the document is a
-geometry declaration.  Files lacking the marker are treated by the
-polymorphic-string dispatch in :func:`load_geometry_file` as paths, not
-as YAML text.
+supported integer ``schema_revision``) is the signal that the document
+is a geometry declaration.  ``schema_revision`` is a fixed property of
+the schema this file conforms to — not a per-file edit counter; users
+should treat the value verbatim and only change it when migrating the
+file to a different declarative-geometry schema revision.  Files
+lacking the marker are treated by the polymorphic-string dispatch in
+:func:`load_geometry_file` as paths, not as YAML text.
 
 Polymorphic source dispatch
 ---------------------------
@@ -154,7 +157,7 @@ _TOP_LEVEL_KEYS: frozenset[str] = frozenset(
     }
 )
 
-_MARKER_KEYS: frozenset[str] = frozenset({"revision"})
+_MARKER_KEYS: frozenset[str] = frozenset({"schema_revision"})
 _PARAMETERS_KEYS: frozenset[str] = frozenset({"alpha_deg"})
 _STAGE_KEYS: frozenset[str] = frozenset({"name", "axis", "parent", "role"})
 _MODE_KEYS: frozenset[str] = frozenset(
@@ -228,23 +231,23 @@ def _validate_marker(doc: dict[str, Any]) -> int:
             f"missing top-level marker key {KIND_KEY!r}; every declarative "
             f"geometry file must declare its kind and schema revision, e.g.\n"
             f"    {KIND_KEY}:\n"
-            f"        revision: {CURRENT_REVISION}"
+            f"        schema_revision: {CURRENT_REVISION}"
         )
     marker = doc[KIND_KEY]
     if not isinstance(marker, dict):
         raise GeometrySchemaError(
-            f"{KIND_KEY!r} value must be a mapping with a 'revision' integer; "
-            f"got {type(marker).__name__!r} ({marker!r})."
+            f"{KIND_KEY!r} value must be a mapping with a 'schema_revision' "
+            f"integer; got {type(marker).__name__!r} ({marker!r})."
         )
     _check_unknown_keys(marker, _MARKER_KEYS, f"inside {KIND_KEY!r}")
-    if "revision" not in marker:
+    if "schema_revision" not in marker:
         raise GeometrySchemaError(
-            f"{KIND_KEY!r} mapping must contain a 'revision' integer key."
+            f"{KIND_KEY!r} mapping must contain a 'schema_revision' integer key."
         )
-    revision = marker["revision"]
+    revision = marker["schema_revision"]
     if not isinstance(revision, int) or isinstance(revision, bool):
         raise GeometrySchemaError(
-            f"{KIND_KEY!r}.revision must be an integer; "
+            f"{KIND_KEY!r}.schema_revision must be an integer; "
             f"got {type(revision).__name__!r} ({revision!r})."
         )
     if revision not in SUPPORTED_REVISIONS:

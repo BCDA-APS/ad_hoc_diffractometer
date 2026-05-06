@@ -57,7 +57,7 @@ from ad_hoc_diffractometer.mode import SampleConstraint
 # the full fourcv complexity).
 _MINIMAL_YAML = """\
 ad_hoc_diffractometer_geometry:
-    revision: 1
+    schema_revision: 1
 name: tiny
 documentation: A minimal demo geometry used in loader unit tests.
 basis: BL
@@ -190,24 +190,24 @@ def test_missing_marker_in_loaded_text_falls_back_to_path():
             id="unknown-marker-subkey",
         ),
         pytest.param(
-            {"revision": "1"},
-            r"revision must be an integer",
-            id="revision-string",
+            {"schema_revision": "1"},
+            r"schema_revision must be an integer",
+            id="schema_revision-string",
         ),
         pytest.param(
-            {"revision": True},
-            r"revision must be an integer",
-            id="revision-bool",
+            {"schema_revision": True},
+            r"schema_revision must be an integer",
+            id="schema_revision-bool",
         ),
         pytest.param(
-            {"revision": 999},
+            {"schema_revision": 999},
             r"unsupported geometry schema revision 999",
-            id="revision-unsupported",
+            id="schema_revision-unsupported",
         ),
         pytest.param(
             {},
-            r"must contain a 'revision' integer key",
-            id="revision-missing",
+            r"must contain a 'schema_revision' integer key",
+            id="schema_revision-missing",
         ),
     ],
 )
@@ -531,9 +531,9 @@ def test_get_schema_returns_dict_with_expected_top_level():
 
 
 def test_schema_marker_revision_enum_matches_supported_revisions():
-    """The schema's revision enum must equal SUPPORTED_REVISIONS."""
+    """The schema's schema_revision enum must equal SUPPORTED_REVISIONS."""
     schema = get_schema()
-    enum = schema["properties"][KIND_KEY]["properties"]["revision"]["enum"]
+    enum = schema["properties"][KIND_KEY]["properties"]["schema_revision"]["enum"]
     assert set(enum) == set(SUPPORTED_REVISIONS)
 
 

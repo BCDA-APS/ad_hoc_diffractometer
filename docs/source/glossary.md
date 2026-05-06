@@ -187,10 +187,12 @@ Q (scattering vector)
 
 Schema marker (declarative geometry)
    The top-level mapping
-   ``ad_hoc_diffractometer_geometry: {revision: <int>}`` that every
-   declarative geometry YAML file must declare.  Its presence
+   ``ad_hoc_diffractometer_geometry: {schema_revision: <int>}`` that
+   every declarative geometry YAML file must declare.  Its presence
    identifies the document as a geometry declaration; the integer
-   ``revision`` selects which schema version the loader applies.
+   ``schema_revision`` selects which version of the declarative-
+   geometry schema the file conforms to.  ``schema_revision`` is a
+   fixed property of the schema, not a per-file edit counter.
    Independent of the package version: schema revisions are deliberate
    editorial events that change far less often than package releases.
    The currently supported revision is

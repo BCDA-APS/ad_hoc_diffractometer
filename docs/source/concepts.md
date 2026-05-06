@@ -139,8 +139,8 @@ A diffractometer geometry can be described in two ways:
   does not express, or when the stage layout itself is computed.
 
 Every declarative file begins with the schema marker
-``ad_hoc_diffractometer_geometry: {revision: 1}``, which identifies the
-document and selects the schema revision.  The loader
+``ad_hoc_diffractometer_geometry: {schema_revision: 1}``, which
+identifies the document and selects the schema revision.  The loader
 ({func}`~ad_hoc_diffractometer.geometry_loader.load_geometry_file` and
 {func}`~ad_hoc_diffractometer.geometry_loader.register_geometry_file`)
 parses the YAML, validates it, and constructs the geometry.  See
