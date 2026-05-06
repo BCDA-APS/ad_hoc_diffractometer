@@ -1377,14 +1377,18 @@ _PSIC_MODES_ALL = {
     "double_diffraction_horizontal",
     "lifting_detector_mu",
     "lifting_detector_phi",
+    "lifting_detector_eta",
     "fixed_psi_vertical",
     "fixed_psi_horizontal",
     "fixed_alpha_i_vertical",
     "fixed_beta_out_vertical",
     "alpha_eq_beta_vertical",
+    "fixed_alpha_i_fixed_chi_fixed_phi",
     "fixed_alpha_i_horizontal",
     "fixed_beta_out_horizontal",
     "alpha_eq_beta_horizontal",
+    "fixed_omega_vertical",
+    "fixed_omega_horizontal",
     "zone_vertical",
     "zone_horizontal",
 }
@@ -1400,6 +1404,9 @@ _PSIC_MODES_IMPLEMENTED = {
     "double_diffraction_horizontal",
     "lifting_detector_mu",
     "lifting_detector_phi",
+    "lifting_detector_eta",
+    "fixed_omega_vertical",
+    "fixed_omega_horizontal",
     "zone_vertical",
     "zone_horizontal",
 }
@@ -2813,3 +2820,207 @@ def test_kappa_bisecting_post_processing_limits_rejection(monkeypatch):
     assert sol["komega"] == pytest.approx(candidate_a["komega"])
     assert sol["kappa"] == pytest.approx(candidate_a["kappa"])
     assert sol["kphi"] == pytest.approx(candidate_a["kphi"])
+
+
+# ---------------------------------------------------------------------------
+# Issue #264 — Step B new psic modes
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "mode_name, h, k, l, context",
+    [
+        pytest.param(
+            "fixed_omega_vertical",
+            1,
+            0,
+            0,
+            does_not_raise(),
+            id="omega_v-100",
+        ),
+        pytest.param(
+            "fixed_omega_vertical",
+            0,
+            1,
+            1,
+            does_not_raise(),
+            id="omega_v-011",
+        ),
+        pytest.param(
+            "fixed_omega_horizontal",
+            0,
+            0,
+            1,
+            does_not_raise(),
+            id="omega_h-001",
+        ),
+        pytest.param(
+            "fixed_omega_horizontal",
+            1,
+            0,
+            1,
+            does_not_raise(),
+            id="omega_h-101",
+        ),
+    ],
+)
+def test_psic_fixed_omega_round_trip(mode_name, h, k, l, context):  # noqa: E741
+    """fixed_omega_* modes (target = 0) round-trip and reduce to bisecting."""
+    from ad_hoc_diffractometer.reference import omega_pseudo
+
+    with context:
+        g = _setup_cubic(psic, a=4.0)
+        g.mode_name = mode_name
+        sols = g.forward(h, k, l)
+        assert len(sols) > 0, f"{mode_name} ({h},{k},{l}): no solutions"
+        for sol in sols:
+            # Round-trip Bragg
+            hkl_back = g.inverse(sol)
+            assert np.allclose(hkl_back, [h, k, l], atol=1e-6), (
+                f"{mode_name} ({h},{k},{l}): inverse mismatch {hkl_back}"
+            )
+            # OMEGA pseudo-angle = 0 in every solution
+            om = omega_pseudo(g, angles=sol)
+            assert om == pytest.approx(0.0, abs=1e-5), (
+                f"{mode_name} ({h},{k},{l}): expected OMEGA=0, got {om}"
+            )
+
+
+def test_psic_fixed_omega_vertical_matches_bisecting():
+    """fixed_omega_vertical (omega=0) yields the bisecting_vertical solutions."""
+    g = _setup_cubic(psic, a=4.0)
+    g.mode_name = "bisecting_vertical"
+    bisect_sols = g.forward(1, 0, 0)
+    g.mode_name = "fixed_omega_vertical"
+    omega_sols = g.forward(1, 0, 0)
+    assert len(bisect_sols) == len(omega_sols)
+    # Compare matching solutions (sort by eta)
+    bisect_sorted = sorted(bisect_sols, key=lambda s: s["eta"])
+    omega_sorted = sorted(omega_sols, key=lambda s: s["eta"])
+    for b, o in zip(bisect_sorted, omega_sorted, strict=False):
+        for stage in ("mu", "eta", "chi", "phi", "nu", "delta"):
+            assert b[stage] == pytest.approx(o[stage], abs=1e-6), (
+                f"stage {stage}: bisect={b[stage]}, omega={o[stage]}"
+            )
+
+
+def test_psic_fixed_omega_nonzero_target():
+    """fixed_omega_vertical with omega=5° produces solutions with OMEGA=5°."""
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import DetectorConstraint
+    from ad_hoc_diffractometer import ReferenceConstraint
+    from ad_hoc_diffractometer import SampleConstraint
+    from ad_hoc_diffractometer.reference import omega_pseudo
+
+    g = _setup_cubic(psic, a=4.0)
+    g.modes["__test_omega_5"] = ConstraintSet(
+        [
+            SampleConstraint("mu", 0.0),
+            DetectorConstraint("nu", 0.0),
+            ReferenceConstraint("omega", 5.0),
+        ],
+        computed=["eta", "chi", "phi", "delta"],
+    )
+    g.mode_name = "__test_omega_5"
+    sols = g.forward(1, 0, 0)
+    assert len(sols) > 0
+    for sol in sols:
+        om = omega_pseudo(g, angles=sol)
+        assert om == pytest.approx(5.0, abs=1e-3), f"omega=5° target: got OMEGA={om}"
+        # Bragg still satisfied
+        hkl_back = g.inverse(sol)
+        assert np.allclose(hkl_back, [1, 0, 0], atol=1e-5)
+
+
+@pytest.mark.parametrize(
+    "h, k, l, alpha_target, context",
+    [
+        pytest.param(0, 1, 1, 0.0, does_not_raise(), id="011-ai0"),
+        pytest.param(0, 1, 1, 5.0, does_not_raise(), id="011-ai5"),
+        pytest.param(1, 1, 1, 3.0, does_not_raise(), id="111-ai3"),
+    ],
+)
+def test_psic_fixed_alpha_i_fixed_chi_fixed_phi_round_trip(
+    h,
+    k,
+    l,  # noqa: E741
+    alpha_target,
+    context,
+):
+    """Issue #264 B3: 4-D Newton with chi=phi=0 + alpha_i target."""
+    from ad_hoc_diffractometer import REQUIRED
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import ReferenceConstraint
+    from ad_hoc_diffractometer import SampleConstraint
+    from ad_hoc_diffractometer.reference import incidence_angle
+
+    with context:
+        g = _setup_cubic(psic, a=4.0)
+        g.surface_normal = (0, 0, 1)
+        g.modes["__test_b3"] = ConstraintSet(
+            [
+                SampleConstraint("chi", 0.0),
+                SampleConstraint("phi", 0.0),
+                ReferenceConstraint("alpha_i", alpha_target),
+            ],
+            computed=["mu", "eta", "nu", "delta"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        )
+        g.mode_name = "__test_b3"
+        sols = g.forward(h, k, l)
+        assert len(sols) > 0, f"B3 ({h},{k},{l}) alpha_i={alpha_target}: no solutions"
+        for sol in sols:
+            assert sol["chi"] == pytest.approx(0.0, abs=1e-6)
+            assert sol["phi"] == pytest.approx(0.0, abs=1e-6)
+            ai = incidence_angle(g, angles=sol)
+            assert ai == pytest.approx(alpha_target, abs=1e-3), (
+                f"B3 ({h},{k},{l}) alpha_i target {alpha_target}: got {ai}"
+            )
+            hkl_back = g.inverse(sol)
+            assert np.allclose(hkl_back, [h, k, l], atol=1e-5)
+
+
+def test_psic_fixed_alpha_i_fixed_chi_fixed_phi_requires_surface_normal():
+    """B3 mode is_implemented=False until surface_normal is set."""
+    g = _setup_cubic(psic, a=4.0)
+    cs = g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
+    assert cs.is_implemented(g) is False
+    g.surface_normal = (0, 0, 1)
+    assert cs.is_implemented(g) is True
+
+
+@pytest.mark.parametrize(
+    "h, k, l, context",
+    [
+        pytest.param(1, 0, 0, does_not_raise(), id="lift_eta-100"),
+        pytest.param(0, 1, 0, does_not_raise(), id="lift_eta-010"),
+        pytest.param(1, 1, 0, does_not_raise(), id="lift_eta-110"),
+        pytest.param(1, 1, 1, does_not_raise(), id="lift_eta-111"),
+    ],
+)
+def test_psic_lifting_detector_eta_round_trip(h, k, l, context):  # noqa: E741
+    """Issue #264 B4: lifting_detector_eta round-trip.
+
+    Fixes mu, chi, phi at zero and lets eta, nu, delta float to satisfy
+    the Bragg condition.  Both detector stages free (no qaz)."""
+    with context:
+        g = _setup_cubic(psic, a=4.0)
+        g.mode_name = "lifting_detector_eta"
+        sols = g.forward(h, k, l)
+        assert len(sols) > 0, f"lifting_detector_eta ({h},{k},{l}): no solutions"
+        for sol in sols:
+            assert sol["mu"] == pytest.approx(0.0, abs=1e-6)
+            assert sol["chi"] == pytest.approx(0.0, abs=1e-6)
+            assert sol["phi"] == pytest.approx(0.0, abs=1e-6)
+            hkl_back = g.inverse(sol)
+            assert np.allclose(hkl_back, [h, k, l], atol=1e-5)
+
+
+def test_psic_lifting_detector_eta_lifts_for_out_of_plane_hkl():
+    """For (1,1,1) the detector lifts out of the horizontal plane (nu != 0)."""
+    g = _setup_cubic(psic, a=4.0)
+    g.mode_name = "lifting_detector_eta"
+    sols = g.forward(1, 1, 1)
+    assert any(abs(s["nu"]) > 1.0 for s in sols), (
+        "lifting_detector_eta (1,1,1): expected nu != 0 in at least one solution"
+    )

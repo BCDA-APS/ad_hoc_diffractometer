@@ -220,6 +220,24 @@ def _reference_psic() -> AdHocDiffractometer:
             computed=["eta", "chi", "phi", "delta"],
             extras={"n_hat": REQUIRED, "psi": None},
         ),
+        "fixed_alpha_i_fixed_chi_fixed_phi": ConstraintSet(
+            [
+                SampleConstraint("chi", 0.0),
+                SampleConstraint("phi", 0.0),
+                ReferenceConstraint("alpha_i", 0.0),
+            ],
+            computed=["mu", "eta", "nu", "delta"],
+            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        ),
+        "fixed_omega_vertical": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                DetectorConstraint("nu", 0.0),
+                ReferenceConstraint("omega", 0.0),
+            ],
+            computed=["eta", "chi", "phi", "delta"],
+            extras={"omega": None},
+        ),
         "double_diffraction_vertical": ConstraintSet(
             [
                 SampleConstraint("mu", 0.0),
@@ -289,6 +307,15 @@ def _reference_psic() -> AdHocDiffractometer:
             computed=["mu", "chi", "phi", "nu"],
             extras={"n_hat": REQUIRED, "psi": None},
         ),
+        "fixed_omega_horizontal": ConstraintSet(
+            [
+                SampleConstraint("eta", 0.0),
+                DetectorConstraint("delta", 0.0),
+                ReferenceConstraint("omega", 0.0),
+            ],
+            computed=["mu", "chi", "phi", "nu"],
+            extras={"omega": None},
+        ),
         "double_diffraction_horizontal": ConstraintSet(
             [
                 SampleConstraint("eta", 0.0),
@@ -330,6 +357,14 @@ def _reference_psic() -> AdHocDiffractometer:
                 DetectorConstraint("qaz", 90.0),
             ],
             computed=["mu", "nu", "delta"],
+        ),
+        "lifting_detector_eta": ConstraintSet(
+            [
+                SampleConstraint("mu", 0.0),
+                SampleConstraint("chi", 0.0),
+                SampleConstraint("phi", 0.0),
+            ],
+            computed=["eta", "nu", "delta"],
         ),
     }
     return AdHocDiffractometer(

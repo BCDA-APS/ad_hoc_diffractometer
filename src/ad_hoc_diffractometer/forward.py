@@ -528,6 +528,12 @@ def _solve_constraint_set(
     if _is_qaz_mode(geometry, mode):
         return _solve_qaz_mode(geometry, Q_phi, ttheta_deg, mode)
 
+    # Free-detectors mode (issue #264 — both detector stages float to
+    # satisfy Bragg jointly with the remaining sample stages, optionally
+    # with one ReferenceConstraint such as alpha_i).
+    if _is_free_detectors_mode(geometry, mode):
+        return _solve_free_detectors(geometry, Q_phi, ttheta_deg, mode)
+
     # Fixed-angle only (no bisect).
     return _solve_fixed_sample(geometry, Q_phi, ttheta_deg, mode)
 
@@ -2824,13 +2830,44 @@ def _is_surface_mode(geometry: AdHocDiffractometer, mode) -> bool:
     The ``"psi"`` and ``"omega"`` ReferenceConstraints are NOT surface modes —
     they are handled by :func:`_is_psi_mode` / :func:`_solve_psi_mode` and
     :func:`_is_omega_mode` / :func:`_solve_omega_mode` respectively.
+
+    psic-family modes that leave **two free sample stages** along with both
+    detector stages free are routed to :func:`_solve_free_detectors`
+    instead (the new general solver added for issue #264) — the legacy
+    ``_solve_surface`` only rocks a single sample stage and assumes that
+    fixing the active detector to ``ttheta`` plus the other constraints
+    is enough to satisfy Bragg.
     """
     from .mode import ReferenceConstraint
 
-    return geometry.surface_normal is not None and any(
+    if geometry.surface_normal is None:
+        return False
+    has_surface_ref = any(
         isinstance(c, ReferenceConstraint) and c.name not in {"psi", "omega"}
         for c in mode.constraints
     )
+    if not has_surface_ref:
+        return False
+    # Defer to :func:`_is_free_detectors_mode` for psic-family modes
+    # with 2 free sample stages and 2 free detector stages (issue
+    # #264 — the B3 mode ``fixed_alpha_i_fixed_chi_fixed_phi``).  The
+    # ``chi`` stage check restricts this exclusion to psic; existing
+    # zaxis/s2d2/sixc surface modes (which also have free detectors)
+    # stay on :func:`_solve_surface` where the legacy 1-D Newton works
+    # well thanks to the constrained sample stack.
+    has_chi = any(s.name == "chi" for s in geometry.sample_stages)
+    if has_chi:
+        fixed_sample_names = {c.name for c in mode.fixed_sample_constraints}
+        n_free_sample = sum(
+            1 for s in geometry.sample_stages if s.name not in fixed_sample_names
+        )
+        if (
+            n_free_sample >= 2
+            and mode.detector_constraint is None
+            and len(geometry.detector_stages) >= 2
+        ):
+            return False
+    return True
 
 
 def _solve_surface(
@@ -3543,6 +3580,282 @@ def _solve_qaz_mode(
                     found_solutions.append(sol)
 
     return found_solutions
+
+
+# ---------------------------------------------------------------------------
+# Free-detectors solver (issue #264 — both detector stages free)
+# ---------------------------------------------------------------------------
+
+
+def _is_free_detectors_mode(geometry: AdHocDiffractometer, mode) -> bool:
+    """Return True when both detector stages are free under ``mode``.
+
+    Used by :func:`_solve_free_detectors` to dispatch psic-family modes
+    that fix multiple sample stages and let the detector arm orient
+    itself entirely from the Bragg condition (and any reference
+    constraint such as ``alpha_i``).  Examples (issue #264):
+
+    - ``lifting_detector_eta`` (3 sample fixed, 1 sample + 2 detector free)
+    - revised ``lifting_detector_phi`` / ``lifting_detector_mu``
+      (after step C of #264 — same shape, different fixed sample stage)
+    - ``fixed_alpha_i_fixed_chi_fixed_phi`` (2 sample fixed + alpha_i,
+      2 sample + 2 detector free)
+
+    The predicate is intentionally conservative: it requires the
+    psic-family geometry signature (a sample stage named ``"chi"``),
+    two detector stages with neither pinned by ``DetectorConstraint``,
+    no qaz/bisect constraint, and a free-sample count compatible with
+    the equation count (Bragg gives 3 equations; each
+    :class:`~mode.ReferenceConstraint` other than ``"omega"`` adds 1).
+    Existing surface geometries (zaxis, s2d2, sixc) lack ``chi`` and
+    continue to use :func:`_solve_surface`.
+    """
+    from .mode import ReferenceConstraint
+
+    detectors = geometry.detector_stages
+    if len(detectors) < 2:
+        return False
+
+    # Restrict to psic-family geometries to avoid disturbing the
+    # zaxis/s2d2/sixc surface mode dispatch path.
+    if not any(s.name == "chi" for s in geometry.sample_stages):
+        return False
+
+    det_constraint = mode.detector_constraint
+    if det_constraint is not None:
+        # qaz is handled by _is_qaz_mode; any other detector constraint
+        # pins one detector stage and is handled by _solve_fixed_sample.
+        return False
+
+    if mode.has_bisect:
+        return False
+
+    fixed_sample_names = {c.name for c in mode.fixed_sample_constraints}
+    free_sample = [
+        s for s in geometry.sample_stages if s.name not in fixed_sample_names
+    ]
+    n_free_sample = len(free_sample)
+
+    # Count reference equations (excluding "omega", which has its own
+    # solver at _solve_omega_mode).
+    n_ref_eqs = sum(
+        1
+        for c in mode.constraints
+        if isinstance(c, ReferenceConstraint) and c.name != "omega"
+    )
+
+    # Equations available: 3 (Bragg) + n_ref_eqs.
+    # Unknowns: n_free_sample + 2 (both detectors free).
+    n_unknowns = n_free_sample + 2
+    n_equations = 3 + n_ref_eqs
+
+    return n_unknowns == n_equations and n_free_sample >= 1
+
+
+def _solve_free_detectors(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+) -> list[dict[str, float]]:
+    """
+    Numerical Newton solver for psic-family modes with both detector
+    stages free.
+
+    Adds support for the issue #264 modes that drop the qaz constraint
+    and let nu and delta float jointly to satisfy the Bragg condition:
+
+    - ``lifting_detector_eta`` (B4)
+    - revised ``lifting_detector_phi`` / ``lifting_detector_mu`` (C3, C4)
+    - ``fixed_alpha_i_fixed_chi_fixed_phi`` (B3, with one alpha_i row)
+
+    Variables: every free sample stage plus both detector stages.
+    Equations: 3 from Bragg (``Q_phi(angles) == Q_phi_target``) plus 1 per
+    non-``omega`` :class:`~mode.ReferenceConstraint` in the mode.
+
+    The solver runs a finite-difference Levenberg-Marquardt-flavoured
+    Newton iteration from a small grid of seed points and de-duplicates
+    by the rounded free-stage values.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+    Q_phi : numpy.ndarray, shape (3,)
+    ttheta_deg : float
+        Magnitude of 2θ implied by ``Q_phi`` (used as a default seed for
+        the active detector stage; not enforced as a constraint).
+    mode : ConstraintSet
+
+    Returns
+    -------
+    list of dict[str, float]
+    """
+    from .mode import ReferenceConstraint
+
+    sample_stages = list(geometry.sample_stages)
+    detector_stages = list(geometry.detector_stages)
+
+    # Baseline angles (apply fixed sample constraints; detectors free)
+    angles_base: dict[str, float] = {
+        s.name: s.angle
+        for s in list(geometry._stages.values())  # noqa: SLF001
+    }
+    fixed_sample_names = set()
+    for c in mode.fixed_sample_constraints:
+        if c.name in geometry._stages:  # noqa: SLF001
+            angles_base[c.name] = float(c.value)
+            fixed_sample_names.add(c.name)
+
+    free_sample = [s for s in sample_stages if s.name not in fixed_sample_names]
+    free_det = list(detector_stages)
+    free_stages = free_sample + free_det
+    free_names = [s.name for s in free_stages]
+    n_free = len(free_names)
+
+    # Reference constraints contributing extra equations
+    ref_constraints = [
+        c
+        for c in mode.constraints
+        if isinstance(c, ReferenceConstraint) and c.name != "omega"
+    ]
+    n_ref = len(ref_constraints)
+    n_eqs = 3 + n_ref
+
+    if n_eqs != n_free:  # pragma: no cover
+        # _is_free_detectors_mode already enforces this, but be defensive
+        return []
+
+    def residual(x: np.ndarray) -> np.ndarray:
+        """Combined Bragg + reference residual."""
+        trial = dict(angles_base)
+        for name, val in zip(free_names, x, strict=False):
+            trial[name] = float(val)
+        from .orientation import _compute_q_phi
+
+        two_pi_over_lambda = 2.0 * np.pi / geometry.wavelength
+        y_hat = np.asarray(geometry.basis["longitudinal"], dtype=float)
+        y_hat = y_hat / np.linalg.norm(y_hat)
+        Q_trial = _compute_q_phi(
+            sample_stages, detector_stages, trial, two_pi_over_lambda, y_hat
+        )
+        r = np.zeros(n_eqs)
+        r[:3] = Q_trial - Q_phi
+        for i, rc in enumerate(ref_constraints):
+            r[3 + i] = _surface_residual(trial, geometry, rc.name, rc.value)
+        return r
+
+    def jacobian_fd(x: np.ndarray, r0: np.ndarray, h: float = 1e-4) -> np.ndarray:
+        J = np.zeros((n_eqs, n_free))
+        for j in range(n_free):
+            xp = x.copy()
+            xp[j] += h
+            J[:, j] = (residual(xp) - r0) / h
+        return J
+
+    # Seed grid: combine bisecting-style seeds for sample stages with
+    # ttheta-anchored seeds for detector stages.
+    sample_seeds: list[list[float]] = []
+    for s in free_sample:
+        lo, hi = s.limits
+        center = max(lo, min(hi, 0.0))
+        candidates = [center, ttheta_deg / 2.0, -ttheta_deg / 2.0, 30.0, -30.0]
+        sample_seeds.append(
+            sorted({float(c) for c in candidates if lo <= c <= hi}) or [center]
+        )
+    det_seed_pairs: list[tuple[float, float]] = []
+    nu_lo, nu_hi = free_det[0].limits
+    delta_lo, delta_hi = free_det[1].limits
+    # Common starting points for (nu, delta): in-plane and lifted variants
+    candidate_pairs = [
+        (0.0, ttheta_deg),
+        (0.0, -ttheta_deg),
+        (ttheta_deg, 0.0),
+        (-ttheta_deg, 0.0),
+        (ttheta_deg / 2.0, ttheta_deg / 2.0),
+        (-ttheta_deg / 2.0, ttheta_deg / 2.0),
+    ]
+    for nu0, d0 in candidate_pairs:
+        if nu_lo <= nu0 <= nu_hi and delta_lo <= d0 <= delta_hi:
+            det_seed_pairs.append((float(nu0), float(d0)))
+    if not det_seed_pairs:
+        det_seed_pairs.append((0.0, float(np.clip(ttheta_deg, delta_lo, delta_hi))))
+
+    # Build cartesian product of seed combinations (capped to keep the
+    # work bounded for high-dimensional cases).
+    from itertools import product
+
+    sample_combos = list(product(*sample_seeds)) if sample_seeds else [()]
+    seed_iter = list(product(sample_combos, det_seed_pairs))
+
+    solutions: list[dict[str, float]] = []
+    seen: list[tuple[float, ...]] = []
+
+    for sample_combo, (nu0, d0) in seed_iter:
+        x0 = list(sample_combo) + [nu0, d0]
+        x = np.array(x0, dtype=float)
+
+        # Levenberg-Marquardt with a damping parameter for stability.
+        lam = 1e-3
+        for _ in range(80):
+            r = residual(x)
+            err = float(np.linalg.norm(r))
+            if err < 1e-9:
+                break
+            J = jacobian_fd(x, r)
+            JtJ = J.T @ J
+            try:
+                dx = np.linalg.solve(
+                    JtJ + lam * np.eye(n_free),
+                    -J.T @ r,
+                )
+            except np.linalg.LinAlgError:  # pragma: no cover
+                break
+            step = float(np.linalg.norm(dx))
+            if step > 30.0:
+                dx = dx * (30.0 / step)
+            x_new = x + dx
+            r_new = residual(x_new)
+            err_new = float(np.linalg.norm(r_new))
+            if err_new < err:
+                lam = max(lam * 0.5, 1e-9)
+                x = x_new
+            else:
+                lam = min(lam * 2.0, 1e3)
+
+        r_final = residual(x)
+        if float(np.linalg.norm(r_final)) > 1e-5:
+            continue
+
+        # Build the solution dict
+        sol = dict(angles_base)
+        for name, val in zip(free_names, x, strict=False):
+            # Normalize to (-180, 180]
+            sol[name] = ((float(val) + 180.0) % 360.0) - 180.0
+
+        # Limits check
+        if not _check_limits(geometry, sol):
+            continue
+
+        # Apply cut points first so equivalent wrap representatives
+        # (e.g. -180 vs +180) collapse before dedup.
+        _apply_cut_points(sol, mode, geometry)
+
+        # Deduplicate using a modular key so that representative angles
+        # one full turn apart (e.g. -180 vs +180) are recognized as the
+        # same physical setting independent of cut-point configuration.
+        # Round to 1 decimal place (0.1°) — finer than the typical
+        # numerical noise from the Newton iteration but well below any
+        # physically meaningful resolution.  The two-step round-then-mod
+        # collapses near-zero negatives (e.g. -1e-15) that Python's ``%``
+        # would otherwise wrap to ~360.
+        key = tuple(round(round(sol[n], 1) % 360.0, 1) for n in free_names)
+        if key in seen:
+            continue
+        seen.append(key)
+
+        solutions.append(sol)
+
+    return solutions
 
 
 def _solve_fixed_sample(
