@@ -9,18 +9,29 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ### Breaking changes
 
-- Replace `ad_hoc_diffractometer.presets.<geom>()` factories with declarative YAML; use `ahd.make_geometry(<name>, **kwargs)` instead. (#267)
+- Remove redundant psic modes. (#243)
+- Switch to declarative YAML for demo geometries. (#267)
+
+### Behavior change
+
+- psic `fixed_chi_horizontal` switch `chi=90°` (kinematically infeasible) to `chi=0°`. (#259)
+- psic `fixed_phi`/`fixed_chi` modes lock scattering-plane axis. (#243)
 
 ### Added
 
 - `BASIS_DEFAULT` neutral basis used when a YAML file omits `basis:`. (#267)
 - Declarative YAML geometry definitions and a loader. (#267)
-- psic and kappa6c zone modes (You §6, SPEC `setmode 5`) (#262)
+- Glossary entries for zone-mode work (Azimuth, Basis, Constraint, Cut point, Double diffraction, Extras, Zone). (#266)
+- psic and kappa6c zone modes (You §6, SPEC `setmode 5`). (#262)
 - `register_geometry_file()` and `load_geometry_file()`. (#267)
 
 ### Changed
 
 - `pyyaml` is now a runtime dependency. (#267)
+
+### Fixed
+
+- RST markup leak in the inclination how-to rendered HTML. (#257)
 
 ## Release v0.9.3
 
