@@ -545,3 +545,724 @@ def test_schema_constraint_types_match_loader_types():
         types.add(variant["properties"]["type"]["const"])
     expected = {"bisect", "virtual_bisect", "sample", "detector", "reference"}
     assert types == expected
+
+
+# ---------------------------------------------------------------------------
+# Error-path coverage for `_construct_from_doc` and helpers
+# ---------------------------------------------------------------------------
+#
+# Each parametrised case here exercises one error branch in the loader.
+# These tests are intentionally tightly scoped to lift coverage on
+# ``geometry_loader.py`` to 100 %; they are not meant to express new
+# product behavior beyond what the user-facing tests above already cover.
+
+
+def _yaml_doc_to_text(doc: dict) -> str:
+    """Render a Python dict as a YAML document the loader can parse."""
+    import yaml as _yaml
+
+    return _yaml.safe_dump(doc, sort_keys=False)
+
+
+def _minimal_doc(**overrides):
+    """Return a minimal valid geometry document as a Python dict."""
+    base = {
+        KIND_KEY: {"schema_revision": 1},
+        "name": "tiny",
+        "documentation": "smoke",
+        "basis": "BL",
+        "stages": [
+            {"name": "omega", "axis": "-transverse", "parent": None, "role": "sample"},
+            {
+                "name": "ttheta",
+                "axis": "-transverse",
+                "parent": None,
+                "role": "detector",
+            },
+        ],
+        "modes": {
+            "bisecting": {
+                "default": True,
+                "constraints": [
+                    {"type": "bisect", "stage1": "omega", "stage2": "ttheta"}
+                ],
+                "computed": ["omega", "ttheta"],
+            }
+        },
+    }
+    base.update(overrides)
+    return base
+
+
+@pytest.mark.parametrize(
+    "doc, match_pattern",
+    [
+        pytest.param(
+            _minimal_doc(name=""),
+            r"'name' must be a non-empty string",
+            id="empty-name",
+        ),
+        pytest.param(
+            _minimal_doc(name=42),
+            r"'name' must be a non-empty string",
+            id="non-string-name",
+        ),
+        pytest.param(
+            _minimal_doc(documentation=42),
+            r"'documentation' must be a string",
+            id="non-string-documentation",
+        ),
+        pytest.param(
+            _minimal_doc(parameters="not-a-mapping"),
+            r"'parameters' must be a mapping",
+            id="parameters-not-mapping",
+        ),
+        pytest.param(
+            _minimal_doc(parameters={"unknown_key": 1}),
+            r"unrecognised key.*unknown_key",
+            id="parameters-unknown-key",
+        ),
+    ],
+)
+def test_top_level_field_errors(doc, match_pattern):
+    """Error branches in `_construct_from_doc` for top-level fields."""
+    with pytest.raises(GeometrySchemaError, match=match_pattern):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+@pytest.mark.parametrize(
+    "doc, match_pattern",
+    [
+        pytest.param(
+            _minimal_doc(stages="oops"),
+            r"'stages' must be a non-empty list",
+            id="stages-not-list",
+        ),
+        pytest.param(
+            _minimal_doc(stages=[]),
+            r"'stages' must be a non-empty list",
+            id="stages-empty",
+        ),
+        pytest.param(
+            _minimal_doc(stages=["not-a-mapping"]),
+            r"stages\[0\] must be a mapping",
+            id="stage-not-mapping",
+        ),
+        pytest.param(
+            _minimal_doc(
+                stages=[{"axis": "+x", "parent": None, "role": "sample"}],
+            ),
+            r"stages\[0\] missing required key 'name'",
+            id="stage-missing-name",
+        ),
+    ],
+)
+def test_stage_field_errors(doc, match_pattern):
+    with pytest.raises(GeometrySchemaError, match=match_pattern):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+@pytest.mark.parametrize(
+    "modes_value, match_pattern",
+    [
+        pytest.param(
+            "oops", r"'modes' must be a non-empty mapping", id="modes-not-mapping"
+        ),
+        pytest.param({}, r"'modes' must be a non-empty mapping", id="modes-empty"),
+    ],
+)
+def test_modes_field_errors(modes_value, match_pattern):
+    doc = _minimal_doc()
+    doc["modes"] = modes_value
+    with pytest.raises(GeometrySchemaError, match=match_pattern):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_mode_name_must_be_string():
+    """Non-string mode name raises GeometrySchemaError."""
+    doc = _minimal_doc()
+    doc["modes"] = {
+        42: {
+            "constraints": [{"type": "bisect", "stage1": "omega", "stage2": "ttheta"}],
+            "computed": ["omega", "ttheta"],
+        }
+    }
+    with pytest.raises(GeometrySchemaError, match="mode names must be strings"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_mode_spec_not_mapping():
+    """Mode spec must itself be a mapping."""
+    doc = _minimal_doc()
+    doc["modes"] = {"weird": "scalar-not-mapping"}
+    with pytest.raises(GeometrySchemaError, match="must be a mapping"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+@pytest.mark.parametrize(
+    "constraints_value, match_pattern",
+    [
+        pytest.param(
+            "oops", r"'constraints' must be a list", id="constraints-not-list"
+        ),
+    ],
+)
+def test_mode_constraints_field_errors(constraints_value, match_pattern):
+    doc = _minimal_doc()
+    doc["modes"] = {
+        "wonky": {"constraints": constraints_value, "computed": []},
+    }
+    with pytest.raises(GeometrySchemaError, match=match_pattern):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_mode_computed_must_be_list():
+    doc = _minimal_doc()
+    doc["modes"] = {
+        "wonky": {"constraints": [], "computed": "not-a-list"},
+    }
+    with pytest.raises(GeometrySchemaError, match="'computed' must be a list"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_mode_extras_must_be_mapping():
+    doc = _minimal_doc()
+    doc["modes"] = {
+        "wonky": {"constraints": [], "computed": [], "extras": "not-a-mapping"},
+    }
+    with pytest.raises(GeometrySchemaError, match="'extras' must be a mapping"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_mode_cut_points_must_be_mapping():
+    doc = _minimal_doc()
+    doc["modes"] = {
+        "wonky": {"constraints": [], "computed": [], "cut_points": "not-a-mapping"},
+    }
+    with pytest.raises(GeometrySchemaError, match="'cut_points' must be a mapping"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+@pytest.mark.parametrize(
+    "constraint_spec, match_pattern",
+    [
+        pytest.param(
+            "scalar",
+            r"each constraint must be a mapping",
+            id="constraint-not-mapping",
+        ),
+        pytest.param(
+            {"stage1": "omega", "stage2": "ttheta"},
+            r"missing required 'type' key",
+            id="constraint-missing-type",
+        ),
+        pytest.param(
+            {"type": "bisect", "stage1": "omega"},
+            r"bisect requires 'stage2'",
+            id="bisect-missing-stage2",
+        ),
+        pytest.param(
+            {"type": "virtual_bisect", "stage1": "omega"},
+            r"virtual_bisect requires 'stage2'",
+            id="virtual_bisect-missing-stage2",
+        ),
+        pytest.param(
+            {"type": "sample", "stage": "omega"},
+            r"sample requires 'value'",
+            id="sample-missing-value",
+        ),
+        pytest.param(
+            {"type": "detector", "value": 0.0},
+            r"detector requires 'stage'",
+            id="detector-missing-stage",
+        ),
+        pytest.param(
+            {"type": "reference", "value": 0.0},
+            r"reference requires 'name'",
+            id="reference-missing-name",
+        ),
+    ],
+)
+def test_constraint_dispatch_errors(constraint_spec, match_pattern):
+    doc = _minimal_doc()
+    doc["modes"] = {
+        "wonky": {
+            "constraints": [constraint_spec],
+            "computed": [],
+        },
+    }
+    with pytest.raises(GeometrySchemaError, match=match_pattern):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_basis_omitted_uses_default_warning_value():
+    """When `basis:` is omitted, the loader emits a UserWarning AND uses
+    BASIS_DEFAULT (covers the warnings.warn branch)."""
+    import numpy as np
+
+    doc = _minimal_doc()
+    del doc["basis"]
+    with pytest.warns(UserWarning, match="BASIS_DEFAULT"):
+        g = load_geometry_file(_yaml_doc_to_text(doc))
+    np.testing.assert_array_equal(g.basis["vertical"], BASIS_DEFAULT["vertical"])
+
+
+def test_basis_caller_dict_missing_keys_raises():
+    """Caller-supplied dict missing required basis keys raises."""
+    doc = _minimal_doc()
+    with pytest.raises(GeometrySchemaError, match="caller-supplied basis is missing"):
+        load_geometry_file(
+            _yaml_doc_to_text(doc),
+            basis={"vertical": [1.0, 0.0, 0.0]},  # missing two keys
+        )
+
+
+def test_basis_caller_string_shorthand():
+    """Caller may pass a shorthand string instead of a dict."""
+    import numpy as np
+
+    doc = _minimal_doc()
+    g = load_geometry_file(_yaml_doc_to_text(doc), basis="YOU")
+    # YOU has vertical=XHAT
+    np.testing.assert_array_equal(g.basis["vertical"], [1.0, 0.0, 0.0])
+
+
+def test_basis_numeric_vector_non_numeric_entries_rejected():
+    """Numeric basis vector with non-numeric entries raises."""
+    doc = _minimal_doc()
+    doc["basis"] = {
+        "vertical": ["a", "b", "c"],
+        "longitudinal": [0.0, 1.0, 0.0],
+        "transverse": [1.0, 0.0, 0.0],
+    }
+    with pytest.raises(GeometrySchemaError, match="numeric vector entries"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_basis_value_invalid_type_in_mapping():
+    """Basis-mapping value of a wrong type raises."""
+    doc = _minimal_doc()
+    doc["basis"] = {
+        "vertical": 42,  # not a string, not a vector
+        "longitudinal": [0.0, 1.0, 0.0],
+        "transverse": [1.0, 0.0, 0.0],
+    }
+    with pytest.raises(GeometrySchemaError, match="signed-axis string"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_basis_string_lookup_failure_in_mapping():
+    """A bad signed-axis string inside a basis mapping raises."""
+    doc = _minimal_doc()
+    doc["basis"] = {
+        "vertical": "+nonsense",
+        "longitudinal": "+y",
+        "transverse": "+x",
+    }
+    with pytest.raises(GeometrySchemaError, match=r"basis\['vertical'\]"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_kappa_chi_eq_invalid_form():
+    """kappa_chi_eq must be a string or length-3 numeric vector."""
+    doc = _minimal_doc()
+    doc["parameters"] = {"alpha_deg": 50.0}
+    doc["kappa_chi_eq"] = 42  # neither
+    with pytest.raises(GeometrySchemaError, match="'kappa_chi_eq' must be"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_kappa_chi_eq_numeric_vector_form():
+    """kappa_chi_eq may be a length-3 numeric vector."""
+    import numpy as np
+
+    doc = {
+        KIND_KEY: {"schema_revision": 1},
+        "name": "kchi_numeric",
+        "documentation": "test",
+        "basis": "BL",
+        "parameters": {"alpha_deg": 50.0},
+        "kappa_chi_eq": [0.0, 0.0, 1.0],
+        "stages": [
+            {
+                "name": "komega",
+                "axis": "-transverse",
+                "parent": None,
+                "role": "sample",
+            },
+            {
+                "name": "kappa",
+                "axis": {"kappa_eulerian": "+transverse"},
+                "parent": "komega",
+                "role": "sample",
+            },
+            {
+                "name": "kphi",
+                "axis": "-transverse",
+                "parent": "kappa",
+                "role": "sample",
+            },
+            {
+                "name": "ttheta",
+                "axis": "-transverse",
+                "parent": None,
+                "role": "detector",
+            },
+        ],
+        "modes": {
+            "bisecting": {
+                "default": True,
+                "constraints": [
+                    {"type": "virtual_bisect", "stage1": "omega", "stage2": "ttheta"}
+                ],
+                "computed": ["komega", "kappa", "kphi", "ttheta"],
+            }
+        },
+    }
+    g = load_geometry_file(_yaml_doc_to_text(doc))
+    np.testing.assert_allclose(
+        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 0.0, 1.0], atol=1e-12
+    )
+
+
+def test_kappa_default_alpha_when_kappa_chi_eq_present():
+    """alpha_deg defaults to KAPPA_ALPHA_DEFAULT when only kappa_chi_eq is set."""
+
+    doc = {
+        KIND_KEY: {"schema_revision": 1},
+        "name": "kappa_default_alpha",
+        "documentation": "test",
+        "basis": "BL",
+        "kappa_chi_eq": "+vertical",
+        "stages": [
+            {
+                "name": "komega",
+                "axis": "-transverse",
+                "parent": None,
+                "role": "sample",
+            },
+            {
+                "name": "kappa",
+                "axis": {"kappa_eulerian": "+transverse"},
+                "parent": "komega",
+                "role": "sample",
+            },
+            {
+                "name": "kphi",
+                "axis": "-transverse",
+                "parent": "kappa",
+                "role": "sample",
+            },
+            {
+                "name": "ttheta",
+                "axis": "-transverse",
+                "parent": None,
+                "role": "detector",
+            },
+        ],
+        "modes": {
+            "bisecting": {
+                "default": True,
+                "constraints": [
+                    {"type": "virtual_bisect", "stage1": "omega", "stage2": "ttheta"}
+                ],
+                "computed": ["komega", "kappa", "kphi", "ttheta"],
+            }
+        },
+    }
+    g = load_geometry_file(_yaml_doc_to_text(doc))
+    # The kappa stage axis was synthesized via kappa_axis_from_eulerian
+    # using the numeric komega vector; sanity-check it's a unit vector.
+    import numpy as np
+
+    np.testing.assert_allclose(np.linalg.norm(g._stages["kappa"].axis), 1.0, atol=1e-12)  # noqa: SLF001
+
+
+def test_axis_invalid_form_rejected():
+    """Stage axis that is neither string, list, nor kappa_eulerian raises."""
+    doc = _minimal_doc()
+    doc["stages"][0]["axis"] = 42
+    with pytest.raises(GeometrySchemaError, match="must be a signed-axis string"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_axis_bad_signed_string_rejected():
+    """A bad signed-axis string in a stage axis surfaces as a stage error."""
+    doc = _minimal_doc()
+    doc["stages"][0]["axis"] = "+nonsense"
+    with pytest.raises(GeometrySchemaError, match=r"stage 'omega'"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_axis_numeric_vector_non_numeric_entries_rejected():
+    """Numeric stage axis with non-numeric entries raises."""
+    doc = _minimal_doc()
+    doc["stages"][0]["axis"] = ["a", "b", "c"]
+    with pytest.raises(GeometrySchemaError, match="numeric axis entries"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_axis_numeric_vector_form_accepted():
+    """Numeric stage axis is accepted (covers happy path)."""
+    import numpy as np
+
+    doc = _minimal_doc()
+    doc["stages"][0]["axis"] = [-1.0, 0.0, 0.0]
+    g = load_geometry_file(_yaml_doc_to_text(doc))
+    np.testing.assert_array_equal(g._stages["omega"].axis, [-1.0, 0.0, 0.0])  # noqa: SLF001
+
+
+def test_axis_kappa_eulerian_without_alpha_or_chi_eq_rejected():
+    """kappa_eulerian axis form requires both alpha_deg and kappa_chi_eq."""
+    doc = _minimal_doc()
+    doc["stages"][0]["axis"] = {"kappa_eulerian": "+transverse"}
+    with pytest.raises(GeometrySchemaError, match=r"requires the top-level"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_axis_kappa_eulerian_extra_keys_rejected():
+    """kappa_eulerian axis spec rejects unknown sub-keys."""
+    doc = _minimal_doc()
+    doc["parameters"] = {"alpha_deg": 50.0}
+    doc["kappa_chi_eq"] = "+vertical"
+    doc["stages"][0]["axis"] = {"kappa_eulerian": "+transverse", "extra": 1}
+    with pytest.raises(GeometrySchemaError, match=r"only one key"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_axis_kappa_eulerian_invalid_inner_value_rejected():
+    """kappa_eulerian inner value must be string or length-3 numeric vector."""
+    doc = _minimal_doc()
+    doc["parameters"] = {"alpha_deg": 50.0}
+    doc["kappa_chi_eq"] = "+vertical"
+    doc["stages"][0]["axis"] = {"kappa_eulerian": 42}
+    with pytest.raises(GeometrySchemaError, match=r"'kappa_eulerian' value must be"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_axis_kappa_eulerian_inner_numeric_vector_form():
+    """kappa_eulerian inner value may be a length-3 numeric vector."""
+    import numpy as np
+
+    doc = {
+        KIND_KEY: {"schema_revision": 1},
+        "name": "kev_numeric",
+        "documentation": "test",
+        "basis": "BL",
+        "parameters": {"alpha_deg": 50.0},
+        "kappa_chi_eq": "+vertical",
+        "stages": [
+            {
+                "name": "komega",
+                "axis": "-transverse",
+                "parent": None,
+                "role": "sample",
+            },
+            {
+                "name": "kappa",
+                "axis": {"kappa_eulerian": [1.0, 0.0, 0.0]},
+                "parent": "komega",
+                "role": "sample",
+            },
+            {
+                "name": "kphi",
+                "axis": "-transverse",
+                "parent": "kappa",
+                "role": "sample",
+            },
+            {
+                "name": "ttheta",
+                "axis": "-transverse",
+                "parent": None,
+                "role": "detector",
+            },
+        ],
+        "modes": {
+            "bisecting": {
+                "default": True,
+                "constraints": [
+                    {"type": "virtual_bisect", "stage1": "omega", "stage2": "ttheta"}
+                ],
+                "computed": ["komega", "kappa", "kphi", "ttheta"],
+            }
+        },
+    }
+    g = load_geometry_file(_yaml_doc_to_text(doc))
+    np.testing.assert_allclose(np.linalg.norm(g._stages["kappa"].axis), 1.0, atol=1e-12)  # noqa: SLF001
+
+
+def test_kappa_synthesis_missing_canonical_stage_names_raises():
+    """If parameters.alpha_deg + kappa_chi_eq are set but the kappa stage
+    names are not canonical (komega/kappa/kphi), the loader raises."""
+    doc = {
+        KIND_KEY: {"schema_revision": 1},
+        "name": "weird_kappa",
+        "documentation": "test",
+        "basis": "BL",
+        "parameters": {"alpha_deg": 50.0},
+        "kappa_chi_eq": "+vertical",
+        "stages": [
+            # Note: not named komega/kappa/kphi — names are wholly different.
+            {"name": "alpha", "axis": "+vertical", "parent": None, "role": "sample"},
+        ],
+        "modes": {
+            "any": {
+                "default": True,
+                "constraints": [],
+                "computed": ["alpha"],
+            }
+        },
+    }
+    with pytest.raises(GeometrySchemaError, match="canonical kappa stage names"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_load_yaml_text_with_yaml_parser_error_falls_back_to_path():
+    """A string that fails YAML parsing is treated as a path."""
+    # Tab + colon in a way YAML rejects as scanner error,
+    # AND not a valid file path.
+    bad = "\t: not yaml\n@@@"
+    with pytest.raises(FileNotFoundError):
+        load_geometry_file(bad)
+
+
+def test_load_geometry_file_path_object_missing_raises():
+    """An explicit Path that doesn't exist raises FileNotFoundError."""
+    from pathlib import Path
+
+    with pytest.raises(FileNotFoundError, match="not found"):
+        load_geometry_file(Path("/no/such/path.yml"))
+
+
+def test_register_geometry_decorator_round_trip(restore_registry):
+    """The @register_geometry decorator (factories.py) registers a callable."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer import register_geometry
+    from ad_hoc_diffractometer.factories import _GEOMETRY_REGISTRY  # noqa: SLF001
+
+    @register_geometry
+    def _my_demo_geom_267():
+        # Build a trivial geometry directly via the loader.
+        return ahd.load_geometry_file(_MINIMAL_YAML)
+
+    try:
+        assert "_my_demo_geom_267" in _GEOMETRY_REGISTRY
+        g = ahd.make_geometry("_my_demo_geom_267")
+        assert g.name == "tiny"
+    finally:
+        _GEOMETRY_REGISTRY.pop("_my_demo_geom_267", None)
+
+
+def test_construct_from_doc_missing_marker_directly():
+    from ad_hoc_diffractometer.geometry_loader import _construct_from_doc
+
+    with pytest.raises(GeometrySchemaError, match="missing top-level marker"):
+        _construct_from_doc(
+            {"name": "x", "stages": [], "modes": {}},
+            source_label="t",
+            overrides={},
+        )
+
+
+def test_construct_from_doc_top_level_not_mapping():
+    from ad_hoc_diffractometer.geometry_loader import _construct_from_doc
+
+    with pytest.raises(GeometrySchemaError, match="must be a mapping"):
+        _construct_from_doc(["not", "a", "mapping"], source_label="t", overrides={})
+
+
+def test_basis_mapping_extra_keys_rejected():
+    doc = _minimal_doc()
+    doc["basis"] = {
+        "vertical": "+z",
+        "longitudinal": "+y",
+        "transverse": "+x",
+        "extra_key": "+x",
+    }
+    with pytest.raises(GeometrySchemaError, match="unrecognised key"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_basis_mapping_missing_keys_rejected():
+    doc = _minimal_doc()
+    doc["basis"] = {"vertical": "+z"}
+    with pytest.raises(GeometrySchemaError, match="missing required key"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_basis_value_not_a_mapping_or_string_rejected():
+    doc = _minimal_doc()
+    doc["basis"] = 42
+    with pytest.raises(GeometrySchemaError, match="shorthand string or a mapping"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_axis_resolve_final_fallback_unknown_form():
+    """Stage axis spec that is none of the accepted forms hits the
+    final fallback raise in `_resolve_axis`."""
+    doc = _minimal_doc()
+    # An empty dict (no kappa_eulerian key) lands at the last raise in _resolve_axis.
+    doc["stages"][0]["axis"] = {"unrelated_key": 1}
+    with pytest.raises(GeometrySchemaError, match="must be a signed-axis string"):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_register_geometry_file_factory_rereads_file(tmp_path, restore_registry):
+    """The registered factory re-reads the file on each call so on-disk
+    edits are picked up without re-registration (covers the re-read path)."""
+    p = tmp_path / "rereadable.yml"
+    p.write_text(_MINIMAL_YAML.replace("name: tiny", "name: rereadable"))
+    name = register_geometry_file(p)
+    g1 = load_geometry_file(p)  # not via registry
+    import ad_hoc_diffractometer as ahd
+
+    g2 = ahd.make_geometry(name)  # via registry — exercises the re-read path
+    assert g1.name == g2.name == "rereadable"
+
+
+def test_top_level_missing_name():
+    doc = _minimal_doc()
+    del doc["name"]
+    with pytest.raises(
+        GeometrySchemaError, match="missing required top-level key 'name'"
+    ):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_top_level_missing_stages():
+    doc = _minimal_doc()
+    del doc["stages"]
+    with pytest.raises(
+        GeometrySchemaError, match="missing required top-level key 'stages'"
+    ):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_top_level_missing_modes():
+    doc = _minimal_doc()
+    del doc["modes"]
+    with pytest.raises(
+        GeometrySchemaError, match="missing required top-level key 'modes'"
+    ):
+        load_geometry_file(_yaml_doc_to_text(doc))
+
+
+def test_basis_defensive_det_check_via_monkeypatch(monkeypatch):
+    """Defensive det-check in `_validate_basis` when somehow det is not 1."""
+    import numpy as np
+
+    from ad_hoc_diffractometer.geometry_loader import _validate_basis
+
+    # All three vectors are unit-length and pairwise orthogonal in finite
+    # precision, but we monkey-patch np.linalg.det to force a non-unit
+    # determinant so the defensive branch fires.
+    real_det = np.linalg.det
+    monkeypatch.setattr(np.linalg, "det", lambda *a, **kw: 0.0)
+    basis = {
+        "vertical": np.array([0.0, 0.0, 1.0]),
+        "longitudinal": np.array([0.0, 1.0, 0.0]),
+        "transverse": np.array([1.0, 0.0, 0.0]),
+    }
+    with pytest.raises(GeometrySchemaError, match="degenerate or non-orthonormal"):
+        _validate_basis(basis)
+    monkeypatch.setattr(np.linalg, "det", real_det)

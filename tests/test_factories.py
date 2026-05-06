@@ -1052,3 +1052,82 @@ class TestEntryPointExtensibility:
             _fac._EP_LOADED = original_ep_loaded
             _fac._GEOMETRY_REGISTRY.clear()
             _fac._GEOMETRY_REGISTRY.update(original_registry)
+
+
+def test_packaged_geometry_loader_failure_is_non_fatal(monkeypatch):
+    """If `_register_packaged_geometries` raises, registry init should
+    not crash; the broken-loader exception is logged at debug level and
+    swallowed (covers the broad except in factories.py)."""
+    import ad_hoc_diffractometer.factories as fac
+
+    fac._EP_LOADED = False  # noqa: SLF001 — force re-discovery
+    original_registry = dict(fac._GEOMETRY_REGISTRY)  # noqa: SLF001
+    try:
+        # Monkey-patch the loader function the factories module imports
+        # to raise when called.
+        from ad_hoc_diffractometer import geometry_loader
+
+        def _broken(*args, **kwargs):
+            raise RuntimeError("simulated loader failure")
+
+        monkeypatch.setattr(geometry_loader, "_register_packaged_geometries", _broken)
+        # Also patch entry_points to an empty list so the rest of the
+        # function runs without raising.
+        monkeypatch.setattr(fac, "entry_points", lambda group: [])
+        # Trigger the discovery path:
+        fac._load_entry_point_geometries()  # noqa: SLF001
+        # Built-ins from before this test must still be present
+        # (the swallowed-exception branch did not corrupt the registry).
+        for name in ("fourcv", "psic"):
+            assert name in fac._GEOMETRY_REGISTRY  # noqa: SLF001
+    finally:
+        fac._EP_LOADED = True  # noqa: SLF001
+        fac._GEOMETRY_REGISTRY.clear()  # noqa: SLF001
+        fac._GEOMETRY_REGISTRY.update(original_registry)  # noqa: SLF001
+
+
+def test_entry_point_redeclaring_existing_factory_is_skipped_silently():
+    """An entry point whose .load() returns the same callable already in
+    the registry is treated as a non-conflict and skipped (covers the
+    dedup `continue` branch in _load_entry_point_geometries)."""
+    from unittest.mock import MagicMock
+    from unittest.mock import patch
+
+    import ad_hoc_diffractometer.factories as fac
+    from ad_hoc_diffractometer import geometry_loader
+
+    # Trigger registry population (no-op if already populated).
+    fac.list_geometries()
+    original_ep_loaded = fac._EP_LOADED  # noqa: SLF001
+    original_registry = dict(fac._GEOMETRY_REGISTRY)  # noqa: SLF001
+    fac._EP_LOADED = False  # noqa: SLF001
+
+    # Capture the existing registry callable for ``fourcv``.  The mock
+    # entry point will return that exact callable, so the dedup
+    # ``existing is factory`` check fires and the loop ``continue``s.
+    duplicate_factory = fac._GEOMETRY_REGISTRY["fourcv"]
+    fake_ep = MagicMock()
+    fake_ep.name = "fourcv"
+    fake_ep.value = "ad_hoc_diffractometer.geometries:fourcv.yml"
+    fake_ep.load.return_value = duplicate_factory
+
+    try:
+        # Patch _register_packaged_geometries to a no-op so the
+        # second invocation does not rebuild a new closure for fourcv;
+        # we want the entry-point loop to see the original callable.
+        with (
+            patch.object(
+                geometry_loader, "_register_packaged_geometries", lambda: None
+            ),
+            patch(
+                "ad_hoc_diffractometer.factories.entry_points",
+                return_value=[fake_ep],
+            ),
+        ):
+            fac.list_geometries()  # triggers _load_entry_point_geometries
+        # Registry still has fourcv pointing at the same factory
+        assert fac._GEOMETRY_REGISTRY["fourcv"] is duplicate_factory
+    finally:
+        fac._EP_LOADED = original_ep_loaded
+        fac._GEOMETRY_REGISTRY.clear()
+        fac._GEOMETRY_REGISTRY.update(original_registry)
