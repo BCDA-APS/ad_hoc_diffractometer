@@ -33,6 +33,8 @@ issue tracker.  The initial project development roadmap is documented here:
 
 - `pyyaml` is now a runtime dependency. (#267)
 - psic `lifting_detector_phi` and `lifting_detector_mu` drop `qaz=90` and fix every sample stage except the named one. (#264)
+- psic `fixed_psi_vertical` drops the bisect; pins `nu = 0` and `mu`. (#264)
+- psic `fixed_psi_horizontal` drops the bisect; pins `delta = 0` and `eta`. (#264)
 
 ### Fixed
 

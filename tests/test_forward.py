@@ -1875,20 +1875,26 @@ def test_psic_fixed_psi_round_trip(mode_name, h, k, l, ref):  # noqa: E741
 
 
 def test_psic_fixed_psi_wrong_target_returns_empty():
-    """psic fixed_psi_vertical returns [] when psi target is wrong."""
+    """psic fixed_psi_vertical returns [] when psi target is wrong.
+
+    After the issue #264 C1 revision the mode is built from
+    DetectorConstraint('nu', 0) + SampleConstraint('mu', 0) +
+    ReferenceConstraint('psi', target); psi-validation still rejects
+    requests whose natural psi differs from the stored target.
+    """
     g = _setup_psi(psic, ref=(0, 0, 1))
     natural = _natural_psi(g, 1, 0, 0)
     assert natural is not None
 
     from ad_hoc_diffractometer import REQUIRED
-    from ad_hoc_diffractometer import BisectConstraint
     from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import DetectorConstraint
     from ad_hoc_diffractometer import ReferenceConstraint
     from ad_hoc_diffractometer import SampleConstraint
 
     g.modes["fixed_psi_vertical"] = ConstraintSet(
         [
-            BisectConstraint("eta", "delta"),
+            DetectorConstraint("nu", 0.0),
             SampleConstraint("mu", 0.0),
             ReferenceConstraint("psi", natural + 45.0),
         ],

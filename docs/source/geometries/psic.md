@@ -142,15 +142,20 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 ### `fixed_psi_vertical`
 
-Vertical bisecting with azimuthal angle ψ validation.
-Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
-The solver returns bisecting solutions only when the natural ψ for the
-requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
+Issue #264 revision.  Vertical scattering plane (`nu = 0`) with `mu`
+fixed at the user-specified value (default 0) and azimuthal angle ψ
+validation.  Set ``g.azimuthal_reference = (h, k, l)`` before calling
+``forward()``.  The previous bisect(`eta`, `delta`) constraint was
+dropped per the @jwkim-anl review.  The solver returns the
+fixed-sample solutions only when the natural ψ for the requested
+(h, k, l) matches the stored target; the free angles ``eta``, ``chi``,
+``phi``, and ``delta`` jointly satisfy the Bragg condition under the
+validated ψ.  See {doc}`../howto/surface`.
 
 | | |
 |---|---|
 | **Computed** | eta, chi, phi, delta |
-| **Constant during** `forward()` | mu = 0, nu = 0 |
+| **Constant during** `forward()` | nu = 0, mu = constraint value, ψ = target |
 | **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
 | **Extras (output)** | psi (computed azimuth) |
 
@@ -315,13 +320,16 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 ### `fixed_psi_horizontal`
 
-Horizontal bisecting with azimuthal angle ψ validation.
-Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+Issue #264 revision.  Horizontal scattering plane (`delta = 0`) with
+`eta` fixed at the user-specified value (default 0) and azimuthal
+angle ψ validation.  The previous bisect(`mu`, `nu`) constraint was
+dropped per the @jwkim-anl review.  Free angles `mu`, `chi`, `phi`,
+`nu` jointly satisfy the Bragg condition under the validated ψ.
 
 | | |
 |---|---|
 | **Computed** | mu, chi, phi, nu |
-| **Constant during** `forward()` | eta = 0, delta = 0 |
+| **Constant during** `forward()` | delta = 0, eta = constraint value, ψ = target |
 | **Extras (input)** | n̂, ψ |
 | **Extras (output)** | psi |
 
