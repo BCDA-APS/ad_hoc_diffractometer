@@ -13,6 +13,10 @@ not yet Released 2026-05-07
 
 - Repository moved to <https://github.com/BCDA-APS/ad_hoc_diffractometer>
 
+### Added
+
+- Redirect docs site root to `latest/` on GitHub Pages. (#272)
+
 ## Release v0.10.0
 
 Released 2026-05-06.

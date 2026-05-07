@@ -102,6 +102,19 @@ jobs:
           destination_dir: latest
           keep_files: true
 
+      - name: Deploy gh-pages root redirect (main push)
+        # Publish docs/gh-pages-root/* to the root of the gh-pages branch
+        # so that https://bcda-aps.github.io/ad_hoc_diffractometer/ redirects
+        # to .../latest/.  keep_files: true preserves all version directories.
+        uses: peaceiris/actions-gh-pages@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: docs/gh-pages-root
+          destination_dir: .
+          keep_files: true
+
       - name: Deploy to gh-pages — <version>/ (tag push)
         uses: peaceiris/actions-gh-pages@v4
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
