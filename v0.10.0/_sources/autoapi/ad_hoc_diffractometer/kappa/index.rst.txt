@@ -1,0 +1,715 @@
+kappa
+=====
+
+.. py:module:: ad_hoc_diffractometer.kappa
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.kappa``
+
+   Kappa diffractometers replace the Eulerian chi circle with a kappa arm
+   tilted at angle ``alpha_0`` from the omega axis.  This module provides
+   **two layers** of conversion between the real motor triple
+   ``(komega, kappa, kphi)`` and the equivalent virtual Eulerian
+   pseudoangles ``(omega, chi, phi)``:
+
+   1. **Geometry-aware (recommended)**.  The functions
+      :func:`eulerian_to_kappa_axes` and :func:`kappa_to_eulerian_axes`
+      take a :class:`KappaPseudoAngleConvention` that names the *actual*
+      stage axis vectors of the kappa demo geometry (``n_komega``, ``n_kappa``,
+      ``n_kphi``) and the *equivalent Eulerian* chi axis (``n_chi_eq``).
+      The decomposition is derived directly from these axes and is correct
+      for any signed-axis combination — including the ``ad_hoc_diffractometer``
+      demo geometries that use mixed handedness or a horizontal scattering plane.
+
+      These are the conversions used internally by the kappa virtual-angle
+      solver.
+
+   2. **Walko (2016) eq. [16] textbook formula**.  The functions
+      :func:`kappa_to_eulerian` and :func:`eulerian_to_kappa` implement
+      Walko's published closed-form relations literally:
+
+          chi   = 2 arcsin[sin(kappa/2) · sin(alpha_0)]
+          offset = arccos[cos(kappa/2) / cos(chi/2)]
+          omega = komega − offset
+          phi   = kphi   − offset
+
+      These are correct **only for the axis convention assumed in
+      Walko's derivation** (omega about the transverse axis, chi about
+      the longitudinal axis, phi about the transverse axis, all
+      right-handed in the textbook sense).  They are retained as
+      reference implementations of the published formula and for
+      backward compatibility with users who study Walko's algebra
+      directly.  They are **not** used inside the kappa virtual-angle
+      solver, because no demo geometry in this package matches the textbook
+      convention exactly: ``kappa4cv`` uses BL ``-TRANSVERSE`` for omega
+      (left-handed); ``kappa4ch`` uses ``-VERTICAL`` (horizontal
+      scattering plane); ``kappa6c`` uses You ``-TRANSVERSE`` (mixed
+      handedness with a horizontal mu base).  See issue #241 for the
+      diagnostic that uncovered this divergence.
+
+   Both directions are implemented as pure-NumPy / standard-library code.
+
+   Functions
+   ---------
+   :func:`kappa_to_eulerian_axes`
+       Geometry-aware forward direction: real (komega, kappa, kphi) →
+       virtual (omega, chi, phi) for arbitrary signed stage axes.
+
+   :func:`eulerian_to_kappa_axes`
+       Geometry-aware inverse direction: virtual (omega, chi, phi) →
+       real (komega, kappa, kphi) for arbitrary signed stage axes.
+
+   :func:`kappa_to_eulerian`
+       Walko (2016) eq. [16] forward direction (textbook frame only).
+
+   :func:`eulerian_to_kappa`
+       Walko (2016) eq. [16] inverse direction (textbook frame only).
+
+   :func:`is_kappa_virtual_mode`
+       Detect whether a mode contains a virtual Eulerian-angle constraint.
+
+   :func:`solve_kappa_virtual`
+       Solve the virtual-angle forward problem for a kappa geometry.
+
+   Classes
+   -------
+   :class:`KappaPseudoAngleConvention`
+       Container holding the four signed unit axes that fully specify
+       the geometry-aware pseudoangle decomposition for a given kappa
+       demo geometry.
+
+   .. rubric:: Notes
+
+   The default kappa tilt angle is 50° (Walko 2016; Enraf-Nonius
+   convention; ITC Vol. C §2.2.6).
+
+   The geometry-aware decomposition has two solutions distinguished by
+   the sign of kappa (the *branch* parameter).  The positive branch
+   (``kappa ≥ 0``) is the default; the negative branch gives
+   ``kappa ≤ 0``.  The caller should choose the branch that keeps all
+   angles within the hardware limits.
+
+   The decomposition fails (``ValueError``) when the requested Eulerian
+   orientation cannot be represented by any kappa motor triple — this
+   is the kappa-arm reachability limit and is geometry-dependent (in
+   the textbook convention it reduces to ``|chi| < 2·alpha_0``).
+
+   .. rubric:: References
+
+   * Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016), eq. [16] —
+     closed-form pseudoangle relations in the textbook frame.
+   * ITC Vol. C §2.2.6 (2006).
+   * Issue #241 — diagnostic and resolution that motivated the
+     geometry-aware layer.
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.kappa.KAPPA_VIRTUAL_ANGLES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.kappa._angle_about_axis
+   ad_hoc_diffractometer.kappa._build_eulerian_equivalent_geometry
+   ad_hoc_diffractometer.kappa._eulerian_rotation
+   ad_hoc_diffractometer.kappa._kappa_rotation
+   ad_hoc_diffractometer.kappa._solve_alpha_cos_beta_sin_eq_gamma
+   ad_hoc_diffractometer.kappa._translate_mode_to_eulerian
+   ad_hoc_diffractometer.kappa._wrap_180
+   ad_hoc_diffractometer.kappa.eulerian_to_kappa
+   ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes
+   ad_hoc_diffractometer.kappa.is_kappa_virtual_mode
+   ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian
+   ad_hoc_diffractometer.kappa.kappa_to_eulerian
+   ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes
+   ad_hoc_diffractometer.kappa.make_kappa_pseudo_angle_convention
+   ad_hoc_diffractometer.kappa.solve_kappa_virtual
+
+
+Module Contents
+---------------
+
+.. py:data:: KAPPA_VIRTUAL_ANGLES
+   :type:  frozenset[str]
+
+.. py:class:: KappaPseudoAngleConvention
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention``
+
+
+   Per-geometry declaration of the four signed axes that determine
+   the kappa ↔ Eulerian pseudoangle decomposition.
+
+   A kappa geometry encodes its three sample stages
+   (``komega``, ``kappa``, ``kphi``) with specific signed axis vectors
+   in the lab frame.  An *equivalent Eulerian triple*
+   (``omega``, ``chi``, ``phi``) shares the outer (``omega``) and
+   inner (``phi``) axes with the kappa stack — by construction — and
+   introduces a virtual ``chi`` axis perpendicular to ``omega`` that
+   plays the role of the Eulerian chi rotation.
+
+   The four axes here are sufficient to derive the conversion in
+   closed form from the rotation-matrix identity
+
+       R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)
+           =  R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ).
+
+   This identity holds for **arbitrary signed stage axes** as long
+   as ``n_kappa`` lies in the plane spanned by ``n_komega`` and
+   ``n_chi_eq`` (which is the geometric definition of a kappa arm).
+
+   :param n_komega: Unit axis of the outer kappa stage (= virtual ω axis).
+   :type n_komega: numpy.ndarray, shape (3,)
+   :param n_kappa: Unit axis of the kappa arm.
+   :type n_kappa: numpy.ndarray, shape (3,)
+   :param n_kphi: Unit axis of the inner kappa stage (= virtual φ axis).
+   :type n_kphi: numpy.ndarray, shape (3,)
+   :param n_chi_eq: Unit axis of the equivalent Eulerian χ rotation, perpendicular
+                    to ``n_komega`` and coplanar with ``n_komega`` and ``n_kappa``.
+   :type n_chi_eq: numpy.ndarray, shape (3,)
+
+   .. rubric:: Notes
+
+   The convention object is immutable (``frozen=True``) and arrays
+   are stored as a copy so the caller cannot accidentally mutate
+   them.  Use :func:`make_kappa_pseudo_angle_convention` to construct
+   one from physical-direction names + a basis dict.
+
+   .. rubric:: References
+
+   * Issue #241 — derivation and resolution.
+
+
+   
+
+   
+
+   
+
+   
+
+.. py:function:: _angle_about_axis(v_from: ~numpy.ndarray, v_to: ~numpy.ndarray, axis: ~numpy.ndarray) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa._angle_about_axis``
+
+
+   Return the signed rotation angle (deg) about ``axis`` that takes
+   ``v_from`` to ``v_to``.  Both vectors are assumed to lie on the
+   same cone about ``axis`` (i.e. ``v_from · axis == v_to · axis``).
+
+
+.. py:function:: _build_eulerian_equivalent_geometry(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> tuple[~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, str, str, str]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa._build_eulerian_equivalent_geometry``
+
+
+   Build a synthetic Eulerian-equivalent geometry from a kappa
+   geometry.
+
+   The synthetic geometry has identical outer and inner stages but
+   replaces the kappa triple ``(komega, kappa, kphi)`` with the
+   Eulerian triple ``(omega, chi, phi)`` whose axes come from the
+   kappa demo geometry's :class:`KappaPseudoAngleConvention`.  The result
+   is a standard Eulerian geometry that the existing solvers handle
+   natively.
+
+   All non-kappa stage angles (and limits) are copied verbatim from
+   the source geometry.
+
+   :param geometry: Kappa geometry with ``kappa_pseudo_angle_convention`` set.
+   :type geometry: AdHocDiffractometer
+
+   :returns: * **eul_geom** (*AdHocDiffractometer*) -- Synthetic Eulerian equivalent.  Has no modes / sample / UB
+               attached; intended for direct use with the low-level forward
+               dispatcher.
+             * **komega_name, kphi_name** (*str*) -- Names of the outermost and innermost kappa stages on the
+               original geometry.  Returned for convenience so callers can
+               substitute Eulerian solutions back into the kappa motor dict.
+
+
+.. py:function:: _eulerian_rotation(convention: KappaPseudoAngleConvention, omega_deg: float, chi_deg: float, phi_deg: float) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa._eulerian_rotation``
+
+
+   Compose the equivalent-Eulerian sample rotation matrix.
+
+   Stage order matches :func:`~orientation._compute_q_phi`: the
+   innermost stage (``phi``) is the leftmost matrix in the product,
+   so that ``Z · v`` rotates ``v`` by the outermost stage first when
+   applied right-to-left.
+
+
+.. py:function:: _kappa_rotation(convention: KappaPseudoAngleConvention, komega_deg: float, kappa_deg: float, kphi_deg: float) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa._kappa_rotation``
+
+
+   Compose the real kappa-stack sample rotation matrix.
+
+   Stage order matches :func:`~orientation._compute_q_phi`: innermost
+   stage (``kphi``) is the leftmost matrix in the product.
+
+
+.. py:function:: _solve_alpha_cos_beta_sin_eq_gamma(alpha: float, beta: float, gamma: float) -> list[float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa._solve_alpha_cos_beta_sin_eq_gamma``
+
+
+   Solve ``alpha · cos(θ) + beta · sin(θ) = gamma`` for θ in degrees.
+
+   Returns the two solutions (or one solution duplicated, when the
+   discriminant is zero) in the range (-180, 180].  Raises
+   :class:`ValueError` when the equation has no real solution
+   (``|gamma| > sqrt(alpha² + beta²)``).
+
+
+.. py:function:: _translate_mode_to_eulerian(mode, det_stage_name: str)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa._translate_mode_to_eulerian``
+
+
+   Rewrite a kappa virtual-angle mode onto the Eulerian-equivalent
+   geometry.
+
+   Virtual-angle ``SampleConstraint`` entries on ``omega``/``chi``/
+   ``phi`` already speak the Eulerian language and are passed through.
+   All other constraints (fixed real outer/inner stages, detector
+   constraints, bisect constraints) are preserved verbatim.  A
+   ``VirtualBisectConstraint`` is downgraded to a plain
+   ``BisectConstraint`` on the equivalent ``omega`` stage so the
+   standard analytic Eulerian bisect solver is dispatched.
+
+
+.. py:function:: _wrap_180(angle_deg: float) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa._wrap_180``
+
+
+   Wrap an angle in degrees to the half-open interval (-180, 180].
+
+
+.. py:function:: eulerian_to_kappa(omega: float, chi: float, phi: float, alpha_deg: float = 50.0, branch: int = +1) -> tuple[float, float, float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.eulerian_to_kappa``
+
+
+   Convert virtual Eulerian pseudoangles to real kappa angles using
+   the inverse of the closed-form Walko (2016) eq. [16] formula.
+
+   .. warning::
+
+      This function implements Walko's published algebra **literally**
+      and is correct only for the textbook axis convention; see the
+      warning in :func:`kappa_to_eulerian` and issue #241.  For any
+      geometry-dependent calculation, use
+      :func:`eulerian_to_kappa_axes` with the demo geometry's
+      :class:`KappaPseudoAngleConvention` instead.
+
+   Inverse of Walko (2016), eq. [16].
+
+   :param omega: Virtual Eulerian omega in degrees.
+   :type omega: float
+   :param chi: Virtual Eulerian chi in degrees.
+   :type chi: float
+   :param phi: Virtual Eulerian phi in degrees.
+   :type phi: float
+   :param alpha_deg: Kappa tilt angle in degrees.  Default 50°.
+   :type alpha_deg: float, optional
+   :param branch: Branch selection.  ``+1`` gives kappa ≥ 0 (default);
+                  ``-1`` gives kappa ≤ 0.
+   :type branch: {+1, -1}, optional
+
+   :returns: **komega, kappa, kphi** -- Real kappa motor angles in degrees in Walko's frame.
+   :rtype: tuple of float
+
+   :raises ValueError: If ``|chi|`` ≥ 2·alpha_deg (chi outside the reachable range).
+   :raises ValueError: If branch is not +1 or -1.
+
+   .. rubric:: Examples
+
+   >>> eulerian_to_kappa(0.0, 90.0, 0.0, alpha_deg=50.0)
+   (57.04519..., 134.75594..., 57.04519...)
+   >>> eulerian_to_kappa(0.0, 90.0, 0.0, alpha_deg=50.0, branch=-1)
+   (-57.04519..., -134.75594..., -57.04519...)
+
+
+.. py:function:: eulerian_to_kappa_axes(omega_deg: float, chi_deg: float, phi_deg: float, convention: KappaPseudoAngleConvention, branch: int = +1) -> tuple[float, float, float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes``
+
+
+   Convert virtual Eulerian pseudoangles to real kappa motor angles
+   using the geometry's actual signed stage axes.
+
+   Inverts the rotation-matrix identity (with stage order matching
+   :func:`~orientation._compute_q_phi` — innermost on the left)
+
+       R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)
+           =  R(n_kphi, φ) · R(n_chi_eq, χ) · R(n_komega, ω).
+
+   The decomposition is fully analytic and selects between the two
+   kappa-branch solutions via the ``branch`` parameter.
+
+   Algorithm
+   ---------
+   Let ``R_eul = R(n_kphi, φ) · R(n_chi_eq, χ) · R(n_komega, ω)``
+   be the target rotation.  Apply both sides to ``n_komega``:
+
+       R(n_kphi, κφ) · R(n_kappa, κ) · n_komega  =  R_eul · n_komega
+
+   (since ``R(n_komega, ·) · n_komega = n_komega``).  Take the dot
+   product with ``n_kphi``:
+
+       n_kphi · R(n_kappa, κ) · n_komega  =  n_kphi · R_eul · n_komega.
+
+   Expanding ``R(n_kappa, κ) · n_komega`` via the Rodrigues formula
+   yields a single trigonometric equation in κ of the form
+   ``alpha·cos(κ) + beta·sin(κ) = gamma`` with two solutions
+   (the two kappa branches).
+
+   Once κ is fixed, ``κφ`` is the rotation about ``n_kphi`` that
+   takes ``R(n_kappa, κ) · n_komega`` onto ``R_eul · n_komega``
+   (these vectors lie on the same cone about ``n_kphi`` by
+   construction).  Finally ``κω`` is the residual rotation about
+   ``n_komega`` extracted from
+   ``R(n_komega, κω) = R(n_kappa, -κ) · R(n_kphi, -κφ) · R_eul``.
+
+   :param omega_deg: Virtual Eulerian pseudoangles in degrees.
+   :type omega_deg: float
+   :param chi_deg: Virtual Eulerian pseudoangles in degrees.
+   :type chi_deg: float
+   :param phi_deg: Virtual Eulerian pseudoangles in degrees.
+   :type phi_deg: float
+   :param convention: Per-geometry axis declaration; see
+                      :func:`make_kappa_pseudo_angle_convention`.
+   :type convention: KappaPseudoAngleConvention
+   :param branch: Branch selection.  Each branch produces a distinct kappa
+                  triple satisfying the same Eulerian rotation.  ``+1`` (default)
+                  selects the branch with the larger ``cos(κ)`` (equivalently
+                  the smaller ``|κ|``); ``-1`` selects the other.
+   :type branch: {+1, -1}, optional
+
+   :returns: **komega, kappa, kphi** -- Real kappa motor angles in degrees, in the cut-point range
+             (-180, 180].
+   :rtype: tuple of float
+
+   :raises ValueError: If ``branch`` is not ``+1`` or ``-1``.
+   :raises ValueError: If the requested Eulerian orientation is not reachable by
+       any kappa triple in the given convention (the equation in κ
+       has no real solution).
+
+   .. rubric:: Notes
+
+   For ``kappa4cv`` (BL convention), the convention is
+
+       n_komega = -TRANSVERSE,   n_kappa = kappa_axis(α),
+       n_kphi   = -TRANSVERSE,   n_chi_eq = +LONGITUDINAL.
+
+   Confirming the geometry-aware result against Walko (2016) eq. [16]
+   requires using the textbook convention exactly:
+
+       n_komega = +VERTICAL,     n_kappa  = +VERTICAL·cos(α) + +TRANSVERSE·sin(α),
+       n_kphi   = +VERTICAL,     n_chi_eq = +LONGITUDINAL.
+
+   See :func:`eulerian_to_kappa` for the textbook closed form.
+
+   .. rubric:: References
+
+   * Issue #241 — derivation and motivation.
+   * Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016) — textbook
+     special case.
+
+
+.. py:function:: is_kappa_virtual_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.is_kappa_virtual_mode``
+
+
+   Return True when *mode* contains a virtual Eulerian angle constraint
+   (omega, chi, or phi) and *geometry* is a kappa diffractometer.
+
+   Used by :func:`~forward._solve_constraint_set` to detect when the
+   kappa virtual-angle solver should be dispatched.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param mode:
+   :type mode: ConstraintSet
+
+   :rtype: bool
+
+
+.. py:function:: kappa_axis_from_eulerian(n_komega: ~numpy.ndarray, n_chi_eq: ~numpy.ndarray, alpha_deg: float) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian``
+
+
+   Compute the kappa rotation axis as a tilt of the omega axis toward
+   the equivalent Eulerian chi axis.
+
+   The canonical definition of a kappa diffractometer (Walko 2016;
+   ITC Vol. C §2.2.6) is that the kappa axis lies in the plane
+   spanned by the outer ``omega`` axis and the equivalent chi axis,
+   tilted by ``α`` from ``n_komega`` toward ``n_chi_eq``:
+
+       n_kappa = n_komega · cos(α) + n_chi_eq · sin(α)
+
+   This formula is **geometry-aware**: the resulting axis is correct
+   for any signed convention of ``n_komega`` and ``n_chi_eq``,
+   including the BL ``-TRANSVERSE`` orientation used by the
+   ``kappa4cv`` demo geometry and the BL ``-VERTICAL`` orientation used by
+   the ``kappa4ch`` demo geometry.
+
+   The historic helper :func:`~ad_hoc_diffractometer.axes.kappa_axis`
+   instead returns ``vertical·cos(α) + transverse·sin(α)``
+   unconditionally, which assumes ``n_komega = +vertical`` and is
+   therefore wrong for any demo geometry whose ``n_komega`` is not literally
+   ``+vertical``.  See issue #241 for the diagnostic that uncovered
+   this.
+
+   :param n_komega: Outer kappa stage axis.  Need not be normalized.
+   :type n_komega: array-like, shape (3,)
+   :param n_chi_eq: Equivalent Eulerian chi axis (perpendicular to ``n_komega``).
+                    Need not be normalized.
+   :type n_chi_eq: array-like, shape (3,)
+   :param alpha_deg: Kappa tilt angle in degrees, measured from ``n_komega``
+                     toward ``n_chi_eq``.  Typical value 50° (Enraf-Nonius
+                     convention).
+   :type alpha_deg: float
+
+   :returns: **n_kappa** -- Unit vector of the kappa axis in the lab frame.
+   :rtype: numpy.ndarray, shape (3,)
+
+   :raises ValueError: If ``n_komega`` and ``n_chi_eq`` are not perpendicular within
+       ``1e-9``.
+
+   .. rubric:: References
+
+   * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016) — kappa
+     arm geometry.
+   * ITC Vol. C, Sec. 2.2.6 (2006) — Enraf-Nonius α convention.
+   * Issue #241 — divergence between the canonical α definition and
+     the historic vertical/transverse hard-coded helper.
+
+
+.. py:function:: kappa_to_eulerian(komega: float, kappa: float, kphi: float, alpha_deg: float = 50.0) -> tuple[float, float, float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.kappa_to_eulerian``
+
+
+   Convert real kappa angles to virtual Eulerian pseudoangles using
+   the closed-form Walko (2016) eq. [16] formula.
+
+   .. warning::
+
+      This function implements Walko's published algebra **literally**
+      and is correct only for the axis convention assumed in that
+      paper (omega and phi about the transverse axis with the
+      textbook handedness; chi about the longitudinal axis).  No
+      demo geometry in this package matches that convention exactly.  For
+      any geometry-dependent calculation, use
+      :func:`kappa_to_eulerian_axes` with the demo geometry's
+      :class:`KappaPseudoAngleConvention` instead.
+
+      Issue #241 records the diagnostic that uncovered this
+      limitation.
+
+   Implements Walko (2016), eq. [16] — forward direction.
+
+   :param komega: Real kappa-omega angle in degrees.
+   :type komega: float
+   :param kappa: Real kappa angle in degrees.
+   :type kappa: float
+   :param kphi: Real kappa-phi angle in degrees.
+   :type kphi: float
+   :param alpha_deg: Kappa tilt angle in degrees.  Default 50°.
+   :type alpha_deg: float, optional
+
+   :returns: **omega, chi, phi** -- Virtual Eulerian pseudoangles in degrees in Walko's frame.
+   :rtype: tuple of float
+
+   :raises ValueError: If the combination of kappa and alpha_deg places chi outside
+       the reachable range (``|kappa/2|`` · sin(alpha_0) > 1).
+
+   .. rubric:: Examples
+
+   >>> kappa_to_eulerian(57.045, 134.756, 57.045, alpha_deg=50.0)
+   (-0.0, 90.0, -0.0)
+
+
+.. py:function:: kappa_to_eulerian_axes(komega_deg: float, kappa_deg: float, kphi_deg: float, convention: KappaPseudoAngleConvention) -> tuple[float, float, float]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes``
+
+
+   Convert real kappa motor angles to virtual Eulerian pseudoangles
+   using the geometry's actual signed stage axes.
+
+   Inverts :func:`eulerian_to_kappa_axes`.  Decomposes the kappa
+   sample-rotation matrix (with stage order matching
+   :func:`~orientation._compute_q_phi`) as
+
+       R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)
+           =  R(n_kphi, φ) · R(n_chi_eq, χ) · R(n_komega, ω)
+
+   and returns ``(ω, χ, φ)``.  The decomposition has two χ branches;
+   this function returns the branch consistent with the input kappa
+   sign.
+
+   Algorithm
+   ---------
+   Let ``R = R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)`` be
+   the realized rotation.  By the same reasoning as in
+   :func:`eulerian_to_kappa_axes` (applied to the Eulerian-equivalent
+   triple):
+
+   1. Solve for χ from
+      ``n_kphi · R(n_chi_eq, χ) · n_komega  =  n_kphi · R · n_komega``.
+
+   2. Recover φ as the signed rotation about ``n_kphi`` taking
+      ``R(n_chi_eq, χ) · n_komega`` onto ``R · n_komega``.
+
+   3. Recover ω from the residual rotation about ``n_komega``.
+
+   :param komega_deg: Real kappa motor angles in degrees.
+   :type komega_deg: float
+   :param kappa_deg: Real kappa motor angles in degrees.
+   :type kappa_deg: float
+   :param kphi_deg: Real kappa motor angles in degrees.
+   :type kphi_deg: float
+   :param convention:
+   :type convention: KappaPseudoAngleConvention
+
+   :returns: **omega, chi, phi** -- Virtual Eulerian pseudoangles in degrees, in the cut-point
+             range (-180, 180].  The sign of χ is chosen consistently with
+             the sign of ``kappa_deg``.
+   :rtype: tuple of float
+
+   .. rubric:: Notes
+
+   The chi-sign convention here matches the Walko (2016) sign
+   convention: positive κ gives positive χ in the textbook frame.
+   For other conventions (e.g. left-handed komega), the sign carries
+   through naturally because the decomposition uses the geometry's
+   own signed axes.
+
+
+.. py:function:: make_kappa_pseudo_angle_convention(n_komega: ~numpy.ndarray, n_kappa: ~numpy.ndarray, n_kphi: ~numpy.ndarray, n_chi_eq: ~numpy.ndarray) -> KappaPseudoAngleConvention
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.make_kappa_pseudo_angle_convention``
+
+
+   Construct a :class:`KappaPseudoAngleConvention` from four axes.
+
+   Thin wrapper that exists so callers do not need to import the
+   dataclass directly; the validation lives in
+   :meth:`KappaPseudoAngleConvention.__post_init__`.
+
+   :param n_komega: Signed axis vectors.  Will be normalized internally.
+   :type n_komega: array-like, shape (3,)
+   :param n_kappa: Signed axis vectors.  Will be normalized internally.
+   :type n_kappa: array-like, shape (3,)
+   :param n_kphi: Signed axis vectors.  Will be normalized internally.
+   :type n_kphi: array-like, shape (3,)
+   :param n_chi_eq: Signed axis vectors.  Will be normalized internally.
+   :type n_chi_eq: array-like, shape (3,)
+
+   :rtype: KappaPseudoAngleConvention
+
+
+.. py:function:: solve_kappa_virtual(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.kappa.solve_kappa_virtual``
+
+
+   Solve a kappa virtual-angle mode: find real kappa motor angles
+   satisfying the virtual Eulerian-angle constraints and the Bragg
+   condition.
+
+   The solver uses the **geometry-aware** decomposition
+   (:func:`eulerian_to_kappa_axes`) introduced by issue #241.  The
+   flow is:
+
+   1. Build a synthetic Eulerian-equivalent geometry whose three
+      sample stages have axes ``(n_komega, n_chi_eq, n_kphi)`` taken
+      from the kappa demo geometry's
+      :class:`KappaPseudoAngleConvention`.
+   2. Translate the kappa virtual-angle mode onto the equivalent
+      geometry (a ``VirtualBisectConstraint`` becomes a plain
+      ``BisectConstraint`` on the synthetic ``omega`` stage; fixed
+      virtual ``SampleConstraint`` entries pass through verbatim).
+   3. Dispatch into the standard Eulerian forward solver
+      (``_solve_constraint_set``), which handles the bisect or
+      fixed-angle variant analytically.
+   4. Convert each Eulerian motor triple to kappa motors via
+      :func:`eulerian_to_kappa_axes` for both branches ±1, with
+      deduplication.
+
+   Each step is closed-form; no Newton iteration is required.
+
+   :param geometry: Kappa geometry with ``kappa_pseudo_angle_convention`` set.
+   :type geometry: AdHocDiffractometer
+   :param Q_phi: Scattering vector in the phi frame (Å⁻¹).
+   :type Q_phi: array-like, shape (3,)
+   :param ttheta_deg: Detector angle (2θ) in degrees.
+   :type ttheta_deg: float
+   :param mode: Either a virtual-bisect mode (``VirtualBisectConstraint``) or
+                a fixed-virtual-angle mode (``SampleConstraint`` on one of
+                ``omega``, ``chi``, ``phi``).
+   :type mode: ConstraintSet
+
+   :returns: One angles dict per solution, keyed by real stage names.
+             Cut-points, limits, and deduplication on the kappa side are
+             applied by the caller in :mod:`~ad_hoc_diffractometer.forward`.
+   :rtype: list of dict[str, float]
+
+

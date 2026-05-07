@@ -1,0 +1,330 @@
+reference
+=========
+
+.. py:module:: ad_hoc_diffractometer.reference
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.reference``
+
+   Provides standalone functions for computing the physical pseudo-angles that
+   appear in :class:`~mode.ReferenceConstraint` conditions: incidence angle,
+   exit angle, azimuthal angle ψ, lab-frame azimuthal angle naz, and the
+   SPEC ``OMEGA`` pseudo-angle (angle between Q and the chi-circle plane).
+
+   These functions require the geometry's :attr:`surface_normal` or
+   :attr:`azimuthal_reference` to be set before calling, **except** for
+   :func:`omega_pseudo`, which is a pure motor-frame quantity and needs
+   neither.
+
+   Functions
+   ---------
+   :func:`incidence_angle`
+       Angle of incidence α_i between the incident beam and the sample surface.
+
+   :func:`exit_angle`
+       Angle of exit β_out between the diffracted beam and the sample surface.
+
+   :func:`psi_angle`
+       Azimuthal angle ψ of the reference vector n̂ about Q (You 1999, eq. 23).
+
+   :func:`naz_angle`
+       Azimuthal angle of n̂ projected onto the lab-frame horizontal plane.
+
+   :func:`omega_pseudo`
+       SPEC ``OMEGA`` pseudo-angle — angle between Q and the plane of the
+       chi circle (SPEC ``psic`` ``def OMEGA 'Q[6]'``; You 1999 §5).
+
+   .. rubric:: Notes
+
+   All functions accept a ``geometry`` instance and an optional ``angles`` dict
+   of motor angles (defaulting to the geometry's current stage angles when
+   ``None``).  They raise :class:`ValueError` when the required reference vector
+   is not set on the geometry (where applicable).
+
+   .. rubric:: References
+
+   * You, *J. Appl. Cryst.* **32**, 614-623 (1999), eqs. 10-11, 23, §5.
+   * Lohmeier & Vlieg, *J. Appl. Cryst.* **26**, 706-716 (1993), §4.2.
+   * Certified Scientific Software, *SPEC psic help*,
+     https://certif.com/spec_help/psic.html — ``def OMEGA 'Q[6]'``.
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.reference._chi_stage_axis_lab
+   ad_hoc_diffractometer.reference._require_azimuthal_reference
+   ad_hoc_diffractometer.reference._require_surface_normal
+   ad_hoc_diffractometer.reference.exit_angle
+   ad_hoc_diffractometer.reference.incidence_angle
+   ad_hoc_diffractometer.reference.naz_angle
+   ad_hoc_diffractometer.reference.omega_pseudo
+   ad_hoc_diffractometer.reference.psi_angle
+
+
+Module Contents
+---------------
+
+.. py:function:: _chi_stage_axis_lab(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float]) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference._chi_stage_axis_lab``
+
+
+   Return the chi stage's rotation-axis unit vector expressed in the lab frame.
+
+   The chi-circle plane is the plane perpendicular to this axis, so this
+   vector is also the normal to the chi-circle plane.  All sample stages
+   *outside* (i.e. lower in the stack than) chi rotate the chi axis;
+   stages *inside* chi (phi, etc.) do not.
+
+   :param geometry: Must contain a sample stage named ``"chi"``.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees, keyed by stage name.
+   :type angles: dict[str, float]
+
+   :returns: Unit vector along the chi rotation axis in the lab frame.
+   :rtype: numpy.ndarray, shape (3,)
+
+   :raises KeyError: If the geometry has no stage named ``"chi"``.
+
+
+.. py:function:: _require_azimuthal_reference(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference._require_azimuthal_reference``
+
+
+   Raise ValueError if azimuthal_reference is not set on the geometry.
+
+
+.. py:function:: _require_surface_normal(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference._require_surface_normal``
+
+
+   Raise ValueError if surface_normal is not set on the geometry.
+
+
+.. py:function:: exit_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference.exit_angle``
+
+
+   Compute the angle of exit β_out in degrees.
+
+   The angle between the diffracted beam and the sample surface.
+   Positive when the diffracted beam exits through the front face.
+
+   Requires :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
+
+   :param geometry: The diffractometer instance.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.  If ``None``, the geometry's current
+                  stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns: Exit angle β_out in degrees.
+   :rtype: float
+
+   :raises ValueError: If ``geometry.surface_normal`` is ``None``.
+
+   .. rubric:: References
+
+   * You (1999), eq. 11.
+   * Lohmeier & Vlieg (1993), §4.2.
+
+
+.. py:function:: incidence_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference.incidence_angle``
+
+
+   Compute the angle of incidence α_i in degrees.
+
+   The angle between the incident beam and the sample surface (the
+   complement of the angle between the incident beam and the surface
+   normal).  Positive when the beam strikes the front face.
+
+   Requires :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
+
+   :param geometry: The diffractometer instance.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.  If ``None``, the geometry's current
+                  stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns: Incidence angle α_i in degrees.
+   :rtype: float
+
+   :raises ValueError: If ``geometry.surface_normal`` is ``None``.
+
+   .. rubric:: References
+
+   * You (1999), eq. 10.
+   * Lohmeier & Vlieg (1993), §4.2.
+
+
+.. py:function:: naz_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference.naz_angle``
+
+
+   Compute the lab-frame azimuthal angle of n̂ (naz) in degrees.
+
+   naz is the azimuthal angle of the surface normal n̂ projected onto
+   the horizontal plane of the lab frame (the plane perpendicular to
+   the vertical axis).  It describes the in-plane orientation of the
+   sample surface relative to the lab coordinate system.
+
+   Requires :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
+
+   :param geometry: The diffractometer instance.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.  If ``None``, the geometry's current
+                  stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns: Azimuthal angle naz in degrees, in the range (−180°, +180°].
+   :rtype: float
+
+   :raises ValueError: If ``geometry.surface_normal`` is ``None``.
+
+   .. rubric:: References
+
+   * You (1999).
+
+
+.. py:function:: omega_pseudo(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference.omega_pseudo``
+
+
+   Compute the SPEC ``OMEGA`` pseudo-angle in degrees.
+
+   OMEGA is the angle between the scattering vector Q and the **plane of
+   the chi circle**, taking values in ``[-90°, +90°]``.  When
+   ``OMEGA = 0`` the scattering vector lies in the chi-circle plane and
+   the diffractometer is in the bisecting condition; non-zero OMEGA
+   means Q is tilted out of that plane.
+
+   The chi-circle plane is the plane perpendicular to the chi rotation
+   axis; that axis itself is rotated by every sample stage that sits
+   *outside* (i.e. lower in the stack than) chi.  In psic the outer
+   sample stages are ``mu`` and ``eta``.
+
+   Algorithm
+   ---------
+   1. Compute the chi-axis unit vector in the lab frame, applying the
+      rotations of all sample stages outside chi (e.g. ``mu`` and
+      ``eta`` in psic).
+   2. Compute the scattering vector ``Q_lab`` from the supplied motor
+      angles.
+   3. The OMEGA pseudo-angle is::
+
+          sin(OMEGA) = (Q̂_lab · n̂_chi)
+
+      where ``n̂_chi`` is the unit chi-axis vector in the lab frame.
+
+   :param geometry: Diffractometer geometry.  Must have ``wavelength`` set and must
+                    contain a sample stage named ``"chi"``.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees, keyed by stage name.  If ``None``
+                  (default), the geometry's current stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns: OMEGA pseudo-angle in degrees, in ``[-90°, +90°]``.
+   :rtype: float
+
+   :raises ValueError: If ``geometry.wavelength`` is ``None``.
+   :raises KeyError: If the geometry has no stage named ``"chi"``.
+
+   .. rubric:: Notes
+
+   Unlike :func:`incidence_angle`, :func:`exit_angle`, :func:`psi_angle`,
+   and :func:`naz_angle`, this function does **not** require any
+   reference vector (``surface_normal`` / ``azimuthal_reference``) to be
+   set on the geometry.  OMEGA is a pure motor-frame quantity defined
+   by the diffractometer's internal geometry.
+
+   The sign convention follows the right-hand rule about the chi axis:
+   OMEGA is positive when Q has a positive component along the chi-axis
+   direction defined by the geometry's stage configuration.
+
+   OMEGA is **independent of the inner sample stages** (``chi`` and
+   ``phi`` in psic): they rotate Q but they also rotate the
+   chi-circle plane normal — the relative angle between them is
+   preserved.  The pseudo-angle therefore depends only on the outer
+   sample stages, the detector stages, and the wavelength.
+
+   .. rubric:: Examples
+
+   >>> import ad_hoc_diffractometer as ahd
+   >>> g = ahd.make_geometry("psic")
+   >>> g.wavelength = 1.5406
+   >>> # Bisecting position: mu = nu = 0, eta = delta/2 — Q in chi-plane
+   >>> ahd.reference.omega_pseudo(
+   ...     g,
+   ...     {"mu": 0, "eta": 15.0, "chi": 90, "phi": 0,
+   ...      "nu": 0, "delta": 30.0},
+   ... )  # doctest: +SKIP
+   0.0
+
+   .. rubric:: References
+
+   * Certified Scientific Software, *SPEC psic help*,
+     https://certif.com/spec_help/psic.html —
+     ``def OMEGA 'Q[6]'`` — "The angle between Q and the plane of
+     the chi circle."
+   * H. You, *J. Appl. Cryst.* **32**, 614-623 (1999), §5.
+
+
+.. py:function:: psi_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reference.psi_angle``
+
+
+   Compute the azimuthal angle ψ of the reference vector n̂ about Q.
+
+   ψ is the angle between the azimuthal reference direction (projected
+   onto the plane perpendicular to Q) and the incident beam direction
+   (also projected onto that plane).  ψ = 0 when the reference vector
+   lies in the scattering plane on the same side as the incident beam.
+
+   Requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`
+   to be set.
+
+   :param geometry: The diffractometer instance.
+   :type geometry: AdHocDiffractometer
+   :param angles: Motor angles in degrees.  If ``None``, the geometry's current
+                  stage angles are used.
+   :type angles: dict[str, float] or None
+
+   :returns: Azimuthal angle ψ in degrees, in the range (−180°, +180°].
+   :rtype: float
+
+   :raises ValueError: If ``geometry.azimuthal_reference`` is ``None``.
+   :raises ValueError: If the reference vector is parallel to Q (ψ is undefined).
+
+   .. rubric:: References
+
+   * You (1999), eq. 23.
+
+
