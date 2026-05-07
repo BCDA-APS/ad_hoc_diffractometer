@@ -1,0 +1,188 @@
+geometries
+==========
+
+.. py:module:: ad_hoc_diffractometer.geometries
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.geometries``
+
+   Declarative geometry definitions (issue #267).
+
+   This subpackage contains the **demonstration** YAML files that ship with
+   ``ad_hoc_diffractometer``.  Each ``*.yml`` file is a declarative
+   description of one diffractometer geometry, parsed at import time by
+   :mod:`ad_hoc_diffractometer.geometry_loader` and registered with the
+   geometry registry in :mod:`ad_hoc_diffractometer.factories`.
+
+   The files here serve **two** purposes:
+
+   1. They populate the registry returned by
+      :func:`ad_hoc_diffractometer.list_geometries` so callers can use
+      ``ahd.make_geometry("fourcv")`` etc. out of the box.
+   2. They are **templates** that real beamlines should copy and adapt to
+      describe their own instruments.  These shipped files are
+      *demonstrations* of the schema — they are not authoritative
+      descriptions of any production diffractometer.
+
+   The schema reference page (``docs/source/reference/declarative_geometry_schema.md``)
+   describes every accepted key, axis form, constraint type, and error
+   message.  The companion how-to (``docs/source/howto/custom_geometry.md``)
+   walks through writing a new geometry from one of these templates.
+
+   This ``__init__.py`` exists so that ``importlib.resources`` can locate
+   the directory as a regular Python package.  No symbols are exported
+   from this module.
+
+   Demo geometries
+   ---------------
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 15 20 50
+
+      * - Name
+        - Type
+        - Description
+      * - ``fourcv``
+        - Eulerian 4-circle
+        - Vertical scattering plane (synchrotron). See :doc:`/geometries/fourcv`.
+      * - ``fourch``
+        - Eulerian 4-circle
+        - Horizontal scattering plane (laboratory). See :doc:`/geometries/fourch`.
+      * - ``fivec``
+        - Eulerian 5-circle
+        - Vlieg et al. (1987), fourcv on a mu base. See :doc:`/geometries/fivec`.
+      * - ``psic``
+        - Eulerian 6-circle
+        - You (1999) 4S+2D. See :doc:`/geometries/psic`.
+      * - ``sixc``
+        - Eulerian 6-circle
+        - Lohmeier & Vlieg (1993) surface geometry. See :doc:`/geometries/sixc`.
+      * - ``kappa4cv``
+        - Kappa 4-circle
+        - Vertical scattering plane (synchrotron). See :doc:`/geometries/kappa4cv`.
+      * - ``kappa4ch``
+        - Kappa 4-circle
+        - Horizontal scattering plane (laboratory). See :doc:`/geometries/kappa4ch`.
+      * - ``kappa6c``
+        - Kappa 6-circle
+        - Psic-style outer axes. See :doc:`/geometries/kappa6c`.
+      * - ``zaxis``
+        - Surface / special
+        - Bloch (1985) Z-axis geometry. See :doc:`/geometries/zaxis`.
+      * - ``s2d2``
+        - Surface / special
+        - Evans-Lutterodt & Tang (1995). See :doc:`/geometries/s2d2`.
+
+   Naming conventions
+   ------------------
+
+   The 10 demo geometries are grouped by their chi-circle mechanism:
+
+   - **Eulerian** geometries: ``fourcv``, ``fourch``, ``fivec``, ``psic``, ``sixc``
+   - **Kappa** geometries: ``kappa4cv``, ``kappa4ch``, ``kappa6c``
+   - **Surface / special** geometries: ``zaxis``, ``s2d2``
+
+   The trailing ``v`` / ``h`` suffix indicates the scattering plane:
+
+   - ``v`` — vertical scattering plane (synchrotron): ttheta rotates about
+     the transverse axis.
+   - ``h`` — horizontal scattering plane (laboratory): ttheta rotates
+     about the vertical axis.
+
+   Where no suffix is given, the detector convention is unambiguous
+   (``psic``, ``sixc``) or the geometry uses a non-standard detector
+   arrangement (``zaxis``, ``s2d2``, ``fivec``).
+
+   Concretely:
+
+   - ``fourch`` (horizontal scattering plane) matches Busing & Levy (1967)
+     Fig. 1b.
+   - ``fourcv`` (vertical scattering plane) is the synchrotron convention.
+   - ``kappa4ch`` and ``kappa4cv`` follow the same convention as
+     ``fourch`` and ``fourcv``.
+
+   Kappa angle (alpha) convention
+   ------------------------------
+
+   The kappa axis is inclined by ``alpha`` degrees from the omega axis,
+   lying in the plane that contains both omega and the equivalent-Eulerian
+   chi axis, and tilted from omega toward that chi direction (Walko 2016
+   Fig. 3; Wyckoff 1985 Fig. 2(b); Thorkildsen 2006 Table 1; Enraf-Nonius;
+   ITC Vol. C Sec. 2.2.6).
+
+   Per geometry (with omega and chi-equivalent shown as physical
+   basis-direction lines, ignoring sign of handedness):
+
+   - ``kappa4cv``: omega along transverse, chi-eq along vertical;
+     kappa lies in the T-V plane between +T and +V.
+   - ``kappa4ch``: omega along vertical, chi-eq along longitudinal;
+     kappa lies in the V-L plane between +V and +L.
+   - ``kappa6c``:  same as ``kappa4cv`` (mounted on top of ``mu`` and
+     ``nu``).
+
+   Typical value: ``alpha = 50`` deg.  Each kappa YAML carries
+   ``parameters.alpha_deg`` and ``kappa_chi_eq``; the loader synthesizes
+   the corresponding
+   :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention` from
+   the canonical stage names ``komega`` / ``kappa`` / ``kphi``.
+
+   Handedness convention
+   ---------------------
+
+   The shipped YAML files follow Walko (2016) and encode
+   omega / kappa / phi / 2theta as **left-handed** about their respective
+   signed-axis vectors (e.g. ``-transverse`` for the ``komega`` axis in
+   ``kappa4cv``).  ITC Vol. C Sec. 2.2.6.2 (2006) instead specifies the
+   standard signs of omega / chi / phi as right-handed (only 2theta is
+   left-handed in Hamilton's choice).  Either convention is internally
+   consistent; users who prefer the ITC convention can construct their
+   own geometry by negating the relevant axis fields in their YAML.  See
+   the schema reference and the custom-geometry how-to.
+
+   Walko (2016) S/D designations
+   -----------------------------
+
+   Each demo geometry corresponds to one of the S/D designations from
+   the survey by Walko (2016):
+
+   - ``S3D1``      — ``fourcv``, ``fourch``, ``kappa4cv``, ``kappa4ch``
+   - ``S4D2``      — ``psic``, ``kappa6c``
+   - ``(S3D2)1``   — ``sixc``   (sample and detector share base stage)
+   - ``(S3D1)1``   — ``fivec``  (fourcv mounted on vertical base)
+   - ``(S1D2)1``   — ``zaxis``  (sample and detector share alpha base
+     stage)
+   - ``S2D2``      — ``s2d2``   (fully decoupled sample/detector pairs)
+
+   For historical context on diffractometer design predating the
+   closed-form Busing & Levy (1967) angle-setting equations, see Arndt &
+   Willis (1966), listed in the project's
+   ``docs/source/references.md``.
+
+   .. rubric:: References
+
+   The full bibliography for these demonstrations lives in
+   ``docs/source/references.md``.  The most-cited entries:
+
+   - W.R. Busing & H.A. Levy, *Acta Cryst.* **22**, 457-464 (1967) —
+     ``fourcv`` / ``fourch``
+   - J.M. Bloch, *J. Appl. Cryst.* **18**, 33-36 (1985) — ``zaxis``
+   - E. Vlieg et al., *J. Appl. Cryst.* **20**, 330-337 (1987) —
+     ``fivec``
+   - M. Lohmeier & E. Vlieg, *J. Appl. Cryst.* **26**, 706-716 (1993) —
+     ``sixc``
+   - K.W. Evans-Lutterodt & M.-T. Tang, *J. Appl. Cryst.* **28**,
+     318-326 (1995) — ``s2d2``
+   - H. You, *J. Appl. Cryst.* **32**, 614-623 (1999),
+     DOI:10.1107/S0021889899001223 — ``psic``
+   - ITC Vol. C, Sec. 2.2.6 (2006), p. 36,
+     DOI:10.1107/97809553602060000577 — kappa goniostat
+   - H.W. Wyckoff, *Methods in Enzymology* **114**, 330-386 (1985) —
+     kappa diffractometer, Fig. 2(b)
+   - G. Thorkildsen, H.B. Larsen & J.A. Beukes, *J. Appl. Cryst.* **39**,
+     151-157 (2006) — three-circle goniostat angle calculations, Table 1
+   - D.A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016) — kappa,
+     zaxis, s2d2, fivec; S/D designation system
+
+

@@ -1,0 +1,1332 @@
+forward
+=======
+
+.. py:module:: ad_hoc_diffractometer.forward
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.forward``
+
+   The forward calculation is the inverse of ``inverse()``: given a reciprocal-
+   lattice point (h, k, l) and a diffraction mode, compute all valid sets of
+   motor angles that satisfy the Bragg condition.
+
+   Entry point
+   -----------
+   ``AdHocDiffractometer.forward(h, k, l)`` calls ``compute_forward(geometry,
+   h, k, l)`` which dispatches to the appropriate solver based on the active
+   mode type.
+
+   Supported modes
+   ---------------
+   Bisecting (ConstraintSet with BisectConstraint)
+       Classic Eulerian four-circle bisecting solution (Busing & Levy 1967,
+       section "Angle settings").  Valid for psic (eta/delta bisecting),
+       fourcv, fourch (omega/ttheta bisecting), and analogous geometries.
+       Stage names are read directly from the BisectConstraint — no
+       axis-geometry heuristic is used.
+
+       Algorithm:
+           1. Q_phi = UB @ (h, k, l)             — target in phi frame
+           2. \|Q\| → ttheta via Bragg's law
+           3. fixed sample stages set from SampleConstraint values
+           4. detector_stage = ttheta            (from BisectConstraint.detector_stage)
+           5. sample_stage   = ttheta / 2        (from BisectConstraint.sample_stage)
+           6. Remaining free sample stages (chi, phi or kchi, kphi) solved
+              from the direction of Q_phi, choosing among the standard
+              solution branches (two solutions: chi in [0°,180°] and
+              chi in [-180°, 0°]).
+
+   True virtual bisecting (ConstraintSet with VirtualBisectConstraint)
+       The physically correct bisecting condition for kappa diffractometers
+       (kappa4cv, kappa4ch, kappa6c).  The bisecting condition is enforced
+       on the *virtual* Eulerian omega pseudoangle (Walko 2016, eq. [16]):
+       ``omega_virtual = ttheta/2``.  The literal ``komega = ttheta/2``
+       enforced by :class:`~mode.BisectConstraint` is only an approximation
+       and is replaced for kappa-bisect modes by
+       :class:`~mode.VirtualBisectConstraint`.  See issue #226.
+
+       Algorithm (:func:`_solve_bisecting_kappa_virtual`):
+           1. Build a synthetic mode that fixes ``omega_virtual = ttheta/2``
+              via a :class:`~mode.SampleConstraint`.
+           2. Delegate to :func:`~kappa.solve_kappa_virtual`, which runs
+              Newton iteration on virtual ``(chi, phi)`` with the omega
+              pseudoangle frozen.
+           3. For each converged virtual triple, convert to real motors via
+              :func:`~kappa.eulerian_to_kappa` for both kappa branches
+              (``±1``).
+           4. Polish the result with a finer central-difference Newton on
+              ``(chi, phi)`` to push the residual toward machine precision.
+
+       Some reflections that were "accessible" under the previous
+       ``komega = ttheta/2`` approximation are **not** accessible under
+       true virtual bisecting — those previous solutions had
+       ``omega_virtual ≠ ttheta/2`` and were therefore not physically
+       bisecting.
+
+   Fixed sample angle (ConstraintSet without BisectConstraint)
+       One or more sample stages are frozen at declared values.  The
+       remaining free stages are solved numerically from the direction
+       of Q_phi.
+
+   :raises NotImplementedError: If the active mode is None or is not a supported type for this geometry.
+   :raises ValueError: If wavelength or UB matrix is not set.
+   :raises ValueError: If (h, k, l) = (0, 0, 0).
+   :raises EwaldSphereViolation: If the requested ``|Q|`` exceeds the Ewald sphere (wavelength too long).
+   :raises ConstraintViolation: If a returned solution violates a declared constraint beyond tolerance.
+
+   .. rubric:: References
+
+   * Busing & Levy, Acta Cryst. 22, 457-464 (1967) — angle-setting equations
+   * You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.forward.ForwardContext
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.forward._apply_cut_points
+   ad_hoc_diffractometer.forward._bisect_pair_for
+   ad_hoc_diffractometer.forward._check_limits
+   ad_hoc_diffractometer.forward._collect_dd_solution
+   ad_hoc_diffractometer.forward._compute_natural_psi
+   ad_hoc_diffractometer.forward._is_cardinal_axis
+   ad_hoc_diffractometer.forward._is_double_diffraction_mode
+   ad_hoc_diffractometer.forward._is_free_detectors_mode
+   ad_hoc_diffractometer.forward._is_kappa_virtual_mode
+   ad_hoc_diffractometer.forward._is_omega_mode
+   ad_hoc_diffractometer.forward._is_psi_mode
+   ad_hoc_diffractometer.forward._is_qaz_mode
+   ad_hoc_diffractometer.forward._is_standard_eulerian_pair
+   ad_hoc_diffractometer.forward._is_surface_mode
+   ad_hoc_diffractometer.forward._is_zone_mode
+   ad_hoc_diffractometer.forward._omega_to_fixed_sample_mode
+   ad_hoc_diffractometer.forward._refine_dd_outer_seeded
+   ad_hoc_diffractometer.forward._solve_bisecting
+   ad_hoc_diffractometer.forward._solve_bisecting_analytic
+   ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual
+   ad_hoc_diffractometer.forward._solve_constraint_set
+   ad_hoc_diffractometer.forward._solve_constraint_set_no_omega
+   ad_hoc_diffractometer.forward._solve_double_diffraction
+   ad_hoc_diffractometer.forward._solve_fixed_sample
+   ad_hoc_diffractometer.forward._solve_free_detectors
+   ad_hoc_diffractometer.forward._solve_kappa_virtual
+   ad_hoc_diffractometer.forward._solve_omega_mode
+   ad_hoc_diffractometer.forward._solve_one_free_angle
+   ad_hoc_diffractometer.forward._solve_one_free_angle_analytic
+   ad_hoc_diffractometer.forward._solve_psi_mode
+   ad_hoc_diffractometer.forward._solve_qaz_mode
+   ad_hoc_diffractometer.forward._solve_surface
+   ad_hoc_diffractometer.forward._solve_two_angles
+   ad_hoc_diffractometer.forward._solve_zone
+   ad_hoc_diffractometer.forward._surface_residual
+   ad_hoc_diffractometer.forward._synthetic_bisecting_for_omega
+   ad_hoc_diffractometer.forward._validate_solutions
+   ad_hoc_diffractometer.forward.compute_forward
+
+
+Module Contents
+---------------
+
+.. py:class:: ForwardContext(geometry)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward.ForwardContext``
+
+
+   Pre-computed intermediates for the forward solver's inner loops.
+
+   Created once per :func:`~ad_hoc_diffractometer.forward.compute_forward()`
+   call, this bundles all constant quantities needed by the Newton-Raphson
+   residual evaluations so they are not recomputed on every call to
+   :func:`~ad_hoc_diffractometer.orientation.angles_to_phi_vector()`.
+
+   .. attribute:: sample_stages
+
+
+
+      :type: list of Stage
+
+   .. attribute:: detector_stages
+
+
+
+      :type: list of Stage
+
+   .. attribute:: two_pi_over_lambda
+
+
+
+      :type: float
+
+   .. attribute:: y_eff
+
+      Effective beam direction (R_inc.T @ y_hat).
+
+      :type: numpy.ndarray, shape (3,)
+
+
+   
+
+   .. py:method:: jacobian_analytic(angles: dict[str, float], free_names: list[str]) -> ~numpy.ndarray
+
+      Compute the analytic Jacobian of Q_phi with respect to free stage angles.
+
+      Uses the closed-form derivative of the Rodrigues rotation matrix to
+      avoid finite-difference evaluations entirely.  The detector rotation
+      ``D`` must be cached (all detector stages fixed) — this is the case
+      for every call site that passes a ``ForwardContext`` to
+      :func:`_solve_two_angles`.
+
+      :param angles: Current motor angles (degrees) for all stages.
+      :type angles: dict[str, float]
+      :param free_names: Ordered list of free stage names (length 1 or 2).
+      :type free_names: list of str
+
+      :returns: **J** -- ``J[:, k]`` is ``dQ_phi / d(stage_k angle in degrees)``.
+      :rtype: numpy.ndarray, shape (3, n_free)
+
+
+
+   .. py:method:: prepare_caching(fixed_angles: dict[str, float], free_stage_names: set[str]) -> None
+
+      Pre-compute rotation matrices for stages whose angles will not
+      change during Newton iteration.
+
+      :param fixed_angles: All angles including fixed ones.
+      :type fixed_angles: dict
+      :param free_stage_names: Names of stages that will vary during iteration.
+      :type free_stage_names: set of str
+
+
+
+   .. py:method:: q_phi(angles: dict[str, float]) -> ~numpy.ndarray
+
+      Compute Q_phi using cached rotation matrices where possible.
+
+
+
+   .. py:method:: q_phi_uncached(angles: dict[str, float]) -> ~numpy.ndarray
+
+      Compute Q_phi without any caching (for validation).
+
+
+
+   
+
+   
+
+   
+
+.. py:function:: _apply_cut_points(angles: dict[str, float], mode, geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._apply_cut_points``
+
+
+   Apply cut-points (in-place) to all angles in the solution dict.
+
+   Mode-level cut-points take priority over geometry-level cut-points.
+
+
+.. py:function:: _bisect_pair_for(geometry, mode)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._bisect_pair_for``
+
+
+   Return a ``BisectConstraint`` on the geometry's chi-circle bisect pair.
+
+   For psic the bisect pair is determined by which sample stage is fixed:
+
+   - If ``mu`` is fixed at 0 (vertical scattering plane): ``eta ↔ delta``.
+   - If ``eta`` is fixed at 0 (horizontal scattering plane): ``mu ↔ nu``.
+
+   Returns ``None`` if neither condition is satisfied (e.g. an unsupported
+   psic-like geometry).
+
+
+.. py:function:: _check_limits(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float]) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._check_limits``
+
+
+   Return True if all angles are within the stage limits of their stage.
+
+   Stages not present in the angles dict are not checked.
+
+
+.. py:function:: _collect_dd_solution(sol: dict[str, float], free_names: list[str], found_solutions: list[dict[str, float]], seen_keys: list[~numpy.ndarray], mode, geometry) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._collect_dd_solution``
+
+
+   De-duplicate, apply cut-points, check limits, and append if valid.
+
+
+.. py:function:: _compute_natural_psi(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray) -> float | None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._compute_natural_psi``
+
+
+   Compute the natural azimuthal angle ψ from the phi frame only.
+
+   ψ is a pure phi-frame quantity: it depends on ``Q_phi = UB @ hkl``,
+   ``n_phi = UB @ n_hkl`` (the azimuthal reference in the phi frame),
+   and ``y_hat`` (the incident-beam direction from the geometry's basis).
+   **No motor angles are involved.**
+
+   :param geometry: Must have ``sample.UB`` and ``azimuthal_reference`` set.
+   :type geometry: AdHocDiffractometer
+   :param Q_phi: Target scattering vector in the phi frame (``UB @ hkl``).
+   :type Q_phi: numpy.ndarray, shape (3,)
+
+   :returns: ψ in degrees (−180°, +180°], or ``None`` when ψ is undefined
+             (Q ∥ incident beam, or reference vector ∥ Q).
+   :rtype: float or None
+
+
+.. py:function:: _is_cardinal_axis(n: ~numpy.ndarray, atol: float = 1e-12) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_cardinal_axis``
+
+
+   Return True if ``n`` is exactly (within ``atol``) ``±XHAT``, ``±YHAT``,
+   or ``±ZHAT``.
+
+   The strict cardinal-axis check gates the analytic 1-free-angle fast
+   path (issue #227).  Geometries with axes that are slightly off-axis
+   (e.g. mis-aligned mounts, kappa-style tilted axes) will fall back to
+   the Newton solver.
+
+   :param n: Unit-norm axis vector to test.
+   :type n: numpy.ndarray, shape (3,)
+   :param atol: Absolute tolerance for the equality check.  Default ``1e-12``,
+                matching the cleanliness of basis vectors that come from
+                :data:`~constants.XHAT` / ``YHAT`` / ``ZHAT`` after stage
+                construction.
+   :type atol: float, optional
+
+   :rtype: bool
+
+
+.. py:function:: _is_double_diffraction_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_double_diffraction_mode``
+
+
+   Return True when mode.extras contains h2, k2, l2 keys.
+
+
+.. py:function:: _is_free_detectors_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_free_detectors_mode``
+
+
+   Return True when both detector stages are free under ``mode``.
+
+   Used by :func:`_solve_free_detectors` to dispatch psic-family modes
+   that fix multiple sample stages and let the detector arm orient
+   itself entirely from the Bragg condition (and any reference
+   constraint such as ``alpha_i``).  Examples (issue #264):
+
+   - ``lifting_detector_eta`` (3 sample fixed, 1 sample + 2 detector free)
+   - revised ``lifting_detector_phi`` / ``lifting_detector_mu``
+     (after step C of #264 — same shape, different fixed sample stage)
+   - ``fixed_alpha_i_fixed_chi_fixed_phi`` (2 sample fixed + alpha_i,
+     2 sample + 2 detector free)
+
+   The predicate is intentionally conservative: it requires the
+   psic-family geometry signature (a sample stage named ``"chi"``),
+   two detector stages with neither pinned by ``DetectorConstraint``,
+   no qaz/bisect constraint, and a free-sample count compatible with
+   the equation count (Bragg gives 3 equations; each
+   :class:`~mode.ReferenceConstraint` other than ``"omega"`` adds 1).
+   Existing surface geometries (zaxis, s2d2, sixc) lack ``chi`` and
+   continue to use :func:`_solve_surface`.
+
+
+.. py:function:: _is_kappa_virtual_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_kappa_virtual_mode``
+
+
+   Return True when the mode contains a virtual Eulerian angle constraint
+   (omega, chi, or phi) on a kappa geometry.
+
+   Delegates to :func:`~kappa.is_kappa_virtual_mode`.
+
+
+.. py:function:: _is_omega_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_omega_mode``
+
+
+   Return True when the mode has an ``"omega"`` ReferenceConstraint and the
+   geometry implements the OMEGA pseudo-angle (i.e. has a ``chi`` stage).
+
+   OMEGA is the SPEC ``Q[6]`` pseudo-angle: angle between Q and the plane
+   of the chi circle.  See
+   :func:`~ad_hoc_diffractometer.reference.omega_pseudo`.
+
+
+.. py:function:: _is_psi_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_psi_mode``
+
+
+   Return True when the mode contains a psi ReferenceConstraint and the reference is set.
+
+
+.. py:function:: _is_qaz_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_qaz_mode``
+
+
+   Return True when the mode contains a qaz DetectorConstraint.
+
+
+.. py:function:: _is_standard_eulerian_pair(chi_stage, phi_stage) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_standard_eulerian_pair``
+
+
+   Return True if the chi and phi stages have orthogonal axis vectors.
+
+   Standard Eulerian geometries (fourcv, fourch, psic, sixc, fivec) have
+   chi about the longitudinal axis and phi about a transverse or vertical
+   axis — always orthogonal.  Kappa geometries do NOT have orthogonal
+   chi/phi (the kappa axis is tilted), so they will return False here and
+   use the Newton fallback.
+
+   :param chi_stage: The two free sample stages (chi-role and phi-role).
+   :type chi_stage: Stage
+   :param phi_stage: The two free sample stages (chi-role and phi-role).
+   :type phi_stage: Stage
+
+   :rtype: bool
+
+
+.. py:function:: _is_surface_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_surface_mode``
+
+
+   Return True when mode has a surface ReferenceConstraint and surface_normal is set.
+
+   The ``"psi"`` and ``"omega"`` ReferenceConstraints are NOT surface modes —
+   they are handled by :func:`_is_psi_mode` / :func:`_solve_psi_mode` and
+   :func:`_is_omega_mode` / :func:`_solve_omega_mode` respectively.
+
+   psic-family modes that leave **two free sample stages** along with both
+   detector stages free are routed to :func:`_solve_free_detectors`
+   instead (the new general solver added for issue #264) — the legacy
+   ``_solve_surface`` only rocks a single sample stage and assumes that
+   fixing the active detector to ``ttheta`` plus the other constraints
+   is enough to satisfy Bragg.
+
+
+.. py:function:: _is_zone_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode) -> bool
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._is_zone_mode``
+
+
+   Return True when ``mode.extras`` contains both ``z0`` and ``z1`` keys.
+
+   Zone modes confine the scattering vector Q to the plane spanned by two
+   reciprocal-lattice vectors z0 and z1.  Like double-diffraction modes,
+   zone modes are dispatched by their ``extras`` schema rather than by a
+   dedicated constraint class.
+
+
+.. py:function:: _omega_to_fixed_sample_mode(mode)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._omega_to_fixed_sample_mode``
+
+
+   Return ``mode`` with the omega ReferenceConstraint stripped.
+
+   Used only by the "all outer stages fixed" branch of
+   :func:`_solve_omega_mode`, which the current YAML modes never trigger.
+
+
+.. py:function:: _refine_dd_outer_seeded(outer_deg: float, candidate: dict[str, float], chi_hint: float, phi_hint: float, chi_name: str, phi_name: str, solve_inner_seeded_fn, ewald_fn, max_iter: int = 20, h: float = 0.0001) -> dict[str, float] | None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._refine_dd_outer_seeded``
+
+
+   1D Newton refinement on the outer sample angle to satisfy the Ewald
+   sphere constraint for the secondary reflection.
+
+   Tracks a single (chi, phi) branch using the seeded inner solver, which
+   uses the previous solution as the starting guess.  This avoids the
+   multi-seed overhead of the full inner solver.
+
+   :param outer_deg: Starting value for the outer sample angle.
+   :type outer_deg: float
+   :param candidate: Pre-computed candidate at ``outer_deg``.
+   :type candidate: dict[str, float]
+   :param chi_hint: Initial (chi, phi) hint for branch tracking.
+   :type chi_hint: float
+   :param phi_hint: Initial (chi, phi) hint for branch tracking.
+   :type phi_hint: float
+   :param chi_name: Stage names for chi and phi.
+   :type chi_name: str
+   :param phi_name: Stage names for chi and phi.
+   :type phi_name: str
+   :param solve_inner_seeded_fn: ``(outer_deg, chi_hint, phi_hint) -> dict | None``
+   :type solve_inner_seeded_fn: callable
+   :param ewald_fn: ``(angles) -> float``
+   :type ewald_fn: callable
+   :param max_iter:
+   :type max_iter: int
+   :param h: Finite-difference step for the derivative.
+   :type h: float
+
+   :returns: Refined solution dict, or None if refinement failed.
+   :rtype: dict[str, float] or None
+
+
+.. py:function:: _solve_bisecting(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_bisecting``
+
+
+   Bisecting-mode forward solver for ConstraintSet.
+
+   Implements the Busing & Levy (1967) angle-setting algorithm for an
+   Eulerian geometry in the bisecting condition.
+
+   The bisect stage pair (sample_stage, detector_stage) is read directly
+   from the :class:`~mode.BisectConstraint` — no geometry heuristics are
+   used.  ``bisect_constraint.detector_stage`` receives ``ttheta_deg``;
+   ``bisect_constraint.sample_stage`` is set to ``ttheta_deg / 2``.
+
+   Any ``DetectorConstraint`` in the mode (e.g. ``nu=0`` in psic) freezes
+   that stage at its declared value.  Any fixed ``SampleConstraint`` values
+   are applied before solving for the remaining free stages.
+
+   Two solutions are returned corresponding to the "positive chi"
+   branch (chi in [0, 180]) and the "negative chi" branch
+   (chi in (-180, 0)).
+
+   Both solutions are validated against stage limits; those that fail are
+   dropped.  Cut-points from the mode are applied to each angle.
+
+   **Dispatch**
+
+   1. **Kappa true-virtual bisecting** — if the geometry is a kappa
+      diffractometer and the bisect sample stage is ``komega``, the
+      solver works in the *virtual* Eulerian frame (omega, chi, phi)
+      where true bisecting means ``omega_virtual = ttheta/2``.  The
+      analytic solver is invoked on the synthetic Eulerian triple, and
+      each solution is converted to real ``(komega, kappa, kphi)`` motor
+      angles via :func:`~kappa.eulerian_to_kappa` for both branches
+      (kappa ≥ 0 and kappa ≤ 0).  See
+      :func:`_solve_bisecting_kappa_virtual`.
+   2. **Standard Eulerian fast path** — when the two free sample stages
+      have orthogonal axes (fourcv, fourch, psic, sixc, fivec), the
+      analytic solver :func:`_solve_bisecting_analytic` yields a
+      5-10× speedup over Newton iteration.
+   3. **Newton fallback** — for any non-standard axis configuration not
+      covered by the fast paths above.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Q_phi: Target scattering vector in the phi frame (Å⁻¹).
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg: Detector angle (2θ) in degrees.
+   :type ttheta_deg: float
+   :param mode:
+   :type mode: ConstraintSet
+
+   :returns: Valid solutions (may be empty if all are out of limits).
+   :rtype: list of dict[str, float]
+
+
+.. py:function:: _solve_bisecting_analytic(ctx: ForwardContext, chi_stage, phi_stage, angles: dict[str, float], Q_phi_target: ~numpy.ndarray) -> list[tuple[float, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_bisecting_analytic``
+
+
+   Analytic solver for bisecting with two free Eulerian angles.
+
+   Derives (chi, phi) from a direct trigonometric decomposition when the
+   chi and phi axes are orthogonal (standard Eulerian geometry).
+
+   **Derivation.**
+
+   The sample rotation matrix is:
+
+   .. math::
+
+       Z = R_\phi \cdot R_\chi \cdot Z_{\text{prefix}}
+
+   where :math:`Z_{\text{prefix}}` is the product of all fixed outer
+   sample stages.  The scattering vector in the phi frame is:
+
+   .. math::
+
+       Q_\phi = Z^T Q_{\text{lab}}
+             = Z_{\text{prefix}}^T \cdot R_\chi^T \cdot R_\phi^T \cdot Q_{\text{lab}}
+
+   Define the known vectors:
+
+   - :math:`q = Z_{\text{prefix}} \cdot Q_{\phi,\text{target}}`
+   - :math:`v = Q_{\text{lab}}`
+
+   The equation to solve is:
+
+   .. math::
+
+       R(\hat n_\chi, -\chi) \cdot R(\hat n_\phi, -\phi) \cdot v = q
+
+   Since :math:`\hat n_\chi \perp \hat n_\phi`, define
+   :math:`\hat n_3 = \hat n_\chi \times \hat n_\phi`.  Projecting onto
+   the :math:`(\hat n_\phi, \hat n_3)` plane gives a 2×2 linear system
+   for :math:`(\cos\chi, \sin\chi)`:
+
+   .. math::
+
+       \begin{pmatrix} A & B \\ -B & A \end{pmatrix}
+       \begin{pmatrix} \cos\chi \\ \sin\chi \end{pmatrix}
+       = \begin{pmatrix} C \\ E \end{pmatrix}
+
+   where
+   :math:`A = \hat n_\phi \cdot q`,
+   :math:`B = \hat n_\phi \cdot (\hat n_\chi \times q)`,
+   :math:`C = \hat n_\phi \cdot v`,
+   :math:`E = \hat n_3 \cdot v`.
+   This yields a unique :math:`\chi` via ``atan2``.
+
+   Phi is then solved from the :math:`\hat n_\chi` component:
+
+   .. math::
+
+       \hat n_\chi \cdot R(\hat n_\phi, -\phi) \cdot v = \hat n_\chi \cdot q
+
+   which gives :math:`\alpha\cos\phi + \beta\sin\phi = \gamma`, solved
+   with the standard ``atan2`` / ``acos`` decomposition.
+
+   :param ctx: Must have ``prepare_caching`` already called with the chi/phi
+               stages as free.
+   :type ctx: ForwardContext
+   :param chi_stage: The two free sample stages (orthogonal axes).
+   :type chi_stage: Stage
+   :param phi_stage: The two free sample stages (orthogonal axes).
+   :type phi_stage: Stage
+   :param angles: Baseline angles with all fixed stages set.
+   :type angles: dict[str, float]
+   :param Q_phi_target: Target scattering vector in the phi frame (Å⁻¹).
+   :type Q_phi_target: numpy.ndarray, shape (3,)
+
+   :returns: Candidate solutions.  May contain 0, 1, or 2 entries.
+             All entries have been validated against a single residual check.
+   :rtype: list of (chi_deg, phi_deg)
+
+
+.. py:function:: _solve_bisecting_kappa_virtual(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode, bisect_c, angles: dict[str, float]) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual``
+
+
+   True virtual bisecting solver for kappa geometries.
+
+   On a kappa diffractometer the real motor triple
+   ``(komega, kappa, kphi)`` is parameterized by *virtual Eulerian
+   pseudoangles* ``(omega, chi, phi)``.  *True* virtual bisecting
+   means the **virtual** ``omega`` equals ``ttheta/2`` — not the
+   previous approximation ``komega = ttheta/2``, which only coincides
+   with true bisecting at ``kappa = 0``.
+
+   Implementation
+   --------------
+   This function is a thin wrapper around
+   :func:`~ad_hoc_diffractometer.kappa.solve_kappa_virtual`, which
+   handles the entire kappa virtual-angle solve uniformly for both
+   bisect (``VirtualBisectConstraint``) and fixed-virtual-angle
+   (``SampleConstraint`` on ``omega``/``chi``/``phi``) modes via the
+   geometry-aware :func:`~kappa.eulerian_to_kappa_axes` decomposition
+   introduced by issue #241.
+
+   The wrapper applies the kappa-side post-processing — cut-points,
+   motor-limit checks, and final deduplication on ``(komega, kappa,
+   kphi)`` — that the rest of the forward pipeline expects.
+
+   :param geometry: A kappa diffractometer with ``kappa_pseudo_angle_convention``
+                    set.
+   :type geometry: AdHocDiffractometer
+   :param Q_phi: Target scattering vector in the phi frame (Å⁻¹).
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg: Detector angle (2θ) in degrees.
+   :type ttheta_deg: float
+   :param mode: Active diffraction mode.
+   :type mode: ConstraintSet
+   :param bisect_c: Active virtual-bisecting constraint (parameter retained for
+                    signature compatibility with the dispatcher in
+                    :func:`_solve_bisecting`).
+   :type bisect_c: :class:`~mode.VirtualBisectConstraint`
+   :param angles: Baseline angles dict with detector stage already frozen at
+                  ``ttheta_deg`` (parameter retained for signature
+                  compatibility).
+   :type angles: dict[str, float]
+
+   :returns: Valid solutions, possibly empty when the requested reflection
+             is not in the bisecting locus or all candidate configurations
+             are outside the stage limits.
+   :rtype: list of dict[str, float]
+
+   .. rubric:: References
+
+   * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016) —
+     textbook pseudoangle special case.
+   * W. R. Busing & H. A. Levy, *Acta Cryst.* 22, 457-464 (1967) —
+     bisecting Eulerian geometry.
+   * Issue #241 — geometry-aware decomposition that supersedes the
+     Walko-only implementation.
+
+
+.. py:function:: _solve_constraint_set(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_constraint_set``
+
+
+   Dispatch to the appropriate analytic or numeric solver based on the
+   constraint pattern encoded in the ConstraintSet.
+
+   Currently supported patterns:
+
+   - Bisect (any geometry): a :class:`~mode.BisectConstraint` is present,
+     with an optional ``DetectorConstraint`` freezing an outer detector
+     stage and optional fixed ``SampleConstraint`` values.
+   - Fixed sample angle without bisect: one or more fixed sample angles;
+     delegates to _solve_fixed_sample.
+
+   Unsupported patterns fall back to the numeric solver.
+
+
+.. py:function:: _solve_constraint_set_no_omega(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_constraint_set_no_omega``
+
+
+   Run the constraint-set dispatcher on ``mode`` after stripping any
+   ``ReferenceConstraint("omega", ...)`` so the inner solve cannot recurse.
+
+   The omega solver re-enters the dispatcher to handle the inner Bragg
+   solve; without this guard the dispatcher would route the recursive
+   call back into :func:`_solve_omega_mode` and loop forever.
+
+
+.. py:function:: _solve_double_diffraction(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_double_diffraction``
+
+
+   Decomposed solver for double-diffraction modes.
+
+   Finds motor angles where both the primary reflection (h1,k1,l1) and a
+   secondary reflection (h2,k2,l2) simultaneously satisfy the Ewald sphere
+   condition.
+
+   Instead of a 4D Newton-Raphson system, the problem is decomposed into
+   sequential subproblems:
+
+   1. **Detector angle** -- known from Bragg's law (``ttheta_deg``).
+   2. **Outer sample angle scan** -- 1D sweep over the outermost free
+      sample stage (omega, eta, mu, or komega).
+   3. **(chi, phi) from Q direction** -- for each outer angle, solve the
+      primary Bragg condition for the two inner sample stages.  Uses the
+      analytic decomposition (``_solve_bisecting_analytic``) for standard
+      Eulerian geometries, or the 2D Gauss-Newton solver for kappa axes.
+   4. **Ewald sphere filter** -- accept only candidates where the secondary
+      reflection hkl2 lies on the Ewald sphere.  A 1D Newton refinement
+      on the outer sample angle drives the residual to machine precision.
+
+   This replaces the former 4D Newton system (~50 seeds x 300 iterations x
+   5 residual evaluations per step) with a 1D scan + analytic 2D solve +
+   scalar filter, yielding a 100-1000x speedup.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Q_phi:
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg:
+   :type ttheta_deg: float
+   :param mode:
+   :type mode: ConstraintSet
+
+   :rtype: list of dict[str, float]
+
+   :raises ValueError: If h2, k2, l2 are not set in ``mode.extras`` (still ``REQUIRED``).
+
+
+.. py:function:: _solve_fixed_sample(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_fixed_sample``
+
+
+   Fixed-sample-angle solver (no bisect condition).
+
+   Freezes all named sample stages at their constraint values, sets the
+   detector stage to ``ttheta_deg``, and solves for any remaining free
+   sample stages numerically.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Q_phi:
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg:
+   :type ttheta_deg: float
+   :param mode:
+   :type mode: ConstraintSet
+
+   :rtype: list of dict[str, float]
+
+
+.. py:function:: _solve_free_detectors(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_free_detectors``
+
+
+   Numerical Newton solver for psic-family modes with both detector
+   stages free.
+
+   Adds support for the issue #264 modes that drop the qaz constraint
+   and let nu and delta float jointly to satisfy the Bragg condition:
+
+   - ``lifting_detector_eta`` (B4)
+   - revised ``lifting_detector_phi`` / ``lifting_detector_mu`` (C3, C4)
+   - ``fixed_alpha_i_fixed_chi_fixed_phi`` (B3, with one alpha_i row)
+
+   Variables: every free sample stage plus both detector stages.
+   Equations: 3 from Bragg (``Q_phi(angles) == Q_phi_target``) plus 1 per
+   non-``omega`` :class:`~mode.ReferenceConstraint` in the mode.
+
+   The solver runs a finite-difference Levenberg-Marquardt-flavoured
+   Newton iteration from a small grid of seed points and de-duplicates
+   by the rounded free-stage values.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Q_phi:
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg: Magnitude of 2θ implied by ``Q_phi`` (used as a default seed for
+                      the active detector stage; not enforced as a constraint).
+   :type ttheta_deg: float
+   :param mode:
+   :type mode: ConstraintSet
+
+   :rtype: list of dict[str, float]
+
+
+.. py:function:: _solve_kappa_virtual(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_kappa_virtual``
+
+
+   Kappa virtual-angle dispatcher.
+
+   Wraps :func:`~kappa.solve_kappa_virtual` (which performs the
+   geometry-aware Eulerian-equivalent solve introduced by issue #241)
+   with the kappa-side post-processing: virtual-angle validation
+   against the per-geometry
+   :class:`~kappa.KappaPseudoAngleConvention`, cut-points, motor
+   limits, and deduplication.
+
+
+.. py:function:: _solve_omega_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_omega_mode``
+
+
+   Forward solver for ``ReferenceConstraint("omega", value)`` modes.
+
+   OMEGA is the SPEC ``Q[6]`` pseudo-angle — the angle between the
+   scattering vector Q and the plane of the chi circle.  When the
+   target value is zero, OMEGA = 0 means Q lies in the chi-circle
+   plane and the diffractometer is in the bisecting condition; non-zero
+   OMEGA tilts Q out of that plane.
+
+   Strategy
+   --------
+   The OMEGA pseudo-angle depends only on the **outer** sample stages
+   (those below chi in the stack — ``mu`` and ``eta`` in psic) and the
+   detector stages.  In each of the supported psic mode topologies
+   exactly one outer stage is fixed and the other is free; we drive
+   that free outer stage to satisfy ``OMEGA = target`` using a 1-D
+   Newton root-find.  The inner sample stages ``(chi, phi)`` and the
+   active detector angle are determined at each Newton step by the
+   Bragg condition through the ordinary fixed-sample solver.
+
+   For the special case ``target = 0`` the bisecting condition (``OMEGA
+   = 0 ⇔ Q in the chi-circle plane``) is exact and the solver
+   short-circuits to ``_solve_bisecting`` via a synthetic
+   ``BisectConstraint``.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Q_phi:
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg:
+   :type ttheta_deg: float
+   :param mode:
+   :type mode: ConstraintSet
+
+   :rtype: list of dict[str, float]
+
+
+.. py:function:: _solve_one_free_angle(geometry, fixed_angles: dict, free_stage, Q_phi_target: ~numpy.ndarray, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_one_free_angle``
+
+
+   Numerically solve for one free stage angle such that
+   ``angles_to_phi_vector(geometry, **all_angles) == Q_phi_target``.
+
+   Used when only one sample stage is free (e.g. phi in fixed_chi mode).
+
+   **Fast path (issue #227).**  When the free stage's axis vector is
+   exactly one of the cardinal directions (``±XHAT``, ``±YHAT``,
+   ``±ZHAT``), :func:`_solve_one_free_angle_analytic` derives the angle
+   via a single ``atan2`` call.  This eliminates Newton iteration
+   entirely (no Jacobian, no seed sweep) and is 10-20× faster than the
+   Newton fallback.
+
+   For non-cardinal axes the function falls back to the previous Newton
+   solver, which seeds from four quadrants and deduplicates.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param fixed_angles: Baseline angles (including all constrained stages).
+   :type fixed_angles: dict
+   :param free_stage: The single free stage.
+   :type free_stage: Stage
+   :param Q_phi_target:
+   :type Q_phi_target: numpy.ndarray, shape (3,)
+   :param mode:
+   :type mode: DiffractionMode
+
+   :rtype: list of dict[str, float]
+
+
+.. py:function:: _solve_one_free_angle_analytic(ctx: ForwardContext, free_stage, angles: dict[str, float], Q_phi_target: ~numpy.ndarray) -> float | None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_one_free_angle_analytic``
+
+
+   Analytic single-``atan2`` solver for one free sample-stage rotation.
+
+   When all detector stages and all sample stages **except one** have
+   fixed angles, the forward equation reduces to a single rotation:
+
+   .. math::
+
+       R_{\text{after}} \cdot R(\hat n, \theta) \cdot R_{\text{before}}
+           \cdot Q_{\phi,\text{target}}^* = Q_{\text{lab}}
+
+   where :math:`R_{\text{before}}` is the product of fixed sample stages
+   *outer* to the free stage (already cached as ``ctx._cached_Z_prefix``),
+   :math:`R_{\text{after}}` is the product of fixed sample stages *inner*
+   to the free stage, and the target satisfies
+   :math:`Q_\phi = Z^T Q_{\text{lab}}`.
+
+   Rearranging:
+
+   .. math::
+
+       R(\hat n, \theta) \cdot q = u
+
+   with :math:`q = R_{\text{before}} \cdot Q_{\phi,\text{target}}` and
+   :math:`u = R_{\text{after}}^T \cdot Q_{\text{lab}}`.  The unknown
+   rotation about a known axis :math:`\hat n` is recovered by projecting
+   both vectors onto the plane perpendicular to :math:`\hat n` and
+   reading off the angle with a single ``atan2``.
+
+   :param ctx: Must have :meth:`~ForwardContext.prepare_caching` already called
+               with ``free_stage.name`` as the only free name.
+   :type ctx: ForwardContext
+   :param free_stage: The single free sample stage.  ``free_stage._axis_hat`` must be
+                      a unit vector.
+   :type free_stage: Stage
+   :param angles: Baseline angles with all fixed stages set.
+   :type angles: dict[str, float]
+   :param Q_phi_target: Target scattering vector in the phi frame (Å⁻¹).
+   :type Q_phi_target: numpy.ndarray, shape (3,)
+
+   :returns: Angle in degrees that satisfies the rotation equation, or
+             ``None`` when:
+
+             * the free stage's axis is not the *first* free index (i.e. there
+               are non-trivial fixed sample stages after it that
+               :class:`ForwardContext` does not currently cache as a suffix),
+             * the projections onto the plane perpendicular to ``n`` are
+               degenerate (``q`` or ``u`` is parallel to ``n``), or
+             * the parallel-component consistency check fails (``Q_phi_target``
+               is not reachable by varying the free angle alone).
+
+             In all such cases the caller falls back to Newton.
+   :rtype: float or None
+
+
+.. py:function:: _solve_psi_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_psi_mode``
+
+
+   Forward solver for psi-constant modes (validation filter).
+
+   For a given (h,k,l) and UB, the azimuthal angle ψ is a pure phi-frame
+   quantity — the same for every Bragg solution.  This solver:
+
+   1. Computes the natural ψ from ``Q_phi`` (no motor angles).
+   2. Compares with ``psi_target`` from the mode's
+      :class:`~mode.ReferenceConstraint`.
+   3. If they disagree (beyond 0.1° tolerance): returns ``[]``.
+   4. If they agree: delegates to the appropriate existing solver
+      (bisecting, kappa-virtual, or synthetic bisecting) and returns
+      all solutions.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Q_phi:
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg:
+   :type ttheta_deg: float
+   :param mode:
+   :type mode: ConstraintSet
+
+   :rtype: list of dict[str, float]
+
+
+.. py:function:: _solve_qaz_mode(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_qaz_mode``
+
+
+   Forward solver for modes with a ``DetectorConstraint("qaz", value)``.
+
+   These are the ``lifting_detector_*`` family of modes (You 1999).  All
+   sample stages are frozen by explicit :class:`~mode.SampleConstraint`
+   entries; the solver finds the two detector stage angles ``(nu, delta)``
+   that simultaneously satisfy the Bragg condition and the qaz constraint.
+
+   Two equations, two unknowns ``(nu, delta)``:
+
+   1. Bragg: ``cos(nu) * cos(delta) = cos(ttheta)``
+   2. qaz:   ``atan2(tan(delta), sin(nu)) = qaz_target``
+
+   The detector angles are solved analytically (no Newton iteration).
+   For ``qaz = 90°`` (vertical scattering plane, the common case):
+   ``nu = 0``, ``delta = ±ttheta``.  For the general case,
+   ``sin²(nu) = (1 - cos²(ttheta)) / (1 + cos²(ttheta)·tan²(qaz))``
+   and ``delta = atan(sin(nu)·tan(qaz))``.
+
+   After finding the detector angles, any remaining free sample stages
+   (those not frozen by the fixed sample constraints) are solved
+   numerically via :func:`_solve_one_free_angle` or :func:`_solve_two_angles`.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Q_phi:
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg:
+   :type ttheta_deg: float
+   :param mode:
+   :type mode: ConstraintSet
+
+   :rtype: list of dict[str, float]
+
+
+.. py:function:: _solve_surface(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_surface``
+
+
+   Surface diffraction forward solver.
+
+   Supports ReferenceConstraint modes where the constraint is:
+
+   - ``"alpha_i"`` — incidence angle fixed at target value
+   - ``"beta_out"`` — exit angle fixed at target value
+   - ``"a_eq_b"`` — symmetric reflection: alpha_i = beta_out
+
+   The solver builds a baseline angles dict (applying all fixed sample/detector
+   constraints and setting the detector stage to ttheta_deg), then performs a
+   1D Newton-Raphson root-find over the remaining free stage to satisfy the
+   surface reference constraint.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Q_phi:
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg:
+   :type ttheta_deg: float
+   :param mode:
+   :type mode: ConstraintSet
+
+   :rtype: list of dict[str, float]
+
+
+.. py:function:: _solve_two_angles(geometry, fixed_angles: dict, free_stage_1: str, free_stage_2: str, start_1: float, start_2: float, Q_phi_target: ~numpy.ndarray, a2phi_fn, max_iter: int = 200, tol: float = 1e-10, _one_dimensional: bool = False, _ctx: ForwardContext | None = None) -> tuple[float, float] | None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_two_angles``
+
+
+   Numerically solve for one or two free stage angles such that
+   ``angles_to_phi_vector(geometry, **all_angles) == Q_phi_target``.
+
+   Uses Gauss-Newton iteration on the 3-component residual.  For the
+   2D case (default) the system is 3×2 (overdetermined but consistent).
+   For the 1D case (``_one_dimensional=True``), only ``free_stage_1`` is
+   varied; ``free_stage_2`` is ignored.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param fixed_angles: All stage angles including the constrained ones.  This dict is
+                        used as the base; free stages are overwritten.
+   :type fixed_angles: dict
+   :param free_stage_1: Names of the free stages.  When ``_one_dimensional=True``,
+                        only ``free_stage_1`` is varied.
+   :type free_stage_1: str
+   :param free_stage_2: Names of the free stages.  When ``_one_dimensional=True``,
+                        only ``free_stage_1`` is varied.
+   :type free_stage_2: str
+   :param start_1: Starting guess in degrees.
+   :type start_1: float
+   :param start_2: Starting guess in degrees.
+   :type start_2: float
+   :param Q_phi_target:
+   :type Q_phi_target: numpy.ndarray, shape (3,)
+   :param a2phi_fn: ``angles_to_phi_vector`` function (used as fallback if no context).
+   :type a2phi_fn: callable
+   :param max_iter: Convergence parameters.
+   :type max_iter: int, float
+   :param tol: Convergence parameters.
+   :type tol: int, float
+   :param _one_dimensional: If True, solve for only ``free_stage_1`` (1D problem).
+   :type _one_dimensional: bool
+   :param _ctx: Pre-computed context for fast Q_phi evaluation.  When provided,
+                bypasses the stateful ``a2phi_fn`` and uses cached rotation
+                matrices instead.
+   :type _ctx: ForwardContext or None
+
+   :returns: **(angle_1, angle_2)** -- When ``_one_dimensional=True``, ``angle_2`` equals ``start_2``.
+   :rtype: tuple of float, or None if no convergence.
+
+
+.. py:function:: _solve_zone(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_zone``
+
+
+   Forward solver for zone modes.
+
+   The zone plane is fixed by two reciprocal-lattice vectors ``z0`` and
+   ``z1`` supplied via ``mode.extras``.  For a single ``forward(h, k, l)``
+   call the in-plane condition is a property of the requested (h, k, l)
+   and the orientation matrix only — it does not constrain the motor
+   angles directly.  The solver therefore:
+
+   1. Validates ``z0``, ``z1`` are concrete and non-degenerate.
+   2. Computes the zone-plane normal in the φ frame:
+      ``n_zone_phi = (UB @ z0) × (UB @ z1)``.
+   3. Verifies that the requested ``Q_phi`` lies in the plane.  If not,
+      returns ``[]`` and emits a warning (matching the soft-failure
+      pattern adopted for ``fixed_psi`` in #176).
+   4. Records the in-plane residual in ``mode.extras['in_plane_residual']``.
+   5. Builds a synthetic :class:`~mode.ConstraintSet` that adds a
+      :class:`~mode.BisectConstraint` (or
+      :class:`~mode.VirtualBisectConstraint` for kappa6c) so the system
+      is fully constrained, then delegates to the existing bisecting
+      solver.  Bisecting is the canonical SPEC-zone "br" position; the
+      remaining azimuthal DOF can be exercised by a separate scan
+      function (``cz``/``mz`` macros in SPEC), which is out of scope for
+      a single ``forward()`` call.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Q_phi: Target scattering vector in the φ frame: ``UB @ (h, k, l)``.
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg: Two-theta angle from Bragg's law.
+   :type ttheta_deg: float
+   :param mode: Active mode with ``extras['z0']``, ``extras['z1']`` set.
+   :type mode: ConstraintSet
+
+   :returns: Bisecting solutions filtered for plane membership.  Empty list when
+             the requested (h, k, l) does not lie in the zone plane.
+   :rtype: list of dict[str, float]
+
+   :raises ValueError: If ``z0`` or ``z1`` are still :data:`~mode.REQUIRED` placeholders,
+       or if they are zero vectors, or if they are parallel (so the plane
+       normal is undefined).
+
+
+.. py:function:: _surface_residual(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, target_name: str, target_value) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._surface_residual``
+
+
+   Compute the surface constraint residual for the given angles.
+
+   Returns a float residual in degrees (zero = constraint satisfied).
+
+
+.. py:function:: _synthetic_bisecting_for_omega(mode, geometry)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._synthetic_bisecting_for_omega``
+
+
+   Build a synthetic ConstraintSet that replaces the omega ReferenceConstraint
+   with a BisectConstraint on the geometry's chi-circle bisect pair.
+
+   Returns ``None`` if no bisect pair can be identified for this mode.
+
+
+.. py:function:: _validate_solutions(solutions: list[dict[str, float]], mode, geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._validate_solutions``
+
+
+   Validate that every returned solution actually satisfies all constraints
+   in the mode, raising ``ValueError`` if any constraint is violated beyond
+   the display precision tolerance.
+
+   This catches solver bugs and virtual-angle mismatches (e.g. a kappa
+   geometry where the declared ``SampleConstraint`` value cannot be achieved
+   by the approximate solver).
+
+   Uses :func:`~.display.precision_atol` as the tolerance — half a unit in
+   the last displayed decimal place, consistent with the package's display
+   precision setting.
+
+   :param solutions: Motor-angle dicts returned by the solver.
+   :type solutions: list of dict[str, float]
+   :param mode: The active constraint set.
+   :type mode: ConstraintSet
+   :param geometry: The diffractometer (needed for :meth:`~.mode.ConstraintSet.is_implemented`
+                    checks and stage-name resolution).
+   :type geometry: AdHocDiffractometer
+
+   :raises ConstraintViolation: If any solution violates a constraint beyond tolerance.
+
+
+.. py:function:: compute_forward(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, h: float, k: float, l: float) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward.compute_forward``
+
+
+   Compute all valid motor-angle solutions for the reciprocal-lattice point
+   (h, k, l) in the geometry's active diffraction mode.
+
+   :param geometry: The diffractometer.  Must have ``wavelength`` and ``sample.UB`` set,
+                    and an active ``mode_name``.
+   :type geometry: AdHocDiffractometer
+   :param h: Miller indices of the target reflection.
+   :type h: float
+   :param k: Miller indices of the target reflection.
+   :type k: float
+   :param l: Miller indices of the target reflection.
+   :type l: float
+
+   :returns: Each element is a complete set of motor angles (all stage names as
+             keys, values in degrees) that satisfies the Bragg condition under
+             the active mode constraints.  May contain zero, one, or multiple
+             solutions depending on the geometry and mode.
+   :rtype: list of dict[str, float]
+
+   :raises ValueError: If ``geometry.wavelength`` is None.
+   :raises ValueError: If ``geometry.sample.UB`` is None.
+   :raises ValueError: If (h, k, l) == (0, 0, 0).
+   :raises EwaldSphereViolation: If the scattering vector magnitude exceeds the Ewald sphere
+       (``|Q|`` > 4π/λ, i.e. Bragg condition cannot be satisfied).
+   :raises ConstraintViolation: If a solution returned by the solver violates a declared constraint
+       beyond the display-precision tolerance.
+   :raises NotImplementedError: If no active mode is set or the active mode type is not supported
+       for this geometry.
+
+
