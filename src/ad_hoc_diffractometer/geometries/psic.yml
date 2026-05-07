@@ -148,9 +148,14 @@ modes:
             alpha_i: null
             beta_out: null
 
+    # Per @jwkim-anl, issue #264: drop the bisect(eta, delta) constraint
+    # entirely.  "vertical" means nu = 0 (detector pin); mu and psi are
+    # fixed at user-specified values (defaults 0).  Free: eta, chi,
+    # phi, delta — at any given (mu, psi) target a combination of the
+    # free angles satisfies Bragg under the validated psi constraint.
     fixed_psi_vertical:
         constraints:
-            - {type: bisect,    stage1: eta, stage2: delta}
+            - {type: detector,  stage: nu, value: 0.0}
             - {type: sample,    stage: mu, value: 0.0}
             - {type: reference, name: psi, value: 0.0}
         computed: [eta, chi, phi, delta]
@@ -260,11 +265,15 @@ modes:
             alpha_i: null
             beta_out: null
 
+    # Per @jwkim-anl, issue #264: drop the bisect(mu, nu) constraint
+    # entirely.  "horizontal" means delta = 0 (detector pin); eta and
+    # psi are fixed at user-specified values (defaults 0).  Free: mu,
+    # chi, phi, nu.
     fixed_psi_horizontal:
         constraints:
-            - {type: bisect,    stage1: mu, stage2: nu}
-            - {type: sample,    stage: eta, value: 0.0}
-            - {type: reference, name: psi, value: 0.0}
+            - {type: detector,  stage: delta, value: 0.0}
+            - {type: sample,    stage: eta,   value: 0.0}
+            - {type: reference, name: psi,    value: 0.0}
         computed: [mu, chi, phi, nu]
         extras:
             n_hat: REQUIRED

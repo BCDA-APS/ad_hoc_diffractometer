@@ -213,7 +213,7 @@ def _reference_psic() -> AdHocDiffractometer:
         ),
         "fixed_psi_vertical": ConstraintSet(
             [
-                BisectConstraint("eta", "delta"),
+                DetectorConstraint("nu", 0.0),
                 SampleConstraint("mu", 0.0),
                 ReferenceConstraint("psi", 0.0),
             ],
@@ -300,7 +300,7 @@ def _reference_psic() -> AdHocDiffractometer:
         ),
         "fixed_psi_horizontal": ConstraintSet(
             [
-                BisectConstraint("mu", "nu"),
+                DetectorConstraint("delta", 0.0),
                 SampleConstraint("eta", 0.0),
                 ReferenceConstraint("psi", 0.0),
             ],

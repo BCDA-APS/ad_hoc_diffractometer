@@ -35,9 +35,18 @@ cross-module *invariants* that must hold across the whole #264 patch:
   ``lifting_detector_eta``, and the revised
   ``lifting_detector_phi`` / ``lifting_detector_mu``).
 
-C1 (``fixed_psi_vertical``) and C2 (``fixed_psi_horizontal``) were
-deferred from this PR pending @jwkim-anl clarification (see the
-discussion thread on #264) and are therefore not exercised here.
+C1 (``fixed_psi_vertical``) and C2 (``fixed_psi_horizontal``) drop
+the previous BisectConstraint and pin a detector stage instead per
+the @jwkim-anl review on the issue thread:
+
+- ``fixed_psi_vertical``   = ``nu = 0`` (vertical) + ``mu`` fixed +
+  ``psi`` target.
+- ``fixed_psi_horizontal`` = ``delta = 0`` (horizontal) + ``eta``
+  fixed + ``psi`` target.
+
+Both modes route through ``_solve_psi_mode`` for the ψ-validation
+filter, then to ``_solve_fixed_sample`` to solve the remaining free
+sample stages plus the active detector at ``2θ``.
 """
 
 from __future__ import annotations
@@ -50,6 +59,7 @@ import pytest
 from helpers import psic
 
 import ad_hoc_diffractometer as ahd
+from ad_hoc_diffractometer import REQUIRED
 from ad_hoc_diffractometer import ConstraintSet
 from ad_hoc_diffractometer import DetectorConstraint
 from ad_hoc_diffractometer import ReferenceConstraint
@@ -72,6 +82,8 @@ _ISSUE_264_NEW_MODES = {
 _ISSUE_264_REVISED_MODES = {
     "lifting_detector_phi",
     "lifting_detector_mu",
+    "fixed_psi_vertical",
+    "fixed_psi_horizontal",
 }
 
 
@@ -362,6 +374,138 @@ def test_revised_lifting_detector_has_no_qaz_constraint(mode_name):
     assert len(sample_constraints) == 3, (
         f"{mode_name}: expected 3 SampleConstraints; got {len(sample_constraints)}"
     )
+
+
+# ---------------------------------------------------------------------------
+# Issue #264 design invariant: revised fixed_psi_* modes drop the bisect
+# and pin a detector stage instead (C1/C2).
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "mode_name, expected_detector_stage, expected_sample_stage",
+    [
+        pytest.param("fixed_psi_vertical", "nu", "mu", id="fixed_psi_vertical-nu-mu"),
+        pytest.param(
+            "fixed_psi_horizontal",
+            "delta",
+            "eta",
+            id="fixed_psi_horizontal-delta-eta",
+        ),
+    ],
+)
+def test_revised_fixed_psi_constraint_shape(
+    mode_name, expected_detector_stage, expected_sample_stage
+):
+    """The C1/C2 revision swapped the BisectConstraint for a
+    DetectorConstraint pinning the scattering plane.
+    """
+    from ad_hoc_diffractometer.mode import BisectConstraint
+
+    g = psic()
+    cs = g.modes[mode_name]
+    # No BisectConstraint after the revision.
+    bisects = [c for c in cs.constraints if isinstance(c, BisectConstraint)]
+    assert bisects == [], (
+        f"{mode_name}: expected no BisectConstraint after C1/C2 revision; "
+        f"found {bisects!r}"
+    )
+    # Exactly one DetectorConstraint pinning the scattering plane.
+    det = cs.detector_constraint
+    assert det is not None
+    assert det.name == expected_detector_stage
+    assert det.value == 0.0
+    # Exactly one SampleConstraint at the named stage (default value 0).
+    samples = [c for c in cs.constraints if isinstance(c, SampleConstraint)]
+    assert len(samples) == 1
+    assert samples[0].name == expected_sample_stage
+    # The psi reference is still present.
+    ref = cs.reference_constraint
+    assert ref is not None
+    assert ref.name == "psi"
+
+
+def _natural_psi(g, h, k, l):  # noqa: E741
+    """Return the natural psi for (h, k, l) on geometry ``g``."""
+    from ad_hoc_diffractometer.forward import _compute_natural_psi
+
+    Q_phi = g.sample.UB @ np.array([h, k, l], float)
+    return _compute_natural_psi(g, Q_phi)
+
+
+@pytest.mark.parametrize(
+    "mode_name, h, k, l",
+    [
+        pytest.param("fixed_psi_vertical", 1, 0, 0, id="fpv-100"),
+        pytest.param("fixed_psi_vertical", 1, 1, 0, id="fpv-110"),
+        pytest.param("fixed_psi_vertical", 1, 1, 1, id="fpv-111"),
+        pytest.param("fixed_psi_horizontal", 1, 0, 1, id="fph-101"),
+        pytest.param("fixed_psi_horizontal", 1, 0, 0, id="fph-100"),
+    ],
+)
+def test_revised_fixed_psi_round_trip(
+    mode_name,
+    h,
+    k,
+    l,  # noqa: E741
+):
+    """C1/C2 revised fixed_psi modes round-trip and satisfy psi target."""
+    from ad_hoc_diffractometer.reference import psi_angle
+
+    g = _setup_psic_cubic()
+    g.azimuthal_reference = (0, 0, 1)
+    natural = _natural_psi(g, h, k, l)
+    assert natural is not None, (
+        f"{mode_name} ({h},{k},{l}): natural psi is undefined for this hkl"
+    )
+
+    # Patch the mode to use the natural psi target so the validator passes.
+    old_mode = g.modes[mode_name]
+    new_constraints = []
+    for c in old_mode.constraints:
+        if isinstance(c, ReferenceConstraint) and c.name == "psi":
+            new_constraints.append(ReferenceConstraint("psi", natural))
+        else:
+            new_constraints.append(c)
+    g.modes[mode_name] = ConstraintSet(
+        new_constraints,
+        computed=old_mode.computed,
+        extras=dict(old_mode.extras),
+    )
+    g.mode_name = mode_name
+
+    sols = g.forward(h, k, l)
+    assert len(sols) > 0, f"{mode_name} ({h},{k},{l}): no solutions"
+    for sol in sols:
+        # psi target satisfied
+        psi = psi_angle(g, angles=sol)
+        assert psi == pytest.approx(natural, abs=1e-3), (
+            f"{mode_name} ({h},{k},{l}): expected psi={natural}, got {psi}"
+        )
+        # Bragg round-trip
+        hkl_back = g.inverse(sol)
+        assert np.allclose(hkl_back, [h, k, l], atol=1e-5)
+
+
+def test_revised_fixed_psi_wrong_target_returns_empty():
+    """C1/C2: psi-validation rejects requests whose natural psi differs
+    from the stored target."""
+    g = _setup_psic_cubic()
+    g.azimuthal_reference = (0, 0, 1)
+    natural = _natural_psi(g, 1, 0, 0)
+    assert natural is not None
+
+    g.modes["fixed_psi_vertical"] = ConstraintSet(
+        [
+            DetectorConstraint("nu", 0.0),
+            SampleConstraint("mu", 0.0),
+            ReferenceConstraint("psi", natural + 45.0),
+        ],
+        computed=["eta", "chi", "phi", "delta"],
+        extras={"n_hat": REQUIRED, "psi": None},
+    )
+    g.mode_name = "fixed_psi_vertical"
+    assert g.forward(1, 0, 0) == []
 
 
 # ---------------------------------------------------------------------------

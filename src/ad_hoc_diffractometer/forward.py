@@ -1815,12 +1815,36 @@ def _solve_psi_mode(
     # The psi constraint is automatically satisfied by ALL Bragg solutions.
 
     if mode.has_bisect:
-        # psic, kappa6c: mode already has a BisectConstraint
+        # kappa6c: mode already has a BisectConstraint
         return _solve_bisecting(geometry, Q_phi, ttheta_deg, mode)
 
     if _is_kappa_virtual_mode(geometry, mode):  # pragma: no cover
         # kappa4cv, kappa4ch: kappa virtual angle mode
         return _solve_kappa_virtual(geometry, Q_phi, ttheta_deg, mode)
+
+    # psic-family fixed_psi_* modes (issue #264 C1/C2 revision): the
+    # bisect was dropped in favor of a SampleConstraint + a
+    # DetectorConstraint pinning the scattering plane (nu = 0 for
+    # vertical, delta = 0 for horizontal) plus the psi reference.  Once
+    # ψ is validated, delegate to ``_solve_fixed_sample`` which handles
+    # the remaining free sample stages plus the active detector at
+    # ttheta.
+    if (
+        any(s.name == "chi" for s in geometry.sample_stages)
+        and mode.detector_constraint is not None
+        and len(mode.fixed_sample_constraints) >= 1
+    ):
+        stripped = ConstraintSet(
+            [
+                c
+                for c in mode.constraints
+                if not (isinstance(c, ReferenceConstraint) and c.name == "psi")
+            ],
+            computed=mode.computed,
+            extras=mode.extras,
+            cut_points=mode.cut_points,
+        )
+        return _solve_fixed_sample(geometry, Q_phi, ttheta_deg, stripped)
 
     # fourcv, fourch, kappa4cv, kappa4ch: no BisectConstraint in the mode.
     # Build a synthetic bisecting mode using the geometry's natural
