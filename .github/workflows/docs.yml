@@ -77,7 +77,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           set -euo pipefail
-          LIVE_URL="https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json"
+          LIVE_URL="https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json"
           TARGET="docs/build/html/_static/switcher.json"
           if curl -fsSL "${LIVE_URL}" -o /tmp/live_switcher.json 2>/dev/null; then
             cp /tmp/live_switcher.json "${TARGET}"
@@ -100,6 +100,19 @@ jobs:
           publish_branch: gh-pages
           publish_dir: docs/build/html
           destination_dir: latest
+          keep_files: true
+
+      - name: Deploy gh-pages root redirect (main push)
+        # Publish docs/gh-pages-root/* to the root of the gh-pages branch
+        # so that https://bcda-aps.github.io/ad_hoc_diffractometer/ redirects
+        # to .../latest/.  keep_files: true preserves all version directories.
+        uses: peaceiris/actions-gh-pages@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: docs/gh-pages-root
+          destination_dir: .
           keep_files: true
 
       - name: Deploy to gh-pages — <version>/ (tag push)
@@ -143,7 +156,7 @@ jobs:
 
           version = os.environ["VERSION"]
           switcher_path = os.environ["SWITCHER"]
-          base_url = "https://prjemian.github.io/ad_hoc_diffractometer"
+          base_url = "https://BCDA-APS.github.io/ad_hoc_diffractometer"
 
           is_prerelease = bool(re.search(r'(a|b|rc)\d+$', version))
 

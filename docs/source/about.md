@@ -26,9 +26,9 @@ changes to the package code.
 
 ## Minimal requirements
 
-Only [Python](https://python.org) (with its Standard Library) and
-[NumPy](https://numpy.org).  No SciPy, SymPy, or other scientific
-dependencies required.
+Only [Python](https://python.org) (with its Standard Library),
+[NumPy](https://numpy.org), and [YAML](https://pyyaml.org/).  No SciPy, SymPy,
+or other scientific dependencies required.
 
 ## Use cases
 

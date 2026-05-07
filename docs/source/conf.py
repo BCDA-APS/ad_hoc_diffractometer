@@ -24,7 +24,8 @@ _metadata = _toml["project"]
 # -- Project information -----------------------------------------------------
 
 project = "ad_hoc_diffractometer"
-author = _metadata["authors"][0]["name"]
+# author = _metadata["authors"][0]["name"]
+author = "UChicago Argonne, LLC"
 copyright = f"2026, {author}"
 description = _metadata["description"]
 
@@ -214,11 +215,11 @@ html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 
 html_theme_options = {
-    "github_url": "https://github.com/prjemian/ad_hoc_diffractometer",
+    "github_url": "https://github.com/BCDA-APS/ad_hoc_diffractometer",
     "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
     "switcher": {
         "json_url": (
-            "https://prjemian.github.io/ad_hoc_diffractometer"
+            "https://BCDA-APS.github.io/ad_hoc_diffractometer"
             "/latest/_static/switcher.json"
         ),
         "version_match": switcher_version_match,

@@ -1,5 +1,5 @@
-# Copyright (c) 2026 Pete R. Jemian <prjemian+ad_hoc_diffractometer@gmail.com>
-# SPDX-License-Identifier: CC-BY-4.0
+# Copyright (c) 2026 UChicago Argonne, LLC
+# SPDX-License-Identifier: LicenseRef-ANL-Open-Source-License
 """
 Unit tests for ad_hoc_diffractometer.axes.
 

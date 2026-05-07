@@ -24,7 +24,7 @@ print(g.summary())
 ## Demo geometry definition
 
 This geometry is defined by the {ref}`geometry-kappa4ch` factory
-function — see the [source](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/factories.py#L964) for the complete stage
+function — see the [source](https://github.com/BCDA-APS/ad_hoc_diffractometer/blob/main/src/ad_hoc_diffractometer/geometries/kappa4ch.yml) for the complete stage
 and mode configuration.
 
 ## Stage layout

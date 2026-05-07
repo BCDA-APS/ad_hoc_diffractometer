@@ -6,23 +6,27 @@ build-backend = "hatchling.build"
 name = "ad_hoc_diffractometer"
 dynamic = ["version"]
 description = "Describe any multi-circle diffractometer geometry and perform X-ray/neutron crystallography calculations."
-authors = [{ name = "Pete Jemian", email = "prjemian+chewacla@gmail.com" }]
-maintainers = [{ name = "Pete Jemian", email = "prjemian+chewacla@gmail.com" }]
+authors = [{ name = "Pete Jemian", email = "prjemian+ad_hoc@gmail.com" }]
+maintainers = [{ name = "Pete Jemian", email = "prjemian+ad_hoc@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.10"
 keywords = ["diffraction", "geometry", "crystallography", "x-ray", "neutron"]
-license = "CC-BY-4.0"
+license = "LicenseRef-ANL-Open-Source-License"
 license-files = ["LICEN[CS]E*"]
 # https://pypi.org/classifiers/
 classifiers = [
   "Development Status :: 4 - Beta",
-  "Environment :: Console",
-  "Environment :: OpenStack",
   "Intended Audience :: Science/Research",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3",
   "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
   "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Chemistry",
+  "Topic :: Scientific/Engineering :: Mathematics",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Topic :: Scientific/Engineering :: Visualization",
+  "Topic :: Software Development",
+  "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
     "numpy",
@@ -63,6 +67,12 @@ all = [
     "ad_hoc_diffractometer[dev]",
     "ad_hoc_diffractometer[doc]",
 ]
+
+[project.urls]
+Homepage      = "https://github.com/BCDA-APS/ad_hoc_diffractometer"
+Documentation = "https://BCDA-APS.github.io/ad_hoc_diffractometer/latest"
+Source        = "https://github.com/BCDA-APS/ad_hoc_diffractometer"
+Issues        = "https://github.com/BCDA-APS/ad_hoc_diffractometer/issues"
 
 [tool.coverage.report]
 fail_under = 100
