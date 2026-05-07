@@ -743,14 +743,19 @@ Module Contents
    Valid reference constraint names (physical pseudo-angles).
 
    The set of strings accepted by :class:`ReferenceConstraint` as the ``name``
-   argument.  Each name corresponds to a physically meaningful pseudo-angle
-   between the scattering vector Q and the reference vector n̂:
+   argument.  Most names correspond to a physically meaningful pseudo-angle
+   between the scattering vector Q and the reference vector n̂; ``"omega"`` is
+   the SPEC ``OMEGA`` pseudo-angle, defined entirely by the diffractometer
+   geometry (no reference vector required):
 
    - ``"psi"`` — azimuthal angle of n̂ about Q (You 1999, eq. 23)
    - ``"alpha_i"`` — angle of incidence (incident beam vs. surface plane)
    - ``"beta_out"`` — angle of exit (diffracted beam vs. surface plane)
    - ``"a_eq_b"`` — relational: alpha_i = beta_out (symmetric reflection)
    - ``"naz"`` — azimuthal angle of n̂ in the lab frame
+   - ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``): angle between
+     Q and the plane of the chi circle (psic family); see
+     :func:`~ad_hoc_diffractometer.reference.omega_pseudo`
 
 .. py:data:: REQUIRED
    :type:  object
@@ -850,6 +855,10 @@ Module Contents
       For ``"alpha_i"``, ``"beta_out"``, and ``"a_eq_b"``: requires
       :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
 
+      For ``"omega"``: no reference vector is required (always returns
+      ``True``); the SPEC ``OMEGA`` pseudo-angle is a pure motor-frame
+      quantity.
+
       This is a prerequisite check, separate from :meth:`is_implemented`.
       A reference constraint can have its vector set but still lack a forward
       solver — in that case ``has_reference_vector`` returns ``True`` but
@@ -874,6 +883,10 @@ Module Contents
         the reference direction; if it matches the stored target the bisecting
         solutions are returned, otherwise an empty list is returned.  See
         issue #176 for the full analysis.
+      - ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``).  Implemented
+        for psic-family geometries (those with a sample stage named
+        ``"chi"``); does not require any reference vector.  See
+        :func:`~ad_hoc_diffractometer.reference.omega_pseudo`.
 
       Not yet implemented:
 

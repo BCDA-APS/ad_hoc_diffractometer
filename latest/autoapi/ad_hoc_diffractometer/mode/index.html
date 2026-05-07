@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=e101e54e"></script>
+    <script src="../../../_static/documentation_options.js?v=6df34829"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 23:43 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-06 21:26 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -1263,14 +1263,19 @@ Setting <code class="docutils literal notranslate"><span class="pre">qaz</span> 
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.mode.</span></span><span class="sig-name descname"><span class="pre">REFERENCE_NAMES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ad_hoc_diffractometer.mode.REFERENCE_NAMES" title="Link to this definition">#</a></dt>
 <dd><p>Valid reference constraint names (physical pseudo-angles).</p>
 <p>The set of strings accepted by <a class="reference internal" href="#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a> as the <code class="docutils literal notranslate"><span class="pre">name</span></code>
-argument.  Each name corresponds to a physically meaningful pseudo-angle
-between the scattering vector Q and the reference vector n̂:</p>
+argument.  Most names correspond to a physically meaningful pseudo-angle
+between the scattering vector Q and the reference vector n̂; <code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code> is
+the SPEC <code class="docutils literal notranslate"><span class="pre">OMEGA</span></code> pseudo-angle, defined entirely by the diffractometer
+geometry (no reference vector required):</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code> — azimuthal angle of n̂ about Q (You 1999, eq. 23)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;alpha_i&quot;</span></code> — angle of incidence (incident beam vs. surface plane)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code> — angle of exit (diffracted beam vs. surface plane)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code> — relational: alpha_i = beta_out (symmetric reflection)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;naz&quot;</span></code> — azimuthal angle of n̂ in the lab frame</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code> — SPEC <code class="docutils literal notranslate"><span class="pre">OMEGA</span></code> pseudo-angle (<code class="docutils literal notranslate"><span class="pre">Q[6]</span></code>): angle between
+Q and the plane of the chi circle (psic family); see
+<a class="reference internal" href="../reference/index.html#ad_hoc_diffractometer.reference.omega_pseudo" title="ad_hoc_diffractometer.reference.omega_pseudo"><code class="xref py py-func docutils literal notranslate"><span class="pre">omega_pseudo()</span></code></a></p></li>
 </ul>
 </dd></dl>
 
@@ -1362,6 +1367,9 @@ reference vector infrastructure (Issue J).  Raises
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">azimuthal_reference</span></code> to be set.</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">&quot;alpha_i&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code>: requires
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code> to be set.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code>: no reference vector is required (always returns
+<code class="docutils literal notranslate"><span class="pre">True</span></code>); the SPEC <code class="docutils literal notranslate"><span class="pre">OMEGA</span></code> pseudo-angle is a pure motor-frame
+quantity.</p>
 <p>This is a prerequisite check, separate from <a class="reference internal" href="#ad_hoc_diffractometer.mode.ReferenceConstraint.is_implemented" title="ad_hoc_diffractometer.mode.ReferenceConstraint.is_implemented"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_implemented()</span></code></a>.
 A reference constraint can have its vector set but still lack a forward
 solver — in that case <code class="docutils literal notranslate"><span class="pre">has_reference_vector</span></code> returns <code class="docutils literal notranslate"><span class="pre">True</span></code> but
@@ -1385,6 +1393,10 @@ every Bragg solution.  The solver computes the natural ψ from UB and
 the reference direction; if it matches the stored target the bisecting
 solutions are returned, otherwise an empty list is returned.  See
 issue #176 for the full analysis.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code> — SPEC <code class="docutils literal notranslate"><span class="pre">OMEGA</span></code> pseudo-angle (<code class="docutils literal notranslate"><span class="pre">Q[6]</span></code>).  Implemented
+for psic-family geometries (those with a sample stage named
+<code class="docutils literal notranslate"><span class="pre">&quot;chi&quot;</span></code>); does not require any reference vector.  See
+<a class="reference internal" href="../reference/index.html#ad_hoc_diffractometer.reference.omega_pseudo" title="ad_hoc_diffractometer.reference.omega_pseudo"><code class="xref py py-func docutils literal notranslate"><span class="pre">omega_pseudo()</span></code></a>.</p></li>
 </ul>
 <p>Not yet implemented:</p>
 <ul class="simple">
@@ -1860,7 +1872,7 @@ Zero means the constraint is satisfied.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 23:43 CDT.
+  Last updated on 2026-05-06 21:26 CDT.
   <br/>
 </p></div>
       

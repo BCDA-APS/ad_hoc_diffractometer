@@ -279,8 +279,12 @@ any others.
 | `reference` | `name`, `value` | {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint` |
 
 For `reference`, `name` is one of `"psi"`, `"alpha_i"`, `"beta_out"`,
-`"a_eq_b"`, `"naz"`; `value` is a float for the angular constraints
-and the literal `true` for `a_eq_b`.
+`"a_eq_b"`, `"naz"`, `"omega"`; `value` is a float for the angular
+constraints and the literal `true` for `a_eq_b`.  The `"omega"` name
+selects the SPEC `OMEGA` pseudo-angle (the angle between Q and the
+plane of the chi circle, SPEC `psic` `def OMEGA 'Q[6]'`); it applies
+to psic-family geometries (those with a sample stage named `chi`) and
+does not require any reference vector.
 
 ### `extras` and the `REQUIRED` sentinel
 

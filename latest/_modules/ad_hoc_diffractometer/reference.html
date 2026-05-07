@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=e101e54e"></script>
+    <script src="../../_static/documentation_options.js?v=6df34829"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 23:43 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-06 21:26 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -427,10 +427,13 @@
 
 <span class="sd">Provides standalone functions for computing the physical pseudo-angles that</span>
 <span class="sd">appear in :class:`~mode.ReferenceConstraint` conditions: incidence angle,</span>
-<span class="sd">exit angle, azimuthal angle ψ, and lab-frame azimuthal angle naz.</span>
+<span class="sd">exit angle, azimuthal angle ψ, lab-frame azimuthal angle naz, and the</span>
+<span class="sd">SPEC ``OMEGA`` pseudo-angle (angle between Q and the chi-circle plane).</span>
 
 <span class="sd">These functions require the geometry&#39;s :attr:`surface_normal` or</span>
-<span class="sd">:attr:`azimuthal_reference` to be set before calling.</span>
+<span class="sd">:attr:`azimuthal_reference` to be set before calling, **except** for</span>
+<span class="sd">:func:`omega_pseudo`, which is a pure motor-frame quantity and needs</span>
+<span class="sd">neither.</span>
 
 <span class="sd">Functions</span>
 <span class="sd">---------</span>
@@ -446,17 +449,23 @@
 <span class="sd">:func:`naz_angle`</span>
 <span class="sd">    Azimuthal angle of n̂ projected onto the lab-frame horizontal plane.</span>
 
+<span class="sd">:func:`omega_pseudo`</span>
+<span class="sd">    SPEC ``OMEGA`` pseudo-angle — angle between Q and the plane of the</span>
+<span class="sd">    chi circle (SPEC ``psic`` ``def OMEGA &#39;Q[6]&#39;``; You 1999 §5).</span>
+
 <span class="sd">Notes</span>
 <span class="sd">-----</span>
 <span class="sd">All functions accept a ``geometry`` instance and an optional ``angles`` dict</span>
 <span class="sd">of motor angles (defaulting to the geometry&#39;s current stage angles when</span>
 <span class="sd">``None``).  They raise :class:`ValueError` when the required reference vector</span>
-<span class="sd">is not set on the geometry.</span>
+<span class="sd">is not set on the geometry (where applicable).</span>
 
 <span class="sd">References</span>
 <span class="sd">----------</span>
-<span class="sd">* You, *J. Appl. Cryst.* **32**, 614-623 (1999), eqs. 10-11, 23.</span>
+<span class="sd">* You, *J. Appl. Cryst.* **32**, 614-623 (1999), eqs. 10-11, 23, §5.</span>
 <span class="sd">* Lohmeier &amp; Vlieg, *J. Appl. Cryst.* **26**, 706-716 (1993), §4.2.</span>
+<span class="sd">* Certified Scientific Software, *SPEC psic help*,</span>
+<span class="sd">  https://certif.com/spec_help/psic.html — ``def OMEGA &#39;Q[6]&#39;``.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
@@ -716,6 +725,202 @@
     <span class="n">sin_naz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">vertical_hat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">longitudinal_hat</span><span class="p">,</span> <span class="n">n_horiz_hat</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_naz</span><span class="p">,</span> <span class="n">cos_naz</span><span class="p">))</span></div>
 
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># SPEC OMEGA pseudo-angle (psic)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="_chi_stage_axis_lab">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference._chi_stage_axis_lab">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_chi_stage_axis_lab</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the chi stage&#39;s rotation-axis unit vector expressed in the lab frame.</span>
+
+<span class="sd">    The chi-circle plane is the plane perpendicular to this axis, so this</span>
+<span class="sd">    vector is also the normal to the chi-circle plane.  All sample stages</span>
+<span class="sd">    *outside* (i.e. lower in the stack than) chi rotate the chi axis;</span>
+<span class="sd">    stages *inside* chi (phi, etc.) do not.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        Must contain a sample stage named ``&quot;chi&quot;``.</span>
+<span class="sd">    angles : dict[str, float]</span>
+<span class="sd">        Motor angles in degrees, keyed by stage name.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray, shape (3,)</span>
+<span class="sd">        Unit vector along the chi rotation axis in the lab frame.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    KeyError</span>
+<span class="sd">        If the geometry has no stage named ``&quot;chi&quot;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_rotation_matrix_normalized</span>
+
+    <span class="c1"># Find the chi stage and the sample stages that come before it</span>
+    <span class="n">sample_stages</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">)</span>
+    <span class="n">chi_index</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sample_stages</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;chi&quot;</span><span class="p">:</span>
+            <span class="n">chi_index</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">chi_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;omega_pseudo: geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> has no sample stage &quot;</span>
+            <span class="s2">&quot;named &#39;chi&#39;.  The OMEGA pseudo-angle (SPEC Q[6]) is defined &quot;</span>
+            <span class="s2">&quot;only for psic-family geometries with a chi circle.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">chi_stage</span> <span class="o">=</span> <span class="n">sample_stages</span><span class="p">[</span><span class="n">chi_index</span><span class="p">]</span>
+    <span class="n">outer_stages</span> <span class="o">=</span> <span class="n">sample_stages</span><span class="p">[:</span><span class="n">chi_index</span><span class="p">]</span>
+
+    <span class="c1"># Apply the rotations of all stages *before* chi to the chi axis</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">outer_stages</span><span class="p">:</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="n">angles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span> <span class="o">@</span> <span class="n">R</span>  <span class="c1"># noqa: SLF001</span>
+
+    <span class="n">chi_axis_lab</span> <span class="o">=</span> <span class="n">R</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">chi_stage</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">chi_axis_lab</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mf">1e-14</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;omega_pseudo: chi stage axis vector has zero length after rotation.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">chi_axis_lab</span> <span class="o">/</span> <span class="n">n</span></div>
+
+
+
+<div class="viewcode-block" id="omega_pseudo">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference.omega_pseudo">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">omega_pseudo</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the SPEC ``OMEGA`` pseudo-angle in degrees.</span>
+
+<span class="sd">    OMEGA is the angle between the scattering vector Q and the **plane of</span>
+<span class="sd">    the chi circle**, taking values in ``[-90°, +90°]``.  When</span>
+<span class="sd">    ``OMEGA = 0`` the scattering vector lies in the chi-circle plane and</span>
+<span class="sd">    the diffractometer is in the bisecting condition; non-zero OMEGA</span>
+<span class="sd">    means Q is tilted out of that plane.</span>
+
+<span class="sd">    The chi-circle plane is the plane perpendicular to the chi rotation</span>
+<span class="sd">    axis; that axis itself is rotated by every sample stage that sits</span>
+<span class="sd">    *outside* (i.e. lower in the stack than) chi.  In psic the outer</span>
+<span class="sd">    sample stages are ``mu`` and ``eta``.</span>
+
+<span class="sd">    Algorithm</span>
+<span class="sd">    ---------</span>
+<span class="sd">    1. Compute the chi-axis unit vector in the lab frame, applying the</span>
+<span class="sd">       rotations of all sample stages outside chi (e.g. ``mu`` and</span>
+<span class="sd">       ``eta`` in psic).</span>
+<span class="sd">    2. Compute the scattering vector ``Q_lab`` from the supplied motor</span>
+<span class="sd">       angles.</span>
+<span class="sd">    3. The OMEGA pseudo-angle is::</span>
+
+<span class="sd">           sin(OMEGA) = (Q̂_lab · n̂_chi)</span>
+
+<span class="sd">       where ``n̂_chi`` is the unit chi-axis vector in the lab frame.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        Diffractometer geometry.  Must have ``wavelength`` set and must</span>
+<span class="sd">        contain a sample stage named ``&quot;chi&quot;``.</span>
+<span class="sd">    angles : dict[str, float] or None</span>
+<span class="sd">        Motor angles in degrees, keyed by stage name.  If ``None``</span>
+<span class="sd">        (default), the geometry&#39;s current stage angles are used.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        OMEGA pseudo-angle in degrees, in ``[-90°, +90°]``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``geometry.wavelength`` is ``None``.</span>
+<span class="sd">    KeyError</span>
+<span class="sd">        If the geometry has no stage named ``&quot;chi&quot;``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Unlike :func:`incidence_angle`, :func:`exit_angle`, :func:`psi_angle`,</span>
+<span class="sd">    and :func:`naz_angle`, this function does **not** require any</span>
+<span class="sd">    reference vector (``surface_normal`` / ``azimuthal_reference``) to be</span>
+<span class="sd">    set on the geometry.  OMEGA is a pure motor-frame quantity defined</span>
+<span class="sd">    by the diffractometer&#39;s internal geometry.</span>
+
+<span class="sd">    The sign convention follows the right-hand rule about the chi axis:</span>
+<span class="sd">    OMEGA is positive when Q has a positive component along the chi-axis</span>
+<span class="sd">    direction defined by the geometry&#39;s stage configuration.</span>
+
+<span class="sd">    OMEGA is **independent of the inner sample stages** (``chi`` and</span>
+<span class="sd">    ``phi`` in psic): they rotate Q but they also rotate the</span>
+<span class="sd">    chi-circle plane normal — the relative angle between them is</span>
+<span class="sd">    preserved.  The pseudo-angle therefore depends only on the outer</span>
+<span class="sd">    sample stages, the detector stages, and the wavelength.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
+<span class="sd">    &gt;&gt;&gt; g = ahd.make_geometry(&quot;psic&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; g.wavelength = 1.5406</span>
+<span class="sd">    &gt;&gt;&gt; # Bisecting position: mu = nu = 0, eta = delta/2 — Q in chi-plane</span>
+<span class="sd">    &gt;&gt;&gt; ahd.reference.omega_pseudo(</span>
+<span class="sd">    ...     g,</span>
+<span class="sd">    ...     {&quot;mu&quot;: 0, &quot;eta&quot;: 15.0, &quot;chi&quot;: 90, &quot;phi&quot;: 0,</span>
+<span class="sd">    ...      &quot;nu&quot;: 0, &quot;delta&quot;: 30.0},</span>
+<span class="sd">    ... )  # doctest: +SKIP</span>
+<span class="sd">    0.0</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    * Certified Scientific Software, *SPEC psic help*,</span>
+<span class="sd">      https://certif.com/spec_help/psic.html —</span>
+<span class="sd">      ``def OMEGA &#39;Q[6]&#39;`` — &quot;The angle between Q and the plane of</span>
+<span class="sd">      the chi circle.&quot;</span>
+<span class="sd">    * H. You, *J. Appl. Cryst.* **32**, 614-623 (1999), §5.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">wavelength</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;omega_pseudo() requires geometry.wavelength to be set.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>  <span class="c1"># noqa: SLF001</span>
+
+    <span class="c1"># Lab-frame chi-circle axis (= normal to the chi-circle plane)</span>
+    <span class="n">n_chi_lab</span> <span class="o">=</span> <span class="n">_chi_stage_axis_lab</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
+
+    <span class="c1"># Lab-frame scattering vector</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_rotation_matrix_normalized</span>
+
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">:</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="n">angles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span> <span class="o">@</span> <span class="n">D</span>  <span class="c1"># noqa: SLF001</span>
+
+    <span class="n">y_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">y_hat</span> <span class="o">=</span> <span class="n">y_raw</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y_raw</span><span class="p">)</span>
+
+    <span class="n">Q_lab</span> <span class="o">=</span> <span class="n">D</span> <span class="o">@</span> <span class="n">y_hat</span> <span class="o">-</span> <span class="n">y_hat</span>
+    <span class="n">Q_mag</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Q_lab</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">Q_mag</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="c1"># No scattering — Q is undefined; OMEGA is undefined; return 0</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="n">Q_hat</span> <span class="o">=</span> <span class="n">Q_lab</span> <span class="o">/</span> <span class="n">Q_mag</span>
+
+    <span class="n">sin_omega</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Q_hat</span><span class="p">,</span> <span class="n">n_chi_lab</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">sin_omega</span><span class="p">))</span></div>
+
 </pre></div>
 
                 </article>
@@ -754,7 +959,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 23:43 CDT.
+  Last updated on 2026-05-06 21:26 CDT.
   <br/>
 </p></div>
       

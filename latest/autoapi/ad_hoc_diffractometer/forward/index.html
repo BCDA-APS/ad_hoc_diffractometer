@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=e101e54e"></script>
+    <script src="../../../_static/documentation_options.js?v=6df34829"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.9" />
-    <meta name="docbuild:last-update" content="2026-05-05 23:43 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-06 21:26 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -639,38 +639,50 @@ of Q_phi.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._apply_cut_points" title="ad_hoc_diffractometer.forward._apply_cut_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_apply_cut_points</span></code></a>(→ None)</p></td>
 <td><p>Apply cut-points (in-place) to all angles in the solution dict.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._check_limits" title="ad_hoc_diffractometer.forward._check_limits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_limits</span></code></a>(→ bool)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._bisect_pair_for" title="ad_hoc_diffractometer.forward._bisect_pair_for"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_bisect_pair_for</span></code></a>(geometry, mode)</p></td>
+<td><p>Return a <code class="docutils literal notranslate"><span class="pre">BisectConstraint</span></code> on the geometry's chi-circle bisect pair.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._check_limits" title="ad_hoc_diffractometer.forward._check_limits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_limits</span></code></a>(→ bool)</p></td>
 <td><p>Return True if all angles are within the stage limits of their stage.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._collect_dd_solution" title="ad_hoc_diffractometer.forward._collect_dd_solution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_collect_dd_solution</span></code></a>(→ None)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._collect_dd_solution" title="ad_hoc_diffractometer.forward._collect_dd_solution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_collect_dd_solution</span></code></a>(→ None)</p></td>
 <td><p>De-duplicate, apply cut-points, check limits, and append if valid.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._compute_natural_psi" title="ad_hoc_diffractometer.forward._compute_natural_psi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_natural_psi</span></code></a>(→ float | None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._compute_natural_psi" title="ad_hoc_diffractometer.forward._compute_natural_psi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_natural_psi</span></code></a>(→ float | None)</p></td>
 <td><p>Compute the natural azimuthal angle ψ from the phi frame only.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_cardinal_axis" title="ad_hoc_diffractometer.forward._is_cardinal_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_cardinal_axis</span></code></a>(→ bool)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_cardinal_axis" title="ad_hoc_diffractometer.forward._is_cardinal_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_cardinal_axis</span></code></a>(→ bool)</p></td>
 <td><p>Return True if <code class="docutils literal notranslate"><span class="pre">n</span></code> is exactly (within <code class="docutils literal notranslate"><span class="pre">atol</span></code>) <code class="docutils literal notranslate"><span class="pre">±XHAT</span></code>, <code class="docutils literal notranslate"><span class="pre">±YHAT</span></code>,</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_double_diffraction_mode" title="ad_hoc_diffractometer.forward._is_double_diffraction_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_double_diffraction_mode</span></code></a>(→ bool)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_double_diffraction_mode" title="ad_hoc_diffractometer.forward._is_double_diffraction_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_double_diffraction_mode</span></code></a>(→ bool)</p></td>
 <td><p>Return True when mode.extras contains h2, k2, l2 keys.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_free_detectors_mode" title="ad_hoc_diffractometer.forward._is_free_detectors_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_free_detectors_mode</span></code></a>(→ bool)</p></td>
+<td><p>Return True when both detector stages are free under <code class="docutils literal notranslate"><span class="pre">mode</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_kappa_virtual_mode" title="ad_hoc_diffractometer.forward._is_kappa_virtual_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_kappa_virtual_mode</span></code></a>(→ bool)</p></td>
 <td><p>Return True when the mode contains a virtual Eulerian angle constraint</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_psi_mode" title="ad_hoc_diffractometer.forward._is_psi_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_psi_mode</span></code></a>(→ bool)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_omega_mode" title="ad_hoc_diffractometer.forward._is_omega_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_omega_mode</span></code></a>(→ bool)</p></td>
+<td><p>Return True when the mode has an <code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code> ReferenceConstraint and the</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_psi_mode" title="ad_hoc_diffractometer.forward._is_psi_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_psi_mode</span></code></a>(→ bool)</p></td>
 <td><p>Return True when the mode contains a psi ReferenceConstraint and the reference is set.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_qaz_mode" title="ad_hoc_diffractometer.forward._is_qaz_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_qaz_mode</span></code></a>(→ bool)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_qaz_mode" title="ad_hoc_diffractometer.forward._is_qaz_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_qaz_mode</span></code></a>(→ bool)</p></td>
 <td><p>Return True when the mode contains a qaz DetectorConstraint.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_standard_eulerian_pair" title="ad_hoc_diffractometer.forward._is_standard_eulerian_pair"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_standard_eulerian_pair</span></code></a>(→ bool)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_standard_eulerian_pair" title="ad_hoc_diffractometer.forward._is_standard_eulerian_pair"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_standard_eulerian_pair</span></code></a>(→ bool)</p></td>
 <td><p>Return True if the chi and phi stages have orthogonal axis vectors.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_surface_mode" title="ad_hoc_diffractometer.forward._is_surface_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_surface_mode</span></code></a>(→ bool)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_surface_mode" title="ad_hoc_diffractometer.forward._is_surface_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_surface_mode</span></code></a>(→ bool)</p></td>
 <td><p>Return True when mode has a surface ReferenceConstraint and surface_normal is set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_zone_mode" title="ad_hoc_diffractometer.forward._is_zone_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_zone_mode</span></code></a>(→ bool)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._is_zone_mode" title="ad_hoc_diffractometer.forward._is_zone_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_zone_mode</span></code></a>(→ bool)</p></td>
 <td><p>Return True when <code class="docutils literal notranslate"><span class="pre">mode.extras</span></code> contains both <code class="docutils literal notranslate"><span class="pre">z0</span></code> and <code class="docutils literal notranslate"><span class="pre">z1</span></code> keys.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._omega_to_fixed_sample_mode" title="ad_hoc_diffractometer.forward._omega_to_fixed_sample_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_omega_to_fixed_sample_mode</span></code></a>(mode)</p></td>
+<td><p>Return <code class="docutils literal notranslate"><span class="pre">mode</span></code> with the omega ReferenceConstraint stripped.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._refine_dd_outer_seeded" title="ad_hoc_diffractometer.forward._refine_dd_outer_seeded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_refine_dd_outer_seeded</span></code></a>(→ dict[str, float] | None)</p></td>
 <td><p>1D Newton refinement on the outer sample angle to satisfy the Ewald</p></td>
@@ -687,38 +699,50 @@ of Q_phi.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_constraint_set" title="ad_hoc_diffractometer.forward._solve_constraint_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_constraint_set</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Dispatch to the appropriate analytic or numeric solver based on the</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_double_diffraction" title="ad_hoc_diffractometer.forward._solve_double_diffraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_double_diffraction</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_constraint_set_no_omega" title="ad_hoc_diffractometer.forward._solve_constraint_set_no_omega"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_constraint_set_no_omega</span></code></a>(→ list[dict[str, float]])</p></td>
+<td><p>Run the constraint-set dispatcher on <code class="docutils literal notranslate"><span class="pre">mode</span></code> after stripping any</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_double_diffraction" title="ad_hoc_diffractometer.forward._solve_double_diffraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_double_diffraction</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Decomposed solver for double-diffraction modes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_fixed_sample" title="ad_hoc_diffractometer.forward._solve_fixed_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_fixed_sample</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_fixed_sample" title="ad_hoc_diffractometer.forward._solve_fixed_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_fixed_sample</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Fixed-sample-angle solver (no bisect condition).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_free_detectors" title="ad_hoc_diffractometer.forward._solve_free_detectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_free_detectors</span></code></a>(→ list[dict[str, float]])</p></td>
+<td><p>Numerical Newton solver for psic-family modes with both detector</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_kappa_virtual" title="ad_hoc_diffractometer.forward._solve_kappa_virtual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_kappa_virtual</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Kappa virtual-angle dispatcher.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_one_free_angle" title="ad_hoc_diffractometer.forward._solve_one_free_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_one_free_angle</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_omega_mode" title="ad_hoc_diffractometer.forward._solve_omega_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_omega_mode</span></code></a>(→ list[dict[str, float]])</p></td>
+<td><p>Forward solver for <code class="docutils literal notranslate"><span class="pre">ReferenceConstraint(&quot;omega&quot;,</span> <span class="pre">value)</span></code> modes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_one_free_angle" title="ad_hoc_diffractometer.forward._solve_one_free_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_one_free_angle</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Numerically solve for one free stage angle such that</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_one_free_angle_analytic" title="ad_hoc_diffractometer.forward._solve_one_free_angle_analytic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_one_free_angle_analytic</span></code></a>(→ float | None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_one_free_angle_analytic" title="ad_hoc_diffractometer.forward._solve_one_free_angle_analytic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_one_free_angle_analytic</span></code></a>(→ float | None)</p></td>
 <td><p>Analytic single-<code class="docutils literal notranslate"><span class="pre">atan2</span></code> solver for one free sample-stage rotation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_psi_mode" title="ad_hoc_diffractometer.forward._solve_psi_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_psi_mode</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_psi_mode" title="ad_hoc_diffractometer.forward._solve_psi_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_psi_mode</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Forward solver for psi-constant modes (validation filter).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_qaz_mode" title="ad_hoc_diffractometer.forward._solve_qaz_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_qaz_mode</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_qaz_mode" title="ad_hoc_diffractometer.forward._solve_qaz_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_qaz_mode</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Forward solver for modes with a <code class="docutils literal notranslate"><span class="pre">DetectorConstraint(&quot;qaz&quot;,</span> <span class="pre">value)</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_surface" title="ad_hoc_diffractometer.forward._solve_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_surface</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_surface" title="ad_hoc_diffractometer.forward._solve_surface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_surface</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Surface diffraction forward solver.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_two_angles" title="ad_hoc_diffractometer.forward._solve_two_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_two_angles</span></code></a>(→ tuple[float, float] | None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_two_angles" title="ad_hoc_diffractometer.forward._solve_two_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_two_angles</span></code></a>(→ tuple[float, float] | None)</p></td>
 <td><p>Numerically solve for one or two free stage angles such that</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_zone" title="ad_hoc_diffractometer.forward._solve_zone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_zone</span></code></a>(→ list[dict[str, float]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_zone" title="ad_hoc_diffractometer.forward._solve_zone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_solve_zone</span></code></a>(→ list[dict[str, float]])</p></td>
 <td><p>Forward solver for zone modes.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._surface_residual" title="ad_hoc_diffractometer.forward._surface_residual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_surface_residual</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._surface_residual" title="ad_hoc_diffractometer.forward._surface_residual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_surface_residual</span></code></a>(→ float)</p></td>
 <td><p>Compute the surface constraint residual for the given angles.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._synthetic_bisecting_for_omega" title="ad_hoc_diffractometer.forward._synthetic_bisecting_for_omega"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_synthetic_bisecting_for_omega</span></code></a>(mode, geometry)</p></td>
+<td><p>Build a synthetic ConstraintSet that replaces the omega ReferenceConstraint</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.forward._validate_solutions" title="ad_hoc_diffractometer.forward._validate_solutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_solutions</span></code></a>(→ None)</p></td>
 <td><p>Validate that every returned solution actually satisfies all constraints</p></td>
@@ -849,6 +873,22 @@ change during Newton iteration.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._bisect_pair_for">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_bisect_pair_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_bisect_pair_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._bisect_pair_for" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._bisect_pair_for</span></code></p>
+</div>
+<p>Return a <code class="docutils literal notranslate"><span class="pre">BisectConstraint</span></code> on the geometry’s chi-circle bisect pair.</p>
+<p>For psic the bisect pair is determined by which sample stage is fixed:</p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">mu</span></code> is fixed at 0 (vertical scattering plane): <code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">↔</span> <span class="pre">delta</span></code>.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">eta</span></code> is fixed at 0 (horizontal scattering plane): <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">↔</span> <span class="pre">nu</span></code>.</p></li>
+</ul>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if neither condition is satisfied (e.g. an unsupported
+psic-like geometry).</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._check_limits">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_check_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_check_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._check_limits" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
@@ -933,6 +973,34 @@ construction.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._is_free_detectors_mode">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_is_free_detectors_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_is_free_detectors_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._is_free_detectors_mode" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._is_free_detectors_mode</span></code></p>
+</div>
+<p>Return True when both detector stages are free under <code class="docutils literal notranslate"><span class="pre">mode</span></code>.</p>
+<p>Used by <a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_free_detectors" title="ad_hoc_diffractometer.forward._solve_free_detectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_free_detectors()</span></code></a> to dispatch psic-family modes
+that fix multiple sample stages and let the detector arm orient
+itself entirely from the Bragg condition (and any reference
+constraint such as <code class="docutils literal notranslate"><span class="pre">alpha_i</span></code>).  Examples (issue #264):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lifting_detector_eta</span></code> (3 sample fixed, 1 sample + 2 detector free)</p></li>
+<li><p>revised <code class="docutils literal notranslate"><span class="pre">lifting_detector_phi</span></code> / <code class="docutils literal notranslate"><span class="pre">lifting_detector_mu</span></code>
+(after step C of #264 — same shape, different fixed sample stage)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_fixed_chi_fixed_phi</span></code> (2 sample fixed + alpha_i,
+2 sample + 2 detector free)</p></li>
+</ul>
+<p>The predicate is intentionally conservative: it requires the
+psic-family geometry signature (a sample stage named <code class="docutils literal notranslate"><span class="pre">&quot;chi&quot;</span></code>),
+two detector stages with neither pinned by <code class="docutils literal notranslate"><span class="pre">DetectorConstraint</span></code>,
+no qaz/bisect constraint, and a free-sample count compatible with
+the equation count (Bragg gives 3 equations; each
+<code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code> other than <code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code> adds 1).
+Existing surface geometries (zaxis, s2d2, sixc) lack <code class="docutils literal notranslate"><span class="pre">chi</span></code> and
+continue to use <a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_surface" title="ad_hoc_diffractometer.forward._solve_surface"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_surface()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._is_kappa_virtual_mode">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_is_kappa_virtual_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_is_kappa_virtual_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._is_kappa_virtual_mode" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
@@ -941,6 +1009,19 @@ construction.</p></li>
 <p>Return True when the mode contains a virtual Eulerian angle constraint
 (omega, chi, or phi) on a kappa geometry.</p>
 <p>Delegates to <code class="xref py py-func docutils literal notranslate"><span class="pre">is_kappa_virtual_mode()</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._is_omega_mode">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_is_omega_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_is_omega_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._is_omega_mode" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._is_omega_mode</span></code></p>
+</div>
+<p>Return True when the mode has an <code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code> ReferenceConstraint and the
+geometry implements the OMEGA pseudo-angle (i.e. has a <code class="docutils literal notranslate"><span class="pre">chi</span></code> stage).</p>
+<p>OMEGA is the SPEC <code class="docutils literal notranslate"><span class="pre">Q[6]</span></code> pseudo-angle: angle between Q and the plane
+of the chi circle.  See
+<a class="reference internal" href="../reference/index.html#ad_hoc_diffractometer.reference.omega_pseudo" title="ad_hoc_diffractometer.reference.omega_pseudo"><code class="xref py py-func docutils literal notranslate"><span class="pre">omega_pseudo()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -993,8 +1074,15 @@ use the Newton fallback.</p>
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._is_surface_mode</span></code></p>
 </div>
 <p>Return True when mode has a surface ReferenceConstraint and surface_normal is set.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code> ReferenceConstraint is NOT a surface mode — it is handled
-by <a class="reference internal" href="#ad_hoc_diffractometer.forward._is_psi_mode" title="ad_hoc_diffractometer.forward._is_psi_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">_is_psi_mode()</span></code></a> / <a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_psi_mode" title="ad_hoc_diffractometer.forward._solve_psi_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_psi_mode()</span></code></a> instead.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code> ReferenceConstraints are NOT surface modes —
+they are handled by <a class="reference internal" href="#ad_hoc_diffractometer.forward._is_psi_mode" title="ad_hoc_diffractometer.forward._is_psi_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">_is_psi_mode()</span></code></a> / <a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_psi_mode" title="ad_hoc_diffractometer.forward._solve_psi_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_psi_mode()</span></code></a> and
+<a class="reference internal" href="#ad_hoc_diffractometer.forward._is_omega_mode" title="ad_hoc_diffractometer.forward._is_omega_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">_is_omega_mode()</span></code></a> / <a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_omega_mode" title="ad_hoc_diffractometer.forward._solve_omega_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_omega_mode()</span></code></a> respectively.</p>
+<p>psic-family modes that leave <strong>two free sample stages</strong> along with both
+detector stages free are routed to <a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_free_detectors" title="ad_hoc_diffractometer.forward._solve_free_detectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_free_detectors()</span></code></a>
+instead (the new general solver added for issue #264) — the legacy
+<code class="docutils literal notranslate"><span class="pre">_solve_surface</span></code> only rocks a single sample stage and assumes that
+fixing the active detector to <code class="docutils literal notranslate"><span class="pre">ttheta</span></code> plus the other constraints
+is enough to satisfy Bragg.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1008,6 +1096,17 @@ by <a class="reference internal" href="#ad_hoc_diffractometer.forward._is_psi_mo
 reciprocal-lattice vectors z0 and z1.  Like double-diffraction modes,
 zone modes are dispatched by their <code class="docutils literal notranslate"><span class="pre">extras</span></code> schema rather than by a
 dedicated constraint class.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._omega_to_fixed_sample_mode">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_omega_to_fixed_sample_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_omega_to_fixed_sample_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._omega_to_fixed_sample_mode" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._omega_to_fixed_sample_mode</span></code></p>
+</div>
+<p>Return <code class="docutils literal notranslate"><span class="pre">mode</span></code> with the omega ReferenceConstraint stripped.</p>
+<p>Used only by the “all outer stages fixed” branch of
+<a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_omega_mode" title="ad_hoc_diffractometer.forward._solve_omega_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_omega_mode()</span></code></a>, which the current YAML modes never trigger.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1276,6 +1375,19 @@ delegates to _solve_fixed_sample.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._solve_constraint_set_no_omega">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_solve_constraint_set_no_omega</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttheta_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_solve_constraint_set_no_omega"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._solve_constraint_set_no_omega" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._solve_constraint_set_no_omega</span></code></p>
+</div>
+<p>Run the constraint-set dispatcher on <code class="docutils literal notranslate"><span class="pre">mode</span></code> after stripping any
+<code class="docutils literal notranslate"><span class="pre">ReferenceConstraint(&quot;omega&quot;,</span> <span class="pre">...)</span></code> so the inner solve cannot recurse.</p>
+<p>The omega solver re-enters the dispatcher to handle the inner Bragg
+solve; without this guard the dispatcher would route the recursive
+call back into <a class="reference internal" href="#ad_hoc_diffractometer.forward._solve_omega_mode" title="ad_hoc_diffractometer.forward._solve_omega_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">_solve_omega_mode()</span></code></a> and loop forever.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._solve_double_diffraction">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_solve_double_diffraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttheta_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_solve_double_diffraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._solve_double_diffraction" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
@@ -1346,6 +1458,43 @@ sample stages numerically.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._solve_free_detectors">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_solve_free_detectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttheta_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_solve_free_detectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._solve_free_detectors" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._solve_free_detectors</span></code></p>
+</div>
+<p>Numerical Newton solver for psic-family modes with both detector
+stages free.</p>
+<p>Adds support for the issue #264 modes that drop the qaz constraint
+and let nu and delta float jointly to satisfy the Bragg condition:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lifting_detector_eta</span></code> (B4)</p></li>
+<li><p>revised <code class="docutils literal notranslate"><span class="pre">lifting_detector_phi</span></code> / <code class="docutils literal notranslate"><span class="pre">lifting_detector_mu</span></code> (C3, C4)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_fixed_chi_fixed_phi</span></code> (B3, with one alpha_i row)</p></li>
+</ul>
+<p>Variables: every free sample stage plus both detector stages.
+Equations: 3 from Bragg (<code class="docutils literal notranslate"><span class="pre">Q_phi(angles)</span> <span class="pre">==</span> <span class="pre">Q_phi_target</span></code>) plus 1 per
+non-<code class="docutils literal notranslate"><span class="pre">omega</span></code> <code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code> in the mode.</p>
+<p>The solver runs a finite-difference Levenberg-Marquardt-flavoured
+Newton iteration from a small grid of seed points and de-duplicates
+by the rounded free-stage values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>)</p></li>
+<li><p><strong>Q_phi</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>)</p></li>
+<li><p><strong>ttheta_deg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Magnitude of 2θ implied by <code class="docutils literal notranslate"><span class="pre">Q_phi</span></code> (used as a default seed for
+the active detector stage; not enforced as a constraint).</p></li>
+<li><p><strong>mode</strong> (<a class="reference internal" href="../mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><em>ConstraintSet</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._solve_kappa_virtual">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_solve_kappa_virtual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttheta_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_solve_kappa_virtual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._solve_kappa_virtual" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
@@ -1358,6 +1507,60 @@ with the kappa-side post-processing: virtual-angle validation
 against the per-geometry
 <code class="xref py py-class docutils literal notranslate"><span class="pre">KappaPseudoAngleConvention</span></code>, cut-points, motor
 limits, and deduplication.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._solve_omega_mode">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_solve_omega_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttheta_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_solve_omega_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._solve_omega_mode" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._solve_omega_mode</span></code></p>
+</div>
+<p>Forward solver for <code class="docutils literal notranslate"><span class="pre">ReferenceConstraint(&quot;omega&quot;,</span> <span class="pre">value)</span></code> modes.</p>
+<p>OMEGA is the SPEC <code class="docutils literal notranslate"><span class="pre">Q[6]</span></code> pseudo-angle — the angle between the
+scattering vector Q and the plane of the chi circle.  When the
+target value is zero, OMEGA = 0 means Q lies in the chi-circle
+plane and the diffractometer is in the bisecting condition; non-zero
+OMEGA tilts Q out of that plane.</p>
+<section id="strategy">
+<h3>Strategy<a class="headerlink" href="#strategy" title="Link to this heading">#</a></h3>
+<p>The OMEGA pseudo-angle depends only on the <strong>outer</strong> sample stages
+(those below chi in the stack — <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">eta</span></code> in psic) and the
+detector stages.  In each of the supported psic mode topologies
+exactly one outer stage is fixed and the other is free; we drive
+that free outer stage to satisfy <code class="docutils literal notranslate"><span class="pre">OMEGA</span> <span class="pre">=</span> <span class="pre">target</span></code> using a 1-D
+Newton root-find.  The inner sample stages <code class="docutils literal notranslate"><span class="pre">(chi,</span> <span class="pre">phi)</span></code> and the
+active detector angle are determined at each Newton step by the
+Bragg condition through the ordinary fixed-sample solver.</p>
+<p>For the special case <code class="docutils literal notranslate"><span class="pre">target</span> <span class="pre">=</span> <span class="pre">0</span></code> the bisecting condition (<code class="docutils literal notranslate"><span class="pre">OMEGA</span>
+<span class="pre">=</span> <span class="pre">0</span> <span class="pre">⇔</span> <span class="pre">Q</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">chi-circle</span> <span class="pre">plane</span></code>) is exact and the solver
+short-circuits to <code class="docutils literal notranslate"><span class="pre">_solve_bisecting</span></code> via a synthetic
+<code class="docutils literal notranslate"><span class="pre">BisectConstraint</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param geometry<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">type geometry<span class="colon">:</span></dt>
+<dd class="field-even"><p>AdHocDiffractometer</p>
+</dd>
+<dt class="field-odd">param Q_phi<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">type Q_phi<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray, shape (3,)</p>
+</dd>
+<dt class="field-odd">param ttheta_deg<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">type ttheta_deg<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param mode<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">type mode<span class="colon">:</span></dt>
+<dd class="field-even"><p>ConstraintSet</p>
+</dd>
+<dt class="field-odd">rtype<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of dict[str, float]</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -1661,6 +1864,17 @@ normal is undefined).</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._synthetic_bisecting_for_omega">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_synthetic_bisecting_for_omega</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_synthetic_bisecting_for_omega"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._synthetic_bisecting_for_omega" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._synthetic_bisecting_for_omega</span></code></p>
+</div>
+<p>Build a synthetic ConstraintSet that replaces the omega ReferenceConstraint
+with a BisectConstraint on the geometry’s chi-circle bisect pair.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if no bisect pair can be identified for this mode.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.forward._validate_solutions">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.forward.</span></span><span class="sig-name descname"><span class="pre">_validate_solutions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solutions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/forward.html#_validate_solutions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.forward._validate_solutions" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
@@ -1800,25 +2014,32 @@ for this geometry.</p></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._apply_cut_points"><code class="docutils literal notranslate"><span class="pre">_apply_cut_points()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._bisect_pair_for"><code class="docutils literal notranslate"><span class="pre">_bisect_pair_for()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._check_limits"><code class="docutils literal notranslate"><span class="pre">_check_limits()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._collect_dd_solution"><code class="docutils literal notranslate"><span class="pre">_collect_dd_solution()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._compute_natural_psi"><code class="docutils literal notranslate"><span class="pre">_compute_natural_psi()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_cardinal_axis"><code class="docutils literal notranslate"><span class="pre">_is_cardinal_axis()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_double_diffraction_mode"><code class="docutils literal notranslate"><span class="pre">_is_double_diffraction_mode()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_free_detectors_mode"><code class="docutils literal notranslate"><span class="pre">_is_free_detectors_mode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_kappa_virtual_mode"><code class="docutils literal notranslate"><span class="pre">_is_kappa_virtual_mode()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_omega_mode"><code class="docutils literal notranslate"><span class="pre">_is_omega_mode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_psi_mode"><code class="docutils literal notranslate"><span class="pre">_is_psi_mode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_qaz_mode"><code class="docutils literal notranslate"><span class="pre">_is_qaz_mode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_standard_eulerian_pair"><code class="docutils literal notranslate"><span class="pre">_is_standard_eulerian_pair()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_surface_mode"><code class="docutils literal notranslate"><span class="pre">_is_surface_mode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._is_zone_mode"><code class="docutils literal notranslate"><span class="pre">_is_zone_mode()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._omega_to_fixed_sample_mode"><code class="docutils literal notranslate"><span class="pre">_omega_to_fixed_sample_mode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._refine_dd_outer_seeded"><code class="docutils literal notranslate"><span class="pre">_refine_dd_outer_seeded()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_bisecting"><code class="docutils literal notranslate"><span class="pre">_solve_bisecting()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_bisecting_analytic"><code class="docutils literal notranslate"><span class="pre">_solve_bisecting_analytic()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual"><code class="docutils literal notranslate"><span class="pre">_solve_bisecting_kappa_virtual()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_constraint_set"><code class="docutils literal notranslate"><span class="pre">_solve_constraint_set()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_constraint_set_no_omega"><code class="docutils literal notranslate"><span class="pre">_solve_constraint_set_no_omega()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_double_diffraction"><code class="docutils literal notranslate"><span class="pre">_solve_double_diffraction()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_fixed_sample"><code class="docutils literal notranslate"><span class="pre">_solve_fixed_sample()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_free_detectors"><code class="docutils literal notranslate"><span class="pre">_solve_free_detectors()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_kappa_virtual"><code class="docutils literal notranslate"><span class="pre">_solve_kappa_virtual()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_omega_mode"><code class="docutils literal notranslate"><span class="pre">_solve_omega_mode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_one_free_angle"><code class="docutils literal notranslate"><span class="pre">_solve_one_free_angle()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_one_free_angle_analytic"><code class="docutils literal notranslate"><span class="pre">_solve_one_free_angle_analytic()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_psi_mode"><code class="docutils literal notranslate"><span class="pre">_solve_psi_mode()</span></code></a></li>
@@ -1827,6 +2048,7 @@ for this geometry.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_two_angles"><code class="docutils literal notranslate"><span class="pre">_solve_two_angles()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._solve_zone"><code class="docutils literal notranslate"><span class="pre">_solve_zone()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._surface_residual"><code class="docutils literal notranslate"><span class="pre">_surface_residual()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._synthetic_bisecting_for_omega"><code class="docutils literal notranslate"><span class="pre">_synthetic_bisecting_for_omega()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward._validate_solutions"><code class="docutils literal notranslate"><span class="pre">_validate_solutions()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.forward.compute_forward"><code class="docutils literal notranslate"><span class="pre">compute_forward()</span></code></a></li>
 </ul>
@@ -1865,7 +2087,7 @@ for this geometry.</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-05 23:43 CDT.
+  Last updated on 2026-05-06 21:26 CDT.
   <br/>
 </p></div>
       
