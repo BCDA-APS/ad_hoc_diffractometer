@@ -69,6 +69,6 @@ About
    * - Published
      - |today|
    * - License
-     - `CC-BY-4.0 <https://creativecommons.org/licenses/by/4.0/>`_
+     - `LicenseRef-ANL-Open-Source-License <https://github.com/BCDA-APS/ad_hoc_diffractometer/blob/main/LICENSE>`_
    * - Index
      - :ref:`genindex`

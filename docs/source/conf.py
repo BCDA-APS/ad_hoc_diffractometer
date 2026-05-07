@@ -24,7 +24,8 @@ _metadata = _toml["project"]
 # -- Project information -----------------------------------------------------
 
 project = "ad_hoc_diffractometer"
-author = _metadata["authors"][0]["name"]
+# author = _metadata["authors"][0]["name"]
+author = "UChicago Argonne, LLC"
 copyright = f"2026, {author}"
 description = _metadata["description"]
 

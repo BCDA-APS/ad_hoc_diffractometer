@@ -2,7 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/ad_hoc_diffractometer)](https://pypi.org/project/ad_hoc_diffractometer/)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/)
-[![License: CC-BY-4.0](https://img.shields.io/badge/License-CC--BY--4.0-brightgreen)](https://creativecommons.org/licenses/by/4.0/)
+[![License: ANL](https://img.shields.io/badge/license-ANL-brightgreen)](LICENSE)
 
 `ad_hoc_diffractometer` is a Python package that lets you describe any
 multi-circle diffractometer geometry and perform X-ray/neutron
