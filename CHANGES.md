@@ -5,7 +5,9 @@ Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues) for the full
 issue tracker.  The initial project development roadmap is documented here:
 [roadmap](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/roadmap.md).
 
-## Unreleased
+## Release v0.10.0
+
+Released 2026-05-06.
 
 ### Breaking changes
 
