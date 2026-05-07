@@ -24,10 +24,17 @@ issue tracker.  The initial project development roadmap is documented here:
 - Glossary entries for zone-mode work (Azimuth, Basis, Constraint, Cut point, Double diffraction, Extras, Zone). (#266)
 - psic and kappa6c zone modes (You §6, SPEC `setmode 5`). (#262)
 - `register_geometry_file()` and `load_geometry_file()`. (#267)
+- SPEC `OMEGA` pseudo-angle (`Q[6]`) as a `ReferenceConstraint` name. (#264)
+- psic `fixed_omega_vertical` and `fixed_omega_horizontal` modes. (#264)
+- psic `fixed_alpha_i_fixed_chi_fixed_phi` mode. (#264)
+- psic `lifting_detector_eta` mode. (#264)
 
 ### Changed
 
 - `pyyaml` is now a runtime dependency. (#267)
+- psic `lifting_detector_phi` and `lifting_detector_mu` drop `qaz=90` and fix every sample stage except the named one. (#264)
+- psic `fixed_psi_vertical` drops the bisect; pins `nu = 0` and `mu`. (#264)
+- psic `fixed_psi_horizontal` drops the bisect; pins `delta = 0` and `eta`. (#264)
 
 ### Fixed
 

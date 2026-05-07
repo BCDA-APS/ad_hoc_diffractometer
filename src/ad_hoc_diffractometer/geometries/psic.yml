@@ -43,19 +43,24 @@ documentation: |
     mechanically independent.
 
 
-    Mode families (20 modes total):
+    Mode families (24 modes total):
 
-    - 8 vertical-scattering-plane modes (mu = nu = 0): bisecting,
+    - 9 vertical-scattering-plane modes (mu = nu = 0): bisecting,
       fixed_phi, fixed_chi, fixed_alpha_i, fixed_beta_out,
-      alpha_eq_beta, fixed_psi, double_diffraction.
+      alpha_eq_beta, fixed_psi, fixed_omega (#264),
+      double_diffraction.
 
-    - 8 horizontal-scattering-plane mirror modes (eta = delta = 0).
+    - 9 horizontal-scattering-plane mirror modes (eta = delta = 0).
+
+    - 1 hybrid mode fixed_alpha_i_fixed_chi_fixed_phi (#264) that
+      fixes chi, phi, and alpha_i and lets every other angle float.
 
     - 2 zone modes (You 1999 §6, SPEC ``setmode 5``): scattering vector
       Q is confined to the plane defined by two reciprocal-lattice
       vectors z0 and z1.
 
-    - 2 lifting-detector modes (out-of-plane geometry).
+    - 3 lifting-detector modes (out-of-plane geometry; #264 dropped
+      the qaz constraint and added lifting_detector_eta).
 
 
     The fixed_chi_horizontal mode uses chi = 0 (not chi = 90 as in the
@@ -143,15 +148,49 @@ modes:
             alpha_i: null
             beta_out: null
 
+    # Per @jwkim-anl, issue #264: drop the bisect(eta, delta) constraint
+    # entirely.  "vertical" means nu = 0 (detector pin); mu and psi are
+    # fixed at user-specified values (defaults 0).  Free: eta, chi,
+    # phi, delta — at any given (mu, psi) target a combination of the
+    # free angles satisfies Bragg under the validated psi constraint.
     fixed_psi_vertical:
         constraints:
-            - {type: bisect,    stage1: eta, stage2: delta}
+            - {type: detector,  stage: nu, value: 0.0}
             - {type: sample,    stage: mu, value: 0.0}
             - {type: reference, name: psi, value: 0.0}
         computed: [eta, chi, phi, delta]
         extras:
             n_hat: REQUIRED
             psi: null
+
+    # Per @jwkim-anl, issue #264: a useful psic mode that fixes chi and
+    # phi and the incidence angle alpha_i, leaving mu, eta, nu, delta
+    # to be determined from the Bragg condition + the alpha_i target.
+    # Two free sample stages and two free detector stages — solved by a
+    # dedicated 4-D Newton.
+    fixed_alpha_i_fixed_chi_fixed_phi:
+        constraints:
+            - {type: sample,    stage: chi, value: 0.0}
+            - {type: sample,    stage: phi, value: 0.0}
+            - {type: reference, name: alpha_i, value: 0.0}
+        computed: [mu, eta, nu, delta]
+        extras:
+            n_hat: REQUIRED
+            alpha_i: null
+            beta_out: null
+
+    # SPEC ``setmode d1 0 0 0`` family — issue #264.
+    # OMEGA = angle between Q and the plane of the chi circle
+    # (SPEC psic ``def OMEGA 'Q[6]'``).  At OMEGA = 0 the mode reduces
+    # to bisecting_vertical.
+    fixed_omega_vertical:
+        constraints:
+            - {type: sample,    stage: mu, value: 0.0}
+            - {type: detector,  stage: nu, value: 0.0}
+            - {type: reference, name: omega, value: 0.0}
+        computed: [eta, chi, phi, delta]
+        extras:
+            omega: null
 
     double_diffraction_vertical:
         constraints:
@@ -226,15 +265,31 @@ modes:
             alpha_i: null
             beta_out: null
 
+    # Per @jwkim-anl, issue #264: drop the bisect(mu, nu) constraint
+    # entirely.  "horizontal" means delta = 0 (detector pin); eta and
+    # psi are fixed at user-specified values (defaults 0).  Free: mu,
+    # chi, phi, nu.
     fixed_psi_horizontal:
         constraints:
-            - {type: bisect,    stage1: mu, stage2: nu}
-            - {type: sample,    stage: eta, value: 0.0}
-            - {type: reference, name: psi, value: 0.0}
+            - {type: detector,  stage: delta, value: 0.0}
+            - {type: sample,    stage: eta,   value: 0.0}
+            - {type: reference, name: psi,    value: 0.0}
         computed: [mu, chi, phi, nu]
         extras:
             n_hat: REQUIRED
             psi: null
+
+    # SPEC ``setmode d1 0 0 0`` family — issue #264 (horizontal mirror).
+    # OMEGA = angle between Q and the plane of the chi circle.
+    # At OMEGA = 0 the mode reduces to bisecting_horizontal.
+    fixed_omega_horizontal:
+        constraints:
+            - {type: sample,    stage: eta,   value: 0.0}
+            - {type: detector,  stage: delta, value: 0.0}
+            - {type: reference, name: omega,  value: 0.0}
+        computed: [mu, chi, phi, nu]
+        extras:
+            omega: null
 
     double_diffraction_horizontal:
         constraints:
@@ -273,16 +328,30 @@ modes:
             in_plane_residual: null
 
     # ── Lifting detector (out-of-plane) ─────────────────────────────────
+    # Per @jwkim-anl, issue #264: drop the qaz=90 detector pseudo-
+    # constraint and fix every sample stage except the named one.  Both
+    # detector stages float jointly to satisfy the Bragg condition,
+    # producing the "lifting detector" effect (nu generally non-zero)
+    # naturally for any (h, k, l) that requires out-of-plane scattering.
     lifting_detector_phi:
         constraints:
-            - {type: sample,   stage: phi, value: 0.0}
             - {type: sample,   stage: mu,  value: 0.0}
-            - {type: detector, stage: qaz, value: 90.0}
+            - {type: sample,   stage: eta, value: 0.0}
+            - {type: sample,   stage: chi, value: 0.0}
         computed: [phi, nu, delta]
 
     lifting_detector_mu:
         constraints:
-            - {type: sample,   stage: mu,  value: 0.0}
             - {type: sample,   stage: eta, value: 0.0}
-            - {type: detector, stage: qaz, value: 90.0}
+            - {type: sample,   stage: chi, value: 0.0}
+            - {type: sample,   stage: phi, value: 0.0}
         computed: [mu, nu, delta]
+
+    # Symmetric counterpart (issue #264 B4): fix every sample stage
+    # except eta; both detector stages float.
+    lifting_detector_eta:
+        constraints:
+            - {type: sample,   stage: mu,  value: 0.0}
+            - {type: sample,   stage: chi, value: 0.0}
+            - {type: sample,   stage: phi, value: 0.0}
+        computed: [eta, nu, delta]

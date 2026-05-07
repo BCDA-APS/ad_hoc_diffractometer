@@ -539,3 +539,170 @@ def test_surface_mode_not_implemented_raises():
     g.mode_name = "zaxis"
     with pytest.raises(NotImplementedError):
         g.forward(0, 1, 0)
+
+
+# ---------------------------------------------------------------------------
+# omega_pseudo (SPEC OMEGA = Q[6], issue #264)
+# ---------------------------------------------------------------------------
+
+
+from contextlib import nullcontext as does_not_raise  # noqa: E402
+
+from ad_hoc_diffractometer.reference import omega_pseudo  # noqa: E402
+
+
+def test_omega_pseudo_requires_wavelength():
+    """omega_pseudo raises ValueError when wavelength is None."""
+    g = psic()
+    # Do NOT set wavelength
+    with pytest.raises(ValueError, match=re.escape("wavelength")):
+        omega_pseudo(g)
+
+
+def test_omega_pseudo_requires_chi_stage():
+    """omega_pseudo raises KeyError on a geometry with no 'chi' stage."""
+    g = zaxis()
+    g.wavelength = WAVELENGTH
+    with pytest.raises(KeyError, match=re.escape("no sample stage named 'chi'")):
+        omega_pseudo(g)
+
+
+def test_omega_pseudo_does_not_require_surface_normal():
+    """omega_pseudo works with no surface_normal or azimuthal_reference."""
+    g = _setup_psic()
+    assert g.surface_normal is None
+    assert g.azimuthal_reference is None
+    g.mode_name = "bisecting_vertical"
+    sols = g.forward(1, 0, 0)
+    for s in sols:
+        om = omega_pseudo(g, angles=s)
+        assert isinstance(om, float)
+
+
+def test_omega_pseudo_uses_current_angles_when_none():
+    """omega_pseudo uses current stage angles when angles=None."""
+    g = _setup_psic()
+    om = omega_pseudo(g, angles=None)
+    assert isinstance(om, float)
+
+
+def test_omega_pseudo_zero_at_bisecting_vertical():
+    """At bisecting_vertical (mu=nu=0, eta=delta/2), OMEGA = 0."""
+    g = _setup_psic()
+    g.mode_name = "bisecting_vertical"
+    sols = g.forward(1, 0, 0)
+    assert len(sols) > 0
+    for s in sols:
+        om = omega_pseudo(g, angles=s)
+        assert om == pytest.approx(0.0, abs=1e-6), (
+            f"OMEGA should be 0 at bisecting; got {om} for {s}"
+        )
+
+
+def test_omega_pseudo_zero_at_bisecting_horizontal():
+    """At bisecting_horizontal (eta=delta=0, mu=nu/2), OMEGA = 0."""
+    g = _setup_psic()
+    g.mode_name = "bisecting_horizontal"
+    sols = g.forward(0, 0, 1)
+    assert len(sols) > 0
+    for s in sols:
+        om = omega_pseudo(g, angles=s)
+        assert om == pytest.approx(0.0, abs=1e-6), (
+            f"OMEGA should be 0 at bisecting_horizontal; got {om} for {s}"
+        )
+
+
+def test_omega_pseudo_independent_of_phi():
+    """OMEGA depends only on the outer sample stages and the detector;
+    it is independent of phi."""
+    g = _setup_psic()
+    angles_a = {
+        "mu": 5.0,
+        "eta": 12.0,
+        "chi": 30.0,
+        "phi": 0.0,
+        "nu": 0.0,
+        "delta": 24.0,
+    }
+    angles_b = dict(angles_a)
+    angles_b["phi"] = 73.0
+    om_a = omega_pseudo(g, angles=angles_a)
+    om_b = omega_pseudo(g, angles=angles_b)
+    assert om_a == pytest.approx(om_b, abs=1e-9), (
+        f"OMEGA must be independent of phi; got {om_a} vs {om_b}"
+    )
+
+
+def test_omega_pseudo_independent_of_chi():
+    """OMEGA depends only on the outer sample stages and the detector;
+    it is independent of chi (chi rotates Q and the chi-circle plane
+    together, preserving their relative angle)."""
+    g = _setup_psic()
+    angles_a = {
+        "mu": 5.0,
+        "eta": 12.0,
+        "chi": 30.0,
+        "phi": 17.0,
+        "nu": 0.0,
+        "delta": 24.0,
+    }
+    angles_b = dict(angles_a)
+    angles_b["chi"] = 91.0
+    om_a = omega_pseudo(g, angles=angles_a)
+    om_b = omega_pseudo(g, angles=angles_b)
+    assert om_a == pytest.approx(om_b, abs=1e-9)
+
+
+@pytest.mark.parametrize(
+    "name, expected",
+    [
+        pytest.param("psi", True, id="psi"),
+        pytest.param("alpha_i", True, id="alpha_i"),
+        pytest.param("beta_out", True, id="beta_out"),
+        pytest.param("a_eq_b", True, id="a_eq_b"),
+        pytest.param("naz", True, id="naz"),
+        pytest.param("omega", True, id="omega"),
+        pytest.param("not_a_pseudo_angle", False, id="invalid"),
+    ],
+)
+def test_reference_constraint_accepts_omega(name, expected):
+    """ReferenceConstraint('omega', value) is now a valid constraint."""
+    context = (
+        does_not_raise()
+        if expected
+        else pytest.raises(ValueError, match=re.escape("ReferenceConstraint name"))
+    )
+    with context:
+        if name == "a_eq_b":
+            ReferenceConstraint(name, True)
+        else:
+            ReferenceConstraint(name, 0.0)
+
+
+def test_reference_constraint_omega_is_implemented_on_psic():
+    """ReferenceConstraint('omega', 0).is_implemented(psic) is True."""
+    g = _setup_psic()
+    rc = ReferenceConstraint("omega", 0.0)
+    assert rc.is_implemented(g) is True
+    assert rc.has_reference_vector(g) is True
+
+
+def test_reference_constraint_omega_not_implemented_on_zaxis():
+    """ReferenceConstraint('omega', 0).is_implemented(zaxis) is False — no chi."""
+    g = zaxis()
+    g.wavelength = WAVELENGTH
+    rc = ReferenceConstraint("omega", 0.0)
+    assert rc.is_implemented(g) is False
+    # has_reference_vector still True (omega needs no reference vector)
+    assert rc.has_reference_vector(g) is True
+
+
+def test_reference_constraint_omega_serialization_round_trip():
+    """ReferenceConstraint('omega', value) round-trips through to_dict / from_dict."""
+    rc = ReferenceConstraint("omega", 12.5)
+    d = rc.to_dict()
+    assert d["type"] == "ReferenceConstraint"
+    assert d["name"] == "omega"
+    assert d["value"] == 12.5
+    rc2 = ReferenceConstraint.from_dict(d)
+    assert rc == rc2
