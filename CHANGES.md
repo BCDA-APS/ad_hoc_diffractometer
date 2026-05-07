@@ -1,9 +1,17 @@
 # Change History
 
 User-facing changes by release.  For future work planning, see [GitHub
-Issues](https://github.com/prjemian/ad_hoc_diffractometer/issues) for the full
+Issues](https://github.com/BCDA-APS/ad_hoc_diffractometer/issues) for the full
 issue tracker.  The initial project development roadmap is documented here:
-[roadmap](https://github.com/prjemian/ad_hoc_diffractometer/blob/main/roadmap.md).
+[roadmap](https://github.com/BCDA-APS/ad_hoc_diffractometer/blob/main/roadmap.md).
+
+## next Release v0.10.1
+
+not yet Released 2026-05-07
+
+### Breaking changes
+
+- Repository moved to <https://github.com/BCDA-APS/ad_hoc_diffractometer>
 
 ## Release v0.10.0
 

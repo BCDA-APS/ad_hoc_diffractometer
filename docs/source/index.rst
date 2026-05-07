@@ -61,9 +61,9 @@ About
    :stub-columns: 1
 
    * - Home
-     - https://prjemian.github.io/ad_hoc_diffractometer/
+     - https://BCDA-APS.github.io/ad_hoc_diffractometer/
    * - Source
-     - https://github.com/prjemian/ad_hoc_diffractometer
+     - https://github.com/BCDA-APS/ad_hoc_diffractometer
    * - Version
      - |release|
    * - Published

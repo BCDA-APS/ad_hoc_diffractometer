@@ -77,7 +77,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           set -euo pipefail
-          LIVE_URL="https://prjemian.github.io/ad_hoc_diffractometer/latest/_static/switcher.json"
+          LIVE_URL="https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json"
           TARGET="docs/build/html/_static/switcher.json"
           if curl -fsSL "${LIVE_URL}" -o /tmp/live_switcher.json 2>/dev/null; then
             cp /tmp/live_switcher.json "${TARGET}"
@@ -143,7 +143,7 @@ jobs:
 
           version = os.environ["VERSION"]
           switcher_path = os.environ["SWITCHER"]
-          base_url = "https://prjemian.github.io/ad_hoc_diffractometer"
+          base_url = "https://BCDA-APS.github.io/ad_hoc_diffractometer"
 
           is_prerelease = bool(re.search(r'(a|b|rc)\d+$', version))
 

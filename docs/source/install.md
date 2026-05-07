@@ -14,7 +14,7 @@ pip install ad_hoc_diffractometer
 ## Install for development
 
 ```bash
-git clone https://github.com/prjemian/ad_hoc_diffractometer
+git clone https://github.com/BCDA-APS/ad_hoc_diffractometer
 cd ad_hoc_diffractometer
 pip install -e .[dev]
 ```
