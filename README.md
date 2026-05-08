@@ -1,7 +1,15 @@
 # *Ad hoc* diffractometer
 
-[![PyPI](https://img.shields.io/pypi/v/ad_hoc_diffractometer)](https://pypi.org/project/ad_hoc_diffractometer/)
-[![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/)
+[![Release](https://img.shields.io/github/v/release/bcda-aps/ad_hoc_diffractometer)](https://github.com/bcda-aps/ad_hoc_diffractometer/releases)
+[![Tag](https://img.shields.io/github/v/tag/bcda-aps/ad_hoc_diffractometer)](https://github.com/bcda-aps/ad_hoc_diffractometer/tags)
+[![PyPi](https://img.shields.io/pypi/v/ad_hoc_diffractometer.svg)](https://pypi.python.org/pypi/ad_hoc_diffractometer)
+[![Conda Package](https://img.shields.io/badge/package-ad_hoc_diffractometer-green.svg)](https://anaconda.org/conda-forge/ad_hoc_diffractometer)
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/ad_hoc_diffractometer.svg)](https://anaconda.org/conda-forge/ad_hoc_diffractometer)
+[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/ad_hoc_diffractometer.svg)](https://anaconda.org/conda-forge/ad_hoc_diffractometer)
+[![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/ad_hoc_diffractometer.svg)](https://anaconda.org/conda-forge/ad_hoc_diffractometer)
+[![Coverage Status](https://coveralls.io/repos/github/bcda-aps/ad_hoc_diffractometer/badge.svg?branch=main)](https://coveralls.io/github/bcda-aps/ad_hoc_diffractometer?branch=main)
+[![Documentation](https://img.shields.io/badge/docs-blue)](https://bcda-aps.github.io/ad_hoc_diffractometer/)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/bcda-aps/ad_hoc_diffractometer)
 [![License: ANL](https://img.shields.io/badge/license-ANL-brightgreen)](LICENSE)
 
 `ad_hoc_diffractometer` is a Python package that lets you describe any
