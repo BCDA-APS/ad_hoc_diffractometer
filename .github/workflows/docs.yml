@@ -68,24 +68,6 @@ jobs:
         run: |
           python3 -m sphinx -b html docs/source docs/build/html
 
-      - name: Preserve live switcher.json from gh-pages
-        # On main-push deploys, the build output contains the source-repo
-        # switcher.json which only lists versions known at commit time.
-        # The live gh-pages copy has been updated by tag-push CI to include
-        # all released versions.  Fetch it and overlay it into the build
-        # output so the deploy does not regress the version switcher.
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          set -euo pipefail
-          LIVE_URL="https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json"
-          TARGET="docs/build/html/_static/switcher.json"
-          if curl -fsSL "${LIVE_URL}" -o /tmp/live_switcher.json 2>/dev/null; then
-            cp /tmp/live_switcher.json "${TARGET}"
-            echo "Preserved live switcher.json from gh-pages"
-          else
-            echo "No live switcher.json found; using source-repo version"
-          fi
-
       - name: Upload docs as workflow artifact
         uses: actions/upload-artifact@v7
         with:
@@ -125,95 +107,34 @@ jobs:
           destination_dir: ${{ env.DOC_VERSION }}
           keep_files: true
 
-      - name: Update switcher.json on tag push
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        run: |
-          set -euo pipefail
-          VERSION="${DOC_VERSION}"
+      # ------------------------------------------------------------------
+      # After any deploy that wrote to gh-pages, regenerate switcher.json
+      # from the *actual* gh-pages directory listing (issue #273).  This
+      # replaces the previous "incrementally edit one file" approach,
+      # which silently fell behind every time a tag-push update step
+      # failed.  The regenerator writes the same canonical JSON into
+      # latest/_static/ AND into every vX.Y.Z/_static/ so visitors on an
+      # older version page see the same up-to-date dropdown.
+      # ------------------------------------------------------------------
 
-          # Clone gh-pages to update switcher.json
+      - name: Clone gh-pages for switcher regeneration
+        if: >-
+          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+          (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+        run: |
           git clone --branch gh-pages --depth 1 \
             "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
             gh-pages-clone
 
-          SWITCHER="gh-pages-clone/latest/_static/switcher.json"
-
-          # If switcher.json doesn't exist yet, bootstrap from source
-          if [ ! -f "${SWITCHER}" ]; then
-            mkdir -p "$(dirname ${SWITCHER})"
-            cp docs/source/_static/switcher.json "${SWITCHER}"
-          fi
-
-          # Update switcher.json.
-          # "latest" is always first. Versioned entries follow in the order
-          # they are added (newest first).
-          # Pre-releases (rcN, aN, bN) appear in the switcher but do not steal
-          # "preferred" from the current stable release.
-          # Stable releases also prune all pre-release entries for the same
-          # base version (e.g. finalising 0.4.1 removes 0.4.1rc1, 0.4.1a1, …).
-          python3 - <<'PYEOF'
-          import json, os, re
-
-          version = os.environ["VERSION"]
-          switcher_path = os.environ["SWITCHER"]
-          base_url = "https://BCDA-APS.github.io/ad_hoc_diffractometer"
-
-          is_prerelease = bool(re.search(r'(a|b|rc)\d+$', version))
-
-          with open(switcher_path) as f:
-              entries = json.load(f)
-
-          # Separate "latest" from versioned entries; "latest" is always first.
-          latest_entries = [e for e in entries if e.get("version") == "latest"]
-          versioned = [e for e in entries if e.get("version") != "latest"]
-          versions = [e["version"] for e in versioned]
-
-          if not is_prerelease:
-              # Remove all pre-release entries for this base version.
-              prerelease_pat = re.compile(r'^' + re.escape(version) + r'(a|b|rc)\d+$')
-              pruned = [e["version"] for e in versioned if prerelease_pat.match(e["version"])]
-              versioned = [e for e in versioned if not prerelease_pat.match(e["version"])]
-              for v in pruned:
-                  print(f"Removed pre-release {v} from switcher.json")
-              versions = [e["version"] for e in versioned]
-              # Clear preferred everywhere, then mark this stable version.
-              for e in versioned:
-                  e.pop("preferred", None)
-              if version in versions:
-                  for e in versioned:
-                      if e["version"] == version:
-                          e["preferred"] = True
-                  print(f"{version} already present; marked preferred")
-              else:
-                  new_entry = {"version": version, "url": f"{base_url}/{version}/", "preferred": True}
-                  versioned.insert(0, new_entry)
-                  print(f"Added {version} to switcher.json and marked preferred")
-          else:
-              # Pre-release: add without touching preferred.
-              if version in versions:
-                  print(f"{version} already present (pre-release; preferred unchanged)")
-              else:
-                  new_entry = {"version": version, "url": f"{base_url}/{version}/"}
-                  versioned.insert(0, new_entry)
-                  print(f"Added pre-release {version} to switcher.json (preferred unchanged)")
-
-          # Always keep "latest" first; sort remaining entries newest-first.
-          def version_key(e):
-              try:
-                  return [int(x) for x in e["version"].lstrip("v").split(".")]
-              except ValueError:
-                  return []
-          versioned.sort(key=version_key, reverse=True)
-          entries = latest_entries + versioned
-          with open(switcher_path, "w") as f:
-              json.dump(entries, f, indent=4)
-          PYEOF
-        env:
-          SWITCHER: gh-pages-clone/latest/_static/switcher.json
-          VERSION: ${{ env.DOC_VERSION }}
+      - name: Regenerate switcher.json from gh-pages listing
+        if: >-
+          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+          (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+        run: |
+          python3 tools/regenerate_switcher.py gh-pages-clone
 
       - name: Remove pre-release doc directories from gh-pages on stable tag
-        if: >
+        if: >-
           github.event_name == 'push' &&
           startsWith(github.ref, 'refs/tags/') &&
           !contains(env.DOC_VERSION, 'a') &&
@@ -236,16 +157,27 @@ jobs:
             echo "No pre-release directories found for ${VERSION}."
           fi
 
-      - name: Commit switcher.json and pruned directories to gh-pages
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+          # Re-run the regenerator so the pruned versions disappear from
+          # switcher.json too.
+          python3 tools/regenerate_switcher.py gh-pages-clone
+
+      - name: Commit switcher.json (and pruned directories) to gh-pages
+        if: >-
+          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+          (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+        working-directory: gh-pages-clone
         run: |
-          cd gh-pages-clone
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet || git commit -m "ci: release ${DOC_VERSION}: update switcher.json, prune pre-release docs"
+          if git diff --cached --quiet; then
+            echo "No switcher.json or pruning changes to commit."
+            exit 0
+          fi
+          git commit -m "ci: regenerate switcher.json from gh-pages listing (${DOC_VERSION})"
           # Pull with rebase before pushing to avoid "fetch first" rejection
-          # when the earlier gh-pages deploy step has already pushed to the branch.
+          # when an earlier gh-pages deploy step has just pushed to the branch.
           git pull --rebase origin gh-pages
           git push
 

@@ -1,0 +1,75 @@
+name: Regenerate Doc Version Switcher
+
+# Regenerate gh-pages/<version>/_static/switcher.json from the live
+# directory listing on the gh-pages branch.  Use this when the published
+# version-switcher dropdown is missing entries or is otherwise out of
+# sync with the actual published docs (issue #273).
+#
+# This workflow does NOT rebuild any documentation.  It only inspects
+# what is already on gh-pages, regenerates the canonical switcher.json
+# from that listing, and mirrors it into latest/ and into every
+# vX.Y.Z/_static/ directory so the dropdown looks identical no matter
+# which version page the visitor is viewing.
+#
+# Usage:
+#   Actions -> "Regenerate Doc Version Switcher" -> Run workflow
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  # Serialize with the docs deploy workflow so the two never race on
+  # gh-pages writes.
+  group: gh-pages-write
+  cancel-in-progress: false
+
+jobs:
+
+  regenerate:
+    name: Regenerate switcher.json from gh-pages listing
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout main (for tools/regenerate_switcher.py)
+        uses: actions/checkout@v6
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          path: gh-pages-clone
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show current top-level layout of gh-pages
+        run: ls -la gh-pages-clone
+
+      - name: Regenerate switcher.json (dry run for log)
+        run: |
+          python3 tools/regenerate_switcher.py gh-pages-clone --dry-run
+
+      - name: Regenerate switcher.json (write)
+        run: |
+          python3 tools/regenerate_switcher.py gh-pages-clone
+
+      - name: Commit and push
+        working-directory: gh-pages-clone
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No switcher.json changes to commit."
+            exit 0
+          fi
+          git commit -m "ci: regenerate switcher.json from gh-pages listing (#273)"
+          git pull --rebase origin gh-pages
+          git push
