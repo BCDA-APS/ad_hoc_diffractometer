@@ -5,6 +5,12 @@ Issues](https://github.com/BCDA-APS/ad_hoc_diffractometer/issues) for the full
 issue tracker.  The initial project development roadmap is documented here:
 [roadmap](https://github.com/BCDA-APS/ad_hoc_diffractometer/blob/main/roadmap.md).
 
+## Unreleased
+
+### Fixed
+
+- Doc version-switcher dropdown now shows every published version. (#273)
+
 ## Release v0.10.1
 
 Released 2026-05-07
