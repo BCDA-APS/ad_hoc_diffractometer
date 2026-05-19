@@ -15,6 +15,7 @@ issue tracker.  The initial project development roadmap is documented here:
 ### Fixed
 
 - Doc version-switcher dropdown now shows every published version. (#273)
+- Surface solver now respects detector pin in psic horizontal modes. (#279)
 
 ## Release v0.10.1
 
