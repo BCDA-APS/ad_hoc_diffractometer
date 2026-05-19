@@ -90,17 +90,22 @@ def _compute_q_phi(
     Q_phi : numpy.ndarray, shape (3,)
         Scattering vector in the phi frame, in Å⁻¹.
     """
-    # Sample rotation matrix Z (floor-most first, so Z = R_n @ ... @ R_1)
+    # Sample rotation matrix Z (BL1967 standard order, Busing & Levy
+    # 1967):  outermost (floor-most) stage is leftmost in the product, so
+    # Z = R_0 @ R_1 @ ... @ R_{n-1}.  Each new rotation is concatenated
+    # on the right so the innermost stage (closest to the sample) ends up
+    # right-most.  Z then maps phi-frame vectors to lab-frame vectors:
+    # v_lab = Z @ v_phi.
     Z = np.eye(3)
     for s in sample_stages:
         angle = angles.get(s.name, s.angle)
-        Z = _rotation_matrix_normalized(s._axis_hat, angle) @ Z  # noqa: SLF001
+        Z = Z @ _rotation_matrix_normalized(s._axis_hat, angle)  # noqa: SLF001
 
-    # Detector rotation matrix D
+    # Detector rotation matrix D — same outermost-leftmost convention.
     D = np.eye(3)
     for s in detector_stages:
         angle = angles.get(s.name, s.angle)
-        D = _rotation_matrix_normalized(s._axis_hat, angle) @ D  # noqa: SLF001
+        D = D @ _rotation_matrix_normalized(s._axis_hat, angle)  # noqa: SLF001
 
     # Q_lab = (2pi/lambda) * (D @ y_eff - y_eff)
     Q_lab = two_pi_over_lambda * (D @ y_eff - y_eff)
@@ -150,32 +155,36 @@ def _compute_q_phi_cached(
     -------
     Q_phi : numpy.ndarray, shape (3,)
     """
-    # Detector rotation matrix — use cached version if available
+    # Detector rotation matrix — use cached version if available.
+    # Composition: outermost (floor-most) stage leftmost, so
+    # D = R_0 @ R_1 @ ... @ R_{n-1}.
     if cached_D is not None:
         D = cached_D
     else:
         D = np.eye(3)
         for s in detector_stages:
             angle = angles.get(s.name, s.angle)
-            D = _rotation_matrix_normalized(s._axis_hat, angle) @ D  # noqa: SLF001
+            D = D @ _rotation_matrix_normalized(s._axis_hat, angle)  # noqa: SLF001
 
-    # Sample rotation matrix Z — use partial caching
+    # Sample rotation matrix Z — use partial caching.
+    # cached_Z_prefix is the product of the fixed *outer* stages
+    # (indices 0..first_free-1), already in BL1967 standard order
+    # R_0 @ R_1 @ ... @ R_{first_free-1}.  The free tail is concatenated
+    # on the right so the final Z stays in outermost-leftmost order.
     if cached_Z_prefix is not None and free_sample_indices is not None:
-        # Start with the cached prefix for stages 0..first_free-1
         Z = cached_Z_prefix.copy()
-        # Multiply in the free stages and any stages after them
         first_free = (
             free_sample_indices[0] if free_sample_indices else len(sample_stages)
         )
         for i in range(first_free, len(sample_stages)):
             s = sample_stages[i]
             angle = angles.get(s.name, s.angle)
-            Z = _rotation_matrix_normalized(s._axis_hat, angle) @ Z  # noqa: SLF001
+            Z = Z @ _rotation_matrix_normalized(s._axis_hat, angle)  # noqa: SLF001
     else:
         Z = np.eye(3)
         for s in sample_stages:
             angle = angles.get(s.name, s.angle)
-            Z = _rotation_matrix_normalized(s._axis_hat, angle) @ Z  # noqa: SLF001
+            Z = Z @ _rotation_matrix_normalized(s._axis_hat, angle)  # noqa: SLF001
 
     Q_lab = two_pi_over_lambda * (D @ y_eff - y_eff)
     return Z.T @ Q_lab
@@ -191,10 +200,18 @@ def angles_to_phi_vector(geometry, **motor_angles: float) -> np.ndarray:
 
     Algorithm (Busing & Levy 1967, section "The phi-axis frame"):
 
-    1. Compute the total sample rotation matrix ``Z`` (product of all sample
-       stage rotation matrices, floor-most first) from the supplied motor
-       angles (stages not supplied keep their current ``angle`` attribute).
-    2. Compute the total detector rotation matrix ``D``.
+    1. Compute the total sample rotation matrix ``Z`` as the product of all
+       sample stage rotation matrices in **outermost-leftmost** order
+       (BL1967 standard convention)::
+
+           Z = R_0 @ R_1 @ ... @ R_{n-1}
+
+       where ``R_0`` is the floor-most (outermost) stage and ``R_{n-1}``
+       is the innermost stage closest to the sample.  Z then maps phi-frame
+       vectors to lab-frame vectors: ``v_lab = Z @ v_phi``.  Stages not
+       supplied keep their current ``angle`` attribute.
+    2. Compute the total detector rotation matrix ``D`` in the same
+       outermost-leftmost order.
     3. The incident-beam unit vector in the lab frame is ``ŷ`` (longitudinal
        direction, ``geometry.basis["longitudinal"]``).
     4. The scattered-beam unit vector in the lab frame is ``D @ ŷ``.

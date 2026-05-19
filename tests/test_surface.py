@@ -25,7 +25,6 @@ Covers:
   - psic surface: surface_normal set, UB=identity, verify ai/af/psi combination
 """
 
-import math
 import re
 from contextlib import nullcontext as does_not_raise
 
@@ -322,28 +321,36 @@ def test_alpha_f_s2d2_zero_at_any_in_plane_delta():
             does_not_raise(),
             id="zaxis-gamma=0-in-plane",
         ),
+        # Under the standard BL1967 composition (issue
+        # #280) the detector chain is ``D = R(delta, -transverse) @
+        # R(gamma, +vertical)`` (outermost leftmost).  Applying ``D``
+        # to the incident beam (along +longitudinal = +y in YOU
+        # basis) gives ``(cos γ · sin δ, cos γ · cos δ, sin γ)``.
+        # With the surface normal along +transverse (= +z in YOU
+        # basis, set by ``surface_normal = (0, 0, 1)``), the
+        # out-of-plane projection is simply ``sin γ`` — i.e.
+        # ``alpha_f = γ`` independent of delta.  The earlier formula
+        # ``arcsin(cos δ · sin γ)`` was a baked-in expectation under
+        # the pre-#280 (inner-leftmost) composition where
+        # ``D = R(gamma) @ R(delta)``.
         pytest.param(
             20.0,
             5.0,
-            math.degrees(
-                math.asin(math.cos(math.radians(20)) * math.sin(math.radians(5)))
-            ),
+            5.0,
             does_not_raise(),
             id="zaxis-delta=20-gamma=5",
         ),
         pytest.param(
             10.0,
             10.0,
-            math.degrees(
-                math.asin(math.cos(math.radians(10)) * math.sin(math.radians(10)))
-            ),
+            10.0,
             does_not_raise(),
             id="zaxis-delta=10-gamma=10",
         ),
     ],
 )
 def test_alpha_f_zaxis_formula(delta, gamma, expected_af, context):
-    """alpha_f for zaxis matches the geometric formula from LV1993."""
+    """alpha_f for zaxis under the standard BL1967 detector composition."""
     g = _make_zaxis()
     with context:
         af = g.alpha_f({"alpha": 0.0, "Z": 0.0, "delta": delta, "gamma": gamma})

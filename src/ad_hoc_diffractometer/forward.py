@@ -155,13 +155,16 @@ class ForwardContext:
         """
         from .rotation import _rotation_matrix_normalized
 
-        # Detector: if no detector stage is free, cache D entirely
+        # Detector: if no detector stage is free, cache D entirely.
+        # Composition: BL1967 standard order (Busing & Levy 1967),
+        # outermost (floor-most) stage leftmost,
+        # so D = R_0 @ R_1 @ ... @ R_{n-1}.
         det_free = any(s.name in free_stage_names for s in self.detector_stages)
         if not det_free:
             D = np.eye(3)
             for s in self.detector_stages:
                 angle = fixed_angles.get(s.name, s.angle)
-                D = _rotation_matrix_normalized(s._axis_hat, angle) @ D  # noqa: SLF001
+                D = D @ _rotation_matrix_normalized(s._axis_hat, angle)  # noqa: SLF001
             self._cached_D = D
         else:  # pragma: no cover
             # No remaining call site passes a detector stage as free
@@ -171,6 +174,9 @@ class ForwardContext:
             self._cached_D = None
 
         # Sample: find the first free stage index and cache the prefix product
+        # of the fixed *outer* stages (indices 0..first_free-1).  This prefix
+        # is built in the same outermost-leftmost order:
+        # Z_prefix = R_0 @ R_1 @ ... @ R_{first_free-1}.
         self._free_sample_indices = []
         for i, s in enumerate(self.sample_stages):
             if s.name in free_stage_names:
@@ -183,8 +189,8 @@ class ForwardContext:
                 for i in range(first_free):
                     s = self.sample_stages[i]
                     angle = fixed_angles.get(s.name, s.angle)
-                    Z_prefix = (
-                        _rotation_matrix_normalized(s._axis_hat, angle) @ Z_prefix
+                    Z_prefix = Z_prefix @ _rotation_matrix_normalized(
+                        s._axis_hat, angle
                     )  # noqa: SLF001
                 self._cached_Z_prefix = Z_prefix
             else:
@@ -283,46 +289,41 @@ class ForwardContext:
                     angle,  # noqa: SLF001
                 )
 
-        # Build suffix products:  suffix[k] = R_{k-1} @ ... @ R_0
-        # where indices are relative to first_free.
-        # suffix[0] = cached_Z_prefix (product of stages 0..first_free-1).
-        # suffix[k] = R_{first_free+k-1} @ suffix[k-1]
-        suffix = [np.empty((3, 3))] * (n_tail + 1)
-        suffix[0] = (
+        # Composition (BL1967 standard convention, outermost-leftmost):
+        # the full sample rotation is
+        #
+        #   Z = R_0 @ R_1 @ ... @ R_{N-1}
+        #     = Z_prefix @ R_list[0] @ R_list[1] @ ... @ R_list[n_tail-1]
+        #
+        # where Z_prefix = R_0 @ ... @ R_{first_free-1} is cached and the
+        # tail R_list[0..n_tail-1] holds R_{first_free}..R_{N-1}.
+        #
+        # The derivative of Z w.r.t. the angle of the free stage at
+        # relative index k is
+        #
+        #   dZ/dθ_k = before[k] @ dR_list[k] @ after[k]
+        #
+        # with
+        #
+        #   before[k] = Z_prefix @ R_list[0] @ R_list[1] @ ... @ R_list[k-1]
+        #   after[k]  = R_list[k+1] @ R_list[k+2] @ ... @ R_list[n_tail-1]
+        #
+        # Build them by simple forward / backward sweeps.
+        Z_prefix = (
             self._cached_Z_prefix if self._cached_Z_prefix is not None else np.eye(3)
         )
-        for k in range(n_tail):
-            suffix[k + 1] = R_list[k] @ suffix[k]
 
-        # Build prefix products:  prefix[k] = R_{N-1} @ ... @ R_{k+1}
-        # where indices are relative to first_free.
-        # prefix[n_tail] = I  (nothing after the last stage)
-        # prefix[k] = prefix[k+1] @ R_{k+1}
-        #
-        # Actually we need prefix in absolute terms:
-        # prefix_abs[j] = R_{N-1} @ ... @ R_{j+1}
-        # For j = first_free + k:
-        #   prefix[k] = R_{n_tail-1} @ ... @ R_{k+1}  (relative indices)
-        prefix = [np.empty((3, 3))] * (n_tail + 1)
-        prefix[n_tail] = np.eye(3)
+        # before[k] for k = 0..n_tail
+        before = [np.empty((3, 3))] * (n_tail + 1)
+        before[0] = Z_prefix
+        for k in range(n_tail):
+            before[k + 1] = before[k] @ R_list[k]
+
+        # after[k] for k = 0..n_tail (after[k] is the product of R_list[k+1..])
+        after = [np.empty((3, 3))] * (n_tail + 1)
+        after[n_tail] = np.eye(3)
         for k in range(n_tail - 1, -1, -1):
-            prefix[k] = prefix[k + 1] @ R_list[k + 1] if k + 1 < n_tail else np.eye(3)
-        # Recalculate more carefully:
-        # prefix[k] should be the product of R_list[k+1] ... R_list[n_tail-1]
-        # applied left to right in stacking order (outermost first).
-        # Actually the Z chain is: Z = R_{N-1} @ R_{N-2} @ ... @ R_0
-        # So for relative index k, R_list[k] = R_{first_free + k}.
-        # Z_tail = R_list[n_tail-1] @ R_list[n_tail-2] @ ... @ R_list[0]
-        #        = suffix[n_tail] (already computed above, without prefix)
-        #
-        # dZ/dθ_j for j = first_free + k:
-        #   = (R_list[n_tail-1] @ ... @ R_list[k+1]) @ dR_list[k] @ (R_list[k-1] @ ... @ R_list[0] @ Z_prefix)
-        #   = prefix[k] @ dR_list[k] @ suffix[k]
-        #
-        # Rebuild prefix properly:
-        prefix[n_tail] = np.eye(3)
-        for k in range(n_tail - 1, -1, -1):
-            prefix[k] = prefix[k + 1] @ R_list[k + 1] if (k + 1) < n_tail else np.eye(3)
+            after[k] = R_list[k + 1] @ after[k + 1] if (k + 1) < n_tail else np.eye(3)
 
         # deg2rad factor: dR is w.r.t. radians, but angles are in degrees.
         deg2rad = np.pi / 180.0
@@ -333,8 +334,8 @@ class ForwardContext:
             abs_idx = next(i for i, s in enumerate(stages) if s.name == name)
             k = abs_idx - first_free  # relative index into R_list
             dR_k = dR_map[abs_idx]
-            # dZ/dθ = prefix[k] @ dR_k @ suffix[k]
-            dZ = prefix[k] @ dR_k @ suffix[k]
+            # dZ/dθ = before[k] @ dR_k @ after[k]
+            dZ = before[k] @ dR_k @ after[k]
             # dQ_phi/dθ = dZ^T @ Q_lab, with deg2rad conversion
             J[:, col] = deg2rad * (dZ.T @ Q_lab)
 
@@ -581,11 +582,12 @@ def _solve_bisecting_analytic(
 
     **Derivation.**
 
-    The sample rotation matrix is:
+    Under the BL1967 standard convention (Busing & Levy 1967,
+    outermost stage leftmost), the sample rotation matrix is:
 
     .. math::
 
-        Z = R_\phi \cdot R_\chi \cdot Z_{\text{prefix}}
+        Z = Z_{\text{prefix}} \cdot R_\chi \cdot R_\phi
 
     where :math:`Z_{\text{prefix}}` is the product of all fixed outer
     sample stages.  The scattering vector in the phi frame is:
@@ -593,45 +595,62 @@ def _solve_bisecting_analytic(
     .. math::
 
         Q_\phi = Z^T Q_{\text{lab}}
-              = Z_{\text{prefix}}^T \cdot R_\chi^T \cdot R_\phi^T \cdot Q_{\text{lab}}
+              = R_\phi^T \cdot R_\chi^T \cdot Z_{\text{prefix}}^T \cdot Q_{\text{lab}}
+
+    Equivalently, multiplying both sides by :math:`R_\chi R_\phi`:
+
+    .. math::
+
+        R(\hat n_\chi, \chi) \cdot R(\hat n_\phi, \phi) \cdot Q_{\phi,\text{target}}
+            = Z_{\text{prefix}}^T \cdot Q_{\text{lab}}
 
     Define the known vectors:
 
-    - :math:`q = Z_{\text{prefix}} \cdot Q_{\phi,\text{target}}`
-    - :math:`v = Q_{\text{lab}}`
+    - :math:`q = Z_{\text{prefix}}^T \cdot Q_{\text{lab}}`
+    - :math:`v = Q_{\phi,\text{target}}`
 
-    The equation to solve is:
+    The equation to solve becomes:
 
     .. math::
 
-        R(\hat n_\chi, -\chi) \cdot R(\hat n_\phi, -\phi) \cdot v = q
+        R(\hat n_\chi, \chi) \cdot R(\hat n_\phi, \phi) \cdot v = q
 
     Since :math:`\hat n_\chi \perp \hat n_\phi`, define
-    :math:`\hat n_3 = \hat n_\chi \times \hat n_\phi`.  Projecting onto
-    the :math:`(\hat n_\phi, \hat n_3)` plane gives a 2×2 linear system
-    for :math:`(\cos\chi, \sin\chi)`:
+    :math:`\hat n_3 = \hat n_\chi \times \hat n_\phi`.
+
+    **Step 1 — solve for phi.**  Project the equation onto
+    :math:`\hat n_\chi` (which is invariant under
+    :math:`R(\hat n_\chi, \chi)`):
 
     .. math::
 
-        \begin{pmatrix} A & B \\ -B & A \end{pmatrix}
-        \begin{pmatrix} \cos\chi \\ \sin\chi \end{pmatrix}
-        = \begin{pmatrix} C \\ E \end{pmatrix}
+        \hat n_\chi \cdot q
+            = \hat n_\chi \cdot R(\hat n_\phi, \phi) \cdot v
 
-    where
-    :math:`A = \hat n_\phi \cdot q`,
-    :math:`B = \hat n_\phi \cdot (\hat n_\chi \times q)`,
-    :math:`C = \hat n_\phi \cdot v`,
-    :math:`E = \hat n_3 \cdot v`.
-    This yields a unique :math:`\chi` via ``atan2``.
-
-    Phi is then solved from the :math:`\hat n_\chi` component:
+    By Rodrigues, since :math:`\hat n_\chi \perp \hat n_\phi`:
 
     .. math::
 
-        \hat n_\chi \cdot R(\hat n_\phi, -\phi) \cdot v = \hat n_\chi \cdot q
+        \hat n_\chi \cdot R(\hat n_\phi, \phi) \cdot v
+            = (\hat n_\chi \cdot v) \cos\phi
+            + (\hat n_\chi \cdot (\hat n_\phi \times v)) \sin\phi
+            = (\hat n_\chi \cdot v) \cos\phi
+            + (\hat n_3 \cdot v) \sin\phi
 
-    which gives :math:`\alpha\cos\phi + \beta\sin\phi = \gamma`, solved
-    with the standard ``atan2`` / ``acos`` decomposition.
+    so :math:`A \cos\phi + B \sin\phi = C` with
+    :math:`A = \hat n_\chi \cdot v`,
+    :math:`B = \hat n_3 \cdot v`,
+    :math:`C = \hat n_\chi \cdot q`, yielding two :math:`\phi`
+    candidates.
+
+    **Step 2 — for each phi, solve for chi.**  Compute
+    :math:`w = R(\hat n_\phi, \phi) \cdot v` (known once :math:`\phi`
+    is fixed).  The equation :math:`R(\hat n_\chi, \chi) \cdot w = q`
+    is a single rotation about :math:`\hat n_\chi` taking :math:`w`
+    onto :math:`q`.  Their :math:`\hat n_\chi`-components must agree
+    (guaranteed by construction); :math:`\chi` is the angle in the
+    plane perpendicular to :math:`\hat n_\chi` between the
+    perpendicular projections of :math:`w` and :math:`q`.
 
     Parameters
     ----------
@@ -656,133 +675,72 @@ def _solve_bisecting_analytic(
     n_chi = chi_stage._axis_hat  # noqa: SLF001
     n_phi = phi_stage._axis_hat  # noqa: SLF001
 
-    # Known vectors
+    # Known vectors (BL1967 standard outermost-leftmost convention).
     Z_prefix = ctx._cached_Z_prefix
     D = ctx._cached_D if ctx._cached_D is not None else np.eye(3)
 
     # Q_lab: scattering vector in the lab frame (all detector & bisect angles fixed)
-    v = ctx.two_pi_over_lambda * (D @ ctx.y_eff - ctx.y_eff)  # Q_lab
+    Q_lab = ctx.two_pi_over_lambda * (D @ ctx.y_eff - ctx.y_eff)
 
-    # q = Z_prefix @ Q_phi_target
-    q = Z_prefix @ Q_phi_target
-
-    # --- Step 1: Solve for chi (two solutions) ---
-    #
-    # Define w = R(n_phi, -phi) @ v.  Then R(n_chi, -chi) @ w = q.
-    # Since R(n_phi, -phi) preserves the n_phi component:
-    #   n_phi · w = n_phi · v  (constant L)
-    #
-    # From w = R(n_chi, chi) @ q (inverse of R(n_chi, -chi) @ w = q):
-    #   n_phi · [R(n_chi, chi) @ q] = L
-    #
-    # Expanding via Rodrigues (n_chi ⊥ n_phi):
-    #   cos(chi)*(n_phi·q) + sin(chi)*(n_phi·(n_chi×q)) = n_phi·v
-    #
-    # This is A*cos(chi) + B*sin(chi) = C, yielding two chi values.
-
-    A = float(np.dot(n_phi, q))
-    B = float(np.dot(n_phi, np.cross(n_chi, q)))
-    C = float(np.dot(n_phi, v))
-
-    R_chi_amp = math.sqrt(A * A + B * B)
-    if R_chi_amp < 1e-12:  # pragma: no cover
-        return []  # degenerate: q ∥ n_chi
-
-    cos_arg_chi = C / R_chi_amp
-    if abs(cos_arg_chi) > 1.0 + 1e-8:  # pragma: no cover
-        return []  # no solution
-    cos_arg_chi = max(-1.0, min(1.0, cos_arg_chi))
-
-    chi0 = math.atan2(B, A)
-    delta_chi = math.acos(cos_arg_chi)
-
-    chi_candidates_rad = [chi0 + delta_chi, chi0 - delta_chi]
-
-    # --- Step 2: For each chi, solve for phi (unique) ---
-    #
-    # From w = R(n_phi, -phi) @ v and n_chi · w = n_chi · q:
-    #   n_chi · [R(n_phi, -phi) @ v] = n_chi · q
-    #
-    # Expanding via Rodrigues (n_chi ⊥ n_phi):
-    #   cos(phi)*(n_chi·v) - sin(phi)*(n_chi·(n_phi×v)) = n_chi · q
-    #
-    # But this gives only one equation — not enough for a unique phi.
-    # We also have the n3 component (n3 = n_chi × n_phi):
-    #   n3 · [R(n_phi, -phi) @ v] = n3 · [R(n_chi, chi) @ q]
-    #
-    # The RHS depends on chi (already known), the LHS depends on phi.
-    # Together with the n_chi equation, this gives a 2×2 system for
-    # (cos(phi), sin(phi)), yielding a unique phi per chi.
-    #
-    # n_chi equation:  (n_chi·v)*cos(phi) - (n_chi·(n_phi×v))*sin(phi) = n_chi·q
-    # n3 equation:     (n3·v)*cos(phi) - (n3·(n_phi×v))*sin(phi) = n3·w_chi
-    #
-    # Using triple product identities (n_chi ⊥ n_phi, n3 = n_chi × n_phi):
-    #   n_chi·(n_phi×v) = (n_chi×n_phi)·v = n3·v
-    #   n3·(n_phi×v)    = v·(n3×n_phi) = v·n_chi   [since n3×n_phi = n_chi]
-    #
-    # So the system is:
-    #   (n_chi·v)*cos(phi) - (n3·v)*sin(phi) = n_chi·q       ...(i)
-    #   (n3·v)*cos(phi) + (n_chi·v)*sin(phi) = n3·w_chi      ...(ii)
-    #
-    # Wait, sign: n3·(n_phi×v) = v·(n3×n_phi). And n3×n_phi:
-    #   n3 = n_chi×n_phi, so n3×n_phi = (n_chi×n_phi)×n_phi
-    #   = n_chi*(n_phi·n_phi) - n_phi*(n_chi·n_phi) = n_chi
-    # So n3·(n_phi×v) = v·n_chi = n_chi·v.
-    #
-    # n3 LHS: R(n_phi, -phi)@v dotted with n3:
-    #   cos(phi)*(n3·v) + (1-cos(phi))*(n_phi·v)*(n_phi·n3) - sin(phi)*(n3·(n_phi×v))
-    #   = cos(phi)*(n3·v) - sin(phi)*(n_chi·v)     [since n_phi·n3=0]
-    #
-    # n3 RHS: R(n_chi, chi)@q dotted with n3:
-    #   cos(chi)*(n3·q) + sin(chi)*(n3·(n_chi×q))
-    #   n3·(n_chi×q) = q·(n3×n_chi) = q·(-n_phi) = -(n_phi·q)
-    #   [since n3×n_chi = (n_chi×n_phi)×n_chi = n_phi]
-    #   Wait: BAC-CAB: (n_chi×n_phi)×n_chi = n_phi(n_chi·n_chi) - n_chi(n_phi·n_chi) = n_phi
-    #   So n3×n_chi = n_phi, and n3·(n_chi×q) = q·(n3×n_chi) = q·n_phi = n_phi·q
-    #   Hmm, let me redo: a·(b×c) = det(a,b,c) = c·(a×b).
-    #   n3·(n_chi×q) = q·(n3×n_chi).
-    #   n3×n_chi = (n_chi×n_phi)×n_chi = n_phi (BAC-CAB, orthonormal)
-    #   So n3·(n_chi×q) = q·n_phi = A (= n_phi·q)
-    #
-    # So n3 RHS = cos(chi)*(n3·q) + sin(chi)*A
-    # And n3 LHS = cos(phi)*(n3·v) - sin(phi)*(n_chi·v)
-    #
-    # The 2×2 system:
-    #   [n_chi·v, -(n3·v)] [cos(phi)]   [n_chi·q        ]
-    #   [n3·v,    n_chi·v ] [sin(phi)] = [n3·R_chi(chi)@q]
-    #
-    # Determinant = (n_chi·v)² + (n3·v)² = |v_perp|² (component of v ⊥ n_phi)
-    # This is non-zero unless v ∥ n_phi (degenerate).
+    # q = Z_prefix^T @ Q_lab  (right-hand side of R_chi R_phi v = q)
+    q = Z_prefix.T @ Q_lab
+    # v = target Q_phi (left-hand side argument)
+    v = np.asarray(Q_phi_target, dtype=float)
 
     n3 = np.cross(n_chi, n_phi)
-    nchi_v = float(np.dot(n_chi, v))
-    n3_v = float(np.dot(n3, v))
-    nchi_q = float(np.dot(n_chi, q))
 
-    det_phi = nchi_v * nchi_v + n3_v * n3_v
-    if det_phi < 1e-20:  # pragma: no cover
-        return []  # v ∥ n_phi — phi indeterminate
+    # --- Step 1: solve A cos phi + B sin phi = C for two phi values ---
+    A = float(np.dot(n_chi, v))
+    B = float(np.dot(n3, v))
+    C = float(np.dot(n_chi, q))
 
-    # Pre-compute n3·q and n_phi·q for the chi-dependent RHS
-    n3_q = float(np.dot(n3, q))
-    # A = n_phi · q (already computed above)
+    amp = math.sqrt(A * A + B * B)
+    if amp < 1e-12:
+        # v ∥ n_phi (perpendicular component of v in (n_chi, n_3) plane is
+        # zero).  phi is indeterminate; defer to the Newton fallback.
+        return []
 
+    cos_arg_phi = C / amp
+    if abs(cos_arg_phi) > 1.0 + 1e-8:  # pragma: no cover
+        return []  # no real phi solution
+
+    cos_arg_phi = max(-1.0, min(1.0, cos_arg_phi))
+    phi0 = math.atan2(B, A)
+    delta_phi = math.acos(cos_arg_phi)
+    phi_candidates_rad = [phi0 + delta_phi, phi0 - delta_phi]
+
+    # --- Step 2: for each phi, recover chi from the residual rotation ---
+    # R(n_chi, chi) @ w = q with w = R(n_phi, phi) @ v.  chi is the
+    # signed angle about n_chi taking w_perp onto q_perp in the plane
+    # perpendicular to n_chi.
     raw_candidates = []
-    for chi_rad in chi_candidates_rad:
-        chi_d = math.degrees(chi_rad)
-        c_chi = math.cos(chi_rad)
-        s_chi = math.sin(chi_rad)
+    for phi_rad in phi_candidates_rad:
+        phi_d = math.degrees(phi_rad)
+        # Build w = R(n_phi, phi) @ v via Rodrigues:
+        #   w = v cos φ + (n_phi × v) sin φ + n_phi (n_phi · v)(1 − cos φ)
+        c_ph = math.cos(phi_rad)
+        s_ph = math.sin(phi_rad)
+        nphi_v = float(np.dot(n_phi, v))
+        w = v * c_ph + np.cross(n_phi, v) * s_ph + n_phi * nphi_v * (1.0 - c_ph)
 
-        # n3 · R(n_chi, chi) @ q = cos(chi)*(n3·q) + sin(chi)*(n_phi·q)
-        rhs_n3 = c_chi * n3_q + s_chi * A
-
-        # Solve 2×2 system for (cos_phi, sin_phi):
-        #   nchi_v * cos_phi - n3_v * sin_phi = nchi_q
-        #   n3_v * cos_phi + nchi_v * sin_phi = rhs_n3
-        cos_phi = (nchi_v * nchi_q + n3_v * rhs_n3) / det_phi
-        sin_phi = (nchi_v * rhs_n3 - n3_v * nchi_q) / det_phi
-        phi_d = math.degrees(math.atan2(sin_phi, cos_phi))
+        # Project w and q onto the plane perpendicular to n_chi.
+        w_par = float(np.dot(w, n_chi))
+        q_par = float(np.dot(q, n_chi))
+        w_perp = w - w_par * n_chi
+        q_perp = q - q_par * n_chi
+        w_perp_norm = float(np.linalg.norm(w_perp))
+        q_perp_norm = float(np.linalg.norm(q_perp))
+        if w_perp_norm < 1e-12 or q_perp_norm < 1e-12:
+            # Degenerate: w or q is parallel to n_chi; chi indeterminate.
+            chi_d = 0.0
+        else:
+            # cos chi = (w_perp · q_perp) / (|w_perp| |q_perp|)
+            # sin chi = n_chi · (w_perp × q_perp) / (|w_perp| |q_perp|)
+            cos_chi = float(np.dot(w_perp, q_perp)) / (w_perp_norm * q_perp_norm)
+            sin_chi = float(np.dot(n_chi, np.cross(w_perp, q_perp))) / (
+                w_perp_norm * q_perp_norm
+            )
+            chi_d = math.degrees(math.atan2(sin_chi, cos_chi))
 
         raw_candidates.append((chi_d, phi_d))
 
@@ -1242,28 +1200,27 @@ def _solve_one_free_angle_analytic(
     r"""
     Analytic single-``atan2`` solver for one free sample-stage rotation.
 
-    When all detector stages and all sample stages **except one** have
-    fixed angles, the forward equation reduces to a single rotation:
+    Under the BL1967 standard convention (Busing & Levy 1967,
+    outermost stage leftmost), when all detector stages and all sample
+    stages **except one** have fixed angles, the forward equation
+    reduces to a single rotation:
 
     .. math::
 
-        R_{\text{after}} \cdot R(\hat n, \theta) \cdot R_{\text{before}}
-            \cdot Q_{\phi,\text{target}}^* = Q_{\text{lab}}
+        Z = R_{\text{before}} \cdot R(\hat n, \theta) \cdot R_{\text{after}}
 
     where :math:`R_{\text{before}}` is the product of fixed sample stages
-    *outer* to the free stage (already cached as ``ctx._cached_Z_prefix``),
-    :math:`R_{\text{after}}` is the product of fixed sample stages *inner*
-    to the free stage, and the target satisfies
-    :math:`Q_\phi = Z^T Q_{\text{lab}}`.
-
-    Rearranging:
+    *outer* to the free stage (already cached as ``ctx._cached_Z_prefix``)
+    and :math:`R_{\text{after}}` is the product of fixed sample stages
+    *inner* to the free stage.  The target satisfies
+    :math:`Q_\phi = Z^T Q_{\text{lab}}`, so
 
     .. math::
 
         R(\hat n, \theta) \cdot q = u
 
-    with :math:`q = R_{\text{before}} \cdot Q_{\phi,\text{target}}` and
-    :math:`u = R_{\text{after}}^T \cdot Q_{\text{lab}}`.  The unknown
+    with :math:`q = R_{\text{after}} \cdot Q_{\phi,\text{target}}` and
+    :math:`u = R_{\text{before}}^T \cdot Q_{\text{lab}}`.  The unknown
     rotation about a known axis :math:`\hat n` is recovered by projecting
     both vectors onto the plane perpendicular to :math:`\hat n` and
     reading off the angle with a single ``atan2``.
@@ -1310,19 +1267,27 @@ def _solve_one_free_angle_analytic(
     if free_idx is None:  # pragma: no cover
         return None
 
+    # Build R_after in BL1967 standard outermost-leftmost order:
+    # R_after = R_{free_idx+1} @ R_{free_idx+2} @ ... @ R_{N-1}.
     R_after = np.eye(3)
     for i in range(free_idx + 1, len(sample_stages)):
         s = sample_stages[i]
         a = angles.get(s.name, s.angle)
-        R_after = _rotation_matrix_normalized(s._axis_hat, a) @ R_after  # noqa: SLF001
+        R_after = R_after @ _rotation_matrix_normalized(s._axis_hat, a)  # noqa: SLF001
 
     Z_prefix = ctx._cached_Z_prefix if ctx._cached_Z_prefix is not None else np.eye(3)
     D = ctx._cached_D if ctx._cached_D is not None else np.eye(3)
     Q_lab = ctx.two_pi_over_lambda * (D @ ctx.y_eff - ctx.y_eff)
 
+    # Solve R(n, θ) q = u with
+    #   q = R_after @ Q_phi_target
+    #   u = Z_prefix^T @ Q_lab
+    # (Derivation: Z = Z_prefix @ R(n, θ) @ R_after, so
+    #  Q_phi = Z^T Q_lab = R_after^T R(n, θ)^T Z_prefix^T Q_lab; multiply
+    #  through by R(n, θ) R_after on the left to get the equation above.)
     n = free_stage._axis_hat  # noqa: SLF001
-    q = Z_prefix @ np.asarray(Q_phi_target, dtype=float)
-    u = R_after.T @ Q_lab
+    q = R_after @ np.asarray(Q_phi_target, dtype=float)
+    u = Z_prefix.T @ Q_lab
 
     # Parallel components must agree: rotation about n preserves the
     # n-component.  If they disagree beyond tolerance the target is not
@@ -1344,7 +1309,12 @@ def _solve_one_free_angle_analytic(
 
     # Match magnitudes: rotation preserves |q_perp| = |u_perp|.
     u_perp_norm = float(np.linalg.norm(u_perp))
-    if abs(q_perp_norm - u_perp_norm) > 1e-7:
+    if abs(q_perp_norm - u_perp_norm) > 1e-7:  # pragma: no cover
+        # When the parallel-component check above passes (q_par == u_par)
+        # and the targets are derived from a consistent geometry/UB/wavelength
+        # configuration (the only call path in the package), rotation-
+        # preservation of perpendicular magnitudes is automatic; this branch
+        # is a defensive guard for caller-constructed contexts only.
         return None  # not reachable by rotation alone
 
     cos_t = float(np.dot(u_perp, e1))
@@ -2021,7 +1991,12 @@ def _solve_double_diffraction(
     is_eulerian = _is_standard_eulerian_pair(chi_stage, phi_stage)
 
     def _build_Z(angles: dict[str, float]) -> np.ndarray:
-        """Compute sample rotation matrix from angle values."""
+        """Compute sample rotation matrix from angle values.
+
+        Composition follows the BL1967 standard convention (Busing &
+        Levy 1967): outermost (floor-most) stage leftmost,
+        so Z = R_0 @ R_1 @ ... @ R_{N-1}.
+        """
         Z = np.eye(3)
         for s in sample_stages:
             Z = Z @ rotation_matrix(s.axis, angles[s.name])
@@ -2066,12 +2041,14 @@ def _solve_double_diffraction(
         )
         outer_stage_obj = sample_stages[outer_stage_idx]
 
-        # Pre-compute the Z_prefix for stages before the outer stage
+        # Pre-compute the Z_prefix for stages before the outer stage.
+        # Composition: BL1967 standard outermost-leftmost, so
+        # Z_pre_outer = R_0 @ R_1 @ ... @ R_{outer_stage_idx-1}.
         Z_pre_outer = np.eye(3)
         for i in range(outer_stage_idx):
             s = sample_stages[i]
             angle = angles_base.get(s.name, s.angle)
-            Z_pre_outer = _rotation_matrix_normalized(s._axis_hat, angle) @ Z_pre_outer  # noqa: SLF001
+            Z_pre_outer = Z_pre_outer @ _rotation_matrix_normalized(s._axis_hat, angle)  # noqa: SLF001
 
     def _solve_inner_eulerian_fast(
         outer_deg: float,
@@ -2079,59 +2056,82 @@ def _solve_double_diffraction(
         """
         Fast analytic (chi, phi) solve for Eulerian geometries.
 
-        Returns list of (chi_deg, phi_deg) pairs.  No ForwardContext created.
+        Inlines the algebra of :func:`_solve_bisecting_analytic` for the
+        double-diffraction outer-scan loop.  Under the BL1967 standard
+        convention (Busing & Levy 1967, outermost-leftmost):
 
-        When the decomposition is degenerate (q parallel to n_chi, so chi
-        is indeterminate), returns an empty list.  The caller handles
-        degenerate points via `_degenerate_outers`.
+            Z_prefix = Z_pre_outer @ R_outer
+            R_chi R_phi v = q
+              with  v = Q_phi (target),  q = Z_prefix^T @ Q_lab
+
+        Step 1 — solve for phi (two candidates) by projecting onto
+        n_chi (invariant under R_chi).  Step 2 — for each phi, recover
+        chi as the residual rotation about n_chi taking
+        w = R(n_phi, phi) v onto q.
+
+        Returns list of (chi_deg, phi_deg) pairs.  Returns an empty list
+        when v ∥ n_phi (phi indeterminate); the caller falls back to a
+        chi-scan via ``_find_degenerate_outers`` /
+        ``_solve_degenerate_outer``.
         """
-        # Z_prefix = R_outer @ Z_pre_outer
         R_outer = _rotation_matrix_normalized(
             outer_stage_obj._axis_hat,
             outer_deg,  # noqa: SLF001
         )
-        Z_prefix = R_outer @ Z_pre_outer
+        # Textbook order: Z_prefix = Z_pre_outer @ R_outer.
+        Z_prefix = Z_pre_outer @ R_outer
 
-        # q = Z_prefix @ Q_phi_target
-        q = Z_prefix @ Q_phi
+        # q_loc = Z_prefix^T @ Q_lab  (constant within an outer-angle step)
+        # v_target = Q_phi_target     (constant)
+        v_target = Q_phi  # alias for clarity
+        q_loc = Z_prefix.T @ v  # v is the Q_lab vector defined at line 2064
 
-        # --- Solve for chi: A*cos(chi) + B*sin(chi) = C ---
-        A = float(np.dot(n_phi, q))
-        B = float(np.dot(n_phi, np.cross(n_chi, q)))
-        C = float(np.dot(n_phi, v))
+        # --- Step 1: A cos phi + B sin phi = C ---
+        A = float(np.dot(n_chi, v_target))
+        B = float(np.dot(n3, v_target))
+        C = float(np.dot(n_chi, q_loc))
 
-        R_chi_amp = math.sqrt(A * A + B * B)
-        if R_chi_amp < 1e-12:
-            return []  # degenerate — handled separately
+        amp = math.sqrt(A * A + B * B)
+        if amp < 1e-12:
+            return []  # v ∥ n_phi; defer to degenerate path
 
-        cos_arg_chi = C / R_chi_amp
-        if abs(cos_arg_chi) > 1.0 + 1e-8:  # pragma: no cover
-            return []  # pragma: no cover
-        cos_arg_chi = max(-1.0, min(1.0, cos_arg_chi))
+        cos_arg_phi = C / amp
+        if abs(cos_arg_phi) > 1.0 + 1e-8:
+            return []
+        cos_arg_phi = max(-1.0, min(1.0, cos_arg_phi))
 
-        chi0 = math.atan2(B, A)
-        delta_chi = math.acos(cos_arg_chi)
-        chi_candidates_rad = [chi0 + delta_chi, chi0 - delta_chi]
+        phi0 = math.atan2(B, A)
+        delta_phi = math.acos(cos_arg_phi)
+        phi_candidates_rad = [phi0 + delta_phi, phi0 - delta_phi]
 
-        # --- For each chi, solve for phi (2x2 system) ---
-        nchi_v = float(np.dot(n_chi, v))
-        n3_v = float(np.dot(n3, v))
-        nchi_q = float(np.dot(n_chi, q))
-        det_phi = nchi_v * nchi_v + n3_v * n3_v
-        if det_phi < 1e-20:  # pragma: no cover
-            return []  # pragma: no cover
-
-        n3_q = float(np.dot(n3, q))
-
+        # --- Step 2: for each phi, recover chi from the residual ---
         results = []
-        for chi_rad in chi_candidates_rad:
-            c_chi = math.cos(chi_rad)
-            s_chi = math.sin(chi_rad)
-            rhs_n3 = c_chi * n3_q + s_chi * A
-            cos_phi = (nchi_v * nchi_q + n3_v * rhs_n3) / det_phi
-            sin_phi = (nchi_v * rhs_n3 - n3_v * nchi_q) / det_phi
-            chi_d = math.degrees(chi_rad)
-            phi_d = math.degrees(math.atan2(sin_phi, cos_phi))
+        for phi_rad in phi_candidates_rad:
+            phi_d = math.degrees(phi_rad)
+            c_ph = math.cos(phi_rad)
+            s_ph = math.sin(phi_rad)
+            nphi_v_target = float(np.dot(n_phi, v_target))
+            w = (
+                v_target * c_ph
+                + np.cross(n_phi, v_target) * s_ph
+                + n_phi * nphi_v_target * (1.0 - c_ph)
+            )
+
+            w_par = float(np.dot(w, n_chi))
+            q_par = float(np.dot(q_loc, n_chi))
+            w_perp = w - w_par * n_chi
+            q_perp = q_loc - q_par * n_chi
+            w_perp_norm = float(np.linalg.norm(w_perp))
+            q_perp_norm = float(np.linalg.norm(q_perp))
+            if w_perp_norm < 1e-12 or q_perp_norm < 1e-12:  # pragma: no cover
+                chi_d = 0.0
+            else:
+                cos_chi = float(np.dot(w_perp, q_perp)) / (w_perp_norm * q_perp_norm)
+                sin_chi = float(np.dot(n_chi, np.cross(w_perp, q_perp))) / (
+                    w_perp_norm * q_perp_norm
+                )
+                chi_d = math.degrees(math.atan2(sin_chi, cos_chi))
+
             # Normalize to (-180, 180]
             chi_d = (chi_d + 180.0) % 360.0 - 180.0
             phi_d = (phi_d + 180.0) % 360.0 - 180.0
@@ -2143,35 +2143,45 @@ def _solve_double_diffraction(
         """
         Find outer angles where the analytic decomposition is degenerate.
 
-        Degeneracy occurs when q = Z_prefix @ Q_phi is parallel to n_chi,
-        meaning R_chi_amp = 0.  At these points chi is indeterminate and
-        solutions (if they exist) must be found by scanning chi.
+        Under the BL1967 standard convention (Busing & Levy 1967) the
+        degeneracy condition is ``Q_phi ∥ n_phi`` (the *target*
+        scattering vector lies along the innermost stage axis), which
+        is **independent of the outer angle**.  Either every outer
+        angle is degenerate or none is.  Return a sweep of candidate
+        outer angles in the degenerate case; otherwise return an empty
+        list.
+
+        The sweep includes both a dense scan and the bisecting outer
+        angles ``± ttheta_deg / 2``.  The bisecting values are
+        appended because they are exactly the outer angles at which
+        the primary Bragg condition is solvable in the degenerate
+        case (every other outer angle gives ``q_par ≠ w_par`` in the
+        inner ``_chi_to_trial`` and is silently rejected).
         """
-        degenerate = []
-        for i in range(720):
-            outer_deg = -180.0 + i * 0.5
-            R_outer = _rotation_matrix_normalized(
-                outer_stage_obj._axis_hat,
-                outer_deg,  # noqa: SLF001
-            )
-            q = R_outer @ Z_pre_outer @ Q_phi
-            A = float(np.dot(n_phi, q))
-            B = float(np.dot(n_phi, np.cross(n_chi, q)))
-            if math.sqrt(A * A + B * B) < 0.1:
-                degenerate.append(outer_deg)
-        return degenerate
+        A = float(np.dot(n_chi, Q_phi))
+        B = float(np.dot(n3, Q_phi))
+        if math.sqrt(A * A + B * B) >= 0.1:
+            return []
+        # Degenerate: phi is indeterminate at every outer angle.  Include
+        # the bisecting outer values so the caller can find at least the
+        # bisecting-locus solutions, plus a dense sweep elsewhere.
+        outers = [-180.0 + i * 0.5 for i in range(720)]
+        outers.extend([ttheta_deg / 2.0, -ttheta_deg / 2.0])
+        return outers
 
     def _solve_degenerate_outer(
         outer_deg: float,
     ) -> list[dict[str, float]]:
         """
-        At degenerate outer angles (q parallel to n_chi), scan chi to find
+        At degenerate outer angles (Q_phi ∥ n_phi), scan phi to find
         solutions that satisfy both the Bragg and Ewald conditions.
 
-        At these points, chi is free and phi is determined by chi.  We scan
-        chi, compute phi from the remaining Bragg components, and detect
-        Ewald sign changes between adjacent chi values.  A bisection then
-        refines the chi to the exact root.
+        Under the corrected outermost-leftmost composition, the
+        degeneracy is phi-indeterminate (R(n_phi, phi) @ Q_phi = Q_phi
+        for every phi).  We scan phi, compute chi from the residual
+        rotation R(n_chi, chi) @ w = q where w = R(n_phi, phi) @ v, and
+        detect Ewald sign changes between adjacent phi values.  A
+        bisection then refines the phi to the exact root.
         """
         angles = dict(angles_base)
         angles[outer_stage_name] = outer_deg
@@ -2179,32 +2189,46 @@ def _solve_double_diffraction(
         ctx = ForwardContext(geometry)
         ctx.prepare_caching(angles, {chi_stage_name, phi_stage_name})
 
+        # Textbook outermost-leftmost composition:
+        #   Z_prefix = Z_pre_outer @ R_outer
         R_outer = _rotation_matrix_normalized(
             outer_stage_obj._axis_hat,
             outer_deg,  # noqa: SLF001
         )
-        q = R_outer @ Z_pre_outer @ Q_phi
-        nchi_v = float(np.dot(n_chi, v))
-        n3_v = float(np.dot(n3, v))
-        nchi_q = float(np.dot(n_chi, q))
-        n3_q = float(np.dot(n3, q))
-        A_local = float(np.dot(n_phi, q))
-        det_phi = nchi_v * nchi_v + n3_v * n3_v
-        if det_phi < 1e-20:  # pragma: no cover
-            return []  # pragma: no cover
+        Z_prefix_local = Z_pre_outer @ R_outer
+        q_loc = Z_prefix_local.T @ v  # v here is the Q_lab vector
+        v_target = Q_phi  # for clarity
+        nphi_v = float(np.dot(n_phi, v_target))
 
-        def _chi_to_trial(chi_deg_f: float) -> dict[str, float] | None:
-            """Given a chi value, compute phi and return a trial dict."""
-            chi_rad = math.radians(chi_deg_f)
-            c_chi = math.cos(chi_rad)
-            s_chi = math.sin(chi_rad)
-            rhs_n3 = c_chi * n3_q + s_chi * A_local
-            cos_phi = (nchi_v * nchi_q + n3_v * rhs_n3) / det_phi
-            sin_phi = (nchi_v * rhs_n3 - n3_v * nchi_q) / det_phi
-            phi_d = math.degrees(math.atan2(sin_phi, cos_phi))
+        def _chi_to_trial(phi_deg_f: float) -> dict[str, float] | None:
+            """Given a phi value, compute chi and return a trial dict."""
+            phi_rad = math.radians(phi_deg_f)
+            c_ph = math.cos(phi_rad)
+            s_ph = math.sin(phi_rad)
+            # w = R(n_phi, phi) @ v_target (Rodrigues)
+            w = (
+                v_target * c_ph
+                + np.cross(n_phi, v_target) * s_ph
+                + n_phi * nphi_v * (1.0 - c_ph)
+            )
+            # chi = angle about n_chi from w_perp to q_perp
+            w_par = float(np.dot(w, n_chi))
+            q_par = float(np.dot(q_loc, n_chi))
+            w_perp = w - w_par * n_chi
+            q_perp = q_loc - q_par * n_chi
+            w_perp_norm = float(np.linalg.norm(w_perp))
+            q_perp_norm = float(np.linalg.norm(q_perp))
+            if w_perp_norm < 1e-12 or q_perp_norm < 1e-12:  # pragma: no cover
+                return None
+            cos_chi = float(np.dot(w_perp, q_perp)) / (w_perp_norm * q_perp_norm)
+            sin_chi = float(np.dot(n_chi, np.cross(w_perp, q_perp))) / (
+                w_perp_norm * q_perp_norm
+            )
+            phi_d = phi_deg_f  # the scanned phi
+            chi_d = math.degrees(math.atan2(sin_chi, cos_chi))
 
             trial = dict(angles)
-            trial[chi_stage_name] = chi_deg_f
+            trial[chi_stage_name] = chi_d
             trial[phi_stage_name] = phi_d
 
             # Verify Bragg condition
@@ -2213,24 +2237,25 @@ def _solve_double_diffraction(
                 return None
             return trial
 
-        # Scan chi at 2-degree intervals, detect sign changes in Ewald
+        # Scan the free angle (phi when v ∥ n_phi) at 2-degree
+        # intervals, detect sign changes in the Ewald residual.
         candidates = []
-        prev_chi: float | None = None
+        prev_scan: float | None = None
         prev_ew: float = 0.0
 
-        for chi_int in range(-180, 180, 2):
-            chi_f = float(chi_int)
-            trial = _chi_to_trial(chi_f)
+        for scan_int in range(-180, 180, 2):
+            scan_f = float(scan_int)
+            trial = _chi_to_trial(scan_f)
             if trial is None:
-                prev_chi = None
+                prev_scan = None
                 continue
             ew = _ewald_residual(trial)
 
             if abs(ew) < 1e-3:  # pragma: no cover
                 candidates.append(trial)  # pragma: no cover
-            elif prev_chi is not None and prev_ew * ew < 0:
-                # Sign change: bisect chi to find root
-                lo, hi = prev_chi, chi_f
+            elif prev_scan is not None and prev_ew * ew < 0:
+                # Sign change: bisect to find root
+                lo, hi = prev_scan, scan_f
                 ew_lo = prev_ew
                 for _ in range(40):
                     mid = (lo + hi) / 2.0
@@ -2253,7 +2278,7 @@ def _solve_double_diffraction(
                         if abs(_ewald_residual(trial_final)) < 1e-5:
                             candidates.append(trial_final)
 
-            prev_chi = chi_f
+            prev_scan = scan_f
             prev_ew = ew
 
         return candidates

@@ -278,7 +278,8 @@ def test_euler_from_Z_round_trip_fourcv():
         g.sample_stages[-1],
     )
     for om, chi, phi in _euler_from_Z_standard(Z0, omega_s, chi_s, phi_s):
-        Z_r = Rmat(phi_s.axis, phi) @ Rmat(chi_s.axis, chi) @ Rmat(omega_s.axis, om)
+        # Standard Busing & Levy 1967 composition: outermost leftmost.
+        Z_r = Rmat(omega_s.axis, om) @ Rmat(chi_s.axis, chi) @ Rmat(phi_s.axis, phi)
         assert np.linalg.norm(Z0 - Z_r) < 1e-10, (
             f"Recomposition error: {np.linalg.norm(Z0 - Z_r)}"
         )
@@ -306,13 +307,15 @@ def test_euler_from_Z_round_trip_psic():
         g.sample_stages[-1],
     )
     outer = g.sample_stages[:-3]
+    # BL1967 composition: R_outer = R_0 @ R_1 @ ... (outermost leftmost).
     R_outer = np.eye(3)
     for s in outer:
-        R_outer = Rmat(s.axis, base.get(s.name, s.angle)) @ R_outer
+        R_outer = R_outer @ Rmat(s.axis, base.get(s.name, s.angle))
+    # Z = R_outer @ Z_inner  →  Z_inner = R_outer.T @ Z.
     Z_inner = R_outer.T @ Z0
     recompose_errors = []
     for om, chi, phi in _euler_from_Z_standard(Z_inner, omega_s, chi_s, phi_s):
-        Z_r = Rmat(phi_s.axis, phi) @ Rmat(chi_s.axis, chi) @ Rmat(omega_s.axis, om)
+        Z_r = Rmat(omega_s.axis, om) @ Rmat(chi_s.axis, chi) @ Rmat(phi_s.axis, phi)
         recompose_errors.append(np.linalg.norm(Z_inner - Z_r))
     assert min(recompose_errors) < 1e-7, f"Recomposition errors: {recompose_errors}"
 
@@ -320,16 +323,22 @@ def test_euler_from_Z_round_trip_psic():
 def test_kappa_from_Z_round_trip_kappa4cv():
     """_kappa_from_Z reproduces kappa4cv base angles to 1e-10.
 
-    Uses (2,0,-1) — accessible in true virtual bisecting on kappa4cv
-    under the corrected kappa-axis convention (issue #252) and
-    produces a non-degenerate kappa value.  Previously this test
-    used (-1,1,1), which is no longer reachable now that the kappa
-    axis lies in the transverse-vertical plane.
+    Under the BL1967 standard composition (Busing & Levy 1967, issue
+    #280), kappa4cv-BL cubic + true-virtual-bisecting reaches only the
+    degenerate ``kappa = 0`` branch for every cubic reflection.  To
+    exercise a non-degenerate kappa in the test we use
+    ``fixed_kphi`` (which fixes kphi=0 and lets kappa take a
+    non-trivial value) on ``(0, 1, 0)``.  Previous test choices
+    (``(2, 0, -1)`` from issue #252, then ``(0, 0, 1)``) no longer
+    produce non-zero kappa under the corrected convention.
     """
     from ad_hoc_diffractometer.rotation import rotation_matrix as Rmat
 
     g = _setup(kappa4cv)
-    base = g.forward(2, 0, -1)[0]
+    g.mode_name = "fixed_kphi"
+    # Pick the non-degenerate (kappa != 0) base solution.
+    solutions = g.forward(0, 1, 0)
+    base = max(solutions, key=lambda s: abs(s.get("kappa", 0.0)))
     for name, angle in base.items():
         try:
             g.set_angle(name, angle)
@@ -338,22 +347,57 @@ def test_kappa_from_Z_round_trip_kappa4cv():
     Z0 = g.sample_rotation_matrix()
     kom_s, kap_s, kph_s = g.sample_stages[-3], g.sample_stages[-2], g.sample_stages[-1]
     sols = _kappa_from_Z(Z0, kom_s, kap_s, kph_s, g.kappa_alpha_deg)
-    # At least one solution must reproduce Z0 and match base angles
+    # At least one solution must reproduce Z0 (BL1967 standard
+    # composition: outermost komega leftmost, innermost kphi rightmost).
     assert any(
         np.linalg.norm(
-            Rmat(kph_s.axis, kph) @ Rmat(kap_s.axis, kap) @ Rmat(kom_s.axis, kom) - Z0
+            Rmat(kom_s.axis, kom) @ Rmat(kap_s.axis, kap) @ Rmat(kph_s.axis, kph) - Z0
         )
         < 1e-10
         for kom, kap, kph in sols
     )
-    # One solution must match the base motor angles
+
+    # One solution must match the base motor angles modulo 360°.
+    # (Wraparound-aware: kappa = +180 and kappa = -180 are equivalent
+    # representations of the same physical rotation; the recomposed Z
+    # matrix is identical for both, but the literal motor-angle values
+    # straddle the (-180, 180] cut-point.)
+    def _wrap_diff(a, b):
+        d = (a - b + 180.0) % 360.0 - 180.0
+        return abs(d)
+
     base_match = any(
-        abs(kom - base["komega"]) < 1e-4
-        and abs(kap - base["kappa"]) < 1e-4
-        and abs(kph - base["kphi"]) < 1e-4
+        _wrap_diff(kom, base["komega"]) < 1e-4
+        and _wrap_diff(kap, base["kappa"]) < 1e-4
+        and _wrap_diff(kph, base["kphi"]) < 1e-4
         for kom, kap, kph in sols
     )
     assert base_match
+
+
+def test_kappa_from_Z_returns_empty_when_unreachable():
+    """``_kappa_from_Z`` returns ``[]`` when the requested Z is outside the
+    kappa arm's range.
+
+    Constructs an explicit ``Z = R(+y, 180°)`` for the kappa4cv
+    geometry.  In that geometry both ``n_komega`` and ``n_kphi`` are
+    ``-transverse`` (parallel), and the kappa arm (with ``α = 50°``)
+    cannot reach a rotation that maps ``n_komega`` to ``-n_komega``
+    (the requested mapping under ``R(+y, 180°)``).  The Rodrigues
+    decomposition then yields ``|γ − c| > M`` and the function
+    returns the empty list rather than a spuriously clamped angle.
+    """
+    from ad_hoc_diffractometer.rotation import rotation_matrix as Rmat
+
+    g = kappa4cv()
+    kom_s, kap_s, kph_s = (
+        g.sample_stages[-3],
+        g.sample_stages[-2],
+        g.sample_stages[-1],
+    )
+    Z = Rmat(np.array([0.0, 1.0, 0.0]), 180.0)
+    sols = _kappa_from_Z(Z, kom_s, kap_s, kph_s, g.kappa_alpha_deg)
+    assert sols == []
 
 
 # ---------------------------------------------------------------------------
@@ -570,16 +614,19 @@ class TestPsiTrajectory:
     def test_psi_round_trip_kappa4cv(self):
         """BL1967 psi round-trip on kappa4cv (mid-range, avoids arm limits).
 
-        Uses (2,0,-1).  Under the corrected kappa-axis convention
-        (issue #252), the kappa axis lies in the transverse-vertical
-        plane, which restricts the true-bisecting reachable locus
-        differently than the v0.9.1 convention did.  (2,0,-1) is
-        accessible across the psi range and produces non-degenerate
-        kappa values.
+        Uses ``(0, 1, 0)``.  Under the corrected outermost-leftmost
+        composition (issue #280), kappa4cv-BL's bisecting locus is
+        physically restricted: many cubic reflections (including
+        ``(0, 0, 1)``, which has Q_phi parallel to the phi axis) put
+        the base ``forward()`` solution at the phi-degenerate
+        ``kphi = 180`` representative, which shifts the measured psi
+        by 180° relative to a kphi=0 reference.  ``(0, 1, 0)`` has
+        an off-axis Q_phi, gives a unique base solution, and produces
+        an exact psi round-trip across the targeted range.
         """
         g = _setup(kappa4cv)
         self._psi_round_trip(
-            g, hkl=(2, 0, -1), targets=list(range(-60, 61, 30)), atol=0.1
+            g, hkl=(0, 1, 0), targets=list(range(-60, 61, 30)), atol=0.1
         )
 
     def test_psi_zero_at_base(self):

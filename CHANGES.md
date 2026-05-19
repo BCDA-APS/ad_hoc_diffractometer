@@ -7,6 +7,10 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+### Behavior change
+
+- Compose stage rotations outermost-leftmost; saved UB matrices must be re-derived. (#280)
+
 ### Fixed
 
 - Doc version-switcher dropdown now shows every published version. (#273)

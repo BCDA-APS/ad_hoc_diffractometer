@@ -306,11 +306,14 @@ def _euler_from_Z_standard(
     phi_stage: object,
 ) -> list[tuple[float, float, float]]:
     """
-    Decompose Z = R(n_φ, φ) · R(n_χ, χ) · R(n_ω, ω) into (ω, χ, φ) in degrees.
+    Decompose ``Z = R(n_ω, ω) · R(n_χ, χ) · R(n_φ, φ)`` into
+    ``(ω, χ, φ)`` in degrees.
 
-    This is the innermost-first product order used by
-    ``geometry.sample_rotation_matrix()``: the outermost stage (omega/eta)
-    is applied first (rightmost), the innermost (phi) last (leftmost).
+    This is the outermost-first (BL1967 standard, Busing & Levy 1967)
+    product order used by
+    :meth:`~AdHocDiffractometer.sample_rotation_matrix`:
+    the outermost (floor-most, omega) stage is the leftmost matrix in
+    the product; the innermost (phi) is rightmost.
 
     The decomposition generalizes Busing & Levy (1967) eqs. 14-17 to
     arbitrary signed stage axes.  Two χ branches are returned
@@ -318,15 +321,16 @@ def _euler_from_Z_standard(
 
     Notes
     -----
-    **Chi** is extracted from the element n_φ · Z · n_ω, which equals
-    n_φ · R_χ · n_ω (since R_φ fixes n_φ and R_ω fixes n_ω).
+    **Chi** is extracted from the element n_ω · Z · n_φ, which equals
+    n_ω · R_χ · n_φ (since R_ω fixes n_ω and R_φ fixes n_φ).
     For the standard case n_ω ∥ n_φ this equals cos(χ).
 
-    **Phi** is extracted from Z · n_ω = R_φ · (R_χ · n_ω): the angle in the
-    plane ⊥ n_φ between (R_χ · n_ω) and (Z · n_ω).
+    **Omega** is extracted from Z · n_φ = R_ω · (R_χ · n_φ): the angle
+    in the plane ⊥ n_ω between (R_χ · n_φ) and (Z · n_φ).
 
-    **Omega** is extracted from Z^T · n_φ = R_χ^T · n_φ: the angle in the
-    plane ⊥ n_ω between (R_χ^T · n_φ) and (Z^T · n_φ), with sign reversed.
+    **Phi** is extracted from Z^T · n_ω = R_φ^T · (R_χ^T · n_ω): the
+    angle in the plane ⊥ n_φ between (R_χ^T · n_ω) and (Z^T · n_ω),
+    with sign reversed (because the rotation acts on Z^T not Z).
 
     Parameters
     ----------
@@ -349,8 +353,8 @@ def _euler_from_Z_standard(
     n_chi_hat = n_chi / np.linalg.norm(n_chi)
     n_phi_hat = n_phi / np.linalg.norm(n_phi)
 
-    # --- Step 1: chi from n_phi · Z · n_om ----------------------------------
-    elem = float(np.dot(n_phi_hat, Z @ n_om_hat))
+    # --- Step 1: chi from n_om · Z · n_phi ----------------------------------
+    elem = float(np.dot(n_om_hat, Z @ n_phi_hat))
     elem = max(-1.0, min(1.0, elem))
     chi_pos = math.degrees(math.acos(elem))
     chi_neg = -chi_pos
@@ -359,27 +363,29 @@ def _euler_from_Z_standard(
     for chi_deg in (chi_pos, chi_neg):
         R_chi = _Rmat(n_chi_hat, chi_deg)
 
-        # --- Step 2: phi from Z · n_om = R_phi · (R_chi · n_om) -------------
-        Rchi_nom = R_chi @ n_om_hat
-        Z_nom = Z @ n_om_hat
-        e1 = _perp_ref(n_phi_hat)
-        e2 = np.cross(n_phi_hat, e1)
-        phi_rad = math.atan2(
-            float(np.dot(Z_nom, e2)), float(np.dot(Z_nom, e1))
-        ) - math.atan2(float(np.dot(Rchi_nom, e2)), float(np.dot(Rchi_nom, e1)))
-        phi_rad = ((phi_rad + math.pi) % (2 * math.pi)) - math.pi
-        phi_deg = math.degrees(phi_rad)
-
-        # --- Step 3: omega from Z^T · n_phi = R_chi^T · n_phi ---------------
-        Rchi_T_nphi = R_chi.T @ n_phi_hat
-        ZT_nphi = Z.T @ n_phi_hat
-        f1 = _perp_ref(n_om_hat)
-        f2 = np.cross(n_om_hat, f1)
+        # --- Step 2: omega from Z · n_phi = R_omega · (R_chi · n_phi) ------
+        Rchi_nph = R_chi @ n_phi_hat
+        Z_nph = Z @ n_phi_hat
+        e1 = _perp_ref(n_om_hat)
+        e2 = np.cross(n_om_hat, e1)
         omega_rad = math.atan2(
-            float(np.dot(Rchi_T_nphi, f2)), float(np.dot(Rchi_T_nphi, f1))
-        ) - math.atan2(float(np.dot(ZT_nphi, f2)), float(np.dot(ZT_nphi, f1)))
+            float(np.dot(Z_nph, e2)), float(np.dot(Z_nph, e1))
+        ) - math.atan2(float(np.dot(Rchi_nph, e2)), float(np.dot(Rchi_nph, e1)))
         omega_rad = ((omega_rad + math.pi) % (2 * math.pi)) - math.pi
         omega_deg = math.degrees(omega_rad)
+
+        # --- Step 3: phi from Z^T · n_om = R_phi^T · (R_chi^T · n_om) -------
+        # R(n_phi, phi)^T · (R(n_chi, chi)^T · n_om) = Z^T · n_om
+        # so R(n_phi, -phi) takes R(n_chi, -chi) · n_om to Z^T · n_om.
+        Rchi_T_nom = R_chi.T @ n_om_hat
+        ZT_nom = Z.T @ n_om_hat
+        f1 = _perp_ref(n_phi_hat)
+        f2 = np.cross(n_phi_hat, f1)
+        phi_rad = math.atan2(
+            float(np.dot(Rchi_T_nom, f2)), float(np.dot(Rchi_T_nom, f1))
+        ) - math.atan2(float(np.dot(ZT_nom, f2)), float(np.dot(ZT_nom, f1)))
+        phi_rad = ((phi_rad + math.pi) % (2 * math.pi)) - math.pi
+        phi_deg = math.degrees(phi_rad)
 
         results.append((omega_deg, chi_deg, phi_deg))
 
@@ -398,25 +404,26 @@ def _kappa_from_Z(
     alpha_deg: float,
 ) -> list[tuple[float, float, float]]:
     r"""
-    Decompose ``Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω)`` into
+    Decompose ``Z = R(n_kω, kω) · R(n_κ, κ) · R(n_kφ, kφ)`` (BL1967
+    standard outermost-leftmost order, Busing & Levy 1967) into
     ``(kω, κ, kφ)`` using a Rodrigues expansion that is **agnostic to
     the specific signed axis convention** of the kappa demo geometry.
 
     Derivation
     ----------
-    Apply both sides to ``n_komega``:
+    Apply both sides to ``n_kphi``:
 
-        Z · n_kω  =  R(n_kφ, kφ) · R(n_κ, κ) · n_kω
+        Z · n_kφ  =  R(n_kω, kω) · R(n_κ, κ) · n_kφ
 
-    (since ``R(n_kω, ·) · n_kω = n_kω``).  Take the dot product with
-    ``n_kphi``:
+    (since ``R(n_kφ, ·) · n_kφ = n_kφ``).  Take the dot product with
+    ``n_komega`` (which is invariant under ``R(n_komega, kω)``):
 
-        n_kφ · Z · n_kω  =  n_kφ · R(n_κ, κ) · n_kω
+        n_kω · Z · n_kφ  =  n_kω · R(n_κ, κ) · n_kφ
 
     Expanding the right side via Rodrigues (with
-    ``a = n_kphi · n_komega``,
-    ``b = n_kphi · (n_kappa × n_komega)``,
-    ``c = (n_kphi · n_kappa)·(n_kappa · n_komega)``):
+    ``a = n_komega · n_kphi``,
+    ``b = n_komega · (n_kappa × n_kphi)``,
+    ``c = (n_komega · n_kappa)·(n_kappa · n_kphi)``):
 
         elem  =  a·cos(κ) + b·sin(κ) + c·(1 − cos(κ))
               =  (a − c)·cos(κ) + b·sin(κ) + c
@@ -461,11 +468,11 @@ def _kappa_from_Z(
     n_kap = np.asarray(kappa_stage.axis, dtype=float) / np.linalg.norm(kappa_stage.axis)
     n_kph = np.asarray(kphi_stage.axis, dtype=float) / np.linalg.norm(kphi_stage.axis)
 
-    # --- Step 1: κ from the Rodrigues expansion of n_kphi · Z · n_komega ----
-    elem = float(np.clip(np.dot(n_kph, Z @ n_km), -1.0, 1.0))
-    a_coeff = float(np.dot(n_kph, n_km))
-    b_coeff = float(np.dot(n_kph, np.cross(n_kap, n_km)))
-    c_coeff = float(np.dot(n_kph, n_kap)) * float(np.dot(n_kap, n_km))
+    # --- Step 1: κ from the Rodrigues expansion of n_komega · Z · n_kphi ----
+    elem = float(np.clip(np.dot(n_km, Z @ n_kph), -1.0, 1.0))
+    a_coeff = float(np.dot(n_km, n_kph))
+    b_coeff = float(np.dot(n_km, np.cross(n_kap, n_kph)))
+    c_coeff = float(np.dot(n_km, n_kap)) * float(np.dot(n_kap, n_kph))
     # Solve (a − c)·cos(κ) + b·sin(κ) = elem − c
     rhs = elem - c_coeff
     M = math.hypot(a_coeff - c_coeff, b_coeff)
@@ -497,27 +504,27 @@ def _kappa_from_Z(
     for kap_deg in (kap_pos, kap_neg):
         R_kap = _Rmat(n_kap, kap_deg)
 
-        # --- Step 2: kphi from Z · n_km = R_kphi · (R_kap · n_km) ----------
-        Rk_nom = R_kap @ n_km
-        Z_nom = Z @ n_km
-        e1 = _perp_ref(n_kph)
-        e2 = np.cross(n_kph, e1)
-        kphi_rad = math.atan2(
-            float(np.dot(Z_nom, e2)), float(np.dot(Z_nom, e1))
-        ) - math.atan2(float(np.dot(Rk_nom, e2)), float(np.dot(Rk_nom, e1)))
-        kphi_rad = ((kphi_rad + math.pi) % (2 * math.pi)) - math.pi
-        kphi_deg = math.degrees(kphi_rad)
-
-        # --- Step 3: komega from Z^T · n_kphi = R_kap^T · n_kphi ------------
-        Rk_T_nkph = R_kap.T @ n_kph
-        ZT_nkph = Z.T @ n_kph
-        f1 = _perp_ref(n_km)
-        f2 = np.cross(n_km, f1)
+        # --- Step 2: komega from Z · n_kphi = R_komega · (R_kap · n_kphi) --
+        Rk_nph = R_kap @ n_kph
+        Z_nph = Z @ n_kph
+        e1 = _perp_ref(n_km)
+        e2 = np.cross(n_km, e1)
         kom_rad = math.atan2(
-            float(np.dot(Rk_T_nkph, f2)), float(np.dot(Rk_T_nkph, f1))
-        ) - math.atan2(float(np.dot(ZT_nkph, f2)), float(np.dot(ZT_nkph, f1)))
+            float(np.dot(Z_nph, e2)), float(np.dot(Z_nph, e1))
+        ) - math.atan2(float(np.dot(Rk_nph, e2)), float(np.dot(Rk_nph, e1)))
         kom_rad = ((kom_rad + math.pi) % (2 * math.pi)) - math.pi
         kom_deg = math.degrees(kom_rad)
+
+        # --- Step 3: kphi from Z^T · n_komega = R_kphi^T · (R_kap^T · n_komega)
+        Rk_T_nkm = R_kap.T @ n_km
+        ZT_nkm = Z.T @ n_km
+        f1 = _perp_ref(n_kph)
+        f2 = np.cross(n_kph, f1)
+        kphi_rad = math.atan2(
+            float(np.dot(Rk_T_nkm, f2)), float(np.dot(Rk_T_nkm, f1))
+        ) - math.atan2(float(np.dot(ZT_nkm, f2)), float(np.dot(ZT_nkm, f1)))
+        kphi_rad = ((kphi_rad + math.pi) % (2 * math.pi)) - math.pi
+        kphi_deg = math.degrees(kphi_rad)
 
         results.append((kom_deg, kap_deg, kphi_deg))
 
@@ -575,10 +582,12 @@ def _psi_candidates(
     outer_stages = sample_stages[:-3]
     omega_s, chi_s, phi_s = sample_stages[-3], sample_stages[-2], sample_stages[-1]
 
-    # Build R_outer from the base angles of any fixed outer stages
+    # Build R_outer from the base angles of any fixed outer stages.
+    # Composition: BL1967 standard outermost-leftmost, so
+    # R_outer = R_0 @ R_1 @ ... @ R_{k-1} where k = first non-outer index.
     R_outer = np.eye(3)
     for s in outer_stages:
-        R_outer = _Rmat(s.axis, base.get(s.name, s.angle)) @ R_outer
+        R_outer = R_outer @ _Rmat(s.axis, base.get(s.name, s.angle))
 
     # Rotate Z0 about Q_lab by -psi_target (negative because the convention
     # is that increasing psi rotates the sample such that the beam-perpendicular

@@ -405,17 +405,44 @@ def test_angles_to_phi_vector_magnitude_bragg(psic_geom):
 
 
 def test_angles_to_phi_vector_explicit_components_psic_sapphire(psic_geom):
-    """
+    r"""
     Explicit component check for psic sapphire (006) at Cu Kα.
 
-    The expected values were computed from the implementation under review
-    and locked here as a regression guard.  Any future change to the
-    rotation convention must also update these numbers.
+    Hand-derivation under the BL1967 standard composition (Busing &
+    Levy 1967, issue #280, outermost-leftmost): with the psic YOU
+    basis (vertical=+x, longitudinal=+y, transverse=+z) and the
+    motor angles ``mu=0, eta=20.97, chi=90, phi=0, nu=0, delta=41.94``:
+
+      D = R(+x, 0) · R(-z, 41.94) = R(-z, 41.94)
+      Z = R(+x, 0) · R(-z, 20.97) · R(+y, 90) · R(-z, 0)
+        = R(-z, 20.97) · R(+y, 90)
+
+    The lab beam ``y_hat = (0, 1, 0)``.  Q_lab = (2π/λ)(D·ŷ − ŷ)
+    has zero x-component (R(-z, ·) preserves the x-z plane only when
+    applied to vectors in it; here ŷ rotates within the x-y plane).
+
+    Working through:
+
+      D·ŷ = R(-z, 41.94) (0,1,0) = (sin 41.94°, cos 41.94°, 0)
+      Q_lab = (2π/λ) (sin 41.94°, cos 41.94° − 1, 0)
+
+    Applying Z^T = R(-y, 90) · R(+z, 20.97) (operator inverse with
+    sign-flipped angles) yields Q_phi with all of its magnitude
+    concentrated along the +z axis::
+
+        Q_phi = (0, 0, (4π/λ)·sin(20.97°))
+              = (0, 0, 2.9191491238932494)  Å⁻¹
+
+    matching |Q_phi| = (4π/λ)·sin(2θ/2) for 2θ = 41.94°.
+
+    The vector lies exactly along +z because the chi=90 rotation
+    swings the original Q_phi (which would be along +y after omega
+    rotation only) onto +z, and phi=0 does not change it.
     """
     psic_geom.wavelength = _LAMBDA_CU_KA
     Q = angles_to_phi_vector(psic_geom, **_SAPPHIRE_ANGLES)
-    expected = np.array([0.37387713, -0.97550961, 2.72580786])
-    np.testing.assert_allclose(Q, expected, atol=1e-6)
+    expected = np.array([0.0, 0.0, _Q_MAG_SAPPHIRE_006])
+    np.testing.assert_allclose(Q, expected, atol=1e-9)
 
 
 # --- invariance / dependence properties -------------------------------------
@@ -1335,6 +1362,19 @@ def test_inverse_real_wavelength_psic_silicon():
     Silicon: a = 5.4310 Å, λ = 1.5406 Å (Cu Kα).
     With the BL1967 B-matrix convention (|B @ hkl| = 2π/d), the round-trip
     inverse(angles_at_Bragg) must return true Miller indices.
+
+    Under the BL1967 standard composition (Busing & Levy 1967, issue
+    #280, outermost-leftmost):
+
+    * ``r1`` at (chi=90, phi=0) places Q_phi along +z.
+    * ``r2`` at (chi=0,  phi=0) places Q_phi along +x.
+
+    These two phi-frame vectors are orthogonal, so the Gram-Schmidt
+    fit in :func:`ub_from_two_reflections_bl1967` is
+    well-conditioned.  (Under the pre-#280 buggy convention the
+    earlier choice ``r2 = (chi=90, phi=90)`` was non-parallel; under
+    the corrected convention that setup produces ``Q_phi`` along
+    +z, collinear with ``r1``, and the fit becomes degenerate.)
     """
     import math
 
@@ -1352,10 +1392,11 @@ def test_inverse_real_wavelength_psic_silicon():
         d = 2.0 * math.pi / float(np.linalg.norm(B @ np.array(hkl, dtype=float)))
         return 2.0 * math.degrees(math.asin(g.wavelength / (2.0 * d)))
 
-    # (006) equivalent: use (0,0,4) — c-axis along phi-axis (chi=90 brings it in)
-    # Use two non-parallel reflections at their true Bragg positions.
-    tth1 = _tth([0, 0, 2])  # c-axis reflection, chi=90 to enter scattering plane
-    tth2 = _tth([2, 0, 0])  # a-axis reflection, chi=90 phi=90
+    # Two non-parallel reflections at their true Bragg positions:
+    #   r1 = (0, 0, 2):  Q_phi along +z under (chi=90, phi=0)
+    #   r2 = (2, 0, 0):  Q_phi along +x under (chi=0,  phi=0)
+    tth1 = _tth([0, 0, 2])
+    tth2 = _tth([2, 0, 0])
 
     r1_angles = {
         "mu": 0.0,
@@ -1368,8 +1409,8 @@ def test_inverse_real_wavelength_psic_silicon():
     r2_angles = {
         "mu": 0.0,
         "eta": tth2 / 2,
-        "chi": 90.0,
-        "phi": 90.0,
+        "chi": 0.0,
+        "phi": 0.0,
         "nu": 0.0,
         "delta": tth2,
     }

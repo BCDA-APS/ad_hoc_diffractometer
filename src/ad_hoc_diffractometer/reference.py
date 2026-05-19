@@ -340,11 +340,15 @@ def _chi_stage_axis_lab(
     chi_stage = sample_stages[chi_index]
     outer_stages = sample_stages[:chi_index]
 
-    # Apply the rotations of all stages *before* chi to the chi axis
+    # Apply the rotations of all stages *outside* chi to the chi axis.
+    # Composition follows the BL1967 standard convention (Busing &
+    # Levy 1967): outermost (floor-most) stage leftmost in the
+    # product, so R_outer = R_0 @ R_1 @ ... @ R_{chi_index-1}.  Then
+    # the chi axis in the lab frame is R_outer @ chi_axis_hat.
     R = np.eye(3)
     for s in outer_stages:
         angle = angles.get(s.name, s.angle)
-        R = _rotation_matrix_normalized(s._axis_hat, angle) @ R  # noqa: SLF001
+        R = R @ _rotation_matrix_normalized(s._axis_hat, angle)  # noqa: SLF001
 
     chi_axis_lab = R @ np.asarray(chi_stage._axis_hat, dtype=float)  # noqa: SLF001
     n = float(np.linalg.norm(chi_axis_lab))
@@ -455,13 +459,15 @@ def omega_pseudo(
     # Lab-frame chi-circle axis (= normal to the chi-circle plane)
     n_chi_lab = _chi_stage_axis_lab(geometry, angles)
 
-    # Lab-frame scattering vector
+    # Lab-frame scattering vector.  Composition follows the BL1967
+    # standard convention (Busing & Levy 1967): outermost (floor-most)
+    # stage leftmost.
     from .rotation import _rotation_matrix_normalized
 
     D = np.eye(3)
     for s in geometry.detector_stages:
         angle = angles.get(s.name, s.angle)
-        D = _rotation_matrix_normalized(s._axis_hat, angle) @ D  # noqa: SLF001
+        D = D @ _rotation_matrix_normalized(s._axis_hat, angle)  # noqa: SLF001
 
     y_raw = np.asarray(geometry.basis["longitudinal"], dtype=float)
     y_hat = y_raw / np.linalg.norm(y_raw)

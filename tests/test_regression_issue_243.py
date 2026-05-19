@@ -399,19 +399,67 @@ def test_removed_redundant_modes_absent(removed_mode):
 # Removing the four redundant bisecting modes also removed the only test
 # path that exercised the ``if analytic_results: ... else: fall through``
 # branch in :func:`ad_hoc_diffractometer.forward._solve_bisecting`
-# (line 1052).  The fallthrough is hit when the scattering vector is
-# kinematically inaccessible in the analytic solver but Newton fallback
-# must still be invoked (and ultimately also returns no solutions).
+# (line 1052).  The fallthrough is hit when the analytic solver returns
+# ``[]`` and the Newton fallback must still be invoked.
 #
-# ``psic bisecting_horizontal`` with the inaccessible reflection
-# ``(-2, -2, 0)`` reproduces this branch on a cubic ``UB = B`` test
-# crystal.
+# Under the issue #280 corrected outermost-leftmost composition the
+# analytic solver returns ``[]`` whenever ``Q_phi`` is parallel to the
+# phi-axis (phi-rotation degenerate; analytic decomposition cannot
+# enumerate the multiple phi-equivalent solutions).  The Newton solver
+# then generates the phi-representatives.  Reflection ``(0, 0, 1)`` on
+# psic bisecting_horizontal puts ``Q_phi`` along ``+z`` while the
+# phi-axis is ``-z``, satisfying this condition.
 # ---------------------------------------------------------------------------
 
 
 def test_bisecting_horizontal_analytic_empty_fallthrough():
-    """Inaccessible hkl returns 0 solutions and exercises the Newton fallback."""
+    """Analytic returns empty for phi-degenerate target; Newton fills in.
+
+    The historic assertion (``solutions == []``) used reflection
+    ``(-2, -2, 0)``, which under the pre-#280 buggy composition was
+    geometrically inaccessible.  Under the corrected composition that
+    reflection is reachable; no kinematically reachable hkl yields the
+    "analytic empty AND Newton empty" combination on this geometry.
+
+    The replacement assertion still exercises the fallthrough branch
+    (verified via a monkey-patched spy in
+    ``test_bisecting_horizontal_analytic_returns_empty``) and confirms
+    the Newton fallback finishes with correct, round-tripping
+    solutions.
+    """
     g = _setup_psic_cubic()
     g.mode_name = "bisecting_horizontal"
-    solutions = g.forward(-2, -2, 0)
-    assert solutions == []
+    solutions = g.forward(0, 0, 1)
+    assert len(solutions) >= 1
+    for sol in solutions:
+        hkl_back = g.inverse(sol)
+        assert abs(hkl_back[0]) < 1e-6
+        assert abs(hkl_back[1]) < 1e-6
+        assert abs(hkl_back[2] - 1.0) < 1e-6
+
+
+def test_bisecting_horizontal_analytic_returns_empty():
+    """Verify the analytic solver returns ``[]`` on the phi-degenerate target."""
+    from ad_hoc_diffractometer import forward as fmod
+
+    g = _setup_psic_cubic()
+    g.mode_name = "bisecting_horizontal"
+
+    captured: list[list[tuple[float, float]]] = []
+    orig = fmod._solve_bisecting_analytic
+
+    def spy(ctx, chi_stage, phi_stage, angles, Q_phi_target):
+        result = orig(ctx, chi_stage, phi_stage, angles, Q_phi_target)
+        captured.append(list(result))
+        return result
+
+    fmod._solve_bisecting_analytic = spy
+    try:
+        g.forward(0, 0, 1)
+    finally:
+        fmod._solve_bisecting_analytic = orig
+
+    # The analytic solver must have been invoked at least once and
+    # returned ``[]`` (phi-degenerate target → defer to Newton fallback).
+    assert captured, "analytic solver was never called"
+    assert captured[0] == []

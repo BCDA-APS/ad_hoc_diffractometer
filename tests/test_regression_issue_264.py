@@ -219,7 +219,11 @@ def test_omega_is_angle_between_q_and_chi_circle_plane():
     om = omega_pseudo(g, angles=angles)
 
     # First-principles computation of the chi-circle plane normal in
-    # the lab frame:  apply mu and eta rotations to the chi axis vector.
+    # the lab frame.  Under the BL1967 standard composition (Busing &
+    # Levy 1967, issue #280, outermost-leftmost), the rotations of
+    # the outer stages (mu, eta) applied to the chi axis form the
+    # product ``R_mu @ R_eta @ chi_axis`` (mu is floor-most, eta is
+    # outer-of-chi).
     from ad_hoc_diffractometer.rotation import _rotation_matrix_normalized
 
     chi_stage = g.stage("chi")
@@ -227,15 +231,16 @@ def test_omega_is_angle_between_q_and_chi_circle_plane():
     eta_stage = g.stage("eta")
     R_mu = _rotation_matrix_normalized(mu_stage._axis_hat, angles["mu"])  # noqa: SLF001
     R_eta = _rotation_matrix_normalized(eta_stage._axis_hat, angles["eta"])  # noqa: SLF001
-    chi_axis_lab = R_eta @ R_mu @ chi_stage._axis_hat  # noqa: SLF001
+    chi_axis_lab = R_mu @ R_eta @ chi_stage._axis_hat  # noqa: SLF001
     chi_axis_lab /= np.linalg.norm(chi_axis_lab)
 
-    # Lab-frame Q vector.
+    # Lab-frame Q vector.  D follows the same outermost-leftmost
+    # composition: D = R_nu @ R_delta.
     nu_stage = g.stage("nu")
     delta_stage = g.stage("delta")
     R_nu = _rotation_matrix_normalized(nu_stage._axis_hat, angles["nu"])  # noqa: SLF001
     R_delta = _rotation_matrix_normalized(delta_stage._axis_hat, angles["delta"])  # noqa: SLF001
-    D = R_delta @ R_nu
+    D = R_nu @ R_delta
     y_hat = np.asarray(g.basis["longitudinal"], dtype=float)
     y_hat /= np.linalg.norm(y_hat)
     Q_lab = D @ y_hat - y_hat

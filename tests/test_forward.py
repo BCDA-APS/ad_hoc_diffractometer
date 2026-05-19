@@ -201,11 +201,32 @@ def test_bisecting_round_trip(factory, a, h, k, l):  # noqa: E741
     assert _round_trip_ok(g, h, k, l)
 
 
-def test_fourcv_bisecting_two_solutions():
-    """Bisecting mode returns two solutions (positive and negative chi branch)."""
+def test_fourcv_bisecting_returns_solutions():
+    """Bisecting mode returns at least one valid solution.
+
+    Under the BL1967 standard composition (Busing & Levy 1967, fixed
+    in issue #280), fourcv's ``(1, 0, 0)`` target ``Q_phi`` lies along
+    ``+x`` — which
+    is parallel (with sign flip) to the fourcv phi-axis ``-x``.  The
+    phi angle is therefore *physically* indeterminate at this
+    reflection: rotation about the phi axis leaves ``Q_phi``
+    invariant.  The Newton solver returns multiple phi
+    representatives at the single ``chi = +90`` branch; the older
+    ``len == 2`` count corresponded to ``±chi`` branches under the
+    pre-#280 (inner-leftmost) convention and is no longer the right
+    physical assertion.
+    """
     g = _setup_cubic(fourcv, a=4.0)
     solutions = g.forward(1, 0, 0)
-    assert len(solutions) == 2
+    assert len(solutions) >= 1
+    # Every returned solution must be a valid Bragg position.
+    Q_phi_target = g.sample.UB @ np.array([1.0, 0.0, 0.0])
+    for sol in solutions:
+        Q_phi = ahd.orientation.angles_to_phi_vector(g, **sol)
+        assert np.allclose(Q_phi, Q_phi_target, atol=1e-7), (
+            f"Bisecting solution {sol} does not satisfy Bragg: "
+            f"Q_phi={Q_phi} vs target={Q_phi_target}"
+        )
 
 
 def test_fourcv_bisecting_omega_equals_ttheta_half():
@@ -378,8 +399,13 @@ def test_kappa4_fixed_kphi_value_in_solution(factory):
         pytest.param(kappa4cv, "fixed_omega", 0, 0, 1, id="kappa4cv-fixed_omega"),
         pytest.param(kappa4cv, "fixed_chi", 0, 0, 1, id="kappa4cv-fixed_chi"),
         pytest.param(kappa4cv, "fixed_phi", 0, 1, 0, id="kappa4cv-fixed_phi"),
-        # kappa4ch (horizontal scattering plane — different reachable reflections)
-        pytest.param(kappa4ch, "fixed_omega", 0, 0, 1, id="kappa4ch-fixed_omega"),
+        # kappa4ch (horizontal scattering plane).  Under the corrected
+        # BL1967 standard composition (issue #280) ``(0, 0, 1)`` is no
+        # longer reachable in ``fixed_omega`` — its ``Q_phi`` is
+        # parallel to the kphi axis, leaving no DOF to generate the
+        # required diffracted-beam direction.  ``(1, 0, 0)`` is
+        # reachable in this mode and exercises the same code path.
+        pytest.param(kappa4ch, "fixed_omega", 1, 0, 0, id="kappa4ch-fixed_omega"),
         pytest.param(kappa4ch, "fixed_chi", 0, 0, 1, id="kappa4ch-fixed_chi"),
         pytest.param(kappa4ch, "fixed_phi", 0, 1, 0, id="kappa4ch-fixed_phi"),
     ],
@@ -520,7 +546,12 @@ def test_four_circle_stub_not_implemented(factory, mode_name):
 @pytest.mark.parametrize(
     "factory, h, k, l",
     [
-        pytest.param(fourcv, 1, 0, 0, id="fourcv-100"),
+        # The (1, 0, 0) case is unreachable in ``fixed_omega`` under the
+        # BL1967 standard composition (issue #280): ``Q_phi = (π/2, 0, 0)`` is
+        # parallel to the phi-axis (-x in BL basis), and ``R(chi, +y)``
+        # cannot generate a y-component while phi rotation is a no-op.
+        # See ``test_four_circle_fixed_omega_unreachable_along_phi_axis``
+        # below for the explicit (0-solutions) check.
         pytest.param(fourcv, 0, 1, 0, id="fourcv-010"),
         pytest.param(fourcv, 1, 1, 1, id="fourcv-111"),
         pytest.param(fourch, 1, 0, 0, id="fourch-100"),
@@ -536,20 +567,47 @@ def test_four_circle_fixed_omega_round_trip(factory, h, k, l):  # noqa: E741
 
 
 @pytest.mark.parametrize(
-    "factory",
+    "factory, h, k, l",
     [
-        pytest.param(fourcv, id="fourcv"),
-        pytest.param(fourch, id="fourch"),
+        pytest.param(fourcv, 0, 1, 0, id="fourcv"),
+        pytest.param(fourch, 1, 0, 0, id="fourch"),
     ],
 )
-def test_four_circle_fixed_omega_value_in_solution(factory):
-    """fixed_omega: omega=0 in all returned solutions."""
+def test_four_circle_fixed_omega_value_in_solution(factory, h, k, l):  # noqa: E741
+    """fixed_omega: omega=0 in all returned solutions.
+
+    Uses a reflection whose ``Q_phi`` is not parallel to the phi-axis
+    (which would be degenerate; see ``test_four_circle_fixed_omega_
+    unreachable_along_phi_axis``).
+    """
     g = _setup_cubic(factory, a=4.0)
     g.mode_name = "fixed_omega"
-    solutions = g.forward(1, 0, 0)
+    solutions = g.forward(h, k, l)
     assert len(solutions) > 0
     for sol in solutions:
         assert sol["omega"] == pytest.approx(0.0, abs=1e-8)
+
+
+def test_four_circle_fixed_omega_unreachable_along_phi_axis():
+    """fourcv fixed_omega: (1, 0, 0) returns no solutions under #280.
+
+    With the BL1967 standard composition (Busing & Levy 1967),
+    ``Q_phi`` for ``(1, 0, 0)`` lies along the phi-axis ``-x`` (BL
+    basis), making
+    the phi rotation a no-op.  At ``omega = 0`` the remaining chi
+    rotation (about ``+y``) can only place the rotated Q in the
+    ``x-z`` plane, but the diffracted-beam direction (rotated about
+    ``-x``) requires a non-zero ``y`` component when ``ttheta > 0``.
+    Therefore no motor configuration satisfies the Bragg condition at
+    ``omega = 0`` for this reflection.
+
+    This is a *physical* asymmetry made visible by the corrected
+    composition; under the pre-#280 (inner-leftmost) convention the
+    self-consistent reversal hid it.
+    """
+    g = _setup_cubic(fourcv, a=4.0)
+    g.mode_name = "fixed_omega"
+    assert g.forward(1, 0, 0) == []
 
 
 @pytest.mark.parametrize(
@@ -1502,12 +1560,33 @@ def test_kappa6c_stub_not_implemented(mode_name):
 
 
 def test_kappa6c_bisecting_vertical_invariants():
-    """bisecting_vertical: komega=delta/2, mu=0, nu=0 in all solutions."""
+    """bisecting_vertical: virtual omega = delta/2, mu = 0, nu = 0.
+
+    The constraint set is::
+
+        virtual_bisect(omega, delta), sample(mu, 0), detector(nu, 0)
+
+    The bisecting condition holds on the *virtual* Eulerian ``omega``,
+    not on the real ``komega``.  Only at the degenerate ``kappa = 0``
+    solution does ``komega == omega_virtual``; the other three
+    branches have ``kappa ≠ 0`` and a correspondingly shifted
+    ``komega``.  Under the pre-#280 (inner-leftmost) composition the
+    virtual-to-real mapping happened to make ``komega == delta/2``
+    for every branch — a coincidence of the buggy decomposition that
+    the corrected BL1967 standard composition (issue #280) no longer
+    produces.
+    """
+    from ad_hoc_diffractometer.kappa import kappa_to_eulerian_axes
+
     g = _setup_cubic(kappa6c, a=4.0)
     solutions = g.forward(1, 0, 0)
     assert len(solutions) > 0
+    conv = g.kappa_pseudo_angle_convention
     for sol in solutions:
-        assert sol["komega"] == pytest.approx(sol["delta"] / 2.0, abs=1e-10)
+        omega_virtual, _chi_v, _phi_v = kappa_to_eulerian_axes(
+            sol["komega"], sol["kappa"], sol["kphi"], conv
+        )
+        assert omega_virtual == pytest.approx(sol["delta"] / 2.0, abs=1e-8)
         assert sol["mu"] == pytest.approx(0.0, abs=1e-8)
         assert sol["nu"] == pytest.approx(0.0, abs=1e-8)
 
@@ -1973,12 +2052,15 @@ def test_fixed_psi_psi_verified_in_solutions(
         pytest.param(
             "fixed_psi_vertical", 1, 0, 0, (0, 0, 1), id="kappa6c-psi_vert-100"
         ),
-        # (-2,1,1) was previously here but is NOT accessible in true
-        # virtual bisecting on kappa6c with the kappa axis in the
-        # transverse-vertical plane (issue #252).  Use (2,1,-1) instead
-        # — non-degenerate kappa (≈78°), accessible.
+        # ``(-2, 1, 1)`` was originally here.  Issue #252 substituted
+        # ``(2, 1, -1)`` after the kappa-axis re-derivation; issue
+        # #280 further restricts reachability under the corrected
+        # BL1967 standard composition, and only ``(h, h, 0)`` and
+        # ``(h, 0, 0)`` reflections remain accessible in
+        # fixed_psi_vertical on this cubic kappa6c.  ``(1, 1, 0)``
+        # exercises the same code path with a non-degenerate kappa.
         pytest.param(
-            "fixed_psi_vertical", 2, 1, -1, (0, 0, 1), id="kappa6c-psi_vert-21m1"
+            "fixed_psi_vertical", 1, 1, 0, (0, 0, 1), id="kappa6c-psi_vert-110"
         ),
     ],
 )
@@ -2012,9 +2094,18 @@ def test_kappa6c_fixed_psi_round_trip(mode_name, h, k, l, ref):  # noqa: E741
 
 
 def test_kappa4cv_fixed_psi_round_trip():
-    """kappa4cv fixed_psi returns bisecting solutions via synthetic bisect."""
+    """kappa4cv fixed_psi returns bisecting solutions via synthetic bisect.
+
+    Uses ``(-1, 1, 0)`` rather than the older ``(1, 1, 0)``: under
+    the BL1967 standard composition (Busing & Levy 1967, fixed in
+    issue #280), ``(1, 1, 0)`` has a phi-axis-parallel component that
+    leaves no DOF for the
+    fixed-psi solver to satisfy both psi and Bragg simultaneously on
+    this cubic kappa4cv-BL geometry.  ``(-1, 1, 0)`` produces a
+    non-degenerate solution at natural psi.
+    """
     g = _setup_psi(kappa4cv, ref=(0, 0, 1))
-    natural = _natural_psi(g, 1, 1, 0)
+    natural = _natural_psi(g, -1, 1, 0)
     assert natural is not None
 
     from ad_hoc_diffractometer import REQUIRED
@@ -2027,7 +2118,7 @@ def test_kappa4cv_fixed_psi_round_trip():
         extras={"n_hat": REQUIRED, "psi": None},
     )
     g.mode_name = "fixed_psi"
-    assert _round_trip_ok(g, 1, 1, 0)
+    assert _round_trip_ok(g, -1, 1, 0)
 
 
 # --- psi undefined → empty solutions ---
@@ -2136,23 +2227,31 @@ def test_double_diffraction_raises_without_extras(factory, mode_name):
         pytest.param(fourcv, "double_diffraction", 1, 0, 0, (0, 1, 0), id="fourcv-100"),
         pytest.param(fourcv, "double_diffraction", 1, 1, 0, (0, 0, 1), id="fourcv-110"),
         pytest.param(fourch, "double_diffraction", 1, 0, 0, (0, 1, 0), id="fourch-100"),
+        # psic DD: under the corrected outermost-leftmost composition
+        # (issue #280), the primary ``(1, 0, 0)`` reflection lands on
+        # the diffractometer's vertical axis (= ``+x`` in YOU basis),
+        # which causes the secondary Ewald-sphere residual to be
+        # sign-constant over every outer angle (no simultaneous
+        # diffraction exists).  Use ``(1, 1, 1)`` instead: it is
+        # off-axis and produces valid double-diffraction solutions in
+        # both psic DD modes.
         pytest.param(
             psic,
             "double_diffraction_vertical",
             1,
-            0,
-            0,
+            1,
+            1,
             (0, 1, 0),
-            id="psic-vert-100",
+            id="psic-vert-111",
         ),
         pytest.param(
             psic,
             "double_diffraction_horizontal",
             1,
-            0,
-            0,
+            1,
+            1,
             (0, 1, 0),
-            id="psic-horiz-100",
+            id="psic-horiz-111",
         ),
     ],
 )
@@ -2412,20 +2511,24 @@ def test_forward_context_all_stages_constrained():
 
 
 def test_bisecting_early_termination_stale():
-    """Bisecting solver terminates early after enough stale seeds."""
-    # Use a reflection that has exactly 2 solutions so that:
-    # - The first 2 solutions are found from the analytic seeds
-    # - Subsequent seeds are all stale (converge to duplicates)
-    # - The solver breaks after _MAX_STALE consecutive stale seeds
-    # If it didn't early-terminate, it would try all 24 seeds.
+    """Bisecting solver terminates early after enough stale seeds.
+
+    Uses ``(1, 1, 0)`` (exactly 2 solutions: ±chi branches).  Under
+    the issue #280 corrected composition, ``(1, 0, 0)`` would have
+    been ambiguous: its ``Q_phi`` is parallel to the fourcv phi-axis
+    so phi is indeterminate and the Newton solver returns three
+    phi-equivalent solutions, defeating the "exactly 2" assertion.
+    ``(1, 1, 0)`` has an off-axis Q_phi and still exercises the same
+    code path (analytic-then-stale Newton sweep).
+    """
     g = _setup_cubic(fourcv, a=4.0)
-    solutions = g.forward(1, 0, 0)
+    solutions = g.forward(1, 1, 0)
     assert len(solutions) == 2  # noqa: PLR2004
     # Verify round-trip for both solutions
     for sol in solutions:
         hkl_back = g.inverse(sol)
         assert abs(hkl_back[0] - 1.0) < 1e-6
-        assert abs(hkl_back[1]) < 1e-6
+        assert abs(hkl_back[1] - 1.0) < 1e-6
         assert abs(hkl_back[2]) < 1e-6
 
 
@@ -2455,8 +2558,18 @@ def test_bisecting_max_solutions_termination():
 # ---------------------------------------------------------------------------
 
 
-def _bisect_fchi_fourcv(chi_value=90.0):
-    """fourcv with a custom bisecting + fixed_chi mode (only phi free)."""
+def _bisect_fchi_fourcv(chi_value=0.0):
+    """fourcv with a custom bisecting + fixed_chi mode (only phi free).
+
+    The default ``chi_value`` was changed from 90° to 0° under issue
+    #280: with the BL1967 standard outermost-leftmost composition, the
+    bisecting condition at chi=90 reaches only ``(1, 0, 0)`` (a
+    phi-degenerate target along the phi axis), which the analytic
+    one-free-angle helper correctly refuses (returns None) because
+    phi is mathematically indeterminate.  At chi=0 the bisecting
+    locus reaches off-axis reflections such as ``(0, 1, 0)`` with a
+    well-defined unique phi, exercising the analytic fast path.
+    """
     g = _setup_cubic(fourcv, a=4.0)
     g.modes["bisect_fchi"] = ConstraintSet(
         [BisectConstraint("omega", "ttheta"), SampleConstraint("chi", chi_value)],
@@ -2494,7 +2607,14 @@ def test_is_cardinal_axis(n, expected):
 
 
 def test_one_free_angle_analytic_invokes_fast_path():
-    """The analytic helper is invoked when the free-stage axis is cardinal."""
+    """The analytic helper is invoked when the free-stage axis is cardinal.
+
+    Uses ``(0, 1, 0)`` with ``chi = 0`` (the new ``_bisect_fchi_fourcv``
+    default).  Under issue #280 the older choice ``(1, 0, 0)`` at
+    ``chi = 90`` produced a Q_phi parallel to the phi axis, making
+    phi indeterminate and the analytic helper correctly return
+    ``None``.
+    """
     from ad_hoc_diffractometer import forward as fmod
 
     g = _bisect_fchi_fourcv()
@@ -2508,7 +2628,7 @@ def test_one_free_angle_analytic_invokes_fast_path():
 
     fmod._solve_one_free_angle_analytic = spy
     try:
-        g.forward(1, 0, 0)
+        g.forward(0, 1, 0)
     finally:
         fmod._solve_one_free_angle_analytic = orig
 
@@ -2516,17 +2636,17 @@ def test_one_free_angle_analytic_invokes_fast_path():
     assert len(calls) == 1
     name, theta = calls[0]
     assert name == "phi"
-    assert theta is not None  # solution exists for (1,0,0)
+    assert theta is not None  # solution exists for (0,1,0) with chi=0
 
 
 def test_one_free_angle_analytic_round_trip():
     """Analytic solution round-trips exactly through forward/inverse."""
     g = _bisect_fchi_fourcv()
-    sols = g.forward(1, 0, 0)
+    sols = g.forward(0, 1, 0)
     assert len(sols) >= 1
     for sol in sols:
         hkl_back = g.inverse(sol)
-        assert np.allclose(hkl_back, [1.0, 0.0, 0.0], atol=1e-9)
+        assert np.allclose(hkl_back, [0.0, 1.0, 0.0], atol=1e-9)
 
 
 def test_one_free_angle_analytic_matches_newton():
@@ -2534,7 +2654,7 @@ def test_one_free_angle_analytic_matches_newton():
     from ad_hoc_diffractometer import forward as fmod
 
     g = _bisect_fchi_fourcv()
-    sols_analytic = g.forward(1, 0, 0)
+    sols_analytic = g.forward(0, 1, 0)
     assert len(sols_analytic) == 1
     phi_analytic = sols_analytic[0]["phi"]
 
@@ -2542,7 +2662,7 @@ def test_one_free_angle_analytic_matches_newton():
     orig_check = fmod._is_cardinal_axis
     fmod._is_cardinal_axis = lambda n, atol=1e-12: False
     try:
-        sols_newton = g.forward(1, 0, 0)
+        sols_newton = g.forward(0, 1, 0)
     finally:
         fmod._is_cardinal_axis = orig_check
     assert len(sols_newton) == 1
