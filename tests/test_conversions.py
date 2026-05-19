@@ -63,11 +63,20 @@ def _sample(a=A_CUBIC):
 
 class TestHklToQ:
     def test_cubic_100(self):
-        """(1,0,0) gives Q along x with magnitude 2π/a."""
+        """(1,0,0) gives Q along the physical beam direction with magnitude 2π/a.
+
+        Under issue #280 ub_identity, the crystal a* axis is physically
+        aligned with the beam (+longitudinal).  For fourcv (BL basis,
+        longitudinal = +y), this places ``Q_phi(1,0,0)`` along +y rather
+        than along +x (the old basis-relative ``U = I`` outcome).
+        Magnitude is unchanged.
+        """
         s = _sample()
         Q = hkl_to_Q(s, 1, 0, 0)
-        expected = TWO_PI / A_CUBIC
-        assert Q == pytest.approx([expected, 0.0, 0.0], abs=1e-10)
+        long_hat = np.asarray(s.parent.basis["longitudinal"], dtype=float)
+        long_hat = long_hat / np.linalg.norm(long_hat)
+        expected = (TWO_PI / A_CUBIC) * long_hat
+        assert Q == pytest.approx(expected, abs=1e-10)
 
     def test_cubic_110(self):
         """(1,1,0) gives |Q| = 2π/a * sqrt(2)."""

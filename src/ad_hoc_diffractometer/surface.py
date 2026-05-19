@@ -151,18 +151,22 @@ def _surface_vectors(
     for name in angles:
         geometry.stage(name)  # raises KeyError if not found
 
-    # Compute rotation matrices statelessly (no save/restore needed)
+    # Compute rotation matrices statelessly (no save/restore needed).
+    # Composition follows the BL1967 standard convention (Busing & Levy
+    # 1967): outermost (floor-most) stage leftmost in the product, so
+    # Z = R_0 @ R_1 @ ... @ R_{n-1} and likewise for D.  Z maps phi-frame
+    # vectors to lab-frame vectors (v_lab = Z @ v_phi).
     from .rotation import _rotation_matrix_normalized
 
     Z = np.eye(3)
     for s in geometry.sample_stages:
         angle = angles.get(s.name, s.angle)
-        Z = _rotation_matrix_normalized(s._axis_hat, angle) @ Z  # noqa: SLF001
+        Z = Z @ _rotation_matrix_normalized(s._axis_hat, angle)  # noqa: SLF001
 
     D = np.eye(3)
     for s in geometry.detector_stages:
         angle = angles.get(s.name, s.angle)
-        D = _rotation_matrix_normalized(s._axis_hat, angle) @ D  # noqa: SLF001
+        D = D @ _rotation_matrix_normalized(s._axis_hat, angle)  # noqa: SLF001
 
     # Incident-beam direction: longitudinal basis vector (normalized)
     y_raw = np.asarray(geometry.basis["longitudinal"], dtype=float)

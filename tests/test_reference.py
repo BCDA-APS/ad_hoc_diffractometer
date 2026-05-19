@@ -128,11 +128,17 @@ def test_psi_angle_raises_without_azimuthal_reference():
 
 
 def test_psi_angle_with_azimuthal_reference():
-    """psi_angle returns a float in (-180, 180] when azimuthal_reference is set."""
+    """psi_angle returns a float in (-180, 180] when azimuthal_reference is set.
+
+    Uses ``(0, 1, 0)`` instead of ``(1, 0, 0)``: under issue #280
+    ub_identity the crystal a* axis is along the beam, so Q_phi(1,0,0)
+    is parallel to the beam and psi is undefined.  ``(0, 1, 0)``
+    produces a Q_phi off the beam axis.
+    """
     g = _setup_psic()
     g.azimuthal_reference = (0, 0, 1)
     g.mode_name = "bisecting_vertical"
-    sols = g.forward(1, 0, 0)
+    sols = g.forward(0, 1, 0)
     for s in sols:
         psi = psi_angle(g, angles=s)
         assert isinstance(psi, float)
@@ -140,12 +146,15 @@ def test_psi_angle_with_azimuthal_reference():
 
 
 def test_psi_angle_uses_current_angles_when_none():
-    """psi_angle uses current stage angles when angles=None."""
+    """psi_angle uses current stage angles when angles=None.
+
+    Uses ``(0, 1, 0)`` for the same reason as
+    :func:`test_psi_angle_with_azimuthal_reference`.
+    """
     g = _setup_psic()
     g.azimuthal_reference = (0, 0, 1)
-    # Forward first to get valid motor angles, then set stages
     g.mode_name = "bisecting_vertical"
-    sols = g.forward(1, 0, 0)
+    sols = g.forward(0, 1, 0)
     s = sols[0]
     for name, value in s.items():
         g.set_angle(name, value)
@@ -192,16 +201,19 @@ def test_naz_angle_uses_current_angles_when_none():
 
 
 def test_naz_angle_vertical_normal_returns_zero():
-    """naz_angle returns 0 when surface normal is vertical (undefined by convention)."""
+    """naz_angle returns 0 when surface normal is vertical (undefined by convention).
+
+    Under issue #280 ub_identity, ``UB @ (0, 1, 0) = U[:, 1] · |b2*|`` is
+    physically along ``+vertical`` (column 1 of U is the vertical basis
+    vector).  Pre-#280 the same physical configuration was selected by
+    ``surface_normal = (1, 0, 0)`` because the basis-relative ``U = I``
+    placed the crystal a-axis along the basis-x direction (= vertical
+    in psic-YOU).
+    """
     g = _setup_psic()
-    # Vertical = +x in BASIS_YOU; a surface normal along (1,0,0) Miller indices
-    # maps to a reciprocal direction. Use a normal that is vertical in the lab.
-    # For naz to be zero by convention, the horizontal projection must be negligible.
-    # The vertical axis is XHAT. Any n_hkl mapping to purely XHAT direction gives naz=0.
-    # This is tricky to arrange exactly — just verify naz is a float.
-    g.surface_normal = (1, 0, 0)
+    g.surface_normal = (0, 1, 0)
     naz = naz_angle(g)
-    assert isinstance(naz, float)
+    assert naz == 0.0
 
 
 # ---------------------------------------------------------------------------

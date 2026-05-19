@@ -7,6 +7,11 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+### Behavior change
+
+- Rotation composition and `ub_identity` corrected. (#280)
+- B matrix for non-cubic lattices now matches BL1967. (#280)
+
 ### Fixed
 
 - Doc version-switcher dropdown now shows every published version. (#273)

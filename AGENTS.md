@@ -535,25 +535,56 @@ diff is reviewable.
 ## CHANGES.md style
 
 `CHANGES.md` is a user-facing changelog, not a design document.  Each
-bullet is **one short headline plus the issue/PR reference** — that is
-the entire bullet.  Nothing more.
+bullet is **a few words plus the issue/PR reference**.  The issue/PR
+reference carries the full load of explanation — readers who want
+details follow the link.  The bullet itself names the change in the
+fewest words that identify it.
+
+**Hard length cap: ≤ 12 words before the ` (#NNN)` reference.**  If
+you find yourself writing a second clause, a semicolon, an "and", a
+parenthetical aside, or a "users must …" instruction in the bullet
+itself, the bullet is too long — cut it down.  All of that material
+belongs in the referenced issue or PR, not in the changelog.
 
 **Use v0.6.0 and earlier as the style reference.**  Several recent
 entries (v0.7.0, v0.8.0) drifted toward multi-sentence bullets with
 implementation detail and benchmark numbers; do not imitate them.
 v0.6.0 is the canonical pattern: each bullet is a short headline
-(typically ≤ 12 words) followed by ` (#NNN)` or ` (#NNN, #MMM)`.
+followed by ` (#NNN)` or ` (#NNN, #MMM)`.
 
-- One bullet per change.  A single short sentence (or sentence
-  fragment) followed by the issue/PR reference.  No second sentence,
-  no rationale, no cross-validation numbers, no comparison to other
-  packages, no internal implementation detail, no benchmark numbers.
+Examples of acceptable length:
+
+```
+- Rotation composition and `ub_identity` corrected. (#280)
+- B matrix for non-cubic lattices now matches BL1967. (#280)
+- Doc version-switcher dropdown now shows every published version. (#273)
+- Switch to declarative YAML for demo geometries. (#267)
+```
+
+Examples of bullets that are **too long** and must be cut:
+
+```
+- Compose stage rotations outermost-leftmost (BL1967); place crystal a*
+  along the beam at ub_identity; saved UB matrices must be re-derived. (#280)
+- Default UB matrix (ub_identity) now places the crystal a-axis along
+  the beam direction; sessions relying on the previous default must
+  explicitly set U or measure orienting reflections. (#NNN)
+```
+
+Both of the "too long" examples pack the issue body into the
+changelog.  The issue/PR already has the body; the bullet should not
+duplicate it.
+
+- One bullet per change.  A few words followed by the issue/PR
+  reference.  No second sentence, no rationale, no cross-validation
+  numbers, no comparison to other packages, no internal implementation
+  detail, no benchmark numbers, no migration instructions.
 - Use the existing subsection headings: `Breaking changes`, `Behavior
   change`, `Added`, `Changed`, `Fixed`.  Omit any that are empty.
 - A correctness fix that changes computed numerical output gets one
-  short `Behavior change` bullet stating what changes and what users
-  must do (e.g. "re-derive saved UB matrices") — not a multi-line
-  essay.
+  short `Behavior change` bullet naming what changed.  Migration
+  instructions (e.g. "re-derive saved UB matrices") belong in the
+  referenced issue/PR, not in the bullet.
 - Do **not** add bullets for test-suite changes (new tests,
   parametrization edits, test-only HKL substitutions), docstring
   fixes, or internal refactoring.  A `Fixed` entry implicitly
@@ -562,6 +593,11 @@ v0.6.0 is the canonical pattern: each bullet is a short headline
   `Released YYYY-MM-DD.` and nothing else.  No prose paragraph.
 - A single-fix release should be three or four lines of bullets, not
   more (see v0.9.0 for the model: two bullets, one line each).
+
+When in doubt, err on the side of fewer words.  If a reviewer can
+look at the bullet and identify what the change is about (well
+enough to decide whether to click the issue link), it is long
+enough.
 
 Contributed by: OpenCode (argo/claudeopus47)
 

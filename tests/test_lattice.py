@@ -438,11 +438,22 @@ def test_lattice_lazy_not_computed_at_construction():
 
 
 def test_lattice_lazy_computed_after_access():
+    """Each lazy property populates its own cache when accessed.
+
+    Under issue #280, the three properties (``cartesian_lattice_vectors``,
+    ``reciprocal_lattice_vectors``, ``B``) are computed independently
+    from the lattice parameters via :func:`b_matrix_bl1967` and the
+    BL1967 reciprocal-of-reciprocal identity, rather than chained
+    through one another.  Accessing ``B`` therefore only populates
+    ``_B``; the other caches populate on their own first access.
+    """
     lat = Lattice(a=5.0)
     _ = lat.B
-    assert lat._cartesian_lattice_vectors is not None
-    assert lat._reciprocal_lattice_vectors is not None
     assert lat._B is not None
+    _ = lat.cartesian_lattice_vectors
+    assert lat._cartesian_lattice_vectors is not None
+    _ = lat.reciprocal_lattice_vectors
+    assert lat._reciprocal_lattice_vectors is not None
 
 
 @pytest.mark.parametrize(

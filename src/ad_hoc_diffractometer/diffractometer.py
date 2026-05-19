@@ -1789,10 +1789,17 @@ class AdHocDiffractometer:
 
     def sample_rotation_matrix(self) -> np.ndarray:
         """
-        Compute the total sample rotation matrix Z = R_floor * ... * R_top.
+        Compute the total sample rotation matrix.
 
-        Stages are applied in stacking order: the floor-most stage is applied
-        first (leftmost in the product), the innermost stage last.
+        Composition follows the BL1967 standard convention (Busing &
+        Levy, *Acta Cryst.* 22, 457-464, 1967): the outermost
+        (floor-most) stage is leftmost in the product, so
+
+            Z = R_0 @ R_1 @ ... @ R_{n-1}
+
+        where ``R_0`` is the floor-most stage and ``R_{n-1}`` is the
+        innermost stage closest to the sample.  Z maps phi-frame vectors
+        to lab-frame vectors: ``v_lab = Z @ v_phi``.
 
         Returns
         -------
@@ -1800,12 +1807,17 @@ class AdHocDiffractometer:
         """
         Z = np.eye(3)
         for s in self.sample_stages:
-            Z = s.rotation_matrix() @ Z
+            Z = Z @ s.rotation_matrix()
         return Z
 
     def detector_rotation_matrix(self) -> np.ndarray:
         """
-        Compute the total detector rotation matrix in stacking order.
+        Compute the total detector rotation matrix.
+
+        Composition follows the same outermost-leftmost convention as
+        :meth:`sample_rotation_matrix`::
+
+            D = R_0 @ R_1 @ ... @ R_{n-1}
 
         Returns
         -------
@@ -1813,7 +1825,7 @@ class AdHocDiffractometer:
         """
         D = np.eye(3)
         for s in self.detector_stages:
-            D = s.rotation_matrix() @ D
+            D = D @ s.rotation_matrix()
         return D
 
     def summary(self) -> None:

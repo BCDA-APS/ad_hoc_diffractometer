@@ -305,15 +305,18 @@ def _eulerian_rotation(
 ) -> np.ndarray:
     """Compose the equivalent-Eulerian sample rotation matrix.
 
-    Stage order matches :func:`~orientation._compute_q_phi`: the
-    innermost stage (``phi``) is the leftmost matrix in the product,
-    so that ``Z · v`` rotates ``v`` by the outermost stage first when
-    applied right-to-left.
+    Stage order matches :func:`~orientation._compute_q_phi` under the
+    BL1967 standard convention (Busing & Levy 1967): the outermost
+    stage (``omega``) is the leftmost matrix in the product, so
+
+        Z = R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ)
+
+    and ``Z · v_phi`` maps phi-frame vectors to lab-frame vectors.
     """
     R_om = _rotation_matrix_normalized(convention.n_komega, omega_deg)
     R_ch = _rotation_matrix_normalized(convention.n_chi_eq, chi_deg)
     R_ph = _rotation_matrix_normalized(convention.n_kphi, phi_deg)
-    return R_ph @ R_ch @ R_om
+    return R_om @ R_ch @ R_ph
 
 
 def _kappa_rotation(
@@ -324,13 +327,16 @@ def _kappa_rotation(
 ) -> np.ndarray:
     """Compose the real kappa-stack sample rotation matrix.
 
-    Stage order matches :func:`~orientation._compute_q_phi`: innermost
-    stage (``kphi``) is the leftmost matrix in the product.
+    Stage order matches :func:`~orientation._compute_q_phi` under the
+    BL1967 standard convention (Busing & Levy 1967): the outermost
+    stage (``komega``) is the leftmost matrix in the product, so
+
+        Z = R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ).
     """
     R_om = _rotation_matrix_normalized(convention.n_komega, komega_deg)
     R_ka = _rotation_matrix_normalized(convention.n_kappa, kappa_deg)
     R_ph = _rotation_matrix_normalized(convention.n_kphi, kphi_deg)
-    return R_ph @ R_ka @ R_om
+    return R_om @ R_ka @ R_ph
 
 
 def _angle_about_axis(v_from: np.ndarray, v_to: np.ndarray, axis: np.ndarray) -> float:
@@ -404,37 +410,38 @@ def eulerian_to_kappa_axes(
     using the geometry's actual signed stage axes.
 
     Inverts the rotation-matrix identity (with stage order matching
-    :func:`~orientation._compute_q_phi` — innermost on the left)
+    :func:`~orientation._compute_q_phi` — BL1967 standard convention,
+    Busing & Levy 1967, outermost on the left)
 
-        R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)
-            =  R(n_kphi, φ) · R(n_chi_eq, χ) · R(n_komega, ω).
+        R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)
+            =  R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ).
 
     The decomposition is fully analytic and selects between the two
     kappa-branch solutions via the ``branch`` parameter.
 
     Algorithm
     ---------
-    Let ``R_eul = R(n_kphi, φ) · R(n_chi_eq, χ) · R(n_komega, ω)``
-    be the target rotation.  Apply both sides to ``n_komega``:
+    Let ``R_eul = R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ)``
+    be the target rotation.  Apply both sides to ``n_kphi``:
 
-        R(n_kphi, κφ) · R(n_kappa, κ) · n_komega  =  R_eul · n_komega
+        R(n_komega, κω) · R(n_kappa, κ) · n_kphi  =  R_eul · n_kphi
 
-    (since ``R(n_komega, ·) · n_komega = n_komega``).  Take the dot
-    product with ``n_kphi``:
+    (since ``R(n_kphi, ·) · n_kphi = n_kphi``).  Take the dot
+    product with ``n_komega`` (which is invariant under ``R(n_komega, ·)``):
 
-        n_kphi · R(n_kappa, κ) · n_komega  =  n_kphi · R_eul · n_komega.
+        n_komega · R(n_kappa, κ) · n_kphi  =  n_komega · R_eul · n_kphi.
 
-    Expanding ``R(n_kappa, κ) · n_komega`` via the Rodrigues formula
+    Expanding ``R(n_kappa, κ) · n_kphi`` via the Rodrigues formula
     yields a single trigonometric equation in κ of the form
     ``alpha·cos(κ) + beta·sin(κ) = gamma`` with two solutions
     (the two kappa branches).
 
-    Once κ is fixed, ``κφ`` is the rotation about ``n_kphi`` that
-    takes ``R(n_kappa, κ) · n_komega`` onto ``R_eul · n_komega``
-    (these vectors lie on the same cone about ``n_kphi`` by
-    construction).  Finally ``κω`` is the residual rotation about
-    ``n_komega`` extracted from
-    ``R(n_komega, κω) = R(n_kappa, -κ) · R(n_kphi, -κφ) · R_eul``.
+    Once κ is fixed, ``κω`` is the rotation about ``n_komega`` that
+    takes ``R(n_kappa, κ) · n_kphi`` onto ``R_eul · n_kphi``
+    (these vectors lie on the same cone about ``n_komega`` by
+    construction).  Finally ``κφ`` is the residual rotation about
+    ``n_kphi`` extracted from
+    ``R(n_kphi, κφ) = R(n_kappa, -κ) · R(n_komega, -κω) · R_eul``.
 
     Parameters
     ----------
@@ -507,17 +514,21 @@ def eulerian_to_kappa_axes(
     n_ka = convention.n_kappa
     n_ph = convention.n_kphi
 
-    # Step 1 — solve for κ from
-    #   n_ph · R(n_ka, κ) · n_om  =  n_ph · R_eul · n_om
-    v_target = R_eul @ n_om
-    gamma = float(np.dot(n_ph, v_target))
+    # Step 1 — solve for κ from the scalar equation
+    #   n_om · R(n_ka, κ) · n_ph  =  n_om · R_eul · n_ph
+    # (n_om is invariant under R(n_om, κω); n_ph is invariant under
+    # R(n_ph, κφ); the BL1967 standard composition has R(n_om, κω)
+    # outermost and R(n_ph, κφ) innermost, so applying both sides to
+    # n_ph then dotting with n_om removes both κω and κφ.)
+    v_target = R_eul @ n_ph
+    gamma = float(np.dot(n_om, v_target))
 
-    # Rodrigues expansion of R(n_ka, κ) · n_om:
-    #   R(n_ka, κ) · n_om = n_om·cos(κ) + (n_ka × n_om)·sin(κ)
-    #                       + n_ka·(n_ka·n_om)·(1 − cos(κ))
-    A = float(np.dot(n_ph, n_om))
-    B = float(np.dot(n_ph, np.cross(n_ka, n_om)))
-    C = float(np.dot(n_ph, n_ka)) * float(np.dot(n_ka, n_om))
+    # Rodrigues expansion of R(n_ka, κ) · n_ph:
+    #   R(n_ka, κ) · n_ph = n_ph·cos(κ) + (n_ka × n_ph)·sin(κ)
+    #                       + n_ka·(n_ka·n_ph)·(1 − cos(κ))
+    A = float(np.dot(n_om, n_ph))
+    B = float(np.dot(n_om, np.cross(n_ka, n_ph)))
+    C = float(np.dot(n_om, n_ka)) * float(np.dot(n_ka, n_ph))
     # → (A − C)·cos(κ) + B·sin(κ) = γ − C
     kappa_candidates = _solve_alpha_cos_beta_sin_eq_gamma(A - C, B, gamma - C)
 
@@ -531,9 +542,9 @@ def eulerian_to_kappa_axes(
         kappa_deg = kappa_candidates[-1]
 
     # Degeneracy at κ = 0: when the kappa rotation is the identity,
-    # ``R(n_kphi, κφ) · R(n_komega, κω) = R(n_kphi, φ) · R(n_komega, ω)``
-    # has a one-parameter family of solutions whenever ``n_kphi`` is
-    # parallel (or anti-parallel) to ``n_komega`` — and *all* kappa
+    # ``R(n_komega, κω) · R(n_kphi, κφ) = R(n_komega, ω) · R(n_kphi, φ)``
+    # has a one-parameter family of solutions whenever ``n_komega`` is
+    # parallel (or anti-parallel) to ``n_kphi`` — and *all* kappa
     # demo geometries in this package have that property by design (komega
     # and kphi share the same physical motor axis).  Pick the
     # representative that maps ``ω → κω`` and ``φ → κφ`` directly so
@@ -542,28 +553,28 @@ def eulerian_to_kappa_axes(
     if abs(kappa_deg) < 1e-12 and parallel_axes:  # pragma: no cover
         return _wrap_180(omega_deg), 0.0, _wrap_180(phi_deg)
 
-    # Step 2 — recover κφ as the signed rotation about n_kphi taking
-    # R(n_kappa, κ) · n_komega onto R_eul · n_komega.
+    # Step 2 — recover κω as the signed rotation about n_komega taking
+    # R(n_kappa, κ) · n_kphi onto R_eul · n_kphi.
     R_ka = _rotation_matrix_normalized(n_ka, kappa_deg)
-    w = R_ka @ n_om
-    kphi_deg = _angle_about_axis(w, v_target, n_ph)
+    w = R_ka @ n_ph
+    komega_deg = _angle_about_axis(w, v_target, n_om)
 
-    # Step 3 — recover κω as the residual rotation about n_komega.
-    # From R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω) = R_eul,
-    # we have R(n_komega, κω) = R(n_kappa, -κ) · R(n_kphi, -κφ) · R_eul.
-    R_ph_inv = _rotation_matrix_normalized(n_ph, -kphi_deg)
+    # Step 3 — recover κφ as the residual rotation about n_kphi.
+    # From R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ) = R_eul,
+    # we have R(n_kphi, κφ) = R(n_kappa, -κ) · R(n_komega, -κω) · R_eul.
+    R_om_inv = _rotation_matrix_normalized(n_om, -komega_deg)
     R_ka_inv = _rotation_matrix_normalized(n_ka, -kappa_deg)
-    R_residual = R_ka_inv @ R_ph_inv @ R_eul
-    # R_residual should be a pure rotation about n_komega.  Recover
-    # the angle from the action on any vector perpendicular to n_om.
-    if abs(n_om[0]) < 0.9:
+    R_residual = R_ka_inv @ R_om_inv @ R_eul
+    # R_residual should be a pure rotation about n_kphi.  Recover
+    # the angle from the action on any vector perpendicular to n_ph.
+    if abs(n_ph[0]) < 0.9:
         ref = np.array([1.0, 0.0, 0.0])
     else:
         ref = np.array([0.0, 1.0, 0.0])
-    perp = ref - np.dot(ref, n_om) * n_om
+    perp = ref - np.dot(ref, n_ph) * n_ph
     perp = perp / np.linalg.norm(perp)
     perp_rot = R_residual @ perp
-    komega_deg = _angle_about_axis(perp, perp_rot, n_om)
+    kphi_deg = _angle_about_axis(perp, perp_rot, n_ph)
 
     return _wrap_180(komega_deg), _wrap_180(kappa_deg), _wrap_180(kphi_deg)
 
@@ -580,10 +591,11 @@ def kappa_to_eulerian_axes(
 
     Inverts :func:`eulerian_to_kappa_axes`.  Decomposes the kappa
     sample-rotation matrix (with stage order matching
-    :func:`~orientation._compute_q_phi`) as
+    :func:`~orientation._compute_q_phi` under the BL1967 standard
+    convention, Busing & Levy 1967) as
 
-        R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)
-            =  R(n_kphi, φ) · R(n_chi_eq, χ) · R(n_komega, ω)
+        R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)
+            =  R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ)
 
     and returns ``(ω, χ, φ)``.  The decomposition has two χ branches;
     this function returns the branch consistent with the input kappa
@@ -591,18 +603,18 @@ def kappa_to_eulerian_axes(
 
     Algorithm
     ---------
-    Let ``R = R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)`` be
+    Let ``R = R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)`` be
     the realized rotation.  By the same reasoning as in
     :func:`eulerian_to_kappa_axes` (applied to the Eulerian-equivalent
     triple):
 
     1. Solve for χ from
-       ``n_kphi · R(n_chi_eq, χ) · n_komega  =  n_kphi · R · n_komega``.
+       ``n_komega · R(n_chi_eq, χ) · n_kphi  =  n_komega · R · n_kphi``.
 
-    2. Recover φ as the signed rotation about ``n_kphi`` taking
-       ``R(n_chi_eq, χ) · n_komega`` onto ``R · n_komega``.
+    2. Recover ω as the signed rotation about ``n_komega`` taking
+       ``R(n_chi_eq, χ) · n_kphi`` onto ``R · n_kphi``.
 
-    3. Recover ω from the residual rotation about ``n_komega``.
+    3. Recover φ from the residual rotation about ``n_kphi``.
 
     Parameters
     ----------
@@ -640,13 +652,16 @@ def kappa_to_eulerian_axes(
     n_ch = convention.n_chi_eq
     n_ph = convention.n_kphi
 
-    # Step 1 — solve for χ from
-    #   n_ph · R(n_ch, χ) · n_om  =  n_ph · R · n_om
-    v_target = R @ n_om
-    gamma = float(np.dot(n_ph, v_target))
-    A = float(np.dot(n_ph, n_om))
-    B = float(np.dot(n_ph, np.cross(n_ch, n_om)))
-    C = float(np.dot(n_ph, n_ch)) * float(np.dot(n_ch, n_om))
+    # Step 1 — solve for χ from the scalar equation
+    #   n_om · R(n_ch, χ) · n_ph  =  n_om · R · n_ph
+    # (Apply both sides of R_eul = R(n_om,ω) · R(n_ch,χ) · R(n_ph,φ)
+    # to n_ph; the inner R(n_ph,·) factor disappears.  Dotting with
+    # n_om removes the outer R(n_om,·) factor.)
+    v_target = R @ n_ph
+    gamma = float(np.dot(n_om, v_target))
+    A = float(np.dot(n_om, n_ph))
+    B = float(np.dot(n_om, np.cross(n_ch, n_ph)))
+    C = float(np.dot(n_om, n_ch)) * float(np.dot(n_ch, n_ph))
     chi_candidates = _solve_alpha_cos_beta_sin_eq_gamma(A - C, B, gamma - C)
 
     # The two χ candidates differ by reflection through the cone-axis
@@ -657,22 +672,25 @@ def kappa_to_eulerian_axes(
     best_err = float("inf")
     target_branch = +1 if kappa_deg >= 0 else -1
     for chi_deg in chi_candidates:
-        # Recover φ from the n_kphi cone identity.
+        # Recover ω from the n_komega cone identity:
+        # R(n_om, ω) takes R(n_ch, χ) · n_ph onto R · n_ph.
         R_ch = _rotation_matrix_normalized(n_ch, chi_deg)
-        w = R_ch @ n_om
-        phi_deg = _angle_about_axis(w, v_target, n_ph)
-        # Recover ω from the residual rotation about n_komega.
-        R_ph_inv = _rotation_matrix_normalized(n_ph, -phi_deg)
+        w = R_ch @ n_ph
+        omega_deg = _angle_about_axis(w, v_target, n_om)
+        # Recover φ from the residual rotation about n_kphi.
+        # From R(n_om, ω) · R(n_ch, χ) · R(n_ph, φ) = R, we have
+        # R(n_ph, φ) = R(n_ch, -χ) · R(n_om, -ω) · R.
+        R_om_inv = _rotation_matrix_normalized(n_om, -omega_deg)
         R_ch_inv = _rotation_matrix_normalized(n_ch, -chi_deg)
-        R_residual = R_ch_inv @ R_ph_inv @ R
-        if abs(n_om[0]) < 0.9:
+        R_residual = R_ch_inv @ R_om_inv @ R
+        if abs(n_ph[0]) < 0.9:
             ref = np.array([1.0, 0.0, 0.0])
         else:
             ref = np.array([0.0, 1.0, 0.0])
-        perp = ref - np.dot(ref, n_om) * n_om
+        perp = ref - np.dot(ref, n_ph) * n_ph
         perp = perp / np.linalg.norm(perp)
         perp_rot = R_residual @ perp
-        omega_deg = _angle_about_axis(perp, perp_rot, n_om)
+        phi_deg = _angle_about_axis(perp, perp_rot, n_ph)
         # Round-trip error: forward through eulerian_to_kappa_axes.
         try:
             ko, k, kp = eulerian_to_kappa_axes(
