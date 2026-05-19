@@ -7,6 +7,11 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+## Release v0.11.0
+
+Released 2026-05-19
+
+
 ### Behavior change
 
 - Rotation composition and `ub_identity` corrected. (#280)
