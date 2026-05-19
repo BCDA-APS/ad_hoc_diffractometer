@@ -14,6 +14,7 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ### Added
 
+- Package now available on conda-forge.
 - `ad_hoc_diffractometer.reference.natural_psi(g, h, k, l)`. (#278)
 
 ### Changed
