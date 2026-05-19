@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=77dce04c"></script>
+    <script src="../../../_static/documentation_options.js?v=8a79c2a2"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-19 16:02 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 16:49 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -1680,11 +1680,17 @@ quantity — the same for every Bragg solution.  This solver:</p>
 <li><p>Computes the natural ψ from <code class="docutils literal notranslate"><span class="pre">Q_phi</span></code> (no motor angles).</p></li>
 <li><p>Compares with <code class="docutils literal notranslate"><span class="pre">psi_target</span></code> from the mode’s
 <code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code>.</p></li>
-<li><p>If they disagree (beyond 0.1° tolerance): returns <code class="docutils literal notranslate"><span class="pre">[]</span></code>.</p></li>
+<li><p>If ψ is undefined for the reflection (Q ∥ azimuthal reference, or
+Q ∥ incident beam): emits a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#UserWarning" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserWarning</span></code></a> and returns <code class="docutils literal notranslate"><span class="pre">[]</span></code>.</p></li>
+<li><p>If natural ψ and target disagree beyond 0.1°: emits a
+<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#UserWarning" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserWarning</span></code></a> naming the natural ψ value and returns <code class="docutils literal notranslate"><span class="pre">[]</span></code>.</p></li>
 <li><p>If they agree: delegates to the appropriate existing solver
 (bisecting, kappa-virtual, or synthetic bisecting) and returns
 all solutions.</p></li>
 </ol>
+<p>The warnings (added in issue #278) make the “ψ is fixed by UB and
+hkl, not by motors” semantics visible to callers who previously saw
+only a silent empty list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2101,7 +2107,7 @@ for this geometry.</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-19 16:02 CDT.
+  Last updated on 2026-05-19 16:49 CDT.
   <br/>
 </p></div>
       

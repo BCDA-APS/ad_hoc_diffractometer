@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=77dce04c"></script>
+    <script src="../../_static/documentation_options.js?v=8a79c2a2"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-19 16:02 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 16:49 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -446,6 +446,11 @@
 <span class="sd">:func:`psi_angle`</span>
 <span class="sd">    Azimuthal angle ψ of the reference vector n̂ about Q (You 1999, eq. 23).</span>
 
+<span class="sd">:func:`natural_psi`</span>
+<span class="sd">    Natural azimuthal angle ψ for a reflection, computed from UB and</span>
+<span class="sd">    (h, k, l) without any motor angles.  Equals :func:`psi_angle` at</span>
+<span class="sd">    every Bragg solution of the same reflection (issue #176).</span>
+
 <span class="sd">:func:`naz_angle`</span>
 <span class="sd">    Azimuthal angle of n̂ projected onto the lab-frame horizontal plane.</span>
 
@@ -640,6 +645,75 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_require_azimuthal_reference</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">psi</span><span class="p">(</span><span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="natural_psi">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference.natural_psi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">natural_psi</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">l</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="c1"># noqa: E741</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the natural azimuthal angle ψ for a reflection from UB alone.</span>
+
+<span class="sd">    The azimuthal angle ψ is a pure phi-frame quantity: for a fixed</span>
+<span class="sd">    crystal orientation (UB matrix) and a fixed reflection (h, k, l),</span>
+<span class="sd">    ψ depends only on ``Q_phi = UB @ (h, k, l)`` and the azimuthal</span>
+<span class="sd">    reference vector ``n_phi = UB @ azimuthal_reference``.  **No motor</span>
+<span class="sd">    angles enter the calculation** — every motor configuration that</span>
+<span class="sd">    brings (h, k, l) into Bragg condition produces the *same* ψ.</span>
+
+<span class="sd">    This invariance is the core fact behind the ψ-validation-filter</span>
+<span class="sd">    forward-solver model: an :class:`~mode.ReferenceConstraint`</span>
+<span class="sd">    ``&quot;psi&quot;`` target is reachable for a given hkl if and only if it</span>
+<span class="sd">    equals this natural value.  Use ``natural_psi`` to ask &quot;what ψ</span>
+<span class="sd">    must I request to make this reflection reachable?&quot; before calling</span>
+<span class="sd">    :meth:`~diffractometer.AdHocDiffractometer.forward`.</span>
+
+<span class="sd">    Requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`</span>
+<span class="sd">    and :attr:`~sample.Sample.UB` to be set on the geometry.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        The diffractometer instance.  ``geometry.sample.UB`` and</span>
+<span class="sd">        ``geometry.azimuthal_reference`` must be set.</span>
+<span class="sd">    h, k, l : float</span>
+<span class="sd">        Miller indices of the reflection.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or None</span>
+<span class="sd">        Natural ψ in degrees, in the range (−180°, +180°].  Returns</span>
+<span class="sd">        ``None`` when ψ is undefined for the reflection — that is,</span>
+<span class="sd">        when ``Q_phi`` is parallel to the azimuthal reference (any ψ</span>
+<span class="sd">        rotation about Q leaves the reference unchanged) or when</span>
+<span class="sd">        ``Q_phi`` is parallel to the incident beam direction.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``geometry.azimuthal_reference`` is ``None``.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    psi_angle : ψ computed from current motor angles (always equals</span>
+<span class="sd">        ``natural_psi`` for any Bragg solution of the same (h, k, l)).</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    * You (1999), eq. 23.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_require_azimuthal_reference</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="c1"># Local import to avoid module-load ordering issues with forward.py.</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.forward</span><span class="w"> </span><span class="kn">import</span> <span class="n">_compute_natural_psi</span>
+
+    <span class="n">hkl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">l</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">Q_phi</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">hkl</span>
+    <span class="k">return</span> <span class="n">_compute_natural_psi</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">)</span></div>
 
 
 
@@ -965,7 +1039,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-19 16:02 CDT.
+  Last updated on 2026-05-19 16:49 CDT.
   <br/>
 </p></div>
       

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=77dce04c"></script>
+    <script src="../../../_static/documentation_options.js?v=8a79c2a2"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-19 16:02 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 16:49 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -548,6 +548,10 @@ neither.</p>
 </dd>
 <dt><a class="reference internal" href="#ad_hoc_diffractometer.reference.psi_angle" title="ad_hoc_diffractometer.reference.psi_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">psi_angle()</span></code></a></dt><dd><p>Azimuthal angle ψ of the reference vector n̂ about Q (You 1999, eq. 23).</p>
 </dd>
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.reference.natural_psi" title="ad_hoc_diffractometer.reference.natural_psi"><code class="xref py py-func docutils literal notranslate"><span class="pre">natural_psi()</span></code></a></dt><dd><p>Natural azimuthal angle ψ for a reflection, computed from UB and
+(h, k, l) without any motor angles.  Equals <a class="reference internal" href="#ad_hoc_diffractometer.reference.psi_angle" title="ad_hoc_diffractometer.reference.psi_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">psi_angle()</span></code></a> at
+every Bragg solution of the same reflection (issue #176).</p>
+</dd>
 <dt><a class="reference internal" href="#ad_hoc_diffractometer.reference.naz_angle" title="ad_hoc_diffractometer.reference.naz_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">naz_angle()</span></code></a></dt><dd><p>Azimuthal angle of n̂ projected onto the lab-frame horizontal plane.</p>
 </dd>
 <dt><a class="reference internal" href="#ad_hoc_diffractometer.reference.omega_pseudo" title="ad_hoc_diffractometer.reference.omega_pseudo"><code class="xref py py-func docutils literal notranslate"><span class="pre">omega_pseudo()</span></code></a></dt><dd><p>SPEC <code class="docutils literal notranslate"><span class="pre">OMEGA</span></code> pseudo-angle — angle between Q and the plane of the
@@ -586,13 +590,16 @@ is not set on the geometry (where applicable).</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.reference.incidence_angle" title="ad_hoc_diffractometer.reference.incidence_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">incidence_angle</span></code></a>(→ float)</p></td>
 <td><p>Compute the angle of incidence α_i in degrees.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.reference.naz_angle" title="ad_hoc_diffractometer.reference.naz_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">naz_angle</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.reference.natural_psi" title="ad_hoc_diffractometer.reference.natural_psi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">natural_psi</span></code></a>(→ float | None)</p></td>
+<td><p>Compute the natural azimuthal angle ψ for a reflection from UB alone.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.reference.naz_angle" title="ad_hoc_diffractometer.reference.naz_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">naz_angle</span></code></a>(→ float)</p></td>
 <td><p>Compute the lab-frame azimuthal angle of n̂ (naz) in degrees.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.reference.omega_pseudo" title="ad_hoc_diffractometer.reference.omega_pseudo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">omega_pseudo</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.reference.omega_pseudo" title="ad_hoc_diffractometer.reference.omega_pseudo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">omega_pseudo</span></code></a>(→ float)</p></td>
 <td><p>Compute the SPEC <code class="docutils literal notranslate"><span class="pre">OMEGA</span></code> pseudo-angle in degrees.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.reference.psi_angle" title="ad_hoc_diffractometer.reference.psi_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psi_angle</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.reference.psi_angle" title="ad_hoc_diffractometer.reference.psi_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psi_angle</span></code></a>(→ float)</p></td>
 <td><p>Compute the azimuthal angle ψ of the reference vector n̂ about Q.</p></td>
 </tr>
 </tbody>
@@ -717,6 +724,64 @@ stage angles are used.</p></li>
 <ul class="simple">
 <li><p>You (1999), eq. 10.</p></li>
 <li><p>Lohmeier &amp; Vlieg (1993), §4.2.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.reference.natural_psi">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.reference.</span></span><span class="sig-name descname"><span class="pre">natural_psi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/reference.html#natural_psi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.reference.natural_psi" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.reference.natural_psi</span></code></p>
+</div>
+<p>Compute the natural azimuthal angle ψ for a reflection from UB alone.</p>
+<p>The azimuthal angle ψ is a pure phi-frame quantity: for a fixed
+crystal orientation (UB matrix) and a fixed reflection (h, k, l),
+ψ depends only on <code class="docutils literal notranslate"><span class="pre">Q_phi</span> <span class="pre">=</span> <span class="pre">UB</span> <span class="pre">&#64;</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> and the azimuthal
+reference vector <code class="docutils literal notranslate"><span class="pre">n_phi</span> <span class="pre">=</span> <span class="pre">UB</span> <span class="pre">&#64;</span> <span class="pre">azimuthal_reference</span></code>.  <strong>No motor
+angles enter the calculation</strong> — every motor configuration that
+brings (h, k, l) into Bragg condition produces the <em>same</em> ψ.</p>
+<p>This invariance is the core fact behind the ψ-validation-filter
+forward-solver model: an <code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code>
+<code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code> target is reachable for a given hkl if and only if it
+equals this natural value.  Use <code class="docutils literal notranslate"><span class="pre">natural_psi</span></code> to ask “what ψ
+must I request to make this reflection reachable?” before calling
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
+<p>Requires <code class="xref py py-attr docutils literal notranslate"><span class="pre">azimuthal_reference</span></code>
+and <code class="xref py py-attr docutils literal notranslate"><span class="pre">UB</span></code> to be set on the geometry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>) – The diffractometer instance.  <code class="docutils literal notranslate"><span class="pre">geometry.sample.UB</span></code> and
+<code class="docutils literal notranslate"><span class="pre">geometry.azimuthal_reference</span></code> must be set.</p></li>
+<li><p><strong>h</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Miller indices of the reflection.</p></li>
+<li><p><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Miller indices of the reflection.</p></li>
+<li><p><strong>l</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Miller indices of the reflection.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Natural ψ in degrees, in the range (−180°, +180°].  Returns
+<code class="docutils literal notranslate"><span class="pre">None</span></code> when ψ is undefined for the reflection — that is,
+when <code class="docutils literal notranslate"><span class="pre">Q_phi</span></code> is parallel to the azimuthal reference (any ψ
+rotation about Q leaves the reference unchanged) or when
+<code class="docutils literal notranslate"><span class="pre">Q_phi</span></code> is parallel to the incident beam direction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">geometry.azimuthal_reference</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.reference.psi_angle" title="ad_hoc_diffractometer.reference.psi_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psi_angle</span></code></a></dt><dd><p>ψ computed from current motor angles (always equals <code class="docutils literal notranslate"><span class="pre">natural_psi</span></code> for any Bragg solution of the same (h, k, l)).</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>You (1999), eq. 23.</p></li>
 </ul>
 </dd></dl>
 
@@ -954,6 +1019,7 @@ stage angles are used.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.reference._require_surface_normal"><code class="docutils literal notranslate"><span class="pre">_require_surface_normal()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.reference.exit_angle"><code class="docutils literal notranslate"><span class="pre">exit_angle()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.reference.incidence_angle"><code class="docutils literal notranslate"><span class="pre">incidence_angle()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.reference.natural_psi"><code class="docutils literal notranslate"><span class="pre">natural_psi()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.reference.naz_angle"><code class="docutils literal notranslate"><span class="pre">naz_angle()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.reference.omega_pseudo"><code class="docutils literal notranslate"><span class="pre">omega_pseudo()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.reference.psi_angle"><code class="docutils literal notranslate"><span class="pre">psi_angle()</span></code></a></li>
@@ -993,7 +1059,7 @@ stage angles are used.</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-19 16:02 CDT.
+  Last updated on 2026-05-19 16:49 CDT.
   <br/>
 </p></div>
       

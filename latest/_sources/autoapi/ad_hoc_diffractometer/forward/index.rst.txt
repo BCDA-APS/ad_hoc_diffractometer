@@ -1067,10 +1067,17 @@ Module Contents
    1. Computes the natural ψ from ``Q_phi`` (no motor angles).
    2. Compares with ``psi_target`` from the mode's
       :class:`~mode.ReferenceConstraint`.
-   3. If they disagree (beyond 0.1° tolerance): returns ``[]``.
-   4. If they agree: delegates to the appropriate existing solver
+   3. If ψ is undefined for the reflection (Q ∥ azimuthal reference, or
+      Q ∥ incident beam): emits a :class:`UserWarning` and returns ``[]``.
+   4. If natural ψ and target disagree beyond 0.1°: emits a
+      :class:`UserWarning` naming the natural ψ value and returns ``[]``.
+   5. If they agree: delegates to the appropriate existing solver
       (bisecting, kappa-virtual, or synthetic bisecting) and returns
       all solutions.
+
+   The warnings (added in issue #278) make the "ψ is fixed by UB and
+   hkl, not by motors" semantics visible to callers who previously saw
+   only a silent empty list.
 
    :param geometry:
    :type geometry: AdHocDiffractometer

@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=77dce04c"></script>
+    <script src="../../_static/documentation_options.js?v=8a79c2a2"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-19 16:02 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 16:49 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -2220,10 +2220,17 @@
 <span class="sd">    1. Computes the natural ψ from ``Q_phi`` (no motor angles).</span>
 <span class="sd">    2. Compares with ``psi_target`` from the mode&#39;s</span>
 <span class="sd">       :class:`~mode.ReferenceConstraint`.</span>
-<span class="sd">    3. If they disagree (beyond 0.1° tolerance): returns ``[]``.</span>
-<span class="sd">    4. If they agree: delegates to the appropriate existing solver</span>
+<span class="sd">    3. If ψ is undefined for the reflection (Q ∥ azimuthal reference, or</span>
+<span class="sd">       Q ∥ incident beam): emits a :class:`UserWarning` and returns ``[]``.</span>
+<span class="sd">    4. If natural ψ and target disagree beyond 0.1°: emits a</span>
+<span class="sd">       :class:`UserWarning` naming the natural ψ value and returns ``[]``.</span>
+<span class="sd">    5. If they agree: delegates to the appropriate existing solver</span>
 <span class="sd">       (bisecting, kappa-virtual, or synthetic bisecting) and returns</span>
 <span class="sd">       all solutions.</span>
+
+<span class="sd">    The warnings (added in issue #278) make the &quot;ψ is fixed by UB and</span>
+<span class="sd">    hkl, not by motors&quot; semantics visible to callers who previously saw</span>
+<span class="sd">    only a silent empty list.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -2236,6 +2243,8 @@
 <span class="sd">    -------</span>
 <span class="sd">    list of dict[str, float]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
     <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectConstraint</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
@@ -2251,6 +2260,15 @@
     <span class="c1"># Compute natural psi from the phi frame (motor-angle independent)</span>
     <span class="n">natural_psi</span> <span class="o">=</span> <span class="n">_compute_natural_psi</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">natural_psi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;forward(): ψ is undefined for this reflection in geometry &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> — Q is parallel to &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;azimuthal_reference=</span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">azimuthal_reference</span><span class="si">}</span><span class="s2"> (or to the &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;incident beam).  Choose a different reflection or change &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;geometry.azimuthal_reference.  Returning [].&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># ψ undefined for this reflection</span>
 
     <span class="c1"># Compare natural psi with target (tolerance 0.1° — generous enough</span>
@@ -2260,6 +2278,18 @@
     <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="mf">180.0</span><span class="p">:</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="mf">360.0</span> <span class="o">-</span> <span class="n">diff</span>
     <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;forward(): mode </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> targets ψ = &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">psi_target</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">° but the natural ψ for this reflection is &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">natural_psi</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">°.  ψ is fixed by UB and (h, k, l); no motor &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;configuration can change it for a given reflection.  Either &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;set the constraint value to </span><span class="si">{</span><span class="n">natural_psi</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">° (or use &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;ad_hoc_diffractometer.reference.natural_psi(g, h, k, l) to &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;discover the natural value), or pick a different reflection.  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Returning [].&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># this (h,k,l) is not accessible at the stored ψ</span>
 
     <span class="c1"># ψ is satisfied — delegate to the appropriate existing solver.</span>
@@ -4750,7 +4780,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-19 16:02 CDT.
+  Last updated on 2026-05-19 16:49 CDT.
   <br/>
 </p></div>
       
