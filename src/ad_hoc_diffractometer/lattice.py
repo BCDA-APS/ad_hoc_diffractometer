@@ -19,6 +19,7 @@ Based on:
 from __future__ import annotations
 
 import logging
+import math
 
 import numpy as np
 
@@ -545,10 +546,25 @@ class Lattice:
     @property
     def cartesian_lattice_vectors(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
-        Direct lattice vectors (a1, a2, a3) in Angstroms.
+        Direct-lattice vectors (a1, a2, a3) in Angstroms, expressed in
+        the BL1967 crystal-Cartesian frame.
 
-        a1 is along xHat, a2 lies in the xHat-yHat plane, a3 is
-        determined by the right-hand rule.  Cached until a parameter changes.
+        The frame is defined by the BL1967 B-matrix convention: the
+        reciprocal vector b1\\* is along crystal-x̂, b2\\* lies in the
+        x̂-ŷ plane, b3\\* completes the right-handed triple.  The
+        direct vectors are then determined by the duality
+        ``aᵢ · bⱼ\\* = 2π δᵢⱼ``.  Their magnitudes equal the lattice
+        parameters (``|a1| = a``, ``|a2| = b``, ``|a3| = c``) and the
+        angles between them recover (α, β, γ).
+
+        For orthogonal cells (cubic, tetragonal, orthorhombic) this
+        reduces to ``a1 = a x̂``, ``a2 = b ŷ``, ``a3 = c ẑ``.  For
+        non-orthogonal cells the direct vectors are rotated relative
+        to that simple placement so that the reciprocal vectors land
+        in the BL1967 frame.  See :func:`lattice_vectors` for the
+        construction.
+
+        Cached until a parameter changes.
         """
         if self._cartesian_lattice_vectors is None:
             self._cartesian_lattice_vectors = lattice_vectors(
@@ -564,37 +580,62 @@ class Lattice:
     @property
     def reciprocal_lattice_vectors(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
-        Reciprocal lattice vectors (b1, b2, b3) in Å⁻¹ (with 2π factor).
+        Reciprocal-lattice vectors (b1, b2, b3) in Å⁻¹ (with 2π factor)
+        expressed in the BL1967 crystal-Cartesian frame.
 
-        Satisfies b_i · a_j = 2π δ_ij.  Cached until a parameter changes.
+        The columns of :attr:`B`.  Satisfies ``bᵢ · aⱼ = 2π δᵢⱼ`` with
+        the direct vectors returned by
+        :attr:`cartesian_lattice_vectors`.  Cached until a parameter
+        changes.
         """
         if self._reciprocal_lattice_vectors is None:
-            a1, a2, a3 = self.cartesian_lattice_vectors
-            self._reciprocal_lattice_vectors = reciprocal_vectors(a1, a2, a3)
+            self._reciprocal_lattice_vectors = reciprocal_vectors(
+                self._a,
+                self._b,
+                self._c,
+                self._alpha,
+                self._beta,
+                self._gamma,
+            )
         return self._reciprocal_lattice_vectors
 
     @property
     def B(self) -> np.ndarray:
         """
-        B matrix in Å⁻¹ (with 2π factor, Busing & Levy 1967 / SPEC convention).
+        B matrix in Å⁻¹ (with 2π factor, BL1967 / SPEC / hkl_soleil
+        convention).
 
-        Transforms Miller indices ``h`` = (h, k, l) to the scattering vector
-        in Cartesian crystal-frame coordinates::
+        Transforms Miller indices ``h`` = (h, k, l) to the scattering
+        vector expressed in the BL1967 crystal-Cartesian frame::
 
             Q_c = B @ h
 
         ``|B @ h| = 2π / d_hkl``.  The orthogonality condition is
         ``bᵢ · aⱼ = 2π δᵢⱼ``.
 
-        This follows the Busing & Levy (1967) eq. 3 and SPEC convention.
-        Some other packages (FullProf, CrysFML, hkl with ``tau=1``) use a
-        no-2π variant where ``bᵢ · aⱼ = δᵢⱼ`` and ``|B @ h| = 1/d_hkl``.
+        Numerical equivalence
+        ---------------------
+        Returns exactly the same B matrix (to machine precision) as
+        SPEC, hkl_soleil (default ``HKL_TAU = 2π``), and diffcalc-core,
+        for every crystal system.  See :func:`b_matrix_bl1967` for the
+        closed-form derivation and the cross-solver references.
+
+        Other packages (FullProf, CrysFML, parts of CCP4, the hkl
+        library compiled with ``HKL_TAU = 1``) use a no-2π variant
+        where ``bᵢ · aⱼ = δᵢⱼ`` and ``|B @ h| = 1/d_hkl``; only the
+        2π variant is exposed by this package.
 
         Cached until a lattice parameter changes.
         """
         if self._B is None:
-            b1, b2, b3 = self.reciprocal_lattice_vectors
-            self._B = b_matrix(b1, b2, b3)
+            self._B = b_matrix_bl1967(
+                self._a,
+                self._b,
+                self._c,
+                self._alpha,
+                self._beta,
+                self._gamma,
+            )
         return self._B
 
     # ------------------------------------------------------------------
@@ -717,6 +758,157 @@ class Lattice:
 # ---------------------------------------------------------------------------
 
 
+def b_matrix_bl1967(
+    a: float,
+    b: float,
+    c: float,
+    alpha: float,
+    beta: float,
+    gamma: float,
+) -> np.ndarray:
+    r"""
+    Compute the B matrix directly from lattice parameters using the
+    Busing & Levy 1967 closed-form expression (eq. 3).
+
+    The columns of B are the reciprocal-lattice vectors b1\*, b2\*, b3\*
+    expressed in the BL1967 crystal-Cartesian frame: b1\* along
+    crystal-x, b2\* in the crystal-x–crystal-y plane (with positive
+    y component), b3\* completing the right-handed orthonormal triple.
+    With this choice B is upper triangular::
+
+        B[0, 0] = a*               B[0, 1] = b* cos γ*    B[0, 2] = c* cos β*
+        B[1, 0] = 0                B[1, 1] = b* sin γ*    B[1, 2] = -c* sin β* cos α
+        B[2, 0] = 0                B[2, 1] = 0            B[2, 2] = 2π / c
+
+    where (a\*, b\*, c\*) are the reciprocal-lattice vector magnitudes
+    (including the 2π factor) and (α\*, β\*, γ\*) are the reciprocal-cell
+    angles, related to the direct-cell parameters by the standard
+    crystallographic identities.
+
+    Numerical equivalence with external solvers
+    -------------------------------------------
+    Returns exactly the same B matrix (to machine precision) as
+
+    * **SPEC** psic and friends,
+    * **hkl_soleil** (the libhkl library) with its default
+      ``HKL_TAU = 2π`` compile-time setting,
+    * **diffcalc-core** (``Crystal._set_reciprocal_cell``).
+
+    This holds for every crystal system, including non-orthogonal
+    cells (hexagonal, trigonal, monoclinic, triclinic).  For
+    orthogonal cells (cubic, tetragonal, orthorhombic), the
+    direct-lattice vectors `a`, `b`, `c` are parallel to the reciprocal
+    vectors a\*, b\*, c\* respectively, and the BL1967 frame coincides
+    with the "direct-lattice-a-along-x" frame that earlier versions of
+    this package used.  For non-orthogonal cells the two frames
+    differ by a rotation in the crystal-Cartesian space; both encode
+    the same physical crystal, but only the BL1967 frame is the one
+    SPEC and hkl_soleil cross-validate against.
+
+    Parameters
+    ----------
+    a, b, c : float
+        Direct-lattice parameters in Angstroms.
+    alpha, beta, gamma : float
+        Direct-lattice angles in degrees.
+        alpha = angle between b and c axes
+        beta  = angle between a and c axes
+        gamma = angle between a and b axes
+
+    Returns
+    -------
+    B : numpy.ndarray, shape (3, 3)
+        B matrix in inverse Angstroms (with 2π factor, BL1967 / SPEC /
+        hkl_soleil convention).  Upper triangular by construction.
+
+    References
+    ----------
+    * W. R. Busing & H. A. Levy, *Acta Cryst.* **22**, 457-464 (1967),
+      eq. 3.
+    * libhkl source: ``hkl/hkl-lattice.c`` (``HKL_TAU = 2π``).
+    * diffcalc-core source:
+      ``src/diffcalc/ub/crystal.py`` (``_set_reciprocal_cell``).
+    """
+    al = math.radians(alpha)
+    be = math.radians(beta)
+    ga = math.radians(gamma)
+
+    # Direct-cell volume scale: D = sqrt(1 - cos²α - cos²β - cos²γ + 2 cos α cos β cos γ).
+    D = math.sqrt(
+        1.0
+        - math.cos(al) ** 2
+        - math.cos(be) ** 2
+        - math.cos(ga) ** 2
+        + 2.0 * math.cos(al) * math.cos(be) * math.cos(ga)
+    )
+
+    # Reciprocal-lattice magnitudes (include the 2π factor).
+    a_star = 2.0 * math.pi * math.sin(al) / (a * D)
+    b_star = 2.0 * math.pi * math.sin(be) / (b * D)
+    c_star = 2.0 * math.pi * math.sin(ga) / (c * D)
+
+    # Reciprocal-cell angles via standard crystallographic identities.
+    cos_beta_star = (math.cos(ga) * math.cos(al) - math.cos(be)) / (
+        math.sin(ga) * math.sin(al)
+    )
+    cos_gamma_star = (math.cos(al) * math.cos(be) - math.cos(ga)) / (
+        math.sin(al) * math.sin(be)
+    )
+    # sin(β*) and sin(γ*) are non-negative by convention.
+    sin_beta_star = math.sqrt(max(0.0, 1.0 - cos_beta_star**2))
+    sin_gamma_star = math.sqrt(max(0.0, 1.0 - cos_gamma_star**2))
+
+    return np.array(
+        [
+            [a_star, b_star * cos_gamma_star, c_star * cos_beta_star],
+            [0.0, b_star * sin_gamma_star, -c_star * sin_beta_star * math.cos(al)],
+            [0.0, 0.0, 2.0 * math.pi / c],
+        ]
+    )
+
+
+def reciprocal_vectors(
+    a: float,
+    b: float,
+    c: float,
+    alpha: float,
+    beta: float,
+    gamma: float,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Return the three reciprocal-lattice vectors (b1\\*, b2\\*, b3\\*)
+    expressed in the BL1967 crystal-Cartesian frame.
+
+    The vectors are the columns of :func:`b_matrix_bl1967` — see that
+    function's docstring for the full convention and the cross-solver
+    equivalence note.  Magnitudes carry the 2π factor (BL1967 / SPEC /
+    hkl_soleil default convention).
+
+    Orthogonality with the direct-lattice vectors holds::
+
+        bᵢ\\* · aⱼ = 2π δᵢⱼ
+
+    where ``aⱼ`` is the corresponding direct-lattice vector returned by
+    :func:`lattice_vectors` (also expressed in the BL1967
+    crystal-Cartesian frame).
+
+    Parameters
+    ----------
+    a, b, c : float
+        Direct-lattice parameters in Angstroms.
+    alpha, beta, gamma : float
+        Direct-lattice angles in degrees.
+
+    Returns
+    -------
+    b1, b2, b3 : numpy.ndarray, shape (3,)
+        Reciprocal-lattice vectors in inverse Angstroms (with 2π factor),
+        expressed as columns of the BL1967 B matrix.
+    """
+    B = b_matrix_bl1967(a, b, c, alpha, beta, gamma)
+    return B[:, 0], B[:, 1], B[:, 2]
+
+
 def lattice_vectors(
     a: float,
     b: float,
@@ -726,78 +918,40 @@ def lattice_vectors(
     gamma: float,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-    Compute the three Cartesian direct lattice vectors from crystal lattice
-    parameters.
+    Return the three direct-lattice vectors (a1, a2, a3) expressed in the
+    BL1967 crystal-Cartesian frame (the same frame as :func:`b_matrix_bl1967`).
 
-    The convention places a1 along xHat, a2 in the xHat-yHat plane, and a3
-    determined by the right-hand rule.
+    Derived from the reciprocal-of-reciprocal identity
+    ``aᵢ · bⱼ\\* = 2π δᵢⱼ``::
+
+        [a1 | a2 | a3] = 2π · (B^T)^{-1} = 2π · (B^{-1})^T
+
+    For orthogonal cells (cubic, tetragonal, orthorhombic) this gives
+    ``a1 = a x̂``, ``a2 = b ŷ``, ``a3 = c ẑ`` — equivalent to the
+    "direct-lattice-a-along-x" frame used by earlier versions of this
+    package.  For non-orthogonal cells the direct vectors are no longer
+    placed with ``a1 ∥ x̂``; instead ``b1\\* ∥ x̂`` (by the BL1967
+    convention), and the direct vectors land wherever the duality
+    relation puts them.  Magnitudes and angles between direct vectors
+    are unchanged (``|a1| = a``, ``|a2| = b``, ``|a3| = c``,
+    ``angle(a2, a3) = α``, etc.).
 
     Parameters
     ----------
     a, b, c : float
-        Lattice parameters in Angstroms.
+        Direct-lattice parameters in Angstroms.
     alpha, beta, gamma : float
-        Lattice angles in degrees.
-        alpha = angle between b and c axes
-        beta  = angle between a and c axes
-        gamma = angle between a and b axes
+        Direct-lattice angles in degrees.
 
     Returns
     -------
     a1, a2, a3 : numpy.ndarray, shape (3,)
-        Cartesian direct lattice vectors in Angstroms.
+        Direct-lattice vectors in Angstroms, expressed in the BL1967
+        crystal-Cartesian frame.
     """
-    alpha_r = np.deg2rad(alpha)
-    beta_r = np.deg2rad(beta)
-    gamma_r = np.deg2rad(gamma)
-
-    a1 = np.array([a, 0.0, 0.0])
-    a2 = np.array([b * np.cos(gamma_r), b * np.sin(gamma_r), 0.0])
-
-    a3x = c * np.cos(beta_r)
-    a3y = c * (np.cos(alpha_r) - np.cos(beta_r) * np.cos(gamma_r)) / np.sin(gamma_r)
-    a3z = np.sqrt(max(c**2 - a3x**2 - a3y**2, 0.0))
-    a3 = np.array([a3x, a3y, a3z])
-
-    return a1, a2, a3
-
-
-def reciprocal_vectors(
-    a1: np.ndarray,
-    a2: np.ndarray,
-    a3: np.ndarray,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """
-    Compute the three reciprocal lattice vectors from Cartesian direct lattice
-    vectors.
-
-    Uses the standard crystallographic definition:
-
-        b1 = 2*pi * (a2 x a3) / (a1 . (a2 x a3))
-        b2 = 2*pi * (a3 x a1) / (a1 . (a2 x a3))
-        b3 = 2*pi * (a1 x a2) / (a1 . (a2 x a3))
-
-    The orthogonality condition is satisfied:
-
-        b_i . a_j = 2*pi * delta_ij
-
-    Parameters
-    ----------
-    a1, a2, a3 : numpy.ndarray, shape (3,)
-        Cartesian direct lattice vectors in Angstroms.
-
-    Returns
-    -------
-    b1, b2, b3 : numpy.ndarray, shape (3,)
-        Reciprocal lattice vectors in inverse Angstroms (with 2*pi factor).
-    """
-    Vc = np.dot(a1, np.cross(a2, a3))
-
-    b1 = 2 * np.pi * np.cross(a2, a3) / Vc
-    b2 = 2 * np.pi * np.cross(a3, a1) / Vc
-    b3 = 2 * np.pi * np.cross(a1, a2) / Vc
-
-    return b1, b2, b3
+    B = b_matrix_bl1967(a, b, c, alpha, beta, gamma)
+    A = 2.0 * math.pi * np.linalg.inv(B).T
+    return A[:, 0], A[:, 1], A[:, 2]
 
 
 def b_matrix(
@@ -806,36 +960,35 @@ def b_matrix(
     b3: np.ndarray,
 ) -> np.ndarray:
     """
-    Compute the B matrix from the reciprocal lattice vectors.
+    Assemble the B matrix from the reciprocal-lattice vectors.
 
-    The B matrix transforms Miller indices ``h`` = (h, k, l) to the
-    scattering vector in Cartesian crystal-frame coordinates
-    (Busing & Levy, 1967, eq. 3)::
+    With the BL1967 / SPEC / hkl_soleil convention used by this
+    package, the B matrix transforms Miller indices ``h`` = (h, k, l)
+    to the scattering vector in the BL1967 crystal-Cartesian frame
+    (Busing & Levy 1967 eq. 3)::
 
         Q_c = B @ h
-
-    The columns of B are the reciprocal lattice vectors b₁, b₂, b₃
-    (each including the 2π factor), so::
-
         B = [b1, b2, b3]    (column-stack of the reciprocal vectors)
 
     Hence ``B @ h = h·b1 + k·b2 + l·b3``.  The orthogonality condition
     is ``bᵢ · aⱼ = 2π δᵢⱼ``, and ``|B @ h| = 2π / d_hkl``.
 
-    This is the Busing & Levy (1967) and SPEC convention.  Some packages
-    (FullProf, CrysFML, parts of CCP4, the hkl library with ``tau=1``)
-    use the alternative no-2π convention ``bᵢ · aⱼ = δᵢⱼ``, which gives
-    a B matrix smaller by a factor of 2π.
+    For non-orthogonal lattices the columns are not mutually
+    orthogonal; the B matrix is upper-triangular by construction (a\\*
+    along crystal-x, b\\* in crystal-xy plane, c\\* completing the
+    right-handed triple).  See :func:`b_matrix_bl1967` for the
+    closed-form construction and the cross-solver equivalence note.
 
     Parameters
     ----------
     b1, b2, b3 : numpy.ndarray, shape (3,)
-        Reciprocal lattice vectors in inverse Angstroms (with 2π factor),
+        Reciprocal-lattice vectors in inverse Angstroms (with 2π factor),
         as returned by :func:`reciprocal_vectors`.
 
     Returns
     -------
     B : numpy.ndarray, shape (3, 3)
-        B matrix in inverse Angstroms (with 2π factor, BL1967 convention).
+        B matrix in inverse Angstroms (with 2π factor, BL1967 / SPEC /
+        hkl_soleil convention).
     """
     return np.column_stack([b1, b2, b3])

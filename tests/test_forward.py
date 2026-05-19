@@ -1859,11 +1859,20 @@ def _natural_psi(g, h, k, l):  # noqa: E741
     ],
 )
 def test_compute_natural_psi(factory, h, k, l, ref, expected_psi):  # noqa: E741
-    """_compute_natural_psi returns the correct motor-angle-independent psi."""
+    """_compute_natural_psi returns the correct motor-angle-independent psi.
+
+    Wrap-aware comparison: the cut-point representative may be returned
+    as ``-180`` or ``+180`` (mathematically equivalent) depending on
+    which side of the ``atan2`` branch the configuration lands.
+    """
     g = _setup_psi(factory, ref=ref)
     psi = _natural_psi(g, h, k, l)
     assert psi is not None
-    assert psi == pytest.approx(expected_psi, abs=1e-4)
+    wrapped_err = abs((psi - expected_psi + 180.0) % 360.0 - 180.0)
+    assert wrapped_err < 1e-4, (
+        f"psi mismatch (wrap-aware): got {psi}, expected {expected_psi}, "
+        f"wrapped error = {wrapped_err}"
+    )
 
 
 def test_compute_natural_psi_undefined_when_ref_parallel_to_Q():

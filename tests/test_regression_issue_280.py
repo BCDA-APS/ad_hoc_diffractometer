@@ -317,3 +317,145 @@ def test_double_diffraction_degenerate_phi_path():
         assert np.allclose(Q, Q_phi, atol=1e-3), (
             f"Degenerate-DD solution {sol} does not satisfy primary Bragg."
         )
+
+
+# ---------------------------------------------------------------------------
+# Phase 3 — BL1967-compliant B-matrix orthogonalized frame
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "lattice_kwargs, expected_diagonal_only",
+    [
+        # Orthogonal cells: B is diagonal.
+        pytest.param(dict(a=4.0), True, id="cubic"),
+        pytest.param(dict(a=4.0, c=6.0), True, id="tetragonal"),
+        pytest.param(dict(a=4.0, b=5.0, c=6.0), True, id="orthorhombic"),
+        # Non-orthogonal cells: B is upper triangular but NOT diagonal.
+        pytest.param(
+            dict(a=4.785, c=12.991, gamma=120.0), False, id="hexagonal-sapphire"
+        ),
+        pytest.param(dict(a=4.81, alpha=47.0), False, id="trigonal"),
+        pytest.param(
+            dict(a=6.284, b=15.200, c=5.678, beta=114.09), False, id="monoclinic"
+        ),
+        pytest.param(
+            dict(a=8.18, b=12.87, c=14.17, alpha=93.17, beta=115.85, gamma=91.26),
+            False,
+            id="triclinic",
+        ),
+    ],
+)
+def test_B_matrix_is_upper_triangular(lattice_kwargs, expected_diagonal_only):
+    """The B matrix is upper-triangular in the BL1967 frame (issue #280).
+
+    The BL1967 convention places ``a*`` along crystal-x and ``b*`` in
+    the crystal-xy plane, so the lower-left entries of B are zero by
+    construction.  For orthogonal cells the off-diagonal entries are
+    also zero (B is diagonal).
+    """
+    lat = ahd.Lattice(**lattice_kwargs)
+    B = lat.B
+    assert B[1, 0] == pytest.approx(0.0, abs=1e-12)
+    assert B[2, 0] == pytest.approx(0.0, abs=1e-12)
+    assert B[2, 1] == pytest.approx(0.0, abs=1e-12)
+    if expected_diagonal_only:
+        assert B[0, 1] == pytest.approx(0.0, abs=1e-12)
+        assert B[0, 2] == pytest.approx(0.0, abs=1e-12)
+        assert B[1, 2] == pytest.approx(0.0, abs=1e-12)
+    else:
+        # At least one upper-triangular entry must be nonzero for a
+        # non-orthogonal cell.
+        upper_off_diagonal = abs(B[0, 1]) + abs(B[0, 2]) + abs(B[1, 2])
+        assert upper_off_diagonal > 1e-6
+
+
+def test_b_matrix_standalone_assembles_columns():
+    """The standalone :func:`~lattice.b_matrix` helper column-stacks the
+    reciprocal-lattice vectors into the B matrix (issue #280).
+
+    This regression test exists to keep the public-API helper exercised
+    after :class:`Lattice` was refactored to call
+    :func:`~lattice.b_matrix_bl1967` directly.
+    """
+    from ad_hoc_diffractometer.lattice import b_matrix
+    from ad_hoc_diffractometer.lattice import reciprocal_vectors
+
+    b1, b2, b3 = reciprocal_vectors(4.0, 5.0, 6.0, 80.0, 85.0, 95.0)
+    B = b_matrix(b1, b2, b3)
+    np.testing.assert_allclose(B[:, 0], b1, atol=1e-12)
+    np.testing.assert_allclose(B[:, 1], b2, atol=1e-12)
+    np.testing.assert_allclose(B[:, 2], b3, atol=1e-12)
+
+
+def test_B_matrix_matches_bl1967_closed_form():
+    """The Lattice B matrix equals the BL1967 closed-form construction
+    entry-by-entry, for non-orthogonal cells where the convention
+    matters (issue #280).
+
+    The closed form here is re-implemented inline (independent of the
+    package's :func:`~lattice.b_matrix_bl1967`) to verify the
+    implementation against the published formula directly.
+    """
+    # Triclinic labradorite-like cell.
+    a, b, c = 8.18, 12.87, 14.17
+    alpha, beta, gamma = 93.17, 115.85, 91.26
+    lat = ahd.Lattice(a=a, b=b, c=c, alpha=alpha, beta=beta, gamma=gamma)
+    al = math.radians(alpha)
+    be = math.radians(beta)
+    ga = math.radians(gamma)
+    D = math.sqrt(
+        1
+        - math.cos(al) ** 2
+        - math.cos(be) ** 2
+        - math.cos(ga) ** 2
+        + 2 * math.cos(al) * math.cos(be) * math.cos(ga)
+    )
+    a_star = 2 * math.pi * math.sin(al) / (a * D)
+    b_star = 2 * math.pi * math.sin(be) / (b * D)
+    c_star = 2 * math.pi * math.sin(ga) / (c * D)
+    cos_beta_star = (math.cos(ga) * math.cos(al) - math.cos(be)) / (
+        math.sin(ga) * math.sin(al)
+    )
+    cos_gamma_star = (math.cos(al) * math.cos(be) - math.cos(ga)) / (
+        math.sin(al) * math.sin(be)
+    )
+    sin_beta_star = math.sqrt(1 - cos_beta_star**2)
+    sin_gamma_star = math.sqrt(1 - cos_gamma_star**2)
+    expected = np.array(
+        [
+            [a_star, b_star * cos_gamma_star, c_star * cos_beta_star],
+            [0.0, b_star * sin_gamma_star, -c_star * sin_beta_star * math.cos(al)],
+            [0.0, 0.0, 2 * math.pi / c],
+        ]
+    )
+    np.testing.assert_allclose(lat.B, expected, atol=1e-12)
+
+
+def test_direct_reciprocal_duality_preserved():
+    """The duality ``aᵢ · bⱼ = 2π δᵢⱼ`` holds in the BL1967 frame for
+    every crystal system (issue #280).
+    """
+    for kwargs in [
+        dict(a=5.0),
+        dict(a=4.785, c=12.991, gamma=120.0),
+        dict(a=8.18, b=12.87, c=14.17, alpha=93.17, beta=115.85, gamma=91.26),
+    ]:
+        lat = ahd.Lattice(**kwargs)
+        a1, a2, a3 = lat.cartesian_lattice_vectors
+        b1, b2, b3 = lat.reciprocal_lattice_vectors
+        two_pi = 2.0 * math.pi
+        # Diagonal: bᵢ · aᵢ = 2π
+        np.testing.assert_allclose(np.dot(b1, a1), two_pi, atol=1e-10)
+        np.testing.assert_allclose(np.dot(b2, a2), two_pi, atol=1e-10)
+        np.testing.assert_allclose(np.dot(b3, a3), two_pi, atol=1e-10)
+        # Off-diagonal: bᵢ · aⱼ = 0
+        for u, v in [
+            (b1, a2),
+            (b1, a3),
+            (b2, a1),
+            (b2, a3),
+            (b3, a1),
+            (b3, a2),
+        ]:
+            np.testing.assert_allclose(np.dot(u, v), 0.0, atol=1e-10)
