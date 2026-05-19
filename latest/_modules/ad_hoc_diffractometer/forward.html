@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=33838f19"></script>
+    <script src="../../_static/documentation_options.js?v=77dce04c"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-19 15:24 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 16:02 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -3479,8 +3479,22 @@
     <span class="k">if</span> <span class="n">det_constraint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>
         <span class="n">angles</span><span class="p">[</span><span class="n">det_constraint</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">value</span>
 
-    <span class="c1"># Set the active detector stage to ttheta_deg</span>
-    <span class="n">det_stage</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># Select the *active* detector stage — the one that should carry ttheta.</span>
+    <span class="c1"># When the mode&#39;s DetectorConstraint pins a specific detector stage</span>
+    <span class="c1"># (e.g. ``delta=0`` in psic horizontal modes), the active stage is the</span>
+    <span class="c1"># OTHER detector stage (e.g. ``nu``).  Picking the last stage</span>
+    <span class="c1"># unconditionally would overwrite the pinned value (issue #279).</span>
+    <span class="n">pinned_det</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">det_constraint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>
+        <span class="n">pinned_det</span> <span class="o">=</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">free_det_stages</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">pinned_det</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">free_det_stages</span><span class="p">:</span>
+        <span class="c1"># Every detector stage is pinned — ``_solve_surface`` cannot place</span>
+        <span class="c1"># ttheta anywhere.  Caller should have routed to a different solver.</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="c1"># Prefer the last free detector stage to preserve historical behavior</span>
+    <span class="c1"># for the common single-detector-stage geometries.</span>
+    <span class="n">det_stage</span> <span class="o">=</span> <span class="n">free_det_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">angles</span><span class="p">[</span><span class="n">det_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttheta_deg</span>
 
     <span class="c1"># Identify the one free sample stage (the one not fixed by any constraint)</span>
@@ -4736,7 +4750,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-19 15:24 CDT.
+  Last updated on 2026-05-19 16:02 CDT.
   <br/>
 </p></div>
       
