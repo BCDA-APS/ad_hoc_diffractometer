@@ -63,6 +63,58 @@ $$\mathbf{Q}_c = \mathbf{B}\,\mathbf{h}$$
 The magnitude $|\mathbf{Q}_c| = |\mathbf{B}\,\mathbf{h}| = 2\pi / d_{hkl}$,
 where $d_{hkl}$ is the interplanar spacing.
 
+### Explicit construction
+
+The B matrix is built from the reciprocal-lattice magnitudes
+$a^\star$, $b^\star$, $c^\star$ and the reciprocal-cell angles
+$\alpha^\star$, $\beta^\star$, $\gamma^\star$, using the explicit
+upper-triangular form (eq. 3 of Busing & Levy 1967):
+
+```
+B[0,0] = a*               B[0,1] = b* cos γ*        B[0,2] = c* cos β*
+B[1,0] = 0                B[1,1] = b* sin γ*        B[1,2] = -c* sin β* cos α
+B[2,0] = 0                B[2,1] = 0                B[2,2] = 2π / c
+```
+
+This places the **reciprocal-lattice $\mathbf{a}^\star$** along
+crystal-Cartesian $\hat{x}$, **$\mathbf{b}^\star$** in the
+crystal-$xy$-plane (with positive $y$ component), and
+**$\mathbf{c}^\star$** completing the right-handed orthonormal triple.
+The B matrix is therefore upper-triangular by construction for every
+crystal system.
+
+The reciprocal-lattice magnitudes carry the $2\pi$ factor (BL1967
+convention), giving $|\mathbf{B}\,\mathbf{h}| = 2\pi / d_{hkl}$ and
+$\mathbf{b}_i \cdot \mathbf{a}_j = 2\pi\,\delta_{ij}$.
+
+### Cross-solver equivalence
+
+This construction is **numerically identical** (to machine precision)
+to the B matrix used by
+
+- **SPEC** (psic and other four-circle modes),
+- **hkl_soleil** (the libhkl library) with its default
+  `HKL_TAU = 2π` compile-time setting,
+- **diffcalc-core** (`Crystal._set_reciprocal_cell`).
+
+The equivalence holds for every crystal system, including
+non-orthogonal cells (hexagonal, trigonal, monoclinic, triclinic).
+For orthogonal cells (cubic, tetragonal, orthorhombic), the
+direct-lattice vectors $\mathbf{a}$, $\mathbf{b}$, $\mathbf{c}$ are
+parallel to the reciprocal vectors $\mathbf{a}^\star$,
+$\mathbf{b}^\star$, $\mathbf{c}^\star$ respectively, so the BL1967
+crystal-Cartesian frame coincides with the
+"direct-lattice-$\mathbf{a}$-along-$\hat{x}$" frame.  For
+non-orthogonal cells the two frames differ by a rotation in the
+crystal-Cartesian space; both encode the same physical crystal, but
+only the BL1967 frame is the one SPEC and hkl_soleil cross-validate
+against.
+
+The no-$2\pi$ alternative ($\mathbf{b}_i \cdot \mathbf{a}_j =
+\delta_{ij}$, $|\mathbf{B}\,\mathbf{h}| = 1/d_{hkl}$), used by
+FullProf, CrysFML, parts of CCP4, and `libhkl` compiled with
+`HKL_TAU = 1`, is not exposed by this package.
+
 ## Reference
 
 - W.R. Busing & H.A. Levy, *Acta Cryst.* **22**, 457–464 (1967).

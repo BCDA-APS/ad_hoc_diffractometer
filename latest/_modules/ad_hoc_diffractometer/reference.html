@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=731280fa"></script>
+    <script src="../../_static/documentation_options.js?v=33838f19"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-12 09:21 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 15:24 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -782,11 +782,15 @@
     <span class="n">chi_stage</span> <span class="o">=</span> <span class="n">sample_stages</span><span class="p">[</span><span class="n">chi_index</span><span class="p">]</span>
     <span class="n">outer_stages</span> <span class="o">=</span> <span class="n">sample_stages</span><span class="p">[:</span><span class="n">chi_index</span><span class="p">]</span>
 
-    <span class="c1"># Apply the rotations of all stages *before* chi to the chi axis</span>
+    <span class="c1"># Apply the rotations of all stages *outside* chi to the chi axis.</span>
+    <span class="c1"># Composition follows the BL1967 standard convention (Busing &amp;</span>
+    <span class="c1"># Levy 1967): outermost (floor-most) stage leftmost in the</span>
+    <span class="c1"># product, so R_outer = R_0 @ R_1 @ ... @ R_{chi_index-1}.  Then</span>
+    <span class="c1"># the chi axis in the lab frame is R_outer @ chi_axis_hat.</span>
     <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">outer_stages</span><span class="p">:</span>
         <span class="n">angle</span> <span class="o">=</span> <span class="n">angles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
-        <span class="n">R</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span> <span class="o">@</span> <span class="n">R</span>  <span class="c1"># noqa: SLF001</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">R</span> <span class="o">@</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>  <span class="c1"># noqa: SLF001</span>
 
     <span class="n">chi_axis_lab</span> <span class="o">=</span> <span class="n">R</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">chi_stage</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># noqa: SLF001</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">chi_axis_lab</span><span class="p">))</span>
@@ -900,13 +904,15 @@
     <span class="c1"># Lab-frame chi-circle axis (= normal to the chi-circle plane)</span>
     <span class="n">n_chi_lab</span> <span class="o">=</span> <span class="n">_chi_stage_axis_lab</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
 
-    <span class="c1"># Lab-frame scattering vector</span>
+    <span class="c1"># Lab-frame scattering vector.  Composition follows the BL1967</span>
+    <span class="c1"># standard convention (Busing &amp; Levy 1967): outermost (floor-most)</span>
+    <span class="c1"># stage leftmost.</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_rotation_matrix_normalized</span>
 
     <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">:</span>
         <span class="n">angle</span> <span class="o">=</span> <span class="n">angles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
-        <span class="n">D</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span> <span class="o">@</span> <span class="n">D</span>  <span class="c1"># noqa: SLF001</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">D</span> <span class="o">@</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>  <span class="c1"># noqa: SLF001</span>
 
     <span class="n">y_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">y_hat</span> <span class="o">=</span> <span class="n">y_raw</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y_raw</span><span class="p">)</span>
@@ -959,7 +965,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-12 09:21 CDT.
+  Last updated on 2026-05-19 15:24 CDT.
   <br/>
 </p></div>
       

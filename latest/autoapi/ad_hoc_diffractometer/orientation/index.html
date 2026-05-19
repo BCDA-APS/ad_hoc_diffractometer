@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=731280fa"></script>
+    <script src="../../../_static/documentation_options.js?v=33838f19"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-12 09:21 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 15:24 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -589,7 +589,7 @@ available.  Returns UB.</p>
 <td><p>Compute U and UB from two orienting reflections (Busing &amp; Levy 1967, eqs. 23-27).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_identity" title="ad_hoc_diffractometer.orientation.ub_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_identity</span></code></a>(→ numpy.ndarray)</p></td>
-<td><p>Set U = I (identity) and UB = B; return UB.</p></td>
+<td><p>Set U so the crystal-Cartesian frame aligns with the physical</p></td>
 </tr>
 </tbody>
 </table>
@@ -715,10 +715,19 @@ stage — the frame in which crystal reflections are expressed when
 computing the orientation (U) matrix.</p>
 <p>Algorithm (Busing &amp; Levy 1967, section “The phi-axis frame”):</p>
 <ol class="arabic">
-<li><p>Compute the total sample rotation matrix <code class="docutils literal notranslate"><span class="pre">Z</span></code> (product of all sample
-stage rotation matrices, floor-most first) from the supplied motor
-angles (stages not supplied keep their current <code class="docutils literal notranslate"><span class="pre">angle</span></code> attribute).</p></li>
-<li><p>Compute the total detector rotation matrix <code class="docutils literal notranslate"><span class="pre">D</span></code>.</p></li>
+<li><p>Compute the total sample rotation matrix <code class="docutils literal notranslate"><span class="pre">Z</span></code> as the product of all
+sample stage rotation matrices in <strong>outermost-leftmost</strong> order
+(BL1967 standard convention):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Z</span> <span class="o">=</span> <span class="n">R_0</span> <span class="o">@</span> <span class="n">R_1</span> <span class="o">@</span> <span class="o">...</span> <span class="o">@</span> <span class="n">R_</span><span class="p">{</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">R_0</span></code> is the floor-most (outermost) stage and <code class="docutils literal notranslate"><span class="pre">R_{n-1}</span></code>
+is the innermost stage closest to the sample.  Z then maps phi-frame
+vectors to lab-frame vectors: <code class="docutils literal notranslate"><span class="pre">v_lab</span> <span class="pre">=</span> <span class="pre">Z</span> <span class="pre">&#64;</span> <span class="pre">v_phi</span></code>.  Stages not
+supplied keep their current <code class="docutils literal notranslate"><span class="pre">angle</span></code> attribute.</p>
+</li>
+<li><p>Compute the total detector rotation matrix <code class="docutils literal notranslate"><span class="pre">D</span></code> in the same
+outermost-leftmost order.</p></li>
 <li><p>The incident-beam unit vector in the lab frame is <code class="docutils literal notranslate"><span class="pre">ŷ</span></code> (longitudinal
 direction, <code class="docutils literal notranslate"><span class="pre">geometry.basis[&quot;longitudinal&quot;]</span></code>).</p></li>
 <li><p>The scattered-beam unit vector in the lab frame is <code class="docutils literal notranslate"><span class="pre">D</span> <span class="pre">&#64;</span> <span class="pre">ŷ</span></code>.</p></li>
@@ -1060,21 +1069,94 @@ wavelength governs the conversion from motor angles to Q_phi.</p>
 <dd><div class="import-path docutils container">
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation.ub_identity</span></code></p>
 </div>
-<p>Set U = I (identity) and UB = B; return UB.</p>
-<p>The crudest orientation assumption: crystal axes are aligned with the
-lab axes.  Useful as a starting point when no reflection information
-is available at all.</p>
+<p>Set U so the crystal-Cartesian frame aligns with the physical
+(longitudinal, vertical, transverse) triple, and UB = U &#64; B.</p>
+<p>The default UB placeholder used before a real UB is set by either
+reflection-based computation (<a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_one_reflection" title="ad_hoc_diffractometer.orientation.ub_from_one_reflection"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_one_reflection()</span></code></a>,
+<a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967()</span></code></a>,
+<a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967()</span></code></a>) or direct assignment
+(<code class="docutils literal notranslate"><span class="pre">sample.UB</span> <span class="pre">=</span> <span class="pre">...</span></code> or <code class="docutils literal notranslate"><span class="pre">sample.U</span> <span class="pre">=</span> <span class="pre">...</span></code>).</p>
+<section id="definition-issue-280">
+<h3>Definition (issue #280)<a class="headerlink" href="#definition-issue-280" title="Link to this heading">#</a></h3>
+<p>The columns of U are the geometry’s physical-direction unit
+vectors expressed in basis-Cartesian coordinates:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">+</span><span class="n">longitudinal</span>   <span class="p">(</span><span class="n">the</span> <span class="n">beam</span> <span class="n">direction</span><span class="p">)</span>
+<span class="n">U</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">+</span><span class="n">vertical</span>
+<span class="n">U</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">+</span><span class="n">transverse</span>
+</pre></div>
+</div>
+<p>Under the Busing &amp; Levy 1967 crystal-Cartesian convention
+(a* along crystal-x, b* in the crystal-x-y plane, c*
+completing the right-handed triple), this places:</p>
+<ul class="simple">
+<li><p>the crystal a* axis physically along the beam,</p></li>
+<li><p>the crystal-y axis physically along vertical,</p></li>
+<li><p>the crystal-z axis physically along transverse.</p></li>
+</ul>
+<p>This matches the <code class="docutils literal notranslate"><span class="pre">hkl_soleil</span></code> convention (<code class="docutils literal notranslate"><span class="pre">U</span> <span class="pre">=</span> <span class="pre">identity</span></code>
+aligns a* along the beam +x; see
+<a class="reference external" href="https://people.debian.org/~picca/hkl/hkl.html">https://people.debian.org/~picca/hkl/hkl.html</a>).</p>
+</section>
+<section id="why-this-is-basis-independent">
+<h3>Why this is basis-independent<a class="headerlink" href="#why-this-is-basis-independent" title="Link to this heading">#</a></h3>
+<p>The geometry’s basis assigns Cartesian unit vectors to the three
+physical-direction labels.  The columns of U are taken directly
+from those physical-direction vectors, so the resulting
+<em>physical</em> crystal orientation does not depend on which Cartesian
+direction the basis labels assign to (vertical, longitudinal,
+transverse).  Two geometries representing the same physical
+equipment under different basis labelings (e.g. <code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code> vs
+<code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code>) produce numerically different U matrices but
+<em>identical physical Bragg orientations</em> — and therefore identical
+<code class="docutils literal notranslate"><span class="pre">forward()</span></code> results.</p>
+<p>The pre-#280 implementation set <code class="docutils literal notranslate"><span class="pre">U</span> <span class="pre">=</span> <span class="pre">numpy.eye(3)</span></code> in basis
+coordinates, which made the physical crystal orientation
+basis-dependent: under <code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code> the crystal a-axis ended up
+physically along transverse, but under <code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code> the same
+code put it along vertical, breaking basis invariance of
+<code class="docutils literal notranslate"><span class="pre">forward()</span></code> reachability and <code class="docutils literal notranslate"><span class="pre">|2θ|</span></code> for the same equipment.</p>
+</section>
+<section id="why-this-is-inclination-independent">
+<h3>Why this is inclination-independent<a class="headerlink" href="#why-this-is-inclination-independent" title="Link to this heading">#</a></h3>
+<p>U is derived from the geometry’s <em>declared</em> basis vectors (a
+property of the YAML, set once), not from the inclination-tilted
+effective beam <code class="docutils literal notranslate"><span class="pre">y_eff</span> <span class="pre">=</span> <span class="pre">R_inc.T</span> <span class="pre">&#64;</span> <span class="pre">y_hat</span></code>.  Tilting the entire
+diffractometer relative to the beamline (issue #15
+<code class="docutils literal notranslate"><span class="pre">inclination_matrix</span></code>) does not silently re-orient the crystal:
+the crystal is mounted on the diffractometer, not on the
+beamline, so its reference orientation lives in the
+diffractometer’s intrinsic frame.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>sample</strong> (<a class="reference internal" href="../sample/index.html#ad_hoc_diffractometer.sample.Sample" title="ad_hoc_diffractometer.sample.Sample"><em>Sample</em></a>) – The sample whose <code class="docutils literal notranslate"><span class="pre">U</span></code> and <code class="docutils literal notranslate"><span class="pre">UB</span></code> attributes are updated in-place.</p>
+<dt class="field-odd">param sample<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The sample whose <code class="docutils literal notranslate"><span class="pre">U</span></code> and <code class="docutils literal notranslate"><span class="pre">UB</span></code> attributes are updated
+in-place.  <code class="docutils literal notranslate"><span class="pre">sample.parent</span></code> must be set (the parent
+<code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> provides the basis vectors).</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>UB</strong></p>
+<dt class="field-even">type sample<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sample</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3, 3)</p>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>UB</strong> – <code class="docutils literal notranslate"><span class="pre">UB</span> <span class="pre">=</span> <span class="pre">U</span> <span class="pre">&#64;</span> <span class="pre">B</span></code>.  Also stored on the sample as <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code>.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray, shape (3, 3)</p>
+</dd>
+<dt class="field-odd">raises ValueError<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If <code class="docutils literal notranslate"><span class="pre">sample.parent</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (cannot resolve the
+geometry’s basis without a parent).</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Busing &amp; Levy, <em>Acta Cryst.</em> <strong>22</strong>, 457-464 (1967) — the
+crystal-Cartesian convention used in the B matrix.</p></li>
+<li><p>Issue #280 — the rotation-composition-order audit that
+exposed the pre-existing basis bias of the old <code class="docutils literal notranslate"><span class="pre">U</span> <span class="pre">=</span> <span class="pre">I</span></code>
+placeholder.</p></li>
+<li><p>hkl_soleil documentation — the published external convention
+this implementation matches.</p></li>
+</ul>
+</section>
 </dd></dl>
 
 </section>
@@ -1174,7 +1256,7 @@ is available at all.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-12 09:21 CDT.
+  Last updated on 2026-05-19 15:24 CDT.
   <br/>
 </p></div>
       

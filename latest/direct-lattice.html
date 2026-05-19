@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=731280fa"></script>
+    <script src="_static/documentation_options.js?v=33838f19"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-12 09:21 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 15:24 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -594,6 +594,54 @@ in Cartesian crystal-frame coordinates (Busing &amp; Levy 1967, eq. 3):</p>
 \[\mathbf{Q}_c = \mathbf{B}\,\mathbf{h}\]</div>
 <p>The magnitude <span class="math notranslate nohighlight">\(|\mathbf{Q}_c| = |\mathbf{B}\,\mathbf{h}| = 2\pi / d_{hkl}\)</span>,
 where <span class="math notranslate nohighlight">\(d_{hkl}\)</span> is the interplanar spacing.</p>
+<section id="explicit-construction">
+<h3>Explicit construction<a class="headerlink" href="#explicit-construction" title="Link to this heading">#</a></h3>
+<p>The B matrix is built from the reciprocal-lattice magnitudes
+<span class="math notranslate nohighlight">\(a^\star\)</span>, <span class="math notranslate nohighlight">\(b^\star\)</span>, <span class="math notranslate nohighlight">\(c^\star\)</span> and the reciprocal-cell angles
+<span class="math notranslate nohighlight">\(\alpha^\star\)</span>, <span class="math notranslate nohighlight">\(\beta^\star\)</span>, <span class="math notranslate nohighlight">\(\gamma^\star\)</span>, using the explicit
+upper-triangular form (eq. 3 of Busing &amp; Levy 1967):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span>               <span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span> <span class="n">cos</span> <span class="n">γ</span><span class="o">*</span>        <span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span><span class="o">*</span> <span class="n">cos</span> <span class="n">β</span><span class="o">*</span>
+<span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>                <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span> <span class="n">sin</span> <span class="n">γ</span><span class="o">*</span>        <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">c</span><span class="o">*</span> <span class="n">sin</span> <span class="n">β</span><span class="o">*</span> <span class="n">cos</span> <span class="n">α</span>
+<span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>                <span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>                <span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="n">π</span> <span class="o">/</span> <span class="n">c</span>
+</pre></div>
+</div>
+<p>This places the <strong>reciprocal-lattice <span class="math notranslate nohighlight">\(\mathbf{a}^\star\)</span></strong> along
+crystal-Cartesian <span class="math notranslate nohighlight">\(\hat{x}\)</span>, <strong><span class="math notranslate nohighlight">\(\mathbf{b}^\star\)</span></strong> in the
+crystal-<span class="math notranslate nohighlight">\(xy\)</span>-plane (with positive <span class="math notranslate nohighlight">\(y\)</span> component), and
+<strong><span class="math notranslate nohighlight">\(\mathbf{c}^\star\)</span></strong> completing the right-handed orthonormal triple.
+The B matrix is therefore upper-triangular by construction for every
+crystal system.</p>
+<p>The reciprocal-lattice magnitudes carry the <span class="math notranslate nohighlight">\(2\pi\)</span> factor (BL1967
+convention), giving <span class="math notranslate nohighlight">\(|\mathbf{B}\,\mathbf{h}| = 2\pi / d_{hkl}\)</span> and
+<span class="math notranslate nohighlight">\(\mathbf{b}_i \cdot \mathbf{a}_j = 2\pi\,\delta_{ij}\)</span>.</p>
+</section>
+<section id="cross-solver-equivalence">
+<h3>Cross-solver equivalence<a class="headerlink" href="#cross-solver-equivalence" title="Link to this heading">#</a></h3>
+<p>This construction is <strong>numerically identical</strong> (to machine precision)
+to the B matrix used by</p>
+<ul class="simple">
+<li><p><strong>SPEC</strong> (psic and other four-circle modes),</p></li>
+<li><p><strong>hkl_soleil</strong> (the libhkl library) with its default
+<code class="docutils literal notranslate"><span class="pre">HKL_TAU</span> <span class="pre">=</span> <span class="pre">2π</span></code> compile-time setting,</p></li>
+<li><p><strong>diffcalc-core</strong> (<code class="docutils literal notranslate"><span class="pre">Crystal._set_reciprocal_cell</span></code>).</p></li>
+</ul>
+<p>The equivalence holds for every crystal system, including
+non-orthogonal cells (hexagonal, trigonal, monoclinic, triclinic).
+For orthogonal cells (cubic, tetragonal, orthorhombic), the
+direct-lattice vectors <span class="math notranslate nohighlight">\(\mathbf{a}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{c}\)</span> are
+parallel to the reciprocal vectors <span class="math notranslate nohighlight">\(\mathbf{a}^\star\)</span>,
+<span class="math notranslate nohighlight">\(\mathbf{b}^\star\)</span>, <span class="math notranslate nohighlight">\(\mathbf{c}^\star\)</span> respectively, so the BL1967
+crystal-Cartesian frame coincides with the
+“direct-lattice-<span class="math notranslate nohighlight">\(\mathbf{a}\)</span>-along-<span class="math notranslate nohighlight">\(\hat{x}\)</span>” frame.  For
+non-orthogonal cells the two frames differ by a rotation in the
+crystal-Cartesian space; both encode the same physical crystal, but
+only the BL1967 frame is the one SPEC and hkl_soleil cross-validate
+against.</p>
+<p>The no-<span class="math notranslate nohighlight">\(2\pi\)</span> alternative (<span class="math notranslate nohighlight">\(\mathbf{b}_i \cdot \mathbf{a}_j =
+\delta_{ij}\)</span>, <span class="math notranslate nohighlight">\(|\mathbf{B}\,\mathbf{h}| = 1/d_{hkl}\)</span>), used by
+FullProf, CrysFML, parts of CCP4, and <code class="docutils literal notranslate"><span class="pre">libhkl</span></code> compiled with
+<code class="docutils literal notranslate"><span class="pre">HKL_TAU</span> <span class="pre">=</span> <span class="pre">1</span></code>, is not exposed by this package.</p>
+</section>
 </section>
 <section id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
@@ -654,7 +702,11 @@ DOI: <a class="reference external" href="https://doi.org/10.1107/S0365110X670009
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lattice-vectors">Lattice vectors</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unit-cell-volume">Unit cell volume</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reciprocal-lattice">Reciprocal lattice</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-b-matrix">The B matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-b-matrix">The B matrix</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#explicit-construction">Explicit construction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-solver-equivalence">Cross-solver equivalence</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference">Reference</a></li>
 </ul>
   </nav></div>
@@ -690,7 +742,7 @@ DOI: <a class="reference external" href="https://doi.org/10.1107/S0365110X670009
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-12 09:21 CDT.
+  Last updated on 2026-05-19 15:24 CDT.
   <br/>
 </p></div>
       

@@ -602,11 +602,12 @@ Module Contents
 
    **Derivation.**
 
-   The sample rotation matrix is:
+   Under the BL1967 standard convention (Busing & Levy 1967,
+   outermost stage leftmost), the sample rotation matrix is:
 
    .. math::
 
-       Z = R_\phi \cdot R_\chi \cdot Z_{\text{prefix}}
+       Z = Z_{\text{prefix}} \cdot R_\chi \cdot R_\phi
 
    where :math:`Z_{\text{prefix}}` is the product of all fixed outer
    sample stages.  The scattering vector in the phi frame is:
@@ -614,45 +615,62 @@ Module Contents
    .. math::
 
        Q_\phi = Z^T Q_{\text{lab}}
-             = Z_{\text{prefix}}^T \cdot R_\chi^T \cdot R_\phi^T \cdot Q_{\text{lab}}
+             = R_\phi^T \cdot R_\chi^T \cdot Z_{\text{prefix}}^T \cdot Q_{\text{lab}}
+
+   Equivalently, multiplying both sides by :math:`R_\chi R_\phi`:
+
+   .. math::
+
+       R(\hat n_\chi, \chi) \cdot R(\hat n_\phi, \phi) \cdot Q_{\phi,\text{target}}
+           = Z_{\text{prefix}}^T \cdot Q_{\text{lab}}
 
    Define the known vectors:
 
-   - :math:`q = Z_{\text{prefix}} \cdot Q_{\phi,\text{target}}`
-   - :math:`v = Q_{\text{lab}}`
+   - :math:`q = Z_{\text{prefix}}^T \cdot Q_{\text{lab}}`
+   - :math:`v = Q_{\phi,\text{target}}`
 
-   The equation to solve is:
+   The equation to solve becomes:
 
    .. math::
 
-       R(\hat n_\chi, -\chi) \cdot R(\hat n_\phi, -\phi) \cdot v = q
+       R(\hat n_\chi, \chi) \cdot R(\hat n_\phi, \phi) \cdot v = q
 
    Since :math:`\hat n_\chi \perp \hat n_\phi`, define
-   :math:`\hat n_3 = \hat n_\chi \times \hat n_\phi`.  Projecting onto
-   the :math:`(\hat n_\phi, \hat n_3)` plane gives a 2×2 linear system
-   for :math:`(\cos\chi, \sin\chi)`:
+   :math:`\hat n_3 = \hat n_\chi \times \hat n_\phi`.
+
+   **Step 1 — solve for phi.**  Project the equation onto
+   :math:`\hat n_\chi` (which is invariant under
+   :math:`R(\hat n_\chi, \chi)`):
 
    .. math::
 
-       \begin{pmatrix} A & B \\ -B & A \end{pmatrix}
-       \begin{pmatrix} \cos\chi \\ \sin\chi \end{pmatrix}
-       = \begin{pmatrix} C \\ E \end{pmatrix}
+       \hat n_\chi \cdot q
+           = \hat n_\chi \cdot R(\hat n_\phi, \phi) \cdot v
 
-   where
-   :math:`A = \hat n_\phi \cdot q`,
-   :math:`B = \hat n_\phi \cdot (\hat n_\chi \times q)`,
-   :math:`C = \hat n_\phi \cdot v`,
-   :math:`E = \hat n_3 \cdot v`.
-   This yields a unique :math:`\chi` via ``atan2``.
-
-   Phi is then solved from the :math:`\hat n_\chi` component:
+   By Rodrigues, since :math:`\hat n_\chi \perp \hat n_\phi`:
 
    .. math::
 
-       \hat n_\chi \cdot R(\hat n_\phi, -\phi) \cdot v = \hat n_\chi \cdot q
+       \hat n_\chi \cdot R(\hat n_\phi, \phi) \cdot v
+           = (\hat n_\chi \cdot v) \cos\phi
+           + (\hat n_\chi \cdot (\hat n_\phi \times v)) \sin\phi
+           = (\hat n_\chi \cdot v) \cos\phi
+           + (\hat n_3 \cdot v) \sin\phi
 
-   which gives :math:`\alpha\cos\phi + \beta\sin\phi = \gamma`, solved
-   with the standard ``atan2`` / ``acos`` decomposition.
+   so :math:`A \cos\phi + B \sin\phi = C` with
+   :math:`A = \hat n_\chi \cdot v`,
+   :math:`B = \hat n_3 \cdot v`,
+   :math:`C = \hat n_\chi \cdot q`, yielding two :math:`\phi`
+   candidates.
+
+   **Step 2 — for each phi, solve for chi.**  Compute
+   :math:`w = R(\hat n_\phi, \phi) \cdot v` (known once :math:`\phi`
+   is fixed).  The equation :math:`R(\hat n_\chi, \chi) \cdot w = q`
+   is a single rotation about :math:`\hat n_\chi` taking :math:`w`
+   onto :math:`q`.  Their :math:`\hat n_\chi`-components must agree
+   (guaranteed by construction); :math:`\chi` is the angle in the
+   plane perpendicular to :math:`\hat n_\chi` between the
+   perpendicular projections of :math:`w` and :math:`q`.
 
    :param ctx: Must have ``prepare_caching`` already called with the chi/phi
                stages as free.
@@ -983,28 +1001,27 @@ Module Contents
 
    Analytic single-``atan2`` solver for one free sample-stage rotation.
 
-   When all detector stages and all sample stages **except one** have
-   fixed angles, the forward equation reduces to a single rotation:
+   Under the BL1967 standard convention (Busing & Levy 1967,
+   outermost stage leftmost), when all detector stages and all sample
+   stages **except one** have fixed angles, the forward equation
+   reduces to a single rotation:
 
    .. math::
 
-       R_{\text{after}} \cdot R(\hat n, \theta) \cdot R_{\text{before}}
-           \cdot Q_{\phi,\text{target}}^* = Q_{\text{lab}}
+       Z = R_{\text{before}} \cdot R(\hat n, \theta) \cdot R_{\text{after}}
 
    where :math:`R_{\text{before}}` is the product of fixed sample stages
-   *outer* to the free stage (already cached as ``ctx._cached_Z_prefix``),
-   :math:`R_{\text{after}}` is the product of fixed sample stages *inner*
-   to the free stage, and the target satisfies
-   :math:`Q_\phi = Z^T Q_{\text{lab}}`.
-
-   Rearranging:
+   *outer* to the free stage (already cached as ``ctx._cached_Z_prefix``)
+   and :math:`R_{\text{after}}` is the product of fixed sample stages
+   *inner* to the free stage.  The target satisfies
+   :math:`Q_\phi = Z^T Q_{\text{lab}}`, so
 
    .. math::
 
        R(\hat n, \theta) \cdot q = u
 
-   with :math:`q = R_{\text{before}} \cdot Q_{\phi,\text{target}}` and
-   :math:`u = R_{\text{after}}^T \cdot Q_{\text{lab}}`.  The unknown
+   with :math:`q = R_{\text{after}} \cdot Q_{\phi,\text{target}}` and
+   :math:`u = R_{\text{before}}^T \cdot Q_{\text{lab}}`.  The unknown
    rotation about a known axis :math:`\hat n` is recovered by projecting
    both vectors onto the plane perpendicular to :math:`\hat n` and
    reading off the angle with a single ``atan2``.

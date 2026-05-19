@@ -258,10 +258,13 @@ Module Contents
 
    Compose the equivalent-Eulerian sample rotation matrix.
 
-   Stage order matches :func:`~orientation._compute_q_phi`: the
-   innermost stage (``phi``) is the leftmost matrix in the product,
-   so that ``Z · v`` rotates ``v`` by the outermost stage first when
-   applied right-to-left.
+   Stage order matches :func:`~orientation._compute_q_phi` under the
+   BL1967 standard convention (Busing & Levy 1967): the outermost
+   stage (``omega``) is the leftmost matrix in the product, so
+
+       Z = R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ)
+
+   and ``Z · v_phi`` maps phi-frame vectors to lab-frame vectors.
 
 
 .. py:function:: _kappa_rotation(convention: KappaPseudoAngleConvention, komega_deg: float, kappa_deg: float, kphi_deg: float) -> ~numpy.ndarray
@@ -273,8 +276,11 @@ Module Contents
 
    Compose the real kappa-stack sample rotation matrix.
 
-   Stage order matches :func:`~orientation._compute_q_phi`: innermost
-   stage (``kphi``) is the leftmost matrix in the product.
+   Stage order matches :func:`~orientation._compute_q_phi` under the
+   BL1967 standard convention (Busing & Levy 1967): the outermost
+   stage (``komega``) is the leftmost matrix in the product, so
+
+       Z = R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ).
 
 
 .. py:function:: _solve_alpha_cos_beta_sin_eq_gamma(alpha: float, beta: float, gamma: float) -> list[float]
@@ -379,37 +385,38 @@ Module Contents
    using the geometry's actual signed stage axes.
 
    Inverts the rotation-matrix identity (with stage order matching
-   :func:`~orientation._compute_q_phi` — innermost on the left)
+   :func:`~orientation._compute_q_phi` — BL1967 standard convention,
+   Busing & Levy 1967, outermost on the left)
 
-       R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)
-           =  R(n_kphi, φ) · R(n_chi_eq, χ) · R(n_komega, ω).
+       R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)
+           =  R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ).
 
    The decomposition is fully analytic and selects between the two
    kappa-branch solutions via the ``branch`` parameter.
 
    Algorithm
    ---------
-   Let ``R_eul = R(n_kphi, φ) · R(n_chi_eq, χ) · R(n_komega, ω)``
-   be the target rotation.  Apply both sides to ``n_komega``:
+   Let ``R_eul = R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ)``
+   be the target rotation.  Apply both sides to ``n_kphi``:
 
-       R(n_kphi, κφ) · R(n_kappa, κ) · n_komega  =  R_eul · n_komega
+       R(n_komega, κω) · R(n_kappa, κ) · n_kphi  =  R_eul · n_kphi
 
-   (since ``R(n_komega, ·) · n_komega = n_komega``).  Take the dot
-   product with ``n_kphi``:
+   (since ``R(n_kphi, ·) · n_kphi = n_kphi``).  Take the dot
+   product with ``n_komega`` (which is invariant under ``R(n_komega, ·)``):
 
-       n_kphi · R(n_kappa, κ) · n_komega  =  n_kphi · R_eul · n_komega.
+       n_komega · R(n_kappa, κ) · n_kphi  =  n_komega · R_eul · n_kphi.
 
-   Expanding ``R(n_kappa, κ) · n_komega`` via the Rodrigues formula
+   Expanding ``R(n_kappa, κ) · n_kphi`` via the Rodrigues formula
    yields a single trigonometric equation in κ of the form
    ``alpha·cos(κ) + beta·sin(κ) = gamma`` with two solutions
    (the two kappa branches).
 
-   Once κ is fixed, ``κφ`` is the rotation about ``n_kphi`` that
-   takes ``R(n_kappa, κ) · n_komega`` onto ``R_eul · n_komega``
-   (these vectors lie on the same cone about ``n_kphi`` by
-   construction).  Finally ``κω`` is the residual rotation about
-   ``n_komega`` extracted from
-   ``R(n_komega, κω) = R(n_kappa, -κ) · R(n_kphi, -κφ) · R_eul``.
+   Once κ is fixed, ``κω`` is the rotation about ``n_komega`` that
+   takes ``R(n_kappa, κ) · n_kphi`` onto ``R_eul · n_kphi``
+   (these vectors lie on the same cone about ``n_komega`` by
+   construction).  Finally ``κφ`` is the residual rotation about
+   ``n_kphi`` extracted from
+   ``R(n_kphi, κφ) = R(n_kappa, -κ) · R(n_komega, -κω) · R_eul``.
 
    :param omega_deg: Virtual Eulerian pseudoangles in degrees.
    :type omega_deg: float
@@ -592,10 +599,11 @@ Module Contents
 
    Inverts :func:`eulerian_to_kappa_axes`.  Decomposes the kappa
    sample-rotation matrix (with stage order matching
-   :func:`~orientation._compute_q_phi`) as
+   :func:`~orientation._compute_q_phi` under the BL1967 standard
+   convention, Busing & Levy 1967) as
 
-       R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)
-           =  R(n_kphi, φ) · R(n_chi_eq, χ) · R(n_komega, ω)
+       R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)
+           =  R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ)
 
    and returns ``(ω, χ, φ)``.  The decomposition has two χ branches;
    this function returns the branch consistent with the input kappa
@@ -603,18 +611,18 @@ Module Contents
 
    Algorithm
    ---------
-   Let ``R = R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)`` be
+   Let ``R = R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)`` be
    the realized rotation.  By the same reasoning as in
    :func:`eulerian_to_kappa_axes` (applied to the Eulerian-equivalent
    triple):
 
    1. Solve for χ from
-      ``n_kphi · R(n_chi_eq, χ) · n_komega  =  n_kphi · R · n_komega``.
+      ``n_komega · R(n_chi_eq, χ) · n_kphi  =  n_komega · R · n_kphi``.
 
-   2. Recover φ as the signed rotation about ``n_kphi`` taking
-      ``R(n_chi_eq, χ) · n_komega`` onto ``R · n_komega``.
+   2. Recover ω as the signed rotation about ``n_komega`` taking
+      ``R(n_chi_eq, χ) · n_kphi`` onto ``R · n_kphi``.
 
-   3. Recover ω from the residual rotation about ``n_komega``.
+   3. Recover φ from the residual rotation about ``n_kphi``.
 
    :param komega_deg: Real kappa motor angles in degrees.
    :type komega_deg: float

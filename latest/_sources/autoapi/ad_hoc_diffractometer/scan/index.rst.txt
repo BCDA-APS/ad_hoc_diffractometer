@@ -182,11 +182,14 @@ Module Contents
       Import: ``ad_hoc_diffractometer.scan._euler_from_Z_standard``
 
 
-   Decompose Z = R(n_φ, φ) · R(n_χ, χ) · R(n_ω, ω) into (ω, χ, φ) in degrees.
+   Decompose ``Z = R(n_ω, ω) · R(n_χ, χ) · R(n_φ, φ)`` into
+   ``(ω, χ, φ)`` in degrees.
 
-   This is the innermost-first product order used by
-   ``geometry.sample_rotation_matrix()``: the outermost stage (omega/eta)
-   is applied first (rightmost), the innermost (phi) last (leftmost).
+   This is the outermost-first (BL1967 standard, Busing & Levy 1967)
+   product order used by
+   :meth:`~AdHocDiffractometer.sample_rotation_matrix`:
+   the outermost (floor-most, omega) stage is the leftmost matrix in
+   the product; the innermost (phi) is rightmost.
 
    The decomposition generalizes Busing & Levy (1967) eqs. 14-17 to
    arbitrary signed stage axes.  Two χ branches are returned
@@ -194,15 +197,16 @@ Module Contents
 
    .. rubric:: Notes
 
-   **Chi** is extracted from the element n_φ · Z · n_ω, which equals
-   n_φ · R_χ · n_ω (since R_φ fixes n_φ and R_ω fixes n_ω).
+   **Chi** is extracted from the element n_ω · Z · n_φ, which equals
+   n_ω · R_χ · n_φ (since R_ω fixes n_ω and R_φ fixes n_φ).
    For the standard case n_ω ∥ n_φ this equals cos(χ).
 
-   **Phi** is extracted from Z · n_ω = R_φ · (R_χ · n_ω): the angle in the
-   plane ⊥ n_φ between (R_χ · n_ω) and (Z · n_ω).
+   **Omega** is extracted from Z · n_φ = R_ω · (R_χ · n_φ): the angle
+   in the plane ⊥ n_ω between (R_χ · n_φ) and (Z · n_φ).
 
-   **Omega** is extracted from Z^T · n_φ = R_χ^T · n_φ: the angle in the
-   plane ⊥ n_ω between (R_χ^T · n_φ) and (Z^T · n_φ), with sign reversed.
+   **Phi** is extracted from Z^T · n_ω = R_φ^T · (R_χ^T · n_ω): the
+   angle in the plane ⊥ n_φ between (R_χ^T · n_ω) and (Z^T · n_ω),
+   with sign reversed (because the rotation acts on Z^T not Z).
 
    :param Z: Sample rotation matrix to decompose.
    :type Z: ndarray, shape (3, 3)
@@ -237,25 +241,26 @@ Module Contents
       Import: ``ad_hoc_diffractometer.scan._kappa_from_Z``
 
 
-   Decompose ``Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω)`` into
+   Decompose ``Z = R(n_kω, kω) · R(n_κ, κ) · R(n_kφ, kφ)`` (BL1967
+   standard outermost-leftmost order, Busing & Levy 1967) into
    ``(kω, κ, kφ)`` using a Rodrigues expansion that is **agnostic to
    the specific signed axis convention** of the kappa demo geometry.
 
    Derivation
    ----------
-   Apply both sides to ``n_komega``:
+   Apply both sides to ``n_kphi``:
 
-       Z · n_kω  =  R(n_kφ, kφ) · R(n_κ, κ) · n_kω
+       Z · n_kφ  =  R(n_kω, kω) · R(n_κ, κ) · n_kφ
 
-   (since ``R(n_kω, ·) · n_kω = n_kω``).  Take the dot product with
-   ``n_kphi``:
+   (since ``R(n_kφ, ·) · n_kφ = n_kφ``).  Take the dot product with
+   ``n_komega`` (which is invariant under ``R(n_komega, kω)``):
 
-       n_kφ · Z · n_kω  =  n_kφ · R(n_κ, κ) · n_kω
+       n_kω · Z · n_kφ  =  n_kω · R(n_κ, κ) · n_kφ
 
    Expanding the right side via Rodrigues (with
-   ``a = n_kphi · n_komega``,
-   ``b = n_kphi · (n_kappa × n_komega)``,
-   ``c = (n_kphi · n_kappa)·(n_kappa · n_komega)``):
+   ``a = n_komega · n_kphi``,
+   ``b = n_komega · (n_kappa × n_kphi)``,
+   ``c = (n_komega · n_kappa)·(n_kappa · n_kphi)``):
 
        elem  =  a·cos(κ) + b·sin(κ) + c·(1 − cos(κ))
              =  (a − c)·cos(κ) + b·sin(κ) + c

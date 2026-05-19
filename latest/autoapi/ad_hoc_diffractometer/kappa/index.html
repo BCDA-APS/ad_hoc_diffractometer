@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=731280fa"></script>
+    <script src="../../../_static/documentation_options.js?v=33838f19"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-12 09:21 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 15:24 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -803,10 +803,13 @@ substitute Eulerian solutions back into the kappa motor dict.</p></li>
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.kappa._eulerian_rotation</span></code></p>
 </div>
 <p>Compose the equivalent-Eulerian sample rotation matrix.</p>
-<p>Stage order matches <code class="xref py py-func docutils literal notranslate"><span class="pre">_compute_q_phi()</span></code>: the
-innermost stage (<code class="docutils literal notranslate"><span class="pre">phi</span></code>) is the leftmost matrix in the product,
-so that <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">·</span> <span class="pre">v</span></code> rotates <code class="docutils literal notranslate"><span class="pre">v</span></code> by the outermost stage first when
-applied right-to-left.</p>
+<p>Stage order matches <code class="xref py py-func docutils literal notranslate"><span class="pre">_compute_q_phi()</span></code> under the
+BL1967 standard convention (Busing &amp; Levy 1967): the outermost
+stage (<code class="docutils literal notranslate"><span class="pre">omega</span></code>) is the leftmost matrix in the product, so</p>
+<blockquote>
+<div><p>Z = R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ)</p>
+</div></blockquote>
+<p>and <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">·</span> <span class="pre">v_phi</span></code> maps phi-frame vectors to lab-frame vectors.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -816,8 +819,12 @@ applied right-to-left.</p>
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.kappa._kappa_rotation</span></code></p>
 </div>
 <p>Compose the real kappa-stack sample rotation matrix.</p>
-<p>Stage order matches <code class="xref py py-func docutils literal notranslate"><span class="pre">_compute_q_phi()</span></code>: innermost
-stage (<code class="docutils literal notranslate"><span class="pre">kphi</span></code>) is the leftmost matrix in the product.</p>
+<p>Stage order matches <code class="xref py py-func docutils literal notranslate"><span class="pre">_compute_q_phi()</span></code> under the
+BL1967 standard convention (Busing &amp; Levy 1967): the outermost
+stage (<code class="docutils literal notranslate"><span class="pre">komega</span></code>) is the leftmost matrix in the product, so</p>
+<blockquote>
+<div><p>Z = R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ).</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
@@ -919,10 +926,11 @@ geometry-dependent calculation, use
 <p>Convert virtual Eulerian pseudoangles to real kappa motor angles
 using the geometry’s actual signed stage axes.</p>
 <p>Inverts the rotation-matrix identity (with stage order matching
-<code class="xref py py-func docutils literal notranslate"><span class="pre">_compute_q_phi()</span></code> — innermost on the left)</p>
+<code class="xref py py-func docutils literal notranslate"><span class="pre">_compute_q_phi()</span></code> — BL1967 standard convention,
+Busing &amp; Levy 1967, outermost on the left)</p>
 <blockquote>
 <div><dl class="simple">
-<dt>R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)</dt><dd><p>=  R(n_kphi, φ) · R(n_chi_eq, χ) · R(n_komega, ω).</p>
+<dt>R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)</dt><dd><p>=  R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ).</p>
 </dd>
 </dl>
 </div></blockquote>
@@ -930,26 +938,26 @@ using the geometry’s actual signed stage axes.</p>
 kappa-branch solutions via the <code class="docutils literal notranslate"><span class="pre">branch</span></code> parameter.</p>
 <section id="algorithm">
 <h3>Algorithm<a class="headerlink" href="#algorithm" title="Link to this heading">#</a></h3>
-<p>Let <code class="docutils literal notranslate"><span class="pre">R_eul</span> <span class="pre">=</span> <span class="pre">R(n_kphi,</span> <span class="pre">φ)</span> <span class="pre">·</span> <span class="pre">R(n_chi_eq,</span> <span class="pre">χ)</span> <span class="pre">·</span> <span class="pre">R(n_komega,</span> <span class="pre">ω)</span></code>
-be the target rotation.  Apply both sides to <code class="docutils literal notranslate"><span class="pre">n_komega</span></code>:</p>
+<p>Let <code class="docutils literal notranslate"><span class="pre">R_eul</span> <span class="pre">=</span> <span class="pre">R(n_komega,</span> <span class="pre">ω)</span> <span class="pre">·</span> <span class="pre">R(n_chi_eq,</span> <span class="pre">χ)</span> <span class="pre">·</span> <span class="pre">R(n_kphi,</span> <span class="pre">φ)</span></code>
+be the target rotation.  Apply both sides to <code class="docutils literal notranslate"><span class="pre">n_kphi</span></code>:</p>
 <blockquote>
-<div><p>R(n_kphi, κφ) · R(n_kappa, κ) · n_komega  =  R_eul · n_komega</p>
+<div><p>R(n_komega, κω) · R(n_kappa, κ) · n_kphi  =  R_eul · n_kphi</p>
 </div></blockquote>
-<p>(since <code class="docutils literal notranslate"><span class="pre">R(n_komega,</span> <span class="pre">·)</span> <span class="pre">·</span> <span class="pre">n_komega</span> <span class="pre">=</span> <span class="pre">n_komega</span></code>).  Take the dot
-product with <code class="docutils literal notranslate"><span class="pre">n_kphi</span></code>:</p>
+<p>(since <code class="docutils literal notranslate"><span class="pre">R(n_kphi,</span> <span class="pre">·)</span> <span class="pre">·</span> <span class="pre">n_kphi</span> <span class="pre">=</span> <span class="pre">n_kphi</span></code>).  Take the dot
+product with <code class="docutils literal notranslate"><span class="pre">n_komega</span></code> (which is invariant under <code class="docutils literal notranslate"><span class="pre">R(n_komega,</span> <span class="pre">·)</span></code>):</p>
 <blockquote>
-<div><p>n_kphi · R(n_kappa, κ) · n_komega  =  n_kphi · R_eul · n_komega.</p>
+<div><p>n_komega · R(n_kappa, κ) · n_kphi  =  n_komega · R_eul · n_kphi.</p>
 </div></blockquote>
-<p>Expanding <code class="docutils literal notranslate"><span class="pre">R(n_kappa,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">n_komega</span></code> via the Rodrigues formula
+<p>Expanding <code class="docutils literal notranslate"><span class="pre">R(n_kappa,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">n_kphi</span></code> via the Rodrigues formula
 yields a single trigonometric equation in κ of the form
 <code class="docutils literal notranslate"><span class="pre">alpha·cos(κ)</span> <span class="pre">+</span> <span class="pre">beta·sin(κ)</span> <span class="pre">=</span> <span class="pre">gamma</span></code> with two solutions
 (the two kappa branches).</p>
-<p>Once κ is fixed, <code class="docutils literal notranslate"><span class="pre">κφ</span></code> is the rotation about <code class="docutils literal notranslate"><span class="pre">n_kphi</span></code> that
-takes <code class="docutils literal notranslate"><span class="pre">R(n_kappa,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">n_komega</span></code> onto <code class="docutils literal notranslate"><span class="pre">R_eul</span> <span class="pre">·</span> <span class="pre">n_komega</span></code>
-(these vectors lie on the same cone about <code class="docutils literal notranslate"><span class="pre">n_kphi</span></code> by
-construction).  Finally <code class="docutils literal notranslate"><span class="pre">κω</span></code> is the residual rotation about
-<code class="docutils literal notranslate"><span class="pre">n_komega</span></code> extracted from
-<code class="docutils literal notranslate"><span class="pre">R(n_komega,</span> <span class="pre">κω)</span> <span class="pre">=</span> <span class="pre">R(n_kappa,</span> <span class="pre">-κ)</span> <span class="pre">·</span> <span class="pre">R(n_kphi,</span> <span class="pre">-κφ)</span> <span class="pre">·</span> <span class="pre">R_eul</span></code>.</p>
+<p>Once κ is fixed, <code class="docutils literal notranslate"><span class="pre">κω</span></code> is the rotation about <code class="docutils literal notranslate"><span class="pre">n_komega</span></code> that
+takes <code class="docutils literal notranslate"><span class="pre">R(n_kappa,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">n_kphi</span></code> onto <code class="docutils literal notranslate"><span class="pre">R_eul</span> <span class="pre">·</span> <span class="pre">n_kphi</span></code>
+(these vectors lie on the same cone about <code class="docutils literal notranslate"><span class="pre">n_komega</span></code> by
+construction).  Finally <code class="docutils literal notranslate"><span class="pre">κφ</span></code> is the residual rotation about
+<code class="docutils literal notranslate"><span class="pre">n_kphi</span></code> extracted from
+<code class="docutils literal notranslate"><span class="pre">R(n_kphi,</span> <span class="pre">κφ)</span> <span class="pre">=</span> <span class="pre">R(n_kappa,</span> <span class="pre">-κ)</span> <span class="pre">·</span> <span class="pre">R(n_komega,</span> <span class="pre">-κω)</span> <span class="pre">·</span> <span class="pre">R_eul</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">param omega_deg<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Virtual Eulerian pseudoangles in degrees.</p>
@@ -1163,10 +1171,11 @@ the reachable range (<code class="docutils literal notranslate"><span class="pre
 using the geometry’s actual signed stage axes.</p>
 <p>Inverts <a class="reference internal" href="#ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes"><code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa_axes()</span></code></a>.  Decomposes the kappa
 sample-rotation matrix (with stage order matching
-<code class="xref py py-func docutils literal notranslate"><span class="pre">_compute_q_phi()</span></code>) as</p>
+<code class="xref py py-func docutils literal notranslate"><span class="pre">_compute_q_phi()</span></code> under the BL1967 standard
+convention, Busing &amp; Levy 1967) as</p>
 <blockquote>
 <div><dl class="simple">
-<dt>R(n_kphi, κφ) · R(n_kappa, κ) · R(n_komega, κω)</dt><dd><p>=  R(n_kphi, φ) · R(n_chi_eq, χ) · R(n_komega, ω)</p>
+<dt>R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)</dt><dd><p>=  R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ)</p>
 </dd>
 </dl>
 </div></blockquote>
@@ -1175,16 +1184,16 @@ this function returns the branch consistent with the input kappa
 sign.</p>
 <section id="id3">
 <h3>Algorithm<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<p>Let <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">=</span> <span class="pre">R(n_kphi,</span> <span class="pre">κφ)</span> <span class="pre">·</span> <span class="pre">R(n_kappa,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">R(n_komega,</span> <span class="pre">κω)</span></code> be
+<p>Let <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">=</span> <span class="pre">R(n_komega,</span> <span class="pre">κω)</span> <span class="pre">·</span> <span class="pre">R(n_kappa,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">R(n_kphi,</span> <span class="pre">κφ)</span></code> be
 the realized rotation.  By the same reasoning as in
 <a class="reference internal" href="#ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes" title="ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes"><code class="xref py py-func docutils literal notranslate"><span class="pre">eulerian_to_kappa_axes()</span></code></a> (applied to the Eulerian-equivalent
 triple):</p>
 <ol class="arabic simple">
 <li><p>Solve for χ from
-<code class="docutils literal notranslate"><span class="pre">n_kphi</span> <span class="pre">·</span> <span class="pre">R(n_chi_eq,</span> <span class="pre">χ)</span> <span class="pre">·</span> <span class="pre">n_komega</span>&#160; <span class="pre">=</span>&#160; <span class="pre">n_kphi</span> <span class="pre">·</span> <span class="pre">R</span> <span class="pre">·</span> <span class="pre">n_komega</span></code>.</p></li>
-<li><p>Recover φ as the signed rotation about <code class="docutils literal notranslate"><span class="pre">n_kphi</span></code> taking
-<code class="docutils literal notranslate"><span class="pre">R(n_chi_eq,</span> <span class="pre">χ)</span> <span class="pre">·</span> <span class="pre">n_komega</span></code> onto <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">·</span> <span class="pre">n_komega</span></code>.</p></li>
-<li><p>Recover ω from the residual rotation about <code class="docutils literal notranslate"><span class="pre">n_komega</span></code>.</p></li>
+<code class="docutils literal notranslate"><span class="pre">n_komega</span> <span class="pre">·</span> <span class="pre">R(n_chi_eq,</span> <span class="pre">χ)</span> <span class="pre">·</span> <span class="pre">n_kphi</span>&#160; <span class="pre">=</span>&#160; <span class="pre">n_komega</span> <span class="pre">·</span> <span class="pre">R</span> <span class="pre">·</span> <span class="pre">n_kphi</span></code>.</p></li>
+<li><p>Recover ω as the signed rotation about <code class="docutils literal notranslate"><span class="pre">n_komega</span></code> taking
+<code class="docutils literal notranslate"><span class="pre">R(n_chi_eq,</span> <span class="pre">χ)</span> <span class="pre">·</span> <span class="pre">n_kphi</span></code> onto <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">·</span> <span class="pre">n_kphi</span></code>.</p></li>
+<li><p>Recover φ from the residual rotation about <code class="docutils literal notranslate"><span class="pre">n_kphi</span></code>.</p></li>
 </ol>
 <dl class="field-list simple">
 <dt class="field-odd">param komega_deg<span class="colon">:</span></dt>
@@ -1413,7 +1422,7 @@ applied by the caller in <a class="reference internal" href="../forward/index.ht
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-12 09:21 CDT.
+  Last updated on 2026-05-19 15:24 CDT.
   <br/>
 </p></div>
       

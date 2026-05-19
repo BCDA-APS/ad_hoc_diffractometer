@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=731280fa"></script>
+    <script src="../../../_static/documentation_options.js?v=33838f19"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-12 09:21 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 15:24 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -645,13 +645,13 @@ Kappa conversion formulae.</p></li>
 <td><p>Return True if all supplied angles are within their stage limits.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._euler_from_Z_standard" title="ad_hoc_diffractometer.scan._euler_from_Z_standard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_euler_from_Z_standard</span></code></a>(→ list[tuple[float, float, float]])</p></td>
-<td><p>Decompose Z = R(n_φ, φ) · R(n_χ, χ) · R(n_ω, ω) into (ω, χ, φ) in degrees.</p></td>
+<td><p>Decompose <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">=</span> <span class="pre">R(n_ω,</span> <span class="pre">ω)</span> <span class="pre">·</span> <span class="pre">R(n_χ,</span> <span class="pre">χ)</span> <span class="pre">·</span> <span class="pre">R(n_φ,</span> <span class="pre">φ)</span></code> into</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._hkl_points" title="ad_hoc_diffractometer.scan._hkl_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_hkl_points</span></code></a>(→ list[tuple[float, float, float]])</p></td>
 <td><p>Generate <code class="docutils literal notranslate"><span class="pre">n_points</span></code> evenly-spaced (h, k, l) tuples from a trajectory dict.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._kappa_from_Z" title="ad_hoc_diffractometer.scan._kappa_from_Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_kappa_from_Z</span></code></a>(→ list[tuple[float, float, float]])</p></td>
-<td><p>Decompose <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">=</span> <span class="pre">R(n_kφ,</span> <span class="pre">kφ)</span> <span class="pre">·</span> <span class="pre">R(n_κ,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">R(n_kω,</span> <span class="pre">kω)</span></code> into</p></td>
+<td><p>Decompose <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">=</span> <span class="pre">R(n_kω,</span> <span class="pre">kω)</span> <span class="pre">·</span> <span class="pre">R(n_κ,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">R(n_kφ,</span> <span class="pre">kφ)</span></code> (BL1967</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._measure_psi" title="ad_hoc_diffractometer.scan._measure_psi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_measure_psi</span></code></a>(→ float)</p></td>
 <td><p>Measure the BL1967 operational ψ for <code class="docutils literal notranslate"><span class="pre">angles</span></code> relative to <code class="docutils literal notranslate"><span class="pre">ref_dir</span></code>.</p></td>
@@ -723,21 +723,25 @@ scores 0.0, so the first solution returned by <code class="docutils literal notr
 <dd><div class="import-path docutils container">
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan._euler_from_Z_standard</span></code></p>
 </div>
-<p>Decompose Z = R(n_φ, φ) · R(n_χ, χ) · R(n_ω, ω) into (ω, χ, φ) in degrees.</p>
-<p>This is the innermost-first product order used by
-<code class="docutils literal notranslate"><span class="pre">geometry.sample_rotation_matrix()</span></code>: the outermost stage (omega/eta)
-is applied first (rightmost), the innermost (phi) last (leftmost).</p>
+<p>Decompose <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">=</span> <span class="pre">R(n_ω,</span> <span class="pre">ω)</span> <span class="pre">·</span> <span class="pre">R(n_χ,</span> <span class="pre">χ)</span> <span class="pre">·</span> <span class="pre">R(n_φ,</span> <span class="pre">φ)</span></code> into
+<code class="docutils literal notranslate"><span class="pre">(ω,</span> <span class="pre">χ,</span> <span class="pre">φ)</span></code> in degrees.</p>
+<p>This is the outermost-first (BL1967 standard, Busing &amp; Levy 1967)
+product order used by
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">sample_rotation_matrix()</span></code>:
+the outermost (floor-most, omega) stage is the leftmost matrix in
+the product; the innermost (phi) is rightmost.</p>
 <p>The decomposition generalizes Busing &amp; Levy (1967) eqs. 14-17 to
 arbitrary signed stage axes.  Two χ branches are returned
 (χ ∈ [0°, 180°] and χ ∈ [-180°, 0°]).</p>
 <p class="rubric">Notes</p>
-<p><strong>Chi</strong> is extracted from the element n_φ · Z · n_ω, which equals
-n_φ · R_χ · n_ω (since R_φ fixes n_φ and R_ω fixes n_ω).
+<p><strong>Chi</strong> is extracted from the element n_ω · Z · n_φ, which equals
+n_ω · R_χ · n_φ (since R_ω fixes n_ω and R_φ fixes n_φ).
 For the standard case n_ω ∥ n_φ this equals cos(χ).</p>
-<p><strong>Phi</strong> is extracted from Z · n_ω = R_φ · (R_χ · n_ω): the angle in the
-plane ⊥ n_φ between (R_χ · n_ω) and (Z · n_ω).</p>
-<p><strong>Omega</strong> is extracted from Z^T · n_φ = R_χ^T · n_φ: the angle in the
-plane ⊥ n_ω between (R_χ^T · n_φ) and (Z^T · n_φ), with sign reversed.</p>
+<p><strong>Omega</strong> is extracted from Z · n_φ = R_ω · (R_χ · n_φ): the angle
+in the plane ⊥ n_ω between (R_χ · n_φ) and (Z · n_φ).</p>
+<p><strong>Phi</strong> is extracted from Z^T · n_ω = R_φ^T · (R_χ^T · n_ω): the
+angle in the plane ⊥ n_φ between (R_χ^T · n_ω) and (Z^T · n_ω),
+with sign reversed (because the rotation acts on Z^T not Z).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -779,24 +783,25 @@ plane ⊥ n_ω between (R_χ^T · n_φ) and (Z^T · n_φ), with sign reversed.</
 <dd><div class="import-path docutils container">
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan._kappa_from_Z</span></code></p>
 </div>
-<p>Decompose <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">=</span> <span class="pre">R(n_kφ,</span> <span class="pre">kφ)</span> <span class="pre">·</span> <span class="pre">R(n_κ,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">R(n_kω,</span> <span class="pre">kω)</span></code> into
+<p>Decompose <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">=</span> <span class="pre">R(n_kω,</span> <span class="pre">kω)</span> <span class="pre">·</span> <span class="pre">R(n_κ,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">R(n_kφ,</span> <span class="pre">kφ)</span></code> (BL1967
+standard outermost-leftmost order, Busing &amp; Levy 1967) into
 <code class="docutils literal notranslate"><span class="pre">(kω,</span> <span class="pre">κ,</span> <span class="pre">kφ)</span></code> using a Rodrigues expansion that is <strong>agnostic to
 the specific signed axis convention</strong> of the kappa demo geometry.</p>
 <section id="derivation">
 <h3>Derivation<a class="headerlink" href="#derivation" title="Link to this heading">#</a></h3>
-<p>Apply both sides to <code class="docutils literal notranslate"><span class="pre">n_komega</span></code>:</p>
+<p>Apply both sides to <code class="docutils literal notranslate"><span class="pre">n_kphi</span></code>:</p>
 <blockquote>
-<div><p>Z · n_kω  =  R(n_kφ, kφ) · R(n_κ, κ) · n_kω</p>
+<div><p>Z · n_kφ  =  R(n_kω, kω) · R(n_κ, κ) · n_kφ</p>
 </div></blockquote>
-<p>(since <code class="docutils literal notranslate"><span class="pre">R(n_kω,</span> <span class="pre">·)</span> <span class="pre">·</span> <span class="pre">n_kω</span> <span class="pre">=</span> <span class="pre">n_kω</span></code>).  Take the dot product with
-<code class="docutils literal notranslate"><span class="pre">n_kphi</span></code>:</p>
+<p>(since <code class="docutils literal notranslate"><span class="pre">R(n_kφ,</span> <span class="pre">·)</span> <span class="pre">·</span> <span class="pre">n_kφ</span> <span class="pre">=</span> <span class="pre">n_kφ</span></code>).  Take the dot product with
+<code class="docutils literal notranslate"><span class="pre">n_komega</span></code> (which is invariant under <code class="docutils literal notranslate"><span class="pre">R(n_komega,</span> <span class="pre">kω)</span></code>):</p>
 <blockquote>
-<div><p>n_kφ · Z · n_kω  =  n_kφ · R(n_κ, κ) · n_kω</p>
+<div><p>n_kω · Z · n_kφ  =  n_kω · R(n_κ, κ) · n_kφ</p>
 </div></blockquote>
 <p>Expanding the right side via Rodrigues (with
-<code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">n_kphi</span> <span class="pre">·</span> <span class="pre">n_komega</span></code>,
-<code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">n_kphi</span> <span class="pre">·</span> <span class="pre">(n_kappa</span> <span class="pre">×</span> <span class="pre">n_komega)</span></code>,
-<code class="docutils literal notranslate"><span class="pre">c</span> <span class="pre">=</span> <span class="pre">(n_kphi</span> <span class="pre">·</span> <span class="pre">n_kappa)·(n_kappa</span> <span class="pre">·</span> <span class="pre">n_komega)</span></code>):</p>
+<code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">n_komega</span> <span class="pre">·</span> <span class="pre">n_kphi</span></code>,
+<code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">n_komega</span> <span class="pre">·</span> <span class="pre">(n_kappa</span> <span class="pre">×</span> <span class="pre">n_kphi)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">c</span> <span class="pre">=</span> <span class="pre">(n_komega</span> <span class="pre">·</span> <span class="pre">n_kappa)·(n_kappa</span> <span class="pre">·</span> <span class="pre">n_kphi)</span></code>):</p>
 <blockquote>
 <div><dl class="simple">
 <dt>elem  =  a·cos(κ) + b·sin(κ) + c·(1 − cos(κ))</dt><dd><p>=  (a − c)·cos(κ) + b·sin(κ) + c</p>
@@ -1265,7 +1270,7 @@ Default: <code class="docutils literal notranslate"><span class="pre">NEAREST_AN
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-12 09:21 CDT.
+  Last updated on 2026-05-19 15:24 CDT.
   <br/>
 </p></div>
       

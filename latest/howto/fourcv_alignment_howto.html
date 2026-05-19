@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../_static/documentation_options.js?v=731280fa"></script>
+    <script src="../_static/documentation_options.js?v=33838f19"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-12 09:21 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 15:24 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -760,9 +760,9 @@ Supplying <code class="docutils literal notranslate"><span class="pre">a</span><
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Lattice(hexagonal: a=4.785000 Å, c=12.991000 Å)
 
 B matrix (reciprocal lattice, Å⁻¹, BL1967 convention with 2π):
-[[ 1.3131    0.        0.      ]
- [ 0.758119  1.516238 -0.      ]
- [-0.       -0.        0.483657]]
+[[ 1.516238  0.758119 -0.      ]
+ [ 0.        1.3131   -0.      ]
+ [ 0.        0.        0.483657]]
 
 Reciprocal lattice parameters (a*, b*, c* = norms of the columns of B):
   a* = 1.516238 Å⁻¹  (SPEC #G1: 1.516238 Å⁻¹)
@@ -1002,17 +1002,17 @@ and the φ frame (<strong>T</strong>_φ).</p></li>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>UB matrix (Å⁻¹, no 2π factor):
-[[-0.182847  0.351047  0.45162 ]
- [ 0.06544   1.269026 -0.161633]
- [-1.503749 -0.751875 -0.061948]]
+[[-0.000000e+00  2.200000e-05  4.836570e-01]
+ [ 0.000000e+00  1.313100e+00 -8.000000e-06]
+ [-1.516238e+00 -7.581190e-01 -0.000000e+00]]
 
 U matrix (orientation):
-[[-0.272919  0.231525  0.933762]
- [-0.433381  0.836957 -0.33419 ]
- [-0.858892 -0.495882 -0.128083]]
+[[-0.0e+00  1.7e-05  1.0e+00]
+ [ 0.0e+00  1.0e+00 -1.7e-05]
+ [-1.0e+00  0.0e+00 -0.0e+00]]
 
 det(U) = 1.00000000  (must be +1 for a proper rotation)
-max |U^T U - I| = 3.93e-17  (must be ~0 for orthonormality)
+max |U^T U - I| = 4.44e-16  (must be ~0 for orthonormality)
 </pre></div>
 </div>
 </div>
@@ -1078,7 +1078,7 @@ direction and the φ-rotation plane.</p>
     cos(angle) = 1.00000000   angular discrepancy = 0.0000°
 
   or2  hkl=(1.0, 0.0, 0.0)
-    cos(angle) = 0.99176346   angular discrepancy = 7.3588°
+    cos(angle) = 1.00000000   angular discrepancy = 0.0000°
 
 or1 is exact by construction.
 or2 has a ~7° discrepancy because 2θ=60° is not the Bragg angle
@@ -1249,20 +1249,20 @@ refined <strong>UB</strong> matrix that reflects the actual crystal alignment.</
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>UB matrix — initial (calculated) vs refined (measured):
                                    Initial     Refined
-  UB[0,0]     -0.182847     -0.192788
-  UB[0,1]      0.351047      0.343112
-  UB[0,2]      0.451620      0.451592
-  UB[1,0]      0.065440      0.068477
-  UB[1,1]      1.269026      1.271602
-  UB[1,2]     -0.161633     -0.160404
-  UB[2,0]     -1.503749     -1.502372
-  UB[2,1]     -0.751875     -0.751186
-  UB[2,2]     -0.061948     -0.065261
+  UB[0,0]     -0.000000     -0.017993
+  UB[0,1]      0.000022      0.004854
+  UB[0,2]      0.483657      0.483596
+  UB[1,0]      0.000000      0.000190
+  UB[1,1]      1.313100      1.313122
+  UB[1,2]     -0.000008     -0.005101
+  UB[2,0]     -1.516238     -1.516131
+  UB[2,1]     -0.758119     -0.758065
+  UB[2,2]     -0.000000     -0.005740
 
 Off-diagonal terms grow slightly — consistent with the 0.68° χ offset.
 
 Frobenius norm:            initial = 2.198153  refined = 2.198153
-Off-diagonal Frobenius norm: initial = 1.784427  refined = 1.781427
+Off-diagonal Frobenius norm: initial = 1.762851  refined = 1.762734
 (A larger off-diagonal norm in the refined matrix reflects the measured χ offset.)
 </pre></div>
 </div>
@@ -1289,7 +1289,7 @@ Off-diagonal Frobenius norm: initial = 1.784427  refined = 1.781427
     cos(angle) = 1.00000000   angular discrepancy = 0.0000°
 
   or2  hkl=(1.0, 0.0, 0.0)
-    cos(angle) = 0.99085492   angular discrepancy = 7.7547°
+    cos(angle) = 0.99992958   angular discrepancy = 0.6800°
 
 or1 remains exact.
 or2 still shows ~7° discrepancy — the geometric placeholder has not changed.
@@ -1575,7 +1575,7 @@ The saved state can be restored later with:
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-12 09:21 CDT.
+  Last updated on 2026-05-19 15:24 CDT.
   <br/>
 </p></div>
       

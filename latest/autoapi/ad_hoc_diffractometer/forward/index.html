@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=731280fa"></script>
+    <script src="../../../_static/documentation_options.js?v=33838f19"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-12 09:21 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 15:24 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -1211,41 +1211,55 @@ covered by the fast paths above.</p></li>
 <p>Derives (chi, phi) from a direct trigonometric decomposition when the
 chi and phi axes are orthogonal (standard Eulerian geometry).</p>
 <p><strong>Derivation.</strong></p>
-<p>The sample rotation matrix is:</p>
+<p>Under the BL1967 standard convention (Busing &amp; Levy 1967,
+outermost stage leftmost), the sample rotation matrix is:</p>
 <div class="math notranslate nohighlight">
-\[Z = R_\phi \cdot R_\chi \cdot Z_{\text{prefix}}\]</div>
+\[Z = Z_{\text{prefix}} \cdot R_\chi \cdot R_\phi\]</div>
 <p>where <span class="math notranslate nohighlight">\(Z_{\text{prefix}}\)</span> is the product of all fixed outer
 sample stages.  The scattering vector in the phi frame is:</p>
 <div class="math notranslate nohighlight">
 \[Q_\phi = Z^T Q_{\text{lab}}
-      = Z_{\text{prefix}}^T \cdot R_\chi^T \cdot R_\phi^T \cdot Q_{\text{lab}}\]</div>
+      = R_\phi^T \cdot R_\chi^T \cdot Z_{\text{prefix}}^T \cdot Q_{\text{lab}}\]</div>
+<p>Equivalently, multiplying both sides by <span class="math notranslate nohighlight">\(R_\chi R_\phi\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[R(\hat n_\chi, \chi) \cdot R(\hat n_\phi, \phi) \cdot Q_{\phi,\text{target}}
+    = Z_{\text{prefix}}^T \cdot Q_{\text{lab}}\]</div>
 <p>Define the known vectors:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(q = Z_{\text{prefix}} \cdot Q_{\phi,\text{target}}\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(v = Q_{\text{lab}}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(q = Z_{\text{prefix}}^T \cdot Q_{\text{lab}}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(v = Q_{\phi,\text{target}}\)</span></p></li>
 </ul>
-<p>The equation to solve is:</p>
+<p>The equation to solve becomes:</p>
 <div class="math notranslate nohighlight">
-\[R(\hat n_\chi, -\chi) \cdot R(\hat n_\phi, -\phi) \cdot v = q\]</div>
+\[R(\hat n_\chi, \chi) \cdot R(\hat n_\phi, \phi) \cdot v = q\]</div>
 <p>Since <span class="math notranslate nohighlight">\(\hat n_\chi \perp \hat n_\phi\)</span>, define
-<span class="math notranslate nohighlight">\(\hat n_3 = \hat n_\chi \times \hat n_\phi\)</span>.  Projecting onto
-the <span class="math notranslate nohighlight">\((\hat n_\phi, \hat n_3)\)</span> plane gives a 2×2 linear system
-for <span class="math notranslate nohighlight">\((\cos\chi, \sin\chi)\)</span>:</p>
+<span class="math notranslate nohighlight">\(\hat n_3 = \hat n_\chi \times \hat n_\phi\)</span>.</p>
+<p><strong>Step 1 — solve for phi.</strong>  Project the equation onto
+<span class="math notranslate nohighlight">\(\hat n_\chi\)</span> (which is invariant under
+<span class="math notranslate nohighlight">\(R(\hat n_\chi, \chi)\)</span>):</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}\begin{pmatrix} A &amp; B \\ -B &amp; A \end{pmatrix}
-\begin{pmatrix} \cos\chi \\ \sin\chi \end{pmatrix}
-= \begin{pmatrix} C \\ E \end{pmatrix}\end{split}\]</div>
-<p>where
-<span class="math notranslate nohighlight">\(A = \hat n_\phi \cdot q\)</span>,
-<span class="math notranslate nohighlight">\(B = \hat n_\phi \cdot (\hat n_\chi \times q)\)</span>,
-<span class="math notranslate nohighlight">\(C = \hat n_\phi \cdot v\)</span>,
-<span class="math notranslate nohighlight">\(E = \hat n_3 \cdot v\)</span>.
-This yields a unique <span class="math notranslate nohighlight">\(\chi\)</span> via <code class="docutils literal notranslate"><span class="pre">atan2</span></code>.</p>
-<p>Phi is then solved from the <span class="math notranslate nohighlight">\(\hat n_\chi\)</span> component:</p>
+\[\hat n_\chi \cdot q
+    = \hat n_\chi \cdot R(\hat n_\phi, \phi) \cdot v\]</div>
+<p>By Rodrigues, since <span class="math notranslate nohighlight">\(\hat n_\chi \perp \hat n_\phi\)</span>:</p>
 <div class="math notranslate nohighlight">
-\[\hat n_\chi \cdot R(\hat n_\phi, -\phi) \cdot v = \hat n_\chi \cdot q\]</div>
-<p>which gives <span class="math notranslate nohighlight">\(\alpha\cos\phi + \beta\sin\phi = \gamma\)</span>, solved
-with the standard <code class="docutils literal notranslate"><span class="pre">atan2</span></code> / <code class="docutils literal notranslate"><span class="pre">acos</span></code> decomposition.</p>
+\[\hat n_\chi \cdot R(\hat n_\phi, \phi) \cdot v
+    = (\hat n_\chi \cdot v) \cos\phi
+    + (\hat n_\chi \cdot (\hat n_\phi \times v)) \sin\phi
+    = (\hat n_\chi \cdot v) \cos\phi
+    + (\hat n_3 \cdot v) \sin\phi\]</div>
+<p>so <span class="math notranslate nohighlight">\(A \cos\phi + B \sin\phi = C\)</span> with
+<span class="math notranslate nohighlight">\(A = \hat n_\chi \cdot v\)</span>,
+<span class="math notranslate nohighlight">\(B = \hat n_3 \cdot v\)</span>,
+<span class="math notranslate nohighlight">\(C = \hat n_\chi \cdot q\)</span>, yielding two <span class="math notranslate nohighlight">\(\phi\)</span>
+candidates.</p>
+<p><strong>Step 2 — for each phi, solve for chi.</strong>  Compute
+<span class="math notranslate nohighlight">\(w = R(\hat n_\phi, \phi) \cdot v\)</span> (known once <span class="math notranslate nohighlight">\(\phi\)</span>
+is fixed).  The equation <span class="math notranslate nohighlight">\(R(\hat n_\chi, \chi) \cdot w = q\)</span>
+is a single rotation about <span class="math notranslate nohighlight">\(\hat n_\chi\)</span> taking <span class="math notranslate nohighlight">\(w\)</span>
+onto <span class="math notranslate nohighlight">\(q\)</span>.  Their <span class="math notranslate nohighlight">\(\hat n_\chi\)</span>-components must agree
+(guaranteed by construction); <span class="math notranslate nohighlight">\(\chi\)</span> is the angle in the
+plane perpendicular to <span class="math notranslate nohighlight">\(\hat n_\chi\)</span> between the
+perpendicular projections of <span class="math notranslate nohighlight">\(w\)</span> and <span class="math notranslate nohighlight">\(q\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1603,21 +1617,21 @@ solver, which seeds from four quadrants and deduplicates.</p>
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.forward._solve_one_free_angle_analytic</span></code></p>
 </div>
 <p>Analytic single-<code class="docutils literal notranslate"><span class="pre">atan2</span></code> solver for one free sample-stage rotation.</p>
-<p>When all detector stages and all sample stages <strong>except one</strong> have
-fixed angles, the forward equation reduces to a single rotation:</p>
+<p>Under the BL1967 standard convention (Busing &amp; Levy 1967,
+outermost stage leftmost), when all detector stages and all sample
+stages <strong>except one</strong> have fixed angles, the forward equation
+reduces to a single rotation:</p>
 <div class="math notranslate nohighlight">
-\[R_{\text{after}} \cdot R(\hat n, \theta) \cdot R_{\text{before}}
-    \cdot Q_{\phi,\text{target}}^* = Q_{\text{lab}}\]</div>
+\[Z = R_{\text{before}} \cdot R(\hat n, \theta) \cdot R_{\text{after}}\]</div>
 <p>where <span class="math notranslate nohighlight">\(R_{\text{before}}\)</span> is the product of fixed sample stages
-<em>outer</em> to the free stage (already cached as <code class="docutils literal notranslate"><span class="pre">ctx._cached_Z_prefix</span></code>),
-<span class="math notranslate nohighlight">\(R_{\text{after}}\)</span> is the product of fixed sample stages <em>inner</em>
-to the free stage, and the target satisfies
-<span class="math notranslate nohighlight">\(Q_\phi = Z^T Q_{\text{lab}}\)</span>.</p>
-<p>Rearranging:</p>
+<em>outer</em> to the free stage (already cached as <code class="docutils literal notranslate"><span class="pre">ctx._cached_Z_prefix</span></code>)
+and <span class="math notranslate nohighlight">\(R_{\text{after}}\)</span> is the product of fixed sample stages
+<em>inner</em> to the free stage.  The target satisfies
+<span class="math notranslate nohighlight">\(Q_\phi = Z^T Q_{\text{lab}}\)</span>, so</p>
 <div class="math notranslate nohighlight">
 \[R(\hat n, \theta) \cdot q = u\]</div>
-<p>with <span class="math notranslate nohighlight">\(q = R_{\text{before}} \cdot Q_{\phi,\text{target}}\)</span> and
-<span class="math notranslate nohighlight">\(u = R_{\text{after}}^T \cdot Q_{\text{lab}}\)</span>.  The unknown
+<p>with <span class="math notranslate nohighlight">\(q = R_{\text{after}} \cdot Q_{\phi,\text{target}}\)</span> and
+<span class="math notranslate nohighlight">\(u = R_{\text{before}}^T \cdot Q_{\text{lab}}\)</span>.  The unknown
 rotation about a known axis <span class="math notranslate nohighlight">\(\hat n\)</span> is recovered by projecting
 both vectors onto the plane perpendicular to <span class="math notranslate nohighlight">\(\hat n\)</span> and
 reading off the angle with a single <code class="docutils literal notranslate"><span class="pre">atan2</span></code>.</p>
@@ -2087,7 +2101,7 @@ for this geometry.</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-12 09:21 CDT.
+  Last updated on 2026-05-19 15:24 CDT.
   <br/>
 </p></div>
       

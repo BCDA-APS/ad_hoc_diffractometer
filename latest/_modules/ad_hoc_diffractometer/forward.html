@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=731280fa"></script>
+    <script src="../../_static/documentation_options.js?v=33838f19"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-12 09:21 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 15:24 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -581,13 +581,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_rotation_matrix_normalized</span>
 
-        <span class="c1"># Detector: if no detector stage is free, cache D entirely</span>
+        <span class="c1"># Detector: if no detector stage is free, cache D entirely.</span>
+        <span class="c1"># Composition: BL1967 standard order (Busing &amp; Levy 1967),</span>
+        <span class="c1"># outermost (floor-most) stage leftmost,</span>
+        <span class="c1"># so D = R_0 @ R_1 @ ... @ R_{n-1}.</span>
         <span class="n">det_free</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">free_stage_names</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">det_free</span><span class="p">:</span>
             <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">:</span>
                 <span class="n">angle</span> <span class="o">=</span> <span class="n">fixed_angles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
-                <span class="n">D</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span> <span class="o">@</span> <span class="n">D</span>  <span class="c1"># noqa: SLF001</span>
+                <span class="n">D</span> <span class="o">=</span> <span class="n">D</span> <span class="o">@</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>  <span class="c1"># noqa: SLF001</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cached_D</span> <span class="o">=</span> <span class="n">D</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
             <span class="c1"># No remaining call site passes a detector stage as free</span>
@@ -597,6 +600,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_cached_D</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Sample: find the first free stage index and cache the prefix product</span>
+        <span class="c1"># of the fixed *outer* stages (indices 0..first_free-1).  This prefix</span>
+        <span class="c1"># is built in the same outermost-leftmost order:</span>
+        <span class="c1"># Z_prefix = R_0 @ R_1 @ ... @ R_{first_free-1}.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_free_sample_indices</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">free_stage_names</span><span class="p">:</span>
@@ -609,8 +615,8 @@
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">first_free</span><span class="p">):</span>
                     <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                     <span class="n">angle</span> <span class="o">=</span> <span class="n">fixed_angles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
-                    <span class="n">Z_prefix</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span> <span class="o">@</span> <span class="n">Z_prefix</span>
+                    <span class="n">Z_prefix</span> <span class="o">=</span> <span class="n">Z_prefix</span> <span class="o">@</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span>
+                        <span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span>
                     <span class="p">)</span>  <span class="c1"># noqa: SLF001</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_cached_Z_prefix</span> <span class="o">=</span> <span class="n">Z_prefix</span>
             <span class="k">else</span><span class="p">:</span>
@@ -718,46 +724,41 @@
                     <span class="n">angle</span><span class="p">,</span>  <span class="c1"># noqa: SLF001</span>
                 <span class="p">)</span>
 
-        <span class="c1"># Build suffix products:  suffix[k] = R_{k-1} @ ... @ R_0</span>
-        <span class="c1"># where indices are relative to first_free.</span>
-        <span class="c1"># suffix[0] = cached_Z_prefix (product of stages 0..first_free-1).</span>
-        <span class="c1"># suffix[k] = R_{first_free+k-1} @ suffix[k-1]</span>
-        <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))]</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_tail</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">suffix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="c1"># Composition (BL1967 standard convention, outermost-leftmost):</span>
+        <span class="c1"># the full sample rotation is</span>
+        <span class="c1">#</span>
+        <span class="c1">#   Z = R_0 @ R_1 @ ... @ R_{N-1}</span>
+        <span class="c1">#     = Z_prefix @ R_list[0] @ R_list[1] @ ... @ R_list[n_tail-1]</span>
+        <span class="c1">#</span>
+        <span class="c1"># where Z_prefix = R_0 @ ... @ R_{first_free-1} is cached and the</span>
+        <span class="c1"># tail R_list[0..n_tail-1] holds R_{first_free}..R_{N-1}.</span>
+        <span class="c1">#</span>
+        <span class="c1"># The derivative of Z w.r.t. the angle of the free stage at</span>
+        <span class="c1"># relative index k is</span>
+        <span class="c1">#</span>
+        <span class="c1">#   dZ/dθ_k = before[k] @ dR_list[k] @ after[k]</span>
+        <span class="c1">#</span>
+        <span class="c1"># with</span>
+        <span class="c1">#</span>
+        <span class="c1">#   before[k] = Z_prefix @ R_list[0] @ R_list[1] @ ... @ R_list[k-1]</span>
+        <span class="c1">#   after[k]  = R_list[k+1] @ R_list[k+2] @ ... @ R_list[n_tail-1]</span>
+        <span class="c1">#</span>
+        <span class="c1"># Build them by simple forward / backward sweeps.</span>
+        <span class="n">Z_prefix</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cached_Z_prefix</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_Z_prefix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tail</span><span class="p">):</span>
-            <span class="n">suffix</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">R_list</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">suffix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
-        <span class="c1"># Build prefix products:  prefix[k] = R_{N-1} @ ... @ R_{k+1}</span>
-        <span class="c1"># where indices are relative to first_free.</span>
-        <span class="c1"># prefix[n_tail] = I  (nothing after the last stage)</span>
-        <span class="c1"># prefix[k] = prefix[k+1] @ R_{k+1}</span>
-        <span class="c1">#</span>
-        <span class="c1"># Actually we need prefix in absolute terms:</span>
-        <span class="c1"># prefix_abs[j] = R_{N-1} @ ... @ R_{j+1}</span>
-        <span class="c1"># For j = first_free + k:</span>
-        <span class="c1">#   prefix[k] = R_{n_tail-1} @ ... @ R_{k+1}  (relative indices)</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))]</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_tail</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">prefix</span><span class="p">[</span><span class="n">n_tail</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="c1"># before[k] for k = 0..n_tail</span>
+        <span class="n">before</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))]</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_tail</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">before</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Z_prefix</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tail</span><span class="p">):</span>
+            <span class="n">before</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">before</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">R_list</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="c1"># after[k] for k = 0..n_tail (after[k] is the product of R_list[k+1..])</span>
+        <span class="n">after</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))]</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_tail</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">after</span><span class="p">[</span><span class="n">n_tail</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tail</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">prefix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">R_list</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">n_tail</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-        <span class="c1"># Recalculate more carefully:</span>
-        <span class="c1"># prefix[k] should be the product of R_list[k+1] ... R_list[n_tail-1]</span>
-        <span class="c1"># applied left to right in stacking order (outermost first).</span>
-        <span class="c1"># Actually the Z chain is: Z = R_{N-1} @ R_{N-2} @ ... @ R_0</span>
-        <span class="c1"># So for relative index k, R_list[k] = R_{first_free + k}.</span>
-        <span class="c1"># Z_tail = R_list[n_tail-1] @ R_list[n_tail-2] @ ... @ R_list[0]</span>
-        <span class="c1">#        = suffix[n_tail] (already computed above, without prefix)</span>
-        <span class="c1">#</span>
-        <span class="c1"># dZ/dθ_j for j = first_free + k:</span>
-        <span class="c1">#   = (R_list[n_tail-1] @ ... @ R_list[k+1]) @ dR_list[k] @ (R_list[k-1] @ ... @ R_list[0] @ Z_prefix)</span>
-        <span class="c1">#   = prefix[k] @ dR_list[k] @ suffix[k]</span>
-        <span class="c1">#</span>
-        <span class="c1"># Rebuild prefix properly:</span>
-        <span class="n">prefix</span><span class="p">[</span><span class="n">n_tail</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tail</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">prefix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">R_list</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_tail</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">after</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">R_list</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">after</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_tail</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
         <span class="c1"># deg2rad factor: dR is w.r.t. radians, but angles are in degrees.</span>
         <span class="n">deg2rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span>
@@ -768,8 +769,8 @@
             <span class="n">abs_idx</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stages</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span>
             <span class="n">k</span> <span class="o">=</span> <span class="n">abs_idx</span> <span class="o">-</span> <span class="n">first_free</span>  <span class="c1"># relative index into R_list</span>
             <span class="n">dR_k</span> <span class="o">=</span> <span class="n">dR_map</span><span class="p">[</span><span class="n">abs_idx</span><span class="p">]</span>
-            <span class="c1"># dZ/dθ = prefix[k] @ dR_k @ suffix[k]</span>
-            <span class="n">dZ</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">dR_k</span> <span class="o">@</span> <span class="n">suffix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="c1"># dZ/dθ = before[k] @ dR_k @ after[k]</span>
+            <span class="n">dZ</span> <span class="o">=</span> <span class="n">before</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">dR_k</span> <span class="o">@</span> <span class="n">after</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="c1"># dQ_phi/dθ = dZ^T @ Q_lab, with deg2rad conversion</span>
             <span class="n">J</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">deg2rad</span> <span class="o">*</span> <span class="p">(</span><span class="n">dZ</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Q_lab</span><span class="p">)</span>
 
@@ -1029,11 +1030,12 @@
 
 <span class="sd">    **Derivation.**</span>
 
-<span class="sd">    The sample rotation matrix is:</span>
+<span class="sd">    Under the BL1967 standard convention (Busing &amp; Levy 1967,</span>
+<span class="sd">    outermost stage leftmost), the sample rotation matrix is:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        Z = R_\phi \cdot R_\chi \cdot Z_{\text{prefix}}</span>
+<span class="sd">        Z = Z_{\text{prefix}} \cdot R_\chi \cdot R_\phi</span>
 
 <span class="sd">    where :math:`Z_{\text{prefix}}` is the product of all fixed outer</span>
 <span class="sd">    sample stages.  The scattering vector in the phi frame is:</span>
@@ -1041,45 +1043,62 @@
 <span class="sd">    .. math::</span>
 
 <span class="sd">        Q_\phi = Z^T Q_{\text{lab}}</span>
-<span class="sd">              = Z_{\text{prefix}}^T \cdot R_\chi^T \cdot R_\phi^T \cdot Q_{\text{lab}}</span>
+<span class="sd">              = R_\phi^T \cdot R_\chi^T \cdot Z_{\text{prefix}}^T \cdot Q_{\text{lab}}</span>
+
+<span class="sd">    Equivalently, multiplying both sides by :math:`R_\chi R_\phi`:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R(\hat n_\chi, \chi) \cdot R(\hat n_\phi, \phi) \cdot Q_{\phi,\text{target}}</span>
+<span class="sd">            = Z_{\text{prefix}}^T \cdot Q_{\text{lab}}</span>
 
 <span class="sd">    Define the known vectors:</span>
 
-<span class="sd">    - :math:`q = Z_{\text{prefix}} \cdot Q_{\phi,\text{target}}`</span>
-<span class="sd">    - :math:`v = Q_{\text{lab}}`</span>
+<span class="sd">    - :math:`q = Z_{\text{prefix}}^T \cdot Q_{\text{lab}}`</span>
+<span class="sd">    - :math:`v = Q_{\phi,\text{target}}`</span>
 
-<span class="sd">    The equation to solve is:</span>
+<span class="sd">    The equation to solve becomes:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        R(\hat n_\chi, -\chi) \cdot R(\hat n_\phi, -\phi) \cdot v = q</span>
+<span class="sd">        R(\hat n_\chi, \chi) \cdot R(\hat n_\phi, \phi) \cdot v = q</span>
 
 <span class="sd">    Since :math:`\hat n_\chi \perp \hat n_\phi`, define</span>
-<span class="sd">    :math:`\hat n_3 = \hat n_\chi \times \hat n_\phi`.  Projecting onto</span>
-<span class="sd">    the :math:`(\hat n_\phi, \hat n_3)` plane gives a 2×2 linear system</span>
-<span class="sd">    for :math:`(\cos\chi, \sin\chi)`:</span>
+<span class="sd">    :math:`\hat n_3 = \hat n_\chi \times \hat n_\phi`.</span>
+
+<span class="sd">    **Step 1 — solve for phi.**  Project the equation onto</span>
+<span class="sd">    :math:`\hat n_\chi` (which is invariant under</span>
+<span class="sd">    :math:`R(\hat n_\chi, \chi)`):</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \begin{pmatrix} A &amp; B \\ -B &amp; A \end{pmatrix}</span>
-<span class="sd">        \begin{pmatrix} \cos\chi \\ \sin\chi \end{pmatrix}</span>
-<span class="sd">        = \begin{pmatrix} C \\ E \end{pmatrix}</span>
+<span class="sd">        \hat n_\chi \cdot q</span>
+<span class="sd">            = \hat n_\chi \cdot R(\hat n_\phi, \phi) \cdot v</span>
 
-<span class="sd">    where</span>
-<span class="sd">    :math:`A = \hat n_\phi \cdot q`,</span>
-<span class="sd">    :math:`B = \hat n_\phi \cdot (\hat n_\chi \times q)`,</span>
-<span class="sd">    :math:`C = \hat n_\phi \cdot v`,</span>
-<span class="sd">    :math:`E = \hat n_3 \cdot v`.</span>
-<span class="sd">    This yields a unique :math:`\chi` via ``atan2``.</span>
-
-<span class="sd">    Phi is then solved from the :math:`\hat n_\chi` component:</span>
+<span class="sd">    By Rodrigues, since :math:`\hat n_\chi \perp \hat n_\phi`:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \hat n_\chi \cdot R(\hat n_\phi, -\phi) \cdot v = \hat n_\chi \cdot q</span>
+<span class="sd">        \hat n_\chi \cdot R(\hat n_\phi, \phi) \cdot v</span>
+<span class="sd">            = (\hat n_\chi \cdot v) \cos\phi</span>
+<span class="sd">            + (\hat n_\chi \cdot (\hat n_\phi \times v)) \sin\phi</span>
+<span class="sd">            = (\hat n_\chi \cdot v) \cos\phi</span>
+<span class="sd">            + (\hat n_3 \cdot v) \sin\phi</span>
 
-<span class="sd">    which gives :math:`\alpha\cos\phi + \beta\sin\phi = \gamma`, solved</span>
-<span class="sd">    with the standard ``atan2`` / ``acos`` decomposition.</span>
+<span class="sd">    so :math:`A \cos\phi + B \sin\phi = C` with</span>
+<span class="sd">    :math:`A = \hat n_\chi \cdot v`,</span>
+<span class="sd">    :math:`B = \hat n_3 \cdot v`,</span>
+<span class="sd">    :math:`C = \hat n_\chi \cdot q`, yielding two :math:`\phi`</span>
+<span class="sd">    candidates.</span>
+
+<span class="sd">    **Step 2 — for each phi, solve for chi.**  Compute</span>
+<span class="sd">    :math:`w = R(\hat n_\phi, \phi) \cdot v` (known once :math:`\phi`</span>
+<span class="sd">    is fixed).  The equation :math:`R(\hat n_\chi, \chi) \cdot w = q`</span>
+<span class="sd">    is a single rotation about :math:`\hat n_\chi` taking :math:`w`</span>
+<span class="sd">    onto :math:`q`.  Their :math:`\hat n_\chi`-components must agree</span>
+<span class="sd">    (guaranteed by construction); :math:`\chi` is the angle in the</span>
+<span class="sd">    plane perpendicular to :math:`\hat n_\chi` between the</span>
+<span class="sd">    perpendicular projections of :math:`w` and :math:`q`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1104,133 +1123,72 @@
     <span class="n">n_chi</span> <span class="o">=</span> <span class="n">chi_stage</span><span class="o">.</span><span class="n">_axis_hat</span>  <span class="c1"># noqa: SLF001</span>
     <span class="n">n_phi</span> <span class="o">=</span> <span class="n">phi_stage</span><span class="o">.</span><span class="n">_axis_hat</span>  <span class="c1"># noqa: SLF001</span>
 
-    <span class="c1"># Known vectors</span>
+    <span class="c1"># Known vectors (BL1967 standard outermost-leftmost convention).</span>
     <span class="n">Z_prefix</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_cached_Z_prefix</span>
     <span class="n">D</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_cached_D</span> <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_cached_D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
     <span class="c1"># Q_lab: scattering vector in the lab frame (all detector &amp; bisect angles fixed)</span>
-    <span class="n">v</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">two_pi_over_lambda</span> <span class="o">*</span> <span class="p">(</span><span class="n">D</span> <span class="o">@</span> <span class="n">ctx</span><span class="o">.</span><span class="n">y_eff</span> <span class="o">-</span> <span class="n">ctx</span><span class="o">.</span><span class="n">y_eff</span><span class="p">)</span>  <span class="c1"># Q_lab</span>
+    <span class="n">Q_lab</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">two_pi_over_lambda</span> <span class="o">*</span> <span class="p">(</span><span class="n">D</span> <span class="o">@</span> <span class="n">ctx</span><span class="o">.</span><span class="n">y_eff</span> <span class="o">-</span> <span class="n">ctx</span><span class="o">.</span><span class="n">y_eff</span><span class="p">)</span>
 
-    <span class="c1"># q = Z_prefix @ Q_phi_target</span>
-    <span class="n">q</span> <span class="o">=</span> <span class="n">Z_prefix</span> <span class="o">@</span> <span class="n">Q_phi_target</span>
-
-    <span class="c1"># --- Step 1: Solve for chi (two solutions) ---</span>
-    <span class="c1">#</span>
-    <span class="c1"># Define w = R(n_phi, -phi) @ v.  Then R(n_chi, -chi) @ w = q.</span>
-    <span class="c1"># Since R(n_phi, -phi) preserves the n_phi component:</span>
-    <span class="c1">#   n_phi · w = n_phi · v  (constant L)</span>
-    <span class="c1">#</span>
-    <span class="c1"># From w = R(n_chi, chi) @ q (inverse of R(n_chi, -chi) @ w = q):</span>
-    <span class="c1">#   n_phi · [R(n_chi, chi) @ q] = L</span>
-    <span class="c1">#</span>
-    <span class="c1"># Expanding via Rodrigues (n_chi ⊥ n_phi):</span>
-    <span class="c1">#   cos(chi)*(n_phi·q) + sin(chi)*(n_phi·(n_chi×q)) = n_phi·v</span>
-    <span class="c1">#</span>
-    <span class="c1"># This is A*cos(chi) + B*sin(chi) = C, yielding two chi values.</span>
-
-    <span class="n">A</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
-    <span class="n">B</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">q</span><span class="p">)))</span>
-    <span class="n">C</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-
-    <span class="n">R_chi_amp</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">B</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">R_chi_amp</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-        <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># degenerate: q ∥ n_chi</span>
-
-    <span class="n">cos_arg_chi</span> <span class="o">=</span> <span class="n">C</span> <span class="o">/</span> <span class="n">R_chi_amp</span>
-    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cos_arg_chi</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-        <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># no solution</span>
-    <span class="n">cos_arg_chi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">cos_arg_chi</span><span class="p">))</span>
-
-    <span class="n">chi0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
-    <span class="n">delta_chi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cos_arg_chi</span><span class="p">)</span>
-
-    <span class="n">chi_candidates_rad</span> <span class="o">=</span> <span class="p">[</span><span class="n">chi0</span> <span class="o">+</span> <span class="n">delta_chi</span><span class="p">,</span> <span class="n">chi0</span> <span class="o">-</span> <span class="n">delta_chi</span><span class="p">]</span>
-
-    <span class="c1"># --- Step 2: For each chi, solve for phi (unique) ---</span>
-    <span class="c1">#</span>
-    <span class="c1"># From w = R(n_phi, -phi) @ v and n_chi · w = n_chi · q:</span>
-    <span class="c1">#   n_chi · [R(n_phi, -phi) @ v] = n_chi · q</span>
-    <span class="c1">#</span>
-    <span class="c1"># Expanding via Rodrigues (n_chi ⊥ n_phi):</span>
-    <span class="c1">#   cos(phi)*(n_chi·v) - sin(phi)*(n_chi·(n_phi×v)) = n_chi · q</span>
-    <span class="c1">#</span>
-    <span class="c1"># But this gives only one equation — not enough for a unique phi.</span>
-    <span class="c1"># We also have the n3 component (n3 = n_chi × n_phi):</span>
-    <span class="c1">#   n3 · [R(n_phi, -phi) @ v] = n3 · [R(n_chi, chi) @ q]</span>
-    <span class="c1">#</span>
-    <span class="c1"># The RHS depends on chi (already known), the LHS depends on phi.</span>
-    <span class="c1"># Together with the n_chi equation, this gives a 2×2 system for</span>
-    <span class="c1"># (cos(phi), sin(phi)), yielding a unique phi per chi.</span>
-    <span class="c1">#</span>
-    <span class="c1"># n_chi equation:  (n_chi·v)*cos(phi) - (n_chi·(n_phi×v))*sin(phi) = n_chi·q</span>
-    <span class="c1"># n3 equation:     (n3·v)*cos(phi) - (n3·(n_phi×v))*sin(phi) = n3·w_chi</span>
-    <span class="c1">#</span>
-    <span class="c1"># Using triple product identities (n_chi ⊥ n_phi, n3 = n_chi × n_phi):</span>
-    <span class="c1">#   n_chi·(n_phi×v) = (n_chi×n_phi)·v = n3·v</span>
-    <span class="c1">#   n3·(n_phi×v)    = v·(n3×n_phi) = v·n_chi   [since n3×n_phi = n_chi]</span>
-    <span class="c1">#</span>
-    <span class="c1"># So the system is:</span>
-    <span class="c1">#   (n_chi·v)*cos(phi) - (n3·v)*sin(phi) = n_chi·q       ...(i)</span>
-    <span class="c1">#   (n3·v)*cos(phi) + (n_chi·v)*sin(phi) = n3·w_chi      ...(ii)</span>
-    <span class="c1">#</span>
-    <span class="c1"># Wait, sign: n3·(n_phi×v) = v·(n3×n_phi). And n3×n_phi:</span>
-    <span class="c1">#   n3 = n_chi×n_phi, so n3×n_phi = (n_chi×n_phi)×n_phi</span>
-    <span class="c1">#   = n_chi*(n_phi·n_phi) - n_phi*(n_chi·n_phi) = n_chi</span>
-    <span class="c1"># So n3·(n_phi×v) = v·n_chi = n_chi·v.</span>
-    <span class="c1">#</span>
-    <span class="c1"># n3 LHS: R(n_phi, -phi)@v dotted with n3:</span>
-    <span class="c1">#   cos(phi)*(n3·v) + (1-cos(phi))*(n_phi·v)*(n_phi·n3) - sin(phi)*(n3·(n_phi×v))</span>
-    <span class="c1">#   = cos(phi)*(n3·v) - sin(phi)*(n_chi·v)     [since n_phi·n3=0]</span>
-    <span class="c1">#</span>
-    <span class="c1"># n3 RHS: R(n_chi, chi)@q dotted with n3:</span>
-    <span class="c1">#   cos(chi)*(n3·q) + sin(chi)*(n3·(n_chi×q))</span>
-    <span class="c1">#   n3·(n_chi×q) = q·(n3×n_chi) = q·(-n_phi) = -(n_phi·q)</span>
-    <span class="c1">#   [since n3×n_chi = (n_chi×n_phi)×n_chi = n_phi]</span>
-    <span class="c1">#   Wait: BAC-CAB: (n_chi×n_phi)×n_chi = n_phi(n_chi·n_chi) - n_chi(n_phi·n_chi) = n_phi</span>
-    <span class="c1">#   So n3×n_chi = n_phi, and n3·(n_chi×q) = q·(n3×n_chi) = q·n_phi = n_phi·q</span>
-    <span class="c1">#   Hmm, let me redo: a·(b×c) = det(a,b,c) = c·(a×b).</span>
-    <span class="c1">#   n3·(n_chi×q) = q·(n3×n_chi).</span>
-    <span class="c1">#   n3×n_chi = (n_chi×n_phi)×n_chi = n_phi (BAC-CAB, orthonormal)</span>
-    <span class="c1">#   So n3·(n_chi×q) = q·n_phi = A (= n_phi·q)</span>
-    <span class="c1">#</span>
-    <span class="c1"># So n3 RHS = cos(chi)*(n3·q) + sin(chi)*A</span>
-    <span class="c1"># And n3 LHS = cos(phi)*(n3·v) - sin(phi)*(n_chi·v)</span>
-    <span class="c1">#</span>
-    <span class="c1"># The 2×2 system:</span>
-    <span class="c1">#   [n_chi·v, -(n3·v)] [cos(phi)]   [n_chi·q        ]</span>
-    <span class="c1">#   [n3·v,    n_chi·v ] [sin(phi)] = [n3·R_chi(chi)@q]</span>
-    <span class="c1">#</span>
-    <span class="c1"># Determinant = (n_chi·v)² + (n3·v)² = |v_perp|² (component of v ⊥ n_phi)</span>
-    <span class="c1"># This is non-zero unless v ∥ n_phi (degenerate).</span>
+    <span class="c1"># q = Z_prefix^T @ Q_lab  (right-hand side of R_chi R_phi v = q)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">Z_prefix</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Q_lab</span>
+    <span class="c1"># v = target Q_phi (left-hand side argument)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Q_phi_target</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
     <span class="n">n3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">n_phi</span><span class="p">)</span>
-    <span class="n">nchi_v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-    <span class="n">n3_v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n3</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-    <span class="n">nchi_q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
 
-    <span class="n">det_phi</span> <span class="o">=</span> <span class="n">nchi_v</span> <span class="o">*</span> <span class="n">nchi_v</span> <span class="o">+</span> <span class="n">n3_v</span> <span class="o">*</span> <span class="n">n3_v</span>
-    <span class="k">if</span> <span class="n">det_phi</span> <span class="o">&lt;</span> <span class="mf">1e-20</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-        <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># v ∥ n_phi — phi indeterminate</span>
+    <span class="c1"># --- Step 1: solve A cos phi + B sin phi = C for two phi values ---</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n3</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
 
-    <span class="c1"># Pre-compute n3·q and n_phi·q for the chi-dependent RHS</span>
-    <span class="n">n3_q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n3</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
-    <span class="c1"># A = n_phi · q (already computed above)</span>
+    <span class="n">amp</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">B</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">amp</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="c1"># v ∥ n_phi (perpendicular component of v in (n_chi, n_3) plane is</span>
+        <span class="c1"># zero).  phi is indeterminate; defer to the Newton fallback.</span>
+        <span class="k">return</span> <span class="p">[]</span>
 
+    <span class="n">cos_arg_phi</span> <span class="o">=</span> <span class="n">C</span> <span class="o">/</span> <span class="n">amp</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cos_arg_phi</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># no real phi solution</span>
+
+    <span class="n">cos_arg_phi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">cos_arg_phi</span><span class="p">))</span>
+    <span class="n">phi0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+    <span class="n">delta_phi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cos_arg_phi</span><span class="p">)</span>
+    <span class="n">phi_candidates_rad</span> <span class="o">=</span> <span class="p">[</span><span class="n">phi0</span> <span class="o">+</span> <span class="n">delta_phi</span><span class="p">,</span> <span class="n">phi0</span> <span class="o">-</span> <span class="n">delta_phi</span><span class="p">]</span>
+
+    <span class="c1"># --- Step 2: for each phi, recover chi from the residual rotation ---</span>
+    <span class="c1"># R(n_chi, chi) @ w = q with w = R(n_phi, phi) @ v.  chi is the</span>
+    <span class="c1"># signed angle about n_chi taking w_perp onto q_perp in the plane</span>
+    <span class="c1"># perpendicular to n_chi.</span>
     <span class="n">raw_candidates</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">chi_rad</span> <span class="ow">in</span> <span class="n">chi_candidates_rad</span><span class="p">:</span>
-        <span class="n">chi_d</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">chi_rad</span><span class="p">)</span>
-        <span class="n">c_chi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">chi_rad</span><span class="p">)</span>
-        <span class="n">s_chi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">chi_rad</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">phi_rad</span> <span class="ow">in</span> <span class="n">phi_candidates_rad</span><span class="p">:</span>
+        <span class="n">phi_d</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+        <span class="c1"># Build w = R(n_phi, phi) @ v via Rodrigues:</span>
+        <span class="c1">#   w = v cos φ + (n_phi × v) sin φ + n_phi (n_phi · v)(1 − cos φ)</span>
+        <span class="n">c_ph</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+        <span class="n">s_ph</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+        <span class="n">nphi_v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">c_ph</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">s_ph</span> <span class="o">+</span> <span class="n">n_phi</span> <span class="o">*</span> <span class="n">nphi_v</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">c_ph</span><span class="p">)</span>
 
-        <span class="c1"># n3 · R(n_chi, chi) @ q = cos(chi)*(n3·q) + sin(chi)*(n_phi·q)</span>
-        <span class="n">rhs_n3</span> <span class="o">=</span> <span class="n">c_chi</span> <span class="o">*</span> <span class="n">n3_q</span> <span class="o">+</span> <span class="n">s_chi</span> <span class="o">*</span> <span class="n">A</span>
-
-        <span class="c1"># Solve 2×2 system for (cos_phi, sin_phi):</span>
-        <span class="c1">#   nchi_v * cos_phi - n3_v * sin_phi = nchi_q</span>
-        <span class="c1">#   n3_v * cos_phi + nchi_v * sin_phi = rhs_n3</span>
-        <span class="n">cos_phi</span> <span class="o">=</span> <span class="p">(</span><span class="n">nchi_v</span> <span class="o">*</span> <span class="n">nchi_q</span> <span class="o">+</span> <span class="n">n3_v</span> <span class="o">*</span> <span class="n">rhs_n3</span><span class="p">)</span> <span class="o">/</span> <span class="n">det_phi</span>
-        <span class="n">sin_phi</span> <span class="o">=</span> <span class="p">(</span><span class="n">nchi_v</span> <span class="o">*</span> <span class="n">rhs_n3</span> <span class="o">-</span> <span class="n">n3_v</span> <span class="o">*</span> <span class="n">nchi_q</span><span class="p">)</span> <span class="o">/</span> <span class="n">det_phi</span>
-        <span class="n">phi_d</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_phi</span><span class="p">,</span> <span class="n">cos_phi</span><span class="p">))</span>
+        <span class="c1"># Project w and q onto the plane perpendicular to n_chi.</span>
+        <span class="n">w_par</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">n_chi</span><span class="p">))</span>
+        <span class="n">q_par</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">n_chi</span><span class="p">))</span>
+        <span class="n">w_perp</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">w_par</span> <span class="o">*</span> <span class="n">n_chi</span>
+        <span class="n">q_perp</span> <span class="o">=</span> <span class="n">q</span> <span class="o">-</span> <span class="n">q_par</span> <span class="o">*</span> <span class="n">n_chi</span>
+        <span class="n">w_perp_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">w_perp</span><span class="p">))</span>
+        <span class="n">q_perp_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_perp</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">w_perp_norm</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">or</span> <span class="n">q_perp_norm</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+            <span class="c1"># Degenerate: w or q is parallel to n_chi; chi indeterminate.</span>
+            <span class="n">chi_d</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># cos chi = (w_perp · q_perp) / (|w_perp| |q_perp|)</span>
+            <span class="c1"># sin chi = n_chi · (w_perp × q_perp) / (|w_perp| |q_perp|)</span>
+            <span class="n">cos_chi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w_perp</span><span class="p">,</span> <span class="n">q_perp</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">w_perp_norm</span> <span class="o">*</span> <span class="n">q_perp_norm</span><span class="p">)</span>
+            <span class="n">sin_chi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">w_perp</span><span class="p">,</span> <span class="n">q_perp</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="n">w_perp_norm</span> <span class="o">*</span> <span class="n">q_perp_norm</span>
+            <span class="p">)</span>
+            <span class="n">chi_d</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_chi</span><span class="p">,</span> <span class="n">cos_chi</span><span class="p">))</span>
 
         <span class="n">raw_candidates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">chi_d</span><span class="p">,</span> <span class="n">phi_d</span><span class="p">))</span>
 
@@ -1702,28 +1660,27 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Analytic single-``atan2`` solver for one free sample-stage rotation.</span>
 
-<span class="sd">    When all detector stages and all sample stages **except one** have</span>
-<span class="sd">    fixed angles, the forward equation reduces to a single rotation:</span>
+<span class="sd">    Under the BL1967 standard convention (Busing &amp; Levy 1967,</span>
+<span class="sd">    outermost stage leftmost), when all detector stages and all sample</span>
+<span class="sd">    stages **except one** have fixed angles, the forward equation</span>
+<span class="sd">    reduces to a single rotation:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        R_{\text{after}} \cdot R(\hat n, \theta) \cdot R_{\text{before}}</span>
-<span class="sd">            \cdot Q_{\phi,\text{target}}^* = Q_{\text{lab}}</span>
+<span class="sd">        Z = R_{\text{before}} \cdot R(\hat n, \theta) \cdot R_{\text{after}}</span>
 
 <span class="sd">    where :math:`R_{\text{before}}` is the product of fixed sample stages</span>
-<span class="sd">    *outer* to the free stage (already cached as ``ctx._cached_Z_prefix``),</span>
-<span class="sd">    :math:`R_{\text{after}}` is the product of fixed sample stages *inner*</span>
-<span class="sd">    to the free stage, and the target satisfies</span>
-<span class="sd">    :math:`Q_\phi = Z^T Q_{\text{lab}}`.</span>
-
-<span class="sd">    Rearranging:</span>
+<span class="sd">    *outer* to the free stage (already cached as ``ctx._cached_Z_prefix``)</span>
+<span class="sd">    and :math:`R_{\text{after}}` is the product of fixed sample stages</span>
+<span class="sd">    *inner* to the free stage.  The target satisfies</span>
+<span class="sd">    :math:`Q_\phi = Z^T Q_{\text{lab}}`, so</span>
 
 <span class="sd">    .. math::</span>
 
 <span class="sd">        R(\hat n, \theta) \cdot q = u</span>
 
-<span class="sd">    with :math:`q = R_{\text{before}} \cdot Q_{\phi,\text{target}}` and</span>
-<span class="sd">    :math:`u = R_{\text{after}}^T \cdot Q_{\text{lab}}`.  The unknown</span>
+<span class="sd">    with :math:`q = R_{\text{after}} \cdot Q_{\phi,\text{target}}` and</span>
+<span class="sd">    :math:`u = R_{\text{before}}^T \cdot Q_{\text{lab}}`.  The unknown</span>
 <span class="sd">    rotation about a known axis :math:`\hat n` is recovered by projecting</span>
 <span class="sd">    both vectors onto the plane perpendicular to :math:`\hat n` and</span>
 <span class="sd">    reading off the angle with a single ``atan2``.</span>
@@ -1770,19 +1727,27 @@
     <span class="k">if</span> <span class="n">free_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="k">return</span> <span class="kc">None</span>
 
+    <span class="c1"># Build R_after in BL1967 standard outermost-leftmost order:</span>
+    <span class="c1"># R_after = R_{free_idx+1} @ R_{free_idx+2} @ ... @ R_{N-1}.</span>
     <span class="n">R_after</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">free_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_stages</span><span class="p">)):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">sample_stages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">a</span> <span class="o">=</span> <span class="n">angles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
-        <span class="n">R_after</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="o">@</span> <span class="n">R_after</span>  <span class="c1"># noqa: SLF001</span>
+        <span class="n">R_after</span> <span class="o">=</span> <span class="n">R_after</span> <span class="o">@</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>  <span class="c1"># noqa: SLF001</span>
 
     <span class="n">Z_prefix</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_cached_Z_prefix</span> <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_cached_Z_prefix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">D</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_cached_D</span> <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_cached_D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">Q_lab</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">two_pi_over_lambda</span> <span class="o">*</span> <span class="p">(</span><span class="n">D</span> <span class="o">@</span> <span class="n">ctx</span><span class="o">.</span><span class="n">y_eff</span> <span class="o">-</span> <span class="n">ctx</span><span class="o">.</span><span class="n">y_eff</span><span class="p">)</span>
 
+    <span class="c1"># Solve R(n, θ) q = u with</span>
+    <span class="c1">#   q = R_after @ Q_phi_target</span>
+    <span class="c1">#   u = Z_prefix^T @ Q_lab</span>
+    <span class="c1"># (Derivation: Z = Z_prefix @ R(n, θ) @ R_after, so</span>
+    <span class="c1">#  Q_phi = Z^T Q_lab = R_after^T R(n, θ)^T Z_prefix^T Q_lab; multiply</span>
+    <span class="c1">#  through by R(n, θ) R_after on the left to get the equation above.)</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">free_stage</span><span class="o">.</span><span class="n">_axis_hat</span>  <span class="c1"># noqa: SLF001</span>
-    <span class="n">q</span> <span class="o">=</span> <span class="n">Z_prefix</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Q_phi_target</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">u</span> <span class="o">=</span> <span class="n">R_after</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Q_lab</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">R_after</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Q_phi_target</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">Z_prefix</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Q_lab</span>
 
     <span class="c1"># Parallel components must agree: rotation about n preserves the</span>
     <span class="c1"># n-component.  If they disagree beyond tolerance the target is not</span>
@@ -1804,7 +1769,12 @@
 
     <span class="c1"># Match magnitudes: rotation preserves |q_perp| = |u_perp|.</span>
     <span class="n">u_perp_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">u_perp</span><span class="p">))</span>
-    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">q_perp_norm</span> <span class="o">-</span> <span class="n">u_perp_norm</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-7</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">q_perp_norm</span> <span class="o">-</span> <span class="n">u_perp_norm</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-7</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="c1"># When the parallel-component check above passes (q_par == u_par)</span>
+        <span class="c1"># and the targets are derived from a consistent geometry/UB/wavelength</span>
+        <span class="c1"># configuration (the only call path in the package), rotation-</span>
+        <span class="c1"># preservation of perpendicular magnitudes is automatic; this branch</span>
+        <span class="c1"># is a defensive guard for caller-constructed contexts only.</span>
         <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># not reachable by rotation alone</span>
 
     <span class="n">cos_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">u_perp</span><span class="p">,</span> <span class="n">e1</span><span class="p">))</span>
@@ -2508,7 +2478,12 @@
     <span class="n">is_eulerian</span> <span class="o">=</span> <span class="n">_is_standard_eulerian_pair</span><span class="p">(</span><span class="n">chi_stage</span><span class="p">,</span> <span class="n">phi_stage</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_Z</span><span class="p">(</span><span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute sample rotation matrix from angle values.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute sample rotation matrix from angle values.</span>
+
+<span class="sd">        Composition follows the BL1967 standard convention (Busing &amp;</span>
+<span class="sd">        Levy 1967): outermost (floor-most) stage leftmost,</span>
+<span class="sd">        so Z = R_0 @ R_1 @ ... @ R_{N-1}.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample_stages</span><span class="p">:</span>
             <span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">angles</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
@@ -2553,12 +2528,14 @@
         <span class="p">)</span>
         <span class="n">outer_stage_obj</span> <span class="o">=</span> <span class="n">sample_stages</span><span class="p">[</span><span class="n">outer_stage_idx</span><span class="p">]</span>
 
-        <span class="c1"># Pre-compute the Z_prefix for stages before the outer stage</span>
+        <span class="c1"># Pre-compute the Z_prefix for stages before the outer stage.</span>
+        <span class="c1"># Composition: BL1967 standard outermost-leftmost, so</span>
+        <span class="c1"># Z_pre_outer = R_0 @ R_1 @ ... @ R_{outer_stage_idx-1}.</span>
         <span class="n">Z_pre_outer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">outer_stage_idx</span><span class="p">):</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">sample_stages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">angle</span> <span class="o">=</span> <span class="n">angles_base</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
-            <span class="n">Z_pre_outer</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span> <span class="o">@</span> <span class="n">Z_pre_outer</span>  <span class="c1"># noqa: SLF001</span>
+            <span class="n">Z_pre_outer</span> <span class="o">=</span> <span class="n">Z_pre_outer</span> <span class="o">@</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>  <span class="c1"># noqa: SLF001</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_solve_inner_eulerian_fast</span><span class="p">(</span>
         <span class="n">outer_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -2566,59 +2543,82 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fast analytic (chi, phi) solve for Eulerian geometries.</span>
 
-<span class="sd">        Returns list of (chi_deg, phi_deg) pairs.  No ForwardContext created.</span>
+<span class="sd">        Inlines the algebra of :func:`_solve_bisecting_analytic` for the</span>
+<span class="sd">        double-diffraction outer-scan loop.  Under the BL1967 standard</span>
+<span class="sd">        convention (Busing &amp; Levy 1967, outermost-leftmost):</span>
 
-<span class="sd">        When the decomposition is degenerate (q parallel to n_chi, so chi</span>
-<span class="sd">        is indeterminate), returns an empty list.  The caller handles</span>
-<span class="sd">        degenerate points via `_degenerate_outers`.</span>
+<span class="sd">            Z_prefix = Z_pre_outer @ R_outer</span>
+<span class="sd">            R_chi R_phi v = q</span>
+<span class="sd">              with  v = Q_phi (target),  q = Z_prefix^T @ Q_lab</span>
+
+<span class="sd">        Step 1 — solve for phi (two candidates) by projecting onto</span>
+<span class="sd">        n_chi (invariant under R_chi).  Step 2 — for each phi, recover</span>
+<span class="sd">        chi as the residual rotation about n_chi taking</span>
+<span class="sd">        w = R(n_phi, phi) v onto q.</span>
+
+<span class="sd">        Returns list of (chi_deg, phi_deg) pairs.  Returns an empty list</span>
+<span class="sd">        when v ∥ n_phi (phi indeterminate); the caller falls back to a</span>
+<span class="sd">        chi-scan via ``_find_degenerate_outers`` /</span>
+<span class="sd">        ``_solve_degenerate_outer``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Z_prefix = R_outer @ Z_pre_outer</span>
         <span class="n">R_outer</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span>
             <span class="n">outer_stage_obj</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span>
             <span class="n">outer_deg</span><span class="p">,</span>  <span class="c1"># noqa: SLF001</span>
         <span class="p">)</span>
-        <span class="n">Z_prefix</span> <span class="o">=</span> <span class="n">R_outer</span> <span class="o">@</span> <span class="n">Z_pre_outer</span>
+        <span class="c1"># Textbook order: Z_prefix = Z_pre_outer @ R_outer.</span>
+        <span class="n">Z_prefix</span> <span class="o">=</span> <span class="n">Z_pre_outer</span> <span class="o">@</span> <span class="n">R_outer</span>
 
-        <span class="c1"># q = Z_prefix @ Q_phi_target</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="n">Z_prefix</span> <span class="o">@</span> <span class="n">Q_phi</span>
+        <span class="c1"># q_loc = Z_prefix^T @ Q_lab  (constant within an outer-angle step)</span>
+        <span class="c1"># v_target = Q_phi_target     (constant)</span>
+        <span class="n">v_target</span> <span class="o">=</span> <span class="n">Q_phi</span>  <span class="c1"># alias for clarity</span>
+        <span class="n">q_loc</span> <span class="o">=</span> <span class="n">Z_prefix</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">v</span>  <span class="c1"># v is the Q_lab vector defined at line 2064</span>
 
-        <span class="c1"># --- Solve for chi: A*cos(chi) + B*sin(chi) = C ---</span>
-        <span class="n">A</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
-        <span class="n">B</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">q</span><span class="p">)))</span>
-        <span class="n">C</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+        <span class="c1"># --- Step 1: A cos phi + B sin phi = C ---</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">v_target</span><span class="p">))</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n3</span><span class="p">,</span> <span class="n">v_target</span><span class="p">))</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">q_loc</span><span class="p">))</span>
 
-        <span class="n">R_chi_amp</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">B</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">R_chi_amp</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># degenerate — handled separately</span>
+        <span class="n">amp</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">B</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">amp</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># v ∥ n_phi; defer to degenerate path</span>
 
-        <span class="n">cos_arg_chi</span> <span class="o">=</span> <span class="n">C</span> <span class="o">/</span> <span class="n">R_chi_amp</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cos_arg_chi</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-            <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># pragma: no cover</span>
-        <span class="n">cos_arg_chi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">cos_arg_chi</span><span class="p">))</span>
+        <span class="n">cos_arg_phi</span> <span class="o">=</span> <span class="n">C</span> <span class="o">/</span> <span class="n">amp</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cos_arg_phi</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="n">cos_arg_phi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">cos_arg_phi</span><span class="p">))</span>
 
-        <span class="n">chi0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
-        <span class="n">delta_chi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cos_arg_chi</span><span class="p">)</span>
-        <span class="n">chi_candidates_rad</span> <span class="o">=</span> <span class="p">[</span><span class="n">chi0</span> <span class="o">+</span> <span class="n">delta_chi</span><span class="p">,</span> <span class="n">chi0</span> <span class="o">-</span> <span class="n">delta_chi</span><span class="p">]</span>
+        <span class="n">phi0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+        <span class="n">delta_phi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cos_arg_phi</span><span class="p">)</span>
+        <span class="n">phi_candidates_rad</span> <span class="o">=</span> <span class="p">[</span><span class="n">phi0</span> <span class="o">+</span> <span class="n">delta_phi</span><span class="p">,</span> <span class="n">phi0</span> <span class="o">-</span> <span class="n">delta_phi</span><span class="p">]</span>
 
-        <span class="c1"># --- For each chi, solve for phi (2x2 system) ---</span>
-        <span class="n">nchi_v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-        <span class="n">n3_v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n3</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-        <span class="n">nchi_q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
-        <span class="n">det_phi</span> <span class="o">=</span> <span class="n">nchi_v</span> <span class="o">*</span> <span class="n">nchi_v</span> <span class="o">+</span> <span class="n">n3_v</span> <span class="o">*</span> <span class="n">n3_v</span>
-        <span class="k">if</span> <span class="n">det_phi</span> <span class="o">&lt;</span> <span class="mf">1e-20</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-            <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># pragma: no cover</span>
-
-        <span class="n">n3_q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n3</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
-
+        <span class="c1"># --- Step 2: for each phi, recover chi from the residual ---</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">chi_rad</span> <span class="ow">in</span> <span class="n">chi_candidates_rad</span><span class="p">:</span>
-            <span class="n">c_chi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">chi_rad</span><span class="p">)</span>
-            <span class="n">s_chi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">chi_rad</span><span class="p">)</span>
-            <span class="n">rhs_n3</span> <span class="o">=</span> <span class="n">c_chi</span> <span class="o">*</span> <span class="n">n3_q</span> <span class="o">+</span> <span class="n">s_chi</span> <span class="o">*</span> <span class="n">A</span>
-            <span class="n">cos_phi</span> <span class="o">=</span> <span class="p">(</span><span class="n">nchi_v</span> <span class="o">*</span> <span class="n">nchi_q</span> <span class="o">+</span> <span class="n">n3_v</span> <span class="o">*</span> <span class="n">rhs_n3</span><span class="p">)</span> <span class="o">/</span> <span class="n">det_phi</span>
-            <span class="n">sin_phi</span> <span class="o">=</span> <span class="p">(</span><span class="n">nchi_v</span> <span class="o">*</span> <span class="n">rhs_n3</span> <span class="o">-</span> <span class="n">n3_v</span> <span class="o">*</span> <span class="n">nchi_q</span><span class="p">)</span> <span class="o">/</span> <span class="n">det_phi</span>
-            <span class="n">chi_d</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">chi_rad</span><span class="p">)</span>
-            <span class="n">phi_d</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_phi</span><span class="p">,</span> <span class="n">cos_phi</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">phi_rad</span> <span class="ow">in</span> <span class="n">phi_candidates_rad</span><span class="p">:</span>
+            <span class="n">phi_d</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            <span class="n">c_ph</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            <span class="n">s_ph</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            <span class="n">nphi_v_target</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">v_target</span><span class="p">))</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">v_target</span> <span class="o">*</span> <span class="n">c_ph</span>
+                <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">v_target</span><span class="p">)</span> <span class="o">*</span> <span class="n">s_ph</span>
+                <span class="o">+</span> <span class="n">n_phi</span> <span class="o">*</span> <span class="n">nphi_v_target</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">c_ph</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">w_par</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">n_chi</span><span class="p">))</span>
+            <span class="n">q_par</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q_loc</span><span class="p">,</span> <span class="n">n_chi</span><span class="p">))</span>
+            <span class="n">w_perp</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">w_par</span> <span class="o">*</span> <span class="n">n_chi</span>
+            <span class="n">q_perp</span> <span class="o">=</span> <span class="n">q_loc</span> <span class="o">-</span> <span class="n">q_par</span> <span class="o">*</span> <span class="n">n_chi</span>
+            <span class="n">w_perp_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">w_perp</span><span class="p">))</span>
+            <span class="n">q_perp_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_perp</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">w_perp_norm</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">or</span> <span class="n">q_perp_norm</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+                <span class="n">chi_d</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cos_chi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w_perp</span><span class="p">,</span> <span class="n">q_perp</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">w_perp_norm</span> <span class="o">*</span> <span class="n">q_perp_norm</span><span class="p">)</span>
+                <span class="n">sin_chi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">w_perp</span><span class="p">,</span> <span class="n">q_perp</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(</span>
+                    <span class="n">w_perp_norm</span> <span class="o">*</span> <span class="n">q_perp_norm</span>
+                <span class="p">)</span>
+                <span class="n">chi_d</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_chi</span><span class="p">,</span> <span class="n">cos_chi</span><span class="p">))</span>
+
             <span class="c1"># Normalize to (-180, 180]</span>
             <span class="n">chi_d</span> <span class="o">=</span> <span class="p">(</span><span class="n">chi_d</span> <span class="o">+</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span> <span class="o">-</span> <span class="mf">180.0</span>
             <span class="n">phi_d</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi_d</span> <span class="o">+</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span> <span class="o">-</span> <span class="mf">180.0</span>
@@ -2630,35 +2630,45 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find outer angles where the analytic decomposition is degenerate.</span>
 
-<span class="sd">        Degeneracy occurs when q = Z_prefix @ Q_phi is parallel to n_chi,</span>
-<span class="sd">        meaning R_chi_amp = 0.  At these points chi is indeterminate and</span>
-<span class="sd">        solutions (if they exist) must be found by scanning chi.</span>
+<span class="sd">        Under the BL1967 standard convention (Busing &amp; Levy 1967) the</span>
+<span class="sd">        degeneracy condition is ``Q_phi ∥ n_phi`` (the *target*</span>
+<span class="sd">        scattering vector lies along the innermost stage axis), which</span>
+<span class="sd">        is **independent of the outer angle**.  Either every outer</span>
+<span class="sd">        angle is degenerate or none is.  Return a sweep of candidate</span>
+<span class="sd">        outer angles in the degenerate case; otherwise return an empty</span>
+<span class="sd">        list.</span>
+
+<span class="sd">        The sweep includes both a dense scan and the bisecting outer</span>
+<span class="sd">        angles ``± ttheta_deg / 2``.  The bisecting values are</span>
+<span class="sd">        appended because they are exactly the outer angles at which</span>
+<span class="sd">        the primary Bragg condition is solvable in the degenerate</span>
+<span class="sd">        case (every other outer angle gives ``q_par ≠ w_par`` in the</span>
+<span class="sd">        inner ``_chi_to_trial`` and is silently rejected).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">degenerate</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">720</span><span class="p">):</span>
-            <span class="n">outer_deg</span> <span class="o">=</span> <span class="o">-</span><span class="mf">180.0</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mf">0.5</span>
-            <span class="n">R_outer</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span>
-                <span class="n">outer_stage_obj</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span>
-                <span class="n">outer_deg</span><span class="p">,</span>  <span class="c1"># noqa: SLF001</span>
-            <span class="p">)</span>
-            <span class="n">q</span> <span class="o">=</span> <span class="n">R_outer</span> <span class="o">@</span> <span class="n">Z_pre_outer</span> <span class="o">@</span> <span class="n">Q_phi</span>
-            <span class="n">A</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
-            <span class="n">B</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">q</span><span class="p">)))</span>
-            <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">B</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
-                <span class="n">degenerate</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outer_deg</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">degenerate</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">))</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n3</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">B</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mf">0.1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="c1"># Degenerate: phi is indeterminate at every outer angle.  Include</span>
+        <span class="c1"># the bisecting outer values so the caller can find at least the</span>
+        <span class="c1"># bisecting-locus solutions, plus a dense sweep elsewhere.</span>
+        <span class="n">outers</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">180.0</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">720</span><span class="p">)]</span>
+        <span class="n">outers</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">ttheta_deg</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="n">ttheta_deg</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">outers</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_solve_degenerate_outer</span><span class="p">(</span>
         <span class="n">outer_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        At degenerate outer angles (q parallel to n_chi), scan chi to find</span>
+<span class="sd">        At degenerate outer angles (Q_phi ∥ n_phi), scan phi to find</span>
 <span class="sd">        solutions that satisfy both the Bragg and Ewald conditions.</span>
 
-<span class="sd">        At these points, chi is free and phi is determined by chi.  We scan</span>
-<span class="sd">        chi, compute phi from the remaining Bragg components, and detect</span>
-<span class="sd">        Ewald sign changes between adjacent chi values.  A bisection then</span>
-<span class="sd">        refines the chi to the exact root.</span>
+<span class="sd">        Under the corrected outermost-leftmost composition, the</span>
+<span class="sd">        degeneracy is phi-indeterminate (R(n_phi, phi) @ Q_phi = Q_phi</span>
+<span class="sd">        for every phi).  We scan phi, compute chi from the residual</span>
+<span class="sd">        rotation R(n_chi, chi) @ w = q where w = R(n_phi, phi) @ v, and</span>
+<span class="sd">        detect Ewald sign changes between adjacent phi values.  A</span>
+<span class="sd">        bisection then refines the phi to the exact root.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">angles</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">angles_base</span><span class="p">)</span>
         <span class="n">angles</span><span class="p">[</span><span class="n">outer_stage_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">outer_deg</span>
@@ -2666,32 +2676,46 @@
         <span class="n">ctx</span> <span class="o">=</span> <span class="n">ForwardContext</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
         <span class="n">ctx</span><span class="o">.</span><span class="n">prepare_caching</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="p">{</span><span class="n">chi_stage_name</span><span class="p">,</span> <span class="n">phi_stage_name</span><span class="p">})</span>
 
+        <span class="c1"># Textbook outermost-leftmost composition:</span>
+        <span class="c1">#   Z_prefix = Z_pre_outer @ R_outer</span>
         <span class="n">R_outer</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span>
             <span class="n">outer_stage_obj</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span>
             <span class="n">outer_deg</span><span class="p">,</span>  <span class="c1"># noqa: SLF001</span>
         <span class="p">)</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="n">R_outer</span> <span class="o">@</span> <span class="n">Z_pre_outer</span> <span class="o">@</span> <span class="n">Q_phi</span>
-        <span class="n">nchi_v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-        <span class="n">n3_v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n3</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-        <span class="n">nchi_q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
-        <span class="n">n3_q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n3</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
-        <span class="n">A_local</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
-        <span class="n">det_phi</span> <span class="o">=</span> <span class="n">nchi_v</span> <span class="o">*</span> <span class="n">nchi_v</span> <span class="o">+</span> <span class="n">n3_v</span> <span class="o">*</span> <span class="n">n3_v</span>
-        <span class="k">if</span> <span class="n">det_phi</span> <span class="o">&lt;</span> <span class="mf">1e-20</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-            <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">Z_prefix_local</span> <span class="o">=</span> <span class="n">Z_pre_outer</span> <span class="o">@</span> <span class="n">R_outer</span>
+        <span class="n">q_loc</span> <span class="o">=</span> <span class="n">Z_prefix_local</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">v</span>  <span class="c1"># v here is the Q_lab vector</span>
+        <span class="n">v_target</span> <span class="o">=</span> <span class="n">Q_phi</span>  <span class="c1"># for clarity</span>
+        <span class="n">nphi_v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">v_target</span><span class="p">))</span>
 
-        <span class="k">def</span><span class="w"> </span><span class="nf">_chi_to_trial</span><span class="p">(</span><span class="n">chi_deg_f</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Given a chi value, compute phi and return a trial dict.&quot;&quot;&quot;</span>
-            <span class="n">chi_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">chi_deg_f</span><span class="p">)</span>
-            <span class="n">c_chi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">chi_rad</span><span class="p">)</span>
-            <span class="n">s_chi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">chi_rad</span><span class="p">)</span>
-            <span class="n">rhs_n3</span> <span class="o">=</span> <span class="n">c_chi</span> <span class="o">*</span> <span class="n">n3_q</span> <span class="o">+</span> <span class="n">s_chi</span> <span class="o">*</span> <span class="n">A_local</span>
-            <span class="n">cos_phi</span> <span class="o">=</span> <span class="p">(</span><span class="n">nchi_v</span> <span class="o">*</span> <span class="n">nchi_q</span> <span class="o">+</span> <span class="n">n3_v</span> <span class="o">*</span> <span class="n">rhs_n3</span><span class="p">)</span> <span class="o">/</span> <span class="n">det_phi</span>
-            <span class="n">sin_phi</span> <span class="o">=</span> <span class="p">(</span><span class="n">nchi_v</span> <span class="o">*</span> <span class="n">rhs_n3</span> <span class="o">-</span> <span class="n">n3_v</span> <span class="o">*</span> <span class="n">nchi_q</span><span class="p">)</span> <span class="o">/</span> <span class="n">det_phi</span>
-            <span class="n">phi_d</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_phi</span><span class="p">,</span> <span class="n">cos_phi</span><span class="p">))</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_chi_to_trial</span><span class="p">(</span><span class="n">phi_deg_f</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Given a phi value, compute chi and return a trial dict.&quot;&quot;&quot;</span>
+            <span class="n">phi_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">phi_deg_f</span><span class="p">)</span>
+            <span class="n">c_ph</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            <span class="n">s_ph</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            <span class="c1"># w = R(n_phi, phi) @ v_target (Rodrigues)</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">v_target</span> <span class="o">*</span> <span class="n">c_ph</span>
+                <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_phi</span><span class="p">,</span> <span class="n">v_target</span><span class="p">)</span> <span class="o">*</span> <span class="n">s_ph</span>
+                <span class="o">+</span> <span class="n">n_phi</span> <span class="o">*</span> <span class="n">nphi_v</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">c_ph</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="c1"># chi = angle about n_chi from w_perp to q_perp</span>
+            <span class="n">w_par</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">n_chi</span><span class="p">))</span>
+            <span class="n">q_par</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">q_loc</span><span class="p">,</span> <span class="n">n_chi</span><span class="p">))</span>
+            <span class="n">w_perp</span> <span class="o">=</span> <span class="n">w</span> <span class="o">-</span> <span class="n">w_par</span> <span class="o">*</span> <span class="n">n_chi</span>
+            <span class="n">q_perp</span> <span class="o">=</span> <span class="n">q_loc</span> <span class="o">-</span> <span class="n">q_par</span> <span class="o">*</span> <span class="n">n_chi</span>
+            <span class="n">w_perp_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">w_perp</span><span class="p">))</span>
+            <span class="n">q_perp_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_perp</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">w_perp_norm</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">or</span> <span class="n">q_perp_norm</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">cos_chi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w_perp</span><span class="p">,</span> <span class="n">q_perp</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">w_perp_norm</span> <span class="o">*</span> <span class="n">q_perp_norm</span><span class="p">)</span>
+            <span class="n">sin_chi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_chi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">w_perp</span><span class="p">,</span> <span class="n">q_perp</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="n">w_perp_norm</span> <span class="o">*</span> <span class="n">q_perp_norm</span>
+            <span class="p">)</span>
+            <span class="n">phi_d</span> <span class="o">=</span> <span class="n">phi_deg_f</span>  <span class="c1"># the scanned phi</span>
+            <span class="n">chi_d</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_chi</span><span class="p">,</span> <span class="n">cos_chi</span><span class="p">))</span>
 
             <span class="n">trial</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
-            <span class="n">trial</span><span class="p">[</span><span class="n">chi_stage_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">chi_deg_f</span>
+            <span class="n">trial</span><span class="p">[</span><span class="n">chi_stage_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">chi_d</span>
             <span class="n">trial</span><span class="p">[</span><span class="n">phi_stage_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">phi_d</span>
 
             <span class="c1"># Verify Bragg condition</span>
@@ -2700,24 +2724,25 @@
                 <span class="k">return</span> <span class="kc">None</span>
             <span class="k">return</span> <span class="n">trial</span>
 
-        <span class="c1"># Scan chi at 2-degree intervals, detect sign changes in Ewald</span>
+        <span class="c1"># Scan the free angle (phi when v ∥ n_phi) at 2-degree</span>
+        <span class="c1"># intervals, detect sign changes in the Ewald residual.</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">prev_chi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">prev_scan</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">prev_ew</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-        <span class="k">for</span> <span class="n">chi_int</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-            <span class="n">chi_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">chi_int</span><span class="p">)</span>
-            <span class="n">trial</span> <span class="o">=</span> <span class="n">_chi_to_trial</span><span class="p">(</span><span class="n">chi_f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">scan_int</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">scan_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">scan_int</span><span class="p">)</span>
+            <span class="n">trial</span> <span class="o">=</span> <span class="n">_chi_to_trial</span><span class="p">(</span><span class="n">scan_f</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">trial</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">prev_chi</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">prev_scan</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">continue</span>
             <span class="n">ew</span> <span class="o">=</span> <span class="n">_ewald_residual</span><span class="p">(</span><span class="n">trial</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ew</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-3</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
                 <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trial</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
-            <span class="k">elif</span> <span class="n">prev_chi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">prev_ew</span> <span class="o">*</span> <span class="n">ew</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c1"># Sign change: bisect chi to find root</span>
-                <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">prev_chi</span><span class="p">,</span> <span class="n">chi_f</span>
+            <span class="k">elif</span> <span class="n">prev_scan</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">prev_ew</span> <span class="o">*</span> <span class="n">ew</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Sign change: bisect to find root</span>
+                <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">prev_scan</span><span class="p">,</span> <span class="n">scan_f</span>
                 <span class="n">ew_lo</span> <span class="o">=</span> <span class="n">prev_ew</span>
                 <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">):</span>
                     <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
@@ -2740,7 +2765,7 @@
                         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">_ewald_residual</span><span class="p">(</span><span class="n">trial_final</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">:</span>
                             <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trial_final</span><span class="p">)</span>
 
-            <span class="n">prev_chi</span> <span class="o">=</span> <span class="n">chi_f</span>
+            <span class="n">prev_scan</span> <span class="o">=</span> <span class="n">scan_f</span>
             <span class="n">prev_ew</span> <span class="o">=</span> <span class="n">ew</span>
 
         <span class="k">return</span> <span class="n">candidates</span>
@@ -4711,7 +4736,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-12 09:21 CDT.
+  Last updated on 2026-05-19 15:24 CDT.
   <br/>
 </p></div>
       

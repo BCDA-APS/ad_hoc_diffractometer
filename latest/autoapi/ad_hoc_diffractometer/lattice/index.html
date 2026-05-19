@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../../_static/documentation_options.js?v=731280fa"></script>
+    <script src="../../../_static/documentation_options.js?v=33838f19"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-12 09:21 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 15:24 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -578,13 +578,16 @@ Lecture-2-Reciprocal-lattice-notes</p>
 <td><p>Validate a complete set of lattice parameters.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix" title="ad_hoc_diffractometer.lattice.b_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">b_matrix</span></code></a>(→ numpy.ndarray)</p></td>
-<td><p>Compute the B matrix from the reciprocal lattice vectors.</p></td>
+<td><p>Assemble the B matrix from the reciprocal-lattice vectors.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.lattice_vectors" title="ad_hoc_diffractometer.lattice.lattice_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lattice_vectors</span></code></a>(→ tuple[numpy.ndarray, numpy.ndarray, ...)</p></td>
-<td><p>Compute the three Cartesian direct lattice vectors from crystal lattice</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">b_matrix_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Compute the B matrix directly from lattice parameters using the</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="ad_hoc_diffractometer.lattice.reciprocal_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reciprocal_vectors</span></code></a>(→ tuple[numpy.ndarray, ...)</p></td>
-<td><p>Compute the three reciprocal lattice vectors from Cartesian direct lattice</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.lattice_vectors" title="ad_hoc_diffractometer.lattice.lattice_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lattice_vectors</span></code></a>(→ tuple[numpy.ndarray, numpy.ndarray, ...)</p></td>
+<td><p>Return the three direct-lattice vectors (a1, a2, a3) expressed in the</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="ad_hoc_diffractometer.lattice.reciprocal_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reciprocal_vectors</span></code></a>(→ tuple[numpy.ndarray, ...)</p></td>
+<td><p>Return the three reciprocal-lattice vectors (b1*, b2*, b3*)</p></td>
 </tr>
 </tbody>
 </table>
@@ -702,18 +705,27 @@ lattice parameter changes.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.B">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">B</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.B" title="Link to this definition">#</a></dt>
-<dd><p>B matrix in Å⁻¹ (with 2π factor, Busing &amp; Levy 1967 / SPEC convention).</p>
-<p>Transforms Miller indices <code class="docutils literal notranslate"><span class="pre">h</span></code> = (h, k, l) to the scattering vector
-in Cartesian crystal-frame coordinates:</p>
+<dd><p>B matrix in Å⁻¹ (with 2π factor, BL1967 / SPEC / hkl_soleil
+convention).</p>
+<p>Transforms Miller indices <code class="docutils literal notranslate"><span class="pre">h</span></code> = (h, k, l) to the scattering
+vector expressed in the BL1967 crystal-Cartesian frame:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Q_c</span> <span class="o">=</span> <span class="n">B</span> <span class="o">@</span> <span class="n">h</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">|B</span> <span class="pre">&#64;</span> <span class="pre">h|</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">/</span> <span class="pre">d_hkl</span></code>.  The orthogonality condition is
 <code class="docutils literal notranslate"><span class="pre">bᵢ</span> <span class="pre">·</span> <span class="pre">aⱼ</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">δᵢⱼ</span></code>.</p>
-<p>This follows the Busing &amp; Levy (1967) eq. 3 and SPEC convention.
-Some other packages (FullProf, CrysFML, hkl with <code class="docutils literal notranslate"><span class="pre">tau=1</span></code>) use a
-no-2π variant where <code class="docutils literal notranslate"><span class="pre">bᵢ</span> <span class="pre">·</span> <span class="pre">aⱼ</span> <span class="pre">=</span> <span class="pre">δᵢⱼ</span></code> and <code class="docutils literal notranslate"><span class="pre">|B</span> <span class="pre">&#64;</span> <span class="pre">h|</span> <span class="pre">=</span> <span class="pre">1/d_hkl</span></code>.</p>
+<section id="numerical-equivalence">
+<h3>Numerical equivalence<a class="headerlink" href="#numerical-equivalence" title="Link to this heading">#</a></h3>
+<p>Returns exactly the same B matrix (to machine precision) as
+SPEC, hkl_soleil (default <code class="docutils literal notranslate"><span class="pre">HKL_TAU</span> <span class="pre">=</span> <span class="pre">2π</span></code>), and diffcalc-core,
+for every crystal system.  See <a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">b_matrix_bl1967()</span></code></a> for the
+closed-form derivation and the cross-solver references.</p>
+<p>Other packages (FullProf, CrysFML, parts of CCP4, the hkl
+library compiled with <code class="docutils literal notranslate"><span class="pre">HKL_TAU</span> <span class="pre">=</span> <span class="pre">1</span></code>) use a no-2π variant
+where <code class="docutils literal notranslate"><span class="pre">bᵢ</span> <span class="pre">·</span> <span class="pre">aⱼ</span> <span class="pre">=</span> <span class="pre">δᵢⱼ</span></code> and <code class="docutils literal notranslate"><span class="pre">|B</span> <span class="pre">&#64;</span> <span class="pre">h|</span> <span class="pre">=</span> <span class="pre">1/d_hkl</span></code>; only the
+2π variant is exposed by this package.</p>
 <p>Cached until a lattice parameter changes.</p>
+</section>
 </dd></dl>
 
 <dl class="py method">
@@ -770,9 +782,22 @@ the correct parameter name rather than a generic deduction error.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.cartesian_lattice_vectors">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cartesian_lattice_vectors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.cartesian_lattice_vectors" title="Link to this definition">#</a></dt>
-<dd><p>Direct lattice vectors (a1, a2, a3) in Angstroms.</p>
-<p>a1 is along xHat, a2 lies in the xHat-yHat plane, a3 is
-determined by the right-hand rule.  Cached until a parameter changes.</p>
+<dd><p>Direct-lattice vectors (a1, a2, a3) in Angstroms, expressed in
+the BL1967 crystal-Cartesian frame.</p>
+<p>The frame is defined by the BL1967 B-matrix convention: the
+reciprocal vector b1* is along crystal-x̂, b2* lies in the
+x̂-ŷ plane, b3* completes the right-handed triple.  The
+direct vectors are then determined by the duality
+<code class="docutils literal notranslate"><span class="pre">aᵢ</span> <span class="pre">·</span> <span class="pre">bⱼ\*</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">δᵢⱼ</span></code>.  Their magnitudes equal the lattice
+parameters (<code class="docutils literal notranslate"><span class="pre">|a1|</span> <span class="pre">=</span> <span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">|a2|</span> <span class="pre">=</span> <span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">|a3|</span> <span class="pre">=</span> <span class="pre">c</span></code>) and the
+angles between them recover (α, β, γ).</p>
+<p>For orthogonal cells (cubic, tetragonal, orthorhombic) this
+reduces to <code class="docutils literal notranslate"><span class="pre">a1</span> <span class="pre">=</span> <span class="pre">a</span> <span class="pre">x̂</span></code>, <code class="docutils literal notranslate"><span class="pre">a2</span> <span class="pre">=</span> <span class="pre">b</span> <span class="pre">ŷ</span></code>, <code class="docutils literal notranslate"><span class="pre">a3</span> <span class="pre">=</span> <span class="pre">c</span> <span class="pre">ẑ</span></code>.  For
+non-orthogonal cells the direct vectors are rotated relative
+to that simple placement so that the reciprocal vectors land
+in the BL1967 frame.  See <a class="reference internal" href="#ad_hoc_diffractometer.lattice.lattice_vectors" title="ad_hoc_diffractometer.lattice.lattice_vectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">lattice_vectors()</span></code></a> for the
+construction.</p>
+<p>Cached until a parameter changes.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -805,8 +830,12 @@ determined by the right-hand rule.  Cached until a parameter changes.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.reciprocal_lattice_vectors">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">reciprocal_lattice_vectors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.reciprocal_lattice_vectors" title="Link to this definition">#</a></dt>
-<dd><p>Reciprocal lattice vectors (b1, b2, b3) in Å⁻¹ (with 2π factor).</p>
-<p>Satisfies b_i · a_j = 2π δ_ij.  Cached until a parameter changes.</p>
+<dd><p>Reciprocal-lattice vectors (b1, b2, b3) in Å⁻¹ (with 2π factor)
+expressed in the BL1967 crystal-Cartesian frame.</p>
+<p>The columns of <a class="reference internal" href="#ad_hoc_diffractometer.lattice.Lattice.B" title="ad_hoc_diffractometer.lattice.Lattice.B"><code class="xref py py-attr docutils literal notranslate"><span class="pre">B</span></code></a>.  Satisfies <code class="docutils literal notranslate"><span class="pre">bᵢ</span> <span class="pre">·</span> <span class="pre">aⱼ</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">δᵢⱼ</span></code> with
+the direct vectors returned by
+<a class="reference internal" href="#ad_hoc_diffractometer.lattice.Lattice.cartesian_lattice_vectors" title="ad_hoc_diffractometer.lattice.Lattice.cartesian_lattice_vectors"><code class="xref py py-attr docutils literal notranslate"><span class="pre">cartesian_lattice_vectors</span></code></a>.  Cached until a parameter
+changes.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -907,37 +936,36 @@ degenerate (zero-volume) unit cell.</p>
 <dd><div class="import-path docutils container">
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice.b_matrix</span></code></p>
 </div>
-<p>Compute the B matrix from the reciprocal lattice vectors.</p>
-<p>The B matrix transforms Miller indices <code class="docutils literal notranslate"><span class="pre">h</span></code> = (h, k, l) to the
-scattering vector in Cartesian crystal-frame coordinates
-(Busing &amp; Levy, 1967, eq. 3):</p>
+<p>Assemble the B matrix from the reciprocal-lattice vectors.</p>
+<p>With the BL1967 / SPEC / hkl_soleil convention used by this
+package, the B matrix transforms Miller indices <code class="docutils literal notranslate"><span class="pre">h</span></code> = (h, k, l)
+to the scattering vector in the BL1967 crystal-Cartesian frame
+(Busing &amp; Levy 1967 eq. 3):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Q_c</span> <span class="o">=</span> <span class="n">B</span> <span class="o">@</span> <span class="n">h</span>
-</pre></div>
-</div>
-<p>The columns of B are the reciprocal lattice vectors b₁, b₂, b₃
-(each including the 2π factor), so:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">b3</span><span class="p">]</span>    <span class="p">(</span><span class="n">column</span><span class="o">-</span><span class="n">stack</span> <span class="n">of</span> <span class="n">the</span> <span class="n">reciprocal</span> <span class="n">vectors</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">b3</span><span class="p">]</span>    <span class="p">(</span><span class="n">column</span><span class="o">-</span><span class="n">stack</span> <span class="n">of</span> <span class="n">the</span> <span class="n">reciprocal</span> <span class="n">vectors</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Hence <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">&#64;</span> <span class="pre">h</span> <span class="pre">=</span> <span class="pre">h·b1</span> <span class="pre">+</span> <span class="pre">k·b2</span> <span class="pre">+</span> <span class="pre">l·b3</span></code>.  The orthogonality condition
 is <code class="docutils literal notranslate"><span class="pre">bᵢ</span> <span class="pre">·</span> <span class="pre">aⱼ</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">δᵢⱼ</span></code>, and <code class="docutils literal notranslate"><span class="pre">|B</span> <span class="pre">&#64;</span> <span class="pre">h|</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">/</span> <span class="pre">d_hkl</span></code>.</p>
-<p>This is the Busing &amp; Levy (1967) and SPEC convention.  Some packages
-(FullProf, CrysFML, parts of CCP4, the hkl library with <code class="docutils literal notranslate"><span class="pre">tau=1</span></code>)
-use the alternative no-2π convention <code class="docutils literal notranslate"><span class="pre">bᵢ</span> <span class="pre">·</span> <span class="pre">aⱼ</span> <span class="pre">=</span> <span class="pre">δᵢⱼ</span></code>, which gives
-a B matrix smaller by a factor of 2π.</p>
+<p>For non-orthogonal lattices the columns are not mutually
+orthogonal; the B matrix is upper-triangular by construction (a*
+along crystal-x, b* in crystal-xy plane, c* completing the
+right-handed triple).  See <a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">b_matrix_bl1967()</span></code></a> for the
+closed-form construction and the cross-solver equivalence note.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>b1</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Reciprocal lattice vectors in inverse Angstroms (with 2π factor),
+<li><p><strong>b1</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Reciprocal-lattice vectors in inverse Angstroms (with 2π factor),
 as returned by <a class="reference internal" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="ad_hoc_diffractometer.lattice.reciprocal_vectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">reciprocal_vectors()</span></code></a>.</p></li>
-<li><p><strong>b2</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Reciprocal lattice vectors in inverse Angstroms (with 2π factor),
+<li><p><strong>b2</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Reciprocal-lattice vectors in inverse Angstroms (with 2π factor),
 as returned by <a class="reference internal" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="ad_hoc_diffractometer.lattice.reciprocal_vectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">reciprocal_vectors()</span></code></a>.</p></li>
-<li><p><strong>b3</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Reciprocal lattice vectors in inverse Angstroms (with 2π factor),
+<li><p><strong>b3</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Reciprocal-lattice vectors in inverse Angstroms (with 2π factor),
 as returned by <a class="reference internal" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="ad_hoc_diffractometer.lattice.reciprocal_vectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">reciprocal_vectors()</span></code></a>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>B</strong> – B matrix in inverse Angstroms (with 2π factor, BL1967 convention).</p>
+<dd class="field-even"><p><strong>B</strong> – B matrix in inverse Angstroms (with 2π factor, BL1967 / SPEC /
+hkl_soleil convention).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3, 3)</p>
@@ -946,37 +974,147 @@ as returned by <a class="reference internal" href="#ad_hoc_diffractometer.lattic
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.b_matrix_bl1967">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">b_matrix_bl1967</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#b_matrix_bl1967"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice.b_matrix_bl1967</span></code></p>
+</div>
+<p>Compute the B matrix directly from lattice parameters using the
+Busing &amp; Levy 1967 closed-form expression (eq. 3).</p>
+<p>The columns of B are the reciprocal-lattice vectors b1*, b2*, b3*
+expressed in the BL1967 crystal-Cartesian frame: b1* along
+crystal-x, b2* in the crystal-x–crystal-y plane (with positive
+y component), b3* completing the right-handed orthonormal triple.
+With this choice B is upper triangular:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span>               <span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span> <span class="n">cos</span> <span class="n">γ</span><span class="o">*</span>    <span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span><span class="o">*</span> <span class="n">cos</span> <span class="n">β</span><span class="o">*</span>
+<span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>                <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span> <span class="n">sin</span> <span class="n">γ</span><span class="o">*</span>    <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">c</span><span class="o">*</span> <span class="n">sin</span> <span class="n">β</span><span class="o">*</span> <span class="n">cos</span> <span class="n">α</span>
+<span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>                <span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>            <span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="n">π</span> <span class="o">/</span> <span class="n">c</span>
+</pre></div>
+</div>
+<p>where (a*, b*, c*) are the reciprocal-lattice vector magnitudes
+(including the 2π factor) and (α*, β*, γ*) are the reciprocal-cell
+angles, related to the direct-cell parameters by the standard
+crystallographic identities.</p>
+<section id="numerical-equivalence-with-external-solvers">
+<h3>Numerical equivalence with external solvers<a class="headerlink" href="#numerical-equivalence-with-external-solvers" title="Link to this heading">#</a></h3>
+<p>Returns exactly the same B matrix (to machine precision) as</p>
+<ul class="simple">
+<li><p><strong>SPEC</strong> psic and friends,</p></li>
+<li><p><strong>hkl_soleil</strong> (the libhkl library) with its default
+<code class="docutils literal notranslate"><span class="pre">HKL_TAU</span> <span class="pre">=</span> <span class="pre">2π</span></code> compile-time setting,</p></li>
+<li><p><strong>diffcalc-core</strong> (<code class="docutils literal notranslate"><span class="pre">Crystal._set_reciprocal_cell</span></code>).</p></li>
+</ul>
+<p>This holds for every crystal system, including non-orthogonal
+cells (hexagonal, trigonal, monoclinic, triclinic).  For
+orthogonal cells (cubic, tetragonal, orthorhombic), the
+direct-lattice vectors <cite>a</cite>, <cite>b</cite>, <cite>c</cite> are parallel to the reciprocal
+vectors a*, b*, c* respectively, and the BL1967 frame coincides
+with the “direct-lattice-a-along-x” frame that earlier versions of
+this package used.  For non-orthogonal cells the two frames
+differ by a rotation in the crystal-Cartesian space; both encode
+the same physical crystal, but only the BL1967 frame is the one
+SPEC and hkl_soleil cross-validate against.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param a<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice parameters in Angstroms.</p>
+</dd>
+<dt class="field-even">type a<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param b<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice parameters in Angstroms.</p>
+</dd>
+<dt class="field-even">type b<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param c<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice parameters in Angstroms.</p>
+</dd>
+<dt class="field-even">type c<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param alpha<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice angles in degrees.
+alpha = angle between b and c axes
+beta  = angle between a and c axes
+gamma = angle between a and b axes</p>
+</dd>
+<dt class="field-even">type alpha<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param beta<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice angles in degrees.
+alpha = angle between b and c axes
+beta  = angle between a and c axes
+gamma = angle between a and b axes</p>
+</dd>
+<dt class="field-even">type beta<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param gamma<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice angles in degrees.
+alpha = angle between b and c axes
+beta  = angle between a and c axes
+gamma = angle between a and b axes</p>
+</dd>
+<dt class="field-even">type gamma<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>B</strong> – B matrix in inverse Angstroms (with 2π factor, BL1967 / SPEC /
+hkl_soleil convention).  Upper triangular by construction.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray, shape (3, 3)</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>W. R. Busing &amp; H. A. Levy, <em>Acta Cryst.</em> <strong>22</strong>, 457-464 (1967),
+eq. 3.</p></li>
+<li><p>libhkl source: <code class="docutils literal notranslate"><span class="pre">hkl/hkl-lattice.c</span></code> (<code class="docutils literal notranslate"><span class="pre">HKL_TAU</span> <span class="pre">=</span> <span class="pre">2π</span></code>).</p></li>
+<li><p>diffcalc-core source:
+<code class="docutils literal notranslate"><span class="pre">src/diffcalc/ub/crystal.py</span></code> (<code class="docutils literal notranslate"><span class="pre">_set_reciprocal_cell</span></code>).</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.lattice_vectors">
 <span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">lattice_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#lattice_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.lattice_vectors" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice.lattice_vectors</span></code></p>
 </div>
-<p>Compute the three Cartesian direct lattice vectors from crystal lattice
-parameters.</p>
-<p>The convention places a1 along xHat, a2 in the xHat-yHat plane, and a3
-determined by the right-hand rule.</p>
+<p>Return the three direct-lattice vectors (a1, a2, a3) expressed in the
+BL1967 crystal-Cartesian frame (the same frame as <a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">b_matrix_bl1967()</span></code></a>).</p>
+<p>Derived from the reciprocal-of-reciprocal identity
+<code class="docutils literal notranslate"><span class="pre">aᵢ</span> <span class="pre">·</span> <span class="pre">bⱼ\*</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">δᵢⱼ</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[a1 | a2 | a3] = 2π · (B^T)^{-1} = 2π · (B^{-1})^T
+</pre></div>
+</div>
+<p>For orthogonal cells (cubic, tetragonal, orthorhombic) this gives
+<code class="docutils literal notranslate"><span class="pre">a1</span> <span class="pre">=</span> <span class="pre">a</span> <span class="pre">x̂</span></code>, <code class="docutils literal notranslate"><span class="pre">a2</span> <span class="pre">=</span> <span class="pre">b</span> <span class="pre">ŷ</span></code>, <code class="docutils literal notranslate"><span class="pre">a3</span> <span class="pre">=</span> <span class="pre">c</span> <span class="pre">ẑ</span></code> — equivalent to the
+“direct-lattice-a-along-x” frame used by earlier versions of this
+package.  For non-orthogonal cells the direct vectors are no longer
+placed with <code class="docutils literal notranslate"><span class="pre">a1</span> <span class="pre">∥</span> <span class="pre">x̂</span></code>; instead <code class="docutils literal notranslate"><span class="pre">b1\*</span> <span class="pre">∥</span> <span class="pre">x̂</span></code> (by the BL1967
+convention), and the direct vectors land wherever the duality
+relation puts them.  Magnitudes and angles between direct vectors
+are unchanged (<code class="docutils literal notranslate"><span class="pre">|a1|</span> <span class="pre">=</span> <span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">|a2|</span> <span class="pre">=</span> <span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">|a3|</span> <span class="pre">=</span> <span class="pre">c</span></code>,
+<code class="docutils literal notranslate"><span class="pre">angle(a2,</span> <span class="pre">a3)</span> <span class="pre">=</span> <span class="pre">α</span></code>, etc.).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Lattice parameters in Angstroms.</p></li>
-<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Lattice parameters in Angstroms.</p></li>
-<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Lattice parameters in Angstroms.</p></li>
-<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Lattice angles in degrees.
-alpha = angle between b and c axes
-beta  = angle between a and c axes
-gamma = angle between a and b axes</p></li>
-<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Lattice angles in degrees.
-alpha = angle between b and c axes
-beta  = angle between a and c axes
-gamma = angle between a and b axes</p></li>
-<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Lattice angles in degrees.
-alpha = angle between b and c axes
-beta  = angle between a and c axes
-gamma = angle between a and b axes</p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
+<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
+<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>a1, a2, a3</strong> – Cartesian direct lattice vectors in Angstroms.</p>
+<dd class="field-even"><p><strong>a1, a2, a3</strong> – Direct-lattice vectors in Angstroms, expressed in the BL1967
+crystal-Cartesian frame.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3,)</p>
@@ -986,32 +1124,37 @@ gamma = angle between a and b axes</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.reciprocal_vectors">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">reciprocal_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">a3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#reciprocal_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">reciprocal_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#reciprocal_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
 <p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice.reciprocal_vectors</span></code></p>
 </div>
-<p>Compute the three reciprocal lattice vectors from Cartesian direct lattice
-vectors.</p>
-<p>Uses the standard crystallographic definition:</p>
-<blockquote>
-<div><p>b1 = 2*pi * (a2 x a3) / (a1 . (a2 x a3))
-b2 = 2*pi * (a3 x a1) / (a1 . (a2 x a3))
-b3 = 2*pi * (a1 x a2) / (a1 . (a2 x a3))</p>
-</div></blockquote>
-<p>The orthogonality condition is satisfied:</p>
-<blockquote>
-<div><p>b_i . a_j = 2*pi * delta_ij</p>
-</div></blockquote>
+<p>Return the three reciprocal-lattice vectors (b1*, b2*, b3*)
+expressed in the BL1967 crystal-Cartesian frame.</p>
+<p>The vectors are the columns of <a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">b_matrix_bl1967()</span></code></a> — see that
+function’s docstring for the full convention and the cross-solver
+equivalence note.  Magnitudes carry the 2π factor (BL1967 / SPEC /
+hkl_soleil default convention).</p>
+<p>Orthogonality with the direct-lattice vectors holds:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>bᵢ\* · aⱼ = 2π δᵢⱼ
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">aⱼ</span></code> is the corresponding direct-lattice vector returned by
+<a class="reference internal" href="#ad_hoc_diffractometer.lattice.lattice_vectors" title="ad_hoc_diffractometer.lattice.lattice_vectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">lattice_vectors()</span></code></a> (also expressed in the BL1967
+crystal-Cartesian frame).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a1</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Cartesian direct lattice vectors in Angstroms.</p></li>
-<li><p><strong>a2</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Cartesian direct lattice vectors in Angstroms.</p></li>
-<li><p><strong>a3</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Cartesian direct lattice vectors in Angstroms.</p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
+<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
+<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>b1, b2, b3</strong> – Reciprocal lattice vectors in inverse Angstroms (with 2*pi factor).</p>
+<dd class="field-even"><p><strong>b1, b2, b3</strong> – Reciprocal-lattice vectors in inverse Angstroms (with 2π factor),
+expressed as columns of the BL1967 B matrix.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3,)</p>
@@ -1094,6 +1237,7 @@ b3 = 2*pi * (a1 x a2) / (a1 . (a2 x a3))</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice._deduce_system_and_params"><code class="docutils literal notranslate"><span class="pre">_deduce_system_and_params()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice._validate_params"><code class="docutils literal notranslate"><span class="pre">_validate_params()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.b_matrix"><code class="docutils literal notranslate"><span class="pre">b_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="docutils literal notranslate"><span class="pre">b_matrix_bl1967()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.lattice_vectors"><code class="docutils literal notranslate"><span class="pre">lattice_vectors()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors"><code class="docutils literal notranslate"><span class="pre">reciprocal_vectors()</span></code></a></li>
 </ul>
@@ -1132,7 +1276,7 @@ b3 = 2*pi * (a1 x a2) / (a1 . (a2 x a3))</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-12 09:21 CDT.
+  Last updated on 2026-05-19 15:24 CDT.
   <br/>
 </p></div>
       

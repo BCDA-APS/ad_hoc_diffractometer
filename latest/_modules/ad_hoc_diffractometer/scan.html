@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=731280fa"></script>
+    <script src="../../_static/documentation_options.js?v=33838f19"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-12 09:21 CDT"/>
+    <meta name="docbuild:last-update" content="2026-05-19 15:24 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -745,11 +745,14 @@
     <span class="n">phi_stage</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decompose Z = R(n_φ, φ) · R(n_χ, χ) · R(n_ω, ω) into (ω, χ, φ) in degrees.</span>
+<span class="sd">    Decompose ``Z = R(n_ω, ω) · R(n_χ, χ) · R(n_φ, φ)`` into</span>
+<span class="sd">    ``(ω, χ, φ)`` in degrees.</span>
 
-<span class="sd">    This is the innermost-first product order used by</span>
-<span class="sd">    ``geometry.sample_rotation_matrix()``: the outermost stage (omega/eta)</span>
-<span class="sd">    is applied first (rightmost), the innermost (phi) last (leftmost).</span>
+<span class="sd">    This is the outermost-first (BL1967 standard, Busing &amp; Levy 1967)</span>
+<span class="sd">    product order used by</span>
+<span class="sd">    :meth:`~AdHocDiffractometer.sample_rotation_matrix`:</span>
+<span class="sd">    the outermost (floor-most, omega) stage is the leftmost matrix in</span>
+<span class="sd">    the product; the innermost (phi) is rightmost.</span>
 
 <span class="sd">    The decomposition generalizes Busing &amp; Levy (1967) eqs. 14-17 to</span>
 <span class="sd">    arbitrary signed stage axes.  Two χ branches are returned</span>
@@ -757,15 +760,16 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    **Chi** is extracted from the element n_φ · Z · n_ω, which equals</span>
-<span class="sd">    n_φ · R_χ · n_ω (since R_φ fixes n_φ and R_ω fixes n_ω).</span>
+<span class="sd">    **Chi** is extracted from the element n_ω · Z · n_φ, which equals</span>
+<span class="sd">    n_ω · R_χ · n_φ (since R_ω fixes n_ω and R_φ fixes n_φ).</span>
 <span class="sd">    For the standard case n_ω ∥ n_φ this equals cos(χ).</span>
 
-<span class="sd">    **Phi** is extracted from Z · n_ω = R_φ · (R_χ · n_ω): the angle in the</span>
-<span class="sd">    plane ⊥ n_φ between (R_χ · n_ω) and (Z · n_ω).</span>
+<span class="sd">    **Omega** is extracted from Z · n_φ = R_ω · (R_χ · n_φ): the angle</span>
+<span class="sd">    in the plane ⊥ n_ω between (R_χ · n_φ) and (Z · n_φ).</span>
 
-<span class="sd">    **Omega** is extracted from Z^T · n_φ = R_χ^T · n_φ: the angle in the</span>
-<span class="sd">    plane ⊥ n_ω between (R_χ^T · n_φ) and (Z^T · n_φ), with sign reversed.</span>
+<span class="sd">    **Phi** is extracted from Z^T · n_ω = R_φ^T · (R_χ^T · n_ω): the</span>
+<span class="sd">    angle in the plane ⊥ n_φ between (R_χ^T · n_ω) and (Z^T · n_ω),</span>
+<span class="sd">    with sign reversed (because the rotation acts on Z^T not Z).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -788,8 +792,8 @@
     <span class="n">n_chi_hat</span> <span class="o">=</span> <span class="n">n_chi</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_chi</span><span class="p">)</span>
     <span class="n">n_phi_hat</span> <span class="o">=</span> <span class="n">n_phi</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_phi</span><span class="p">)</span>
 
-    <span class="c1"># --- Step 1: chi from n_phi · Z · n_om ----------------------------------</span>
-    <span class="n">elem</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_phi_hat</span><span class="p">,</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_om_hat</span><span class="p">))</span>
+    <span class="c1"># --- Step 1: chi from n_om · Z · n_phi ----------------------------------</span>
+    <span class="n">elem</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om_hat</span><span class="p">,</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_phi_hat</span><span class="p">))</span>
     <span class="n">elem</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">elem</span><span class="p">))</span>
     <span class="n">chi_pos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">elem</span><span class="p">))</span>
     <span class="n">chi_neg</span> <span class="o">=</span> <span class="o">-</span><span class="n">chi_pos</span>
@@ -798,27 +802,29 @@
     <span class="k">for</span> <span class="n">chi_deg</span> <span class="ow">in</span> <span class="p">(</span><span class="n">chi_pos</span><span class="p">,</span> <span class="n">chi_neg</span><span class="p">):</span>
         <span class="n">R_chi</span> <span class="o">=</span> <span class="n">_Rmat</span><span class="p">(</span><span class="n">n_chi_hat</span><span class="p">,</span> <span class="n">chi_deg</span><span class="p">)</span>
 
-        <span class="c1"># --- Step 2: phi from Z · n_om = R_phi · (R_chi · n_om) -------------</span>
-        <span class="n">Rchi_nom</span> <span class="o">=</span> <span class="n">R_chi</span> <span class="o">@</span> <span class="n">n_om_hat</span>
-        <span class="n">Z_nom</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_om_hat</span>
-        <span class="n">e1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_phi_hat</span><span class="p">)</span>
-        <span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_phi_hat</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span>
-        <span class="n">phi_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
-            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nom</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nom</span><span class="p">,</span> <span class="n">e1</span><span class="p">))</span>
-        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_nom</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_nom</span><span class="p">,</span> <span class="n">e1</span><span class="p">)))</span>
-        <span class="n">phi_rad</span> <span class="o">=</span> <span class="p">((</span><span class="n">phi_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
-        <span class="n">phi_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
-
-        <span class="c1"># --- Step 3: omega from Z^T · n_phi = R_chi^T · n_phi ---------------</span>
-        <span class="n">Rchi_T_nphi</span> <span class="o">=</span> <span class="n">R_chi</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_phi_hat</span>
-        <span class="n">ZT_nphi</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_phi_hat</span>
-        <span class="n">f1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_om_hat</span><span class="p">)</span>
-        <span class="n">f2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_om_hat</span><span class="p">,</span> <span class="n">f1</span><span class="p">)</span>
+        <span class="c1"># --- Step 2: omega from Z · n_phi = R_omega · (R_chi · n_phi) ------</span>
+        <span class="n">Rchi_nph</span> <span class="o">=</span> <span class="n">R_chi</span> <span class="o">@</span> <span class="n">n_phi_hat</span>
+        <span class="n">Z_nph</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_phi_hat</span>
+        <span class="n">e1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_om_hat</span><span class="p">)</span>
+        <span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_om_hat</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span>
         <span class="n">omega_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
-            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_T_nphi</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_T_nphi</span><span class="p">,</span> <span class="n">f1</span><span class="p">))</span>
-        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nphi</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nphi</span><span class="p">,</span> <span class="n">f1</span><span class="p">)))</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nph</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nph</span><span class="p">,</span> <span class="n">e1</span><span class="p">))</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_nph</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_nph</span><span class="p">,</span> <span class="n">e1</span><span class="p">)))</span>
         <span class="n">omega_rad</span> <span class="o">=</span> <span class="p">((</span><span class="n">omega_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
         <span class="n">omega_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">omega_rad</span><span class="p">)</span>
+
+        <span class="c1"># --- Step 3: phi from Z^T · n_om = R_phi^T · (R_chi^T · n_om) -------</span>
+        <span class="c1"># R(n_phi, phi)^T · (R(n_chi, chi)^T · n_om) = Z^T · n_om</span>
+        <span class="c1"># so R(n_phi, -phi) takes R(n_chi, -chi) · n_om to Z^T · n_om.</span>
+        <span class="n">Rchi_T_nom</span> <span class="o">=</span> <span class="n">R_chi</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_om_hat</span>
+        <span class="n">ZT_nom</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_om_hat</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_phi_hat</span><span class="p">)</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_phi_hat</span><span class="p">,</span> <span class="n">f1</span><span class="p">)</span>
+        <span class="n">phi_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_T_nom</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rchi_T_nom</span><span class="p">,</span> <span class="n">f1</span><span class="p">))</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nom</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nom</span><span class="p">,</span> <span class="n">f1</span><span class="p">)))</span>
+        <span class="n">phi_rad</span> <span class="o">=</span> <span class="p">((</span><span class="n">phi_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">phi_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
 
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">omega_deg</span><span class="p">,</span> <span class="n">chi_deg</span><span class="p">,</span> <span class="n">phi_deg</span><span class="p">))</span>
 
@@ -840,25 +846,26 @@
     <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decompose ``Z = R(n_kφ, kφ) · R(n_κ, κ) · R(n_kω, kω)`` into</span>
+<span class="sd">    Decompose ``Z = R(n_kω, kω) · R(n_κ, κ) · R(n_kφ, kφ)`` (BL1967</span>
+<span class="sd">    standard outermost-leftmost order, Busing &amp; Levy 1967) into</span>
 <span class="sd">    ``(kω, κ, kφ)`` using a Rodrigues expansion that is **agnostic to</span>
 <span class="sd">    the specific signed axis convention** of the kappa demo geometry.</span>
 
 <span class="sd">    Derivation</span>
 <span class="sd">    ----------</span>
-<span class="sd">    Apply both sides to ``n_komega``:</span>
+<span class="sd">    Apply both sides to ``n_kphi``:</span>
 
-<span class="sd">        Z · n_kω  =  R(n_kφ, kφ) · R(n_κ, κ) · n_kω</span>
+<span class="sd">        Z · n_kφ  =  R(n_kω, kω) · R(n_κ, κ) · n_kφ</span>
 
-<span class="sd">    (since ``R(n_kω, ·) · n_kω = n_kω``).  Take the dot product with</span>
-<span class="sd">    ``n_kphi``:</span>
+<span class="sd">    (since ``R(n_kφ, ·) · n_kφ = n_kφ``).  Take the dot product with</span>
+<span class="sd">    ``n_komega`` (which is invariant under ``R(n_komega, kω)``):</span>
 
-<span class="sd">        n_kφ · Z · n_kω  =  n_kφ · R(n_κ, κ) · n_kω</span>
+<span class="sd">        n_kω · Z · n_kφ  =  n_kω · R(n_κ, κ) · n_kφ</span>
 
 <span class="sd">    Expanding the right side via Rodrigues (with</span>
-<span class="sd">    ``a = n_kphi · n_komega``,</span>
-<span class="sd">    ``b = n_kphi · (n_kappa × n_komega)``,</span>
-<span class="sd">    ``c = (n_kphi · n_kappa)·(n_kappa · n_komega)``):</span>
+<span class="sd">    ``a = n_komega · n_kphi``,</span>
+<span class="sd">    ``b = n_komega · (n_kappa × n_kphi)``,</span>
+<span class="sd">    ``c = (n_komega · n_kappa)·(n_kappa · n_kphi)``):</span>
 
 <span class="sd">        elem  =  a·cos(κ) + b·sin(κ) + c·(1 − cos(κ))</span>
 <span class="sd">              =  (a − c)·cos(κ) + b·sin(κ) + c</span>
@@ -903,11 +910,11 @@
     <span class="n">n_kap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kappa_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">kappa_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
     <span class="n">n_kph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kphi_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">kphi_stage</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
 
-    <span class="c1"># --- Step 1: κ from the Rodrigues expansion of n_kphi · Z · n_komega ----</span>
-    <span class="n">elem</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_km</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-    <span class="n">a_coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">n_km</span><span class="p">))</span>
-    <span class="n">b_coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_kap</span><span class="p">,</span> <span class="n">n_km</span><span class="p">)))</span>
-    <span class="n">c_coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">n_kap</span><span class="p">))</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kap</span><span class="p">,</span> <span class="n">n_km</span><span class="p">))</span>
+    <span class="c1"># --- Step 1: κ from the Rodrigues expansion of n_komega · Z · n_kphi ----</span>
+    <span class="n">elem</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_km</span><span class="p">,</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_kph</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">a_coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_km</span><span class="p">,</span> <span class="n">n_kph</span><span class="p">))</span>
+    <span class="n">b_coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_km</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_kap</span><span class="p">,</span> <span class="n">n_kph</span><span class="p">)))</span>
+    <span class="n">c_coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_km</span><span class="p">,</span> <span class="n">n_kap</span><span class="p">))</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_kap</span><span class="p">,</span> <span class="n">n_kph</span><span class="p">))</span>
     <span class="c1"># Solve (a − c)·cos(κ) + b·sin(κ) = elem − c</span>
     <span class="n">rhs</span> <span class="o">=</span> <span class="n">elem</span> <span class="o">-</span> <span class="n">c_coeff</span>
     <span class="n">M</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">a_coeff</span> <span class="o">-</span> <span class="n">c_coeff</span><span class="p">,</span> <span class="n">b_coeff</span><span class="p">)</span>
@@ -939,27 +946,27 @@
     <span class="k">for</span> <span class="n">kap_deg</span> <span class="ow">in</span> <span class="p">(</span><span class="n">kap_pos</span><span class="p">,</span> <span class="n">kap_neg</span><span class="p">):</span>
         <span class="n">R_kap</span> <span class="o">=</span> <span class="n">_Rmat</span><span class="p">(</span><span class="n">n_kap</span><span class="p">,</span> <span class="n">kap_deg</span><span class="p">)</span>
 
-        <span class="c1"># --- Step 2: kphi from Z · n_km = R_kphi · (R_kap · n_km) ----------</span>
-        <span class="n">Rk_nom</span> <span class="o">=</span> <span class="n">R_kap</span> <span class="o">@</span> <span class="n">n_km</span>
-        <span class="n">Z_nom</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_km</span>
-        <span class="n">e1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_kph</span><span class="p">)</span>
-        <span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span>
-        <span class="n">kphi_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
-            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nom</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nom</span><span class="p">,</span> <span class="n">e1</span><span class="p">))</span>
-        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_nom</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_nom</span><span class="p">,</span> <span class="n">e1</span><span class="p">)))</span>
-        <span class="n">kphi_rad</span> <span class="o">=</span> <span class="p">((</span><span class="n">kphi_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
-        <span class="n">kphi_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">kphi_rad</span><span class="p">)</span>
-
-        <span class="c1"># --- Step 3: komega from Z^T · n_kphi = R_kap^T · n_kphi ------------</span>
-        <span class="n">Rk_T_nkph</span> <span class="o">=</span> <span class="n">R_kap</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_kph</span>
-        <span class="n">ZT_nkph</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_kph</span>
-        <span class="n">f1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_km</span><span class="p">)</span>
-        <span class="n">f2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_km</span><span class="p">,</span> <span class="n">f1</span><span class="p">)</span>
+        <span class="c1"># --- Step 2: komega from Z · n_kphi = R_komega · (R_kap · n_kphi) --</span>
+        <span class="n">Rk_nph</span> <span class="o">=</span> <span class="n">R_kap</span> <span class="o">@</span> <span class="n">n_kph</span>
+        <span class="n">Z_nph</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">@</span> <span class="n">n_kph</span>
+        <span class="n">e1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_km</span><span class="p">)</span>
+        <span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_km</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span>
         <span class="n">kom_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
-            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_T_nkph</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_T_nkph</span><span class="p">,</span> <span class="n">f1</span><span class="p">))</span>
-        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nkph</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nkph</span><span class="p">,</span> <span class="n">f1</span><span class="p">)))</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nph</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z_nph</span><span class="p">,</span> <span class="n">e1</span><span class="p">))</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_nph</span><span class="p">,</span> <span class="n">e2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_nph</span><span class="p">,</span> <span class="n">e1</span><span class="p">)))</span>
         <span class="n">kom_rad</span> <span class="o">=</span> <span class="p">((</span><span class="n">kom_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
         <span class="n">kom_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">kom_rad</span><span class="p">)</span>
+
+        <span class="c1"># --- Step 3: kphi from Z^T · n_komega = R_kphi^T · (R_kap^T · n_komega)</span>
+        <span class="n">Rk_T_nkm</span> <span class="o">=</span> <span class="n">R_kap</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_km</span>
+        <span class="n">ZT_nkm</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_km</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="n">_perp_ref</span><span class="p">(</span><span class="n">n_kph</span><span class="p">)</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_kph</span><span class="p">,</span> <span class="n">f1</span><span class="p">)</span>
+        <span class="n">kphi_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_T_nkm</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Rk_T_nkm</span><span class="p">,</span> <span class="n">f1</span><span class="p">))</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nkm</span><span class="p">,</span> <span class="n">f2</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ZT_nkm</span><span class="p">,</span> <span class="n">f1</span><span class="p">)))</span>
+        <span class="n">kphi_rad</span> <span class="o">=</span> <span class="p">((</span><span class="n">kphi_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">kphi_deg</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">kphi_rad</span><span class="p">)</span>
 
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">kom_deg</span><span class="p">,</span> <span class="n">kap_deg</span><span class="p">,</span> <span class="n">kphi_deg</span><span class="p">))</span>
 
@@ -1020,10 +1027,12 @@
     <span class="n">outer_stages</span> <span class="o">=</span> <span class="n">sample_stages</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
     <span class="n">omega_s</span><span class="p">,</span> <span class="n">chi_s</span><span class="p">,</span> <span class="n">phi_s</span> <span class="o">=</span> <span class="n">sample_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">],</span> <span class="n">sample_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sample_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="c1"># Build R_outer from the base angles of any fixed outer stages</span>
+    <span class="c1"># Build R_outer from the base angles of any fixed outer stages.</span>
+    <span class="c1"># Composition: BL1967 standard outermost-leftmost, so</span>
+    <span class="c1"># R_outer = R_0 @ R_1 @ ... @ R_{k-1} where k = first non-outer index.</span>
     <span class="n">R_outer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">outer_stages</span><span class="p">:</span>
-        <span class="n">R_outer</span> <span class="o">=</span> <span class="n">_Rmat</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">))</span> <span class="o">@</span> <span class="n">R_outer</span>
+        <span class="n">R_outer</span> <span class="o">=</span> <span class="n">R_outer</span> <span class="o">@</span> <span class="n">_Rmat</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">))</span>
 
     <span class="c1"># Rotate Z0 about Q_lab by -psi_target (negative because the convention</span>
     <span class="c1"># is that increasing psi rotates the sample such that the beam-perpendicular</span>
@@ -1561,7 +1570,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-12 09:21 CDT.
+  Last updated on 2026-05-19 15:24 CDT.
   <br/>
 </p></div>
       
