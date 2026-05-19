@@ -14,6 +14,7 @@ Covers:
 """
 
 import re
+from contextlib import nullcontext as does_not_raise
 
 import pytest
 from helpers import psic
@@ -27,6 +28,7 @@ from ad_hoc_diffractometer import ReferenceConstraint
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.reference import exit_angle
 from ad_hoc_diffractometer.reference import incidence_angle
+from ad_hoc_diffractometer.reference import natural_psi
 from ad_hoc_diffractometer.reference import naz_angle
 from ad_hoc_diffractometer.reference import psi_angle
 
@@ -558,8 +560,6 @@ def test_surface_mode_not_implemented_raises():
 # ---------------------------------------------------------------------------
 
 
-from contextlib import nullcontext as does_not_raise  # noqa: E402
-
 from ad_hoc_diffractometer.reference import omega_pseudo  # noqa: E402
 
 
@@ -718,3 +718,93 @@ def test_reference_constraint_omega_serialization_round_trip():
     assert d["value"] == 12.5
     rc2 = ReferenceConstraint.from_dict(d)
     assert rc == rc2
+
+
+# ---------------------------------------------------------------------------
+# natural_psi — added by issue #278 to expose the ψ-validation target
+# ---------------------------------------------------------------------------
+
+
+def test_natural_psi_raises_without_azimuthal_reference():
+    """natural_psi raises ValueError when azimuthal_reference is None."""
+    g = _setup_psic()
+    # azimuthal_reference defaults to None
+    with pytest.raises(
+        ValueError,
+        match=re.escape("azimuthal_reference must be set"),
+    ):
+        natural_psi(g, 1, 0, 0)
+
+
+@pytest.mark.parametrize(
+    "h, k, l, expected, context",
+    [
+        # On psic / cubic / ub_identity / azimuthal=(0,0,1):
+        # natural ψ is determined entirely by Q_phi = UB @ hkl and the
+        # beam direction (longitudinal axis).  The expected values were
+        # produced by an independent run of _compute_natural_psi and
+        # are stable across the ψ-validation-filter design (issue #176).
+        pytest.param(0, 1, 0, 90.0, does_not_raise(), id="010-psi-90"),
+        pytest.param(1, 1, 0, 90.0, does_not_raise(), id="110-psi-90"),
+        pytest.param(0, 1, 1, 90.0, does_not_raise(), id="011-psi-90"),
+        pytest.param(1, 0, 1, 180.0, does_not_raise(), id="101-psi-180"),
+        pytest.param(1, 1, 1, 120.0, does_not_raise(), id="111-psi-120"),
+    ],
+)
+def test_natural_psi_matches_expected_values(h, k, l, expected, context):  # noqa: E741
+    """natural_psi returns the expected motor-angle-independent ψ value."""
+    with context:
+        g = _setup_psic()
+        g.azimuthal_reference = (0, 0, 1)
+        result = natural_psi(g, h, k, l)
+        assert result == pytest.approx(expected, abs=1e-6)
+
+
+@pytest.mark.parametrize(
+    "h, k, l, context",
+    [
+        # (1,0,0) and (0,0,1) make Q_phi parallel to the azimuthal
+        # reference / beam direction respectively, so ψ is undefined.
+        pytest.param(1, 0, 0, does_not_raise(), id="100-undef"),
+        pytest.param(0, 0, 1, does_not_raise(), id="001-undef"),
+    ],
+)
+def test_natural_psi_returns_none_when_undefined(h, k, l, context):  # noqa: E741
+    """natural_psi returns None when ψ is undefined for the reflection.
+
+    ψ is undefined when ``Q_phi`` is parallel to the azimuthal
+    reference or to the incident beam — there is no in-plane direction
+    relative to which to measure the azimuth.
+    """
+    with context:
+        g = _setup_psic()
+        g.azimuthal_reference = (0, 0, 1)
+        assert natural_psi(g, h, k, l) is None
+
+
+def test_natural_psi_equals_psi_angle_at_bisecting_solution():
+    """natural_psi equals psi_angle(motors) at every Bragg solution.
+
+    The central physical claim behind the ψ-validation-filter model
+    (issue #176): for fixed (UB, hkl), every motor configuration that
+    satisfies Bragg gives the same ψ.
+    """
+    g = _setup_psic()
+    g.azimuthal_reference = (0, 0, 1)
+    g.mode_name = "bisecting_vertical"
+    sols = g.forward(1, 1, 0)
+    assert sols, "bisecting_vertical should return at least one solution for (1,1,0)"
+    nat = natural_psi(g, 1, 1, 0)
+    for sol in sols:
+        assert psi_angle(g, angles=sol) == pytest.approx(nat, abs=1e-6)
+
+
+def test_natural_psi_independent_of_motor_state():
+    """natural_psi depends only on UB and (h, k, l), not on stage angles."""
+    g = _setup_psic()
+    g.azimuthal_reference = (0, 0, 1)
+    baseline = natural_psi(g, 1, 1, 0)
+    # Move every stage to an arbitrary non-zero angle.
+    for stage in g._stages.values():  # noqa: SLF001
+        stage.angle = 17.5
+    assert natural_psi(g, 1, 1, 0) == pytest.approx(baseline, abs=1e-12)

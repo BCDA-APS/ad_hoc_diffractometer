@@ -24,6 +24,11 @@ Functions
 :func:`psi_angle`
     Azimuthal angle ψ of the reference vector n̂ about Q (You 1999, eq. 23).
 
+:func:`natural_psi`
+    Natural azimuthal angle ψ for a reflection, computed from UB and
+    (h, k, l) without any motor angles.  Equals :func:`psi_angle` at
+    every Bragg solution of the same reflection (issue #176).
+
 :func:`naz_angle`
     Azimuthal angle of n̂ projected onto the lab-frame horizontal plane.
 
@@ -204,6 +209,72 @@ def psi_angle(
     """
     _require_azimuthal_reference(geometry)
     return geometry.psi(angles=angles)
+
+
+def natural_psi(
+    geometry: AdHocDiffractometer,
+    h: float,
+    k: float,
+    l: float,  # noqa: E741
+) -> float | None:
+    """
+    Compute the natural azimuthal angle ψ for a reflection from UB alone.
+
+    The azimuthal angle ψ is a pure phi-frame quantity: for a fixed
+    crystal orientation (UB matrix) and a fixed reflection (h, k, l),
+    ψ depends only on ``Q_phi = UB @ (h, k, l)`` and the azimuthal
+    reference vector ``n_phi = UB @ azimuthal_reference``.  **No motor
+    angles enter the calculation** — every motor configuration that
+    brings (h, k, l) into Bragg condition produces the *same* ψ.
+
+    This invariance is the core fact behind the ψ-validation-filter
+    forward-solver model: an :class:`~mode.ReferenceConstraint`
+    ``"psi"`` target is reachable for a given hkl if and only if it
+    equals this natural value.  Use ``natural_psi`` to ask "what ψ
+    must I request to make this reflection reachable?" before calling
+    :meth:`~diffractometer.AdHocDiffractometer.forward`.
+
+    Requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`
+    and :attr:`~sample.Sample.UB` to be set on the geometry.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+        The diffractometer instance.  ``geometry.sample.UB`` and
+        ``geometry.azimuthal_reference`` must be set.
+    h, k, l : float
+        Miller indices of the reflection.
+
+    Returns
+    -------
+    float or None
+        Natural ψ in degrees, in the range (−180°, +180°].  Returns
+        ``None`` when ψ is undefined for the reflection — that is,
+        when ``Q_phi`` is parallel to the azimuthal reference (any ψ
+        rotation about Q leaves the reference unchanged) or when
+        ``Q_phi`` is parallel to the incident beam direction.
+
+    Raises
+    ------
+    ValueError
+        If ``geometry.azimuthal_reference`` is ``None``.
+
+    See Also
+    --------
+    psi_angle : ψ computed from current motor angles (always equals
+        ``natural_psi`` for any Bragg solution of the same (h, k, l)).
+
+    References
+    ----------
+    * You (1999), eq. 23.
+    """
+    _require_azimuthal_reference(geometry)
+    # Local import to avoid module-load ordering issues with forward.py.
+    from .forward import _compute_natural_psi
+
+    hkl = np.array([float(h), float(k), float(l)], dtype=float)
+    Q_phi = geometry.sample.UB @ hkl
+    return _compute_natural_psi(geometry, Q_phi)
 
 
 def naz_angle(
