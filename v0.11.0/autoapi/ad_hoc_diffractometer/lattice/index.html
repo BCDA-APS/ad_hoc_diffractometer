@@ -1,0 +1,1317 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>lattice &#8212; ad_hoc_diffractometer 0.11</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=91f10d53" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../../_static/documentation_options.js?v=f3b36f1a"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/ad_hoc_diffractometer/lattice/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.11.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="mode" href="../mode/index.html" />
+    <link rel="prev" title="kappa" href="../kappa/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11" />
+    <meta name="docbuild:last-update" content="2026-05-19 16:56 CDT"/>
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.11</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code></a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../howto/index.html">How-to Guides</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/basis_vectors.html">Choose and Understand Basis Vectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/custom_geometry.html">Build a Custom Diffractometer Geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/wavelength.html">Set Wavelength / Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/lattice.html">Define the Sample Lattice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/orient.html">Orient a Crystal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/forward.html">Forward and Inverse Computations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/modes.html">Switch Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/constraints.html">Work with Constraints and Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/surface.html">Surface Geometry and the Reference Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/trajectory.html">Plan a Trajectory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/refine_lattice.html">Refine the Lattice Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/serialize.html">Save and Restore a Diffractometer Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/inclination.html">Set Diffractometer Inclination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/performance.html">Measure Forward/Inverse Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/fourcv_alignment_howto.html">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../geometries/index.html">Demonstration Geometries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/fourcv.html">fourcv — Eulerian Four-Circle (vertical)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/fourch.html">fourch — Eulerian Four-Circle (horizontal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/fivec.html">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/psic.html">psic — Eulerian Six-Circle, 4S+2D (You 1999)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/sixc.html">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/kappa4cv.html">kappa4cv — Kappa Four-Circle (vertical)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/kappa4ch.html">kappa4ch — Kappa Four-Circle (horizontal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/kappa6c.html">kappa6c — Kappa Six-Circle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/zaxis.html">zaxis — Z-Axis Four-Circle (Surface)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/declarative_geometry_schema.html">Declarative Geometry Schema</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../../api.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../index.html">ad_hoc_diffractometer</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../axes/index.html">axes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../benchmark/index.html">benchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../constants/index.html">constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../conversions/index.html">conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../diffractometer/index.html">diffractometer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../display/index.html">display</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../drawing/index.html">drawing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../factories/index.html">factories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../forward/index.html">forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../geometries/index.html">geometries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../geometry_loader/index.html">geometry_loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../kappa/index.html">kappa</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">lattice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mode/index.html">mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../orientation/index.html">orientation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../radiation/index.html">radiation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/index.html">reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../refinement/index.html">refinement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reflection/index.html">reflection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rotation/index.html">rotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sample/index.html">sample</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scan/index.html">scan</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stage/index.html">stage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../surface/index.html">surface</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../direct-lattice.html">Direct Lattice in Crystallography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problem1.html">Case Study: Describing a Diffractometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problem2.html">Case Study: Choice of Basis and the UB Matrix</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../../api.html" class="nav-link">API</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">ad_hoc_diffractometer</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">lattice</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ad_hoc_diffractometer.lattice">
+<span id="lattice"></span><h1>lattice<a class="headerlink" href="#module-ad_hoc_diffractometer.lattice" title="Link to this heading">#</a></h1>
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice</span></code></p>
+<dl class="simple">
+<dt>Provides:</dt><dd><ul class="simple">
+<li><p>Lattice class: describes a crystal lattice with lazy-computed properties
+for Cartesian lattice vectors, reciprocal lattice vectors, and the B matrix.</p></li>
+<li><p>lattice_vectors(): standalone function (kept for backward compatibility)</p></li>
+<li><p>reciprocal_vectors(): standalone function</p></li>
+<li><p>b_matrix(): standalone function</p></li>
+</ul>
+</dd>
+<dt>Based on:</dt><dd><p>Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967)
+I16 Diffractometer Rotation Matrix document
+Lecture-2-Reciprocal-lattice-notes</p>
+</dd>
+</dl>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.CRYSTAL_SYSTEMS" title="ad_hoc_diffractometer.lattice.CRYSTAL_SYSTEMS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CRYSTAL_SYSTEMS</span></code></a></p></td>
+<td><p>The seven crystal systems, derived from <code class="xref py py-data docutils literal notranslate"><span class="pre">_SYSTEM_FREE_PARAMS</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.Lattice" title="ad_hoc_diffractometer.lattice.Lattice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lattice</span></code></a></p></td>
+<td><p>A crystal lattice described by up to six parameters (a, b, c, α, β, γ).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice._deduce_system_and_params" title="ad_hoc_diffractometer.lattice._deduce_system_and_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_deduce_system_and_params</span></code></a>(→ tuple[str, float, float, ...)</p></td>
+<td><p>Deduce the crystal system from the supplied parameters and fill in</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice._validate_params" title="ad_hoc_diffractometer.lattice._validate_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_params</span></code></a>(→ None)</p></td>
+<td><p>Validate a complete set of lattice parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix" title="ad_hoc_diffractometer.lattice.b_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">b_matrix</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Assemble the B matrix from the reciprocal-lattice vectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">b_matrix_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Compute the B matrix directly from lattice parameters using the</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.lattice_vectors" title="ad_hoc_diffractometer.lattice.lattice_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lattice_vectors</span></code></a>(→ tuple[numpy.ndarray, numpy.ndarray, ...)</p></td>
+<td><p>Return the three direct-lattice vectors (a1, a2, a3) expressed in the</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="ad_hoc_diffractometer.lattice.reciprocal_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reciprocal_vectors</span></code></a>(→ tuple[numpy.ndarray, ...)</p></td>
+<td><p>Return the three reciprocal-lattice vectors (b1*, b2*, b3*)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.CRYSTAL_SYSTEMS">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">CRYSTAL_SYSTEMS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['cubic',</span> <span class="pre">'tetragonal',</span> <span class="pre">'orthorhombic',</span> <span class="pre">'hexagonal',</span> <span class="pre">'trigonal',</span> <span class="pre">'monoclinic',</span> <span class="pre">'triclinic']</span></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.CRYSTAL_SYSTEMS" title="Link to this definition">#</a></dt>
+<dd><p>The seven crystal systems, derived from <code class="xref py py-data docutils literal notranslate"><span class="pre">_SYSTEM_FREE_PARAMS</span></code>.</p>
+<p>Membership and order are always consistent with the free-parameter table.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">Lattice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">_UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#Lattice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice.Lattice</span></code></p>
+</div>
+<p>A crystal lattice described by up to six parameters (a, b, c, α, β, γ).</p>
+<p>The crystal system is deduced automatically from the <strong>minimum set</strong> of
+parameters supplied.  Missing parameters are filled in according to the
+symmetry constraints of the deduced system.  The default (no arguments)
+is a cubic lattice with a = 1 Å.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id1">
+<caption><span class="caption-text">Minimum parameters by crystal system</span><a class="headerlink" href="#id1" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 28.6%" />
+<col style="width: 71.4%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>System</p></th>
+<th class="head"><p>Minimum parameters required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Cubic</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Tetragonal</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">c</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Hexagonal</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">c</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma=120</span></code> <em>(must be explicit)</em></p></td>
+</tr>
+<tr class="row-odd"><td><p>Trigonal</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha</span></code> <em>(alpha ≠ 90)</em></p></td>
+</tr>
+<tr class="row-even"><td><p>Orthorhombic</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">c</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Monoclinic</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">c</span></code>, <code class="docutils literal notranslate"><span class="pre">beta</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Triclinic</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">c</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">beta</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="simple">
+<dt>All parameters are validated on construction and on every change:</dt><dd><ul class="simple">
+<li><p>Lengths (a, b, c) must be strictly positive.</p></li>
+<li><p>Angles (alpha, beta, gamma) must be in (1, 179) degrees.</p></li>
+<li><p>The combination must produce a non-degenerate unit cell.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Cartesian lattice vectors, reciprocal lattice vectors, and the B matrix
+are computed lazily: calculated on first access and cached until any
+lattice parameter changes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>float — lattice parameters in Angstroms</em>) – Lattice parameter a in Angstroms.  Default 1.0.</p></li>
+<li><p><strong>b</strong> (<em>float — lattice parameters in Angstroms</em>) – Lattice parameter b in Angstroms.</p></li>
+<li><p><strong>c</strong> (<em>float — lattice parameters in Angstroms</em>) – Lattice parameter c in Angstroms.</p></li>
+<li><p><strong>alpha</strong> (<em>float — lattice angles in degrees</em>) – Angle between b and c axes in degrees.</p></li>
+<li><p><strong>beta</strong> (<em>float — lattice angles in degrees</em>) – Angle between a and c axes in degrees.</p></li>
+<li><p><strong>gamma</strong> (<em>float — lattice angles in degrees</em>) – Angle between a and b axes in degrees.</p></li>
+<li><p><strong>(</strong><strong>read/write</strong><strong>)</strong> (<em>Properties</em>)</p></li>
+<li><p><strong>-----------------------</strong></p></li>
+<li><p><strong>a</strong></p></li>
+<li><p><strong>b</strong></p></li>
+<li><p><strong>c</strong></p></li>
+<li><p><strong>alpha</strong></p></li>
+<li><p><strong>beta</strong></p></li>
+<li><p><strong>gamma</strong></p></li>
+<li><p><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><em>None — decimal places for display; None uses the</em>) – package-level default from display.get_precision()</p></li>
+<li><p><strong>(</strong><strong>read-only</strong> (<em>Properties</em>)</p></li>
+<li><p><strong>lazy</strong><strong>)</strong></p></li>
+<li><p><strong>----------------------------</strong></p></li>
+<li><p><strong>system</strong> (<em>str — deduced crystal system</em>)</p></li>
+<li><p><strong>cartesian_lattice_vectors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>(</em><em>a1</em><em>, </em><em>a2</em><em>, </em><em>a3</em><em>) </em><em>— direct lattice vectors</em><em> (</em><em>Å</em><em>)</em>)</p></li>
+<li><p><strong>reciprocal_lattice_vectors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>(</em><em>b1</em><em>, </em><em>b2</em><em>, </em><em>b3</em><em>) </em><em>— reciprocal vectors</em><em> (</em><em>Å⁻¹</em><em>, </em><em>with 2π</em><em>)</em>)</p></li>
+<li><p><strong>B</strong> (<em>ndarray</em><em> (</em><em>3</em><em>,</em><em>3</em><em>) </em><em>— B matrix</em><em> (</em><em>Å⁻¹</em><em>, </em><em>no 2π</em><em>)</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Lattice</span><span class="p">()</span>                                     <span class="c1"># cubic, a=1 Å</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>                                <span class="c1"># cubic, a=5 Å</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">6.0</span><span class="p">)</span>                         <span class="c1"># tetragonal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">4.785</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">12.991</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">120.0</span><span class="p">)</span>       <span class="c1"># hexagonal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">60.0</span><span class="p">)</span>                    <span class="c1"># trigonal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>                 <span class="c1"># orthorhombic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">7.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">110.0</span><span class="p">)</span>     <span class="c1"># monoclinic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">85</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mi">95</span><span class="p">)</span>  <span class="c1"># triclinic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span> <span class="o">=</span> <span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">4.785</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">12.991</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">120.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span><span class="o">.</span><span class="n">precision</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>   <span class="c1"># shows 3 decimal places</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.B">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">B</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.B" title="Link to this definition">#</a></dt>
+<dd><p>B matrix in Å⁻¹ (with 2π factor, BL1967 / SPEC / hkl_soleil
+convention).</p>
+<p>Transforms Miller indices <code class="docutils literal notranslate"><span class="pre">h</span></code> = (h, k, l) to the scattering
+vector expressed in the BL1967 crystal-Cartesian frame:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Q_c</span> <span class="o">=</span> <span class="n">B</span> <span class="o">@</span> <span class="n">h</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">|B</span> <span class="pre">&#64;</span> <span class="pre">h|</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">/</span> <span class="pre">d_hkl</span></code>.  The orthogonality condition is
+<code class="docutils literal notranslate"><span class="pre">bᵢ</span> <span class="pre">·</span> <span class="pre">aⱼ</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">δᵢⱼ</span></code>.</p>
+<section id="numerical-equivalence">
+<h3>Numerical equivalence<a class="headerlink" href="#numerical-equivalence" title="Link to this heading">#</a></h3>
+<p>Returns exactly the same B matrix (to machine precision) as
+SPEC, hkl_soleil (default <code class="docutils literal notranslate"><span class="pre">HKL_TAU</span> <span class="pre">=</span> <span class="pre">2π</span></code>), and diffcalc-core,
+for every crystal system.  See <a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">b_matrix_bl1967()</span></code></a> for the
+closed-form derivation and the cross-solver references.</p>
+<p>Other packages (FullProf, CrysFML, parts of CCP4, the hkl
+library compiled with <code class="docutils literal notranslate"><span class="pre">HKL_TAU</span> <span class="pre">=</span> <span class="pre">1</span></code>) use a no-2π variant
+where <code class="docutils literal notranslate"><span class="pre">bᵢ</span> <span class="pre">·</span> <span class="pre">aⱼ</span> <span class="pre">=</span> <span class="pre">δᵢⱼ</span></code> and <code class="docutils literal notranslate"><span class="pre">|B</span> <span class="pre">&#64;</span> <span class="pre">h|</span> <span class="pre">=</span> <span class="pre">1/d_hkl</span></code>; only the
+2π variant is exposed by this package.</p>
+<p>Cached until a lattice parameter changes.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice._invalidate">
+<span class="sig-name descname"><span class="pre">_invalidate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#Lattice._invalidate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice._invalidate" title="Link to this definition">#</a></dt>
+<dd><p>Mark all cached computations as stale.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice._set_params">
+<span class="sig-name descname"><span class="pre">_set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#Lattice._set_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice._set_params" title="Link to this definition">#</a></dt>
+<dd><p>Update one or more lattice parameters, re-deduce the crystal system,
+and invalidate the cache.  Parameters are always passed to the
+deduction function in the canonical order a, b, c, alpha, beta, gamma.</p>
+<p>All six current values are passed through, with kwargs overriding.
+This allows re-deduction across crystal systems when a parameter
+change alters the symmetry (e.g. setting b != a on a cubic lattice
+causes re-deduction to orthorhombic).</p>
+<p>Individual parameter validation (positive lengths, angle range) is
+performed first, before deduction, so that errors are reported with
+the correct parameter name rather than a generic deduction error.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.a">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">a</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.a" title="Link to this definition">#</a></dt>
+<dd><p>Lattice parameter a (Å).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.alpha">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">alpha</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.alpha" title="Link to this definition">#</a></dt>
+<dd><p>Lattice angle alpha (degrees).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.b">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">b</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.b" title="Link to this definition">#</a></dt>
+<dd><p>Lattice parameter b (Å).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.beta">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">beta</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.beta" title="Link to this definition">#</a></dt>
+<dd><p>Lattice angle beta (degrees).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.c">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">c</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.c" title="Link to this definition">#</a></dt>
+<dd><p>Lattice parameter c (Å).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.cartesian_lattice_vectors">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cartesian_lattice_vectors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.cartesian_lattice_vectors" title="Link to this definition">#</a></dt>
+<dd><p>Direct-lattice vectors (a1, a2, a3) in Angstroms, expressed in
+the BL1967 crystal-Cartesian frame.</p>
+<p>The frame is defined by the BL1967 B-matrix convention: the
+reciprocal vector b1* is along crystal-x̂, b2* lies in the
+x̂-ŷ plane, b3* completes the right-handed triple.  The
+direct vectors are then determined by the duality
+<code class="docutils literal notranslate"><span class="pre">aᵢ</span> <span class="pre">·</span> <span class="pre">bⱼ\*</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">δᵢⱼ</span></code>.  Their magnitudes equal the lattice
+parameters (<code class="docutils literal notranslate"><span class="pre">|a1|</span> <span class="pre">=</span> <span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">|a2|</span> <span class="pre">=</span> <span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">|a3|</span> <span class="pre">=</span> <span class="pre">c</span></code>) and the
+angles between them recover (α, β, γ).</p>
+<p>For orthogonal cells (cubic, tetragonal, orthorhombic) this
+reduces to <code class="docutils literal notranslate"><span class="pre">a1</span> <span class="pre">=</span> <span class="pre">a</span> <span class="pre">x̂</span></code>, <code class="docutils literal notranslate"><span class="pre">a2</span> <span class="pre">=</span> <span class="pre">b</span> <span class="pre">ŷ</span></code>, <code class="docutils literal notranslate"><span class="pre">a3</span> <span class="pre">=</span> <span class="pre">c</span> <span class="pre">ẑ</span></code>.  For
+non-orthogonal cells the direct vectors are rotated relative
+to that simple placement so that the reciprocal vectors land
+in the BL1967 frame.  See <a class="reference internal" href="#ad_hoc_diffractometer.lattice.lattice_vectors" title="ad_hoc_diffractometer.lattice.lattice_vectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">lattice_vectors()</span></code></a> for the
+construction.</p>
+<p>Cached until a parameter changes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.from_dict">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ad_hoc_diffractometer.lattice.Lattice" title="ad_hoc_diffractometer.lattice.Lattice"><span class="pre">Lattice</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#Lattice.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.from_dict" title="Link to this definition">#</a></dt>
+<dd><p>Reconstruct a <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> from a dict produced by <a class="reference internal" href="#ad_hoc_diffractometer.lattice.Lattice.to_dict" title="ad_hoc_diffractometer.lattice.Lattice.to_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_dict()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Must contain keys <code class="docutils literal notranslate"><span class="pre">&quot;a&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;b&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;c&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;alpha&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;beta&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;gamma&quot;</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ad_hoc_diffractometer.lattice.Lattice" title="ad_hoc_diffractometer.lattice.Lattice">Lattice</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Lattice</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mf">5.431</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mf">5.431</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mf">5.431</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">})</span>
+<span class="go">Lattice(system=&#39;cubic&#39;, a=5.431, b=5.431, c=5.431, ...)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.gamma">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">gamma</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.gamma" title="Link to this definition">#</a></dt>
+<dd><p>Lattice angle gamma (degrees).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.reciprocal_lattice_vectors">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">reciprocal_lattice_vectors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.reciprocal_lattice_vectors" title="Link to this definition">#</a></dt>
+<dd><p>Reciprocal-lattice vectors (b1, b2, b3) in Å⁻¹ (with 2π factor)
+expressed in the BL1967 crystal-Cartesian frame.</p>
+<p>The columns of <a class="reference internal" href="#ad_hoc_diffractometer.lattice.Lattice.B" title="ad_hoc_diffractometer.lattice.Lattice.B"><code class="xref py py-attr docutils literal notranslate"><span class="pre">B</span></code></a>.  Satisfies <code class="docutils literal notranslate"><span class="pre">bᵢ</span> <span class="pre">·</span> <span class="pre">aⱼ</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">δᵢⱼ</span></code> with
+the direct vectors returned by
+<a class="reference internal" href="#ad_hoc_diffractometer.lattice.Lattice.cartesian_lattice_vectors" title="ad_hoc_diffractometer.lattice.Lattice.cartesian_lattice_vectors"><code class="xref py py-attr docutils literal notranslate"><span class="pre">cartesian_lattice_vectors</span></code></a>.  Cached until a parameter
+changes.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.system">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">system</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.system" title="Link to this definition">#</a></dt>
+<dd><p>Deduced crystal system name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.Lattice.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#Lattice.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.Lattice.to_dict" title="Link to this definition">#</a></dt>
+<dd><p>Return a JSON-serialisable <code class="docutils literal notranslate"><span class="pre">dict</span></code> representing this lattice.</p>
+<p>All six parameters are always stored (even constrained ones), so
+the dict is unambiguous regardless of crystal system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Keys: <code class="docutils literal notranslate"><span class="pre">&quot;a&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;b&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;c&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;alpha&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;beta&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;gamma&quot;</span></code> (all <code class="docutils literal notranslate"><span class="pre">float</span></code>).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">4.785</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">12.991</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{&#39;a&#39;: 4.785, &#39;b&#39;: 4.785, &#39;c&#39;: 12.991, &#39;alpha&#39;: 90.0, &#39;beta&#39;: 90.0, &#39;gamma&#39;: 120.0}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice._deduce_system_and_params">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">_deduce_system_and_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#_deduce_system_and_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice._deduce_system_and_params" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice._deduce_system_and_params</span></code></p>
+</div>
+<p>Deduce the crystal system from the supplied parameters and fill in
+symmetry-required defaults for any that were not supplied.</p>
+<p>Caller supplies values or _UNSET for each parameter.  ‘a’ is always
+required.  All other parameters are optional; their defaults depend on
+the deduced crystal system.</p>
+<p>Deduction rules (most constrained first):</p>
+<p>Cubic:         a only
+Trigonal:      a + alpha (alpha != 90)
+Hexagonal:     a + c + gamma=120 (gamma must be explicit)
+Tetragonal:    a + c (no angles)
+Orthorhombic:  a + b + c (no angles)
+Monoclinic:    a + b + c + beta
+Triclinic:     all six</p>
+<p>When all six parameters are supplied, the system is classified by
+examining the symmetry of the values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – Each is either a float (supplied) or _UNSET (not supplied).</p></li>
+<li><p><strong>b</strong> – Each is either a float (supplied) or _UNSET (not supplied).</p></li>
+<li><p><strong>c</strong> – Each is either a float (supplied) or _UNSET (not supplied).</p></li>
+<li><p><strong>alpha</strong> – Each is either a float (supplied) or _UNSET (not supplied).</p></li>
+<li><p><strong>beta</strong> – Each is either a float (supplied) or _UNSET (not supplied).</p></li>
+<li><p><strong>gamma</strong> – Each is either a float (supplied) or _UNSET (not supplied).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>system</strong> (<em>str</em>)</p></li>
+<li><p><strong>a, b, c, alpha, beta, gamma</strong> (<em>float (complete, validated)</em>)</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If ‘a’ is not supplied, if the supplied combination is ambiguous
+or inconsistent, or if validated parameters are out of range.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice._validate_params">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">_validate_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#_validate_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice._validate_params" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice._validate_params</span></code></p>
+</div>
+<p>Validate a complete set of lattice parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If any length is not strictly positive, any angle is outside
+(_ANGLE_MIN, _ANGLE_MAX), or the parameters would produce a
+degenerate (zero-volume) unit cell.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.b_matrix">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">b_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#b_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.b_matrix" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice.b_matrix</span></code></p>
+</div>
+<p>Assemble the B matrix from the reciprocal-lattice vectors.</p>
+<p>With the BL1967 / SPEC / hkl_soleil convention used by this
+package, the B matrix transforms Miller indices <code class="docutils literal notranslate"><span class="pre">h</span></code> = (h, k, l)
+to the scattering vector in the BL1967 crystal-Cartesian frame
+(Busing &amp; Levy 1967 eq. 3):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Q_c</span> <span class="o">=</span> <span class="n">B</span> <span class="o">@</span> <span class="n">h</span>
+<span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">b3</span><span class="p">]</span>    <span class="p">(</span><span class="n">column</span><span class="o">-</span><span class="n">stack</span> <span class="n">of</span> <span class="n">the</span> <span class="n">reciprocal</span> <span class="n">vectors</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Hence <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">&#64;</span> <span class="pre">h</span> <span class="pre">=</span> <span class="pre">h·b1</span> <span class="pre">+</span> <span class="pre">k·b2</span> <span class="pre">+</span> <span class="pre">l·b3</span></code>.  The orthogonality condition
+is <code class="docutils literal notranslate"><span class="pre">bᵢ</span> <span class="pre">·</span> <span class="pre">aⱼ</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">δᵢⱼ</span></code>, and <code class="docutils literal notranslate"><span class="pre">|B</span> <span class="pre">&#64;</span> <span class="pre">h|</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">/</span> <span class="pre">d_hkl</span></code>.</p>
+<p>For non-orthogonal lattices the columns are not mutually
+orthogonal; the B matrix is upper-triangular by construction (a*
+along crystal-x, b* in crystal-xy plane, c* completing the
+right-handed triple).  See <a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">b_matrix_bl1967()</span></code></a> for the
+closed-form construction and the cross-solver equivalence note.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>b1</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Reciprocal-lattice vectors in inverse Angstroms (with 2π factor),
+as returned by <a class="reference internal" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="ad_hoc_diffractometer.lattice.reciprocal_vectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">reciprocal_vectors()</span></code></a>.</p></li>
+<li><p><strong>b2</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Reciprocal-lattice vectors in inverse Angstroms (with 2π factor),
+as returned by <a class="reference internal" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="ad_hoc_diffractometer.lattice.reciprocal_vectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">reciprocal_vectors()</span></code></a>.</p></li>
+<li><p><strong>b3</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Reciprocal-lattice vectors in inverse Angstroms (with 2π factor),
+as returned by <a class="reference internal" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="ad_hoc_diffractometer.lattice.reciprocal_vectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">reciprocal_vectors()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>B</strong> – B matrix in inverse Angstroms (with 2π factor, BL1967 / SPEC /
+hkl_soleil convention).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3, 3)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.b_matrix_bl1967">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">b_matrix_bl1967</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#b_matrix_bl1967"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice.b_matrix_bl1967</span></code></p>
+</div>
+<p>Compute the B matrix directly from lattice parameters using the
+Busing &amp; Levy 1967 closed-form expression (eq. 3).</p>
+<p>The columns of B are the reciprocal-lattice vectors b1*, b2*, b3*
+expressed in the BL1967 crystal-Cartesian frame: b1* along
+crystal-x, b2* in the crystal-x–crystal-y plane (with positive
+y component), b3* completing the right-handed orthonormal triple.
+With this choice B is upper triangular:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span>               <span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span> <span class="n">cos</span> <span class="n">γ</span><span class="o">*</span>    <span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span><span class="o">*</span> <span class="n">cos</span> <span class="n">β</span><span class="o">*</span>
+<span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>                <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span> <span class="n">sin</span> <span class="n">γ</span><span class="o">*</span>    <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">c</span><span class="o">*</span> <span class="n">sin</span> <span class="n">β</span><span class="o">*</span> <span class="n">cos</span> <span class="n">α</span>
+<span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>                <span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>            <span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="n">π</span> <span class="o">/</span> <span class="n">c</span>
+</pre></div>
+</div>
+<p>where (a*, b*, c*) are the reciprocal-lattice vector magnitudes
+(including the 2π factor) and (α*, β*, γ*) are the reciprocal-cell
+angles, related to the direct-cell parameters by the standard
+crystallographic identities.</p>
+<section id="numerical-equivalence-with-external-solvers">
+<h3>Numerical equivalence with external solvers<a class="headerlink" href="#numerical-equivalence-with-external-solvers" title="Link to this heading">#</a></h3>
+<p>Returns exactly the same B matrix (to machine precision) as</p>
+<ul class="simple">
+<li><p><strong>SPEC</strong> psic and friends,</p></li>
+<li><p><strong>hkl_soleil</strong> (the libhkl library) with its default
+<code class="docutils literal notranslate"><span class="pre">HKL_TAU</span> <span class="pre">=</span> <span class="pre">2π</span></code> compile-time setting,</p></li>
+<li><p><strong>diffcalc-core</strong> (<code class="docutils literal notranslate"><span class="pre">Crystal._set_reciprocal_cell</span></code>).</p></li>
+</ul>
+<p>This holds for every crystal system, including non-orthogonal
+cells (hexagonal, trigonal, monoclinic, triclinic).  For
+orthogonal cells (cubic, tetragonal, orthorhombic), the
+direct-lattice vectors <cite>a</cite>, <cite>b</cite>, <cite>c</cite> are parallel to the reciprocal
+vectors a*, b*, c* respectively, and the BL1967 frame coincides
+with the “direct-lattice-a-along-x” frame that earlier versions of
+this package used.  For non-orthogonal cells the two frames
+differ by a rotation in the crystal-Cartesian space; both encode
+the same physical crystal, but only the BL1967 frame is the one
+SPEC and hkl_soleil cross-validate against.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param a<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice parameters in Angstroms.</p>
+</dd>
+<dt class="field-even">type a<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param b<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice parameters in Angstroms.</p>
+</dd>
+<dt class="field-even">type b<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param c<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice parameters in Angstroms.</p>
+</dd>
+<dt class="field-even">type c<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param alpha<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice angles in degrees.
+alpha = angle between b and c axes
+beta  = angle between a and c axes
+gamma = angle between a and b axes</p>
+</dd>
+<dt class="field-even">type alpha<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param beta<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice angles in degrees.
+alpha = angle between b and c axes
+beta  = angle between a and c axes
+gamma = angle between a and b axes</p>
+</dd>
+<dt class="field-even">type beta<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param gamma<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Direct-lattice angles in degrees.
+alpha = angle between b and c axes
+beta  = angle between a and c axes
+gamma = angle between a and b axes</p>
+</dd>
+<dt class="field-even">type gamma<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>B</strong> – B matrix in inverse Angstroms (with 2π factor, BL1967 / SPEC /
+hkl_soleil convention).  Upper triangular by construction.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray, shape (3, 3)</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>W. R. Busing &amp; H. A. Levy, <em>Acta Cryst.</em> <strong>22</strong>, 457-464 (1967),
+eq. 3.</p></li>
+<li><p>libhkl source: <code class="docutils literal notranslate"><span class="pre">hkl/hkl-lattice.c</span></code> (<code class="docutils literal notranslate"><span class="pre">HKL_TAU</span> <span class="pre">=</span> <span class="pre">2π</span></code>).</p></li>
+<li><p>diffcalc-core source:
+<code class="docutils literal notranslate"><span class="pre">src/diffcalc/ub/crystal.py</span></code> (<code class="docutils literal notranslate"><span class="pre">_set_reciprocal_cell</span></code>).</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.lattice_vectors">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">lattice_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#lattice_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.lattice_vectors" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice.lattice_vectors</span></code></p>
+</div>
+<p>Return the three direct-lattice vectors (a1, a2, a3) expressed in the
+BL1967 crystal-Cartesian frame (the same frame as <a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">b_matrix_bl1967()</span></code></a>).</p>
+<p>Derived from the reciprocal-of-reciprocal identity
+<code class="docutils literal notranslate"><span class="pre">aᵢ</span> <span class="pre">·</span> <span class="pre">bⱼ\*</span> <span class="pre">=</span> <span class="pre">2π</span> <span class="pre">δᵢⱼ</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[a1 | a2 | a3] = 2π · (B^T)^{-1} = 2π · (B^{-1})^T
+</pre></div>
+</div>
+<p>For orthogonal cells (cubic, tetragonal, orthorhombic) this gives
+<code class="docutils literal notranslate"><span class="pre">a1</span> <span class="pre">=</span> <span class="pre">a</span> <span class="pre">x̂</span></code>, <code class="docutils literal notranslate"><span class="pre">a2</span> <span class="pre">=</span> <span class="pre">b</span> <span class="pre">ŷ</span></code>, <code class="docutils literal notranslate"><span class="pre">a3</span> <span class="pre">=</span> <span class="pre">c</span> <span class="pre">ẑ</span></code> — equivalent to the
+“direct-lattice-a-along-x” frame used by earlier versions of this
+package.  For non-orthogonal cells the direct vectors are no longer
+placed with <code class="docutils literal notranslate"><span class="pre">a1</span> <span class="pre">∥</span> <span class="pre">x̂</span></code>; instead <code class="docutils literal notranslate"><span class="pre">b1\*</span> <span class="pre">∥</span> <span class="pre">x̂</span></code> (by the BL1967
+convention), and the direct vectors land wherever the duality
+relation puts them.  Magnitudes and angles between direct vectors
+are unchanged (<code class="docutils literal notranslate"><span class="pre">|a1|</span> <span class="pre">=</span> <span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">|a2|</span> <span class="pre">=</span> <span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">|a3|</span> <span class="pre">=</span> <span class="pre">c</span></code>,
+<code class="docutils literal notranslate"><span class="pre">angle(a2,</span> <span class="pre">a3)</span> <span class="pre">=</span> <span class="pre">α</span></code>, etc.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
+<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
+<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>a1, a2, a3</strong> – Direct-lattice vectors in Angstroms, expressed in the BL1967
+crystal-Cartesian frame.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.lattice.reciprocal_vectors">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.lattice.</span></span><span class="sig-name descname"><span class="pre">reciprocal_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/lattice.html#reciprocal_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.lattice.reciprocal_vectors</span></code></p>
+</div>
+<p>Return the three reciprocal-lattice vectors (b1*, b2*, b3*)
+expressed in the BL1967 crystal-Cartesian frame.</p>
+<p>The vectors are the columns of <a class="reference internal" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967" title="ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">b_matrix_bl1967()</span></code></a> — see that
+function’s docstring for the full convention and the cross-solver
+equivalence note.  Magnitudes carry the 2π factor (BL1967 / SPEC /
+hkl_soleil default convention).</p>
+<p>Orthogonality with the direct-lattice vectors holds:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>bᵢ\* · aⱼ = 2π δᵢⱼ
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">aⱼ</span></code> is the corresponding direct-lattice vector returned by
+<a class="reference internal" href="#ad_hoc_diffractometer.lattice.lattice_vectors" title="ad_hoc_diffractometer.lattice.lattice_vectors"><code class="xref py py-func docutils literal notranslate"><span class="pre">lattice_vectors()</span></code></a> (also expressed in the BL1967
+crystal-Cartesian frame).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice parameters in Angstroms.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
+<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
+<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Direct-lattice angles in degrees.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>b1, b2, b3</strong> – Reciprocal-lattice vectors in inverse Angstroms (with 2π factor),
+expressed as columns of the BL1967 B matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../kappa/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">kappa</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../mode/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">mode</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.CRYSTAL_SYSTEMS"><code class="docutils literal notranslate"><span class="pre">CRYSTAL_SYSTEMS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice"><code class="docutils literal notranslate"><span class="pre">Lattice</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.B"><code class="docutils literal notranslate"><span class="pre">Lattice.B</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice._invalidate"><code class="docutils literal notranslate"><span class="pre">Lattice._invalidate()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice._set_params"><code class="docutils literal notranslate"><span class="pre">Lattice._set_params()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.a"><code class="docutils literal notranslate"><span class="pre">Lattice.a</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.alpha"><code class="docutils literal notranslate"><span class="pre">Lattice.alpha</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.b"><code class="docutils literal notranslate"><span class="pre">Lattice.b</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.beta"><code class="docutils literal notranslate"><span class="pre">Lattice.beta</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.c"><code class="docutils literal notranslate"><span class="pre">Lattice.c</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.cartesian_lattice_vectors"><code class="docutils literal notranslate"><span class="pre">Lattice.cartesian_lattice_vectors</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.from_dict"><code class="docutils literal notranslate"><span class="pre">Lattice.from_dict()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.gamma"><code class="docutils literal notranslate"><span class="pre">Lattice.gamma</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.reciprocal_lattice_vectors"><code class="docutils literal notranslate"><span class="pre">Lattice.reciprocal_lattice_vectors</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.system"><code class="docutils literal notranslate"><span class="pre">Lattice.system</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.Lattice.to_dict"><code class="docutils literal notranslate"><span class="pre">Lattice.to_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice._deduce_system_and_params"><code class="docutils literal notranslate"><span class="pre">_deduce_system_and_params()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice._validate_params"><code class="docutils literal notranslate"><span class="pre">_validate_params()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.b_matrix"><code class="docutils literal notranslate"><span class="pre">b_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.b_matrix_bl1967"><code class="docutils literal notranslate"><span class="pre">b_matrix_bl1967()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.lattice_vectors"><code class="docutils literal notranslate"><span class="pre">lattice_vectors()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.lattice.reciprocal_vectors"><code class="docutils literal notranslate"><span class="pre">reciprocal_vectors()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/autoapi/ad_hoc_diffractometer/lattice/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-05-19 16:56 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

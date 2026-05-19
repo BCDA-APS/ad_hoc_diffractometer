@@ -1,0 +1,1311 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>scan &#8212; ad_hoc_diffractometer 0.11</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=91f10d53" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../../_static/documentation_options.js?v=f3b36f1a"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/ad_hoc_diffractometer/scan/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.11.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="stage" href="../stage/index.html" />
+    <link rel="prev" title="sample" href="../sample/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11" />
+    <meta name="docbuild:last-update" content="2026-05-19 16:56 CDT"/>
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.11</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code></a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../howto/index.html">How-to Guides</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/basis_vectors.html">Choose and Understand Basis Vectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/custom_geometry.html">Build a Custom Diffractometer Geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/wavelength.html">Set Wavelength / Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/lattice.html">Define the Sample Lattice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/orient.html">Orient a Crystal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/forward.html">Forward and Inverse Computations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/modes.html">Switch Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/constraints.html">Work with Constraints and Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/surface.html">Surface Geometry and the Reference Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/trajectory.html">Plan a Trajectory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/refine_lattice.html">Refine the Lattice Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/serialize.html">Save and Restore a Diffractometer Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/inclination.html">Set Diffractometer Inclination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/performance.html">Measure Forward/Inverse Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/fourcv_alignment_howto.html">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../geometries/index.html">Demonstration Geometries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/fourcv.html">fourcv — Eulerian Four-Circle (vertical)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/fourch.html">fourch — Eulerian Four-Circle (horizontal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/fivec.html">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/psic.html">psic — Eulerian Six-Circle, 4S+2D (You 1999)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/sixc.html">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/kappa4cv.html">kappa4cv — Kappa Four-Circle (vertical)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/kappa4ch.html">kappa4ch — Kappa Four-Circle (horizontal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/kappa6c.html">kappa6c — Kappa Six-Circle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/zaxis.html">zaxis — Z-Axis Four-Circle (Surface)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/declarative_geometry_schema.html">Declarative Geometry Schema</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../../api.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../index.html">ad_hoc_diffractometer</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../axes/index.html">axes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../benchmark/index.html">benchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../constants/index.html">constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../conversions/index.html">conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../diffractometer/index.html">diffractometer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../display/index.html">display</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../drawing/index.html">drawing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../factories/index.html">factories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../forward/index.html">forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../geometries/index.html">geometries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../geometry_loader/index.html">geometry_loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../kappa/index.html">kappa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../lattice/index.html">lattice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mode/index.html">mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../orientation/index.html">orientation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../radiation/index.html">radiation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/index.html">reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../refinement/index.html">refinement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reflection/index.html">reflection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rotation/index.html">rotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sample/index.html">sample</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">scan</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stage/index.html">stage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../surface/index.html">surface</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../direct-lattice.html">Direct Lattice in Crystallography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problem1.html">Case Study: Describing a Diffractometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problem2.html">Case Study: Choice of Basis and the UB Matrix</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../../api.html" class="nav-link">API</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">ad_hoc_diffractometer</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">scan</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ad_hoc_diffractometer.scan">
+<span id="scan"></span><h1>scan<a class="headerlink" href="#module-ad_hoc_diffractometer.scan" title="Link to this heading">#</a></h1>
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan</span></code></p>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.scan.hkl_trajectory" title="ad_hoc_diffractometer.scan.hkl_trajectory"><code class="xref py py-func docutils literal notranslate"><span class="pre">hkl_trajectory()</span></code></a> <code class="docutils literal notranslate"><span class="pre">(geometry,</span> <span class="pre">trajectory,</span> <span class="pre">n_points,</span> <span class="pre">solution_key=NEAREST_ANGLES)</span></code></dt><dd><p><strong>Generator.</strong> Yield motor-angle dicts along a reciprocal-space path.
+Use <code class="docutils literal notranslate"><span class="pre">list(hkl_trajectory(...))</span></code> to collect all points at once.</p>
+</dd>
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.scan.psi_trajectory" title="ad_hoc_diffractometer.scan.psi_trajectory"><code class="xref py py-func docutils literal notranslate"><span class="pre">psi_trajectory()</span></code></a> <code class="docutils literal notranslate"><span class="pre">(geometry,</span> <span class="pre">h,</span> <span class="pre">k,</span> <span class="pre">l,</span> <span class="pre">psi_values,</span> <span class="pre">solution_key=NEAREST_ANGLES)</span></code></dt><dd><p><strong>Generator.</strong> Yield motor-angle dicts for ψ (psi) rotation about Q.</p>
+</dd>
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.scan.trajectory_plan" title="ad_hoc_diffractometer.scan.trajectory_plan"><code class="xref py py-func docutils literal notranslate"><span class="pre">trajectory_plan()</span></code></a> <code class="docutils literal notranslate"><span class="pre">(geometry,</span> <span class="pre">hkl_start,</span> <span class="pre">hkl_end,</span> <span class="pre">n_points,</span> <span class="pre">space=&quot;hkl&quot;,</span> <span class="pre">solution_key=NEAREST_ANGLES)</span></code></dt><dd><p><strong>Generator.</strong> Yield motor-angle dicts between two reciprocal-space points,
+flagging limit violations and inaccessible regions.</p>
+</dd>
+<dt><a class="reference internal" href="#ad_hoc_diffractometer.scan.NEAREST_ANGLES" title="ad_hoc_diffractometer.scan.NEAREST_ANGLES"><code class="xref py py-data docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code></a></dt><dd><p>Built-in solution-key callable: selects the candidate solution whose
+motor angles are closest (in least-squares sense) to the previous point.
+Suppresses branch-flip discontinuities across a trajectory.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>These functions <em>compute</em> trajectories; they do not move motors or
+communicate with hardware.  A future execution layer (not yet planned)
+will consume these outputs to drive real diffractometers.</p>
+<section id="the-ordering-instability-of-forward">
+<h3>The ordering instability of <a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a><a class="headerlink" href="#the-ordering-instability-of-forward" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a> returns multiple solutions in seed-discovery order, which is
+not reproducible and can switch between the positive-chi and negative-chi
+branches at adjacent trajectory points.  All three trajectory functions
+accept a <code class="docutils literal notranslate"><span class="pre">solution_key</span></code> parameter — a callable that scores each candidate
+solution against the previous point’s chosen angles.  Passing
+<code class="docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code> (the module default) prevents branch flips by always
+preferring the candidate closest in motor space to the previous point.</p>
+</section>
+<section id="scan-algorithm">
+<h3>ψ-scan algorithm<a class="headerlink" href="#scan-algorithm" title="Link to this heading">#</a></h3>
+<p>Two distinct definitions of ψ exist in the literature.</p>
+<p><code class="docutils literal notranslate"><span class="pre">geometry.psi()</span></code> implements You (1999) eqs. 10-11: ψ is the azimuthal
+angle of the reference vector <strong>n</strong> about <strong>Q</strong> measured from the projection
+of the fixed lab beam direction y_hat onto the phi-frame Q-perp plane.  For
+a given (hkl, UB, n_hkl) this value is <em>constant</em> across all motor-angle
+solutions that satisfy the Bragg condition — it is a crystal-orientation
+diagnostic, not a motor-angle observable.</p>
+<p><code class="docutils literal notranslate"><span class="pre">psi_trajectory()</span></code> implements the Busing &amp; Levy (1967) <em>operational</em> ψ:
+the angle through which the sample has been rotated about the scattering
+vector Q relative to a chosen reference orientation.  This is the quantity
+physically varied during a ψ scan on a real diffractometer.</p>
+<p>Algorithm (Busing &amp; Levy 1967, Section “Angle settings”):</p>
+<ol class="arabic simple">
+<li><p>Obtain Z₀ — the sample rotation matrix at the base forward() solution.</p></li>
+<li><p>Compute Q̂_lab from the fixed detector position (ttheta unchanged).</p></li>
+<li><p>For each ψ_target build Z(ψ) = R(Q̂_lab, −ψ_target) · Z₀.
+Left-multiplying by R(Q̂_lab, −ψ) rotates the sample about Q in the lab
+frame while the Bragg condition Z · q̂_phi = Q̂_lab is preserved.</p></li>
+<li><p>Remove the contribution of any fixed outer stages and decompose the
+inner-three-stage part of Z(ψ) into motor angles analytically:</p>
+<ul class="simple">
+<li><p><strong>Eulerian</strong> (fourcv, fourch, psic-style, fivec-style):
+n_phi · Z · n_om = cos(χ) isolates χ; then ω and φ follow from
+projections of Z · n_om and Z^T · n_phi onto the plane perpendicular
+to their shared rotation axis.  Two χ branches are returned.</p></li>
+<li><p><strong>Kappa</strong> (kappa4cv, kappa4ch, kappa6c):
+n_kphi · Z · n_komega = cos(κ)·cos²(α) + sin²(α) isolates κ (where
+α = kappa_alpha_deg); komega and kphi follow by the same projection
+method.  Two κ branches (positive and negative) are returned.</p></li>
+</ul>
+</li>
+<li><p>All candidate solutions are filtered through stage limits; the
+<code class="docutils literal notranslate"><span class="pre">solution_key</span></code> (default: <code class="docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code>) selects the one closest
+in motor space to the previous ψ point, keeping motion continuous.</p></li>
+</ol>
+<p>The BL1967 ψ is measured as the angle between the beam direction projected
+perpendicular to Q in the phi frame at Z₀ versus at Z(ψ), rotating about
+q̂_phi.  ψ = 0 by definition at the base forward() solution.</p>
+</section>
+<section id="trajectory-dict-specification-for-hkl-trajectory">
+<h3>Trajectory dict specification for hkl_trajectory<a class="headerlink" href="#trajectory-dict-specification-for-hkl-trajectory" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">trajectory</span></code> argument is a dict whose <code class="docutils literal notranslate"><span class="pre">&quot;type&quot;</span></code> key selects the
+scan shape.  Supported types:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;line&quot;</span></code></dt><dd><p>Linear interpolation between two hkl points.
+Required keys: <code class="docutils literal notranslate"><span class="pre">&quot;start&quot;:</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;end&quot;:</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;radial&quot;</span></code></dt><dd><p>Scan ±extent from center along a reciprocal-space direction.
+Required keys: <code class="docutils literal notranslate"><span class="pre">&quot;center&quot;:</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;direction&quot;:</span> <span class="pre">(dh,</span> <span class="pre">dk,</span> <span class="pre">dl)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;extent&quot;:</span> <span class="pre">delta</span></code>.  The direction is normalized; extent is in r.l.u.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;transverse&quot;</span></code></dt><dd><p>Scan ±extent from center perpendicular to a reference Q direction.
+Required keys: <code class="docutils literal notranslate"><span class="pre">&quot;center&quot;:</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Q_ref&quot;:</span> <span class="pre">(dh,</span> <span class="pre">dk,</span> <span class="pre">dl)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;extent&quot;:</span> <span class="pre">delta</span></code>.  The transverse direction is the component of the
+first non-collinear standard basis vector perpendicular to <code class="docutils literal notranslate"><span class="pre">Q_ref</span></code>
+(Gram-Schmidt).</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967) —
+Four-circle geometry, ψ scan formulation, angle-setting equations.</p></li>
+<li><p>You, J. Appl. Cryst. 32, 614-623 (1999) —
+psic geometry, azimuthal angle definition (eqs. 10-11).</p></li>
+<li><p>ITC Vol. C, Sec. 2.2.6 (2006) —
+Kappa geometry, ψ scan via ω, χ, φ.</p></li>
+<li><p>D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016) —
+Kappa conversion formulae.</p></li>
+</ul>
+</section>
+</section>
+<section id="id1">
+<h2>Functions<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan.NEAREST_ANGLES" title="ad_hoc_diffractometer.scan.NEAREST_ANGLES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code></a>(→ float)</p></td>
+<td><p>Score a candidate motor-angle solution by its distance from the previous point.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._check_limits" title="ad_hoc_diffractometer.scan._check_limits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_limits</span></code></a>(→ bool)</p></td>
+<td><p>Return True if all supplied angles are within their stage limits.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._euler_from_Z_standard" title="ad_hoc_diffractometer.scan._euler_from_Z_standard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_euler_from_Z_standard</span></code></a>(→ list[tuple[float, float, float]])</p></td>
+<td><p>Decompose <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">=</span> <span class="pre">R(n_ω,</span> <span class="pre">ω)</span> <span class="pre">·</span> <span class="pre">R(n_χ,</span> <span class="pre">χ)</span> <span class="pre">·</span> <span class="pre">R(n_φ,</span> <span class="pre">φ)</span></code> into</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._hkl_points" title="ad_hoc_diffractometer.scan._hkl_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_hkl_points</span></code></a>(→ list[tuple[float, float, float]])</p></td>
+<td><p>Generate <code class="docutils literal notranslate"><span class="pre">n_points</span></code> evenly-spaced (h, k, l) tuples from a trajectory dict.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._kappa_from_Z" title="ad_hoc_diffractometer.scan._kappa_from_Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_kappa_from_Z</span></code></a>(→ list[tuple[float, float, float]])</p></td>
+<td><p>Decompose <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">=</span> <span class="pre">R(n_kω,</span> <span class="pre">kω)</span> <span class="pre">·</span> <span class="pre">R(n_κ,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">R(n_kφ,</span> <span class="pre">kφ)</span></code> (BL1967</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._measure_psi" title="ad_hoc_diffractometer.scan._measure_psi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_measure_psi</span></code></a>(→ float)</p></td>
+<td><p>Measure the BL1967 operational ψ for <code class="docutils literal notranslate"><span class="pre">angles</span></code> relative to <code class="docutils literal notranslate"><span class="pre">ref_dir</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._perp_ref" title="ad_hoc_diffractometer.scan._perp_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_perp_ref</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Return a unit vector perpendicular to <code class="docutils literal notranslate"><span class="pre">axis</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._pick_solution" title="ad_hoc_diffractometer.scan._pick_solution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_pick_solution</span></code></a>(→ dict[str, float] | None)</p></td>
+<td><p>Return the best solution scored by <code class="docutils literal notranslate"><span class="pre">solution_key</span></code>, or None if empty.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan._psi_candidates" title="ad_hoc_diffractometer.scan._psi_candidates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_psi_candidates</span></code></a>(→ list[dict[str, float]])</p></td>
+<td><p>Compute all in-limits motor-angle candidates for <code class="docutils literal notranslate"><span class="pre">psi_target</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan.hkl_trajectory" title="ad_hoc_diffractometer.scan.hkl_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hkl_trajectory</span></code></a>(→ collections.abc.Iterator[dict])</p></td>
+<td><p>Yield motor-angle dicts along a reciprocal-space trajectory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan.psi_trajectory" title="ad_hoc_diffractometer.scan.psi_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psi_trajectory</span></code></a>(→ collections.abc.Iterator[dict])</p></td>
+<td><p>Yield motor-angle dicts for ψ rotation about the scattering vector Q.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.scan.trajectory_plan" title="ad_hoc_diffractometer.scan.trajectory_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trajectory_plan</span></code></a>(→ collections.abc.Iterator[dict])</p></td>
+<td><p>Yield motor-angle dicts for a planned path between two reciprocal-space points.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan.NEAREST_ANGLES">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">NEAREST_ANGLES</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#NEAREST_ANGLES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan.NEAREST_ANGLES" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan.NEAREST_ANGLES</span></code></p>
+</div>
+<p>Score a candidate motor-angle solution by its distance from the previous point.</p>
+<p>Returns the sum of squared angular differences between <code class="docutils literal notranslate"><span class="pre">candidate</span></code> and
+<code class="docutils literal notranslate"><span class="pre">previous</span></code> over all stages present in <code class="docutils literal notranslate"><span class="pre">candidate</span></code>.  Lower score means
+closer to the previous point.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">previous</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (first trajectory point) every candidate
+scores 0.0, so the first solution returned by <code class="docutils literal notranslate"><span class="pre">forward()</span></code> is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>candidate</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Motor angles for one solution candidate.</p></li>
+<li><p><strong>previous</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>] or </em><em>None</em>) – Motor angles chosen at the immediately preceding trajectory point.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Non-negative score; lower is preferred.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan._check_limits">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">_check_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#_check_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan._check_limits" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan._check_limits</span></code></p>
+</div>
+<p>Return True if all supplied angles are within their stage limits.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan._euler_from_Z_standard">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">_euler_from_Z_standard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega_stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi_stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#_euler_from_Z_standard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan._euler_from_Z_standard" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan._euler_from_Z_standard</span></code></p>
+</div>
+<p>Decompose <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">=</span> <span class="pre">R(n_ω,</span> <span class="pre">ω)</span> <span class="pre">·</span> <span class="pre">R(n_χ,</span> <span class="pre">χ)</span> <span class="pre">·</span> <span class="pre">R(n_φ,</span> <span class="pre">φ)</span></code> into
+<code class="docutils literal notranslate"><span class="pre">(ω,</span> <span class="pre">χ,</span> <span class="pre">φ)</span></code> in degrees.</p>
+<p>This is the outermost-first (BL1967 standard, Busing &amp; Levy 1967)
+product order used by
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">sample_rotation_matrix()</span></code>:
+the outermost (floor-most, omega) stage is the leftmost matrix in
+the product; the innermost (phi) is rightmost.</p>
+<p>The decomposition generalizes Busing &amp; Levy (1967) eqs. 14-17 to
+arbitrary signed stage axes.  Two χ branches are returned
+(χ ∈ [0°, 180°] and χ ∈ [-180°, 0°]).</p>
+<p class="rubric">Notes</p>
+<p><strong>Chi</strong> is extracted from the element n_ω · Z · n_φ, which equals
+n_ω · R_χ · n_φ (since R_ω fixes n_ω and R_φ fixes n_φ).
+For the standard case n_ω ∥ n_φ this equals cos(χ).</p>
+<p><strong>Omega</strong> is extracted from Z · n_φ = R_ω · (R_χ · n_φ): the angle
+in the plane ⊥ n_ω between (R_χ · n_φ) and (Z · n_φ).</p>
+<p><strong>Phi</strong> is extracted from Z^T · n_ω = R_φ^T · (R_χ^T · n_ω): the
+angle in the plane ⊥ n_φ between (R_χ^T · n_ω) and (Z^T · n_ω),
+with sign reversed (because the rotation acts on Z^T not Z).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Z</strong> (<em>ndarray</em><em>, </em><em>shape</em><em> (</em><em>3</em><em>, </em><em>3</em><em>)</em>) – Sample rotation matrix to decompose.</p></li>
+<li><p><strong>omega_stage</strong> (<a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a>) – The three innermost sample stages in stacking order (floor → sample).</p></li>
+<li><p><strong>chi_stage</strong> (<a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a>) – The three innermost sample stages in stacking order (floor → sample).</p></li>
+<li><p><strong>phi_stage</strong> (<a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a>) – The three innermost sample stages in stacking order (floor → sample).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>One or two solutions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of (omega_deg, chi_deg, phi_deg)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan._hkl_points">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">_hkl_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#_hkl_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan._hkl_points" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan._hkl_points</span></code></p>
+</div>
+<p>Generate <code class="docutils literal notranslate"><span class="pre">n_points</span></code> evenly-spaced (h, k, l) tuples from a trajectory dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">n_points</span> <span class="pre">&lt;</span> <span class="pre">2</span></code>, type is unknown, or a direction/Q_ref is zero.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – If a required trajectory key is missing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan._kappa_from_Z">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">_kappa_from_Z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">komega_stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa_stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kphi_stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#_kappa_from_Z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan._kappa_from_Z" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan._kappa_from_Z</span></code></p>
+</div>
+<p>Decompose <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">=</span> <span class="pre">R(n_kω,</span> <span class="pre">kω)</span> <span class="pre">·</span> <span class="pre">R(n_κ,</span> <span class="pre">κ)</span> <span class="pre">·</span> <span class="pre">R(n_kφ,</span> <span class="pre">kφ)</span></code> (BL1967
+standard outermost-leftmost order, Busing &amp; Levy 1967) into
+<code class="docutils literal notranslate"><span class="pre">(kω,</span> <span class="pre">κ,</span> <span class="pre">kφ)</span></code> using a Rodrigues expansion that is <strong>agnostic to
+the specific signed axis convention</strong> of the kappa demo geometry.</p>
+<section id="derivation">
+<h3>Derivation<a class="headerlink" href="#derivation" title="Link to this heading">#</a></h3>
+<p>Apply both sides to <code class="docutils literal notranslate"><span class="pre">n_kphi</span></code>:</p>
+<blockquote>
+<div><p>Z · n_kφ  =  R(n_kω, kω) · R(n_κ, κ) · n_kφ</p>
+</div></blockquote>
+<p>(since <code class="docutils literal notranslate"><span class="pre">R(n_kφ,</span> <span class="pre">·)</span> <span class="pre">·</span> <span class="pre">n_kφ</span> <span class="pre">=</span> <span class="pre">n_kφ</span></code>).  Take the dot product with
+<code class="docutils literal notranslate"><span class="pre">n_komega</span></code> (which is invariant under <code class="docutils literal notranslate"><span class="pre">R(n_komega,</span> <span class="pre">kω)</span></code>):</p>
+<blockquote>
+<div><p>n_kω · Z · n_kφ  =  n_kω · R(n_κ, κ) · n_kφ</p>
+</div></blockquote>
+<p>Expanding the right side via Rodrigues (with
+<code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">n_komega</span> <span class="pre">·</span> <span class="pre">n_kphi</span></code>,
+<code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">n_komega</span> <span class="pre">·</span> <span class="pre">(n_kappa</span> <span class="pre">×</span> <span class="pre">n_kphi)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">c</span> <span class="pre">=</span> <span class="pre">(n_komega</span> <span class="pre">·</span> <span class="pre">n_kappa)·(n_kappa</span> <span class="pre">·</span> <span class="pre">n_kphi)</span></code>):</p>
+<blockquote>
+<div><dl class="simple">
+<dt>elem  =  a·cos(κ) + b·sin(κ) + c·(1 − cos(κ))</dt><dd><p>=  (a − c)·cos(κ) + b·sin(κ) + c</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>For the Walko (2016) textbook axis convention this reduces to
+<code class="docutils literal notranslate"><span class="pre">cos(κ)·cos²(α)</span> <span class="pre">+</span> <span class="pre">sin²(α)</span></code>; for the geometry-aware kappa axis
+introduced by issue #241 (<code class="docutils literal notranslate"><span class="pre">n_kappa</span> <span class="pre">=</span> <span class="pre">cos(α)·n_komega</span> <span class="pre">+</span>
+<span class="pre">sin(α)·n_chi_eq</span></code>, with <code class="docutils literal notranslate"><span class="pre">n_komega</span></code> parallel to <code class="docutils literal notranslate"><span class="pre">n_kphi</span></code>) the
+same expression evaluates to <code class="docutils literal notranslate"><span class="pre">cos(κ)·sin²(α)</span> <span class="pre">+</span> <span class="pre">cos²(α)</span></code>.  The
+code below uses the general <code class="docutils literal notranslate"><span class="pre">(a</span> <span class="pre">−</span> <span class="pre">c)·cos(κ)</span> <span class="pre">+</span> <span class="pre">b·sin(κ)</span> <span class="pre">=</span> <span class="pre">γ</span> <span class="pre">−</span> <span class="pre">c</span></code>
+form so that any future kappa convention with non-parallel
+komega/kphi axes is handled correctly.</p>
+<p><code class="docutils literal notranslate"><span class="pre">komega</span></code> and <code class="docutils literal notranslate"><span class="pre">kphi</span></code> are then extracted by the same projection
+method as <a class="reference internal" href="#ad_hoc_diffractometer.scan._euler_from_Z_standard" title="ad_hoc_diffractometer.scan._euler_from_Z_standard"><code class="xref py py-func docutils literal notranslate"><span class="pre">_euler_from_Z_standard()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param Z<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">type Z<span class="colon">:</span></dt>
+<dd class="field-even"><p>ndarray, shape (3, 3)</p>
+</dd>
+<dt class="field-odd">param komega_stage<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">type komega_stage<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stage</p>
+</dd>
+<dt class="field-odd">param kappa_stage<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">type kappa_stage<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stage</p>
+</dd>
+<dt class="field-odd">param kphi_stage<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">type kphi_stage<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stage</p>
+</dd>
+<dt class="field-odd">param alpha_deg<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Kappa tilt angle in degrees.  Retained for API compatibility;
+the decomposition itself uses only the geometric axes.</p>
+</dd>
+<dt class="field-even">type alpha_deg<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Two solutions (positive and negative κ branches), or one if
+degenerate.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of (komega_deg, kappa_deg, kphi_deg)</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Walko, <em>Ref. Module Mater. Sci. Mater. Eng.</em> (2016) — textbook
+special case used by earlier versions of this function.</p></li>
+<li><p>Issue #241 — geometry-aware re-derivation.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan._measure_psi">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">_measure_psi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_lab_hat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_eff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">q_hat_phi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#_measure_psi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan._measure_psi" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan._measure_psi</span></code></p>
+</div>
+<p>Measure the BL1967 operational ψ for <code class="docutils literal notranslate"><span class="pre">angles</span></code> relative to <code class="docutils literal notranslate"><span class="pre">ref_dir</span></code>.</p>
+<p>ψ is the angle from <code class="docutils literal notranslate"><span class="pre">ref_dir</span></code> to (Z^T · y_eff)_⊥ about q̂_phi,
+where the perpendicular projection removes the Q component.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan._perp_ref">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">_perp_ref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#_perp_ref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan._perp_ref" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan._perp_ref</span></code></p>
+</div>
+<p>Return a unit vector perpendicular to <code class="docutils literal notranslate"><span class="pre">axis</span></code>.</p>
+<p>Picks the first of [y, x, z] that is not nearly parallel to <code class="docutils literal notranslate"><span class="pre">axis</span></code>,
+then Gram-Schmidt-orthogonalises it.  This avoids the conditional
+<code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">abs(dot(ref,</span> <span class="pre">axis))</span> <span class="pre">&gt;</span> <span class="pre">0.9</span></code> scattered across the decomposition steps.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan._pick_solution">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">_pick_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solutions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">solution_key</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#_pick_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan._pick_solution" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan._pick_solution</span></code></p>
+</div>
+<p>Return the best solution scored by <code class="docutils literal notranslate"><span class="pre">solution_key</span></code>, or None if empty.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan._psi_candidates">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">_psi_candidates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_lab_hat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_eff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">psi_target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#_psi_candidates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan._psi_candidates" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan._psi_candidates</span></code></p>
+</div>
+<p>Compute all in-limits motor-angle candidates for <code class="docutils literal notranslate"><span class="pre">psi_target</span></code>.</p>
+<p>Implements BL1967 step 3-4: builds Z(ψ) = R(Q̂_lab, −ψ) · Z₀ then
+decomposes the inner three stages analytically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>)</p></li>
+<li><p><strong>Z0</strong> (<em>ndarray</em><em> (</em><em>3</em><em>, </em><em>3</em><em>)</em>) – Sample rotation matrix at the base forward() solution.</p></li>
+<li><p><strong>Q_lab_hat</strong> (<em>ndarray</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Unit scattering vector in the lab frame (from detector position).</p></li>
+<li><p><strong>y_eff</strong> (<em>ndarray</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Effective incident-beam direction (accounts for inclination).</p></li>
+<li><p><strong>psi_target</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Target ψ in degrees.</p></li>
+<li><p><strong>base</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Base motor angles (Bragg solution); used for outer stages and ttheta.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>All limit-passing candidate motor-angle dicts.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan.hkl_trajectory">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">hkl_trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">solution_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NEAREST_ANGLES</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#hkl_trajectory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan.hkl_trajectory" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan.hkl_trajectory</span></code></p>
+</div>
+<p>Yield motor-angle dicts along a reciprocal-space trajectory.</p>
+<p>For each of the <code class="docutils literal notranslate"><span class="pre">n_points</span></code> equally-spaced hkl positions along the
+trajectory, calls <code class="docutils literal notranslate"><span class="pre">geometry.forward()</span></code> to find all valid motor-angle
+solutions, then uses <code class="docutils literal notranslate"><span class="pre">solution_key</span></code> to select one.  Points with no
+valid solution are yielded with <code class="docutils literal notranslate"><span class="pre">angles=None</span></code>.</p>
+<p>This function is a <strong>generator</strong>: it yields one dict per trajectory point
+and computes each point on demand.  To get all points at once use
+<code class="docutils literal notranslate"><span class="pre">list(hkl_trajectory(...))</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code> solution key (the default) prevents branch-flip
+discontinuities: at each point it selects the candidate whose motor
+angles are closest to those of the previous point.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>) – Must have <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> set and an active mode.</p></li>
+<li><p><strong>trajectory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Trajectory specification.  The <code class="docutils literal notranslate"><span class="pre">&quot;type&quot;</span></code> key selects the scan
+shape; see module docstring for supported types and required keys.</p></li>
+<li><p><strong>n_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of evenly-spaced points to compute (≥ 2).</p></li>
+<li><p><strong>solution_key</strong> (<em>callable</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Scoring function <code class="docutils literal notranslate"><span class="pre">(candidate,</span> <span class="pre">previous)</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>; lower wins.
+Default: <code class="docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code>.  Pass <code class="docutils literal notranslate"><span class="pre">None</span></code> to use <code class="docutils literal notranslate"><span class="pre">forward()</span></code>’s
+raw ordering.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – One entry per trajectory point with keys:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;hkl&quot;</span></code><span class="classifier">tuple of float</span></dt><dd><p>The requested Miller indices (h, k, l).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;angles&quot;</span></code><span class="classifier">dict[str, float] or None</span></dt><dd><p>Motor angles in degrees, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if no valid solution.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;warning&quot;</span></code><span class="classifier">str or None</span></dt><dd><p>Descriptive warning when <code class="docutils literal notranslate"><span class="pre">angles</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, else <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">n_points</span> <span class="pre">&lt;</span> <span class="pre">2</span></code>, trajectory type is unknown, or a required
+trajectory key is missing.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">geometry.wavelength</span></code> is None or <code class="docutils literal notranslate"><span class="pre">geometry.sample.UB</span></code> is None.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.14)"><strong>NotImplementedError</strong></a> – If no active diffraction mode is set.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;bisecting&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">ahd</span><span class="o">.</span><span class="n">hkl_trajectory</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">g</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="n">n_points</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="s2">&quot;hkl&quot;</span><span class="p">],</span> <span class="n">pt</span><span class="p">[</span><span class="s2">&quot;angles&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan.psi_trajectory">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">psi_trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">psi_values</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">solution_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NEAREST_ANGLES</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#psi_trajectory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan.psi_trajectory" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan.psi_trajectory</span></code></p>
+</div>
+<p>Yield motor-angle dicts for ψ rotation about the scattering vector Q.</p>
+<p>For the fixed reflection (h, k, l) and each target ψ in <code class="docutils literal notranslate"><span class="pre">psi_values</span></code>,
+finds motor angles that simultaneously satisfy the Bragg condition and
+produce the requested BL1967 operational ψ.</p>
+<section id="definition-busing-levy-1967">
+<h3>ψ Definition (Busing &amp; Levy 1967)<a class="headerlink" href="#definition-busing-levy-1967" title="Link to this heading">#</a></h3>
+<p>ψ is the angle through which the sample has rotated about Q relative to
+the base <code class="docutils literal notranslate"><span class="pre">forward()</span></code> solution.  ψ = 0 at the base solution by definition.
+Physically, ψ is varied by rotating the sample about Q (changing ω, χ, φ
+or their kappa equivalents) while keeping 2θ fixed.</p>
+<p>This differs from <code class="docutils literal notranslate"><span class="pre">geometry.psi()</span></code>, which implements the You (1999)
+definition and is constant for all Bragg solutions of a given hkl.  See
+the module docstring for the full discussion.</p>
+<dl class="field-list">
+<dt class="field-odd">param geometry<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Must have <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> set, and an active
+diffraction mode.  <code class="docutils literal notranslate"><span class="pre">kappa_alpha_deg</span></code> must be set for kappa
+geometries (it is set automatically by the demo geometries).</p>
+</dd>
+<dt class="field-even">type geometry<span class="colon">:</span></dt>
+<dd class="field-even"><p>AdHocDiffractometer</p>
+</dd>
+<dt class="field-odd">param h<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Miller indices of the fixed reflection.</p>
+</dd>
+<dt class="field-even">type h<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param k<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Miller indices of the fixed reflection.</p>
+</dd>
+<dt class="field-even">type k<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param l<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Miller indices of the fixed reflection.</p>
+</dd>
+<dt class="field-even">type l<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param psi_values<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Target ψ angles in degrees relative to the base forward() solution.</p>
+</dd>
+<dt class="field-even">type psi_values<span class="colon">:</span></dt>
+<dd class="field-even"><p>iterable of float</p>
+</dd>
+<dt class="field-odd">param solution_key<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Scoring function <code class="docutils literal notranslate"><span class="pre">(candidate,</span> <span class="pre">previous)</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>; lower wins.
+Default: <code class="docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code>.</p>
+</dd>
+<dt class="field-even">type solution_key<span class="colon">:</span></dt>
+<dd class="field-even"><p>callable or None, optional</p>
+</dd>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em> – One entry per ψ value with keys:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;psi_target&quot;</span></code><span class="classifier">float</span></dt><dd><p>The requested ψ (degrees).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;psi_actual&quot;</span></code><span class="classifier">float or None</span></dt><dd><p>Achieved ψ verified by internal measurement, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;angles&quot;</span></code><span class="classifier">dict[str, float] or None</span></dt><dd><p>Motor angles in degrees, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;warning&quot;</span></code><span class="classifier">str or None</span></dt><dd><p>Descriptive warning when <code class="docutils literal notranslate"><span class="pre">angles</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, else <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">raises ValueError<span class="colon">:</span></dt>
+<dd class="field-even"><p>If <code class="docutils literal notranslate"><span class="pre">geometry.wavelength</span></code> is None or <code class="docutils literal notranslate"><span class="pre">geometry.sample.UB</span></code> is None.</p>
+</dd>
+<dt class="field-odd">raises ValueError<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If <code class="docutils literal notranslate"><span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span> <span class="pre">==</span> <span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</p>
+</dd>
+<dt class="field-even">raises NotImplementedError<span class="colon">:</span></dt>
+<dd class="field-even"><p>If no active diffraction mode is set.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The geometry must have at least three sample stages (omega/eta, chi/kappa,
+phi/kphi).  Geometries with fewer sample stages are not supported.</p>
+<p class="rubric">References</p>
+<p>Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967), angle-setting equations.
+ITC Vol. C, Sec. 2.2.6 (2006), kappa ψ scan.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;bisecting&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">ahd</span><span class="o">.</span><span class="n">psi_trajectory</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">30</span><span class="p">)):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="s2">&quot;psi_target&quot;</span><span class="p">],</span> <span class="n">pt</span><span class="p">[</span><span class="s2">&quot;psi_actual&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.scan.trajectory_plan">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.scan.</span></span><span class="sig-name descname"><span class="pre">trajectory_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hkl_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hkl_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hkl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solution_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NEAREST_ANGLES</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/scan.html#trajectory_plan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.scan.trajectory_plan" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.scan.trajectory_plan</span></code></p>
+</div>
+<p>Yield motor-angle dicts for a planned path between two reciprocal-space points.</p>
+<p>Interpolates between <code class="docutils literal notranslate"><span class="pre">hkl_start</span></code> and <code class="docutils literal notranslate"><span class="pre">hkl_end</span></code> in <code class="docutils literal notranslate"><span class="pre">n_points</span></code>
+equally-spaced steps, calls <code class="docutils literal notranslate"><span class="pre">geometry.forward()</span></code> at each point, and
+flags portions that are inaccessible (no valid motor solution) or that
+exceed stage limits.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>) – Must have <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> set and an active mode.</p></li>
+<li><p><strong>hkl_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Start and end Miller indices (h, k, l).</p></li>
+<li><p><strong>hkl_end</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Start and end Miller indices (h, k, l).</p></li>
+<li><p><strong>n_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of evenly-spaced points including endpoints (≥ 2).</p></li>
+<li><p><strong>space</strong> (<em>{&quot;hkl&quot;</em><em>, </em><em>&quot;Q&quot;}</em><em>, </em><em>optional</em>) – <p>Interpolation space.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;hkl&quot;</span></code> (default)</dt><dd><p>Linearly interpolate Miller indices.  Natural for L-scans,
+H-scans, and crystal-axis-aligned trajectories.  Equal steps in
+hkl are <em>not</em> equal steps in |Q| for non-cubic lattices.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;Q&quot;</span></code></dt><dd><p>Linearly interpolate in reciprocal Cartesian coordinates
+(Qx, Qy, Qz = UB &#64; hkl).  Equal steps in Q regardless of
+lattice distortion; intermediate hkl values are generally
+non-integer.  Endpoints are exact by construction.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>solution_key</strong> (<em>callable</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Scoring function <code class="docutils literal notranslate"><span class="pre">(candidate,</span> <span class="pre">previous)</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>; lower wins.
+Default: <code class="docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – One entry per trajectory point with keys:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;hkl&quot;</span></code><span class="classifier">tuple of float</span></dt><dd><p>The (h, k, l) point.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;angles&quot;</span></code><span class="classifier">dict[str, float] or None</span></dt><dd><p>Motor angles, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if inaccessible.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;accessible&quot;</span></code><span class="classifier">bool</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if a valid in-limits solution was found.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;warnings&quot;</span></code><span class="classifier">list of str</span></dt><dd><p>Empty when accessible; otherwise one or more warning strings.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">n_points</span> <span class="pre">&lt;</span> <span class="pre">2</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">space</span></code> is not <code class="docutils literal notranslate"><span class="pre">&quot;hkl&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;Q&quot;</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">space=&quot;Q&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">geometry.sample.UB</span></code> is None or singular.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">geometry.wavelength</span></code> is None or <code class="docutils literal notranslate"><span class="pre">geometry.sample.UB</span></code> is None.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.14)"><strong>NotImplementedError</strong></a> – If no active diffraction mode is set.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">fourcv</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="s2">&quot;bisecting&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plan</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ahd</span><span class="o">.</span><span class="n">trajectory_plan</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">11</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">accessible</span> <span class="o">=</span> <span class="p">[</span><span class="n">pt</span> <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">plan</span> <span class="k">if</span> <span class="n">pt</span><span class="p">[</span><span class="s2">&quot;accessible&quot;</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">accessible</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span><span class="si">}</span><span class="s2"> points accessible&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../sample/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">sample</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../stage/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">stage</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-ordering-instability-of-forward">The ordering instability of <code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scan-algorithm">ψ-scan algorithm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trajectory-dict-specification-for-hkl-trajectory">Trajectory dict specification for hkl_trajectory</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan.NEAREST_ANGLES"><code class="docutils literal notranslate"><span class="pre">NEAREST_ANGLES()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan._check_limits"><code class="docutils literal notranslate"><span class="pre">_check_limits()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan._euler_from_Z_standard"><code class="docutils literal notranslate"><span class="pre">_euler_from_Z_standard()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan._hkl_points"><code class="docutils literal notranslate"><span class="pre">_hkl_points()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan._kappa_from_Z"><code class="docutils literal notranslate"><span class="pre">_kappa_from_Z()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan._measure_psi"><code class="docutils literal notranslate"><span class="pre">_measure_psi()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan._perp_ref"><code class="docutils literal notranslate"><span class="pre">_perp_ref()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan._pick_solution"><code class="docutils literal notranslate"><span class="pre">_pick_solution()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan._psi_candidates"><code class="docutils literal notranslate"><span class="pre">_psi_candidates()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan.hkl_trajectory"><code class="docutils literal notranslate"><span class="pre">hkl_trajectory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan.psi_trajectory"><code class="docutils literal notranslate"><span class="pre">psi_trajectory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.scan.trajectory_plan"><code class="docutils literal notranslate"><span class="pre">trajectory_plan()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/autoapi/ad_hoc_diffractometer/scan/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-05-19 16:56 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

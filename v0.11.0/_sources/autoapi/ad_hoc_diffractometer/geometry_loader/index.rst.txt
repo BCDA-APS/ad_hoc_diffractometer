@@ -1,0 +1,422 @@
+geometry_loader
+===============
+
+.. py:module:: ad_hoc_diffractometer.geometry_loader
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.geometry_loader``
+
+   Parses YAML files (or in-memory YAML text) describing a diffractometer
+   geometry and returns a fully-configured
+   :class:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`
+   instance.
+
+   The schema is documented authoritatively in
+   ``docs/source/reference/declarative_geometry_schema.md``.  This module
+   implements the schema; the how-to
+   ``docs/source/howto/custom_geometry.md`` walks through writing a file
+   from scratch.
+
+   Public API
+   ----------
+
+   - :func:`load_geometry_file` — construct a geometry from a path or YAML
+     text (no registry mutation).
+   - :func:`register_geometry_file` — parse a YAML file from any path and
+     add it to the geometry registry under its declared name (or an
+     explicit ``name=`` override).
+   - :data:`KIND_KEY` — the top-level marker key
+     (``"ad_hoc_diffractometer_geometry"``).
+   - :data:`SUPPORTED_REVISIONS` — the schema revisions this loader
+     understands.
+   - :data:`CURRENT_REVISION` — the schema revision newly-authored YAML
+     files SHOULD declare.
+
+   Schema marker
+   -------------
+   Every declarative geometry file must declare itself at the top level::
+
+       ad_hoc_diffractometer_geometry:
+           schema_revision: 1
+
+   The presence of this key (with a well-formed mapping value containing a
+   supported integer ``schema_revision``) is the signal that the document
+   is a geometry declaration.  ``schema_revision`` is a fixed property of
+   the schema this file conforms to — not a per-file edit counter; users
+   should treat the value verbatim and only change it when migrating the
+   file to a different declarative-geometry schema revision.  Files
+   lacking the marker are treated by the polymorphic-string dispatch in
+   :func:`load_geometry_file` as paths, not as YAML text.
+
+   Polymorphic source dispatch
+   ---------------------------
+   :func:`load_geometry_file` accepts either a filesystem path (as
+   ``str``, :class:`pathlib.Path`, or any :class:`os.PathLike`) **or** a
+   ``str`` containing YAML text.  The dispatch rule is:
+
+   1. ``Path`` / ``os.PathLike`` → always a path; ``FileNotFoundError`` if absent.
+   2. ``str`` parses as YAML *and* declares the
+      :data:`KIND_KEY` marker → treat as YAML text.
+   3. ``str`` either fails to parse as YAML *or* parses but lacks the marker
+      → treat as a filesystem path.  ``FileNotFoundError`` if the file does
+      not exist; the error message names both attempts.
+
+   Strict unknown-key policy
+   -------------------------
+   Unknown top-level or nested keys are rejected with a ``ValueError`` that
+   names the offending key, the containing context, and the accepted-key
+   set for that context.  Future schema revisions may relax this policy.
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.geometry_loader.CURRENT_REVISION
+   ad_hoc_diffractometer.geometry_loader.KIND_KEY
+   ad_hoc_diffractometer.geometry_loader.SUPPORTED_REVISIONS
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.geometry_loader.GeometrySchemaError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.geometry_loader._build_constraint
+   ad_hoc_diffractometer.geometry_loader._build_constraint_set
+   ad_hoc_diffractometer.geometry_loader._check_unknown_keys
+   ad_hoc_diffractometer.geometry_loader._construct_from_doc
+   ad_hoc_diffractometer.geometry_loader._is_geometry_yaml_text
+   ad_hoc_diffractometer.geometry_loader._register_packaged_geometries
+   ad_hoc_diffractometer.geometry_loader._resolve_axis
+   ad_hoc_diffractometer.geometry_loader._resolve_basis
+   ad_hoc_diffractometer.geometry_loader._resolve_extras
+   ad_hoc_diffractometer.geometry_loader._validate_basis
+   ad_hoc_diffractometer.geometry_loader._validate_marker
+   ad_hoc_diffractometer.geometry_loader.get_schema
+   ad_hoc_diffractometer.geometry_loader.get_schema_text
+   ad_hoc_diffractometer.geometry_loader.load_geometry_file
+   ad_hoc_diffractometer.geometry_loader.register_geometry_file
+
+
+Module Contents
+---------------
+
+.. py:data:: CURRENT_REVISION
+   :type:  int
+   :value: 1
+
+
+   Schema revision that newly-authored YAML files SHOULD declare.
+
+.. py:exception:: GeometrySchemaError
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader.GeometrySchemaError``
+
+
+   Bases: :py:obj:`ValueError`
+
+
+   Raised when a YAML document violates the declarative geometry schema.
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+
+.. py:data:: KIND_KEY
+   :type:  str
+   :value: 'ad_hoc_diffractometer_geometry'
+
+
+   Top-level marker key that identifies a YAML document as a declarative
+   diffractometer geometry.
+
+.. py:data:: SUPPORTED_REVISIONS
+   :type:  frozenset[int]
+
+   Schema revisions this loader can parse.
+
+.. py:function:: _build_constraint(spec: Any, *, mode_name: str, index: int)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._build_constraint``
+
+
+   Translate one constraint spec dict into a constraint instance.
+
+
+.. py:function:: _build_constraint_set(name: str, spec: dict[str, Any]) -> ~ad_hoc_diffractometer.mode.ConstraintSet
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._build_constraint_set``
+
+
+   Translate one mode-spec mapping into a :class:`ConstraintSet`.
+
+
+.. py:function:: _check_unknown_keys(mapping: dict[str, Any], accepted: frozenset[str], context: str) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._check_unknown_keys``
+
+
+   Enforce the strict unknown-key policy for one mapping context.
+
+   :param mapping: The mapping to inspect.
+   :type mapping: dict
+   :param accepted: The keys allowed in ``mapping``.
+   :type accepted: frozenset of str
+   :param context: Human-readable description of the location (e.g. ``"top-level"``,
+                   ``"inside ad_hoc_diffractometer_geometry"``,
+                   ``"inside stages[2]"``).
+   :type context: str
+
+
+.. py:function:: _construct_from_doc(doc: dict[str, Any], *, source_label: str, overrides: dict[str, Any]) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._construct_from_doc``
+
+
+   Build an :class:`AdHocDiffractometer` from a parsed document.
+
+   :param doc: The YAML document (already parsed).  Must declare the marker.
+   :type doc: dict
+   :param source_label: Human-readable label used in error messages (typically the file
+                        path or ``"<in-memory YAML text>"``).
+   :type source_label: str
+   :param overrides: Caller-supplied keyword overrides (currently ``basis`` and
+                     ``alpha_deg``).
+   :type overrides: dict
+
+
+.. py:function:: _is_geometry_yaml_text(text: str) -> tuple[bool, Any]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._is_geometry_yaml_text``
+
+
+   Try to parse ``text`` as a YAML geometry declaration.
+
+   :returns: ``is_geometry`` is ``True`` when the text parses successfully,
+             produces a mapping, and contains the :data:`KIND_KEY` marker as
+             a top-level key (regardless of the marker value's well-formedness).
+             ``parsed`` is the parsed document (or ``None`` if parsing failed).
+   :rtype: (is_geometry, parsed)
+
+   .. rubric:: Notes
+
+   The marker value's well-formedness (mapping vs scalar, supported
+   revision, etc.) does **not** affect this helper.  Once the
+   :data:`KIND_KEY` key is present, the document has *declared* its
+   intent; full schema validation then happens in
+   :func:`_construct_from_doc`, which raises a :class:`GeometrySchemaError`
+   on any malformed marker.  This means a user who typed an incorrect
+   marker value (e.g. ``ad_hoc_diffractometer_geometry: 1``) gets a
+   clear schema error rather than a misleading
+   :class:`FileNotFoundError`.
+
+
+.. py:function:: _register_packaged_geometries() -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._register_packaged_geometries``
+
+
+   Register every ``*.yml`` file shipped under
+   :mod:`ad_hoc_diffractometer.geometries` with the geometry registry.
+
+   Called once at package import time from
+   :mod:`ad_hoc_diffractometer.factories`.  Subsequent calls are no-ops
+   in the sense that already-registered names are skipped (with the
+   same uniqueness guard as :func:`register_geometry_file`).
+
+
+.. py:function:: _resolve_axis(spec: Any, basis: dict[str, ~numpy.ndarray], *, alpha_deg: float | None, kappa_chi_eq: ~numpy.ndarray | None, stage_name: str) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._resolve_axis``
+
+
+   Resolve one stage's ``axis:`` field to a numpy vector.
+
+   Supported forms:
+
+   - signed-axis string: ``'+transverse'``, ``'-vertical'``, ``'+x'``, etc.
+   - length-3 numeric sequence: ``[0.0, 0.0, 1.0]``.
+   - kappa-tilt mapping: ``{kappa_eulerian: [<ref>]}`` resolves to
+     :func:`kappa_axis_from_eulerian` using the geometry's
+     ``parameters.alpha_deg`` and the top-level ``kappa_chi_eq:``.  The
+     single argument is the outer (komega) axis.
+
+
+.. py:function:: _resolve_basis(value: Any) -> dict[str, ~numpy.ndarray]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._resolve_basis``
+
+
+   Resolve a YAML ``basis`` value to a ``dict[str, ndarray]``.
+
+   Accepts:
+
+   - one of the shorthand strings ``"BL"``, ``"YOU"``, ``"DEFAULT"``
+   - a mapping with the three physical-direction keys
+     (``vertical``, ``longitudinal``, ``transverse``) whose values are
+     either signed-axis strings (``"+x"``, ``"-vertical"``, ...) or
+     length-3 numeric sequences.
+
+   The returned dict is validated for unit length, mutual orthogonality,
+   and right-handedness (``vertical × longitudinal ≈ transverse``).
+
+
+.. py:function:: _resolve_extras(extras: dict[str, Any]) -> dict[str, Any]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._resolve_extras``
+
+
+   Map the literal string ``'REQUIRED'`` to the
+   :data:`ad_hoc_diffractometer.mode.REQUIRED` sentinel.
+
+   All other values pass through unchanged.  YAML ``null`` (Python
+   ``None``) is preserved.
+
+
+.. py:function:: _validate_basis(basis: dict[str, ~numpy.ndarray]) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._validate_basis``
+
+
+   Verify a basis is orthonormal within tolerance.
+
+   The three vectors must each have unit length and be mutually
+   orthogonal.  Both literature conventions accepted by this package
+   (Busing & Levy 1967 and You 1999) are orthonormal, but they assign
+   physical names to Cartesian axes in mirror-image patterns:
+
+   - You 1999: ``(vertical, longitudinal, transverse) = (X, Y, Z)``
+     so ``vertical × longitudinal = transverse``.
+   - Busing & Levy 1967:
+     ``(transverse, longitudinal, vertical) = (X, Y, Z)`` so
+     ``transverse × longitudinal = vertical`` and equivalently
+     ``vertical × longitudinal = -transverse``.
+
+   Both are physically meaningful and right-handed in their own
+   canonical ordering; this check therefore enforces only orthonormality
+   and not any particular chirality of the (vertical, longitudinal,
+   transverse) ordering.
+
+
+.. py:function:: _validate_marker(doc: dict[str, Any]) -> int
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._validate_marker``
+
+
+   Validate the ``ad_hoc_diffractometer_geometry`` top-level marker.
+
+   :returns: The schema revision declared by the document.
+   :rtype: int
+
+   :raises GeometrySchemaError: If the marker is missing, malformed, or declares an unsupported
+       revision.
+
+
+.. py:function:: get_schema() -> dict
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader.get_schema``
+
+
+   Return the parsed JSON Schema as a Python ``dict``.
+
+
+.. py:function:: get_schema_text() -> str
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader.get_schema_text``
+
+
+   Return the JSON Schema (revision 1) as a string.
+
+   The schema is shipped as ``ad_hoc_diffractometer/geometries/schema.json``
+   and is intended for editor tooling, documentation, and any external
+   consumer that wants a machine-readable description of the
+   declarative geometry format.  The loader itself does **not** consume
+   this schema at runtime — its hand-written validator enforces the
+   same rules without taking on a ``jsonschema`` runtime dependency.
+
+
+.. py:function:: load_geometry_file(source: str | ~os.PathLike[str] | ~pathlib.Path, **kwargs: Any) -> ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader.load_geometry_file``
+
+
+   Construct a geometry from a path or YAML text.
+
+   :param source: Either a filesystem path to a YAML file, or a ``str`` containing
+                  YAML text.  See the dispatch rule in the module docstring.
+   :type source: str | os.PathLike | pathlib.Path
+   :param \*\*kwargs: Override values for ``basis`` and ``alpha_deg``.  Caller-supplied
+                      ``basis`` always wins over whatever the YAML declares.
+
+   :rtype: AdHocDiffractometer
+
+   :raises FileNotFoundError: If the source resolves to a path that does not exist.
+   :raises GeometrySchemaError: If the YAML document declares the geometry marker but is otherwise
+       malformed.
+
+
+.. py:function:: register_geometry_file(path: str | ~os.PathLike[str] | ~pathlib.Path, *, name: str | None = None) -> str
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader.register_geometry_file``
+
+
+   Parse a YAML file and add it to the geometry registry.
+
+   :param path: Filesystem path to the YAML file.  Unlike
+                :func:`load_geometry_file`, this function does **not** accept
+                in-memory YAML text — registry entries need a stable name
+                source, which a filesystem path provides naturally via the
+                filename stem.
+   :type path: str | os.PathLike | pathlib.Path
+   :param name: Override for the registry key.  Defaults to the filename stem.
+   :type name: str, optional
+
+   :returns: The registry name under which the geometry was registered.
+   :rtype: str
+
+   :raises FileNotFoundError: If the file does not exist.
+   :raises ValueError: If the registry already contains an entry under the same name.
+
+

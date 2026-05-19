@@ -1,0 +1,133 @@
+stage
+=====
+
+.. py:module:: ad_hoc_diffractometer.stage
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.stage``
+
+   A Stage represents one rotary axis of a diffractometer.  Its rotation axis
+   is stored internally as a signed numpy array (the internal representation).
+   The caller-facing +x/-z string notation is handled in axes.py.
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.stage.Stage
+
+
+Module Contents
+---------------
+
+.. py:class:: Stage(name: str, axis: ~numpy.ndarray, parent: str | None = None, role: str = 'sample', angle: float = 0.0, limits: tuple[float, float] = (-180.0, 180.0))
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.stage.Stage``
+
+
+   One rotary stage of a diffractometer.
+
+   Each stage is characterized by:
+     - a name (e.g. 'mu', 'eta', 'chi')
+     - a rotation axis expressed as a signed Cartesian vector in the lab
+       frame (e.g. +XHAT for right-handed vertical, -ZHAT for left-handed
+       transverse).  Use axes.parse_axis() to construct this from the
+       caller-facing notation.
+     - a parent stage name (the stage on which this one sits), or None if
+       it sits on the floor / fixed lab frame.
+
+   The sign of the axis vector encodes handedness:
+       +nHat  =>  right-handed rotation about nHat
+       -nHat  =>  left-handed rotation about nHat
+
+   :param name: Human-readable name for this stage (e.g. 'mu', 'S2-1').
+   :type name: str
+   :param axis: Signed rotation axis vector in the lab frame (internal representation).
+                Construct from caller-facing notation using axes.parse_axis().
+   :type axis: numpy.ndarray, shape (3,)
+   :param parent: Name of the stage on which this stage is mounted, or None if it
+                  sits directly on the lab frame (floor).
+   :type parent: str or None
+   :param role: An arbitrary string label for bookkeeping.  The two conventional
+                values are ``"sample"`` and ``"detector"``; any other string is
+                accepted and can be used to model additional components such as
+                analyzers, polarizers, slits, or azimuthal spinners.
+                Geometry methods ``sample_stages`` and ``detector_stages`` filter
+                by these conventional values; use
+                :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.stages_by_role`
+                to query stages with any other role.  Default is ``"sample"``.
+   :type role: str, optional
+   :param angle: Current angle setting in degrees.  Default is 0.0.
+   :type angle: float, optional
+   :param limits: (min_angle, max_angle) in degrees.  Default is (-180.0, 180.0).
+                  Must satisfy min_angle < max_angle.
+   :type limits: tuple of (float, float), optional
+
+   :raises ValueError: If limits[0] >= limits[1].
+
+
+   
+
+   
+
+   .. py:method:: from_dict(d: dict) -> Stage
+      :classmethod:
+
+
+      Reconstruct a :class:`Stage` from a dict produced by :meth:`to_dict`.
+
+      :param d: Must contain ``"name"``, ``"axis"``, ``"role"``.  ``"parent"``,
+                ``"angle"``, and ``"limits"`` are optional (defaulting to
+                ``None``, ``0.0``, and ``(-180.0, 180.0)`` respectively).
+      :type d: dict
+
+      :rtype: Stage
+
+
+
+   .. py:method:: in_limits(angle_deg: float) -> bool
+
+      Return True if angle_deg is within [min_angle, max_angle] (inclusive).
+
+      :param angle_deg: Angle to test, in degrees.
+      :type angle_deg: float
+
+      :rtype: bool
+
+
+
+   .. py:property:: limits
+      :type: tuple[float, float]
+
+
+      Motor angle limits (min_angle, max_angle) in degrees.
+
+
+   
+
+   
+
+   
+
+   .. py:method:: rotation_matrix() -> ~numpy.ndarray
+
+      Return the 3x3 rotation matrix for the current angle setting.
+
+
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable ``dict`` representing this stage.
+
+      :returns: Keys: ``"name"`` (str), ``"axis"`` (list of 3 float),
+                ``"role"`` (str), ``"parent"`` (str or None),
+                ``"angle"`` (float), ``"limits"`` (list of 2 float).
+      :rtype: dict
+
+
+
