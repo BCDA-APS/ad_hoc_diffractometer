@@ -2974,8 +2974,22 @@ def _solve_surface(
     if det_constraint is not None and not det_constraint.is_qaz:
         angles[det_constraint.name] = det_constraint.value
 
-    # Set the active detector stage to ttheta_deg
-    det_stage = geometry.detector_stages[-1]
+    # Select the *active* detector stage — the one that should carry ttheta.
+    # When the mode's DetectorConstraint pins a specific detector stage
+    # (e.g. ``delta=0`` in psic horizontal modes), the active stage is the
+    # OTHER detector stage (e.g. ``nu``).  Picking the last stage
+    # unconditionally would overwrite the pinned value (issue #279).
+    pinned_det: str | None = None
+    if det_constraint is not None and not det_constraint.is_qaz:
+        pinned_det = det_constraint.name
+    free_det_stages = [s for s in geometry.detector_stages if s.name != pinned_det]
+    if not free_det_stages:
+        # Every detector stage is pinned — ``_solve_surface`` cannot place
+        # ttheta anywhere.  Caller should have routed to a different solver.
+        return []
+    # Prefer the last free detector stage to preserve historical behavior
+    # for the common single-detector-stage geometries.
+    det_stage = free_det_stages[-1]
     angles[det_stage.name] = ttheta_deg
 
     # Identify the one free sample stage (the one not fixed by any constraint)
