@@ -470,17 +470,17 @@ def test_sample_constraint_is_implemented_virtual_on_non_kappa():
             id="fixed_phi-010",
         ),
         pytest.param(
-            # (0,1,0) is along the beam axis and unreachable with omega=0
-            # on kappa4cv; use (0,0,1) which is the canonical fixed_omega
-            # reflection (vertical-axis scattering).
+            # Under issue #280 ub_identity (crystal a* along the beam),
+            # (0,0,1) is unreachable in fixed_omega on kappa4cv (Q_phi
+            # along the kphi axis).  (1,0,0) is reachable.
             "fixed_omega",
             "omega",
             0.0,
-            0,
-            0,
             1,
+            0,
+            0,
             does_not_raise(),
-            id="fixed_omega-001",
+            id="fixed_omega-100",
         ),
         pytest.param(
             "fixed_chi",

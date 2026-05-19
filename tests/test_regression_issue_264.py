@@ -328,7 +328,9 @@ def test_fixed_alpha_i_fixed_chi_fixed_phi_routes_to_free_detectors():
         pytest.param("fixed_alpha_i_fixed_chi_fixed_phi", 0, 1, 1, True, id="b3-011"),
         pytest.param("lifting_detector_eta", 1, 1, 0, False, id="le-110"),
         pytest.param("lifting_detector_phi", 1, 0, 0, False, id="lp-100"),
-        pytest.param("lifting_detector_mu", 0, 1, 0, False, id="lm-010"),
+        # Under issue #280 ub_identity, (0,1,0) is unreachable on psic
+        # lifting_detector_mu; (1,0,0) exercises the same code path.
+        pytest.param("lifting_detector_mu", 1, 0, 0, False, id="lm-100"),
     ],
 )
 def test_issue_264_mode_round_trip(
@@ -441,11 +443,18 @@ def _natural_psi(g, h, k, l):  # noqa: E741
 @pytest.mark.parametrize(
     "mode_name, h, k, l",
     [
-        pytest.param("fixed_psi_vertical", 1, 0, 0, id="fpv-100"),
+        # Under issue #280 ub_identity, the crystal a* axis is along the
+        # beam, so ``(1, 0, 0)`` produces Q_phi parallel to the beam and
+        # natural psi is undefined; use ``(0, 1, 0)`` instead.  Similarly
+        # ``(1, 0, 1)`` produces a Q_phi where the in-Q-plane projection
+        # of the beam is collinear with the in-Q-plane projection of the
+        # azimuthal reference (psi = ±180° → wrap-equivalent representations
+        # complicate the assertion), so use ``(0, 1, 1)`` instead.
+        pytest.param("fixed_psi_vertical", 0, 1, 0, id="fpv-010"),
         pytest.param("fixed_psi_vertical", 1, 1, 0, id="fpv-110"),
         pytest.param("fixed_psi_vertical", 1, 1, 1, id="fpv-111"),
-        pytest.param("fixed_psi_horizontal", 1, 0, 1, id="fph-101"),
-        pytest.param("fixed_psi_horizontal", 1, 0, 0, id="fph-100"),
+        pytest.param("fixed_psi_horizontal", 0, 1, 1, id="fph-011"),
+        pytest.param("fixed_psi_horizontal", 0, 1, 0, id="fph-010"),
     ],
 )
 def test_revised_fixed_psi_round_trip(
@@ -494,10 +503,15 @@ def test_revised_fixed_psi_round_trip(
 
 def test_revised_fixed_psi_wrong_target_returns_empty():
     """C1/C2: psi-validation rejects requests whose natural psi differs
-    from the stored target."""
+    from the stored target.
+
+    Uses ``(0, 1, 0)`` (natural psi defined under issue #280 ub_identity)
+    rather than ``(1, 0, 0)`` (where Q_phi is parallel to the beam and
+    psi is undefined).
+    """
     g = _setup_psic_cubic()
     g.azimuthal_reference = (0, 0, 1)
-    natural = _natural_psi(g, 1, 0, 0)
+    natural = _natural_psi(g, 0, 1, 0)
     assert natural is not None
 
     g.modes["fixed_psi_vertical"] = ConstraintSet(
@@ -510,7 +524,7 @@ def test_revised_fixed_psi_wrong_target_returns_empty():
         extras={"n_hat": REQUIRED, "psi": None},
     )
     g.mode_name = "fixed_psi_vertical"
-    assert g.forward(1, 0, 0) == []
+    assert g.forward(0, 1, 0) == []
 
 
 # ---------------------------------------------------------------------------

@@ -876,26 +876,38 @@ def test_psi_returns_float():
 
 
 def test_psi_n_perpendicular_to_scattering_plane_is_90():
-    """n=(1,0,0) = XHAT_BL (transverse) ⊥ vertical scattering plane at chi=0 → psi=90."""
+    """Reference physically along transverse → ⊥ vertical scattering plane → psi=90.
+
+    Under issue #280 ub_identity, ``UB @ (0, 0, 1) = U[:, 2] · |b3*|`` is
+    physically along ``+transverse`` (= +x in fourcv-BL basis), which is
+    perpendicular to the vertical scattering plane.  Pre-#280 the same
+    physical configuration was selected by ``azimuthal_reference =
+    (1, 0, 0)`` because the basis-relative ``U = I`` put the crystal
+    a-axis along ``+x``.
+    """
     g = _fourcv_identity()
-    g.azimuthal_reference = (
-        1,
-        0,
-        0,
-    )  # XHAT_BL = transverse ⊥ vertical scattering plane
+    g.azimuthal_reference = (0, 0, 1)  # → n_phi along +transverse
     angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0}
     psi = g.psi(angles)
     assert abs(psi - 90.0) < 1e-8
 
 
 def test_psi_n_in_scattering_plane_is_0():
-    """n=(0,1,0) = YHAT_BL (longitudinal) lies in vertical scattering plane at chi=0 → psi=0."""
+    """Reference physically along longitudinal (beam) → in vertical scattering plane → psi=0.
+
+    Under issue #280 ub_identity, ``UB @ (1, 0, 0) = U[:, 0] · |b1*|`` is
+    physically along ``+longitudinal`` (the beam direction; = +y in
+    fourcv-BL basis), which lies in the vertical scattering plane and
+    is parallel to the incident beam.  By the BL1967 psi convention,
+    a reference parallel to the incident beam gives psi = 0.
+
+    The pre-#280 test used ``azimuthal_reference = (0, 1, 0)`` for the
+    same physical configuration because the basis-relative ``U = I``
+    aligned the crystal b-axis along the basis-y direction.  Under the
+    new ub_identity the crystal a-axis is the one along the beam.
+    """
     g = _fourcv_identity()
-    g.azimuthal_reference = (
-        0,
-        1,
-        0,
-    )  # YHAT_BL = longitudinal = in vertical scattering plane
+    g.azimuthal_reference = (1, 0, 0)  # → n_phi along +longitudinal
     angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0}
     psi = g.psi(angles)
     assert abs(psi - 0.0) < 1e-8
@@ -908,7 +920,10 @@ def test_psi_uses_current_angles_when_none_passed():
     g.set_angle("chi", 0.0)
     g.set_angle("phi", 0.0)
     g.set_angle("ttheta", 60.0)
-    g.azimuthal_reference = (1, 0, 0)  # transverse — perpendicular to Q at these angles
+    # Under issue #280 ub_identity, (0,0,1) places the reference
+    # physically along +transverse — perpendicular to the vertical
+    # scattering plane and to Q at these angles.
+    g.azimuthal_reference = (0, 0, 1)
     psi_implicit = g.psi()
     psi_explicit = g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
     assert abs(psi_implicit - psi_explicit) < 1e-10
@@ -957,13 +972,59 @@ def test_psi_no_ub_raises():
 
 
 def test_psi_n_parallel_to_q_raises():
-    """psi() raises ValueError when the reference is parallel to Q."""
+    """psi() raises ValueError when the reference is parallel to Q.
+
+    Under issue #280 ub_identity at chi=0, the scattering vector Q lies
+    along the in-scattering-plane direction of the diffracted beam (a
+    combination of +vertical and +longitudinal at non-zero ttheta).
+    Choose a Miller index whose ``UB @ hkl`` is parallel to that Q.
+
+    Under the new ub_identity the simplest such case is to set
+    ``azimuthal_reference`` to the same physical direction as Q at the
+    chosen motor configuration.  We pick the hkl that places n_phi
+    exactly where Q lands for these angles.
+    """
     g = _fourcv_identity()
-    # With corrected fourcv at chi=0, Q is along -ZHAT_BL=(0,0,-1).
-    # Set n=(0,0,1) → parallel to Q → raises.
-    g.azimuthal_reference = (0, 0, 1)
+    angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0}
+    # Compute the actual Q_phi direction at these angles, then choose
+    # the hkl Miller index whose UB-image is parallel.  The exact hkl
+    # at chi=0 in fourcv-BL under the new ub_identity is along
+    # +vertical (i.e. crystal b*), giving Miller hkl = (0, 1, 0).
+    # That is also the natural Bragg-direction at these motor angles.
+    Q_phi = g.inverse(angles)
+    # Q_phi here actually returns the hkl tuple; use it directly as
+    # the parallel reference.
+    g.azimuthal_reference = tuple(float(v) for v in Q_phi)
     with pytest.raises(ValueError, match=re.escape("parallel to Q")):
-        g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
+        g.psi(angles)
+
+
+def test_psi_beam_parallel_to_q_raises():
+    """psi() raises ValueError when the incident beam is parallel to Q.
+
+    Forces the configuration by setting ttheta = 180° (backscatter):
+    the diffracted beam is anti-parallel to the incident beam, so
+    Q_lab = D·ŷ − ŷ = −2 ŷ, which is along the incident beam axis.
+    Under issue #280 ub_identity, ``(1, 0, 0)`` places ``Q_phi``
+    physically along +longitudinal, so the bisecting solution sits
+    naturally at ttheta near 180° → beam ∥ Q.
+    """
+    g = _fourcv_identity()
+    # Force a configuration where the beam (longitudinal) is parallel
+    # to the lab-frame Q vector.  Setting ttheta = 180° (backscatter)
+    # makes D @ ŷ = -ŷ, so Q_lab = D@ŷ − ŷ = -2 ŷ, exactly along the
+    # beam axis.
+    angles = {"omega": 0.0, "chi": 0.0, "phi": 0.0, "ttheta": 180.0}
+    # Choose a reference whose UB-image is NOT along the beam, so the
+    # reference-parallel-to-Q branch does not pre-empt the beam-parallel
+    # branch.  Under the new ub_identity, ``(0, 0, 1)`` places n_phi
+    # along physical +transverse (= +x in fourcv-BL), which is
+    # perpendicular to the beam direction.
+    g.azimuthal_reference = (0, 0, 1)
+    with pytest.raises(
+        ValueError, match=re.escape("incident beam direction is parallel to Q")
+    ):
+        g.psi(angles)
 
 
 def test_psi_pa_shows_azimuthal_reference():

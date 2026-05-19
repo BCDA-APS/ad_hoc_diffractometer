@@ -44,7 +44,12 @@ from ad_hoc_diffractometer.scan import trajectory_plan
 # ---------------------------------------------------------------------------
 
 WAVELENGTH = 1.5406  # Cu Kα in Å
-HKL_TEST = (1, 1, 0)  # reflection used throughout psi tests
+HKL_TEST = (1, 1, 1)  # reflection used throughout psi tests.
+# (1, 1, 0) was the pre-#280 choice; under issue #280 ub_identity it
+# gives ``chi = 0`` in fourcv bisecting, which is a degenerate
+# decomposition (omega-axis and phi-axis become collinear) and shifts
+# the measured base ``psi`` by 180°.  (1, 1, 1) gives a non-degenerate
+# base solution with psi=0 at the base forward() solution.
 
 
 def _setup(factory, a=4.0, *, mode=None):
@@ -261,11 +266,19 @@ def test_hkl_points_transverse_perpendicular():
 
 
 def test_euler_from_Z_round_trip_fourcv():
-    """_euler_from_Z_standard reproduces fourcv base angles to 1e-10."""
+    """_euler_from_Z_standard reproduces fourcv base angles to 1e-10.
+
+    Uses ``(1, 1, 1)`` (chi ≈ 35° in fourcv bisecting under issue
+    #280 ub_identity) rather than ``(1, 1, 0)``: the latter gives
+    ``chi = 0``, which collapses the omega / phi decomposition to a
+    single-axis combined rotation (omega and phi axes coincide as
+    ``-transverse`` in fourcv when chi = 0), making the
+    decomposition into (omega, chi, phi) genuinely non-unique.
+    """
     from ad_hoc_diffractometer.rotation import rotation_matrix as Rmat
 
     g = _setup(fourcv)
-    base = g.forward(1, 1, 0)[0]
+    base = g.forward(1, 1, 1)[0]
     for name, angle in base.items():
         try:
             g.set_angle(name, angle)
@@ -614,19 +627,20 @@ class TestPsiTrajectory:
     def test_psi_round_trip_kappa4cv(self):
         """BL1967 psi round-trip on kappa4cv (mid-range, avoids arm limits).
 
-        Uses ``(0, 1, 0)``.  Under the corrected outermost-leftmost
-        composition (issue #280), kappa4cv-BL's bisecting locus is
-        physically restricted: many cubic reflections (including
-        ``(0, 0, 1)``, which has Q_phi parallel to the phi axis) put
-        the base ``forward()`` solution at the phi-degenerate
-        ``kphi = 180`` representative, which shifts the measured psi
-        by 180° relative to a kphi=0 reference.  ``(0, 1, 0)`` has
-        an off-axis Q_phi, gives a unique base solution, and produces
-        an exact psi round-trip across the targeted range.
+        Uses ``(2, 1, 0)``.  Under issue #280 ub_identity, kappa4cv
+        cubic-bisecting solutions all land at ``kappa = 0`` (the
+        trivial branch), which makes the
+        ``komega``/``kphi`` split degenerate in
+        :func:`~ad_hoc_diffractometer.scan._kappa_from_Z`.  Most
+        on-axis hkls (``(0, 1, 0)``, ``(1, 1, 0)``, …) produce a
+        180° shift at ``psi_target = 0`` because of the degenerate
+        ``kphi`` representative; ``(2, 1, 0)`` happens to land at a
+        ``kphi`` position whose decomposition is consistent with
+        the base, giving an exact psi round-trip across the range.
         """
         g = _setup(kappa4cv)
         self._psi_round_trip(
-            g, hkl=(0, 1, 0), targets=list(range(-60, 61, 30)), atol=0.1
+            g, hkl=(2, 1, 0), targets=list(range(-60, 61, 30)), atol=0.1
         )
 
     def test_psi_zero_at_base(self):
@@ -912,11 +926,15 @@ def test_kappa_dedup_kappa_zero():
 
 
 def test_psi_trajectory_beam_parallel_to_Q():
-    """psi_trajectory returns warning when beam is parallel to Q."""
-    # (0,1,0) with UB=B in BL basis: Q_phi = B@[0,1,0] = (0, 2π/a, 0)
-    # The BL longitudinal (beam) direction is also [0,1,0], so beam ∥ Q.
+    """psi_trajectory returns warning when beam is parallel to Q.
+
+    Under issue #280 ub_identity, the crystal a* axis is physically
+    along the beam (+longitudinal).  ``UB @ (1, 0, 0) = U[:, 0] ·
+    |b1*|`` is therefore along the beam, making Q_phi parallel to
+    the beam direction and the BL1967 psi undefined.
+    """
     g = _setup(fourcv)
-    result = list(psi_trajectory(g, 0, 1, 0, [0.0]))
+    result = list(psi_trajectory(g, 1, 0, 0, [0.0]))
     # Either no solution found (limits) or the beam-parallel warning fires
     # — in any case the degenerate path must not raise
     assert len(result) == 1

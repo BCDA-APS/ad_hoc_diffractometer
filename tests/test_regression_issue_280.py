@@ -55,7 +55,6 @@ import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.orientation import angles_to_phi_vector
 from ad_hoc_diffractometer.rotation import rotation_matrix
 
-
 # ---------------------------------------------------------------------------
 # Hand-derived fixed-orientation expectations
 # ---------------------------------------------------------------------------

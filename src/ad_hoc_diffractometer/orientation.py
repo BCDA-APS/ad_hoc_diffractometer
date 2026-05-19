@@ -923,22 +923,110 @@ def ub_from_three_reflections_bl1967(
 
 def ub_identity(sample) -> np.ndarray:
     """
-    Set U = I (identity) and UB = B; return UB.
+    Set U so the crystal-Cartesian frame aligns with the physical
+    (longitudinal, vertical, transverse) triple, and UB = U @ B.
 
-    The crudest orientation assumption: crystal axes are aligned with the
-    lab axes.  Useful as a starting point when no reflection information
-    is available at all.
+    The default UB placeholder used before a real UB is set by either
+    reflection-based computation (:func:`ub_from_one_reflection`,
+    :func:`ub_from_two_reflections_bl1967`,
+    :func:`ub_from_three_reflections_bl1967`) or direct assignment
+    (``sample.UB = ...`` or ``sample.U = ...``).
+
+    Definition (issue #280)
+    -----------------------
+    The columns of U are the geometry's physical-direction unit
+    vectors expressed in basis-Cartesian coordinates::
+
+        U[:, 0] = +longitudinal   (the beam direction)
+        U[:, 1] = +vertical
+        U[:, 2] = +transverse
+
+    Under the Busing & Levy 1967 crystal-Cartesian convention
+    (a\\* along crystal-x, b\\* in the crystal-x-y plane, c\\*
+    completing the right-handed triple), this places:
+
+    * the crystal a\\* axis physically along the beam,
+    * the crystal-y axis physically along vertical,
+    * the crystal-z axis physically along transverse.
+
+    This matches the ``hkl_soleil`` convention (``U = identity``
+    aligns a\\* along the beam +x; see
+    https://people.debian.org/~picca/hkl/hkl.html).
+
+    Why this is basis-independent
+    -----------------------------
+    The geometry's basis assigns Cartesian unit vectors to the three
+    physical-direction labels.  The columns of U are taken directly
+    from those physical-direction vectors, so the resulting
+    *physical* crystal orientation does not depend on which Cartesian
+    direction the basis labels assign to (vertical, longitudinal,
+    transverse).  Two geometries representing the same physical
+    equipment under different basis labelings (e.g. ``BASIS_BL`` vs
+    ``BASIS_YOU``) produce numerically different U matrices but
+    *identical physical Bragg orientations* — and therefore identical
+    ``forward()`` results.
+
+    The pre-#280 implementation set ``U = numpy.eye(3)`` in basis
+    coordinates, which made the physical crystal orientation
+    basis-dependent: under ``BASIS_BL`` the crystal a-axis ended up
+    physically along transverse, but under ``BASIS_YOU`` the same
+    code put it along vertical, breaking basis invariance of
+    ``forward()`` reachability and ``|2θ|`` for the same equipment.
+
+    Why this is inclination-independent
+    -----------------------------------
+    U is derived from the geometry's *declared* basis vectors (a
+    property of the YAML, set once), not from the inclination-tilted
+    effective beam ``y_eff = R_inc.T @ y_hat``.  Tilting the entire
+    diffractometer relative to the beamline (issue #15
+    ``inclination_matrix``) does not silently re-orient the crystal:
+    the crystal is mounted on the diffractometer, not on the
+    beamline, so its reference orientation lives in the
+    diffractometer's intrinsic frame.
 
     Parameters
     ----------
     sample : Sample
-        The sample whose ``U`` and ``UB`` attributes are updated in-place.
+        The sample whose ``U`` and ``UB`` attributes are updated
+        in-place.  ``sample.parent`` must be set (the parent
+        ``AdHocDiffractometer`` provides the basis vectors).
 
     Returns
     -------
     UB : numpy.ndarray, shape (3, 3)
+        ``UB = U @ B``.  Also stored on the sample as ``sample.UB``.
+
+    Raises
+    ------
+    ValueError
+        If ``sample.parent`` is ``None`` (cannot resolve the
+        geometry's basis without a parent).
+
+    References
+    ----------
+    * Busing & Levy, *Acta Cryst.* **22**, 457-464 (1967) — the
+      crystal-Cartesian convention used in the B matrix.
+    * Issue #280 — the rotation-composition-order audit that
+      exposed the pre-existing basis bias of the old ``U = I``
+      placeholder.
+    * hkl_soleil documentation — the published external convention
+      this implementation matches.
     """
-    B = sample.lattice.B
-    sample.U = np.eye(3)
-    sample.UB = B.copy()
+    geom = sample.parent
+    if geom is None:
+        raise ValueError(
+            "ub_identity() requires sample.parent to be set: the "
+            "geometry's basis vectors are needed to construct a "
+            "basis-independent U matrix.  Attach the sample to a "
+            "geometry first (e.g. via geometry.add_sample(...))."
+        )
+    long_hat = np.asarray(geom.basis["longitudinal"], dtype=float)
+    vert_hat = np.asarray(geom.basis["vertical"], dtype=float)
+    trans_hat = np.asarray(geom.basis["transverse"], dtype=float)
+    long_hat = long_hat / np.linalg.norm(long_hat)
+    vert_hat = vert_hat / np.linalg.norm(vert_hat)
+    trans_hat = trans_hat / np.linalg.norm(trans_hat)
+    U = np.column_stack([long_hat, vert_hat, trans_hat])
+    sample.U = U
+    sample.UB = U @ sample.lattice.B
     return sample.UB

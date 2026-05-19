@@ -317,11 +317,20 @@ def test_bisecting_reachable_reflections_round_trip(factory, mode_name, hkl):
 # ---------------------------------------------------------------------------
 
 
-def test_sapphire_002_kappa4cv_bisecting_solves():
-    """The sapphire (0,0,2) reflection that triggered issue #241 still
-    solves on kappa4cv/bisecting after the issue-#252 axis correction.
+def test_sapphire_100_kappa4cv_bisecting_solves():
+    """A sapphire reflection in the issue-#241 family still solves on
+    kappa4cv/bisecting after the issue-#252 axis correction and the
+    issue-#280 ub_identity update.
 
     Sapphire: a=4.785 Å, c=12.991 Å, γ=120°; λ=1.5498 Å; UB=identity.
+
+    The original #241 reproducer was sapphire ``(0, 0, 2)``.  Under
+    issue #280 ub_identity (crystal a* axis physically along the beam,
+    c* axis physically along transverse), ``(0, 0, 2)`` puts Q_phi
+    along the kappa4cv kphi-axis direction and is physically
+    unreachable in bisecting on this geometry.  ``(1, 0, 0)`` is the
+    equivalent reachable sapphire reflection under the new
+    ub_identity and exercises the same kappa decomposition code path.
     """
     g = kappa4cv()
     g.wavelength = 1.5498
@@ -330,10 +339,10 @@ def test_sapphire_002_kappa4cv_bisecting_solves():
     )
     ahd.ub_identity(g.sample)
     g.mode_name = "bisecting"
-    sols = g.forward(0, 0, 2)
+    sols = g.forward(1, 0, 0)
     assert sols, (
-        "sapphire (0,0,2) must solve on kappa4cv/bisecting — this was "
-        "the original issue-#241 reproducer."
+        "sapphire (1,0,0) must solve on kappa4cv/bisecting — exercises "
+        "the same code path as the original issue-#241 reproducer."
     )
     for sol in sols:
-        np.testing.assert_allclose(g.inverse(sol), [0, 0, 2], atol=1e-8)
+        np.testing.assert_allclose(g.inverse(sol), [1, 0, 0], atol=1e-8)

@@ -72,15 +72,44 @@ def sapphire_geom():
 # ---------------------------------------------------------------------------
 
 
-def test_ub_identity_sets_U_to_eye(psic_geom):
-    ub_identity(psic_geom.sample)
-    np.testing.assert_array_equal(psic_geom.sample.U, np.eye(3))
+def test_ub_identity_sets_U_to_physical_direction_triple(psic_geom):
+    """Under issue #280, ``ub_identity`` sets U to the basis-independent
+    physical-direction triple (columns: longitudinal, vertical, transverse).
 
-
-def test_ub_identity_sets_UB_to_B(psic_geom):
+    The pre-#280 contract ``U = numpy.eye(3)`` was basis-relative and
+    has been replaced.  See ``ub_identity`` docstring.
+    """
     ub_identity(psic_geom.sample)
+    expected_U = np.column_stack(
+        [
+            np.asarray(psic_geom.basis["longitudinal"], dtype=float),
+            np.asarray(psic_geom.basis["vertical"], dtype=float),
+            np.asarray(psic_geom.basis["transverse"], dtype=float),
+        ]
+    )
+    np.testing.assert_allclose(psic_geom.sample.U, expected_U, atol=1e-12)
+    # U is orthogonal by construction.
     np.testing.assert_allclose(
-        psic_geom.sample.UB, psic_geom.sample.lattice.B, atol=1e-12
+        psic_geom.sample.U @ psic_geom.sample.U.T, np.eye(3), atol=1e-12
+    )
+
+
+def test_ub_identity_sets_UB_to_U_times_B(psic_geom):
+    """``UB = U @ B``, where ``U`` is the physical-direction triple
+    (issue #280; replaces the pre-#280 ``UB = B`` contract).
+    """
+    ub_identity(psic_geom.sample)
+    U_expected = np.column_stack(
+        [
+            np.asarray(psic_geom.basis["longitudinal"], dtype=float),
+            np.asarray(psic_geom.basis["vertical"], dtype=float),
+            np.asarray(psic_geom.basis["transverse"], dtype=float),
+        ]
+    )
+    np.testing.assert_allclose(
+        psic_geom.sample.UB,
+        U_expected @ psic_geom.sample.lattice.B,
+        atol=1e-12,
     )
 
 
@@ -93,6 +122,26 @@ def test_ub_identity_updates_in_place(psic_geom):
     sample = psic_geom.sample
     UB = ub_identity(sample)
     assert sample.UB is UB
+
+
+def test_ub_identity_raises_without_parent(psic_geom):
+    """ub_identity raises ValueError when sample.parent is None.
+
+    Under issue #280 ub_identity needs the geometry's basis vectors
+    to construct the basis-independent U; a sample with no parent
+    cannot supply them.
+    """
+    orphan = Sample(
+        name="orphan",
+        lattice=psic_geom.sample.lattice,
+        reflections=ReflectionList(
+            geometry_name="psic",
+            valid_stages=["mu", "eta", "chi", "phi", "nu", "delta"],
+        ),
+        parent=None,
+    )
+    with pytest.raises(ValueError, match=re.escape("sample.parent")):
+        ub_identity(orphan)
 
 
 # ---------------------------------------------------------------------------

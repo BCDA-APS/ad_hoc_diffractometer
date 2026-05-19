@@ -9,7 +9,7 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ### Behavior change
 
-- Compose stage rotations outermost-leftmost; saved UB matrices must be re-derived. (#280)
+- Rotation composition and `ub_identity` corrected. (#280)
 
 ### Fixed
 

@@ -218,11 +218,20 @@ def _compute_labradorite_seeds(wavelength: float) -> tuple:
     """Compute self-consistent (omega, chi, phi, ttheta) seeds for labradorite.
 
     Uses ad_hoc with ``ub_identity`` to get the bisecting-mode motor
-    angles for ``r1 = (0, 0, 2)`` and ``r2 = (2, 0, 0)`` on the
+    angles for two well-conditioned seed reflections on the
     labradorite cell.  These angles are then used as the seed
     observations for both libraries — they orient the diffractometer
     consistently with the lattice without depending on any external
     measurement.
+
+    Under issue #280 ``ub_identity`` (crystal a* along the beam) the
+    bisecting locus for labradorite on fourcv has shifted: most
+    low-index reflections (like ``(0, 0, 2)`` and ``(2, 0, 0)``)
+    produce |chi| > 90°, which is outside the kappa-arm range
+    (|chi| < 2α ≈ 100°).  Use ``(0, -1, 0)`` and ``(1, 0, -1)`` instead:
+    both yield |chi| < 10° on fourcv bisecting, are independent in
+    reciprocal space, and remain inside the kappa-arm reachable
+    locus when passed through ``eulerian_to_kappa_axes``.
     """
     g = fourcv()
     g.wavelength = wavelength
@@ -231,13 +240,7 @@ def _compute_labradorite_seeds(wavelength: float) -> tuple:
     ahd.ub_identity(g.sample)
     g.mode_name = "bisecting"
     seeds = []
-    # (0, 2, 0) and (0, 1, 1) both land at chi = 0 in bisecting mode
-    # for this labradorite cell, so the kappa preset's pseudoangle
-    # decomposition can reach them (kappa is bounded to |chi| ≲ 2α).
-    # The two reflections point along b2 and b2 + b3 respectively —
-    # genuinely independent in reciprocal space — so they produce a
-    # well-conditioned UB on the triclinic lattice.
-    for hkl in [(0, 2, 0), (0, 1, 1)]:
+    for hkl in [(0, -1, 0), (1, 0, -1)]:
         sols = g.forward(*hkl)
         assert sols, f"labradorite seed {hkl} not reachable"
         sol = sols[0]
