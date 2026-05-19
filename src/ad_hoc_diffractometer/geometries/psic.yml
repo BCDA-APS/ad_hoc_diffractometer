@@ -149,10 +149,17 @@ modes:
             beta_out: null
 
     # Per @jwkim-anl, issue #264: drop the bisect(eta, delta) constraint
-    # entirely.  "vertical" means nu = 0 (detector pin); mu and psi are
-    # fixed at user-specified values (defaults 0).  Free: eta, chi,
-    # phi, delta — at any given (mu, psi) target a combination of the
-    # free angles satisfies Bragg under the validated psi constraint.
+    # entirely.  "vertical" means nu = 0 (detector pin); mu is pinned
+    # at a user-settable value (default 0).  Free: eta, chi, phi, delta.
+    # The psi ReferenceConstraint is a **validation filter** (issue
+    # #176), NOT a user-settable target in the same sense: ψ is a pure
+    # phi-frame quantity, uniquely determined by (h, k, l) and UB —
+    # every Bragg solution of the reflection has the same ψ.  The mode
+    # therefore returns solutions only when the constraint's psi value
+    # equals the natural ψ for the requested reflection.  Use
+    # ad_hoc_diffractometer.reference.natural_psi(g, h, k, l) to
+    # discover the natural value; the forward solver also emits a
+    # UserWarning naming it when the target is wrong (issue #278).
     fixed_psi_vertical:
         constraints:
             - {type: detector,  stage: nu, value: 0.0}
@@ -266,9 +273,15 @@ modes:
             beta_out: null
 
     # Per @jwkim-anl, issue #264: drop the bisect(mu, nu) constraint
-    # entirely.  "horizontal" means delta = 0 (detector pin); eta and
-    # psi are fixed at user-specified values (defaults 0).  Free: mu,
-    # chi, phi, nu.
+    # entirely.  "horizontal" means delta = 0 (detector pin); eta is
+    # pinned at a user-settable value (default 0).  Free: mu, chi,
+    # phi, nu.  As with fixed_psi_vertical above, the psi
+    # ReferenceConstraint is a **validation filter** (not a
+    # user-settable target in the same sense): ψ is uniquely determined
+    # by (h, k, l) and UB, so the mode returns solutions only when the
+    # constraint's psi value equals the natural ψ for the requested
+    # reflection.  See the fixed_psi_vertical comment and issue #278
+    # for the rationale and the UserWarning behavior.
     fixed_psi_horizontal:
         constraints:
             - {type: detector,  stage: delta, value: 0.0}

@@ -1739,10 +1739,17 @@ def _solve_psi_mode(
     1. Computes the natural ψ from ``Q_phi`` (no motor angles).
     2. Compares with ``psi_target`` from the mode's
        :class:`~mode.ReferenceConstraint`.
-    3. If they disagree (beyond 0.1° tolerance): returns ``[]``.
-    4. If they agree: delegates to the appropriate existing solver
+    3. If ψ is undefined for the reflection (Q ∥ azimuthal reference, or
+       Q ∥ incident beam): emits a :class:`UserWarning` and returns ``[]``.
+    4. If natural ψ and target disagree beyond 0.1°: emits a
+       :class:`UserWarning` naming the natural ψ value and returns ``[]``.
+    5. If they agree: delegates to the appropriate existing solver
        (bisecting, kappa-virtual, or synthetic bisecting) and returns
        all solutions.
+
+    The warnings (added in issue #278) make the "ψ is fixed by UB and
+    hkl, not by motors" semantics visible to callers who previously saw
+    only a silent empty list.
 
     Parameters
     ----------
@@ -1755,6 +1762,8 @@ def _solve_psi_mode(
     -------
     list of dict[str, float]
     """
+    import warnings
+
     from .mode import BisectConstraint
     from .mode import ConstraintSet
     from .mode import ReferenceConstraint
@@ -1770,6 +1779,15 @@ def _solve_psi_mode(
     # Compute natural psi from the phi frame (motor-angle independent)
     natural_psi = _compute_natural_psi(geometry, Q_phi)
     if natural_psi is None:
+        warnings.warn(
+            f"forward(): ψ is undefined for this reflection in geometry "
+            f"{geometry.name!r} — Q is parallel to "
+            f"azimuthal_reference={geometry.azimuthal_reference} (or to the "
+            f"incident beam).  Choose a different reflection or change "
+            f"geometry.azimuthal_reference.  Returning [].",
+            UserWarning,
+            stacklevel=5,
+        )
         return []  # ψ undefined for this reflection
 
     # Compare natural psi with target (tolerance 0.1° — generous enough
@@ -1779,6 +1797,18 @@ def _solve_psi_mode(
     if diff > 180.0:
         diff = 360.0 - diff
     if diff > 0.1:
+        warnings.warn(
+            f"forward(): mode {geometry.mode_name!r} targets ψ = "
+            f"{psi_target:.4f}° but the natural ψ for this reflection is "
+            f"{natural_psi:.4f}°.  ψ is fixed by UB and (h, k, l); no motor "
+            f"configuration can change it for a given reflection.  Either "
+            f"set the constraint value to {natural_psi:.4f}° (or use "
+            f"ad_hoc_diffractometer.reference.natural_psi(g, h, k, l) to "
+            f"discover the natural value), or pick a different reflection.  "
+            f"Returning [].",
+            UserWarning,
+            stacklevel=5,
+        )
         return []  # this (h,k,l) is not accessible at the stored ψ
 
     # ψ is satisfied — delegate to the appropriate existing solver.

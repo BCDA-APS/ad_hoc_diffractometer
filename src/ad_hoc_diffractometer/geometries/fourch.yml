@@ -89,6 +89,11 @@ modes:
             - {type: sample, stage: omega, value: 0.0}
         computed: [chi, phi, ttheta]
 
+    # psi is a **validation filter** (issue #176, #278): ψ is uniquely
+    # determined by (h, k, l) and UB.  The mode returns solutions only
+    # when the constraint value equals the natural ψ for the requested
+    # reflection.  Use ahd.reference.natural_psi(g, h, k, l) to discover
+    # the natural value; forward() emits a UserWarning when it mismatches.
     fixed_psi:
         constraints:
             - {type: reference, name: psi, value: 0.0}

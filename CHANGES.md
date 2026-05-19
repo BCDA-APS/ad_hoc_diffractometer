@@ -12,6 +12,14 @@ issue tracker.  The initial project development roadmap is documented here:
 - Rotation composition and `ub_identity` corrected. (#280)
 - B matrix for non-cubic lattices now matches BL1967. (#280)
 
+### Added
+
+- `ad_hoc_diffractometer.reference.natural_psi(g, h, k, l)`. (#278)
+
+### Changed
+
+- `forward()` warns when a `fixed_psi*` mode target ψ is unreachable. (#278)
+
 ### Fixed
 
 - Doc version-switcher dropdown now shows every published version. (#273)

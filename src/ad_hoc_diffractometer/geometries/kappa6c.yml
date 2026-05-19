@@ -186,6 +186,15 @@ modes:
             - {type: detector, stage: qaz,  value: 90.0}
         computed: [kphi, nu, delta]
 
+    # The psi ReferenceConstraint in both fixed_psi_* modes is a
+    # **validation filter** (issue #176): ψ is uniquely determined by
+    # (h, k, l) and UB — every Bragg solution of a given reflection
+    # has the same ψ — so the mode returns solutions only when the
+    # constraint's psi value equals the natural ψ for the requested
+    # reflection.  Use ad_hoc_diffractometer.reference.natural_psi(
+    # g, h, k, l) to discover the natural value; the forward solver
+    # also emits a UserWarning naming it when the target is wrong
+    # (issue #278).
     fixed_psi_vertical:
         constraints:
             - {type: virtual_bisect, stage1: omega, stage2: delta}
