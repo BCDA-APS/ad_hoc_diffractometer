@@ -152,6 +152,7 @@ _TOP_LEVEL_KEYS: frozenset[str] = frozenset(
         "basis",
         "parameters",
         "kappa_chi_eq",
+        "kappa_eulerian_chi",
         "stages",
         "modes",
     }
@@ -450,6 +451,64 @@ def _resolve_axis(
     )
 
 
+def _derive_kappa_eulerian_chi(
+    n_komega: np.ndarray,
+    basis: dict[str, np.ndarray],
+    source_label: str,
+) -> np.ndarray:
+    """Derive the equivalent-Eulerian chi pseudo-angle axis when the
+    YAML does not declare ``kappa_eulerian_chi`` explicitly (issue
+    #284).
+
+    Picks the first basis direction perpendicular to ``n_komega`` in
+    the conventional order ``(+longitudinal, +vertical, +transverse)``.
+    Every standard Eulerian preset shipped with this package
+    (fourcv, fourch, psic, sixc, fivec) puts its ``chi`` rotation
+    about ``+longitudinal``; honoring that order makes the kappa
+    preset's equivalent-Eulerian decomposition match its sister
+    Eulerian preset's chi pseudo-angle exactly.
+
+    Parameters
+    ----------
+    n_komega : numpy.ndarray, shape (3,)
+        Outer kappa stage axis.  Need not be normalized.
+    basis : dict[str, numpy.ndarray]
+        The geometry's basis dictionary with keys ``vertical``,
+        ``longitudinal``, ``transverse``.
+    source_label : str
+        Label naming the source YAML file or string; used in error
+        messages.
+
+    Returns
+    -------
+    n_chi_eq : numpy.ndarray, shape (3,)
+        A unit-magnitude basis direction perpendicular to
+        ``n_komega``.
+
+    Raises
+    ------
+    GeometrySchemaError
+        If no basis direction is perpendicular to ``n_komega`` within
+        tolerance ``1e-9`` — i.e. ``n_komega`` is not aligned to any
+        single basis axis.  In that pathological case the YAML must
+        declare ``kappa_eulerian_chi`` explicitly.
+    """
+    n_om = np.asarray(n_komega, dtype=float)
+    n_om = n_om / np.linalg.norm(n_om)
+    for label in ("longitudinal", "vertical", "transverse"):
+        candidate = np.asarray(basis[label], dtype=float)
+        candidate = candidate / np.linalg.norm(candidate)
+        if abs(float(np.dot(n_om, candidate))) < 1e-9:
+            return candidate
+    raise GeometrySchemaError(
+        f"{source_label}: cannot derive the equivalent-Eulerian chi "
+        f"axis automatically because the outer kappa axis (komega = "
+        f"{n_komega.tolist()!r}) is not perpendicular to any single "
+        f"basis direction.  Declare 'kappa_eulerian_chi' explicitly "
+        f"in the top-level YAML."
+    )
+
+
 def _resolve_extras(extras: dict[str, Any]) -> dict[str, Any]:
     """Map the literal string ``'REQUIRED'`` to the
     :data:`ad_hoc_diffractometer.mode.REQUIRED` sentinel.
@@ -674,7 +733,7 @@ def _construct_from_doc(
         alpha_deg = float(parameters["alpha_deg"])
     if "alpha_deg" in overrides and overrides["alpha_deg"] is not None:
         alpha_deg = float(overrides["alpha_deg"])
-    elif alpha_deg is None and "kappa_chi_eq" in doc:
+    elif alpha_deg is None and ("kappa_chi_eq" in doc or "kappa_eulerian_chi" in doc):
         # File declares a kappa pseudo-angle equivalent but no alpha; default.
         alpha_deg = KAPPA_ALPHA_DEFAULT
 
@@ -708,7 +767,13 @@ def _construct_from_doc(
         )
         basis = {k: np.asarray(v, dtype=float).copy() for k, v in BASIS_DEFAULT.items()}
 
-    # Optional kappa_chi_eq for kappa-tilt axis resolution.
+    # Optional kappa_chi_eq for kappa-arm tilt-direction (Walko's
+    # geometric formula in ``_resolve_axis``).  This direction lies in
+    # the plane spanned by ``n_komega`` and ``n_kappa`` (it is the
+    # in-plane perpendicular of ``n_komega``).  It is NOT the
+    # equivalent-Eulerian chi-pseudo-angle axis (which is generally a
+    # different direction; see ``kappa_eulerian_chi`` below and issue
+    # #284).
     kappa_chi_eq: np.ndarray | None = None
     if "kappa_chi_eq" in doc:
         kappa_chi_eq_spec = doc["kappa_chi_eq"]
@@ -725,6 +790,29 @@ def _construct_from_doc(
                 f"{source_label}: 'kappa_chi_eq' must be a signed-axis "
                 f"string or a length-3 numeric vector; got "
                 f"{kappa_chi_eq_spec!r}."
+            )
+
+    # Optional kappa_eulerian_chi for the equivalent-Eulerian chi
+    # pseudo-angle axis (issue #284).  Distinct from ``kappa_chi_eq``:
+    # this is the axis the kappa→Eulerian decomposition rotates about
+    # for the virtual ``chi`` angle, and should match the corresponding
+    # non-kappa Eulerian preset's ``chi`` axis (fourcv/fourch/psic chi
+    # is conventionally ``+longitudinal``).  When omitted, the loader
+    # derives it from the first basis direction perpendicular to
+    # ``n_komega`` in the conventional order
+    # (``+longitudinal``, ``+vertical``, ``+transverse``).
+    kappa_eulerian_chi: np.ndarray | None = None
+    if "kappa_eulerian_chi" in doc:
+        spec = doc["kappa_eulerian_chi"]
+        if isinstance(spec, str):
+            kappa_eulerian_chi = parse_axis(spec, basis=basis)
+        elif isinstance(spec, list | tuple) and len(spec) == 3:
+            kappa_eulerian_chi = np.asarray([float(c) for c in spec], dtype=float)
+        else:
+            raise GeometrySchemaError(
+                f"{source_label}: 'kappa_eulerian_chi' must be a "
+                f"signed-axis string or a length-3 numeric vector; "
+                f"got {spec!r}."
             )
 
     # Stages
@@ -795,7 +883,9 @@ def _construct_from_doc(
 
     # Build the kappa pseudo-angle convention if applicable.
     kappa_convention: KappaPseudoAngleConvention | None = None
-    if alpha_deg is not None and kappa_chi_eq is not None:
+    if alpha_deg is not None and (
+        kappa_chi_eq is not None or kappa_eulerian_chi is not None
+    ):
         try:
             n_komega = next(s.axis for s in stages if s.name == "komega")
             n_kappa = next(s.axis for s in stages if s.name == "kappa")
@@ -807,13 +897,34 @@ def _construct_from_doc(
                 f"'komega', 'kappa', 'kphi'.  The declarative loader "
                 f"synthesizes the KappaPseudoAngleConvention from these "
                 f"names; rename your stages accordingly or omit the "
-                f"'kappa_chi_eq' / 'parameters.alpha_deg' fields."
+                f"'kappa_chi_eq' / 'kappa_eulerian_chi' / "
+                f"'parameters.alpha_deg' fields."
             ) from None
+
+        # Resolve the equivalent-Eulerian chi axis (issue #284).
+        # Precedence:
+        #   1. explicit ``kappa_eulerian_chi`` field (caller override);
+        #   2. derived: first basis direction perpendicular to
+        #      ``n_komega`` in the conventional order
+        #      ``(+longitudinal, +vertical, +transverse)``.
+        # The conventional choice is ``+longitudinal``: every standard
+        # 4-/6-circle Eulerian preset shipped with this package
+        # (fourcv, fourch, psic, sixc, fivec) puts its ``chi`` rotation
+        # about ``+longitudinal``.  Aligning the kappa equivalent-
+        # Eulerian decomposition with that choice makes
+        # ``forward()`` reachability of a kappa preset match its
+        # non-kappa sister (fourcv↔kappa4cv, fourch↔kappa4ch,
+        # psic↔kappa6c).
+        if kappa_eulerian_chi is not None:
+            n_chi_eq = kappa_eulerian_chi
+        else:
+            n_chi_eq = _derive_kappa_eulerian_chi(n_komega, basis, source_label)
+
         kappa_convention = KappaPseudoAngleConvention(
             n_komega=n_komega,
             n_kappa=n_kappa,
             n_kphi=n_kphi,
-            n_chi_eq=kappa_chi_eq,
+            n_chi_eq=n_chi_eq,
         )
 
     return AdHocDiffractometer(

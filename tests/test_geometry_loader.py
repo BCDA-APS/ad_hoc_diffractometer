@@ -873,7 +873,18 @@ def test_kappa_chi_eq_invalid_form():
 
 
 def test_kappa_chi_eq_numeric_vector_form():
-    """kappa_chi_eq may be a length-3 numeric vector."""
+    """kappa_chi_eq may be a length-3 numeric vector.
+
+    With issue #284 the ``kappa_chi_eq`` field controls only the
+    kappa-arm tilt direction (input to Walko's formula in
+    ``_resolve_axis``).  This test verifies the numeric-vector form
+    parses without error and that the kappa stage axis is built
+    correctly from it; the synthesized convention's ``n_chi_eq`` is
+    a separate concept (auto-derived from the basis, here
+    ``+longitudinal``) and is verified by other tests.
+    """
+    import math
+
     import numpy as np
 
     doc = {
@@ -920,8 +931,17 @@ def test_kappa_chi_eq_numeric_vector_form():
         },
     }
     g = load_geometry_file(_yaml_doc_to_text(doc))
+    # The kappa stage axis is built from the unsigned outer (+transverse)
+    # tilted alpha_deg toward kappa_chi_eq (+vertical):
+    expected_kappa = np.cos(math.radians(50.0)) * np.array([1.0, 0.0, 0.0]) + np.sin(
+        math.radians(50.0)
+    ) * np.array([0.0, 0.0, 1.0])
+    np.testing.assert_allclose(g.stage("kappa").axis, expected_kappa, atol=1e-12)
+    # The synthesized convention's n_chi_eq is auto-derived as the
+    # first basis direction perpendicular to n_komega; for BL with
+    # n_komega = -transverse that yields +longitudinal.
     np.testing.assert_allclose(
-        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 0.0, 1.0], atol=1e-12
+        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 1.0, 0.0], atol=1e-12
     )
 
 

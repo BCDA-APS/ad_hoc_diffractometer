@@ -5,7 +5,16 @@ Issues](https://github.com/BCDA-APS/ad_hoc_diffractometer/issues) for the full
 issue tracker.  The initial project development roadmap is documented here:
 [roadmap](https://github.com/BCDA-APS/ad_hoc_diffractometer/blob/main/roadmap.md).
 
+<!--
 ## Unreleased
+
+Note any unreleased items inside the comment here.  Not visible until release.
+
+### Fixed
+
+- Kappa equivalent-Eulerian chi axis now matches fourcv/fourch/psic. (#284)
+
+-->
 
 ## Release v0.11.0
 

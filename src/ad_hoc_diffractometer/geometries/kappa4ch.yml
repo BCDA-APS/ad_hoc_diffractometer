@@ -75,8 +75,12 @@ basis: BL
 parameters:
     alpha_deg: 50.0
 
-# Equivalent-Eulerian chi axis: +longitudinal for kappa4ch (the kappa
-# arm tilts in the vertical-longitudinal plane).
+# Kappa-arm tilt direction: +longitudinal for kappa4ch (the kappa arm
+# tilts in the vertical-longitudinal plane).  For this preset the
+# kappa-arm tilt direction happens to coincide with the equivalent-
+# Eulerian chi pseudo-angle axis (both +longitudinal), so a single
+# ``kappa_chi_eq`` value is sufficient.  See kappa4cv.yml for the
+# general two-field story (issue #284).
 kappa_chi_eq: +longitudinal
 
 stages:

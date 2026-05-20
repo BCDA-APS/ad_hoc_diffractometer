@@ -730,8 +730,13 @@ def _solve_bisecting_analytic(
         q_perp = q - q_par * n_chi
         w_perp_norm = float(np.linalg.norm(w_perp))
         q_perp_norm = float(np.linalg.norm(q_perp))
-        if w_perp_norm < 1e-12 or q_perp_norm < 1e-12:
+        if w_perp_norm < 1e-12 or q_perp_norm < 1e-12:  # pragma: no cover
             # Degenerate: w or q is parallel to n_chi; chi indeterminate.
+            # No shipped geometry / mode / reflection lands here after the
+            # issue-#284 kappa equivalent-Eulerian chi axis correction;
+            # retained as a defensive fallback for ad-hoc geometries
+            # whose target Q_phi happens to project to zero on the
+            # plane perpendicular to n_chi.
             chi_d = 0.0
         else:
             # cos chi = (w_perp · q_perp) / (|w_perp| |q_perp|)

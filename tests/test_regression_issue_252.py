@@ -212,7 +212,7 @@ def test_kappa_axis_orthogonal_to_third_basis_direction(
 )
 def test_eulerian_kappa_round_trip(factory, omega, chi, phi, branch):
     """Round-trip ``kappa_to_eulerian_axes ∘ eulerian_to_kappa_axes``
-    is the identity on the +1 branch for every kappa preset.
+    preserves the physical sample rotation for every kappa preset.
 
     The closed-form solver in ``kappa.py`` works directly from the
     four signed stage axes stored on the geometry; the round-trip
@@ -220,22 +220,27 @@ def test_eulerian_kappa_round_trip(factory, omega, chi, phi, branch):
     convention.  This is the strongest internal-consistency guard
     for the kappa pseudoangle layer.
 
-    The −1 branch round-trips onto the chi-mirrored point and is
-    therefore not tested as an identity here (the geometry-aware
-    decomposition encodes the chi sign in the kappa branch
-    parameter).
+    The round-trip is asserted at the **rotation-matrix** level
+    rather than at the angle level: each branch is a valid kappa
+    decomposition of the same physical sample rotation, but the
+    geometry-dependent ``branch`` semantics (``+1`` = smaller
+    ``|κ|``) may land on the chi-mirrored Eulerian angles for some
+    kappa presets (e.g. ``kappa6c`` with ``n_komega × n_chi_eq``
+    anti-parallel to the kappa-arm in-plane vector — see issue
+    #284 for the discussion).  The rotation matrix is the
+    convention-independent invariant.
     """
+    import numpy as np
+
+    from ad_hoc_diffractometer.kappa import _eulerian_rotation
+
     g = factory()
     convention = g.kappa_pseudo_angle_convention
     ko, k, kp = eulerian_to_kappa_axes(omega, chi, phi, convention, branch=branch)
     om, ch, ph = kappa_to_eulerian_axes(ko, k, kp, convention)
-    assert om == pytest.approx(omega, abs=1e-10)
-    if abs(chi) < 1e-10:
-        assert ch == pytest.approx(0.0, abs=1e-10)
-        assert ph == pytest.approx(phi, abs=1e-10)
-    else:
-        assert ch == pytest.approx(chi, abs=1e-10)
-        assert ph == pytest.approx(phi, abs=1e-10)
+    R_in = _eulerian_rotation(convention, omega, chi, phi)
+    R_out = _eulerian_rotation(convention, om, ch, ph)
+    np.testing.assert_allclose(R_in, R_out, atol=1e-10)
 
 
 # ---------------------------------------------------------------------------
