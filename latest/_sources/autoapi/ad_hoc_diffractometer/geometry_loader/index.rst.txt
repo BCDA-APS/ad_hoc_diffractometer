@@ -96,6 +96,7 @@ Functions
    ad_hoc_diffractometer.geometry_loader._build_constraint_set
    ad_hoc_diffractometer.geometry_loader._check_unknown_keys
    ad_hoc_diffractometer.geometry_loader._construct_from_doc
+   ad_hoc_diffractometer.geometry_loader._derive_kappa_eulerian_chi
    ad_hoc_diffractometer.geometry_loader._is_geometry_yaml_text
    ad_hoc_diffractometer.geometry_loader._register_packaged_geometries
    ad_hoc_diffractometer.geometry_loader._resolve_axis
@@ -203,6 +204,44 @@ Module Contents
    :param overrides: Caller-supplied keyword overrides (currently ``basis`` and
                      ``alpha_deg``).
    :type overrides: dict
+
+
+.. py:function:: _derive_kappa_eulerian_chi(n_komega: ~numpy.ndarray, basis: dict[str, ~numpy.ndarray], source_label: str) -> ~numpy.ndarray
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader._derive_kappa_eulerian_chi``
+
+
+   Derive the equivalent-Eulerian chi pseudo-angle axis when the
+   YAML does not declare ``kappa_eulerian_chi`` explicitly (issue
+   #284).
+
+   Picks the first basis direction perpendicular to ``n_komega`` in
+   the conventional order ``(+longitudinal, +vertical, +transverse)``.
+   Every standard Eulerian preset shipped with this package
+   (fourcv, fourch, psic, sixc, fivec) puts its ``chi`` rotation
+   about ``+longitudinal``; honoring that order makes the kappa
+   preset's equivalent-Eulerian decomposition match its sister
+   Eulerian preset's chi pseudo-angle exactly.
+
+   :param n_komega: Outer kappa stage axis.  Need not be normalized.
+   :type n_komega: numpy.ndarray, shape (3,)
+   :param basis: The geometry's basis dictionary with keys ``vertical``,
+                 ``longitudinal``, ``transverse``.
+   :type basis: dict[str, numpy.ndarray]
+   :param source_label: Label naming the source YAML file or string; used in error
+                        messages.
+   :type source_label: str
+
+   :returns: **n_chi_eq** -- A unit-magnitude basis direction perpendicular to
+             ``n_komega``.
+   :rtype: numpy.ndarray, shape (3,)
+
+   :raises GeometrySchemaError: If no basis direction is perpendicular to ``n_komega`` within
+       tolerance ``1e-9`` — i.e. ``n_komega`` is not aligned to any
+       single basis axis.  In that pathological case the YAML must
+       declare ``kappa_eulerian_chi`` explicitly.
 
 
 .. py:function:: _is_geometry_yaml_text(text: str) -> tuple[bool, Any]

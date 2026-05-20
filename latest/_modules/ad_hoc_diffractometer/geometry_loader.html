@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ad_hoc_diffractometer.geometry_loader &#8212; ad_hoc_diffractometer 0.10</title>
+    <title>ad_hoc_diffractometer.geometry_loader &#8212; ad_hoc_diffractometer 0.11</title>
   
   
   
@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
-    <script src="../../_static/documentation_options.js?v=212b3363"></script>
+    <script src="../../_static/documentation_options.js?v=a1984d36"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,7 +50,7 @@
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/geometry_loader';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.17.1';
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -62,8 +62,8 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.10" />
-    <meta name="docbuild:last-update" content="2026-05-19 16:55 CDT"/>
+  <meta name="docsearch:version" content="0.11" />
+    <meta name="docbuild:last-update" content="2026-05-20 15:30 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -131,7 +131,7 @@
   
   
   
-    <p class="title logo__title">ad_hoc_diffractometer 0.10</p>
+    <p class="title logo__title">ad_hoc_diffractometer 0.11</p>
   
 </a></div>
     
@@ -213,11 +213,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -230,8 +237,7 @@
           
           
           
-          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -338,11 +344,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -355,8 +368,7 @@
           
           
           
-          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -580,6 +592,7 @@
         <span class="s2">&quot;basis&quot;</span><span class="p">,</span>
         <span class="s2">&quot;parameters&quot;</span><span class="p">,</span>
         <span class="s2">&quot;kappa_chi_eq&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kappa_eulerian_chi&quot;</span><span class="p">,</span>
         <span class="s2">&quot;stages&quot;</span><span class="p">,</span>
         <span class="s2">&quot;modes&quot;</span><span class="p">,</span>
     <span class="p">}</span>
@@ -896,6 +909,67 @@
 
 
 
+<div class="viewcode-block" id="_derive_kappa_eulerian_chi">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._derive_kappa_eulerian_chi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_derive_kappa_eulerian_chi</span><span class="p">(</span>
+    <span class="n">n_komega</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">source_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive the equivalent-Eulerian chi pseudo-angle axis when the</span>
+<span class="sd">    YAML does not declare ``kappa_eulerian_chi`` explicitly (issue</span>
+<span class="sd">    #284).</span>
+
+<span class="sd">    Picks the first basis direction perpendicular to ``n_komega`` in</span>
+<span class="sd">    the conventional order ``(+longitudinal, +vertical, +transverse)``.</span>
+<span class="sd">    Every standard Eulerian preset shipped with this package</span>
+<span class="sd">    (fourcv, fourch, psic, sixc, fivec) puts its ``chi`` rotation</span>
+<span class="sd">    about ``+longitudinal``; honoring that order makes the kappa</span>
+<span class="sd">    preset&#39;s equivalent-Eulerian decomposition match its sister</span>
+<span class="sd">    Eulerian preset&#39;s chi pseudo-angle exactly.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_komega : numpy.ndarray, shape (3,)</span>
+<span class="sd">        Outer kappa stage axis.  Need not be normalized.</span>
+<span class="sd">    basis : dict[str, numpy.ndarray]</span>
+<span class="sd">        The geometry&#39;s basis dictionary with keys ``vertical``,</span>
+<span class="sd">        ``longitudinal``, ``transverse``.</span>
+<span class="sd">    source_label : str</span>
+<span class="sd">        Label naming the source YAML file or string; used in error</span>
+<span class="sd">        messages.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    n_chi_eq : numpy.ndarray, shape (3,)</span>
+<span class="sd">        A unit-magnitude basis direction perpendicular to</span>
+<span class="sd">        ``n_komega``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    GeometrySchemaError</span>
+<span class="sd">        If no basis direction is perpendicular to ``n_komega`` within</span>
+<span class="sd">        tolerance ``1e-9`` — i.e. ``n_komega`` is not aligned to any</span>
+<span class="sd">        single basis axis.  In that pathological case the YAML must</span>
+<span class="sd">        declare ``kappa_eulerian_chi`` explicitly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_om</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">n_komega</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">n_om</span> <span class="o">=</span> <span class="n">n_om</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_om</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">,</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="s2">&quot;transverse&quot;</span><span class="p">):</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">basis</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="n">candidate</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">candidate</span><span class="p">)))</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">candidate</span>
+    <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: cannot derive the equivalent-Eulerian chi &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;axis automatically because the outer kappa axis (komega = &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_komega</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">!r}</span><span class="s2">) is not perpendicular to any single &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;basis direction.  Declare &#39;kappa_eulerian_chi&#39; explicitly &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;in the top-level YAML.&quot;</span>
+    <span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="_resolve_extras">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._resolve_extras">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_extras</span><span class="p">(</span><span class="n">extras</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -1134,7 +1208,7 @@
         <span class="n">alpha_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha_deg&quot;</span><span class="p">])</span>
     <span class="k">if</span> <span class="s2">&quot;alpha_deg&quot;</span> <span class="ow">in</span> <span class="n">overrides</span> <span class="ow">and</span> <span class="n">overrides</span><span class="p">[</span><span class="s2">&quot;alpha_deg&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">alpha_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="p">[</span><span class="s2">&quot;alpha_deg&quot;</span><span class="p">])</span>
-    <span class="k">elif</span> <span class="n">alpha_deg</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;kappa_chi_eq&quot;</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">alpha_deg</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;kappa_chi_eq&quot;</span> <span class="ow">in</span> <span class="n">doc</span> <span class="ow">or</span> <span class="s2">&quot;kappa_eulerian_chi&quot;</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">):</span>
         <span class="c1"># File declares a kappa pseudo-angle equivalent but no alpha; default.</span>
         <span class="n">alpha_deg</span> <span class="o">=</span> <span class="n">KAPPA_ALPHA_DEFAULT</span>
 
@@ -1168,7 +1242,13 @@
         <span class="p">)</span>
         <span class="n">basis</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">BASIS_DEFAULT</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
-    <span class="c1"># Optional kappa_chi_eq for kappa-tilt axis resolution.</span>
+    <span class="c1"># Optional kappa_chi_eq for kappa-arm tilt-direction (Walko&#39;s</span>
+    <span class="c1"># geometric formula in ``_resolve_axis``).  This direction lies in</span>
+    <span class="c1"># the plane spanned by ``n_komega`` and ``n_kappa`` (it is the</span>
+    <span class="c1"># in-plane perpendicular of ``n_komega``).  It is NOT the</span>
+    <span class="c1"># equivalent-Eulerian chi-pseudo-angle axis (which is generally a</span>
+    <span class="c1"># different direction; see ``kappa_eulerian_chi`` below and issue</span>
+    <span class="c1"># #284).</span>
     <span class="n">kappa_chi_eq</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="s2">&quot;kappa_chi_eq&quot;</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
         <span class="n">kappa_chi_eq_spec</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;kappa_chi_eq&quot;</span><span class="p">]</span>
@@ -1185,6 +1265,29 @@
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: &#39;kappa_chi_eq&#39; must be a signed-axis &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;string or a length-3 numeric vector; got &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kappa_chi_eq_spec</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Optional kappa_eulerian_chi for the equivalent-Eulerian chi</span>
+    <span class="c1"># pseudo-angle axis (issue #284).  Distinct from ``kappa_chi_eq``:</span>
+    <span class="c1"># this is the axis the kappa→Eulerian decomposition rotates about</span>
+    <span class="c1"># for the virtual ``chi`` angle, and should match the corresponding</span>
+    <span class="c1"># non-kappa Eulerian preset&#39;s ``chi`` axis (fourcv/fourch/psic chi</span>
+    <span class="c1"># is conventionally ``+longitudinal``).  When omitted, the loader</span>
+    <span class="c1"># derives it from the first basis direction perpendicular to</span>
+    <span class="c1"># ``n_komega`` in the conventional order</span>
+    <span class="c1"># (``+longitudinal``, ``+vertical``, ``+transverse``).</span>
+    <span class="n">kappa_eulerian_chi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="s2">&quot;kappa_eulerian_chi&quot;</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;kappa_eulerian_chi&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">kappa_eulerian_chi</span> <span class="o">=</span> <span class="n">parse_axis</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">kappa_eulerian_chi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: &#39;kappa_eulerian_chi&#39; must be a &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;signed-axis string or a length-3 numeric vector; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">spec</span><span class="si">!r}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
     <span class="c1"># Stages</span>
@@ -1255,7 +1358,9 @@
 
     <span class="c1"># Build the kappa pseudo-angle convention if applicable.</span>
     <span class="n">kappa_convention</span><span class="p">:</span> <span class="n">KappaPseudoAngleConvention</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="n">alpha_deg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">kappa_chi_eq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">alpha_deg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span>
+        <span class="n">kappa_chi_eq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">kappa_eulerian_chi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">n_komega</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;komega&quot;</span><span class="p">)</span>
             <span class="n">n_kappa</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;kappa&quot;</span><span class="p">)</span>
@@ -1267,13 +1372,34 @@
                 <span class="sa">f</span><span class="s2">&quot;&#39;komega&#39;, &#39;kappa&#39;, &#39;kphi&#39;.  The declarative loader &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;synthesizes the KappaPseudoAngleConvention from these &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;names; rename your stages accordingly or omit the &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&#39;kappa_chi_eq&#39; / &#39;parameters.alpha_deg&#39; fields.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;kappa_chi_eq&#39; / &#39;kappa_eulerian_chi&#39; / &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;parameters.alpha_deg&#39; fields.&quot;</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+        <span class="c1"># Resolve the equivalent-Eulerian chi axis (issue #284).</span>
+        <span class="c1"># Precedence:</span>
+        <span class="c1">#   1. explicit ``kappa_eulerian_chi`` field (caller override);</span>
+        <span class="c1">#   2. derived: first basis direction perpendicular to</span>
+        <span class="c1">#      ``n_komega`` in the conventional order</span>
+        <span class="c1">#      ``(+longitudinal, +vertical, +transverse)``.</span>
+        <span class="c1"># The conventional choice is ``+longitudinal``: every standard</span>
+        <span class="c1"># 4-/6-circle Eulerian preset shipped with this package</span>
+        <span class="c1"># (fourcv, fourch, psic, sixc, fivec) puts its ``chi`` rotation</span>
+        <span class="c1"># about ``+longitudinal``.  Aligning the kappa equivalent-</span>
+        <span class="c1"># Eulerian decomposition with that choice makes</span>
+        <span class="c1"># ``forward()`` reachability of a kappa preset match its</span>
+        <span class="c1"># non-kappa sister (fourcv↔kappa4cv, fourch↔kappa4ch,</span>
+        <span class="c1"># psic↔kappa6c).</span>
+        <span class="k">if</span> <span class="n">kappa_eulerian_chi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_chi_eq</span> <span class="o">=</span> <span class="n">kappa_eulerian_chi</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n_chi_eq</span> <span class="o">=</span> <span class="n">_derive_kappa_eulerian_chi</span><span class="p">(</span><span class="n">n_komega</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">source_label</span><span class="p">)</span>
+
         <span class="n">kappa_convention</span> <span class="o">=</span> <span class="n">KappaPseudoAngleConvention</span><span class="p">(</span>
             <span class="n">n_komega</span><span class="o">=</span><span class="n">n_komega</span><span class="p">,</span>
             <span class="n">n_kappa</span><span class="o">=</span><span class="n">n_kappa</span><span class="p">,</span>
             <span class="n">n_kphi</span><span class="o">=</span><span class="n">n_kphi</span><span class="p">,</span>
-            <span class="n">n_chi_eq</span><span class="o">=</span><span class="n">kappa_chi_eq</span><span class="p">,</span>
+            <span class="n">n_chi_eq</span><span class="o">=</span><span class="n">n_chi_eq</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
@@ -1525,8 +1651,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1534,7 +1660,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-05-19 16:55 CDT.
+  Last updated on 2026-05-20 15:30 CDT.
   <br/>
 </p></div>
       
