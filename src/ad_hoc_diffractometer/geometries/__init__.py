@@ -101,17 +101,17 @@ Kappa angle (alpha) convention
 ------------------------------
 
 The kappa axis is inclined by ``alpha`` degrees from the omega axis,
-lying in the plane that contains both omega and the equivalent-Eulerian
-chi axis, and tilted from omega toward that chi direction (Walko 2016
+lying in the plane that contains both omega and the kappa-arm tilt
+direction, and tilted from omega toward that tilt direction (Walko 2016
 Fig. 3; Wyckoff 1985 Fig. 2(b); Thorkildsen 2006 Table 1; Enraf-Nonius;
 ITC Vol. C Sec. 2.2.6).
 
-Per geometry (with omega and chi-equivalent shown as physical
-basis-direction lines, ignoring sign of handedness):
+Per geometry (with omega and kappa-arm tilt direction shown as
+physical basis-direction lines, ignoring sign of handedness):
 
-- ``kappa4cv``: omega along transverse, chi-eq along vertical;
+- ``kappa4cv``: omega along transverse, tilt-direction along vertical;
   kappa lies in the T-V plane between +T and +V.
-- ``kappa4ch``: omega along vertical, chi-eq along longitudinal;
+- ``kappa4ch``: omega along vertical, tilt-direction along longitudinal;
   kappa lies in the V-L plane between +V and +L.
 - ``kappa6c``:  same as ``kappa4cv`` (mounted on top of ``mu`` and
   ``nu``).
@@ -121,6 +121,23 @@ Typical value: ``alpha = 50`` deg.  Each kappa YAML carries
 the corresponding
 :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention` from
 the canonical stage names ``komega`` / ``kappa`` / ``kphi``.
+
+Equivalent-Eulerian chi axis vs kappa-arm tilt direction (issue #284)
+---------------------------------------------------------------------
+
+The kappa-arm tilt direction (``kappa_chi_eq``) and the equivalent-
+Eulerian chi pseudo-angle axis (``kappa_eulerian_chi``) are two
+distinct concepts.  The former defines the kappa stage's geometric
+axis (the plane the arm tilts in); the latter defines the axis the
+kappa→Eulerian decomposition rotates about for the virtual chi
+pseudo-angle.  They happen to coincide for ``kappa4ch`` (both
+``+longitudinal``) but differ for ``kappa4cv`` and ``kappa6c``
+(tilt direction is ``+vertical``; equivalent-Eulerian chi is
+``+longitudinal``, matching ``fourcv`` and ``psic``).  When
+``kappa_eulerian_chi`` is omitted the loader derives it as the
+first basis direction perpendicular to ``n_komega`` in the
+conventional order ``(+longitudinal, +vertical, +transverse)`` —
+the right answer for every kappa preset shipped with the package.
 
 Handedness convention
 ---------------------

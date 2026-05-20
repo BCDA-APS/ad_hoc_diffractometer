@@ -67,7 +67,11 @@
             }
         },
         "kappa_chi_eq": {
-            "description": "Equivalent-Eulerian chi axis. Required when parameters.alpha_deg is declared. Used by axis fields of the form {kappa_eulerian: ...}.",
+            "description": "Kappa-arm tilt direction. Lies in the plane spanned by n_komega and n_kappa (the in-plane perpendicular of n_komega). Used by axis fields of the form {kappa_eulerian: ...} to construct the kappa stage axis via Walko's formula. Distinct from the equivalent-Eulerian chi pseudo-angle axis (see kappa_eulerian_chi). Required when parameters.alpha_deg is declared (unless kappa_eulerian_chi is the only kappa input).",
+            "$ref": "#/$defs/axis_value"
+        },
+        "kappa_eulerian_chi": {
+            "description": "Equivalent-Eulerian chi pseudo-angle axis (issue #284). Specifies the axis the kappa-to-Eulerian decomposition rotates about for the virtual chi angle. Should match the corresponding non-kappa Eulerian preset's chi axis (fourcv/fourch/psic all use +longitudinal). When omitted, the loader derives it from the first basis direction perpendicular to n_komega in the order (+longitudinal, +vertical, +transverse), which yields +longitudinal for all standard kappa geometries.",
             "$ref": "#/$defs/axis_value"
         },
         "stages": {
@@ -100,7 +104,7 @@
             ]
         },
         "axis_value": {
-            "description": "A stage axis specification. Three accepted forms: (1) signed physical-direction or Cartesian string ('+transverse', '-vertical', '+x', '-z'); (2) length-3 numeric vector (sign included; the Stage constructor handles normalisation for rotation calculations); (3) kappa-tilt mapping {kappa_eulerian: <axis>}, valid only when parameters.alpha_deg and the top-level kappa_chi_eq are both declared.",
+            "description": "A stage axis specification. Three accepted forms: (1) signed physical-direction or Cartesian string ('+transverse', '-vertical', '+x', '-z'); (2) length-3 numeric vector (sign included; the Stage constructor handles normalization for rotation calculations); (3) kappa-tilt mapping {kappa_eulerian: <axis>}, valid only when parameters.alpha_deg and the top-level kappa_chi_eq are both declared.",
             "oneOf": [
                 {
                     "type": "string",

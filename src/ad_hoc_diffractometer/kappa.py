@@ -142,9 +142,18 @@ class KappaPseudoAngleConvention:
         R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)
             =  R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ).
 
-    This identity holds for **arbitrary signed stage axes** as long
-    as ``n_kappa`` lies in the plane spanned by ``n_komega`` and
-    ``n_chi_eq`` (which is the geometric definition of a kappa arm).
+    The decomposition is solvable for any ``n_chi_eq`` that is
+    perpendicular to ``n_komega`` (and not parallel to ``n_kphi``);
+    it does **not** require ``n_chi_eq`` to lie in the kappa-arm
+    tilt plane.  Different ``n_chi_eq`` choices yield different
+    (and equally valid) virtual-Eulerian parametrizations of the
+    same kappa rotation, but with different ``(ω, χ, φ)`` values
+    and different bisecting-reachability sets.  Issue #284 records
+    the choice this package adopts (``+longitudinal`` for every
+    shipped kappa preset, to match the corresponding non-kappa
+    Eulerian preset's ``chi`` axis); see
+    :mod:`ad_hoc_diffractometer.geometries` for the broader
+    discussion.
 
     Parameters
     ----------
@@ -155,8 +164,10 @@ class KappaPseudoAngleConvention:
     n_kphi : numpy.ndarray, shape (3,)
         Unit axis of the inner kappa stage (= virtual φ axis).
     n_chi_eq : numpy.ndarray, shape (3,)
-        Unit axis of the equivalent Eulerian χ rotation, perpendicular
-        to ``n_komega`` and coplanar with ``n_komega`` and ``n_kappa``.
+        Unit axis of the equivalent Eulerian χ rotation.  Must be
+        perpendicular to ``n_komega`` and not parallel to ``n_kphi``;
+        does **not** need to lie in the kappa-arm tilt plane (see
+        issue #284 for the discussion).
 
     Notes
     -----

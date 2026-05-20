@@ -391,6 +391,7 @@ def _reference_kappa4cv(
     basis = BASIS_BL
     TRANSVERSE = basis["transverse"]
     VERTICAL = basis["vertical"]
+    LONGITUDINAL = basis["longitudinal"]
     kax = kappa_axis_from_eulerian(+TRANSVERSE, +VERTICAL, alpha_deg)
     stages = [
         Stage("komega", -TRANSVERSE, parent=None, role="sample"),
@@ -398,11 +399,14 @@ def _reference_kappa4cv(
         Stage("kphi", -TRANSVERSE, parent="kappa", role="sample"),
         Stage("ttheta", -TRANSVERSE, parent=None, role="detector"),
     ]
+    # Equivalent-Eulerian chi pseudo-angle axis: +LONGITUDINAL for
+    # kappa4cv (matches fourcv's chi axis; issue #284).  Distinct from
+    # the kappa-arm tilt direction (+VERTICAL) used to build ``kax``.
     convention = KappaPseudoAngleConvention(
         n_komega=-TRANSVERSE,
         n_kappa=kax,
         n_kphi=-TRANSVERSE,
-        n_chi_eq=+VERTICAL,
+        n_chi_eq=+LONGITUDINAL,
     )
     modes = {
         "bisecting": ConstraintSet(
@@ -465,6 +469,7 @@ def _reference_kappa6c(
     basis = BASIS_YOU
     VERTICAL = basis["vertical"]
     TRANSVERSE = basis["transverse"]
+    LONGITUDINAL = basis["longitudinal"]
     kax = kappa_axis_from_eulerian(+TRANSVERSE, +VERTICAL, alpha_deg)
     stages = [
         Stage("mu", +VERTICAL, parent=None, role="sample"),
@@ -474,11 +479,14 @@ def _reference_kappa6c(
         Stage("nu", +VERTICAL, parent=None, role="detector"),
         Stage("delta", -TRANSVERSE, parent="nu", role="detector"),
     ]
+    # Equivalent-Eulerian chi pseudo-angle axis: +LONGITUDINAL for
+    # kappa6c (matches psic's chi axis; issue #284).  Distinct from
+    # the kappa-arm tilt direction (+VERTICAL) used to build ``kax``.
     convention = KappaPseudoAngleConvention(
         n_komega=-TRANSVERSE,
         n_kappa=kax,
         n_kphi=-TRANSVERSE,
-        n_chi_eq=+VERTICAL,
+        n_chi_eq=+LONGITUDINAL,
     )
     modes = {
         "bisecting_vertical": ConstraintSet(

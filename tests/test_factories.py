@@ -181,9 +181,15 @@ def test_make_geometry_kappa_alpha_forwarded():
     The kappa axis lies in the transverse-vertical plane, tilted
     ``alpha`` degrees from +T toward +V (Walko 2016 Fig. 3 and
     Thorkildsen et al. 2006 Table 1; see issue #252 for the
-    correction to the v0.9.1 ``n_chi_eq=+LONGITUDINAL`` choice).
-    For ``kappa4cv`` (BL basis: T=+x, L=+y, V=+z) the kappa axis is
-    therefore ``+x̂·cos(α) + ẑ·sin(α)``.
+    correction of the kappa-arm tilt direction).  For ``kappa4cv``
+    (BL basis: T=+x, L=+y, V=+z) the kappa axis is therefore
+    ``+x̂·cos(α) + ẑ·sin(α)``.
+
+    Issue #284 separated the kappa-arm tilt direction (which the YAML
+    ``kappa_chi_eq`` field still controls; tested here) from the
+    equivalent-Eulerian chi pseudo-angle axis (controlled by the
+    new YAML ``kappa_eulerian_chi`` field; auto-derived to
+    ``+longitudinal`` for every shipped kappa preset).
     """
     g = make_geometry("kappa4cv", alpha_deg=45.0)
     expected = np.cos(np.deg2rad(45)) * np.array([1, 0, 0]) + np.sin(

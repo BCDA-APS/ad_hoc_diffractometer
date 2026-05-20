@@ -87,10 +87,19 @@ basis: BL
 parameters:
     alpha_deg: 50.0
 
-# Equivalent-Eulerian chi axis: +vertical for kappa4cv.  This (together
-# with parameters.alpha_deg and the kappa-stage axis spec below) drives
-# the synthesized KappaPseudoAngleConvention attached to the
-# constructed geometry.
+# Kappa-arm tilt direction: +vertical for kappa4cv.  The kappa stage
+# axis (computed via Walko's formula in ``_resolve_axis``) lies in the
+# plane spanned by the unsigned outer axis (+transverse) and this
+# tilt direction (+vertical), tilted ``parameters.alpha_deg`` from the
+# former toward the latter.
+#
+# This is the kappa-arm *geometric* tilt direction.  The equivalent-
+# Eulerian chi *pseudo-angle* axis (used by the kappa→Eulerian
+# decomposition) is a separate convention: see ``kappa_eulerian_chi``
+# in the schema, and issue #284 for the history of why the two fields
+# were separated.  For kappa4cv the auto-derived value (+longitudinal,
+# matching fourcv's chi axis) is correct; no explicit declaration is
+# needed here.
 kappa_chi_eq: +vertical
 
 stages:
