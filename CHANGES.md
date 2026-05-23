@@ -10,6 +10,10 @@ issue tracker.  The initial project development roadmap is documented here:
 
 Note any unreleased items inside the comment here.  Not visible until release.
 
+### Added
+
+- `register_geometry_yaml` in-memory registration entry point. (#288)
+
 ### Fixed
 
 - Kappa equivalent-Eulerian chi axis now matches fourcv/fourch/psic. (#284)

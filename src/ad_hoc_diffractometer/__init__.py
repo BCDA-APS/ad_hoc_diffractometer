@@ -31,6 +31,7 @@ from .factories import make_geometry
 from .factories import register_geometry
 from .geometry_loader import load_geometry_file
 from .geometry_loader import register_geometry_file
+from .geometry_loader import register_geometry_yaml
 from .lattice import Lattice
 from .mode import REQUIRED
 from .mode import BisectConstraint
@@ -67,6 +68,7 @@ __all__ = [
     "make_geometry",
     "register_geometry",
     "register_geometry_file",
+    "register_geometry_yaml",
     "load_geometry_file",
     # orientation
     "ub_identity",

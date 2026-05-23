@@ -18,6 +18,9 @@ Covers the declarative-YAML schema (#267):
   ``detector``, ``reference``)
 - :func:`register_geometry_file` (registry insertion, name override,
   duplicate-name guard)
+- :func:`register_geometry_yaml` (in-memory companion: registry
+  insertion, required ``name=``, duplicate-name guard, eager schema
+  validation, re-parse on every call)
 - module-level constants ``KIND_KEY``, ``SUPPORTED_REVISIONS``,
   ``CURRENT_REVISION``
 """
@@ -26,12 +29,14 @@ from __future__ import annotations
 
 import os
 import re
+from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
 
 from ad_hoc_diffractometer import load_geometry_file
 from ad_hoc_diffractometer import register_geometry_file
+from ad_hoc_diffractometer import register_geometry_yaml
 from ad_hoc_diffractometer.factories import _GEOMETRY_REGISTRY
 from ad_hoc_diffractometer.factories import BASIS_BL
 from ad_hoc_diffractometer.factories import BASIS_DEFAULT
@@ -491,6 +496,93 @@ def test_register_geometry_file_duplicate_raises(tmp_path, restore_registry):
 def test_register_geometry_file_missing(tmp_path, restore_registry):
     with pytest.raises(FileNotFoundError):
         register_geometry_file(tmp_path / "does_not_exist.yml")
+
+
+# ---------------------------------------------------------------------------
+# register_geometry_yaml()  (issue #288 — in-memory companion)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "kwargs, expected_name, context",
+    [
+        pytest.param(
+            {"name": "inmem_alpha"},
+            "inmem_alpha",
+            does_not_raise(),
+            id="registers-under-supplied-name",
+        ),
+        pytest.param(
+            {},
+            None,
+            pytest.raises(TypeError, match="name"),
+            id="name-is-required",
+        ),
+    ],
+)
+def test_register_geometry_yaml_name_argument(
+    kwargs, expected_name, context, restore_registry
+):
+    """``name`` is a required keyword-only argument."""
+    with context:
+        returned = register_geometry_yaml(_MINIMAL_YAML, **kwargs)
+        assert returned == expected_name
+        assert expected_name in _GEOMETRY_REGISTRY
+
+
+def test_register_geometry_yaml_make_geometry_round_trip(restore_registry):
+    """make_geometry() on a registered in-memory geometry produces an
+    AdHocDiffractometer consistent with load_geometry_file(yaml_text)."""
+    import ad_hoc_diffractometer as ahd
+
+    register_geometry_yaml(_MINIMAL_YAML, name="inmem_round_trip")
+    g_registry = ahd.make_geometry("inmem_round_trip")
+    g_direct = load_geometry_file(_MINIMAL_YAML)
+    assert g_registry.name == g_direct.name == "tiny"
+    assert list(g_registry._stages) == list(g_direct._stages)
+    assert list(g_registry.modes) == list(g_direct.modes)
+
+
+def test_register_geometry_yaml_duplicate_raises(restore_registry):
+    """Second registration under the same name raises ValueError
+    (same contract as register_geometry_file)."""
+    register_geometry_yaml(_MINIMAL_YAML, name="inmem_dup")
+    with pytest.raises(ValueError, match="already registered"):
+        register_geometry_yaml(_MINIMAL_YAML, name="inmem_dup")
+
+
+def test_register_geometry_yaml_eager_schema_validation(restore_registry):
+    """Schema errors surface at registration time, not at first
+    make_geometry() call (matches register_geometry_file behavior)."""
+    # Drop the required top-level 'stages' key.
+    bad_yaml = (
+        "ad_hoc_diffractometer_geometry:\n"
+        "    schema_revision: 1\n"
+        "name: broken\n"
+        "basis: BL\n"
+        "modes:\n"
+        "    m:\n"
+        "        default: true\n"
+        "        constraints: []\n"
+        "        computed: []\n"
+    )
+    with pytest.raises(GeometrySchemaError, match="stages"):
+        register_geometry_yaml(bad_yaml, name="inmem_broken")
+    # Registration was rejected — nothing landed in the registry.
+    assert "inmem_broken" not in _GEOMETRY_REGISTRY
+
+
+def test_register_geometry_yaml_factory_reparses_text(restore_registry):
+    """Each make_geometry() call re-parses the captured YAML text, so
+    every call returns a fresh AdHocDiffractometer instance (mirroring
+    register_geometry_file's per-call re-read semantics)."""
+    import ad_hoc_diffractometer as ahd
+
+    register_geometry_yaml(_MINIMAL_YAML, name="inmem_fresh")
+    g1 = ahd.make_geometry("inmem_fresh")
+    g2 = ahd.make_geometry("inmem_fresh")
+    assert g1 is not g2
+    assert g1.name == g2.name == "tiny"
 
 
 # ---------------------------------------------------------------------------
