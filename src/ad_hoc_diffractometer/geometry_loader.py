@@ -22,6 +22,9 @@ Public API
 - :func:`register_geometry_file` — parse a YAML file from any path and
   add it to the geometry registry under its declared name (or an
   explicit ``name=`` override).
+- :func:`register_geometry_yaml` — parse an in-memory YAML string and
+  add it to the geometry registry under a caller-supplied name (the
+  in-memory companion to :func:`register_geometry_file`).
 - :data:`KIND_KEY` — the top-level marker key
   (``"ad_hoc_diffractometer_geometry"``).
 - :data:`SUPPORTED_REVISIONS` — the schema revisions this loader
@@ -1081,6 +1084,84 @@ def register_geometry_file(
     _factory.__doc__ = geom.description.splitlines()[0] if geom.description else ""
     registry[final_name] = _factory
     return final_name
+
+
+def register_geometry_yaml(
+    yaml_text: str,
+    *,
+    name: str,
+) -> str:
+    """Parse an in-memory YAML string and add it to the geometry registry.
+
+    The in-memory companion to :func:`register_geometry_file`.  Use it
+    when the YAML definition of a geometry is already available as a
+    Python ``str`` (for example, persisted inside another configuration
+    document) and you want it discoverable via :func:`list_geometries`
+    and :func:`make_geometry` without round-tripping through the
+    filesystem.
+
+    Parameters
+    ----------
+    yaml_text : str
+        The YAML document declaring the geometry.  Must contain the
+        :data:`KIND_KEY` marker with a supported
+        :data:`SUPPORTED_REVISIONS` value.  Parsed eagerly so schema
+        errors surface at registration time rather than at first
+        :func:`make_geometry` call (matching
+        :func:`register_geometry_file`).
+    name : str
+        Required registry key under which the geometry will be
+        installed.  Unlike :func:`register_geometry_file` there is no
+        filesystem path from which to derive a default, so this
+        argument is mandatory.
+
+    Returns
+    -------
+    str
+        The registry name (the value passed in as ``name``).
+
+    Raises
+    ------
+    ValueError
+        If the registry already contains an entry under ``name``.
+    GeometrySchemaError
+        If ``yaml_text`` is not a well-formed declarative geometry
+        document.
+
+    Notes
+    -----
+    The registered factory re-parses ``yaml_text`` on every
+    :func:`make_geometry` call so that each invocation returns a fresh
+    :class:`AdHocDiffractometer` instance, mirroring the re-read
+    semantics of :func:`register_geometry_file`.
+    """
+    # Local import to avoid a circular dependency at module load time.
+    from . import factories as _factories
+
+    source_label = f"<in-memory:{name}>"
+    doc = yaml.safe_load(yaml_text)
+    # Validate eagerly so problems surface at registration time.
+    geom = _construct_from_doc(doc, source_label=source_label, overrides={})
+    registry = _factories._GEOMETRY_REGISTRY  # noqa: SLF001
+    if name in registry:
+        existing = registry[name]
+        raise ValueError(
+            f"register_geometry_yaml: a geometry named {name!r} is "
+            f"already registered ({existing!r}); pass a different "
+            f"name= to register this YAML under another name."
+        )
+
+    # Capture yaml_text in the closure so each call re-parses the same
+    # source.  This mirrors register_geometry_file's re-read semantics
+    # (every make_geometry() returns a fresh AdHocDiffractometer).
+    def _factory(**kwargs: Any) -> AdHocDiffractometer:
+        fresh = yaml.safe_load(yaml_text)
+        return _construct_from_doc(fresh, source_label=source_label, overrides=kwargs)
+
+    _factory.__name__ = name
+    _factory.__doc__ = geom.description.splitlines()[0] if geom.description else ""
+    registry[name] = _factory
+    return name
 
 
 def _register_packaged_geometries() -> None:
