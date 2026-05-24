@@ -26,6 +26,9 @@ geometry_loader
    - :func:`register_geometry_file` — parse a YAML file from any path and
      add it to the geometry registry under its declared name (or an
      explicit ``name=`` override).
+   - :func:`register_geometry_yaml` — parse an in-memory YAML string and
+     add it to the geometry registry under a caller-supplied name (the
+     in-memory companion to :func:`register_geometry_file`).
    - :data:`KIND_KEY` — the top-level marker key
      (``"ad_hoc_diffractometer_geometry"``).
    - :data:`SUPPORTED_REVISIONS` — the schema revisions this loader
@@ -108,6 +111,7 @@ Functions
    ad_hoc_diffractometer.geometry_loader.get_schema_text
    ad_hoc_diffractometer.geometry_loader.load_geometry_file
    ad_hoc_diffractometer.geometry_loader.register_geometry_file
+   ad_hoc_diffractometer.geometry_loader.register_geometry_yaml
 
 
 Module Contents
@@ -457,5 +461,49 @@ Module Contents
 
    :raises FileNotFoundError: If the file does not exist.
    :raises ValueError: If the registry already contains an entry under the same name.
+
+
+.. py:function:: register_geometry_yaml(yaml_text: str, *, name: str) -> str
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.geometry_loader.register_geometry_yaml``
+
+
+   Parse an in-memory YAML string and add it to the geometry registry.
+
+   The in-memory companion to :func:`register_geometry_file`.  Use it
+   when the YAML definition of a geometry is already available as a
+   Python ``str`` (for example, persisted inside another configuration
+   document) and you want it discoverable via :func:`list_geometries`
+   and :func:`make_geometry` without round-tripping through the
+   filesystem.
+
+   :param yaml_text: The YAML document declaring the geometry.  Must contain the
+                     :data:`KIND_KEY` marker with a supported
+                     :data:`SUPPORTED_REVISIONS` value.  Parsed eagerly so schema
+                     errors surface at registration time rather than at first
+                     :func:`make_geometry` call (matching
+                     :func:`register_geometry_file`).
+   :type yaml_text: str
+   :param name: Required registry key under which the geometry will be
+                installed.  Unlike :func:`register_geometry_file` there is no
+                filesystem path from which to derive a default, so this
+                argument is mandatory.
+   :type name: str
+
+   :returns: The registry name (the value passed in as ``name``).
+   :rtype: str
+
+   :raises ValueError: If the registry already contains an entry under ``name``.
+   :raises GeometrySchemaError: If ``yaml_text`` is not a well-formed declarative geometry
+       document.
+
+   .. rubric:: Notes
+
+   The registered factory re-parses ``yaml_text`` on every
+   :func:`make_geometry` call so that each invocation returns a fresh
+   :class:`AdHocDiffractometer` instance, mirroring the re-read
+   semantics of :func:`register_geometry_file`.
 
 
