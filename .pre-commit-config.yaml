@@ -28,6 +28,22 @@ repos:
           - --license-filepath=.copyright.txt
           - --comment-style=#
           - --no-extra-eol
+      - id: insert-license
+        name: insert-license (scripts)
+        files: ^scripts/.*\.py$
+        args:
+          - --license-filepath=.copyright.txt
+          - --comment-style=#
+          - --no-extra-eol
+
+  - repo: local
+    hooks:
+      - id: update-copyright-year
+        name: Update copyright end year
+        language: python
+        entry: python scripts/update_copyright_year.py
+        pass_filenames: false
+        always_run: true
 
   - repo: https://github.com/PyCQA/isort
     rev: 5.13.2

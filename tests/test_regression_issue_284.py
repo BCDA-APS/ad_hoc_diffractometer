@@ -1,5 +1,5 @@
-# Copyright (c) 2026 UChicago Argonne, LLC
-# SPDX-License-Identifier: LicenseRef-ANL-Open-Source-License
+# Copyright (c) 2026-2026 UChicago Argonne, LLC
+# SPDX-License-Identifier: LicenseRef-UChicago-Argonne-LLC-License
 """
 Regression tests for issue #284.
 
@@ -443,9 +443,7 @@ def test_kappa_eulerian_chi_invalid_form_rejected():
     """Non-string non-vector ``kappa_eulerian_chi`` is rejected."""
     doc = yaml.safe_load(_kappa_yaml_doc())
     doc["kappa_eulerian_chi"] = 42  # neither a string nor a vector
-    with pytest.raises(
-        GeometrySchemaError, match="'kappa_eulerian_chi' must be"
-    ):
+    with pytest.raises(GeometrySchemaError, match="'kappa_eulerian_chi' must be"):
         load_geometry_file(yaml.safe_dump(doc))
 
 
@@ -701,6 +699,3 @@ def test_kappa_convention_accepts_any_perpendicular_n_chi_eq(n_chi_eq, context):
             n_kphi=n_kphi,
             n_chi_eq=np.array(n_chi_eq, dtype=float),
         )
-
-
-

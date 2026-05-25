@@ -1,5 +1,5 @@
-# Copyright (c) 2026 UChicago Argonne, LLC
-# SPDX-License-Identifier: LicenseRef-ANL-Open-Source-License
+# Copyright (c) 2026-2026 UChicago Argonne, LLC
+# SPDX-License-Identifier: LicenseRef-UChicago-Argonne-LLC-License
 """
 sample.py — Sample class and SampleDict for crystallographic sample management.
 

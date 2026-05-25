@@ -18,6 +18,10 @@ Note any unreleased items inside the comment here.  Not visible until release.
 
 - Kappa equivalent-Eulerian chi axis now matches fourcv/fourch/psic. (#284)
 
+### Maintenance
+
+- Unify copyright automation: `.copyright.txt` year range, SPDX identifier `LicenseRef-UChicago-Argonne-LLC-License`, bump-script pre-commit hook. (#290)
+
 -->
 
 ## Release v0.11.0
