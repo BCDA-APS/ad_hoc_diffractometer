@@ -18,6 +18,10 @@ Note any unreleased items inside the comment here.  Not visible until release.
 
 - Kappa equivalent-Eulerian chi axis now matches fourcv/fourch/psic. (#284)
 
+### Maintenance
+
+- Unify copyright automation across hklpy2 family. (#290)
+
 -->
 
 ## Release v0.11.0

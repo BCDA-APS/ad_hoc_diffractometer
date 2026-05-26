@@ -26,7 +26,9 @@ _metadata = _toml["project"]
 project = "ad_hoc_diffractometer"
 # author = _metadata["authors"][0]["name"]
 author = "UChicago Argonne, LLC"
-copyright = f"2026, {author}"
+# Static year range; kept in sync with .copyright.txt and LICENSE by
+# scripts/update_copyright_year.py (registered as a pre-commit hook).
+copyright = "2026-2026, UChicago Argonne, LLC"
 description = _metadata["description"]
 
 release = _version("ad_hoc_diffractometer")
