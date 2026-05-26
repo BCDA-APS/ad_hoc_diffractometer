@@ -20,7 +20,7 @@ Note any unreleased items inside the comment here.  Not visible until release.
 
 ### Maintenance
 
-- Unify copyright automation: `.copyright.txt` year range, SPDX identifier `LicenseRef-UChicago-Argonne-LLC-License`, bump-script pre-commit hook. (#290)
+- Unify copyright automation across hklpy2 family. (#290)
 
 -->
 
