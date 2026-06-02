@@ -429,10 +429,10 @@ the Hkl/Soleil `E6C` `hkl` engine, and You (1999).
 | `bisecting_vertical` | `(2,0,5,0,0)` | `bissector_vertical` | §5.1 |
 | `fixed_phi_vertical` | `(2,0,4,2,0)` | `constant_phi_vertical` | §5.2 |
 | `fixed_chi_vertical` | `(2,0,3,2,0)` | `constant_chi_vertical` | §5.2 |
-| `fixed_alpha_i_vertical` | `(2,2,5,0,0)` | — | §6.1 |
-| `fixed_beta_out_vertical` | `(2,3,5,0,0)` | — | §6.2 |
-| `alpha_eq_beta_vertical` | `(2,1,5,0,0)` | — | §6.3 |
-| `fixed_psi_vertical` | `(2,4,5,0,0)` | `psi_constant_vertical` | §6.4 |
+| `fixed_alpha_i_vertical` | `(2,2,2,0,0)` | — | §6.1 |
+| `fixed_beta_out_vertical` | `(2,3,2,0,0)` | — | §6.2 |
+| `alpha_eq_beta_vertical` | `(2,1,2,0,0)` | — | §6.3 |
+| `fixed_psi_vertical` | `(2,4,2,0,0)` | `psi_constant_vertical` | §6.4 |
 | `fixed_alpha_i_fixed_chi_fixed_phi` | `(2,2,3,4,0)` ‡ | — | §6.1 |
 | `fixed_omega_vertical` | `setmode d1 0 0 0` | — | §5 (Q[6]) |
 | `double_diffraction_vertical` | — | `double_diffraction_vertical` | §6.5 |
@@ -440,10 +440,10 @@ the Hkl/Soleil `E6C` `hkl` engine, and You (1999).
 | `bisecting_horizontal` | `(1,0,6,0,0)` | `bissector_horizontal` | §5.1 |
 | `fixed_phi_horizontal` | `(1,0,4,1,0)` † | — | §5.2 |
 | `fixed_chi_horizontal` | `(1,0,3,1,0)` † | — | §5.2 |
-| `fixed_alpha_i_horizontal` | `(1,2,6,0,0)` | — | §6.1 |
-| `fixed_beta_out_horizontal` | `(1,3,6,0,0)` | — | §6.2 |
-| `alpha_eq_beta_horizontal` | `(1,1,6,0,0)` | — | §6.3 |
-| `fixed_psi_horizontal` | `(1,4,6,0,0)` | `psi_constant_horizontal` | §6.4 |
+| `fixed_alpha_i_horizontal` | `(1,2,1,0,0)` | — | §6.1 |
+| `fixed_beta_out_horizontal` | `(1,3,1,0,0)` | — | §6.2 |
+| `alpha_eq_beta_horizontal` | `(1,1,1,0,0)` | — | §6.3 |
+| `fixed_psi_horizontal` | `(1,4,1,0,0)` | `psi_constant_horizontal` | §6.4 |
 | `fixed_omega_horizontal` | `setmode d1 0 0 0` | — | §5 (Q[6]) |
 | `double_diffraction_horizontal` | — | `double_diffraction_horizontal` | §6.5 |
 | `zone_horizontal` | `setmode 5` | (TODO `HklEngine "zone"`) | §6 |
