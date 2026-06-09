@@ -1,0 +1,1785 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ad_hoc_diffractometer.geometry_loader &#8212; ad_hoc_diffractometer 0.11</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../_static/documentation_options.js?v=57cbeb03"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/geometry_loader';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.11.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11" />
+    <meta name="docbuild:last-update" content="2026-06-09 13:32 CDT"/>
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.11</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer.geometry_loader</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ad_hoc_diffractometer.geometry_loader</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2026-2026 UChicago Argonne, LLC</span>
+<span class="c1"># SPDX-License-Identifier: LicenseRef-UChicago-Argonne-LLC-License</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">geometry_loader.py — declarative-YAML geometry loader (issue #267).</span>
+
+<span class="sd">Parses YAML files (or in-memory YAML text) describing a diffractometer</span>
+<span class="sd">geometry and returns a fully-configured</span>
+<span class="sd">:class:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer`</span>
+<span class="sd">instance.</span>
+
+<span class="sd">The schema is documented authoritatively in</span>
+<span class="sd">``docs/source/reference/declarative_geometry_schema.md``.  This module</span>
+<span class="sd">implements the schema; the how-to</span>
+<span class="sd">``docs/source/howto/custom_geometry.md`` walks through writing a file</span>
+<span class="sd">from scratch.</span>
+
+<span class="sd">Public API</span>
+<span class="sd">----------</span>
+
+<span class="sd">- :func:`load_geometry_file` — construct a geometry from a path or YAML</span>
+<span class="sd">  text (no registry mutation).</span>
+<span class="sd">- :func:`register_geometry_file` — parse a YAML file from any path and</span>
+<span class="sd">  add it to the geometry registry under its declared name (or an</span>
+<span class="sd">  explicit ``name=`` override).</span>
+<span class="sd">- :func:`register_geometry_yaml` — parse an in-memory YAML string and</span>
+<span class="sd">  add it to the geometry registry under a caller-supplied name (the</span>
+<span class="sd">  in-memory companion to :func:`register_geometry_file`).</span>
+<span class="sd">- :data:`KIND_KEY` — the top-level marker key</span>
+<span class="sd">  (``&quot;ad_hoc_diffractometer_geometry&quot;``).</span>
+<span class="sd">- :data:`SUPPORTED_REVISIONS` — the schema revisions this loader</span>
+<span class="sd">  understands.</span>
+<span class="sd">- :data:`CURRENT_REVISION` — the schema revision newly-authored YAML</span>
+<span class="sd">  files SHOULD declare.</span>
+
+<span class="sd">Schema marker</span>
+<span class="sd">-------------</span>
+<span class="sd">Every declarative geometry file must declare itself at the top level::</span>
+
+<span class="sd">    ad_hoc_diffractometer_geometry:</span>
+<span class="sd">        schema_revision: 1</span>
+
+<span class="sd">The presence of this key (with a well-formed mapping value containing a</span>
+<span class="sd">supported integer ``schema_revision``) is the signal that the document</span>
+<span class="sd">is a geometry declaration.  ``schema_revision`` is a fixed property of</span>
+<span class="sd">the schema this file conforms to — not a per-file edit counter; users</span>
+<span class="sd">should treat the value verbatim and only change it when migrating the</span>
+<span class="sd">file to a different declarative-geometry schema revision.  Files</span>
+<span class="sd">lacking the marker are treated by the polymorphic-string dispatch in</span>
+<span class="sd">:func:`load_geometry_file` as paths, not as YAML text.</span>
+
+<span class="sd">Polymorphic source dispatch</span>
+<span class="sd">---------------------------</span>
+<span class="sd">:func:`load_geometry_file` accepts either a filesystem path (as</span>
+<span class="sd">``str``, :class:`pathlib.Path`, or any :class:`os.PathLike`) **or** a</span>
+<span class="sd">``str`` containing YAML text.  The dispatch rule is:</span>
+
+<span class="sd">1. ``Path`` / ``os.PathLike`` → always a path; ``FileNotFoundError`` if absent.</span>
+<span class="sd">2. ``str`` parses as YAML *and* declares the</span>
+<span class="sd">   :data:`KIND_KEY` marker → treat as YAML text.</span>
+<span class="sd">3. ``str`` either fails to parse as YAML *or* parses but lacks the marker</span>
+<span class="sd">   → treat as a filesystem path.  ``FileNotFoundError`` if the file does</span>
+<span class="sd">   not exist; the error message names both attempts.</span>
+
+<span class="sd">Strict unknown-key policy</span>
+<span class="sd">-------------------------</span>
+<span class="sd">Unknown top-level or nested keys are rejected with a ``ValueError`` that</span>
+<span class="sd">names the offending key, the containing context, and the accepted-key</span>
+<span class="sd">set for that context.  Future schema revisions may relax this policy.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">resources</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_axis</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdHocDiffractometer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">BASIS_BL</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">BASIS_DEFAULT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">BASIS_YOU</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">KAPPA_ALPHA_DEFAULT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">KappaPseudoAngleConvention</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">kappa_axis_from_eulerian</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">REQUIRED</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectConstraint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectorConstraint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleConstraint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">VirtualBisectConstraint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.stage</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stage</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Public schema constants</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="n">KIND_KEY</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ad_hoc_diffractometer_geometry&quot;</span>
+<span class="sd">&quot;&quot;&quot;Top-level marker key that identifies a YAML document as a declarative</span>
+<span class="sd">diffractometer geometry.&quot;&quot;&quot;</span>
+
+<span class="n">SUPPORTED_REVISIONS</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="mi">1</span><span class="p">})</span>
+<span class="sd">&quot;&quot;&quot;Schema revisions this loader can parse.&quot;&quot;&quot;</span>
+
+<span class="n">CURRENT_REVISION</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="sd">&quot;&quot;&quot;Schema revision that newly-authored YAML files SHOULD declare.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="get_schema_text">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.get_schema_text">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_schema_text</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the JSON Schema (revision 1) as a string.</span>
+
+<span class="sd">    The schema is shipped as ``ad_hoc_diffractometer/geometries/schema.json``</span>
+<span class="sd">    and is intended for editor tooling, documentation, and any external</span>
+<span class="sd">    consumer that wants a machine-readable description of the</span>
+<span class="sd">    declarative geometry format.  The loader itself does **not** consume</span>
+<span class="sd">    this schema at runtime — its hand-written validator enforces the</span>
+<span class="sd">    same rules without taking on a ``jsonschema`` runtime dependency.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;ad_hoc_diffractometer.geometries&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;schema.json&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_schema">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.get_schema">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the parsed JSON Schema as a Python ``dict``.&quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">get_schema_text</span><span class="p">())</span></div>
+
+
+
+<span class="n">_BASIS_SHORTHANDS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;BL&quot;</span><span class="p">:</span> <span class="n">BASIS_BL</span><span class="p">,</span>
+    <span class="s2">&quot;YOU&quot;</span><span class="p">:</span> <span class="n">BASIS_YOU</span><span class="p">,</span>
+    <span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span> <span class="n">BASIS_DEFAULT</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Shorthand strings accepted as values of the top-level ``basis:`` key.&quot;&quot;&quot;</span>
+
+<span class="c1"># Accepted-key sets per schema context.  Used by the strict unknown-key</span>
+<span class="c1"># policy to produce informative error messages.</span>
+<span class="n">_TOP_LEVEL_KEYS</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="n">KIND_KEY</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;documentation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;basis&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;parameters&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kappa_chi_eq&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kappa_eulerian_chi&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;stages&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;modes&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">_MARKER_KEYS</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;schema_revision&quot;</span><span class="p">})</span>
+<span class="n">_PARAMETERS_KEYS</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;alpha_deg&quot;</span><span class="p">})</span>
+<span class="n">_STAGE_KEYS</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;axis&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;role&quot;</span><span class="p">})</span>
+<span class="n">_MODE_KEYS</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;constraints&quot;</span><span class="p">,</span> <span class="s2">&quot;computed&quot;</span><span class="p">,</span> <span class="s2">&quot;extras&quot;</span><span class="p">,</span> <span class="s2">&quot;cut_points&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">_CONSTRAINT_TYPES</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;bisect&quot;</span><span class="p">,</span> <span class="s2">&quot;virtual_bisect&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;detector&quot;</span><span class="p">,</span> <span class="s2">&quot;reference&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">_CONSTRAINT_KEYS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;bisect&quot;</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;stage1&quot;</span><span class="p">,</span> <span class="s2">&quot;stage2&quot;</span><span class="p">}),</span>
+    <span class="s2">&quot;virtual_bisect&quot;</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;stage1&quot;</span><span class="p">,</span> <span class="s2">&quot;stage2&quot;</span><span class="p">}),</span>
+    <span class="s2">&quot;sample&quot;</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;stage&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">}),</span>
+    <span class="s2">&quot;detector&quot;</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;stage&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">}),</span>
+    <span class="s2">&quot;reference&quot;</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">}),</span>
+<span class="p">}</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Internal validation helpers</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="GeometrySchemaError">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.GeometrySchemaError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeometrySchemaError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a YAML document violates the declarative geometry schema.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="_check_unknown_keys">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._check_unknown_keys">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_unknown_keys</span><span class="p">(</span>
+    <span class="n">mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">accepted</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">context</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enforce the strict unknown-key policy for one mapping context.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mapping : dict</span>
+<span class="sd">        The mapping to inspect.</span>
+<span class="sd">    accepted : frozenset of str</span>
+<span class="sd">        The keys allowed in ``mapping``.</span>
+<span class="sd">    context : str</span>
+<span class="sd">        Human-readable description of the location (e.g. ``&quot;top-level&quot;``,</span>
+<span class="sd">        ``&quot;inside ad_hoc_diffractometer_geometry&quot;``,</span>
+<span class="sd">        ``&quot;inside stages[2]&quot;``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">extras</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span> <span class="o">-</span> <span class="n">accepted</span>
+    <span class="k">if</span> <span class="n">extras</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;unrecognised key(s) </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">extras</span><span class="p">)</span><span class="si">!r}</span><span class="s2"> </span><span class="si">{</span><span class="n">context</span><span class="si">}</span><span class="s2">; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;accepted keys: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">accepted</span><span class="p">)</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_validate_marker">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._validate_marker">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_marker</span><span class="p">(</span><span class="n">doc</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate the ``ad_hoc_diffractometer_geometry`` top-level marker.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        The schema revision declared by the document.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    GeometrySchemaError</span>
+<span class="sd">        If the marker is missing, malformed, or declares an unsupported</span>
+<span class="sd">        revision.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">KIND_KEY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;missing top-level marker key </span><span class="si">{</span><span class="n">KIND_KEY</span><span class="si">!r}</span><span class="s2">; every declarative &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;geometry file must declare its kind and schema revision, e.g.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">KIND_KEY</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;        schema_revision: </span><span class="si">{</span><span class="n">CURRENT_REVISION</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="n">marker</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="n">KIND_KEY</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">marker</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">KIND_KEY</span><span class="si">!r}</span><span class="s2"> value must be a mapping with a &#39;schema_revision&#39; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;integer; got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="n">marker</span><span class="si">!r}</span><span class="s2">).&quot;</span>
+        <span class="p">)</span>
+    <span class="n">_check_unknown_keys</span><span class="p">(</span><span class="n">marker</span><span class="p">,</span> <span class="n">_MARKER_KEYS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;inside </span><span class="si">{</span><span class="n">KIND_KEY</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;schema_revision&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">marker</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">KIND_KEY</span><span class="si">!r}</span><span class="s2"> mapping must contain a &#39;schema_revision&#39; integer key.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">revision</span> <span class="o">=</span> <span class="n">marker</span><span class="p">[</span><span class="s2">&quot;schema_revision&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">revision</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">revision</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">KIND_KEY</span><span class="si">!r}</span><span class="s2">.schema_revision must be an integer; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">revision</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="n">revision</span><span class="si">!r}</span><span class="s2">).&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">revision</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SUPPORTED_REVISIONS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;unsupported geometry schema revision </span><span class="si">{</span><span class="n">revision</span><span class="si">}</span><span class="s2">; this build &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;of ad_hoc_diffractometer supports </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">SUPPORTED_REVISIONS</span><span class="p">)</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Upgrade the package to read newer revisions, or downgrade the &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;YAML to a supported revision.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">revision</span></div>
+
+
+
+<div class="viewcode-block" id="_resolve_basis">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._resolve_basis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_basis</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve a YAML ``basis`` value to a ``dict[str, ndarray]``.</span>
+
+<span class="sd">    Accepts:</span>
+
+<span class="sd">    - one of the shorthand strings ``&quot;BL&quot;``, ``&quot;YOU&quot;``, ``&quot;DEFAULT&quot;``</span>
+<span class="sd">    - a mapping with the three physical-direction keys</span>
+<span class="sd">      (``vertical``, ``longitudinal``, ``transverse``) whose values are</span>
+<span class="sd">      either signed-axis strings (``&quot;+x&quot;``, ``&quot;-vertical&quot;``, ...) or</span>
+<span class="sd">      length-3 numeric sequences.</span>
+
+<span class="sd">    The returned dict is validated for unit length, mutual orthogonality,</span>
+<span class="sd">    and right-handedness (``vertical × longitudinal ≈ transverse``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_BASIS_SHORTHANDS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;unknown basis shorthand </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;accepted: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_BASIS_SHORTHANDS</span><span class="p">)</span><span class="si">!r}</span><span class="s2">, or supply an &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;explicit mapping with &#39;vertical&#39;, &#39;longitudinal&#39;, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;transverse&#39; keys.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_BASIS_SHORTHANDS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;basis must be a shorthand string or a mapping; got &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">).&quot;</span>
+        <span class="p">)</span>
+    <span class="n">required</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="s2">&quot;longitudinal&quot;</span><span class="p">,</span> <span class="s2">&quot;transverse&quot;</span><span class="p">}</span>
+    <span class="n">missing</span> <span class="o">=</span> <span class="n">required</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;basis mapping is missing required key(s) </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">!r}</span><span class="s2">; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;need exactly </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">required</span><span class="p">)</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">extras</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-</span> <span class="n">required</span>
+    <span class="k">if</span> <span class="n">extras</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;basis mapping has unrecognised key(s) </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">extras</span><span class="p">)</span><span class="si">!r}</span><span class="s2">; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;accepted: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">required</span><span class="p">)</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">out</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="s2">&quot;longitudinal&quot;</span><span class="p">,</span> <span class="s2">&quot;transverse&quot;</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">vec</span> <span class="o">=</span> <span class="n">parse_axis</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;basis[&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;]: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">item</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;basis[&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;]: numeric vector entries must be numbers; &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">item</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">).&quot;</span>
+                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;basis[&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;]: expected a signed-axis string &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(e.g. &#39;+x&#39;, &#39;-vertical&#39;) or a length-3 numeric vector; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="n">item</span><span class="si">!r}</span><span class="s2">).&quot;</span>
+            <span class="p">)</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">vec</span>
+    <span class="n">_validate_basis</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="_validate_basis">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._validate_basis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_basis</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify a basis is orthonormal within tolerance.</span>
+
+<span class="sd">    The three vectors must each have unit length and be mutually</span>
+<span class="sd">    orthogonal.  Both literature conventions accepted by this package</span>
+<span class="sd">    (Busing &amp; Levy 1967 and You 1999) are orthonormal, but they assign</span>
+<span class="sd">    physical names to Cartesian axes in mirror-image patterns:</span>
+
+<span class="sd">    - You 1999: ``(vertical, longitudinal, transverse) = (X, Y, Z)``</span>
+<span class="sd">      so ``vertical × longitudinal = transverse``.</span>
+<span class="sd">    - Busing &amp; Levy 1967:</span>
+<span class="sd">      ``(transverse, longitudinal, vertical) = (X, Y, Z)`` so</span>
+<span class="sd">      ``transverse × longitudinal = vertical`` and equivalently</span>
+<span class="sd">      ``vertical × longitudinal = -transverse``.</span>
+
+<span class="sd">    Both are physically meaningful and right-handed in their own</span>
+<span class="sd">    canonical ordering; this check therefore enforces only orthonormality</span>
+<span class="sd">    and not any particular chirality of the (vertical, longitudinal,</span>
+<span class="sd">    transverse) ordering.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-9</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">]</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="s2">&quot;transverse&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">vec</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">,</span> <span class="n">lon</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;transverse&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)):</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vec</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">norm</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;basis[&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;] is not a unit vector (|v| = </span><span class="si">{</span><span class="n">norm</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2">); &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;every basis vector must have unit length.&quot;</span>
+            <span class="p">)</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="s2">&quot;longitudinal&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">lon</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">,</span> <span class="s2">&quot;transverse&quot;</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="s2">&quot;transverse&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+        <span class="n">dot</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dot</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;basis[&#39;</span><span class="si">{</span><span class="n">n1</span><span class="si">}</span><span class="s2">&#39;] and basis[&#39;</span><span class="si">{</span><span class="n">n2</span><span class="si">}</span><span class="s2">&#39;] are not orthogonal &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(dot product </span><span class="si">{</span><span class="n">dot</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2">).&quot;</span>
+            <span class="p">)</span>
+    <span class="c1"># Also require det = ±1 (degenerate / co-planar bases would be</span>
+    <span class="c1"># caught by orthonormality; this is a defensive cross-check).</span>
+    <span class="n">det</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">v</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">t</span><span class="p">])))</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">det</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;basis is degenerate or non-orthonormal &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(|det([v, l, t])| = </span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">det</span><span class="p">)</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2">, expected 1).&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_resolve_axis">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._resolve_axis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_axis</span><span class="p">(</span>
+    <span class="n">spec</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">kappa_chi_eq</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">stage_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve one stage&#39;s ``axis:`` field to a numpy vector.</span>
+
+<span class="sd">    Supported forms:</span>
+
+<span class="sd">    - signed-axis string: ``&#39;+transverse&#39;``, ``&#39;-vertical&#39;``, ``&#39;+x&#39;``, etc.</span>
+<span class="sd">    - length-3 numeric sequence: ``[0.0, 0.0, 1.0]``.</span>
+<span class="sd">    - kappa-tilt mapping: ``{kappa_eulerian: [&lt;ref&gt;]}`` resolves to</span>
+<span class="sd">      :func:`kappa_axis_from_eulerian` using the geometry&#39;s</span>
+<span class="sd">      ``parameters.alpha_deg`` and the top-level ``kappa_chi_eq:``.  The</span>
+<span class="sd">      single argument is the outer (komega) axis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parse_axis</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">stage_name</span><span class="si">!r}</span><span class="s2">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">stage_name</span><span class="si">!r}</span><span class="s2">: numeric axis entries must be &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;numbers; got </span><span class="si">{</span><span class="n">spec</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">).&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;kappa_eulerian&quot;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">alpha_deg</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">kappa_chi_eq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">stage_name</span><span class="si">!r}</span><span class="s2">: &#39;kappa_eulerian&#39; axis form requires &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;the top-level &#39;parameters.alpha_deg&#39; and &#39;kappa_chi_eq&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;fields; one or both are missing.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="s2">&quot;kappa_eulerian&quot;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">extra</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">stage_name</span><span class="si">!r}</span><span class="s2">: kappa_eulerian axis spec accepts &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;only one key; got extra(s) </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">extra</span><span class="p">)</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">komega_spec</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;kappa_eulerian&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">komega_spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">n_komega</span> <span class="o">=</span> <span class="n">parse_axis</span><span class="p">(</span><span class="n">komega_spec</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">komega_spec</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">komega_spec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">n_komega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">komega_spec</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">stage_name</span><span class="si">!r}</span><span class="s2">: &#39;kappa_eulerian&#39; value must be a &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;signed-axis string or a length-3 numeric vector; got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">komega_spec</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">kappa_axis_from_eulerian</span><span class="p">(</span><span class="n">n_komega</span><span class="p">,</span> <span class="n">kappa_chi_eq</span><span class="p">,</span> <span class="n">alpha_deg</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">stage_name</span><span class="si">!r}</span><span class="s2">: axis must be a signed-axis string, a &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;length-3 numeric vector, or a &#39;kappa_eulerian&#39; mapping; got &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spec</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_derive_kappa_eulerian_chi">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._derive_kappa_eulerian_chi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_derive_kappa_eulerian_chi</span><span class="p">(</span>
+    <span class="n">n_komega</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">source_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive the equivalent-Eulerian chi pseudo-angle axis when the</span>
+<span class="sd">    YAML does not declare ``kappa_eulerian_chi`` explicitly (issue</span>
+<span class="sd">    #284).</span>
+
+<span class="sd">    Picks the first basis direction perpendicular to ``n_komega`` in</span>
+<span class="sd">    the conventional order ``(+longitudinal, +vertical, +transverse)``.</span>
+<span class="sd">    Every standard Eulerian preset shipped with this package</span>
+<span class="sd">    (fourcv, fourch, psic, sixc, fivec) puts its ``chi`` rotation</span>
+<span class="sd">    about ``+longitudinal``; honoring that order makes the kappa</span>
+<span class="sd">    preset&#39;s equivalent-Eulerian decomposition match its sister</span>
+<span class="sd">    Eulerian preset&#39;s chi pseudo-angle exactly.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_komega : numpy.ndarray, shape (3,)</span>
+<span class="sd">        Outer kappa stage axis.  Need not be normalized.</span>
+<span class="sd">    basis : dict[str, numpy.ndarray]</span>
+<span class="sd">        The geometry&#39;s basis dictionary with keys ``vertical``,</span>
+<span class="sd">        ``longitudinal``, ``transverse``.</span>
+<span class="sd">    source_label : str</span>
+<span class="sd">        Label naming the source YAML file or string; used in error</span>
+<span class="sd">        messages.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    n_chi_eq : numpy.ndarray, shape (3,)</span>
+<span class="sd">        A unit-magnitude basis direction perpendicular to</span>
+<span class="sd">        ``n_komega``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    GeometrySchemaError</span>
+<span class="sd">        If no basis direction is perpendicular to ``n_komega`` within</span>
+<span class="sd">        tolerance ``1e-9`` — i.e. ``n_komega`` is not aligned to any</span>
+<span class="sd">        single basis axis.  In that pathological case the YAML must</span>
+<span class="sd">        declare ``kappa_eulerian_chi`` explicitly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_om</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">n_komega</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">n_om</span> <span class="o">=</span> <span class="n">n_om</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_om</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">,</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="s2">&quot;transverse&quot;</span><span class="p">):</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">basis</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="n">candidate</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">candidate</span><span class="p">)))</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">candidate</span>
+    <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: cannot derive the equivalent-Eulerian chi &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;axis automatically because the outer kappa axis (komega = &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_komega</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">!r}</span><span class="s2">) is not perpendicular to any single &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;basis direction.  Declare &#39;kappa_eulerian_chi&#39; explicitly &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;in the top-level YAML.&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_resolve_extras">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._resolve_extras">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_extras</span><span class="p">(</span><span class="n">extras</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map the literal string ``&#39;REQUIRED&#39;`` to the</span>
+<span class="sd">    :data:`ad_hoc_diffractometer.mode.REQUIRED` sentinel.</span>
+
+<span class="sd">    All other values pass through unchanged.  YAML ``null`` (Python</span>
+<span class="sd">    ``None``) is preserved.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">extras</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;REQUIRED&quot;</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">REQUIRED</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="_build_constraint">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._build_constraint">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_constraint</span><span class="p">(</span><span class="n">spec</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate one constraint spec dict into a constraint instance.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> constraints[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">]: each constraint must &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;be a mapping; got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">ctype</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ctype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> constraints[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">]: missing required &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;type&#39; key; one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_CONSTRAINT_TYPES</span><span class="p">)</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ctype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_CONSTRAINT_TYPES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> constraints[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">]: unknown constraint &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;type </span><span class="si">{</span><span class="n">ctype</span><span class="si">!r}</span><span class="s2">; accepted: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_CONSTRAINT_TYPES</span><span class="p">)</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">accepted</span> <span class="o">=</span> <span class="n">_CONSTRAINT_KEYS</span><span class="p">[</span><span class="n">ctype</span><span class="p">]</span>
+    <span class="n">_check_unknown_keys</span><span class="p">(</span>
+        <span class="n">spec</span><span class="p">,</span>
+        <span class="n">accepted</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;in mode </span><span class="si">{</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> constraints[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">] (type=</span><span class="si">{</span><span class="n">ctype</span><span class="si">!r}</span><span class="s2">)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ctype</span> <span class="o">==</span> <span class="s2">&quot;bisect&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;stage1&quot;</span><span class="p">,</span> <span class="s2">&quot;stage2&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> constraints[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">]: bisect requires </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">BisectConstraint</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">&quot;stage1&quot;</span><span class="p">],</span> <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;stage2&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">ctype</span> <span class="o">==</span> <span class="s2">&quot;virtual_bisect&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;stage1&quot;</span><span class="p">,</span> <span class="s2">&quot;stage2&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> constraints[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">]: virtual_bisect &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;requires </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">VirtualBisectConstraint</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">&quot;stage1&quot;</span><span class="p">],</span> <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;stage2&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">ctype</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;stage&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> constraints[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">]: sample requires </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">SampleConstraint</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">&quot;stage&quot;</span><span class="p">],</span> <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">ctype</span> <span class="o">==</span> <span class="s2">&quot;detector&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;stage&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> constraints[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">]: detector &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;requires </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">DetectorConstraint</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">&quot;stage&quot;</span><span class="p">],</span> <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+    <span class="c1"># ctype == &quot;reference&quot;</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">mode_name</span><span class="si">!r}</span><span class="s2"> constraints[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">]: reference requires </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="_build_constraint_set">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._build_constraint_set">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_constraint_set</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ConstraintSet</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate one mode-spec mapping into a :class:`ConstraintSet`.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">: must be a mapping; got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">_check_unknown_keys</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">_MODE_KEYS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;in mode </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">constraints_spec</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constraints&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraints_spec</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">: &#39;constraints&#39; must be a list; got &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">constraints_spec</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">_build_constraint</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">mode_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">constraints_spec</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">computed</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;computed&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">computed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">computed</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">: &#39;computed&#39; must be a list of stage names; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">computed</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">extras_raw</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;extras&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extras_raw</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">: &#39;extras&#39; must be a mapping; got &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">extras_raw</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">cut_points</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cut_points&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cut_points</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">: &#39;cut_points&#39; must be a mapping; got &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">cut_points</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+        <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">,</span>
+        <span class="n">computed</span><span class="o">=</span><span class="n">computed</span><span class="p">,</span>
+        <span class="n">extras</span><span class="o">=</span><span class="n">_resolve_extras</span><span class="p">(</span><span class="n">extras_raw</span><span class="p">),</span>
+        <span class="n">cut_points</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">cut_points</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Polymorphic-source dispatch</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="_is_geometry_yaml_text">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._is_geometry_yaml_text">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_geometry_yaml_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Try to parse ``text`` as a YAML geometry declaration.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (is_geometry, parsed)</span>
+<span class="sd">        ``is_geometry`` is ``True`` when the text parses successfully,</span>
+<span class="sd">        produces a mapping, and contains the :data:`KIND_KEY` marker as</span>
+<span class="sd">        a top-level key (regardless of the marker value&#39;s well-formedness).</span>
+<span class="sd">        ``parsed`` is the parsed document (or ``None`` if parsing failed).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The marker value&#39;s well-formedness (mapping vs scalar, supported</span>
+<span class="sd">    revision, etc.) does **not** affect this helper.  Once the</span>
+<span class="sd">    :data:`KIND_KEY` key is present, the document has *declared* its</span>
+<span class="sd">    intent; full schema validation then happens in</span>
+<span class="sd">    :func:`_construct_from_doc`, which raises a :class:`GeometrySchemaError`</span>
+<span class="sd">    on any malformed marker.  This means a user who typed an incorrect</span>
+<span class="sd">    marker value (e.g. ``ad_hoc_diffractometer_geometry: 1``) gets a</span>
+<span class="sd">    clear schema error rather than a misleading</span>
+<span class="sd">    :class:`FileNotFoundError`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">parsed</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">parsed</span>
+    <span class="k">if</span> <span class="n">KIND_KEY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parsed</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">parsed</span>
+    <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">parsed</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Construction</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="_construct_from_doc">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._construct_from_doc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_construct_from_doc</span><span class="p">(</span>
+    <span class="n">doc</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">source_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">overrides</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an :class:`AdHocDiffractometer` from a parsed document.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    doc : dict</span>
+<span class="sd">        The YAML document (already parsed).  Must declare the marker.</span>
+<span class="sd">    source_label : str</span>
+<span class="sd">        Human-readable label used in error messages (typically the file</span>
+<span class="sd">        path or ``&quot;&lt;in-memory YAML text&gt;&quot;``).</span>
+<span class="sd">    overrides : dict</span>
+<span class="sd">        Caller-supplied keyword overrides (currently ``basis`` and</span>
+<span class="sd">        ``alpha_deg``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: top-level YAML document must be a mapping; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">_validate_marker</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+    <span class="n">_check_unknown_keys</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">_TOP_LEVEL_KEYS</span><span class="p">,</span> <span class="s2">&quot;at top level&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: missing required top-level key &#39;name&#39;.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: &#39;name&#39; must be a non-empty string; got </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">documentation</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;documentation&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">documentation</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: &#39;documentation&#39; must be a string; got &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">documentation</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># parameters block (currently only alpha_deg)</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parameters&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: &#39;parameters&#39; must be a mapping; got &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">_check_unknown_keys</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">_PARAMETERS_KEYS</span><span class="p">,</span> <span class="s2">&quot;in &#39;parameters&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="s2">&quot;alpha_deg&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+        <span class="n">alpha_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha_deg&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="s2">&quot;alpha_deg&quot;</span> <span class="ow">in</span> <span class="n">overrides</span> <span class="ow">and</span> <span class="n">overrides</span><span class="p">[</span><span class="s2">&quot;alpha_deg&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">alpha_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="p">[</span><span class="s2">&quot;alpha_deg&quot;</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">alpha_deg</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;kappa_chi_eq&quot;</span> <span class="ow">in</span> <span class="n">doc</span> <span class="ow">or</span> <span class="s2">&quot;kappa_eulerian_chi&quot;</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">):</span>
+        <span class="c1"># File declares a kappa pseudo-angle equivalent but no alpha; default.</span>
+        <span class="n">alpha_deg</span> <span class="o">=</span> <span class="n">KAPPA_ALPHA_DEFAULT</span>
+
+    <span class="c1"># Basis resolution (precedence: caller kwarg &gt; YAML &#39;basis:&#39; &gt; BASIS_DEFAULT)</span>
+    <span class="n">basis</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">overrides</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;basis&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ov</span> <span class="o">=</span> <span class="n">overrides</span><span class="p">[</span><span class="s2">&quot;basis&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ov</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="c1"># caller-supplied dict; copy and validate</span>
+            <span class="n">basis</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ov</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="n">required</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="s2">&quot;longitudinal&quot;</span><span class="p">,</span> <span class="s2">&quot;transverse&quot;</span><span class="p">}</span>
+            <span class="n">missing</span> <span class="o">=</span> <span class="n">required</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: caller-supplied basis is missing &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;key(s) </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">_validate_basis</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">basis</span> <span class="o">=</span> <span class="n">_resolve_basis</span><span class="p">(</span><span class="n">ov</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s2">&quot;basis&quot;</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+        <span class="n">basis</span> <span class="o">=</span> <span class="n">_resolve_basis</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;basis&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2"> does not declare a basis; using BASIS_DEFAULT &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(vertical=YHAT, longitudinal=ZHAT, transverse=XHAT). Real &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;instruments should declare an explicit basis (e.g. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;`basis: BL` or `basis: YOU`).&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">basis</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">BASIS_DEFAULT</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="c1"># Optional kappa_chi_eq for kappa-arm tilt-direction (Walko&#39;s</span>
+    <span class="c1"># geometric formula in ``_resolve_axis``).  This direction lies in</span>
+    <span class="c1"># the plane spanned by ``n_komega`` and ``n_kappa`` (it is the</span>
+    <span class="c1"># in-plane perpendicular of ``n_komega``).  It is NOT the</span>
+    <span class="c1"># equivalent-Eulerian chi-pseudo-angle axis (which is generally a</span>
+    <span class="c1"># different direction; see ``kappa_eulerian_chi`` below and issue</span>
+    <span class="c1"># #284).</span>
+    <span class="n">kappa_chi_eq</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="s2">&quot;kappa_chi_eq&quot;</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+        <span class="n">kappa_chi_eq_spec</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;kappa_chi_eq&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kappa_chi_eq_spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">kappa_chi_eq</span> <span class="o">=</span> <span class="n">parse_axis</span><span class="p">(</span><span class="n">kappa_chi_eq_spec</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">kappa_chi_eq_spec</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">kappa_chi_eq_spec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="p">):</span>
+            <span class="n">kappa_chi_eq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">kappa_chi_eq_spec</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: &#39;kappa_chi_eq&#39; must be a signed-axis &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;string or a length-3 numeric vector; got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kappa_chi_eq_spec</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Optional kappa_eulerian_chi for the equivalent-Eulerian chi</span>
+    <span class="c1"># pseudo-angle axis (issue #284).  Distinct from ``kappa_chi_eq``:</span>
+    <span class="c1"># this is the axis the kappa→Eulerian decomposition rotates about</span>
+    <span class="c1"># for the virtual ``chi`` angle, and should match the corresponding</span>
+    <span class="c1"># non-kappa Eulerian preset&#39;s ``chi`` axis (fourcv/fourch/psic chi</span>
+    <span class="c1"># is conventionally ``+longitudinal``).  When omitted, the loader</span>
+    <span class="c1"># derives it from the first basis direction perpendicular to</span>
+    <span class="c1"># ``n_komega`` in the conventional order</span>
+    <span class="c1"># (``+longitudinal``, ``+vertical``, ``+transverse``).</span>
+    <span class="n">kappa_eulerian_chi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="s2">&quot;kappa_eulerian_chi&quot;</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;kappa_eulerian_chi&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">kappa_eulerian_chi</span> <span class="o">=</span> <span class="n">parse_axis</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">kappa_eulerian_chi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: &#39;kappa_eulerian_chi&#39; must be a &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;signed-axis string or a length-3 numeric vector; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">spec</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Stages</span>
+    <span class="k">if</span> <span class="s2">&quot;stages&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: missing required top-level key &#39;stages&#39;.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">stages_spec</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stages_spec</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">stages_spec</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: &#39;stages&#39; must be a non-empty list.&quot;</span><span class="p">)</span>
+    <span class="n">stages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Stage</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">stage_spec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stages_spec</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stage_spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: stages[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">] must be a mapping; got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">stage_spec</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">_check_unknown_keys</span><span class="p">(</span><span class="n">stage_spec</span><span class="p">,</span> <span class="n">_STAGE_KEYS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;in stages[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;axis&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;role&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stage_spec</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: stages[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">] missing required key </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+        <span class="n">sname</span> <span class="o">=</span> <span class="n">stage_spec</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">_resolve_axis</span><span class="p">(</span>
+            <span class="n">stage_spec</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">],</span>
+            <span class="n">basis</span><span class="p">,</span>
+            <span class="n">alpha_deg</span><span class="o">=</span><span class="n">alpha_deg</span><span class="p">,</span>
+            <span class="n">kappa_chi_eq</span><span class="o">=</span><span class="n">kappa_chi_eq</span><span class="p">,</span>
+            <span class="n">stage_name</span><span class="o">=</span><span class="n">sname</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">Stage</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">sname</span><span class="p">,</span>
+                <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
+                <span class="n">parent</span><span class="o">=</span><span class="n">stage_spec</span><span class="p">[</span><span class="s2">&quot;parent&quot;</span><span class="p">],</span>
+                <span class="n">role</span><span class="o">=</span><span class="n">stage_spec</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Modes</span>
+    <span class="k">if</span> <span class="s2">&quot;modes&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: missing required top-level key &#39;modes&#39;.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">modes_spec</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;modes&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">modes_spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">modes_spec</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: &#39;modes&#39; must be a non-empty mapping.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">modes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConstraintSet</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">default_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">mname</span><span class="p">,</span> <span class="n">mspec</span> <span class="ow">in</span> <span class="n">modes_spec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: mode names must be strings; got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mname</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mname</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">).&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mspec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">mspec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">default_mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: more than one mode is marked &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;&#39;default: true&#39; (</span><span class="si">{</span><span class="n">default_mode</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="n">mname</span><span class="si">!r}</span><span class="s2">); &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;exactly one default is allowed.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">default_mode</span> <span class="o">=</span> <span class="n">mname</span>
+        <span class="n">modes</span><span class="p">[</span><span class="n">mname</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_constraint_set</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="n">mspec</span><span class="p">)</span>
+
+    <span class="c1"># Build the kappa pseudo-angle convention if applicable.</span>
+    <span class="n">kappa_convention</span><span class="p">:</span> <span class="n">KappaPseudoAngleConvention</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">alpha_deg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span>
+        <span class="n">kappa_chi_eq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">kappa_eulerian_chi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">n_komega</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;komega&quot;</span><span class="p">)</span>
+            <span class="n">n_kappa</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;kappa&quot;</span><span class="p">)</span>
+            <span class="n">n_kphi</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">axis</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;kphi&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GeometrySchemaError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_label</span><span class="si">}</span><span class="s2">: kappa parameters declared but the stage &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;list does not contain the canonical kappa stage names &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;komega&#39;, &#39;kappa&#39;, &#39;kphi&#39;.  The declarative loader &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;synthesizes the KappaPseudoAngleConvention from these &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;names; rename your stages accordingly or omit the &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;kappa_chi_eq&#39; / &#39;kappa_eulerian_chi&#39; / &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;parameters.alpha_deg&#39; fields.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+        <span class="c1"># Resolve the equivalent-Eulerian chi axis (issue #284).</span>
+        <span class="c1"># Precedence:</span>
+        <span class="c1">#   1. explicit ``kappa_eulerian_chi`` field (caller override);</span>
+        <span class="c1">#   2. derived: first basis direction perpendicular to</span>
+        <span class="c1">#      ``n_komega`` in the conventional order</span>
+        <span class="c1">#      ``(+longitudinal, +vertical, +transverse)``.</span>
+        <span class="c1"># The conventional choice is ``+longitudinal``: every standard</span>
+        <span class="c1"># 4-/6-circle Eulerian preset shipped with this package</span>
+        <span class="c1"># (fourcv, fourch, psic, sixc, fivec) puts its ``chi`` rotation</span>
+        <span class="c1"># about ``+longitudinal``.  Aligning the kappa equivalent-</span>
+        <span class="c1"># Eulerian decomposition with that choice makes</span>
+        <span class="c1"># ``forward()`` reachability of a kappa preset match its</span>
+        <span class="c1"># non-kappa sister (fourcv↔kappa4cv, fourch↔kappa4ch,</span>
+        <span class="c1"># psic↔kappa6c).</span>
+        <span class="k">if</span> <span class="n">kappa_eulerian_chi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_chi_eq</span> <span class="o">=</span> <span class="n">kappa_eulerian_chi</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n_chi_eq</span> <span class="o">=</span> <span class="n">_derive_kappa_eulerian_chi</span><span class="p">(</span><span class="n">n_komega</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">source_label</span><span class="p">)</span>
+
+        <span class="n">kappa_convention</span> <span class="o">=</span> <span class="n">KappaPseudoAngleConvention</span><span class="p">(</span>
+            <span class="n">n_komega</span><span class="o">=</span><span class="n">n_komega</span><span class="p">,</span>
+            <span class="n">n_kappa</span><span class="o">=</span><span class="n">n_kappa</span><span class="p">,</span>
+            <span class="n">n_kphi</span><span class="o">=</span><span class="n">n_kphi</span><span class="p">,</span>
+            <span class="n">n_chi_eq</span><span class="o">=</span><span class="n">n_chi_eq</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">stages</span><span class="o">=</span><span class="n">stages</span><span class="p">,</span>
+        <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">documentation</span><span class="p">,</span>
+        <span class="n">modes</span><span class="o">=</span><span class="n">modes</span><span class="p">,</span>
+        <span class="n">default_mode</span><span class="o">=</span><span class="n">default_mode</span><span class="p">,</span>
+        <span class="n">kappa_alpha_deg</span><span class="o">=</span><span class="n">alpha_deg</span><span class="p">,</span>
+        <span class="n">kappa_pseudo_angle_convention</span><span class="o">=</span><span class="n">kappa_convention</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Public API</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="load_geometry_file">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.load_geometry_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_geometry_file</span><span class="p">(</span>
+    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a geometry from a path or YAML text.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source : str | os.PathLike | pathlib.Path</span>
+<span class="sd">        Either a filesystem path to a YAML file, or a ``str`` containing</span>
+<span class="sd">        YAML text.  See the dispatch rule in the module docstring.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Override values for ``basis`` and ``alpha_deg``.  Caller-supplied</span>
+<span class="sd">        ``basis`` always wins over whatever the YAML declares.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    AdHocDiffractometer</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FileNotFoundError</span>
+<span class="sd">        If the source resolves to a path that does not exist.</span>
+<span class="sd">    GeometrySchemaError</span>
+<span class="sd">        If the YAML document declares the geometry marker but is otherwise</span>
+<span class="sd">        malformed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">accepted</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;basis&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha_deg&quot;</span><span class="p">}</span>
+    <span class="n">extras</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-</span> <span class="n">accepted</span>
+    <span class="k">if</span> <span class="n">extras</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;load_geometry_file: unrecognised keyword argument(s) &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">extras</span><span class="p">)</span><span class="si">!r}</span><span class="s2">; accepted: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">accepted</span><span class="p">)</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Branch 1: explicit Path / os.PathLike → always a path.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;declarative geometry file not found: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">_construct_from_doc</span><span class="p">(</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()),</span>
+            <span class="n">source_label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">),</span>
+            <span class="n">overrides</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Branch 2: str — try as YAML first.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;load_geometry_file: &#39;source&#39; must be a path or a str of YAML &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;text; got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">is_geometry</span><span class="p">,</span> <span class="n">parsed</span> <span class="o">=</span> <span class="n">_is_geometry_yaml_text</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_geometry</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_construct_from_doc</span><span class="p">(</span>
+            <span class="n">parsed</span><span class="p">,</span>
+            <span class="n">source_label</span><span class="o">=</span><span class="s2">&quot;&lt;in-memory YAML text&gt;&quot;</span><span class="p">,</span>
+            <span class="n">overrides</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Branch 3: fall back to filesystem path.</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;declarative geometry source </span><span class="si">{</span><span class="n">source</span><span class="si">!r}</span><span class="s2"> not found.  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;It was first attempted as YAML text and was not recognized &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;as a geometry declaration (no </span><span class="si">{</span><span class="n">KIND_KEY</span><span class="si">!r}</span><span class="s2"> marker), then &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;attempted as a filesystem path and the file does not exist.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_construct_from_doc</span><span class="p">(</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()),</span>
+        <span class="n">source_label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">),</span>
+        <span class="n">overrides</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="register_geometry_file">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.register_geometry_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_geometry_file</span><span class="p">(</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a YAML file and add it to the geometry registry.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str | os.PathLike | pathlib.Path</span>
+<span class="sd">        Filesystem path to the YAML file.  Unlike</span>
+<span class="sd">        :func:`load_geometry_file`, this function does **not** accept</span>
+<span class="sd">        in-memory YAML text — registry entries need a stable name</span>
+<span class="sd">        source, which a filesystem path provides naturally via the</span>
+<span class="sd">        filename stem.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Override for the registry key.  Defaults to the filename stem.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The registry name under which the geometry was registered.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FileNotFoundError</span>
+<span class="sd">        If the file does not exist.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the registry already contains an entry under the same name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Local import to avoid a circular dependency at module load time.</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">factories</span> <span class="k">as</span> <span class="n">_factories</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;register_geometry_file: file not found: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+    <span class="c1"># Validate eagerly so problems surface at registration time.</span>
+    <span class="n">geom</span> <span class="o">=</span> <span class="n">_construct_from_doc</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">source_label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">overrides</span><span class="o">=</span><span class="p">{})</span>
+    <span class="n">final_name</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">p</span><span class="o">.</span><span class="n">stem</span>
+    <span class="n">registry</span> <span class="o">=</span> <span class="n">_factories</span><span class="o">.</span><span class="n">_GEOMETRY_REGISTRY</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="k">if</span> <span class="n">final_name</span> <span class="ow">in</span> <span class="n">registry</span><span class="p">:</span>
+        <span class="n">existing</span> <span class="o">=</span> <span class="n">registry</span><span class="p">[</span><span class="n">final_name</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;register_geometry_file: a geometry named </span><span class="si">{</span><span class="n">final_name</span><span class="si">!r}</span><span class="s2"> is &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;already registered (</span><span class="si">{</span><span class="n">existing</span><span class="si">!r}</span><span class="s2">); pass an explicit name= &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;to register this file under a different name.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_factory</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
+        <span class="c1"># Re-read the file on each call so on-disk edits are picked up.</span>
+        <span class="n">fresh</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">_construct_from_doc</span><span class="p">(</span><span class="n">fresh</span><span class="p">,</span> <span class="n">source_label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">overrides</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">_factory</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">final_name</span>
+    <span class="n">_factory</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">geom</span><span class="o">.</span><span class="n">description</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">registry</span><span class="p">[</span><span class="n">final_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_factory</span>
+    <span class="k">return</span> <span class="n">final_name</span></div>
+
+
+
+<div class="viewcode-block" id="register_geometry_yaml">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader.register_geometry_yaml">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_geometry_yaml</span><span class="p">(</span>
+    <span class="n">yaml_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an in-memory YAML string and add it to the geometry registry.</span>
+
+<span class="sd">    The in-memory companion to :func:`register_geometry_file`.  Use it</span>
+<span class="sd">    when the YAML definition of a geometry is already available as a</span>
+<span class="sd">    Python ``str`` (for example, persisted inside another configuration</span>
+<span class="sd">    document) and you want it discoverable via :func:`list_geometries`</span>
+<span class="sd">    and :func:`make_geometry` without round-tripping through the</span>
+<span class="sd">    filesystem.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    yaml_text : str</span>
+<span class="sd">        The YAML document declaring the geometry.  Must contain the</span>
+<span class="sd">        :data:`KIND_KEY` marker with a supported</span>
+<span class="sd">        :data:`SUPPORTED_REVISIONS` value.  Parsed eagerly so schema</span>
+<span class="sd">        errors surface at registration time rather than at first</span>
+<span class="sd">        :func:`make_geometry` call (matching</span>
+<span class="sd">        :func:`register_geometry_file`).</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Required registry key under which the geometry will be</span>
+<span class="sd">        installed.  Unlike :func:`register_geometry_file` there is no</span>
+<span class="sd">        filesystem path from which to derive a default, so this</span>
+<span class="sd">        argument is mandatory.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The registry name (the value passed in as ``name``).</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the registry already contains an entry under ``name``.</span>
+<span class="sd">    GeometrySchemaError</span>
+<span class="sd">        If ``yaml_text`` is not a well-formed declarative geometry</span>
+<span class="sd">        document.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The registered factory re-parses ``yaml_text`` on every</span>
+<span class="sd">    :func:`make_geometry` call so that each invocation returns a fresh</span>
+<span class="sd">    :class:`AdHocDiffractometer` instance, mirroring the re-read</span>
+<span class="sd">    semantics of :func:`register_geometry_file`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Local import to avoid a circular dependency at module load time.</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">factories</span> <span class="k">as</span> <span class="n">_factories</span>
+
+    <span class="n">source_label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&lt;in-memory:</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_text</span><span class="p">)</span>
+    <span class="c1"># Validate eagerly so problems surface at registration time.</span>
+    <span class="n">geom</span> <span class="o">=</span> <span class="n">_construct_from_doc</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">source_label</span><span class="o">=</span><span class="n">source_label</span><span class="p">,</span> <span class="n">overrides</span><span class="o">=</span><span class="p">{})</span>
+    <span class="n">registry</span> <span class="o">=</span> <span class="n">_factories</span><span class="o">.</span><span class="n">_GEOMETRY_REGISTRY</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">registry</span><span class="p">:</span>
+        <span class="n">existing</span> <span class="o">=</span> <span class="n">registry</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;register_geometry_yaml: a geometry named </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> is &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;already registered (</span><span class="si">{</span><span class="n">existing</span><span class="si">!r}</span><span class="s2">); pass a different &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;name= to register this YAML under another name.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Capture yaml_text in the closure so each call re-parses the same</span>
+    <span class="c1"># source.  This mirrors register_geometry_file&#39;s re-read semantics</span>
+    <span class="c1"># (every make_geometry() returns a fresh AdHocDiffractometer).</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_factory</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
+        <span class="n">fresh</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_construct_from_doc</span><span class="p">(</span><span class="n">fresh</span><span class="p">,</span> <span class="n">source_label</span><span class="o">=</span><span class="n">source_label</span><span class="p">,</span> <span class="n">overrides</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">_factory</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">_factory</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">geom</span><span class="o">.</span><span class="n">description</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">registry</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_factory</span>
+    <span class="k">return</span> <span class="n">name</span></div>
+
+
+
+<div class="viewcode-block" id="_register_packaged_geometries">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/geometry_loader/index.html#ad_hoc_diffractometer.geometry_loader._register_packaged_geometries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_register_packaged_geometries</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register every ``*.yml`` file shipped under</span>
+<span class="sd">    :mod:`ad_hoc_diffractometer.geometries` with the geometry registry.</span>
+
+<span class="sd">    Called once at package import time from</span>
+<span class="sd">    :mod:`ad_hoc_diffractometer.factories`.  Subsequent calls are no-ops</span>
+<span class="sd">    in the sense that already-registered names are skipped (with the</span>
+<span class="sd">    same uniqueness guard as :func:`register_geometry_file`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">factories</span> <span class="k">as</span> <span class="n">_factories</span>
+
+    <span class="n">pkg</span> <span class="o">=</span> <span class="s2">&quot;ad_hoc_diffractometer.geometries&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;packaged geometries directory </span><span class="si">%r</span><span class="s2"> not found&quot;</span><span class="p">,</span> <span class="n">pkg</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">registry</span> <span class="o">=</span> <span class="n">_factories</span><span class="o">.</span><span class="n">_GEOMETRY_REGISTRY</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="o">.</span><span class="n">iterdir</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yml&quot;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">stem</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;.yml&quot;</span><span class="p">)]</span>
+
+        <span class="c1"># Bind ``entry`` and ``stem`` into the closure explicitly so each</span>
+        <span class="c1"># iteration captures its own values.</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_make_factory</span><span class="p">(</span><span class="n">_entry</span><span class="o">=</span><span class="n">entry</span><span class="p">,</span> <span class="n">_stem</span><span class="o">=</span><span class="n">stem</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">_factory</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdHocDiffractometer</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">_entry</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+                <span class="n">fresh</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">_construct_from_doc</span><span class="p">(</span>
+                    <span class="n">fresh</span><span class="p">,</span>
+                    <span class="n">source_label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pkg</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">_entry</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">overrides</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">_factory</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">_stem</span>
+            <span class="k">return</span> <span class="n">_factory</span>
+
+        <span class="n">factory</span> <span class="o">=</span> <span class="n">_make_factory</span><span class="p">()</span>
+        <span class="c1"># Eagerly construct once to catch schema errors at import time.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">geom</span> <span class="o">=</span> <span class="n">factory</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                <span class="s2">&quot;failed to load packaged geometry </span><span class="si">%r</span><span class="s2">; skipping&quot;</span><span class="p">,</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">factory</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">geom</span><span class="o">.</span><span class="n">description</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">stem</span> <span class="ow">in</span> <span class="n">registry</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;declarative YAML overrides existing registration for </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">stem</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">registry</span><span class="p">[</span><span class="n">stem</span><span class="p">]</span> <span class="o">=</span> <span class="n">factory</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-06-09 13:32 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
