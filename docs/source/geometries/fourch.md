@@ -81,8 +81,7 @@ Places the sample symmetrically between the incident and diffracted beams.
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 `chi` is held at the value declared in the constraint (default in the demo geometry: 90°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; the constraint
-persists until replaced — see {doc}`../howto/constraints`.
+Override at run time with `g.modes["fixed_chi"].with_constraint_values(chi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -93,7 +92,7 @@ persists until replaced — see {doc}`../howto/constraints`.
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 `phi` is held at the value declared in the constraint (default in the demo geometry: 0°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
+Override at run time with `g.modes["fixed_phi"].with_constraint_values(phi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -104,7 +103,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 `omega` is held at the value declared in the constraint (default in the demo geometry: 0°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
+Override at run time with `g.modes["fixed_omega"].with_constraint_values(omega=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|

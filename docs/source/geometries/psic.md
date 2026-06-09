@@ -85,6 +85,7 @@ Vertical scattering plane bisecting condition (You 1999, §5.3).
 ### `fixed_phi_vertical`
 
 `phi` held at declared value (default 0°), `mu = 0`, `nu = 0`.
+Override at run time with `g.modes["fixed_phi_vertical"].with_constraint_values(phi=...)` — see {doc}`../howto/constraints`.
 The scattering plane is locked vertical by `mu = 0` and `nu = 0`;
 `eta`, `chi`, and `delta` are solved from the hkl equations.
 
@@ -96,7 +97,7 @@ The scattering plane is locked vertical by `mu = 0` and `nu = 0`;
 ### `fixed_chi_vertical`
 
 `chi` held at declared value (default 90°), `mu = 0`, `nu = 0`.
-The caller chooses the chi value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet` — see {doc}`../howto/constraints`.
+Override at run time with `g.modes["fixed_chi_vertical"].with_constraint_values(chi=...)` — see {doc}`../howto/constraints`.
 The scattering plane is locked vertical by `mu = 0` and `nu = 0`;
 `eta`, `phi`, and `delta` are solved from the hkl equations.
 
@@ -109,6 +110,7 @@ The scattering plane is locked vertical by `mu = 0` and `nu = 0`;
 
 Incidence angle α_i fixed at declared value (default 0°) in the
 vertical scattering plane.
+Override at run time with `g.modes["fixed_alpha_i_vertical"].with_constraint_values(alpha_i=...)` — see {doc}`../howto/constraints`.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -122,6 +124,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 Exit angle β_out fixed at declared value (default 0°) in the
 vertical scattering plane.
+Override at run time with `g.modes["fixed_beta_out_vertical"].with_constraint_values(beta_out=...)` — see {doc}`../howto/constraints`.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -148,7 +151,9 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 Issue #264 revision.  Vertical scattering plane (`nu = 0`) with `mu`
 fixed at the user-specified value (default 0) and azimuthal angle ψ
 validation.  Set ``g.azimuthal_reference = (h, k, l)`` before calling
-``forward()``.  The previous bisect(`eta`, `delta`) constraint was
+``forward()``.
+Override the mu pin or the psi target at run time with `g.modes["fixed_psi_vertical"].with_constraint_values(mu=..., psi=...)` — see {doc}`../howto/constraints`.
+The previous bisect(`eta`, `delta`) constraint was
 dropped per the @jwkim-anl review.  The solver returns the
 fixed-sample solutions only when the natural ψ for the requested
 (h, k, l) matches the stored target; the free angles ``eta``, ``chi``,
@@ -170,6 +175,7 @@ are solved jointly from the Bragg condition plus the α_i target.
 This is a 4-D Newton solve that routes through the
 ``_solve_free_detectors`` solver (both detector stages float to lift
 the detector arm out of plane as needed).
+Override any of the three pinned values at run time with `g.modes["fixed_alpha_i_fixed_chi_fixed_phi"].with_constraint_values(chi=..., phi=..., alpha_i=...)` — see {doc}`../howto/constraints`.
 
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
@@ -194,6 +200,7 @@ reduces exactly to ``bisecting_vertical`` (above) because OMEGA = 0
 ⇔ Q lies in the chi-circle plane ⇔ bisecting condition.  Non-zero
 targets tilt Q out of the chi-circle plane and are solved by a 1-D
 Newton refinement on the free outer sample stage (`eta`).
+Override the OMEGA target at run time with `g.modes["fixed_omega_vertical"].with_constraint_values(omega=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -260,6 +267,7 @@ Horizontal scattering plane bisecting condition (You 1999, §5.1).
 ### `fixed_phi_horizontal`
 
 `phi` held at declared value (default 0°), `eta = 0`, `delta = 0`.
+Override at run time with `g.modes["fixed_phi_horizontal"].with_constraint_values(phi=...)` — see {doc}`../howto/constraints`.
 The scattering plane is locked horizontal by `eta = 0` and `delta = 0`;
 `mu`, `chi`, and `nu` are solved from the hkl equations.
 
@@ -271,6 +279,7 @@ The scattering plane is locked horizontal by `eta = 0` and `delta = 0`;
 ### `fixed_chi_horizontal`
 
 `chi` held at declared value (default 0°), `eta = 0`, `delta = 0`.
+Override at run time with `g.modes["fixed_chi_horizontal"].with_constraint_values(chi=...)` — see {doc}`../howto/constraints`.
 The scattering plane is locked horizontal by `eta = 0` and `delta = 0`;
 `mu`, `phi`, and `nu` are solved from the hkl equations.
 
@@ -291,6 +300,7 @@ is kinematically infeasible in this mode.
 
 Incidence angle α_i fixed at declared value (default 0°) in the
 horizontal scattering plane.
+Override at run time with `g.modes["fixed_alpha_i_horizontal"].with_constraint_values(alpha_i=...)` — see {doc}`../howto/constraints`.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -304,6 +314,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 Exit angle β_out fixed at declared value (default 0°) in the
 horizontal scattering plane.
+Override at run time with `g.modes["fixed_beta_out_horizontal"].with_constraint_values(beta_out=...)` — see {doc}`../howto/constraints`.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -332,6 +343,7 @@ Issue #264 revision.  Horizontal scattering plane (`delta = 0`) with
 angle ψ validation.  The previous bisect(`mu`, `nu`) constraint was
 dropped per the @jwkim-anl review.  Free angles `mu`, `chi`, `phi`,
 `nu` jointly satisfy the Bragg condition under the validated ψ.
+Override the eta pin or the psi target at run time with `g.modes["fixed_psi_horizontal"].with_constraint_values(eta=..., psi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -347,6 +359,7 @@ plane (`eta = 0`, `delta = 0`).  Same OMEGA pseudo-angle definition as
 ``fixed_omega_vertical`` above; at ``omega = 0`` the mode reduces
 exactly to ``bisecting_horizontal``.  The free outer sample stage
 rocked by the 1-D Newton is `mu`.
+Override the OMEGA target at run time with `g.modes["fixed_omega_horizontal"].with_constraint_values(omega=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|

@@ -72,6 +72,7 @@ See {doc}`../howto/constraints` for the extras dict pattern.
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 surface normal aligned with the Z-axis; alpha directly equals the incidence
 angle β_in, gamma directly equals the exit angle β_out.
+Override the α_i target at run time with `g.modes["zaxis"].with_constraint_values(alpha_i=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
