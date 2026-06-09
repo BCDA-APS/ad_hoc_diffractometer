@@ -42,8 +42,19 @@ Module Contents
        it sits on the floor / fixed lab frame.
 
    The sign of the axis vector encodes handedness:
-       +nHat  =>  right-handed rotation about nHat
-       -nHat  =>  left-handed rotation about nHat
+   ``+n_axis`` is a right-handed rotation about ``n_axis``;
+   ``-n_axis`` is left-handed.
+
+   .. note::
+
+      ``n_axis`` is the **per-stage rotation axis** — internal to the
+      stage definition.  It is **not** the same as ``n̂``
+      (``n_hat`` in mode ``extras``,
+      :attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`,
+      :attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuthal_reference`),
+      which is the user-facing reference vector consumed by
+      :class:`~ad_hoc_diffractometer.mode.ReferenceConstraint` modes.
+      See the :ref:`glossary` for the disambiguation.
 
    :param name: Human-readable name for this stage (e.g. 'mu', 'S2-1').
    :type name: str

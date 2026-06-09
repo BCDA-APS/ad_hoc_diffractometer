@@ -15,6 +15,20 @@ Azimuth
    {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint` and
    {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`.
 
+Azimuthal reference vector
+   The reciprocal-space direction (Miller indices
+   ``(h, k, l)``) about which the azimuthal angle **ψ** is measured.
+   Stored on the geometry as
+   {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuthal_reference`
+   and consumed by the ``"psi"`` and ``"naz"``
+   {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint` modes.
+   Set with ``g.azimuthal_reference = (h, k, l)`` (a length-3 sequence
+   of numbers; ``(0, 0, 0)`` is rejected).  Default is ``None``.  In
+   per-mode ``Extras (input)`` tables this same vector is referred to
+   by its mathematical symbol **n̂** (rendered as the ``n_hat`` key in
+   ``mode.extras``).  See {term}`n̂ (reference vector)` for the full
+   surface-form table, and {doc}`howto/surface`.
+
 B matrix
    The matrix that encodes the reciprocal lattice and maps Miller indices
    **h** = (h, k, l)ᵀ to the scattering vector in Cartesian crystal-frame
@@ -168,6 +182,60 @@ Monochromatic radiation
    of the single-wavelength four-circle formalism.
    Spallation (time-of-flight) sources are out of scope.
 
+n̂ (reference vector)
+   The reference direction (Miller indices) consumed by a
+   {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`.  The same
+   abstract concept appears in the codebase under several surface
+   forms — this is the canonical entry that disambiguates them:
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 28 28 44
+
+      * - Where you see it
+        - Surface form
+        - What it refers to
+      * - Per-mode tables in ``docs/source/geometries/*.md``
+        - **n̂** (Unicode hat) or **n̂ (surface normal)** or
+          **n̂ (reference vector)**
+        - The abstract mathematical symbol for the reference vector
+      * - Math blocks in ``docs/source/concepts.md`` and the kappa
+          per-geometry pages
+        - ``\hat{n}``
+        - The same symbol in LaTeX
+      * - YAML files in
+          ``src/ad_hoc_diffractometer/geometries/``,
+          ``mode.extras`` dict
+        - ``n_hat: REQUIRED``
+        - Documentation placeholder — **not** a settable input slot.
+          Assigning a value here has no effect on ``forward()`` (and
+          emits a ``UserWarning`` directing the caller at the geometry
+          attribute below — issue #294).
+      * - On the geometry, when used by ``"alpha_i"``, ``"beta_out"``,
+          ``"a_eq_b"`` reference constraints
+        - {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`
+        - The actual stored vector.  Set via
+          ``g.surface_normal = (h, k, l)``.
+      * - On the geometry, when used by ``"psi"`` or ``"naz"``
+          reference constraints
+        - {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuthal_reference`
+        - The actual stored vector.  Set via
+          ``g.azimuthal_reference = (h, k, l)``.
+
+   **Which attribute does the active mode need?** Use
+   {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.required_reference_vector`
+   to ask the geometry directly — it returns
+   ``"surface_normal"``, ``"azimuthal_reference"``, or ``None`` based
+   on the active mode's reference constraint.
+
+   **Not to be confused with** the {term}`Stage rotation axis` (the
+   per-stage rotation axis vector encoded by sign in the YAML ``axis:``
+   field), which is a different vector entirely and is internal to the
+   stage definition.  See that entry for the disambiguation.
+
+   See {doc}`howto/surface` for the run-time recipe and the
+   ``"omega"`` reference constraint, which needs no vector.
+
 Orienting reflection
    A Bragg reflection measured at a known (h, k, l) whose measured motor
    angles are used to determine the U matrix.  Typically two reflections
@@ -205,10 +273,24 @@ Sphere of confusion
    ideally a point but in practice a sphere of finite radius.
 
 Stage
-   A single rotary axis of the diffractometer.  Characterized by its axis
-   direction (signed unit vector), parent stage, role (sample or detector),
-   and optional motor limits.
+   A single rotary axis of the diffractometer.  Characterized by its
+   {term}`rotation axis <Stage rotation axis>` (a signed unit vector),
+   parent stage, role (sample or detector), and optional motor limits.
    See {class}`~ad_hoc_diffractometer.stage.Stage`.
+
+Stage rotation axis
+   The signed unit vector that defines a single {term}`stage <Stage>`'s
+   rotation axis in the lab frame.  Encoded in the YAML ``axis:`` field
+   of each stage declaration; the sign carries the handedness
+   (``+n_axis`` → right-handed rotation, ``-n_axis`` → left-handed).
+   Internal to the stage definition — **not** a user-settable run-time
+   parameter.  Used by
+   {func}`~ad_hoc_diffractometer.rotation.rotation_matrix` and the
+   stage's ``axis`` attribute.  Earlier docstrings spelled this
+   ``nHat`` (camelCase); the name was changed to ``n_axis`` in issue
+   #294 to remove the search-collision with **n̂** (the user-facing
+   reference vector).  See {term}`n̂ (reference vector)` for the
+   disambiguation.
 
 Serialization
    The process of converting the complete diffractometer state to a Python
@@ -222,6 +304,23 @@ Stack
    one below it (its parent).  The combined rotation matrix is the ordered
    product of individual stage matrices, from the base-mounted (outermost)
    stage to the innermost.
+
+Surface normal
+   The reciprocal-space direction (Miller indices ``(h, k, l)``) of
+   the vector perpendicular to the sample surface.  Stored on the
+   geometry as
+   {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`
+   and consumed by the ``"alpha_i"``, ``"beta_out"``, and ``"a_eq_b"``
+   {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint` modes
+   (plus {func}`~ad_hoc_diffractometer.reference.incidence_angle` /
+   {func}`~ad_hoc_diffractometer.reference.exit_angle` and
+   {mod}`~ad_hoc_diffractometer.surface` helpers).  Set with
+   ``g.surface_normal = (h, k, l)`` (a length-3 sequence of numbers;
+   ``(0, 0, 0)`` is rejected).  Default is ``None``.  In per-mode
+   ``Extras (input)`` tables this same vector is referred to by its
+   mathematical symbol **n̂** (rendered as the ``n_hat`` key in
+   ``mode.extras``).  See {term}`n̂ (reference vector)` for the full
+   surface-form table, and {doc}`howto/surface`.
 
 Two-theta
    The total scattering angle 2θ between the incident and diffracted
@@ -283,11 +382,18 @@ Zone (mode)
    pages for usage.
 
 ψ (psi) angle
-   Two definitions appear in the literature:
-   (1) **You (1999)**: azimuthal angle of a reference vector about **Q** —
-   a crystal-orientation diagnostic, constant for a given (hkl, UB).
-   (2) **Busing & Levy (1967)**: angle of sample rotation about **Q** relative
-   to a reference orientation — the quantity physically varied in a ψ scan.
-   See {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.psi` and
+   A *scalar angle* (degrees), distinct from both the {term}`azimuthal
+   reference vector <Azimuthal reference vector>` it is measured *from*
+   and the {term}`reference vector <n̂ (reference vector)>` it shares
+   notation with.  Two definitions appear in the literature:
+   (1) **You (1999)**: azimuthal angle of a reference vector about
+   **Q** — a crystal-orientation diagnostic, constant for a given
+   (hkl, UB).
+   (2) **Busing & Levy (1967)**: angle of sample rotation about **Q**
+   relative to a reference orientation — the quantity physically varied
+   in a ψ scan.
+   See {meth}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.psi`,
+   {func}`~ad_hoc_diffractometer.reference.psi_angle`,
+   {func}`~ad_hoc_diffractometer.reference.natural_psi`, and
    {func}`~ad_hoc_diffractometer.scan.psi_trajectory`.
 ```

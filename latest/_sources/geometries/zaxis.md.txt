@@ -78,7 +78,7 @@ Override the α_i target at run time with `g.modes["zaxis"].with_constraint_valu
 |---|---|
 | **Computed** | Z, delta, gamma |
 | **Constant during** `forward()` | — |
-| **Extras (input)** | n̂ (surface normal) |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i (= alpha), beta_out (= gamma) |
 
 ### `reflectivity`
@@ -90,7 +90,7 @@ symmetric reflection — alpha_i = beta_out (alpha = gamma).
 |---|---|
 | **Computed** | Z, delta, alpha, gamma |
 | **Constant during** `forward()` | — |
-| **Extras (input)** | n̂ |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i, beta_out |
 
 ## API reference

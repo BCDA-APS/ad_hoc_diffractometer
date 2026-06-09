@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
-    <script src="../../_static/documentation_options.js?v=cb47ac36"></script>
+    <script src="../../_static/documentation_options.js?v=4394e4e0"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-09 11:44 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-09 13:06 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -693,6 +693,81 @@
 <span class="sd">        extras={&quot;azimuth&quot;: OPTIONAL},</span>
 <span class="sd">    )</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Documentation-placeholder extras keys (issue #294)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="n">_PLACEHOLDER_EXTRA_KEYS</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;n_hat&quot;</span><span class="p">})</span>
+<span class="sd">&quot;&quot;&quot;Extras-dict keys that are *documentation hints*, not settable input slots.</span>
+
+<span class="sd">Issue #294.  Some ``extras`` entries on a</span>
+<span class="sd">:class:`ConstraintSet` — currently only ``&quot;n_hat&quot;`` — name a quantity</span>
+<span class="sd">that *looks* like a settable input but is actually a documentation</span>
+<span class="sd">placeholder.  The corresponding value lives on the diffractometer under</span>
+<span class="sd">:attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`</span>
+<span class="sd">or</span>
+<span class="sd">:attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuthal_reference`,</span>
+<span class="sd">chosen by the mode&#39;s</span>
+<span class="sd">:class:`ReferenceConstraint`; the ``extras`` entry is just a hint that</span>
+<span class="sd">documents the requirement.</span>
+
+<span class="sd">A user who naively assigns ``cs.extras[&quot;n_hat&quot;] = (0, 0, 1)`` sees no</span>
+<span class="sd">effect on :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`</span>
+<span class="sd">and is confused.  :class:`_ExtrasDict` (below) wraps the ``extras``</span>
+<span class="sd">dict and emits a :class:`UserWarning` whenever a placeholder key in</span>
+<span class="sd">this set is overwritten with a non-sentinel, non-``None`` value,</span>
+<span class="sd">directing the caller at the correct geometry attribute.</span>
+
+<span class="sd">To extend the warning to a new placeholder key, add the key name to</span>
+<span class="sd">this frozenset.  The warning is intentionally minimal — no exception</span>
+<span class="sd">is raised — because the assignment is harmless (silently ignored by</span>
+<span class="sd">the solver).  The goal is to surface the footgun to a user who has</span>
+<span class="sd">misread the ``extras`` dict as a settable input bag.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="_ExtrasDict">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode._ExtrasDict">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ExtrasDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dict that warns when documentation-placeholder keys are overwritten.</span>
+
+<span class="sd">    Issue #294.  Behaves identically to ``dict`` except that assigning a</span>
+<span class="sd">    non-sentinel, non-``None`` value to a key in</span>
+<span class="sd">    :data:`_PLACEHOLDER_EXTRA_KEYS` (currently ``{&quot;n_hat&quot;}``) emits a</span>
+<span class="sd">    :class:`UserWarning` directing the caller at the correct geometry</span>
+<span class="sd">    attribute.  Sentinel writes (``REQUIRED``, ``OPTIONAL``, ``None``)</span>
+<span class="sd">    are silent: those are legitimate construction-time states produced</span>
+<span class="sd">    by the YAML loader and :meth:`ConstraintSet.from_dict`.</span>
+
+<span class="sd">    The check is intentionally minimal — no exception, no rejection of</span>
+<span class="sd">    the write — because the value is harmless (it&#39;s silently ignored by</span>
+<span class="sd">    the solver).  The goal is only to surface the footgun to a user who</span>
+<span class="sd">    has misread the ``extras`` dict as a settable input bag.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_PLACEHOLDER_EXTRA_KEYS</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">REQUIRED</span><span class="p">,</span> <span class="n">OPTIONAL</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;extras[</span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">] is a documentation placeholder, not a &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;settable input slot.  Assigning a value here has no &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;effect on forward().  Set the reference vector on the &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;geometry instead: use &#39;g.surface_normal = (h, k, l)&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;for surface-mode constraints &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(alpha_i / beta_out / a_eq_b), or &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;g.azimuthal_reference = (h, k, l)&#39; for &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;psi / naz constraints.  See &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;AdHocDiffractometer.required_reference_vector to &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;discover which attribute the active mode needs.  &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(issue #294)&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -1611,7 +1686,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">computed</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
             <span class="nb">list</span><span class="p">(</span><span class="n">computed</span><span class="p">)</span> <span class="k">if</span> <span class="n">computed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extras</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">extras</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="c1"># Use _ExtrasDict so a later assignment to a placeholder key</span>
+        <span class="c1"># (e.g. ``cs.extras[&quot;n_hat&quot;] = (0, 0, 1)``) warns the caller —</span>
+        <span class="c1"># see issue #294.  Construction-time values bypass the warning</span>
+        <span class="c1"># path because we populate via super().__setitem__ semantics</span>
+        <span class="c1"># (the dict() copy uses internal C-level assignment).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extras</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_ExtrasDict</span><span class="p">(</span><span class="n">extras</span> <span class="ow">or</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cut_points</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">cut_points</span> <span class="ow">or</span> <span class="p">{})</span>
 
     <span class="c1"># ------------------------------------------------------------------</span>
@@ -2219,7 +2299,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-09 11:44 CDT.
+  Last updated on 2026-06-09 13:06 CDT.
   <br/>
 </p></div>
       

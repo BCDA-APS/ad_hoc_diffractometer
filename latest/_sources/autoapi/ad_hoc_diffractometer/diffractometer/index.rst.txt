@@ -872,6 +872,70 @@ Module Contents
 
 
 
+   .. py:property:: required_reference_vector
+      :type: str | None
+
+
+      Name of the geometry attribute the active mode needs as its reference vector.
+
+      Issue #294.  The ``n̂`` reference vector required by some modes
+      does not live in :attr:`mode.extras` — that ``n_hat`` entry is a
+      documentation placeholder.  The actual vector lives on the
+      diffractometer under one of two attributes, chosen by the mode's
+      :class:`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
+
+      =====================================  =================================
+      ReferenceConstraint name               Required attribute on the geometry
+      =====================================  =================================
+      ``"alpha_i"``                          :attr:`surface_normal`
+      ``"beta_out"``                         :attr:`surface_normal`
+      ``"a_eq_b"``                           :attr:`surface_normal`
+      ``"psi"``                              :attr:`azimuthal_reference`
+      ``"naz"``                              :attr:`azimuthal_reference`
+      ``"omega"``                            (none)
+      =====================================  =================================
+
+      This property answers "which attribute do I set?" without
+      forcing the caller to memorise the table.
+
+      :returns: One of ``"surface_normal"``, ``"azimuthal_reference"``, or
+                ``None``.  ``None`` is returned when the active mode either
+                has no :class:`~ad_hoc_diffractometer.mode.ReferenceConstraint`,
+                uses a ReferenceConstraint that needs no vector (``"omega"``),
+                or no mode is active.
+      :rtype: str or None
+
+      .. rubric:: Examples
+
+      Surface mode → ``surface_normal``:
+
+      >>> g = make_geometry("psic")
+      >>> g.mode_name = "fixed_alpha_i_fixed_chi_fixed_phi"
+      >>> g.required_reference_vector
+      'surface_normal'
+      >>> setattr(g, g.required_reference_vector, (0, 0, 1))
+
+      Azimuthal mode → ``azimuthal_reference``:
+
+      >>> g.mode_name = "fixed_psi_vertical"
+      >>> g.required_reference_vector
+      'azimuthal_reference'
+
+      OMEGA pseudo-angle mode → no vector required:
+
+      >>> g.mode_name = "fixed_omega_vertical"
+      >>> g.required_reference_vector is None
+      True
+
+      .. seealso::
+
+         :py:obj:`surface_normal`
+             The attribute set for surface-type reference constraints.
+
+         :py:obj:`azimuthal_reference`
+             The attribute set for psi/naz reference constraints.
+
+
    .. py:property:: sample
       :type: ~ad_hoc_diffractometer.sample.Sample
 

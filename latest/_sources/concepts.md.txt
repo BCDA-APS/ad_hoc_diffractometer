@@ -86,11 +86,23 @@ The `BASIS_YOU` and `BASIS_BL` constants are exported from the package.
 
 ## Axis sign convention
 
-Each stage's rotation axis is a **signed unit vector**: `+nHat` means
-right-handed rotation, `-nHat` means left-handed (equivalent to
+Each stage's rotation axis is a **signed unit vector**: `+n_axis` means
+right-handed rotation, `-n_axis` means left-handed (equivalent to
 right-handed about the negated axis).  Physical direction names
 (`"vertical"`, `"transverse"`, `"longitudinal"`) are resolved against
 the geometry's basis dict.
+
+```{note}
+``n_axis`` here is the **per-stage rotation axis** vector — internal
+to the stage definition.  It is **not** the same as ``n̂`` (written as
+the ``n_hat`` key in mode ``extras``, or as
+``g.surface_normal`` / ``g.azimuthal_reference`` on the geometry),
+which is the *user-facing reference vector* required by surface and
+azimuthal modes.  See the {ref}`glossary <glossary>` entries for
+"n̂ (reference vector)" and "Stage rotation axis" for the full
+disambiguation, and {doc}`howto/surface` for how to provide the
+reference vector at run time.
+```
 
 The two equivalences in full:
 
