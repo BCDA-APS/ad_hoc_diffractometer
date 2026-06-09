@@ -2435,3 +2435,259 @@ def test_qaz_residual_nonzero():
     residual = _qaz_residual(angles, g, 90.0)
     assert residual == pytest.approx(qaz_actual - 90.0, abs=1e-6)
     assert abs(residual) > 1e-3  # not satisfied
+
+
+# ---------------------------------------------------------------------------
+# ConstraintSet.with_constraint_values (issue #293)
+# ---------------------------------------------------------------------------
+
+
+def _b3_constraint_set():
+    """Build a ConstraintSet matching psic 'fixed_alpha_i_fixed_chi_fixed_phi'.
+
+    Three settable-value constraints: two SampleConstraint plus one
+    ReferenceConstraint.  Used by several with_constraint_values tests
+    that exercise the multi-value path.
+    """
+    return ConstraintSet(
+        [
+            SampleConstraint("chi", 0.0),
+            SampleConstraint("phi", 0.0),
+            ReferenceConstraint("alpha_i", 0.0),
+        ],
+        computed=["mu", "eta", "nu", "delta"],
+        extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        cut_points={"eta": -180.0},
+    )
+
+
+@pytest.mark.parametrize(
+    "build_cs, updates, expected_values, context",
+    [
+        pytest.param(
+            lambda: ConstraintSet(
+                [
+                    SampleConstraint("chi", 90.0),
+                    SampleConstraint("mu", 0.0),
+                    DetectorConstraint("nu", 0.0),
+                ],
+                computed=["eta", "phi", "delta"],
+            ),
+            {"chi": 45.0},
+            {"chi": 45.0, "mu": 0.0, "nu": 0.0},
+            does_not_raise(),
+            id="sample-chi-45",
+        ),
+        pytest.param(
+            lambda: ConstraintSet(
+                [
+                    SampleConstraint("eta", 0.0),
+                    DetectorConstraint("delta", 0.0),
+                    SampleConstraint("phi", 0.0),
+                ],
+                computed=["mu", "chi", "nu"],
+            ),
+            {"delta": 30.0},
+            {"eta": 0.0, "delta": 30.0, "phi": 0.0},
+            does_not_raise(),
+            id="detector-delta-30",
+        ),
+        pytest.param(
+            _b3_constraint_set,
+            {"alpha_i": 5.0},
+            {"chi": 0.0, "phi": 0.0, "alpha_i": 5.0},
+            does_not_raise(),
+            id="reference-alpha_i-5",
+        ),
+        pytest.param(
+            # ReferenceConstraint('a_eq_b', ...) only accepts True
+            # (the constraint expresses the *boolean* condition
+            # alpha_i = beta_out; there is no False variant).  This
+            # case verifies the bool branch of with_constraint_values
+            # by re-applying the only legal value.
+            lambda: ConstraintSet(
+                [ReferenceConstraint("a_eq_b", True)],
+                extras={"n_hat": REQUIRED},
+            ),
+            {"a_eq_b": True},
+            {"a_eq_b": True},
+            does_not_raise(),
+            id="reference-a_eq_b-True",
+        ),
+        pytest.param(
+            _b3_constraint_set,
+            {"chi": 15.0, "phi": 30.0, "alpha_i": 5.0},
+            {"chi": 15.0, "phi": 30.0, "alpha_i": 5.0},
+            does_not_raise(),
+            id="b3-three-values",
+        ),
+        pytest.param(
+            _b3_constraint_set,
+            {},
+            {"chi": 0.0, "phi": 0.0, "alpha_i": 0.0},
+            does_not_raise(),
+            id="empty-updates-no-change",
+        ),
+    ],
+)
+def test_with_constraint_values_replaces_values(
+    build_cs, updates, expected_values, context
+):
+    """Each named constraint's value is replaced; others untouched."""
+    cs = build_cs()
+    with context:
+        new = cs.with_constraint_values(**updates)
+        # Always a fresh instance, even when updates is empty.
+        assert new is not cs
+        # Names mapped to actual values in the new set.
+        new_values = {c.name: c.value for c in new.constraints if hasattr(c, "name")}
+        for name, expected in expected_values.items():
+            assert new_values[name] == expected
+        # Constraint order preserved.
+        original_names = [getattr(c, "name", None) for c in cs.constraints]
+        new_names = [getattr(c, "name", None) for c in new.constraints]
+        assert new_names == original_names
+        # Receiver is unmodified.
+        original_values = {
+            c.name: c.value for c in cs.constraints if hasattr(c, "name")
+        }
+        for c in cs.constraints:
+            if hasattr(c, "name"):
+                assert c.value == original_values[c.name]
+
+
+def test_with_constraint_values_preserves_computed_extras_cut_points():
+    """computed, extras (with sentinel identity), and cut_points survive."""
+    cs = _b3_constraint_set()
+    new = cs.with_constraint_values(chi=15.0)
+    # computed is a fresh list with the same contents.
+    assert new.computed == cs.computed
+    assert new.computed is not cs.computed
+    # extras is a fresh dict; REQUIRED sentinel identity preserved;
+    # None placeholders preserved.
+    assert new.extras is not cs.extras
+    assert new.extras == cs.extras
+    assert new.extras["n_hat"] is REQUIRED
+    assert new.extras["alpha_i"] is None
+    assert new.extras["beta_out"] is None
+    # OPTIONAL sentinel identity survives too.
+    cs2 = ConstraintSet(
+        [SampleConstraint("chi", 0.0)],
+        extras={"opt": OPTIONAL},
+    )
+    new2 = cs2.with_constraint_values(chi=10.0)
+    assert new2.extras["opt"] is OPTIONAL
+    # cut_points is a fresh dict with the same contents.
+    assert new.cut_points is not cs.cut_points
+    assert new.cut_points == cs.cut_points
+
+
+def test_with_constraint_values_empty_updates_returns_equal_fresh_instance():
+    """Empty kwargs return a fresh instance that compares equal to self."""
+    cs = _b3_constraint_set()
+    new = cs.with_constraint_values()
+    assert new is not cs
+    assert new == cs
+
+
+def test_with_constraint_values_unknown_key_raises_KeyError():
+    """A single typo lists the typo and the available names."""
+    cs = _b3_constraint_set()
+    with pytest.raises(
+        KeyError,
+        match=re.escape(
+            "with_constraint_values: no constraint(s) named "
+            "['cho'] in this ConstraintSet; available names "
+            "are ['alpha_i', 'chi', 'phi']."
+        ),
+    ):
+        cs.with_constraint_values(cho=45.0)
+
+
+def test_with_constraint_values_multiple_unknown_keys_batched_error():
+    """Every unknown key appears in a single error message."""
+    cs = _b3_constraint_set()
+    with pytest.raises(
+        KeyError,
+        match=re.escape(
+            "with_constraint_values: no constraint(s) named "
+            "['bad_one', 'bad_two'] in this ConstraintSet"
+        ),
+    ):
+        cs.with_constraint_values(bad_two=1.0, bad_one=2.0, chi=15.0)
+
+
+def test_with_constraint_values_bisect_constraint_ignored():
+    """BisectConstraint is relational (no value); the helper skips it.
+
+    A ConstraintSet containing only a BisectConstraint exposes zero
+    settable-value names, so any kwarg falls through to the unknown-key
+    path with an empty ``available names`` list.  This pins the design
+    decision that bisects cannot be overridden via with_constraint_values
+    (they carry sample/detector *stages*, not a value).
+    """
+    cs = ConstraintSet([BisectConstraint("eta", "delta")])
+    with pytest.raises(
+        KeyError,
+        match=re.escape(
+            "with_constraint_values: no constraint(s) named "
+            "['eta'] in this ConstraintSet; available names are []."
+        ),
+    ):
+        cs.with_constraint_values(eta=10.0)
+
+
+def test_with_constraint_values_bisect_alongside_settable_ignored():
+    """A bisect mixed with settable constraints does not appear in
+    available names, and a kwarg matching the bisect class identifier
+    ``'bisect'`` is rejected as unknown."""
+    cs = ConstraintSet(
+        [
+            BisectConstraint("eta", "delta"),
+            SampleConstraint("mu", 0.0),
+            DetectorConstraint("nu", 0.0),
+        ],
+    )
+    # Settable names are mu and nu only — not the bisect's class-level
+    # 'bisect' identifier.
+    with pytest.raises(
+        KeyError,
+        match=re.escape(
+            "with_constraint_values: no constraint(s) named "
+            "['bisect'] in this ConstraintSet; available names "
+            "are ['mu', 'nu']."
+        ),
+    ):
+        cs.with_constraint_values(bisect=10.0)
+
+
+def test_with_constraint_values_duplicate_name_raises_ValueError():
+    """A ConstraintSet hand-built with two same-named constraints rejects override."""
+    # Two SampleConstraint entries sharing the stage name "chi".  This is
+    # a malformed mode (the YAML loader does not produce these) but the
+    # ConstraintSet constructor does not detect it, so with_constraint_values
+    # is the guard.
+    cs = ConstraintSet(
+        [
+            SampleConstraint("chi", 0.0),
+            SampleConstraint("chi", 90.0),
+        ],
+    )
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            "with_constraint_values: this ConstraintSet contains "
+            "two constraints both named 'chi'; cannot resolve "
+            "an override unambiguously."
+        ),
+    ):
+        cs.with_constraint_values(chi=45.0)
+
+
+def test_with_constraint_values_round_trips_via_to_dict():
+    """Replace then restore via to_dict comparison: identical dicts."""
+    cs = _b3_constraint_set()
+    original_dict = cs.to_dict()
+    intermediate = cs.with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)
+    restored = intermediate.with_constraint_values(chi=0.0, phi=0.0, alpha_i=0.0)
+    assert restored.to_dict() == original_dict

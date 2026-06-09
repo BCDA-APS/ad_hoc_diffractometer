@@ -13,6 +13,11 @@ Note any unreleased items inside the comment here.  Not visible until release.
 ### Added
 
 - `register_geometry_yaml` in-memory registration entry point. (#288)
+- `ConstraintSet.with_constraint_values()` one-call value override. (#293)
+
+### Changed
+
+- Document how to override fixed-axis constraint values. (#293)
 
 ### Fixed
 

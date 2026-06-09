@@ -1,3 +1,5 @@
+# Copyright (c) 2026-2026 UChicago Argonne, LLC
+# SPDX-License-Identifier: LicenseRef-UChicago-Argonne-LLC-License
 """
 Regression tests for issue #292.
 
@@ -111,9 +113,7 @@ def test_psic_b3_populates_alpha_i_and_beta_out_extras(
         for ai_stored, bo_stored, sol in zip(
             mode.extras["alpha_i"], mode.extras["beta_out"], sols, strict=True
         ):
-            assert ai_stored == pytest.approx(
-                incidence_angle(g, angles=sol), abs=1e-8
-            )
+            assert ai_stored == pytest.approx(incidence_angle(g, angles=sol), abs=1e-8)
             assert bo_stored == pytest.approx(exit_angle(g, angles=sol), abs=1e-8)
             assert ai_stored == pytest.approx(alpha_target, abs=1e-3)
 
@@ -211,9 +211,11 @@ def test_fourcv_fixed_psi_populates_psi_extra(
             assert stored == pytest.approx(psi_angle(g, angles=sol), abs=1e-6)
             # And by the validation-filter property, every solution must
             # have the natural psi (modulo 360).
-            assert stored == pytest.approx(natural, abs=1e-3) or stored == pytest.approx(
-                natural - 360.0, abs=1e-3
-            ) or stored == pytest.approx(natural + 360.0, abs=1e-3)
+            assert (
+                stored == pytest.approx(natural, abs=1e-3)
+                or stored == pytest.approx(natural - 360.0, abs=1e-3)
+                or stored == pytest.approx(natural + 360.0, abs=1e-3)
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -312,7 +314,9 @@ def test_populate_extras_soft_fails_when_reference_helper_raises(monkeypatch, ca
     def _explode(*_args, **_kwargs):
         raise ValueError("synthetic failure for issue #292 coverage")
 
-    monkeypatch.setattr(forward_mod, "_populate_output_extras", forward_mod._populate_output_extras)
+    monkeypatch.setattr(
+        forward_mod, "_populate_output_extras", forward_mod._populate_output_extras
+    )
     monkeypatch.setattr(
         "ad_hoc_diffractometer.reference.omega_pseudo",
         _explode,

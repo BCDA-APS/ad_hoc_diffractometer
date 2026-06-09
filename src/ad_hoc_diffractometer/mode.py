@@ -1261,6 +1261,121 @@ class ConstraintSet:
         return (bc.sample_stage, bc.detector_stage)
 
     # ------------------------------------------------------------------
+    # Functional update (issue #293)
+    # ------------------------------------------------------------------
+
+    def with_constraint_values(self, **updates: float | bool) -> ConstraintSet:
+        """Return a new :class:`ConstraintSet` with named constraint values replaced.
+
+        The receiver is left unchanged.  Each keyword argument names a
+        constraint by its ``.name`` attribute and supplies the new value.
+        Constraint order, :attr:`computed`, :attr:`extras`, and
+        :attr:`cut_points` are preserved.  The method always returns a
+        fresh instance, even when ``updates`` is empty.
+
+        Parameters
+        ----------
+        **updates : float or bool
+            Mapping of constraint name → new value.  Each key must
+            exactly match the ``.name`` attribute of an existing
+            :class:`SampleConstraint`, :class:`DetectorConstraint`, or
+            :class:`ReferenceConstraint` in the set.  Values are floats
+            (or ``bool`` for the ``"a_eq_b"`` :class:`ReferenceConstraint`).
+
+        Returns
+        -------
+        ConstraintSet
+            A new instance with the named constraints replaced.
+
+        Raises
+        ------
+        KeyError
+            If any key in ``updates`` does not match a constraint name in
+            the set.  The message lists every unknown key at once so a
+            user can fix them all in a single edit.
+        ValueError
+            If two constraints in the receiver share the same
+            ``.name``.  This indicates a malformed
+            :class:`ConstraintSet` (the declarative YAML loader does not
+            produce these; a user who hand-builds one with duplicate
+            sample-stage names will get this error).
+
+        Examples
+        --------
+        Single sample-stage value:
+
+        >>> import ad_hoc_diffractometer as ahd
+        >>> g = ahd.make_geometry("psic")
+        >>> g.modes["fixed_chi_vertical"] = (
+        ...     g.modes["fixed_chi_vertical"].with_constraint_values(chi=45.0)
+        ... )
+
+        Multiple values at once (psic ``fixed_alpha_i_fixed_chi_fixed_phi``):
+
+        >>> g.modes["fixed_alpha_i_fixed_chi_fixed_phi"] = (
+        ...     g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
+        ...     .with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)
+        ... )
+
+        Notes
+        -----
+        :class:`BisectConstraint` (and :class:`VirtualBisectConstraint`)
+        carry no scalar value — they are *relational* constraints
+        between two stages.  This method intentionally ignores them: a
+        kwarg whose key happens to equal a bisect's class-level
+        ``name`` identifier (``"bisect"`` / ``"virtual_bisect"``) will
+        not match and raises :class:`KeyError` like any other unknown
+        key.  A bisect cannot be overridden by changing a value
+        because it has none.
+        """
+        # Build a {name: index} map of constraints that have a settable
+        # scalar value (SampleConstraint, DetectorConstraint,
+        # ReferenceConstraint).  Bisect constraints are deliberately
+        # excluded — they are relational and have no `.value` to
+        # override (see Notes).
+        settable = (SampleConstraint, DetectorConstraint, ReferenceConstraint)
+        name_to_index: dict[str, int] = {}
+        for idx, c in enumerate(self._constraints):
+            if not isinstance(c, settable):
+                continue
+            cname = c.name
+            if cname in name_to_index:
+                raise ValueError(
+                    f"with_constraint_values: this ConstraintSet contains "
+                    f"two constraints both named {cname!r}; cannot resolve "
+                    f"an override unambiguously."
+                )
+            name_to_index[cname] = idx
+
+        unknown = sorted(k for k in updates if k not in name_to_index)
+        if unknown:
+            available = sorted(name_to_index)
+            raise KeyError(
+                f"with_constraint_values: no constraint(s) named "
+                f"{unknown!r} in this ConstraintSet; available names "
+                f"are {available!r}."
+            )
+
+        new_constraints: list[AnyConstraint] = list(self._constraints)
+        for name, new_value in updates.items():
+            idx = name_to_index[name]
+            original = new_constraints[idx]
+            # Each settable-value constraint is constructed with the same
+            # (name, value) signature, so a single replacement pattern
+            # suffices across SampleConstraint, DetectorConstraint, and
+            # ReferenceConstraint.
+            new_constraints[idx] = type(original)(name, new_value)
+
+        # extras and cut_points are shallow-copied; sentinel identity
+        # (REQUIRED / OPTIONAL) is preserved by the copy.
+        return ConstraintSet(
+            constraints=new_constraints,
+            computed=list(self.computed) if self.computed is not None else None,
+            extras=dict(self.extras),
+            cut_points=dict(self.cut_points),
+        )
+
+    # ------------------------------------------------------------------
     # Serialisation
     # ------------------------------------------------------------------
 
