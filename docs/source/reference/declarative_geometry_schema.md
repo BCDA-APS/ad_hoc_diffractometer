@@ -241,10 +241,16 @@ Three accepted forms:
    {func}`~ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian`.
 
 ```{important}
-The sign of the axis vector encodes handedness: ``+nHat`` is
-right-handed rotation about ``nHat``; ``-nHat`` is left-handed.  The
-``rotation: left/right`` shorthand discussed in early issue drafts is
-**not** part of the schema — use signed-axis strings instead.
+The sign of the axis vector encodes handedness: ``+n_axis`` is
+right-handed rotation about ``n_axis``; ``-n_axis`` is left-handed.
+Here ``n_axis`` is the stage's **rotation-axis vector** (an internal
+property of the stage definition).  It is **not** the same as ``n̂``
+(``n_hat`` in mode ``extras``, ``surface_normal``, or
+``azimuthal_reference``), which is the user-facing **reference
+vector** required by surface and ψ modes — see {ref}`glossary` for
+the disambiguation.  The ``rotation: left/right`` shorthand discussed
+in early issue drafts is **not** part of the schema — use signed-axis
+strings instead.
 ```
 
 ---

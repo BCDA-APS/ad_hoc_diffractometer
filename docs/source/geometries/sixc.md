@@ -115,7 +115,7 @@ Override any of the three pinned values at run time with `g.modes["fixed_alpha_z
 |---|---|
 | **Computed** | omega, delta, gamma |
 | **Constant during** `forward()` | alpha (= β_in), chi, phi |
-| **Extras (input)** | n̂ (surface normal) |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i (incidence angle), beta_out (exit angle) |
 
 ### `fixed_beta_zaxis`
@@ -128,7 +128,7 @@ Override at run time with `g.modes["fixed_beta_zaxis"].with_constraint_values(ga
 |---|---|
 | **Computed** | omega, delta, alpha |
 | **Constant during** `forward()` | gamma (= β_out), chi |
-| **Extras (input)** | n̂ |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i, beta_out |
 
 ### `alpha_eq_beta_zaxis`
@@ -141,7 +141,7 @@ Override the chi or phi pin at run time with `g.modes["alpha_eq_beta_zaxis"].wit
 |---|---|
 | **Computed** | omega, delta, alpha, gamma |
 | **Constant during** `forward()` | chi, phi |
-| **Extras (input)** | n̂ |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i, beta_out |
 
 ## API reference

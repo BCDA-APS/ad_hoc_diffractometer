@@ -117,7 +117,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 |---|---|
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
-| **Extras (input)** | n̂ (surface normal) |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i (incidence angle), beta_out (exit angle) |
 
 ### `fixed_beta_out_vertical`
@@ -131,7 +131,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 |---|---|
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
-| **Extras (input)** | n̂ (surface normal) |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i, beta_out |
 
 ### `alpha_eq_beta_vertical`
@@ -143,7 +143,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 |---|---|
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
-| **Extras (input)** | n̂ (surface normal) |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i, beta_out |
 
 ### `fixed_psi_vertical`
@@ -164,7 +164,7 @@ validated ψ.  See {doc}`../howto/surface`.
 |---|---|
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | nu = 0, mu = constraint value, ψ = target |
-| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (input)** | n̂ → set `g.azimuthal_reference = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi (computed azimuth) |
 
 ### `fixed_alpha_i_fixed_chi_fixed_phi`
@@ -183,7 +183,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 |---|---|
 | **Computed** | mu, eta, nu, delta |
 | **Constant during** `forward()` | chi, phi, α_i = target |
-| **Extras (input)** | n̂ (surface normal) |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i, beta_out |
 
 ### `fixed_omega_vertical`
@@ -307,7 +307,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 |---|---|
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | eta = 0, delta = 0 |
-| **Extras (input)** | n̂ (surface normal) |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i, beta_out |
 
 ### `fixed_beta_out_horizontal`
@@ -321,7 +321,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 |---|---|
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | eta = 0, delta = 0 |
-| **Extras (input)** | n̂ (surface normal) |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i, beta_out |
 
 ### `alpha_eq_beta_horizontal`
@@ -333,7 +333,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 |---|---|
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | eta = 0, delta = 0 |
-| **Extras (input)** | n̂ (surface normal) |
+| **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | alpha_i, beta_out |
 
 ### `fixed_psi_horizontal`
@@ -349,7 +349,7 @@ Override the eta pin or the psi target at run time with `g.modes["fixed_psi_hori
 |---|---|
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | delta = 0, eta = constraint value, ψ = target |
-| **Extras (input)** | n̂, ψ |
+| **Extras (input)** | n̂ → set `g.azimuthal_reference = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi |
 
 ### `fixed_omega_horizontal`

@@ -256,6 +256,78 @@ Place this sentinel as the value for any key in ``ConstraintSet.extras`` that
 
 
 # ---------------------------------------------------------------------------
+# Documentation-placeholder extras keys (issue #294)
+# ---------------------------------------------------------------------------
+
+_PLACEHOLDER_EXTRA_KEYS: frozenset[str] = frozenset({"n_hat"})
+"""Extras-dict keys that are *documentation hints*, not settable input slots.
+
+Issue #294.  Some ``extras`` entries on a
+:class:`ConstraintSet` — currently only ``"n_hat"`` — name a quantity
+that *looks* like a settable input but is actually a documentation
+placeholder.  The corresponding value lives on the diffractometer under
+:attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`
+or
+:attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuthal_reference`,
+chosen by the mode's
+:class:`ReferenceConstraint`; the ``extras`` entry is just a hint that
+documents the requirement.
+
+A user who naively assigns ``cs.extras["n_hat"] = (0, 0, 1)`` sees no
+effect on :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`
+and is confused.  :class:`_ExtrasDict` (below) wraps the ``extras``
+dict and emits a :class:`UserWarning` whenever a placeholder key in
+this set is overwritten with a non-sentinel, non-``None`` value,
+directing the caller at the correct geometry attribute.
+
+To extend the warning to a new placeholder key, add the key name to
+this frozenset.  The warning is intentionally minimal — no exception
+is raised — because the assignment is harmless (silently ignored by
+the solver).  The goal is to surface the footgun to a user who has
+misread the ``extras`` dict as a settable input bag.
+"""
+
+
+class _ExtrasDict(dict):
+    """A dict that warns when documentation-placeholder keys are overwritten.
+
+    Issue #294.  Behaves identically to ``dict`` except that assigning a
+    non-sentinel, non-``None`` value to a key in
+    :data:`_PLACEHOLDER_EXTRA_KEYS` (currently ``{"n_hat"}``) emits a
+    :class:`UserWarning` directing the caller at the correct geometry
+    attribute.  Sentinel writes (``REQUIRED``, ``OPTIONAL``, ``None``)
+    are silent: those are legitimate construction-time states produced
+    by the YAML loader and :meth:`ConstraintSet.from_dict`.
+
+    The check is intentionally minimal — no exception, no rejection of
+    the write — because the value is harmless (it's silently ignored by
+    the solver).  The goal is only to surface the footgun to a user who
+    has misread the ``extras`` dict as a settable input bag.
+    """
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        if key in _PLACEHOLDER_EXTRA_KEYS and value not in (REQUIRED, OPTIONAL, None):
+            import warnings
+
+            warnings.warn(
+                f"extras[{key!r}] is a documentation placeholder, not a "
+                f"settable input slot.  Assigning a value here has no "
+                f"effect on forward().  Set the reference vector on the "
+                f"geometry instead: use 'g.surface_normal = (h, k, l)' "
+                f"for surface-mode constraints "
+                f"(alpha_i / beta_out / a_eq_b), or "
+                f"'g.azimuthal_reference = (h, k, l)' for "
+                f"psi / naz constraints.  See "
+                f"AdHocDiffractometer.required_reference_vector to "
+                f"discover which attribute the active mode needs.  "
+                f"(issue #294)",
+                UserWarning,
+                stacklevel=2,
+            )
+        super().__setitem__(key, value)
+
+
+# ---------------------------------------------------------------------------
 # Individual constraint classes
 # ---------------------------------------------------------------------------
 
@@ -1082,7 +1154,12 @@ class ConstraintSet:
         self.computed: list[str] | None = (
             list(computed) if computed is not None else None
         )
-        self.extras: dict[str, Any] = dict(extras or {})
+        # Use _ExtrasDict so a later assignment to a placeholder key
+        # (e.g. ``cs.extras["n_hat"] = (0, 0, 1)``) warns the caller —
+        # see issue #294.  Construction-time values bypass the warning
+        # path because we populate via super().__setitem__ semantics
+        # (the dict() copy uses internal C-level assignment).
+        self.extras: dict[str, Any] = _ExtrasDict(extras or {})
         self.cut_points: dict[str, float] = dict(cut_points or {})
 
     # ------------------------------------------------------------------

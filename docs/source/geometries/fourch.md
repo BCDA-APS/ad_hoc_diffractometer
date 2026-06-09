@@ -120,7 +120,7 @@ the stored target.  See {doc}`../howto/surface`.
 
 | | |
 |---|---|
-| **Extras (input)** | n̂ (reference vector), ψ (target, degrees) |
+| **Extras (input)** | n̂ → set `g.azimuthal_reference = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi (computed azimuth) |
 
 ### `double_diffraction`

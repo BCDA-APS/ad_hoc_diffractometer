@@ -30,9 +30,21 @@ def rotation_matrix(axis: np.ndarray, angle_deg: float) -> np.ndarray:
     negated axis: rotation_matrix(-ZHAT, angle_deg).
 
     The sign of the axis vector encodes handedness:
-        +nHat  =>  right-handed rotation about nHat
-        -nHat  =>  left-handed rotation about nHat
-                   (equivalent to right-handed with negated angle)
+    ``+n_axis`` is a right-handed rotation about ``n_axis``,
+    ``-n_axis`` is left-handed (equivalent to right-handed with
+    a negated angle).
+
+    .. note::
+
+       Here ``n_axis`` is the **per-stage rotation axis** — a property
+       of how each stage is wired in its YAML definition.  Do not
+       confuse it with ``n̂`` (``n_hat`` in mode ``extras``,
+       :attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`,
+       :attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuthal_reference`),
+       which is the user-facing **reference vector** consumed by
+       :class:`~ad_hoc_diffractometer.mode.ReferenceConstraint` modes.
+       See the :ref:`glossary` entries for "n̂ (reference vector)" and
+       "Stage rotation axis" for the disambiguation.
 
     Parameters
     ----------

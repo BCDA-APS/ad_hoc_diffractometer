@@ -2691,3 +2691,122 @@ def test_with_constraint_values_round_trips_via_to_dict():
     intermediate = cs.with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)
     restored = intermediate.with_constraint_values(chi=0.0, phi=0.0, alpha_i=0.0)
     assert restored.to_dict() == original_dict
+
+
+# ---------------------------------------------------------------------------
+# Documentation-placeholder extras warning (issue #294)
+# ---------------------------------------------------------------------------
+
+
+def test_extras_n_hat_assignment_warns_pointing_at_geometry_attribute():
+    """Assigning a real value to extras['n_hat'] warns the caller."""
+    import warnings
+
+    cs = ConstraintSet(
+        [SampleConstraint("chi", 0.0)],
+        extras={"n_hat": REQUIRED},
+    )
+    with pytest.warns(
+        UserWarning,
+        match=re.escape("extras['n_hat'] is a documentation placeholder"),
+    ):
+        cs.extras["n_hat"] = (0, 0, 1)
+
+    # The assignment still goes through (silent no-op was rejected by
+    # design — the value is harmless, the warning is the whole point).
+    assert cs.extras["n_hat"] == (0, 0, 1)
+
+    # The warning text names the correct geometry attributes so the
+    # caller can self-rescue.
+    with warnings.catch_warnings(record=True) as captured:
+        warnings.simplefilter("always")
+        cs.extras["n_hat"] = (1, 1, 1)
+    assert len(captured) == 1
+    msg = str(captured[0].message)
+    assert "g.surface_normal" in msg
+    assert "g.azimuthal_reference" in msg
+    assert "required_reference_vector" in msg
+
+
+@pytest.mark.parametrize(
+    "value, context",
+    [
+        # Sentinels and None are legitimate construction-time values;
+        # writing them via __setitem__ must remain silent.
+        pytest.param(REQUIRED, does_not_raise(), id="REQUIRED-silent"),
+        pytest.param(OPTIONAL, does_not_raise(), id="OPTIONAL-silent"),
+        pytest.param(None, does_not_raise(), id="None-silent"),
+    ],
+)
+def test_extras_n_hat_sentinel_assignment_does_not_warn(value, context):
+    """Assigning REQUIRED, OPTIONAL, or None to extras['n_hat'] is silent."""
+    import warnings
+
+    cs = ConstraintSet([SampleConstraint("chi", 0.0)])
+    with context:
+        with warnings.catch_warnings(record=True) as captured:
+            warnings.simplefilter("always")
+            cs.extras["n_hat"] = value
+        # Filter to UserWarnings about the placeholder so unrelated
+        # warnings (e.g. deprecations from other parts of the stack)
+        # do not produce false positives.
+        placeholder_warnings = [
+            w for w in captured if "documentation placeholder" in str(w.message)
+        ]
+        assert placeholder_warnings == []
+
+
+def test_extras_non_placeholder_keys_never_warn():
+    """Keys outside the placeholder allow-list never warn."""
+    import warnings
+
+    cs = ConstraintSet(
+        [SampleConstraint("chi", 0.0)],
+        extras={"psi": None, "alpha_i": None, "beta_out": None, "omega": None},
+    )
+    with warnings.catch_warnings(record=True) as captured:
+        warnings.simplefilter("always")
+        cs.extras["psi"] = 12.5
+        cs.extras["alpha_i"] = 5.0
+        cs.extras["beta_out"] = 5.0
+        cs.extras["omega"] = 0.0
+        cs.extras["new_key"] = "anything"
+    placeholder_warnings = [
+        w for w in captured if "documentation placeholder" in str(w.message)
+    ]
+    assert placeholder_warnings == []
+
+
+def test_extras_initialization_via_constructor_is_silent():
+    """Constructing a ConstraintSet with extras={'n_hat': real-value} is silent.
+
+    The warning fires only on explicit __setitem__ after construction.
+    A real value supplied to the constructor (unusual, but valid Python)
+    must not warn because the dict-init fast path bypasses __setitem__
+    — verifying this guarantees that the YAML loader and from_dict()
+    paths are silent under all sentinel and non-sentinel values.
+    """
+    import warnings
+
+    with warnings.catch_warnings(record=True) as captured:
+        warnings.simplefilter("always")
+        cs = ConstraintSet(
+            [SampleConstraint("chi", 0.0)],
+            extras={"n_hat": (0, 0, 1)},  # non-sentinel value at init
+        )
+    placeholder_warnings = [
+        w for w in captured if "documentation placeholder" in str(w.message)
+    ]
+    assert placeholder_warnings == []
+    assert cs.extras["n_hat"] == (0, 0, 1)
+
+
+def test_extras_dict_round_trips_through_with_constraint_values():
+    """with_constraint_values returns a ConstraintSet whose extras still warns."""
+    cs = ConstraintSet(
+        [SampleConstraint("chi", 0.0)],
+        extras={"n_hat": REQUIRED},
+    )
+    new_cs = cs.with_constraint_values(chi=45.0)
+    with pytest.warns(UserWarning, match="documentation placeholder"):
+        new_cs.extras["n_hat"] = (0, 0, 1)

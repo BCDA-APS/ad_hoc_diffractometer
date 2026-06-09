@@ -1,9 +1,69 @@
 (howto-surface)=
 # Surface Geometry and the Reference Vector
 
-This guide explains how to supply the surface normal n̂ and the azimuthal
-reference vector to modes that require them, and how to compute the
-resulting reference pseudo-angles (α_i, β_out, ψ, naz).
+This guide explains how to supply the surface normal **n̂** and the
+azimuthal reference vector to modes that require them, and how to
+compute the resulting reference pseudo-angles (α_i, β_out, ψ, naz).
+
+## Quick reference: which vector does my mode need?
+
+The same abstract symbol **n̂** (rendered as the ``n_hat`` key in
+``mode.extras``) is consumed by two **different** geometry attributes,
+chosen by the active mode's
+{class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
+
+| ReferenceConstraint name | Set on the geometry | Recipe |
+|---|---|---|
+| `alpha_i`, `beta_out`, `a_eq_b` | `surface_normal` | `g.surface_normal = (h, k, l)` |
+| `psi`, `naz` | `azimuthal_reference` | `g.azimuthal_reference = (h, k, l)` |
+| `omega` (SPEC pseudo-angle) | (none required) | — |
+
+Don't want to memorise the table?  Ask the geometry directly:
+
+```python
+g.mode_name = "fixed_alpha_i_fixed_chi_fixed_phi"
+attr = g.required_reference_vector       # → 'surface_normal'
+setattr(g, attr, (0, 0, 1))              # equivalent to g.surface_normal = ...
+```
+
+`required_reference_vector` returns `'surface_normal'`,
+`'azimuthal_reference'`, or `None`.
+
+## What the `n̂` placeholder in `mode.extras` means
+
+Every per-geometry mode table shows a row like
+
+```
+Extras (input) | n̂ (surface normal)
+```
+
+or
+
+```
+Extras (input) | n̂ (reference vector), ψ (target azimuth, degrees)
+```
+
+and inspecting the active mode shows
+
+```python
+>>> g.modes["fixed_psi_vertical"].extras
+{'n_hat': REQUIRED, ...}
+```
+
+The `n_hat` key is a **documentation placeholder**, not a settable
+input slot — the actual vector lives on the geometry under
+`surface_normal` or `azimuthal_reference` (see the table above).
+
+```python
+# WRONG — n_hat in extras is silently ignored by forward():
+g.modes["fixed_psi_vertical"].extras["n_hat"] = (0, 0, 1)
+
+# RIGHT — set the geometry attribute the constraint reads:
+g.azimuthal_reference = (0, 0, 1)
+```
+
+Since issue #294 the package emits a `UserWarning` when the first
+form is used, pointing the caller at the second form.
 
 ## Background
 
@@ -23,6 +83,15 @@ Two separate reference vectors may be set:
 
 They may be the same vector (e.g. the surface normal is also the azimuthal
 reference) or different.
+
+```{note}
+Neither attribute defaults to ``(0, 0, 0)`` — both are ``None`` until
+you assign.  The setters explicitly reject the zero vector with a
+``ValueError``: ``(0, 0, 0)`` is not a meaningful direction.  When the
+user-facing question "what does **n̂ = 0** mean as a default?" comes up,
+the answer is that there is no such default state — only ``None``
+(not set) or a valid Miller-index 3-tuple.
+```
 
 ## Set the surface normal
 
