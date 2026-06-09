@@ -86,8 +86,7 @@ Reduces to standard four-circle bisecting geometry.
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2:
 `mu = 0`.
 `chi` is held at the value declared in the constraint (default in the demo geometry: 90°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; the constraint
-persists until replaced — see {doc}`../howto/constraints`.
+Override at run time with `g.modes["fixed_chi"].with_constraint_values(chi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -99,7 +98,7 @@ persists until replaced — see {doc}`../howto/constraints`.
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2:
 `mu = 0`.
 `phi` is held at the value declared in the constraint (default in the demo geometry: 0°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
+Override at run time with `g.modes["fixed_phi"].with_constraint_values(phi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -111,7 +110,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint`:
 `omega = ttheta / 2`.
 `mu` is held at the value declared in the constraint (default in the demo geometry: 0°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
+Override at run time with `g.modes["fixed_mu"].with_constraint_values(mu=...)` — see {doc}`../howto/constraints`.
 Intended for non-zero mu once the tilted-plane solver is implemented.
 
 | | |
@@ -124,7 +123,7 @@ Intended for non-zero mu once the tilted-plane solver is implemented.
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2:
 `mu = 0`.
 `omega` is held at the value declared in the constraint (default in the demo geometry: 0°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
+Override at run time with `g.modes["fixed_omega_noncoplanar"].with_constraint_values(omega=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|

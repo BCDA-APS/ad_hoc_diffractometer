@@ -59,24 +59,50 @@ solutions = g.forward(1, 0, 0)
 # sol["chi"] == 90.0 for every solution
 ```
 
-To use a **different value**, construct a new {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
-and assign it. The constraint persists until replaced — only reassign when
-the value changes:
+To use a **different value**, the simplest call is
+{meth}`~ad_hoc_diffractometer.mode.ConstraintSet.with_constraint_values`,
+which returns a fresh `ConstraintSet` with the named constraint values
+replaced:
+
+```python
+# Single value: chi = 45° on the demo fixed_chi mode
+g.modes["fixed_chi"] = g.modes["fixed_chi"].with_constraint_values(chi=45.0)
+g.mode_name = "fixed_chi"
+sols_45 = g.forward(1, 0, 0)   # chi = 45°
+
+# Several values at once (e.g. psic B3 mode: two sample stages plus
+# the alpha_i target — three pinned values in one call):
+g.modes["fixed_alpha_i_fixed_chi_fixed_phi"] = (
+    g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
+    .with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)
+)
+```
+
+For modes where you want to change *which* constraints appear (not just
+their values), build a new {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
+directly:
 
 ```python
 from ad_hoc_diffractometer import ConstraintSet, SampleConstraint
 
-# Call 1: chi = 45°
-g.modes["my_chi"] = ConstraintSet([SampleConstraint("chi", 45.0)])
-g.mode_name = "my_chi"
-sols_45 = g.forward(1, 0, 0)   # chi = 45° this call
-
-# Call 2: chi = 60°
 g.modes["my_chi"] = ConstraintSet([SampleConstraint("chi", 60.0)])
-sols_60 = g.forward(1, 0, 0)   # chi = 60° this call
+g.mode_name = "my_chi"
 ```
 
-See {doc}`constraints` for the full run-time pattern.
+See {doc}`constraints` for the full run-time pattern, including how to
+override detector and reference-target values and the rationale for the
+immutable-constraint design.
+
+## Change a fixed-axis value
+
+Yes, you can override the YAML default for any `fixed_*` mode at run
+time.  Use
+{meth}`~ad_hoc_diffractometer.mode.ConstraintSet.with_constraint_values`
+for a one-call value swap (single or multiple values), or rebuild the
+{class}`~ad_hoc_diffractometer.mode.ConstraintSet` from scratch when
+you also need to change which constraints appear.  Worked examples for
+sample, detector, and reference-target overrides are in
+{ref}`howto-constraints`.
 
 ### fixed_omega
 

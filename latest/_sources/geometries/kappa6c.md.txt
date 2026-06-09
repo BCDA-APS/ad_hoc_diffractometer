@@ -140,6 +140,7 @@ Vertical scattering plane (psic-style).
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 `kphi` held at declared value (default 0°), `mu = 0`, `nu = 0`.
+Override at run time with `g.modes["fixed_kphi"].with_constraint_values(kphi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -150,6 +151,7 @@ Vertical scattering plane (psic-style).
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
 `mu` held at declared value (default 0°), `komega = delta/2`, `nu = 0`.
+Override at run time with `g.modes["fixed_mu"].with_constraint_values(mu=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -161,6 +163,7 @@ Vertical scattering plane (psic-style).
 {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 `nu` held at declared value (default 0°), `komega = delta/2`, `mu = 0`.
 Analogous to psic `fixed_nu`.
+Override at run time with `g.modes["fixed_nu"].with_constraint_values(nu=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -173,6 +176,7 @@ Vertical bisecting with azimuthal angle ψ validation.
 Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
 The solver returns bisecting solutions only when the natural ψ for the
 requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
+Override the ψ target at run time with `g.modes["fixed_psi_vertical"].with_constraint_values(psi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -230,6 +234,7 @@ Horizontal scattering plane.
 {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint`:
 `delta` held at declared value (default 0°), `mu = nu/2`, `komega = 0`.
 Horizontal plane with delta frozen.
+Override at run time with `g.modes["fixed_delta"].with_constraint_values(delta=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -241,6 +246,7 @@ Horizontal plane with delta frozen.
 Horizontal bisecting with azimuthal angle ψ validation.
 Symmetric with `fixed_psi_vertical` in the horizontal plane.
 Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+Override the ψ target at run time with `g.modes["fixed_psi_horizontal"].with_constraint_values(psi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|

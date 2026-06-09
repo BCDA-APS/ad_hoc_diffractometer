@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
-    <script src="../_static/documentation_options.js?v=0d33d6e9"></script>
+    <script src="../_static/documentation_options.js?v=cb47ac36"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-09 09:58 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-09 11:44 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -662,6 +662,7 @@ Vertical scattering plane bisecting condition (You 1999, §5.3).</p>
 <section id="fixed-phi-vertical">
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_phi_vertical</span></code><a class="headerlink" href="#fixed-phi-vertical" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">phi</span></code> held at declared value (default 0°), <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">=</span> <span class="pre">0</span></code>.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_phi_vertical&quot;].with_constraint_values(phi=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 The scattering plane is locked vertical by <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">=</span> <span class="pre">0</span></code>;
 <code class="docutils literal notranslate"><span class="pre">eta</span></code>, <code class="docutils literal notranslate"><span class="pre">chi</span></code>, and <code class="docutils literal notranslate"><span class="pre">delta</span></code> are solved from the hkl equations.</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -684,7 +685,7 @@ The scattering plane is locked vertical by <code class="docutils literal notrans
 <section id="fixed-chi-vertical">
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_chi_vertical</span></code><a class="headerlink" href="#fixed-chi-vertical" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">chi</span></code> held at declared value (default 90°), <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">=</span> <span class="pre">0</span></code>.
-The caller chooses the chi value by constructing a <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_chi_vertical&quot;].with_constraint_values(chi=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 The scattering plane is locked vertical by <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">=</span> <span class="pre">0</span></code>;
 <code class="docutils literal notranslate"><span class="pre">eta</span></code>, <code class="docutils literal notranslate"><span class="pre">phi</span></code>, and <code class="docutils literal notranslate"><span class="pre">delta</span></code> are solved from the hkl equations.</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -708,6 +709,7 @@ The scattering plane is locked vertical by <code class="docutils literal notrans
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_vertical</span></code><a class="headerlink" href="#fixed-alpha-i-vertical" title="Link to this heading">#</a></h3>
 <p>Incidence angle α_i fixed at declared value (default 0°) in the
 vertical scattering plane.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_alpha_i_vertical&quot;].with_constraint_values(alpha_i=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -736,6 +738,7 @@ Set <code class="docutils literal notranslate"><span class="pre">g.surface_norma
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_beta_out_vertical</span></code><a class="headerlink" href="#fixed-beta-out-vertical" title="Link to this heading">#</a></h3>
 <p>Exit angle β_out fixed at declared value (default 0°) in the
 vertical scattering plane.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_beta_out_vertical&quot;].with_constraint_values(beta_out=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -792,7 +795,9 @@ Set <code class="docutils literal notranslate"><span class="pre">g.surface_norma
 <p>Issue #264 revision.  Vertical scattering plane (<code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">=</span> <span class="pre">0</span></code>) with <code class="docutils literal notranslate"><span class="pre">mu</span></code>
 fixed at the user-specified value (default 0) and azimuthal angle ψ
 validation.  Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling
-<code class="docutils literal notranslate"><span class="pre">forward()</span></code>.  The previous bisect(<code class="docutils literal notranslate"><span class="pre">eta</span></code>, <code class="docutils literal notranslate"><span class="pre">delta</span></code>) constraint was
+<code class="docutils literal notranslate"><span class="pre">forward()</span></code>.
+Override the mu pin or the psi target at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_psi_vertical&quot;].with_constraint_values(mu=...,</span> <span class="pre">psi=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
+The previous bisect(<code class="docutils literal notranslate"><span class="pre">eta</span></code>, <code class="docutils literal notranslate"><span class="pre">delta</span></code>) constraint was
 dropped per the &#64;jwkim-anl review.  The solver returns the
 fixed-sample solutions only when the natural ψ for the requested
 (h, k, l) matches the stored target; the free angles <code class="docutils literal notranslate"><span class="pre">eta</span></code>, <code class="docutils literal notranslate"><span class="pre">chi</span></code>,
@@ -828,7 +833,8 @@ validated ψ.  See <a class="reference internal" href="../howto/surface.html"><s
 are solved jointly from the Bragg condition plus the α_i target.
 This is a 4-D Newton solve that routes through the
 <code class="docutils literal notranslate"><span class="pre">_solve_free_detectors</span></code> solver (both detector stages float to lift
-the detector arm out of plane as needed).</p>
+the detector arm out of plane as needed).
+Override any of the three pinned values at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;].with_constraint_values(chi=...,</span> <span class="pre">phi=...,</span> <span class="pre">alpha_i=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.</p>
 <p>Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -865,7 +871,8 @@ four-circle stage of the same name.  See
 reduces exactly to <code class="docutils literal notranslate"><span class="pre">bisecting_vertical</span></code> (above) because OMEGA = 0
 ⇔ Q lies in the chi-circle plane ⇔ bisecting condition.  Non-zero
 targets tilt Q out of the chi-circle plane and are solved by a 1-D
-Newton refinement on the free outer sample stage (<code class="docutils literal notranslate"><span class="pre">eta</span></code>).</p>
+Newton refinement on the free outer sample stage (<code class="docutils literal notranslate"><span class="pre">eta</span></code>).
+Override the OMEGA target at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_omega_vertical&quot;].with_constraint_values(omega=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p></p></th>
@@ -982,6 +989,7 @@ Horizontal scattering plane bisecting condition (You 1999, §5.1).</p>
 <section id="fixed-phi-horizontal">
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_phi_horizontal</span></code><a class="headerlink" href="#fixed-phi-horizontal" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">phi</span></code> held at declared value (default 0°), <code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">delta</span> <span class="pre">=</span> <span class="pre">0</span></code>.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_phi_horizontal&quot;].with_constraint_values(phi=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 The scattering plane is locked horizontal by <code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">delta</span> <span class="pre">=</span> <span class="pre">0</span></code>;
 <code class="docutils literal notranslate"><span class="pre">mu</span></code>, <code class="docutils literal notranslate"><span class="pre">chi</span></code>, and <code class="docutils literal notranslate"><span class="pre">nu</span></code> are solved from the hkl equations.</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -1004,6 +1012,7 @@ The scattering plane is locked horizontal by <code class="docutils literal notra
 <section id="fixed-chi-horizontal">
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_chi_horizontal</span></code><a class="headerlink" href="#fixed-chi-horizontal" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">chi</span></code> held at declared value (default 0°), <code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">delta</span> <span class="pre">=</span> <span class="pre">0</span></code>.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_chi_horizontal&quot;].with_constraint_values(chi=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 The scattering plane is locked horizontal by <code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">delta</span> <span class="pre">=</span> <span class="pre">0</span></code>;
 <code class="docutils literal notranslate"><span class="pre">mu</span></code>, <code class="docutils literal notranslate"><span class="pre">phi</span></code>, and <code class="docutils literal notranslate"><span class="pre">nu</span></code> are solved from the hkl equations.</p>
 <p>The default chi value differs from the vertical counterpart
@@ -1034,6 +1043,7 @@ is kinematically infeasible in this mode.</p>
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_horizontal</span></code><a class="headerlink" href="#fixed-alpha-i-horizontal" title="Link to this heading">#</a></h3>
 <p>Incidence angle α_i fixed at declared value (default 0°) in the
 horizontal scattering plane.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_alpha_i_horizontal&quot;].with_constraint_values(alpha_i=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -1062,6 +1072,7 @@ Set <code class="docutils literal notranslate"><span class="pre">g.surface_norma
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_beta_out_horizontal</span></code><a class="headerlink" href="#fixed-beta-out-horizontal" title="Link to this heading">#</a></h3>
 <p>Exit angle β_out fixed at declared value (default 0°) in the
 horizontal scattering plane.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_beta_out_horizontal&quot;].with_constraint_values(beta_out=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -1119,7 +1130,8 @@ Set <code class="docutils literal notranslate"><span class="pre">g.surface_norma
 <code class="docutils literal notranslate"><span class="pre">eta</span></code> fixed at the user-specified value (default 0) and azimuthal
 angle ψ validation.  The previous bisect(<code class="docutils literal notranslate"><span class="pre">mu</span></code>, <code class="docutils literal notranslate"><span class="pre">nu</span></code>) constraint was
 dropped per the &#64;jwkim-anl review.  Free angles <code class="docutils literal notranslate"><span class="pre">mu</span></code>, <code class="docutils literal notranslate"><span class="pre">chi</span></code>, <code class="docutils literal notranslate"><span class="pre">phi</span></code>,
-<code class="docutils literal notranslate"><span class="pre">nu</span></code> jointly satisfy the Bragg condition under the validated ψ.</p>
+<code class="docutils literal notranslate"><span class="pre">nu</span></code> jointly satisfy the Bragg condition under the validated ψ.
+Override the eta pin or the psi target at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_psi_horizontal&quot;].with_constraint_values(eta=...,</span> <span class="pre">psi=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p></p></th>
@@ -1149,7 +1161,8 @@ dropped per the &#64;jwkim-anl review.  Free angles <code class="docutils litera
 plane (<code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">delta</span> <span class="pre">=</span> <span class="pre">0</span></code>).  Same OMEGA pseudo-angle definition as
 <code class="docutils literal notranslate"><span class="pre">fixed_omega_vertical</span></code> above; at <code class="docutils literal notranslate"><span class="pre">omega</span> <span class="pre">=</span> <span class="pre">0</span></code> the mode reduces
 exactly to <code class="docutils literal notranslate"><span class="pre">bisecting_horizontal</span></code>.  The free outer sample stage
-rocked by the 1-D Newton is <code class="docutils literal notranslate"><span class="pre">mu</span></code>.</p>
+rocked by the 1-D Newton is <code class="docutils literal notranslate"><span class="pre">mu</span></code>.
+Override the OMEGA target at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_omega_horizontal&quot;].with_constraint_values(omega=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p></p></th>
@@ -1598,7 +1611,7 @@ depending on the specific instrument’s <code class="docutils literal notransla
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-09 09:58 CDT.
+  Last updated on 2026-06-09 11:44 CDT.
   <br/>
 </p></div>
       

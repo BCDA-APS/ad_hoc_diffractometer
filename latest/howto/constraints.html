@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
-    <script src="../_static/documentation_options.js?v=0d33d6e9"></script>
+    <script src="../_static/documentation_options.js?v=cb47ac36"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-09 09:58 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-09 11:44 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -662,6 +662,61 @@ at run time without any knowledge of geometry internals.</p>
 The <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a> object persists on the
 geometry until explicitly replaced — there is no need to reassign it if the
 value does not change between calls.</p>
+<section id="why-constraint-values-are-immutable">
+<h3>Why constraint values are immutable<a class="headerlink" href="#why-constraint-values-are-immutable" title="Link to this heading">#</a></h3>
+<p>Every constraint (<code class="docutils literal notranslate"><span class="pre">SampleConstraint</span></code>, <code class="docutils literal notranslate"><span class="pre">DetectorConstraint</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code>) exposes <code class="docutils literal notranslate"><span class="pre">.value</span></code> as a <strong>read-only property</strong> — there
+is no setter and no <code class="docutils literal notranslate"><span class="pre">set_value()</span></code> method.  This is deliberate:</p>
+<ul class="simple">
+<li><p>Constraints are <em>values</em>, not mutable state, so <code class="docutils literal notranslate"><span class="pre">ConstraintSet.to_dict()</span></code>
+/ <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> round-trip cleanly and serialized modes always describe
+the run-time state.</p></li>
+<li><p>The YAML file under
+<code class="docutils literal notranslate"><span class="pre">src/ad_hoc_diffractometer/geometries/</span></code> is the <strong>single source of
+truth</strong> for default values; run-time overrides happen by replacing the
+containing <code class="docutils literal notranslate"><span class="pre">ConstraintSet</span></code>, never by mutating the constraint object.</p></li>
+<li><p>Two callers holding references to the same <code class="docutils literal notranslate"><span class="pre">ConstraintSet</span></code> (e.g. the
+active mode and a snapshot taken before a scan) cannot surprise each
+other with hidden value changes.</p></li>
+</ul>
+<p>To override a default value you therefore produce a <strong>new</strong>
+<code class="docutils literal notranslate"><span class="pre">ConstraintSet</span></code>.  There are two ways to do that — pick whichever is more
+readable for your case.</p>
+</section>
+<section id="use-with-constraint-values-for-a-one-call-override">
+<h3>Use <code class="docutils literal notranslate"><span class="pre">with_constraint_values</span></code> for a one-call override<a class="headerlink" href="#use-with-constraint-values-for-a-one-call-override" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">ConstraintSet.with_constraint_values(**updates)</span></code> returns a fresh
+<code class="docutils literal notranslate"><span class="pre">ConstraintSet</span></code> with the named constraint values replaced.  Each keyword
+argument names a constraint by its <code class="docutils literal notranslate"><span class="pre">.name</span></code> attribute (a stage name for
+sample / detector constraints, a reference name like <code class="docutils literal notranslate"><span class="pre">alpha_i</span></code> /
+<code class="docutils literal notranslate"><span class="pre">beta_out</span></code> / <code class="docutils literal notranslate"><span class="pre">psi</span></code> / <code class="docutils literal notranslate"><span class="pre">a_eq_b</span></code> for reference constraints).  Constraint
+order, <code class="docutils literal notranslate"><span class="pre">computed</span></code>, <code class="docutils literal notranslate"><span class="pre">extras</span></code>, and <code class="docutils literal notranslate"><span class="pre">cut_points</span></code> are preserved.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;psic&quot;</span><span class="p">)</span>
+
+<span class="c1"># Multiple values at once (psic B3 mode: chi, phi, and the alpha_i target):</span>
+<span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span>
+    <span class="o">.</span><span class="n">with_constraint_values</span><span class="p">(</span><span class="n">chi</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">alpha_i</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Single value (psic fixed_chi_vertical: default chi=90° → 45°):</span>
+<span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_chi_vertical&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_chi_vertical&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">with_constraint_values</span><span class="p">(</span><span class="n">chi</span><span class="o">=</span><span class="mf">45.0</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Unknown keys (typos, names that do not appear in the set) raise
+<code class="docutils literal notranslate"><span class="pre">KeyError</span></code> listing every unrecognised key at once so a multi-typo edit
+can be fixed in one pass.  <code class="docutils literal notranslate"><span class="pre">BisectConstraint</span></code> is relational (it has no
+scalar value) and is invisible to this method — any kwarg targeting a
+bisect raises <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>.</p>
+</section>
+<section id="rebuild-the-whole-constraintset">
+<h3>Rebuild the whole <code class="docutils literal notranslate"><span class="pre">ConstraintSet</span></code><a class="headerlink" href="#rebuild-the-whole-constraintset" title="Link to this heading">#</a></h3>
+<p>When you want to change which constraints appear (not just their
+values), construct a new <code class="docutils literal notranslate"><span class="pre">ConstraintSet</span></code> directly:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span><span class="p">,</span> <span class="n">SampleConstraint</span>
 
 <span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;fourcv&quot;</span><span class="p">)</span>
@@ -679,13 +734,42 @@ value does not change between calls.</p>
 <span class="n">sols_new</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1"># chi = 60° from here on</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">&quot;fixed_chi&quot;</span></code> mode in the demo geometry has a default chi = 90°.
-Replacing the <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a>
-in <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_chi&quot;]</span></code> changes the value for all subsequent calls
-until it is replaced again.</p>
+<p>A detector-stage value works identically — pass the new
+<code class="docutils literal notranslate"><span class="pre">DetectorConstraint</span></code> in the list:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectorConstraint</span>
+
+<span class="c1"># psic fixed_delta-style mode: change the detector pin to a non-zero value</span>
+<span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;my_fixed_delta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">BisectConstraint</span><span class="p">(</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">),</span>
+        <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">DetectorConstraint</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span>       <span class="c1"># was 0.0; now 5.0</span>
+    <span class="p">],</span>
+    <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For a reference-target value (surface modes), pass a new
+<code class="docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
+
+<span class="c1"># psic B3 mode: pin the incidence angle alpha_i at 5° instead of the</span>
+<span class="c1"># YAML default 0°.</span>
+<span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;alpha_i&quot;</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span>  <span class="c1"># was 0.0; now 5.0</span>
+    <span class="p">],</span>
+    <span class="n">computed</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">computed</span><span class="p">,</span>
+    <span class="n">extras</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extras</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <p>The <code class="docutils literal notranslate"><span class="pre">computed</span></code> field on <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet" title="ad_hoc_diffractometer.mode.ConstraintSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a> is
 informational (documents which stages the solver computes) and does not
 affect the calculation.</p>
+</section>
 </section>
 <section id="build-a-multi-constraint-mode-six-circle">
 <h2>Build a multi-constraint mode (six-circle)<a class="headerlink" href="#build-a-multi-constraint-mode-six-circle" title="Link to this heading">#</a></h2>
@@ -873,7 +957,12 @@ that has <code class="docutils literal notranslate"><span class="pre">is_impleme
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constraint-categories">Constraint categories</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-principles">Design principles</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-a-factory-defined-mode">Use a factory-defined mode</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-a-constraint-value-at-run-time">Set a constraint value at run time</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-a-constraint-value-at-run-time">Set a constraint value at run time</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-constraint-values-are-immutable">Why constraint values are immutable</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-with-constraint-values-for-a-one-call-override">Use <code class="docutils literal notranslate"><span class="pre">with_constraint_values</span></code> for a one-call override</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rebuild-the-whole-constraintset">Rebuild the whole <code class="docutils literal notranslate"><span class="pre">ConstraintSet</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-a-multi-constraint-mode-six-circle">Build a multi-constraint mode (six-circle)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-a-mode">Inspect a mode</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-extras-dict">The extras dict</a></li>
@@ -915,7 +1004,7 @@ that has <code class="docutils literal notranslate"><span class="pre">is_impleme
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-09 09:58 CDT.
+  Last updated on 2026-06-09 11:44 CDT.
   <br/>
 </p></div>
       

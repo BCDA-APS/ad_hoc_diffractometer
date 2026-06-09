@@ -86,8 +86,7 @@ Reduces to standard four-circle bisecting geometry.
 {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint`:
 `alpha = 0`, `omega = delta / 2`.
 `gamma` is held at the value declared in the constraint (default in the demo geometry: 0°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`; the constraint
-persists until replaced — see {doc}`../howto/constraints`.
+Override at run time with `g.modes["fixed_gamma_5c"].with_constraint_values(gamma=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -99,7 +98,7 @@ persists until replaced — see {doc}`../howto/constraints`.
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
 `omega = delta / 2`, `gamma = 0`.
 `alpha` is held at the value declared in the constraint (default in the demo geometry: 0°).
-The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mode.ConstraintSet`.
+Override at run time with `g.modes["fixed_alpha_5c"].with_constraint_values(alpha=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -110,6 +109,7 @@ The caller chooses the value by constructing a {class}`~ad_hoc_diffractometer.mo
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2 + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 Z-axis mode with fixed incidence angle. Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
+Override any of the three pinned values at run time with `g.modes["fixed_alpha_zaxis"].with_constraint_values(alpha=..., chi=..., phi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -122,6 +122,7 @@ Z-axis mode with fixed incidence angle. Requires ``g.surface_normal = (h, k, l)`
 
 {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 Z-axis mode with fixed exit angle. Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
+Override at run time with `g.modes["fixed_beta_zaxis"].with_constraint_values(gamma=..., chi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
@@ -134,6 +135,7 @@ Z-axis mode with fixed exit angle. Requires ``g.surface_normal = (h, k, l)`` —
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2 + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
+Override the chi or phi pin at run time with `g.modes["alpha_eq_beta_zaxis"].with_constraint_values(chi=..., phi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|

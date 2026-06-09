@@ -120,6 +120,64 @@ The {class}`~ad_hoc_diffractometer.mode.ConstraintSet` object persists on the
 geometry until explicitly replaced — there is no need to reassign it if the
 value does not change between calls.
 
+### Why constraint values are immutable
+
+Every constraint (`SampleConstraint`, `DetectorConstraint`,
+`ReferenceConstraint`) exposes `.value` as a **read-only property** — there
+is no setter and no `set_value()` method.  This is deliberate:
+
+- Constraints are *values*, not mutable state, so `ConstraintSet.to_dict()`
+  / `from_dict()` round-trip cleanly and serialized modes always describe
+  the run-time state.
+- The YAML file under
+  `src/ad_hoc_diffractometer/geometries/` is the **single source of
+  truth** for default values; run-time overrides happen by replacing the
+  containing `ConstraintSet`, never by mutating the constraint object.
+- Two callers holding references to the same `ConstraintSet` (e.g. the
+  active mode and a snapshot taken before a scan) cannot surprise each
+  other with hidden value changes.
+
+To override a default value you therefore produce a **new**
+`ConstraintSet`.  There are two ways to do that — pick whichever is more
+readable for your case.
+
+### Use `with_constraint_values` for a one-call override
+
+`ConstraintSet.with_constraint_values(**updates)` returns a fresh
+`ConstraintSet` with the named constraint values replaced.  Each keyword
+argument names a constraint by its `.name` attribute (a stage name for
+sample / detector constraints, a reference name like `alpha_i` /
+`beta_out` / `psi` / `a_eq_b` for reference constraints).  Constraint
+order, `computed`, `extras`, and `cut_points` are preserved.
+
+```python
+import ad_hoc_diffractometer as ahd
+
+g = ahd.make_geometry("psic")
+
+# Multiple values at once (psic B3 mode: chi, phi, and the alpha_i target):
+g.modes["fixed_alpha_i_fixed_chi_fixed_phi"] = (
+    g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
+    .with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)
+)
+
+# Single value (psic fixed_chi_vertical: default chi=90° → 45°):
+g.modes["fixed_chi_vertical"] = (
+    g.modes["fixed_chi_vertical"].with_constraint_values(chi=45.0)
+)
+```
+
+Unknown keys (typos, names that do not appear in the set) raise
+`KeyError` listing every unrecognised key at once so a multi-typo edit
+can be fixed in one pass.  `BisectConstraint` is relational (it has no
+scalar value) and is invisible to this method — any kwarg targeting a
+bisect raises `KeyError`.
+
+### Rebuild the whole `ConstraintSet`
+
+When you want to change which constraints appear (not just their
+values), construct a new `ConstraintSet` directly:
+
 ```python
 from ad_hoc_diffractometer import ConstraintSet, SampleConstraint
 
@@ -138,10 +196,41 @@ g.modes["my_chi"] = ConstraintSet([SampleConstraint("chi", 60.0)])
 sols_new = g.forward(1, 0, 0)   # chi = 60° from here on
 ```
 
-The `"fixed_chi"` mode in the demo geometry has a default chi = 90°.
-Replacing the {class}`~ad_hoc_diffractometer.mode.ConstraintSet`
-in `g.modes["fixed_chi"]` changes the value for all subsequent calls
-until it is replaced again.
+A detector-stage value works identically — pass the new
+`DetectorConstraint` in the list:
+
+```python
+from ad_hoc_diffractometer import DetectorConstraint
+
+# psic fixed_delta-style mode: change the detector pin to a non-zero value
+g.modes["my_fixed_delta"] = ConstraintSet(
+    [
+        BisectConstraint("eta", "delta"),
+        SampleConstraint("mu", 0.0),
+        DetectorConstraint("nu", 5.0),       # was 0.0; now 5.0
+    ],
+    computed=["eta", "chi", "phi", "delta"],
+)
+```
+
+For a reference-target value (surface modes), pass a new
+`ReferenceConstraint`:
+
+```python
+from ad_hoc_diffractometer import ReferenceConstraint
+
+# psic B3 mode: pin the incidence angle alpha_i at 5° instead of the
+# YAML default 0°.
+g.modes["fixed_alpha_i_fixed_chi_fixed_phi"] = ConstraintSet(
+    [
+        SampleConstraint("chi", 0.0),
+        SampleConstraint("phi", 0.0),
+        ReferenceConstraint("alpha_i", 5.0),  # was 0.0; now 5.0
+    ],
+    computed=g.modes["fixed_alpha_i_fixed_chi_fixed_phi"].computed,
+    extras=dict(g.modes["fixed_alpha_i_fixed_chi_fixed_phi"].extras),
+)
+```
 
 The `computed` field on {class}`~ad_hoc_diffractometer.mode.ConstraintSet` is
 informational (documents which stages the solver computes) and does not
