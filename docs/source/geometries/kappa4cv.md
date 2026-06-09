@@ -193,7 +193,7 @@ Override the ψ target at run time with `g.modes["fixed_psi"].with_constraint_va
 | | |
 |---|---|
 | **Computed** | komega, kappa, kphi, ttheta |
-| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (input)** | n̂ → set `g.azimuthal_reference = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi (computed azimuth) |
 
 ### `double_diffraction`

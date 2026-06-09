@@ -98,8 +98,11 @@ stages:
     - {name: ttheta, axis: +vertical,     parent: null,   role: detector}
 ```
 
-The sign on the axis encodes handedness: `+nHat` is a right-handed
-rotation about `nHat`, `-nHat` is left-handed.  See
+The sign on the axis encodes handedness: `+n_axis` is a right-handed
+rotation about `n_axis`, `-n_axis` is left-handed.  This `n_axis` is
+the *stage's rotation axis* and is not the same as `n̂` — the
+user-facing reference vector required by surface and ψ modes; see
+{ref}`glossary` for the disambiguation.  See
 {ref}`decl-stages` for the full axis grammar (signed-physical-direction
 strings, signed Cartesian strings, numeric vectors, and the
 `kappa_eulerian` form for kappa geometries).

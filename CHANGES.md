@@ -14,10 +14,13 @@ Note any unreleased items inside the comment here.  Not visible until release.
 
 - `register_geometry_yaml` in-memory registration entry point. (#288)
 - `ConstraintSet.with_constraint_values()` one-call value override. (#293)
+- `AdHocDiffractometer.required_reference_vector` property. (#294)
+- Warn on `extras['n_hat']` assignment. (#294)
 
 ### Changed
 
 - Document how to override fixed-axis constraint values. (#293)
+- Disambiguate n̂ / surface_normal / azimuthal_reference / n_axis. (#294)
 
 ### Fixed
 

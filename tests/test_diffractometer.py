@@ -2191,3 +2191,91 @@ def test_geometry_to_dict_version_unknown_on_metadata_error():
         assert d["_meta"]["version"] == "unknown"
     finally:
         importlib.metadata.version = original_fn
+
+
+# ---------------------------------------------------------------------------
+# AdHocDiffractometer.required_reference_vector (issue #294)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "geom_name, mode_name, expected",
+    [
+        pytest.param(
+            "psic",
+            "fixed_alpha_i_fixed_chi_fixed_phi",
+            "surface_normal",
+            id="psic-B3-surface_normal",
+        ),
+        pytest.param(
+            "psic",
+            "fixed_psi_vertical",
+            "azimuthal_reference",
+            id="psic-fixed_psi_vertical-azimuthal_reference",
+        ),
+        pytest.param(
+            "psic",
+            "fixed_psi_horizontal",
+            "azimuthal_reference",
+            id="psic-fixed_psi_horizontal-azimuthal_reference",
+        ),
+        pytest.param(
+            "psic",
+            "fixed_omega_vertical",
+            None,
+            id="psic-fixed_omega-no-vector",
+        ),
+        pytest.param(
+            "psic",
+            "bisecting_vertical",
+            None,
+            id="psic-bisecting-no-reference-constraint",
+        ),
+        pytest.param(
+            "zaxis",
+            "zaxis",
+            "surface_normal",
+            id="zaxis-zaxis-surface_normal",
+        ),
+        pytest.param(
+            "zaxis",
+            "reflectivity",
+            "surface_normal",
+            id="zaxis-reflectivity-surface_normal",
+        ),
+        pytest.param(
+            "fourcv",
+            "fixed_psi",
+            "azimuthal_reference",
+            id="fourcv-fixed_psi-azimuthal_reference",
+        ),
+    ],
+)
+def test_required_reference_vector(geom_name, mode_name, expected):
+    """Active mode dictates which geometry attribute to set as n̂."""
+    import ad_hoc_diffractometer as ahd
+
+    g = ahd.make_geometry(geom_name)
+    g.mode_name = mode_name
+    assert g.required_reference_vector == expected
+
+
+def test_required_reference_vector_no_active_mode():
+    """No active mode → None (no vector requirement to communicate)."""
+    import ad_hoc_diffractometer as ahd
+
+    g = ahd.make_geometry("psic")
+    g.mode_name = None
+    assert g.required_reference_vector is None
+
+
+def test_required_reference_vector_usable_with_setattr():
+    """The returned name can be fed straight into setattr to wire the vector."""
+    import ad_hoc_diffractometer as ahd
+
+    g = ahd.make_geometry("psic")
+    g.mode_name = "fixed_alpha_i_fixed_chi_fixed_phi"
+    attr = g.required_reference_vector
+    assert attr == "surface_normal"
+    setattr(g, attr, (0, 0, 1))
+    assert g.surface_normal == (0.0, 0.0, 1.0)

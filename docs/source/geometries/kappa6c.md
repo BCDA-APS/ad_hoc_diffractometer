@@ -182,7 +182,7 @@ Override the ψ target at run time with `g.modes["fixed_psi_vertical"].with_cons
 |---|---|
 | **Computed** | komega, kappa, kphi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
-| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (input)** | n̂ → set `g.azimuthal_reference = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi (computed azimuth) |
 
 ### `double_diffraction_vertical`
@@ -252,7 +252,7 @@ Override the ψ target at run time with `g.modes["fixed_psi_horizontal"].with_co
 |---|---|
 | **Computed** | mu, kappa, kphi, nu |
 | **Constant during** `forward()` | komega = 0, delta = 0 |
-| **Extras (input)** | n̂ (reference vector), ψ (target azimuth, degrees) |
+| **Extras (input)** | n̂ → set `g.azimuthal_reference = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi (computed azimuth) |
 
 ### `double_diffraction_horizontal`

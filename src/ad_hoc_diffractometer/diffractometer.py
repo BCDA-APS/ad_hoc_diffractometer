@@ -1193,6 +1193,86 @@ class AdHocDiffractometer:
         self._surface_normal = (h, k, l)
 
     # ------------------------------------------------------------------
+    # Reference-vector helper (issue #294)
+    # ------------------------------------------------------------------
+
+    @property
+    def required_reference_vector(self) -> str | None:
+        """
+        Name of the geometry attribute the active mode needs as its reference vector.
+
+        Issue #294.  The ``n̂`` reference vector required by some modes
+        does not live in :attr:`mode.extras` — that ``n_hat`` entry is a
+        documentation placeholder.  The actual vector lives on the
+        diffractometer under one of two attributes, chosen by the mode's
+        :class:`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
+
+        =====================================  =================================
+        ReferenceConstraint name               Required attribute on the geometry
+        =====================================  =================================
+        ``"alpha_i"``                          :attr:`surface_normal`
+        ``"beta_out"``                         :attr:`surface_normal`
+        ``"a_eq_b"``                           :attr:`surface_normal`
+        ``"psi"``                              :attr:`azimuthal_reference`
+        ``"naz"``                              :attr:`azimuthal_reference`
+        ``"omega"``                            (none)
+        =====================================  =================================
+
+        This property answers "which attribute do I set?" without
+        forcing the caller to memorise the table.
+
+        Returns
+        -------
+        str or None
+            One of ``"surface_normal"``, ``"azimuthal_reference"``, or
+            ``None``.  ``None`` is returned when the active mode either
+            has no :class:`~ad_hoc_diffractometer.mode.ReferenceConstraint`,
+            uses a ReferenceConstraint that needs no vector (``"omega"``),
+            or no mode is active.
+
+        Examples
+        --------
+        Surface mode → ``surface_normal``:
+
+        >>> g = make_geometry("psic")
+        >>> g.mode_name = "fixed_alpha_i_fixed_chi_fixed_phi"
+        >>> g.required_reference_vector
+        'surface_normal'
+        >>> setattr(g, g.required_reference_vector, (0, 0, 1))
+
+        Azimuthal mode → ``azimuthal_reference``:
+
+        >>> g.mode_name = "fixed_psi_vertical"
+        >>> g.required_reference_vector
+        'azimuthal_reference'
+
+        OMEGA pseudo-angle mode → no vector required:
+
+        >>> g.mode_name = "fixed_omega_vertical"
+        >>> g.required_reference_vector is None
+        True
+
+        See Also
+        --------
+        surface_normal : The attribute set for surface-type reference constraints.
+        azimuthal_reference : The attribute set for psi/naz reference constraints.
+        """
+        from .mode import ReferenceConstraint
+
+        mode = self.mode
+        if mode is None:
+            return None
+        rc: ReferenceConstraint | None = mode.reference_constraint
+        if rc is None:
+            return None
+        if rc.name in {"alpha_i", "beta_out", "a_eq_b"}:
+            return "surface_normal"
+        if rc.name in {"psi", "naz"}:
+            return "azimuthal_reference"
+        # "omega" pseudo-angle requires no reference vector.
+        return None
+
+    # ------------------------------------------------------------------
     # Detector geometry parameters
     # ------------------------------------------------------------------
 
