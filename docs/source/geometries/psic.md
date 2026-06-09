@@ -116,6 +116,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 | **Extras (input)** | n̂ (surface normal) |
+| **Extras (output)** | alpha_i (incidence angle), beta_out (exit angle) |
 
 ### `fixed_beta_out_vertical`
 
@@ -128,6 +129,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 | **Extras (input)** | n̂ (surface normal) |
+| **Extras (output)** | alpha_i, beta_out |
 
 ### `alpha_eq_beta_vertical`
 
@@ -139,6 +141,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 | **Extras (input)** | n̂ (surface normal) |
+| **Extras (output)** | alpha_i, beta_out |
 
 ### `fixed_psi_vertical`
 
@@ -175,6 +178,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | mu, eta, nu, delta |
 | **Constant during** `forward()` | chi, phi, α_i = target |
 | **Extras (input)** | n̂ (surface normal) |
+| **Extras (output)** | alpha_i, beta_out |
 
 ### `fixed_omega_vertical`
 
@@ -294,6 +298,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | eta = 0, delta = 0 |
 | **Extras (input)** | n̂ (surface normal) |
+| **Extras (output)** | alpha_i, beta_out |
 
 ### `fixed_beta_out_horizontal`
 
@@ -306,6 +311,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | eta = 0, delta = 0 |
 | **Extras (input)** | n̂ (surface normal) |
+| **Extras (output)** | alpha_i, beta_out |
 
 ### `alpha_eq_beta_horizontal`
 
@@ -317,6 +323,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | eta = 0, delta = 0 |
 | **Extras (input)** | n̂ (surface normal) |
+| **Extras (output)** | alpha_i, beta_out |
 
 ### `fixed_psi_horizontal`
 
