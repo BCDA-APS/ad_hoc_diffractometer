@@ -9,18 +9,23 @@ issue tracker.  The initial project development roadmap is documented here:
 ## Unreleased
 
 Note any unreleased items inside the comment here.  Not visible until release.
+-->
+
+## Release v0.11.1
+
+Released 2026-06-09
 
 ### Added
 
-- `register_geometry_yaml` in-memory registration entry point. (#288)
-- `ConstraintSet.with_constraint_values()` one-call value override. (#293)
 - `AdHocDiffractometer.required_reference_vector` property. (#294)
+- `ConstraintSet.with_constraint_values()` one-call value override. (#293)
+- `register_geometry_yaml` in-memory registration entry point. (#288)
 - Warn on `extras['n_hat']` assignment. (#294)
 
 ### Changed
 
-- Document how to override fixed-axis constraint values. (#293)
 - Disambiguate n̂ / surface_normal / azimuthal_reference / n_axis. (#294)
+- Document how to override fixed-axis constraint values. (#293)
 
 ### Fixed
 
@@ -31,7 +36,6 @@ Note any unreleased items inside the comment here.  Not visible until release.
 
 - Unify copyright automation across hklpy2 family. (#290)
 
--->
 
 ## Release v0.11.0
 
