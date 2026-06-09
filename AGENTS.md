@@ -648,6 +648,13 @@ duplicate it.
   detail, no benchmark numbers, no migration instructions.
 - Use the existing subsection headings: `Breaking changes`, `Behavior
   change`, `Added`, `Changed`, `Fixed`.  Omit any that are empty.
+- **Sort bullets alphabetically within each `###` subsection.**
+  Case-insensitive; treat surrounding backticks, asterisks, and
+  punctuation as transparent so the leading *word* is what sorts.
+  This makes diff review predictable and keeps related bullets near
+  each other across releases.  Applies going forward (post-v0.11.1);
+  do not silently re-sort historical release sections in unrelated
+  PRs — open a dedicated cleanup PR if you want to backfill.
 - A correctness fix that changes computed numerical output gets one
   short `Behavior change` bullet naming what changed.  Migration
   instructions (e.g. "re-derive saved UB matrices") belong in the
