@@ -17,6 +17,7 @@ Note any unreleased items inside the comment here.  Not visible until release.
 ### Fixed
 
 - Kappa equivalent-Eulerian chi axis now matches fourcv/fourch/psic. (#284)
+- Populate alpha_i/beta_out/psi/omega output extras after `forward()`. (#292)
 
 ### Maintenance
 

@@ -459,7 +459,98 @@ def compute_forward(
 
     solutions = _solve_constraint_set(geometry, Q_phi, ttheta_deg, mode)
     _validate_solutions(solutions, mode, geometry)
+    _populate_output_extras(geometry, mode, solutions)
     return solutions
+
+
+# ---------------------------------------------------------------------------
+# Output-extras population (issue #292)
+# ---------------------------------------------------------------------------
+
+
+# Map of output-slot key → (callable(geometry, angles) → float, friendly label).
+# The callables are imported lazily inside :func:`_populate_output_extras` to
+# avoid a circular import at module load time (``reference`` imports from
+# ``forward``).
+_OUTPUT_EXTRA_KEYS = ("alpha_i", "beta_out", "psi", "omega")
+
+
+def _populate_output_extras(
+    geometry: AdHocDiffractometer,
+    mode,
+    solutions: list[dict[str, float]],
+) -> None:
+    """Populate output-slot extras (alpha_i, beta_out, psi, omega) per solution.
+
+    Issue #292.  A subset of declarative modes (psic, sixc, zaxis, s2d2 surface
+    modes; the fixed_psi_* family; fixed_omega_*) declare placeholder slots
+    in ``mode.extras`` for derived angles that the forward solver does not
+    constrain directly.  Before this hook those slots remained at their YAML
+    default of ``None`` even after a successful ``forward()`` call.  This
+    function fills each declared slot with a list of values aligned with
+    ``solutions`` (one float per solution), computed via the corresponding
+    helper in :mod:`ad_hoc_diffractometer.reference`.
+
+    Behavior
+    --------
+    * Only keys actually declared in ``mode.extras`` are touched.
+    * A key declared but whose required reference vector is unset on the
+      geometry (e.g. ``alpha_i`` without ``surface_normal``) is left as
+      ``None``; a debug-level log message records why.
+    * Empty ``solutions`` leaves every slot as an empty list.
+    * Each successful call **replaces** the prior contents of the slot.
+    """
+    if mode is None or not getattr(mode, "extras", None):
+        return
+
+    relevant = [k for k in _OUTPUT_EXTRA_KEYS if k in mode.extras]
+    if not relevant:
+        return
+
+    # Lazy imports — ``reference`` imports from ``forward``.
+    from .reference import exit_angle as _exit_angle
+    from .reference import incidence_angle as _incidence_angle
+    from .reference import omega_pseudo as _omega_pseudo
+    from .reference import psi_angle as _psi_angle
+
+    computers: dict[str, callable] = {
+        "alpha_i": _incidence_angle,
+        "beta_out": _exit_angle,
+        "psi": _psi_angle,
+        "omega": _omega_pseudo,
+    }
+
+    for key in relevant:
+        compute = computers[key]
+        values: list[float] = []
+        failure: Exception | None = None
+        for angles in solutions:
+            try:
+                values.append(float(compute(geometry, angles=angles)))
+            except Exception as exc:  # noqa: BLE001
+                # Underlying call raised (e.g. missing surface_normal /
+                # azimuthal_reference, or psi undefined when Q ∥ n_ref).
+                # Leave the slot unpopulated and record the cause for a
+                # single debug log below.  We break immediately so a
+                # later good solution does not mask the failure.
+                failure = exc
+                values = []
+                break
+        if values:
+            mode.extras[key] = values
+        else:
+            # Reset to None so a stale value from a previous forward() call
+            # is not retained, and report the cause once.
+            mode.extras[key] = None if solutions else []
+            if failure is not None:
+                logger.debug(
+                    "_populate_output_extras: leaving mode.extras[%r] as None "
+                    "for mode %r on geometry %r: %s",
+                    key,
+                    geometry.mode_name,
+                    geometry.name,
+                    failure,
+                )
 
 
 # ---------------------------------------------------------------------------
