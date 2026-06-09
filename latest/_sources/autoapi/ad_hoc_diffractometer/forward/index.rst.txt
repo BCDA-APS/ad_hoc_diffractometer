@@ -110,6 +110,7 @@ Functions
    ad_hoc_diffractometer.forward._is_surface_mode
    ad_hoc_diffractometer.forward._is_zone_mode
    ad_hoc_diffractometer.forward._omega_to_fixed_sample_mode
+   ad_hoc_diffractometer.forward._populate_output_extras
    ad_hoc_diffractometer.forward._refine_dd_outer_seeded
    ad_hoc_diffractometer.forward._solve_bisecting
    ad_hoc_diffractometer.forward._solve_bisecting_analytic
@@ -488,6 +489,34 @@ Module Contents
 
    Used only by the "all outer stages fixed" branch of
    :func:`_solve_omega_mode`, which the current YAML modes never trigger.
+
+
+.. py:function:: _populate_output_extras(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, mode, solutions: list[dict[str, float]]) -> None
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._populate_output_extras``
+
+
+   Populate output-slot extras (alpha_i, beta_out, psi, omega) per solution.
+
+   Issue #292.  A subset of declarative modes (psic, sixc, zaxis, s2d2 surface
+   modes; the fixed_psi_* family; fixed_omega_*) declare placeholder slots
+   in ``mode.extras`` for derived angles that the forward solver does not
+   constrain directly.  Before this hook those slots remained at their YAML
+   default of ``None`` even after a successful ``forward()`` call.  This
+   function fills each declared slot with a list of values aligned with
+   ``solutions`` (one float per solution), computed via the corresponding
+   helper in :mod:`ad_hoc_diffractometer.reference`.
+
+   Behavior
+   --------
+   * Only keys actually declared in ``mode.extras`` are touched.
+   * A key declared but whose required reference vector is unset on the
+     geometry (e.g. ``alpha_i`` without ``surface_normal``) is left as
+     ``None``; a debug-level log message records why.
+   * Empty ``solutions`` leaves every slot as an empty list.
+   * Each successful call **replaces** the prior contents of the slot.
 
 
 .. py:function:: _refine_dd_outer_seeded(outer_deg: float, candidate: dict[str, float], chi_hint: float, phi_hint: float, chi_name: str, phi_name: str, solve_inner_seeded_fn, ewald_fn, max_iter: int = 20, h: float = 0.0001) -> dict[str, float] | None
