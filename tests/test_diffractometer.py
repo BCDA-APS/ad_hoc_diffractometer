@@ -908,6 +908,24 @@ def test_azimuthal_reference_and_azimuth_conflict_raises():
         )
 
 
+def test_azimuth_and_azimuthal_reference_matching_values_accepted():
+    """Supplying both kwargs with matching values warns but does not raise."""
+    from helpers import fourcv
+
+    from ad_hoc_diffractometer.diffractometer import AdHocDiffractometer
+
+    template = fourcv()
+    with pytest.warns(DeprecationWarning, match=re.escape("azimuthal_reference")):
+        g = AdHocDiffractometer(
+            name="fourcv",
+            stages=list(template._stages.values()),
+            basis=template.basis,
+            azimuth=(0, 0, 1),
+            azimuthal_reference=(0, 0, 1),
+        )
+    assert g.azimuth == (0.0, 0.0, 1.0)
+
+
 def test_to_dict_writes_azimuth_key_not_legacy():
     """to_dict() emits the new key "azimuth" and not the legacy key."""
     from helpers import fourcv
