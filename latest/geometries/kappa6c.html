@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -38,12 +38,12 @@
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../_static/documentation_options.js?v=57cbeb03"></script>
+    <script src="../_static/documentation_options.js?v=4ef7c848"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,7 +53,7 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'geometries/kappa6c';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-09 13:47 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -780,7 +780,7 @@ Override at run time with <code class="docutils literal notranslate"><span class
 <section id="fixed-psi-vertical">
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_psi_vertical</span></code><a class="headerlink" href="#fixed-psi-vertical" title="Link to this heading">#</a></h3>
 <p>Vertical bisecting with azimuthal angle ψ validation.
-Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.
+Set <code class="docutils literal notranslate"><span class="pre">g.azimuth</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.
 The solver returns bisecting solutions only when the natural ψ for the
 requested (h,k,l) matches the stored target.  See <a class="reference internal" href="../howto/surface.html"><span class="doc">Surface Geometry and the Reference Vector</span></a>.
 Override the ψ target at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_psi_vertical&quot;].with_constraint_values(psi=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.</p>
@@ -798,7 +798,7 @@ Override the ψ target at run time with <code class="docutils literal notranslat
 <td><p>mu = 0, nu = 0</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Extras (input)</strong></p></td>
-<td><p>n̂ → set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>; ψ target via <code class="docutils literal notranslate"><span class="pre">with_constraint_values(psi=...)</span></code></p></td>
+<td><p>n̂ → set <code class="docutils literal notranslate"><span class="pre">g.azimuth</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>; ψ target via <code class="docutils literal notranslate"><span class="pre">with_constraint_values(psi=...)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
 <td><p>psi (computed azimuth)</p></td>
@@ -916,7 +916,7 @@ Override at run time with <code class="docutils literal notranslate"><span class
 <h3><code class="docutils literal notranslate"><span class="pre">fixed_psi_horizontal</span></code><a class="headerlink" href="#fixed-psi-horizontal" title="Link to this heading">#</a></h3>
 <p>Horizontal bisecting with azimuthal angle ψ validation.
 Symmetric with <code class="docutils literal notranslate"><span class="pre">fixed_psi_vertical</span></code> in the horizontal plane.
-Set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.
+Set <code class="docutils literal notranslate"><span class="pre">g.azimuth</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.
 Override the ψ target at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_psi_horizontal&quot;].with_constraint_values(psi=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -932,7 +932,7 @@ Override the ψ target at run time with <code class="docutils literal notranslat
 <td><p>komega = 0, delta = 0</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Extras (input)</strong></p></td>
-<td><p>n̂ → set <code class="docutils literal notranslate"><span class="pre">g.azimuthal_reference</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>; ψ target via <code class="docutils literal notranslate"><span class="pre">with_constraint_values(psi=...)</span></code></p></td>
+<td><p>n̂ → set <code class="docutils literal notranslate"><span class="pre">g.azimuth</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>; ψ target via <code class="docutils literal notranslate"><span class="pre">with_constraint_values(psi=...)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
 <td><p>psi (computed azimuth)</p></td>
@@ -1279,8 +1279,8 @@ DOI: <a class="reference external" href="https://doi.org/10.1107/978095536020600
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1288,7 +1288,7 @@ DOI: <a class="reference external" href="https://doi.org/10.1107/978095536020600
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-09 13:47 CDT.
+  Last updated on 2026-06-15 18:38 CDT.
   <br/>
 </p></div>
       

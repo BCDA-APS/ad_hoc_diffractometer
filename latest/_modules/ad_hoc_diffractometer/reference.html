@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=57cbeb03"></script>
+    <script src="../../_static/documentation_options.js?v=4ef7c848"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,7 +50,7 @@
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/reference';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-09 13:47 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -443,7 +443,7 @@
 <span class="sd">SPEC ``OMEGA`` pseudo-angle (angle between Q and the chi-circle plane).</span>
 
 <span class="sd">These functions require the geometry&#39;s :attr:`surface_normal` or</span>
-<span class="sd">:attr:`azimuthal_reference` to be set before calling, **except** for</span>
+<span class="sd">:attr:`azimuth` to be set before calling, **except** for</span>
 <span class="sd">:func:`omega_pseudo`, which is a pure motor-frame quantity and needs</span>
 <span class="sd">neither.</span>
 
@@ -514,16 +514,16 @@
 
 
 
-<div class="viewcode-block" id="_require_azimuthal_reference">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference._require_azimuthal_reference">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">_require_azimuthal_reference</span><span class="p">(</span><span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise ValueError if azimuthal_reference is not set on the geometry.&quot;&quot;&quot;</span>
-    <span class="n">ar</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">azimuthal_reference</span>
+<div class="viewcode-block" id="_require_azimuth">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference._require_azimuth">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_require_azimuth</span><span class="p">(</span><span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise ValueError if azimuth is not set on the geometry.&quot;&quot;&quot;</span>
+    <span class="n">ar</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">azimuth</span>
     <span class="k">if</span> <span class="n">ar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;geometry &#39;</span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: azimuthal_reference must be set before &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;geometry &#39;</span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: azimuth must be set before &quot;</span>
             <span class="s2">&quot;computing the ψ angle.  &quot;</span>
-            <span class="s2">&quot;Set g.azimuthal_reference = (h, k, l) with the reference direction &quot;</span>
+            <span class="s2">&quot;Set g.azimuth = (h, k, l) with the reference direction &quot;</span>
             <span class="s2">&quot;expressed as Miller indices.&quot;</span>
         <span class="p">)</span></div>
 
@@ -628,7 +628,7 @@
 <span class="sd">    (also projected onto that plane).  ψ = 0 when the reference vector</span>
 <span class="sd">    lies in the scattering plane on the same side as the incident beam.</span>
 
-<span class="sd">    Requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`</span>
+<span class="sd">    Requires :attr:`~geometry.AdHocDiffractometer.azimuth`</span>
 <span class="sd">    to be set.</span>
 
 <span class="sd">    Parameters</span>
@@ -647,7 +647,7 @@
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
-<span class="sd">        If ``geometry.azimuthal_reference`` is ``None``.</span>
+<span class="sd">        If ``geometry.azimuth`` is ``None``.</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If the reference vector is parallel to Q (ψ is undefined).</span>
 
@@ -655,7 +655,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    * You (1999), eq. 23.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_require_azimuthal_reference</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="n">_require_azimuth</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">psi</span><span class="p">(</span><span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span></div>
 
 
@@ -674,7 +674,7 @@
 <span class="sd">    The azimuthal angle ψ is a pure phi-frame quantity: for a fixed</span>
 <span class="sd">    crystal orientation (UB matrix) and a fixed reflection (h, k, l),</span>
 <span class="sd">    ψ depends only on ``Q_phi = UB @ (h, k, l)`` and the azimuthal</span>
-<span class="sd">    reference vector ``n_phi = UB @ azimuthal_reference``.  **No motor</span>
+<span class="sd">    reference vector ``n_phi = UB @ azimuth``.  **No motor</span>
 <span class="sd">    angles enter the calculation** — every motor configuration that</span>
 <span class="sd">    brings (h, k, l) into Bragg condition produces the *same* ψ.</span>
 
@@ -685,14 +685,14 @@
 <span class="sd">    must I request to make this reflection reachable?&quot; before calling</span>
 <span class="sd">    :meth:`~diffractometer.AdHocDiffractometer.forward`.</span>
 
-<span class="sd">    Requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`</span>
+<span class="sd">    Requires :attr:`~geometry.AdHocDiffractometer.azimuth`</span>
 <span class="sd">    and :attr:`~sample.Sample.UB` to be set on the geometry.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    geometry : AdHocDiffractometer</span>
 <span class="sd">        The diffractometer instance.  ``geometry.sample.UB`` and</span>
-<span class="sd">        ``geometry.azimuthal_reference`` must be set.</span>
+<span class="sd">        ``geometry.azimuth`` must be set.</span>
 <span class="sd">    h, k, l : float</span>
 <span class="sd">        Miller indices of the reflection.</span>
 
@@ -708,7 +708,7 @@
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
-<span class="sd">        If ``geometry.azimuthal_reference`` is ``None``.</span>
+<span class="sd">        If ``geometry.azimuth`` is ``None``.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -719,7 +719,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    * You (1999), eq. 23.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_require_azimuthal_reference</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="n">_require_azimuth</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
     <span class="c1"># Local import to avoid module-load ordering issues with forward.py.</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.forward</span><span class="w"> </span><span class="kn">import</span> <span class="n">_compute_natural_psi</span>
 
@@ -946,7 +946,7 @@
 <span class="sd">    -----</span>
 <span class="sd">    Unlike :func:`incidence_angle`, :func:`exit_angle`, :func:`psi_angle`,</span>
 <span class="sd">    and :func:`naz_angle`, this function does **not** require any</span>
-<span class="sd">    reference vector (``surface_normal`` / ``azimuthal_reference``) to be</span>
+<span class="sd">    reference vector (``surface_normal`` / ``azimuth``) to be</span>
 <span class="sd">    set on the geometry.  OMEGA is a pure motor-frame quantity defined</span>
 <span class="sd">    by the diffractometer&#39;s internal geometry.</span>
 
@@ -1042,8 +1042,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1051,7 +1051,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-09 13:47 CDT.
+  Last updated on 2026-06-15 18:38 CDT.
   <br/>
 </p></div>
       

@@ -31,7 +31,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:class:: AdHocDiffractometer(name: str, stages: list[~ad_hoc_diffractometer.stage.Stage], basis: dict | None = None, description: str = '', wavelength: float | None = None, kappa_alpha_deg: float | None = None, kappa_pseudo_angle_convention=None, azimuthal_reference: tuple[float, float, float] | None = None, modes: dict | ~ad_hoc_diffractometer.mode.ModeDict | None = None, default_mode: str | None = None, cut_points: dict[str, float] | None = None)
+.. py:class:: AdHocDiffractometer(name: str, stages: list[~ad_hoc_diffractometer.stage.Stage], basis: dict | None = None, description: str = '', wavelength: float | None = None, kappa_alpha_deg: float | None = None, kappa_pseudo_angle_convention=None, azimuth: tuple[float, float, float] | None = None, azimuthal_reference: tuple[float, float, float] | None = None, modes: dict | ~ad_hoc_diffractometer.mode.ModeDict | None = None, default_mode: str | None = None, cut_points: dict[str, float] | None = None)
 
    .. container:: import-path
 
@@ -75,9 +75,13 @@ Module Contents
                            the kappa demo geometries; not intended to be changed after
                            construction.
    :type kappa_alpha_deg: float or None, optional
-   :param azimuthal_reference: Azimuthal reference direction as Miller indices (h, k, l).  Used
-                               by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)
-                               means no reference is set.  Must be a non-zero vector.
+   :param azimuth: Azimuthal reference direction as Miller indices (h, k, l).  Used
+                   by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)
+                   means no reference is set.  Must be a non-zero vector.
+   :type azimuth: tuple of float or None, optional
+   :param azimuthal_reference: Deprecated alias for ``azimuth``.  Accepted for backward
+                               compatibility; emits :class:`DeprecationWarning` if used.  Will
+                               be removed in a future release.
    :type azimuthal_reference: tuple of float or None, optional
    :param modes: Named diffraction modes available for this geometry.  Keys are
                  mode names (str); values are :class:`~mode.DiffractionMode`
@@ -209,7 +213,7 @@ Module Contents
 
       αf is the angle between the diffracted beam and the sample surface.
       Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
-      (or ``azimuthal_reference``) to be set.
+      (or ``azimuth``) to be set.
 
       :param angles: Motor angles.  If ``None``, current stage angles are used.
       :type angles: dict[str, float] or None
@@ -230,7 +234,7 @@ Module Contents
 
       αᵢ is the angle between the incoming beam and the sample surface.
       Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
-      (or ``azimuthal_reference``) to be set.
+      (or ``azimuth``) to be set.
 
       :param angles: Motor angles.  If ``None``, current stage angles are used.
       :type angles: dict[str, float] or None
@@ -254,7 +258,7 @@ Module Contents
 
 
 
-   .. py:property:: azimuthal_reference
+   .. py:property:: azimuth
       :type: tuple[float, float, float] | None
 
 
@@ -281,10 +285,24 @@ Module Contents
       .. rubric:: Examples
 
       >>> g = psic()
-      >>> g.azimuthal_reference = (0, 0, 1)   # c-axis surface normal
-      >>> g.azimuthal_reference
+      >>> g.azimuth = (0, 0, 1)   # c-axis surface normal
+      >>> g.azimuth
       (0.0, 0.0, 1.0)
-      >>> g.azimuthal_reference = None          # clear reference
+      >>> g.azimuth = None          # clear reference
+
+
+   .. py:property:: azimuthal_reference
+      :type: tuple[float, float, float] | None
+
+
+      Deprecated alias for :attr:`azimuth`.
+
+      .. deprecated:: 0.12.0
+          Use :attr:`azimuth` instead.  This alias will be removed in a
+          future release.
+
+      Reads and writes are forwarded to :attr:`azimuth`; every access
+      emits a :class:`DeprecationWarning`.
 
 
    
@@ -813,7 +831,7 @@ Module Contents
 
       :raises ValueError: If ``self.wavelength`` is None.
       :raises ValueError: If ``self.sample.UB`` is None.
-      :raises ValueError: If ``self.azimuthal_reference`` is None (no reference set).
+      :raises ValueError: If ``self.azimuth`` is None (no reference set).
       :raises ValueError: If the reference vector is parallel to Q (ψ is undefined).
 
       .. rubric:: Notes
@@ -832,7 +850,7 @@ Module Contents
       >>> import ad_hoc_diffractometer as ahd
       >>> g = ahd.fourcv()
       >>> g.wavelength = 1.5406
-      >>> g.azimuthal_reference = (0, 0, 1)
+      >>> g.azimuth = (0, 0, 1)
       >>> # ... set UB, move motors ...
       >>> psi = g.psi()
 
@@ -890,15 +908,15 @@ Module Contents
       ``"alpha_i"``                          :attr:`surface_normal`
       ``"beta_out"``                         :attr:`surface_normal`
       ``"a_eq_b"``                           :attr:`surface_normal`
-      ``"psi"``                              :attr:`azimuthal_reference`
-      ``"naz"``                              :attr:`azimuthal_reference`
+      ``"psi"``                              :attr:`azimuth`
+      ``"naz"``                              :attr:`azimuth`
       ``"omega"``                            (none)
       =====================================  =================================
 
       This property answers "which attribute do I set?" without
       forcing the caller to memorise the table.
 
-      :returns: One of ``"surface_normal"``, ``"azimuthal_reference"``, or
+      :returns: One of ``"surface_normal"``, ``"azimuth"``, or
                 ``None``.  ``None`` is returned when the active mode either
                 has no :class:`~ad_hoc_diffractometer.mode.ReferenceConstraint`,
                 uses a ReferenceConstraint that needs no vector (``"omega"``),
@@ -915,11 +933,11 @@ Module Contents
       'surface_normal'
       >>> setattr(g, g.required_reference_vector, (0, 0, 1))
 
-      Azimuthal mode → ``azimuthal_reference``:
+      Azimuthal mode → ``azimuth``:
 
       >>> g.mode_name = "fixed_psi_vertical"
       >>> g.required_reference_vector
-      'azimuthal_reference'
+      'azimuth'
 
       OMEGA pseudo-angle mode → no vector required:
 
@@ -932,7 +950,7 @@ Module Contents
          :py:obj:`surface_normal`
              The attribute set for surface-type reference constraints.
 
-         :py:obj:`azimuthal_reference`
+         :py:obj:`azimuth`
              The attribute set for psi/naz reference constraints.
 
 
@@ -1095,7 +1113,7 @@ Module Contents
       :meth:`is_specular`, :meth:`is_evanescent`).
 
       When ``None``, the surface calculations fall back to
-      :attr:`azimuthal_reference` if that is set.
+      :attr:`azimuth` if that is set.
 
       Setting this to ``None`` clears the surface normal.
       Setting to a non-zero (h, k, l) 3-tuple stores it.
@@ -1136,7 +1154,7 @@ Module Contents
                     Wavelength in Å (float or None).
                 ``"kappa_alpha_deg"``
                     Kappa tilt angle in degrees (float or None).
-                ``"azimuthal_reference"``
+                ``"azimuth"``
                     Miller indices [h, k, l] (list of 3 float, or None).
                 ``"basis"``
                     Dict mapping physical direction names to [x, y, z] lists.

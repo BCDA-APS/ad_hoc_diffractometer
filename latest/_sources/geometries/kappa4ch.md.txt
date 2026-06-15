@@ -175,14 +175,14 @@ Override at run time with `g.modes["fixed_phi"].with_constraint_values(phi=...)`
 
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 azimuthal angle ψ validation filter.
-Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+Set ``g.azimuth = (h, k, l)`` before calling ``forward()``.
 Returns bisecting solutions only when the natural ψ for (h,k,l) matches
 the stored target.  See {doc}`../howto/surface`.
 Override the ψ target at run time with `g.modes["fixed_psi"].with_constraint_values(psi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
-| **Extras (input)** | n̂ → set `g.azimuthal_reference = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
+| **Extras (input)** | n̂ → set `g.azimuth = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi (computed azimuth) |
 
 ## API reference

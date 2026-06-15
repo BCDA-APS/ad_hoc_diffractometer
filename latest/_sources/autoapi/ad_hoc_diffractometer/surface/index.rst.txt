@@ -40,7 +40,7 @@ surface
    The sample surface normal is specified as Miller indices ``(h, k, l)``
    via the geometry's ``surface_normal`` property (added to
    ``AdHocDiffractometer``).  If ``surface_normal`` is ``None`` the
-   ``azimuthal_reference`` is used as a fallback.
+   ``azimuth`` is used as a fallback.
 
    The surface normal in the lab frame is computed as::
 
@@ -112,7 +112,7 @@ Module Contents
                B matrix omits).
 
    :raises ValueError: If ``geometry.wavelength`` is None.
-   :raises ValueError: If ``geometry.surface_normal`` and ``geometry.azimuthal_reference``
+   :raises ValueError: If ``geometry.surface_normal`` and ``geometry.azimuth``
        are both None (no surface normal available).
    :raises ValueError: If ``geometry.sample.UB`` is None.
 
@@ -131,7 +131,7 @@ Module Contents
        sin(αf) = |k̂f · n̂_lab|
 
    :param geometry: Must have ``wavelength``, ``sample.UB``, and ``surface_normal``
-                    (or ``azimuthal_reference``) set.
+                    (or ``azimuth``) set.
    :type geometry: AdHocDiffractometer
    :param angles: Motor angles in degrees.  If ``None``, current stage angles are used.
    :type angles: dict[str, float] or None
@@ -161,7 +161,7 @@ Module Contents
        sin(αᵢ) = |ŷ · n̂_lab|
 
    :param geometry: Must have ``wavelength``, ``sample.UB``, and ``surface_normal``
-                    (or ``azimuthal_reference``) set.
+                    (or ``azimuth``) set.
    :type geometry: AdHocDiffractometer
    :param angles: Motor angles in degrees.  If ``None``, current stage angles are used.
    :type angles: dict[str, float] or None
@@ -266,7 +266,7 @@ Module Contents
    i.e. Å⁻¹ using the ``(2π/λ)(kf − ki)`` definition of Q (with full 2π).
 
    :param geometry: Must have ``wavelength``, ``sample.UB``, and ``surface_normal``
-                    (or ``azimuthal_reference``) set.
+                    (or ``azimuth``) set.
    :type geometry: AdHocDiffractometer
    :param angles: Motor angles in degrees.  If ``None``, current stage angles are used.
    :type angles: dict[str, float] or None

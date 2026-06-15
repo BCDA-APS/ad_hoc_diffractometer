@@ -15,7 +15,7 @@ chosen by the active mode's
 | ReferenceConstraint name | Set on the geometry | Recipe |
 |---|---|---|
 | `alpha_i`, `beta_out`, `a_eq_b` | `surface_normal` | `g.surface_normal = (h, k, l)` |
-| `psi`, `naz` | `azimuthal_reference` | `g.azimuthal_reference = (h, k, l)` |
+| `psi`, `naz` | `azimuth` | `g.azimuth = (h, k, l)` |
 | `omega` (SPEC pseudo-angle) | (none required) | — |
 
 Don't want to memorise the table?  Ask the geometry directly:
@@ -27,7 +27,16 @@ setattr(g, attr, (0, 0, 1))              # equivalent to g.surface_normal = ...
 ```
 
 `required_reference_vector` returns `'surface_normal'`,
-`'azimuthal_reference'`, or `None`.
+`'azimuth'`, or `None`.
+
+```{note}
+The `azimuth` attribute was named `azimuthal_reference` before
+v0.12.0 (issue #298).  The old name remains as a deprecated forwarding
+alias — both the property access and the constructor keyword emit
+`DeprecationWarning` — and will be removed in a future release.
+`required_reference_vector` now returns `'azimuth'` where it
+previously returned `'azimuthal_reference'`.
+```
 
 ## What the `n̂` placeholder in `mode.extras` means
 
@@ -52,14 +61,14 @@ and inspecting the active mode shows
 
 The `n_hat` key is a **documentation placeholder**, not a settable
 input slot — the actual vector lives on the geometry under
-`surface_normal` or `azimuthal_reference` (see the table above).
+`surface_normal` or `azimuth` (see the table above).
 
 ```python
 # WRONG — n_hat in extras is silently ignored by forward():
 g.modes["fixed_psi_vertical"].extras["n_hat"] = (0, 0, 1)
 
 # RIGHT — set the geometry attribute the constraint reads:
-g.azimuthal_reference = (0, 0, 1)
+g.azimuth = (0, 0, 1)
 ```
 
 Since issue #294 the package emits a `UserWarning` when the first
@@ -78,7 +87,7 @@ Two separate reference vectors may be set:
 - **`surface_normal`** — the direction perpendicular to the sample surface,
   used by `alpha_i`, `alpha_f`, `incidence_angle`, `exit_angle`, and
   surface modes (`zaxis`, `reflectivity`, `alpha_eq_beta_zaxis`).
-- **`azimuthal_reference`** — the direction used to define ψ = 0, used by
+- **`azimuth`** — the direction used to define ψ = 0, used by
   `psi_angle` and `fixed_psi_*` modes.
 
 They may be the same vector (e.g. the surface normal is also the azimuthal
@@ -118,11 +127,11 @@ The setter accepts any three-element sequence of numbers and raises
 
 ```python
 # Azimuthal reference along the a-axis: (1, 0, 0)
-g.azimuthal_reference = (1, 0, 0)
-print(g.azimuthal_reference)   # (1.0, 0.0, 0.0)
+g.azimuth = (1, 0, 0)
+print(g.azimuth)   # (1.0, 0.0, 0.0)
 
 # Same vector as surface normal for a (001) surface
-g.azimuthal_reference = (0, 0, 1)
+g.azimuth = (0, 0, 1)
 ```
 
 ## Compute incidence and exit angles
@@ -155,7 +164,7 @@ ai = incidence_angle(g)   # uses current stage angles
 ```python
 from ad_hoc_diffractometer import psi_angle
 
-g.azimuthal_reference = (0, 0, 1)
+g.azimuth = (0, 0, 1)
 g.mode_name = "bisecting_vertical"
 solutions = g.forward(1, 0, 0)
 
@@ -209,7 +218,7 @@ for sol in solutions:
 
 ## Serialization
 
-`surface_normal` and `azimuthal_reference` are serialized in `to_dict()`
+`surface_normal` and `azimuth` are serialized in `to_dict()`
 and restored by `from_dict()`:
 
 ```python
@@ -217,25 +226,29 @@ import json
 from ad_hoc_diffractometer import AdHocDiffractometer
 
 g.surface_normal = (0, 0, 1)
-g.azimuthal_reference = (1, 0, 0)
+g.azimuth = (1, 0, 0)
 
 d = g.to_dict()
 print(d["surface_normal"])        # [0.0, 0.0, 1.0]
-print(d["azimuthal_reference"])   # [1.0, 0.0, 0.0]
+print(d["azimuth"])   # [1.0, 0.0, 0.0]
 
 g2 = AdHocDiffractometer.from_dict(d)
 print(g2.surface_normal)          # (0.0, 0.0, 1.0)
 ```
 
+`from_dict()` also accepts the legacy key `"azimuthal_reference"`
+for backward compatibility with sessions saved by
+ad_hoc_diffractometer ≤ v0.11.x (issue #298).
+
 ## Reference constraint modes
 
 Modes that use a ``ReferenceConstraint`` require the appropriate reference
 vector to be set on the geometry.  ``fixed_psi_*`` modes require
-``azimuthal_reference``; surface modes (``zaxis``, ``reflectivity``) require
+``azimuth``; surface modes (``zaxis``, ``reflectivity``) require
 ``surface_normal``.
 
 ```python
-g.azimuthal_reference = (0, 0, 1)
+g.azimuth = (0, 0, 1)
 g.mode_name = "fixed_psi_vertical"
 
 cs = g.modes["fixed_psi_vertical"]

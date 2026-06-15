@@ -173,7 +173,7 @@ Override at run time with `g.modes["fixed_nu"].with_constraint_values(nu=...)` �
 ### `fixed_psi_vertical`
 
 Vertical bisecting with azimuthal angle ψ validation.
-Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+Set ``g.azimuth = (h, k, l)`` before calling ``forward()``.
 The solver returns bisecting solutions only when the natural ψ for the
 requested (h,k,l) matches the stored target.  See {doc}`../howto/surface`.
 Override the ψ target at run time with `g.modes["fixed_psi_vertical"].with_constraint_values(psi=...)` — see {doc}`../howto/constraints`.
@@ -182,7 +182,7 @@ Override the ψ target at run time with `g.modes["fixed_psi_vertical"].with_cons
 |---|---|
 | **Computed** | komega, kappa, kphi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
-| **Extras (input)** | n̂ → set `g.azimuthal_reference = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
+| **Extras (input)** | n̂ → set `g.azimuth = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi (computed azimuth) |
 
 ### `double_diffraction_vertical`
@@ -245,14 +245,14 @@ Override at run time with `g.modes["fixed_delta"].with_constraint_values(delta=.
 
 Horizontal bisecting with azimuthal angle ψ validation.
 Symmetric with `fixed_psi_vertical` in the horizontal plane.
-Set ``g.azimuthal_reference = (h, k, l)`` before calling ``forward()``.
+Set ``g.azimuth = (h, k, l)`` before calling ``forward()``.
 Override the ψ target at run time with `g.modes["fixed_psi_horizontal"].with_constraint_values(psi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
 | **Computed** | mu, kappa, kphi, nu |
 | **Constant during** `forward()` | komega = 0, delta = 0 |
-| **Extras (input)** | n̂ → set `g.azimuthal_reference = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
+| **Extras (input)** | n̂ → set `g.azimuth = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi (computed azimuth) |
 
 ### `double_diffraction_horizontal`

@@ -844,7 +844,7 @@ Module Contents
    Constrains a physical pseudo-angle between Q and the reference vector n̂.
 
    The reference vector n̂ must be stored on the geometry as
-   ``geometry.surface_normal`` (preferred) or ``geometry.azimuthal_reference``
+   ``geometry.surface_normal`` (preferred) or ``geometry.azimuth``
    before calling ``forward()``.
 
    Valid names (from You 1999 and Lohmeier & Vlieg 1993):
@@ -910,7 +910,7 @@ Module Contents
       Return True when the required reference vector is set on the geometry.
 
       For ``"psi"`` and ``"naz"``: requires
-      :attr:`~geometry.AdHocDiffractometer.azimuthal_reference` to be set.
+      :attr:`~geometry.AdHocDiffractometer.azimuth` to be set.
 
       For ``"alpha_i"``, ``"beta_out"``, and ``"a_eq_b"``: requires
       :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
@@ -936,7 +936,7 @@ Module Contents
       - ``"alpha_i"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
       - ``"beta_out"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
       - ``"a_eq_b"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
-      - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`.
+      - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuth`.
         The forward solver treats ψ as a **validation filter**: for a given
         (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for
         every Bragg solution.  The solver computes the natural ψ from UB and

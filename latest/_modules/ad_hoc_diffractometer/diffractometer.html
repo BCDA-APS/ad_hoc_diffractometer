@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=57cbeb03"></script>
+    <script src="../../_static/documentation_options.js?v=4ef7c848"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,7 +50,7 @@
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/diffractometer';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-09 13:47 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -443,6 +443,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">builtins</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -505,10 +506,14 @@
 <span class="sd">        kappa4ch, kappa6c).  None for non-kappa geometries.  Set by</span>
 <span class="sd">        the kappa demo geometries; not intended to be changed after</span>
 <span class="sd">        construction.</span>
-<span class="sd">    azimuthal_reference : tuple of float or None, optional</span>
+<span class="sd">    azimuth : tuple of float or None, optional</span>
 <span class="sd">        Azimuthal reference direction as Miller indices (h, k, l).  Used</span>
 <span class="sd">        by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)</span>
 <span class="sd">        means no reference is set.  Must be a non-zero vector.</span>
+<span class="sd">    azimuthal_reference : tuple of float or None, optional</span>
+<span class="sd">        Deprecated alias for ``azimuth``.  Accepted for backward</span>
+<span class="sd">        compatibility; emits :class:`DeprecationWarning` if used.  Will</span>
+<span class="sd">        be removed in a future release.</span>
 <span class="sd">    modes : dict[str, ConstraintSet] or ModeDict or None, optional</span>
 <span class="sd">        Named diffraction modes available for this geometry.  Keys are</span>
 <span class="sd">        mode names (str); values are :class:`~mode.DiffractionMode`</span>
@@ -540,6 +545,7 @@
         <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">kappa_alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">kappa_pseudo_angle_convention</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">azimuth</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">azimuthal_reference</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">modes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="n">ModeDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">default_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -552,7 +558,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">wavelength</span>  <span class="c1"># validated via property setter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa_alpha_deg</span> <span class="o">=</span> <span class="n">kappa_alpha_deg</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa_pseudo_angle_convention</span> <span class="o">=</span> <span class="n">kappa_pseudo_angle_convention</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="o">=</span> <span class="n">azimuthal_reference</span>  <span class="c1"># validated via property setter</span>
+        <span class="c1"># Resolve azimuth / azimuthal_reference (deprecated alias).  If both</span>
+        <span class="c1"># are supplied and disagree, raise; if only the deprecated form is</span>
+        <span class="c1"># supplied, warn and accept it.</span>
+        <span class="k">if</span> <span class="n">azimuthal_reference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">azimuth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">azimuth</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">azimuthal_reference</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Cannot specify both &#39;azimuth&#39; and &#39;azimuthal_reference&#39; &quot;</span>
+                    <span class="s2">&quot;with different values; &#39;azimuthal_reference&#39; is the &quot;</span>
+                    <span class="s2">&quot;deprecated alias for &#39;azimuth&#39;.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;The &#39;azimuthal_reference&#39; constructor keyword is deprecated &quot;</span>
+                <span class="s2">&quot;since v0.12.0; use &#39;azimuth&#39; instead. The old name will be &quot;</span>
+                <span class="s2">&quot;removed in a future release.&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">azimuth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">azimuth</span> <span class="o">=</span> <span class="n">azimuthal_reference</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span> <span class="o">=</span> <span class="n">azimuth</span>  <span class="c1"># validated via property setter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_surface_normal</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_detector_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_detector_tilt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -983,7 +1008,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_kappa_pseudo_angle_convention</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">azimuthal_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">azimuth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Azimuthal reference vector as Miller indices (h, k, l), or ``None``.</span>
 
@@ -1013,30 +1038,62 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; g = psic()</span>
-<span class="sd">        &gt;&gt;&gt; g.azimuthal_reference = (0, 0, 1)   # c-axis surface normal</span>
-<span class="sd">        &gt;&gt;&gt; g.azimuthal_reference</span>
+<span class="sd">        &gt;&gt;&gt; g.azimuth = (0, 0, 1)   # c-axis surface normal</span>
+<span class="sd">        &gt;&gt;&gt; g.azimuth</span>
 <span class="sd">        (0.0, 0.0, 1.0)</span>
-<span class="sd">        &gt;&gt;&gt; g.azimuthal_reference = None          # clear reference</span>
+<span class="sd">        &gt;&gt;&gt; g.azimuth = None          # clear reference</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_azimuthal_reference</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_azimuth</span>
 
-    <span class="nd">@azimuthal_reference</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">azimuthal_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nd">@azimuth</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">azimuth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_azimuthal_reference</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_azimuth</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>  <span class="c1"># noqa: E741</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;azimuthal_reference must be a length-3 sequence of numbers &quot;</span>
+                <span class="s2">&quot;azimuth must be a length-3 sequence of numbers &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;or None; got </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">.&quot;</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
         <span class="k">if</span> <span class="n">h</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">k</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">l</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;azimuthal_reference must be a non-zero vector; (0, 0, 0) is not allowed.&quot;</span>
+                <span class="s2">&quot;azimuth must be a non-zero vector; (0, 0, 0) is not allowed.&quot;</span>
             <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_azimuthal_reference</span> <span class="o">=</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_azimuth</span> <span class="o">=</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">azimuthal_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deprecated alias for :attr:`azimuth`.</span>
+
+<span class="sd">        .. deprecated:: 0.12.0</span>
+<span class="sd">            Use :attr:`azimuth` instead.  This alias will be removed in a</span>
+<span class="sd">            future release.</span>
+
+<span class="sd">        Reads and writes are forwarded to :attr:`azimuth`; every access</span>
+<span class="sd">        emits a :class:`DeprecationWarning`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;AdHocDiffractometer.azimuthal_reference is deprecated since &quot;</span>
+            <span class="s2">&quot;v0.12.0; use &#39;azimuth&#39; instead. The old name will be removed &quot;</span>
+            <span class="s2">&quot;in a future release.&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_azimuth</span>
+
+    <span class="nd">@azimuthal_reference</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">azimuthal_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;AdHocDiffractometer.azimuthal_reference is deprecated since &quot;</span>
+            <span class="s2">&quot;v0.12.0; use &#39;azimuth&#39; instead. The old name will be removed &quot;</span>
+            <span class="s2">&quot;in a future release.&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Diffraction modes</span>
@@ -1515,7 +1572,7 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If ``self.sample.UB`` is None.</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If ``self.azimuthal_reference`` is None (no reference set).</span>
+<span class="sd">            If ``self.azimuth`` is None (no reference set).</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If the reference vector is parallel to Q (ψ is undefined).</span>
 
@@ -1535,7 +1592,7 @@
 <span class="sd">        &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
 <span class="sd">        &gt;&gt;&gt; g = ahd.fourcv()</span>
 <span class="sd">        &gt;&gt;&gt; g.wavelength = 1.5406</span>
-<span class="sd">        &gt;&gt;&gt; g.azimuthal_reference = (0, 0, 1)</span>
+<span class="sd">        &gt;&gt;&gt; g.azimuth = (0, 0, 1)</span>
 <span class="sd">        &gt;&gt;&gt; # ... set UB, move motors ...</span>
 <span class="sd">        &gt;&gt;&gt; psi = g.psi()</span>
 
@@ -1552,10 +1609,10 @@
                 <span class="s2">&quot;psi() requires a UB matrix on the active sample. &quot;</span>
                 <span class="s2">&quot;Call ub_identity() or ub_from_two_reflections_bl1967() first.&quot;</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuthal_reference</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;psi() requires azimuthal_reference to be set on the geometry. &quot;</span>
-                <span class="s2">&quot;Set geometry.azimuthal_reference = (h, k, l) first.&quot;</span>
+                <span class="s2">&quot;psi() requires azimuth to be set on the geometry. &quot;</span>
+                <span class="s2">&quot;Set geometry.azimuth = (h, k, l) first.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1570,7 +1627,7 @@
         <span class="n">Q_hat</span> <span class="o">=</span> <span class="n">Q_phi</span> <span class="o">/</span> <span class="n">Q_mag</span>
 
         <span class="c1"># Reference direction in phi frame</span>
-        <span class="n">n_hkl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">azimuthal_reference</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">n_hkl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">n_phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="o">@</span> <span class="n">n_hkl</span>
         <span class="n">n_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_phi</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">n_mag</span> <span class="o">&lt;</span> <span class="mf">1e-14</span><span class="p">:</span>
@@ -1628,7 +1685,7 @@
 <span class="sd">        :meth:`is_specular`, :meth:`is_evanescent`).</span>
 
 <span class="sd">        When ``None``, the surface calculations fall back to</span>
-<span class="sd">        :attr:`azimuthal_reference` if that is set.</span>
+<span class="sd">        :attr:`azimuth` if that is set.</span>
 
 <span class="sd">        Setting this to ``None`` clears the surface normal.</span>
 <span class="sd">        Setting to a non-zero (h, k, l) 3-tuple stores it.</span>
@@ -1688,8 +1745,8 @@
 <span class="sd">        ``&quot;alpha_i&quot;``                          :attr:`surface_normal`</span>
 <span class="sd">        ``&quot;beta_out&quot;``                         :attr:`surface_normal`</span>
 <span class="sd">        ``&quot;a_eq_b&quot;``                           :attr:`surface_normal`</span>
-<span class="sd">        ``&quot;psi&quot;``                              :attr:`azimuthal_reference`</span>
-<span class="sd">        ``&quot;naz&quot;``                              :attr:`azimuthal_reference`</span>
+<span class="sd">        ``&quot;psi&quot;``                              :attr:`azimuth`</span>
+<span class="sd">        ``&quot;naz&quot;``                              :attr:`azimuth`</span>
 <span class="sd">        ``&quot;omega&quot;``                            (none)</span>
 <span class="sd">        =====================================  =================================</span>
 
@@ -1699,7 +1756,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str or None</span>
-<span class="sd">            One of ``&quot;surface_normal&quot;``, ``&quot;azimuthal_reference&quot;``, or</span>
+<span class="sd">            One of ``&quot;surface_normal&quot;``, ``&quot;azimuth&quot;``, or</span>
 <span class="sd">            ``None``.  ``None`` is returned when the active mode either</span>
 <span class="sd">            has no :class:`~ad_hoc_diffractometer.mode.ReferenceConstraint`,</span>
 <span class="sd">            uses a ReferenceConstraint that needs no vector (``&quot;omega&quot;``),</span>
@@ -1715,11 +1772,11 @@
 <span class="sd">        &#39;surface_normal&#39;</span>
 <span class="sd">        &gt;&gt;&gt; setattr(g, g.required_reference_vector, (0, 0, 1))</span>
 
-<span class="sd">        Azimuthal mode → ``azimuthal_reference``:</span>
+<span class="sd">        Azimuthal mode → ``azimuth``:</span>
 
 <span class="sd">        &gt;&gt;&gt; g.mode_name = &quot;fixed_psi_vertical&quot;</span>
 <span class="sd">        &gt;&gt;&gt; g.required_reference_vector</span>
-<span class="sd">        &#39;azimuthal_reference&#39;</span>
+<span class="sd">        &#39;azimuth&#39;</span>
 
 <span class="sd">        OMEGA pseudo-angle mode → no vector required:</span>
 
@@ -1730,7 +1787,7 @@
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        surface_normal : The attribute set for surface-type reference constraints.</span>
-<span class="sd">        azimuthal_reference : The attribute set for psi/naz reference constraints.</span>
+<span class="sd">        azimuth : The attribute set for psi/naz reference constraints.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
 
@@ -1743,7 +1800,7 @@
         <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;alpha_i&quot;</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">,</span> <span class="s2">&quot;a_eq_b&quot;</span><span class="p">}:</span>
             <span class="k">return</span> <span class="s2">&quot;surface_normal&quot;</span>
         <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="s2">&quot;naz&quot;</span><span class="p">}:</span>
-            <span class="k">return</span> <span class="s2">&quot;azimuthal_reference&quot;</span>
+            <span class="k">return</span> <span class="s2">&quot;azimuth&quot;</span>
         <span class="c1"># &quot;omega&quot; pseudo-angle requires no reference vector.</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -1871,7 +1928,7 @@
 
 <span class="sd">        αᵢ is the angle between the incoming beam and the sample surface.</span>
 <span class="sd">        Requires ``wavelength``, ``sample.UB``, and ``surface_normal``</span>
-<span class="sd">        (or ``azimuthal_reference``) to be set.</span>
+<span class="sd">        (or ``azimuth``) to be set.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1909,7 +1966,7 @@
 
 <span class="sd">        αf is the angle between the diffracted beam and the sample surface.</span>
 <span class="sd">        Requires ``wavelength``, ``sample.UB``, and ``surface_normal``</span>
-<span class="sd">        (or ``azimuthal_reference``) to be set.</span>
+<span class="sd">        (or ``azimuth``) to be set.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2313,7 +2370,7 @@
         <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
         <span class="c1"># Azimuthal reference</span>
-        <span class="n">az_ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuthal_reference</span>
+        <span class="n">az_ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span>
         <span class="k">if</span> <span class="n">az_ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">az_ref</span>  <span class="c1"># noqa: E741</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -2534,7 +2591,7 @@
 <span class="sd">                Wavelength in Å (float or None).</span>
 <span class="sd">            ``&quot;kappa_alpha_deg&quot;``</span>
 <span class="sd">                Kappa tilt angle in degrees (float or None).</span>
-<span class="sd">            ``&quot;azimuthal_reference&quot;``</span>
+<span class="sd">            ``&quot;azimuth&quot;``</span>
 <span class="sd">                Miller indices [h, k, l] (list of 3 float, or None).</span>
 <span class="sd">            ``&quot;basis&quot;``</span>
 <span class="sd">                Dict mapping physical direction names to [x, y, z] lists.</span>
@@ -2589,11 +2646,7 @@
             <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
             <span class="s2">&quot;wavelength&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">,</span>
             <span class="s2">&quot;kappa_alpha_deg&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kappa_alpha_deg</span><span class="p">,</span>
-            <span class="s2">&quot;azimuthal_reference&quot;</span><span class="p">:</span> <span class="p">(</span>
-                <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_azimuthal_reference</span><span class="p">)</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_azimuthal_reference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                <span class="k">else</span> <span class="kc">None</span>
-            <span class="p">),</span>
+            <span class="s2">&quot;azimuth&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_azimuth</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_azimuth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">),</span>
             <span class="s2">&quot;surface_normal&quot;</span><span class="p">:</span> <span class="p">(</span>
                 <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_surface_normal</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_surface_normal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
             <span class="p">),</span>
@@ -2688,7 +2741,7 @@
             <span class="n">description</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
             <span class="n">wavelength</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;wavelength&quot;</span><span class="p">),</span>
             <span class="n">kappa_alpha_deg</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kappa_alpha_deg&quot;</span><span class="p">),</span>
-            <span class="n">azimuthal_reference</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;azimuthal_reference&quot;</span><span class="p">),</span>
+            <span class="n">azimuth</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;azimuth&quot;</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;azimuthal_reference&quot;</span><span class="p">)),</span>
             <span class="n">modes</span><span class="o">=</span><span class="n">restored_modes</span> <span class="k">if</span> <span class="n">restored_modes</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">default_mode</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mode_name&quot;</span><span class="p">),</span>
             <span class="n">cut_points</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cut_points&quot;</span><span class="p">),</span>
@@ -2875,8 +2928,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -2884,7 +2937,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-09 13:47 CDT.
+  Last updated on 2026-06-15 18:38 CDT.
   <br/>
 </p></div>
       
