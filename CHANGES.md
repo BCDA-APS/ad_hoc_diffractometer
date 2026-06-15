@@ -9,6 +9,19 @@ issue tracker.  The initial project development roadmap is documented here:
 ## Unreleased
 
 Note any unreleased items inside the comment here.  Not visible until release.
+
+### Added
+
+- `azimuth` property and constructor kwarg as canonical name. (#298)
+
+### Changed
+
+- `required_reference_vector` returns `"azimuth"` instead of `"azimuthal_reference"`. (#298)
+
+### Deprecated
+
+- `azimuthal_reference` property and kwarg; use `azimuth` instead. (#298)
+
 -->
 
 ## Release v0.11.1

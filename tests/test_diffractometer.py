@@ -10,7 +10,7 @@ Covers:
   - set_angle() and stage()
   - sample_rotation_matrix() and detector_rotation_matrix()
   - check_limits()
-  - azimuthal_reference property: storage, validation, default None
+  - azimuth property: storage, validation, default None
   - psi() method: psi=0 when n in scattering plane, psi=90 when n perp,
     uses current angles when called with no args, error cases
   - wh(print=False): str output, content, graceful fallbacks, stdout control
@@ -753,80 +753,185 @@ def test_inverse_unknown_stage_raises():
 
 
 # ---------------------------------------------------------------------------
-# azimuthal_reference property (#11)
+# azimuth property (#11)
 # ---------------------------------------------------------------------------
 
 
-def test_azimuthal_reference_default_is_none():
-    """azimuthal_reference is None by default."""
+def test_azimuth_default_is_none():
+    """azimuth is None by default."""
     from helpers import fourcv
 
-    assert fourcv().azimuthal_reference is None
+    assert fourcv().azimuth is None
 
 
-def test_azimuthal_reference_set_tuple():
+def test_azimuth_set_tuple():
     """Setting to a 3-tuple stores it as (float, float, float)."""
     from helpers import fourcv
 
     g = fourcv()
-    g.azimuthal_reference = (0, 0, 1)
-    assert g.azimuthal_reference == (0.0, 0.0, 1.0)
+    g.azimuth = (0, 0, 1)
+    assert g.azimuth == (0.0, 0.0, 1.0)
 
 
-def test_azimuthal_reference_set_list():
+def test_azimuth_set_list():
     """Setting to a list of 3 numbers works (converts to tuple of floats)."""
     from helpers import psic
 
     g = psic()
-    g.azimuthal_reference = [1, 1, 0]
-    assert g.azimuthal_reference == (1.0, 1.0, 0.0)
+    g.azimuth = [1, 1, 0]
+    assert g.azimuth == (1.0, 1.0, 0.0)
 
 
-def test_azimuthal_reference_clear_with_none():
+def test_azimuth_clear_with_none():
     """Setting to None clears the reference."""
     from helpers import fourcv
 
     g = fourcv()
-    g.azimuthal_reference = (0, 0, 1)
-    g.azimuthal_reference = None
-    assert g.azimuthal_reference is None
+    g.azimuth = (0, 0, 1)
+    g.azimuth = None
+    assert g.azimuth is None
 
 
-def test_azimuthal_reference_constructor():
-    """azimuthal_reference can be set at construction via keyword argument."""
+def test_azimuth_constructor():
+    """azimuth can be set at construction via keyword argument."""
     from helpers import fourcv
 
     # Use fourcv factory result and check the property works after setting
     g = fourcv()
-    g.azimuthal_reference = (0, 1, 0)
-    assert g.azimuthal_reference == (0.0, 1.0, 0.0)
+    g.azimuth = (0, 1, 0)
+    assert g.azimuth == (0.0, 1.0, 0.0)
 
 
-def test_azimuthal_reference_zero_vector_raises():
+def test_azimuth_zero_vector_raises():
     """Setting to (0, 0, 0) raises ValueError."""
     from helpers import fourcv
 
     g = fourcv()
     with pytest.raises(ValueError, match=re.escape("non-zero")):
-        g.azimuthal_reference = (0, 0, 0)
+        g.azimuth = (0, 0, 0)
 
 
-def test_azimuthal_reference_bad_type_raises():
+def test_azimuth_bad_type_raises():
     """Setting to a non-sequence raises ValueError."""
     from helpers import fourcv
 
     g = fourcv()
     with pytest.raises(ValueError, match=re.escape("length-3 sequence")):
-        g.azimuthal_reference = 42
+        g.azimuth = 42
 
 
-def test_azimuthal_reference_wrong_length_raises():
+def test_azimuth_wrong_length_raises():
     """Setting to a 2-element tuple raises ValueError."""
     from helpers import fourcv
 
     g = fourcv()
     with pytest.raises(ValueError):
-        g.azimuthal_reference = (0, 1)
+        g.azimuth = (0, 1)
+
+
+# ---------------------------------------------------------------------------
+# azimuthal_reference deprecated alias (#298)
+# ---------------------------------------------------------------------------
+#
+# Issue #298 renamed `azimuthal_reference` to `azimuth`.  The old name is
+# kept as a forwarding alias that emits DeprecationWarning on both read
+# and write.  The constructor keyword is kept under the same policy.
+# `to_dict()` writes the new key `"azimuth"`; `from_dict()` accepts
+# either the new or the legacy key for backward compatibility.
+
+
+def test_azimuthal_reference_alias_set_warns():
+    """Writing the deprecated name emits DeprecationWarning."""
+    from helpers import fourcv
+
+    g = fourcv()
+    with pytest.warns(DeprecationWarning, match=re.escape("azimuthal_reference")):
+        g.azimuthal_reference = (0, 0, 1)
+
+
+def test_azimuthal_reference_alias_get_warns():
+    """Reading the deprecated name emits DeprecationWarning."""
+    from helpers import fourcv
+
+    g = fourcv()
+    g.azimuth = (0, 0, 1)
+    with pytest.warns(DeprecationWarning, match=re.escape("azimuthal_reference")):
+        _ = g.azimuthal_reference
+
+
+def test_azimuthal_reference_alias_shares_storage():
+    """The deprecated alias and the canonical name share underlying storage."""
+    import warnings
+
+    from helpers import fourcv
+
+    g = fourcv()
+    g.azimuth = (0, 0, 1)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        assert g.azimuthal_reference == (0.0, 0.0, 1.0)
+        g.azimuthal_reference = (1, 0, 0)
+    assert g.azimuth == (1.0, 0.0, 0.0)
+
+
+def test_azimuthal_reference_constructor_kwarg_warns():
+    """The deprecated constructor kwarg emits DeprecationWarning."""
+    from helpers import fourcv
+
+    from ad_hoc_diffractometer.diffractometer import AdHocDiffractometer
+
+    template = fourcv()
+    with pytest.warns(DeprecationWarning, match=re.escape("azimuthal_reference")):
+        g = AdHocDiffractometer(
+            name="fourcv",
+            stages=list(template._stages.values()),
+            basis=template.basis,
+            azimuthal_reference=(0, 0, 1),
+        )
+    assert g.azimuth == (0.0, 0.0, 1.0)
+
+
+def test_azimuthal_reference_and_azimuth_conflict_raises():
+    """Supplying both kwargs with disagreeing values raises ValueError."""
+    from helpers import fourcv
+
+    from ad_hoc_diffractometer.diffractometer import AdHocDiffractometer
+
+    template = fourcv()
+    with pytest.raises(ValueError, match=re.escape("Cannot specify both")):
+        AdHocDiffractometer(
+            name="fourcv",
+            stages=list(template._stages.values()),
+            basis=template.basis,
+            azimuth=(0, 0, 1),
+            azimuthal_reference=(1, 0, 0),
+        )
+
+
+def test_to_dict_writes_azimuth_key_not_legacy():
+    """to_dict() emits the new key "azimuth" and not the legacy key."""
+    from helpers import fourcv
+
+    g = fourcv()
+    g.azimuth = (0, 0, 1)
+    d = g.to_dict()
+    assert d["azimuth"] == [0.0, 0.0, 1.0]
+    assert "azimuthal_reference" not in d
+
+
+def test_from_dict_accepts_legacy_azimuthal_reference_key():
+    """from_dict() reads the legacy "azimuthal_reference" key when present."""
+    from helpers import fourcv
+
+    from ad_hoc_diffractometer.diffractometer import AdHocDiffractometer
+
+    g = fourcv()
+    g.azimuth = (0, 0, 1)
+    d = g.to_dict()
+    # Simulate a session saved by ad_hoc_diffractometer < v0.12.0
+    d["azimuthal_reference"] = d.pop("azimuth")
+    g2 = AdHocDiffractometer.from_dict(d)
+    assert g2.azimuth == (0.0, 0.0, 1.0)
 
 
 # ---------------------------------------------------------------------------
@@ -842,7 +947,7 @@ def test_azimuthal_reference_wrong_length_raises():
 
 
 def _fourcv_identity():
-    """fourcv with B=I (a=1), lambda=2pi, UB=I, azimuthal_reference=(1,0,0).
+    """fourcv with B=I (a=1), lambda=2pi, UB=I, azimuth=(1,0,0).
 
     With the corrected fourcv (vertical scattering plane), omega and ttheta
     rotate about the transverse (-x) axis.  At chi=0, phi=0, omega=30, ttheta=60
@@ -858,7 +963,7 @@ def _fourcv_identity():
     g.wavelength = 2 * _math.pi
     g.sample.lattice = Lattice(a=1.0)
     ub_identity(g.sample)
-    g.azimuthal_reference = (
+    g.azimuth = (
         1,
         0,
         0,
@@ -881,12 +986,12 @@ def test_psi_n_perpendicular_to_scattering_plane_is_90():
     Under issue #280 ub_identity, ``UB @ (0, 0, 1) = U[:, 2] · |b3*|`` is
     physically along ``+transverse`` (= +x in fourcv-BL basis), which is
     perpendicular to the vertical scattering plane.  Pre-#280 the same
-    physical configuration was selected by ``azimuthal_reference =
+    physical configuration was selected by ``azimuth =
     (1, 0, 0)`` because the basis-relative ``U = I`` put the crystal
     a-axis along ``+x``.
     """
     g = _fourcv_identity()
-    g.azimuthal_reference = (0, 0, 1)  # → n_phi along +transverse
+    g.azimuth = (0, 0, 1)  # → n_phi along +transverse
     angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0}
     psi = g.psi(angles)
     assert abs(psi - 90.0) < 1e-8
@@ -901,13 +1006,13 @@ def test_psi_n_in_scattering_plane_is_0():
     is parallel to the incident beam.  By the BL1967 psi convention,
     a reference parallel to the incident beam gives psi = 0.
 
-    The pre-#280 test used ``azimuthal_reference = (0, 1, 0)`` for the
+    The pre-#280 test used ``azimuth = (0, 1, 0)`` for the
     same physical configuration because the basis-relative ``U = I``
     aligned the crystal b-axis along the basis-y direction.  Under the
     new ub_identity the crystal a-axis is the one along the beam.
     """
     g = _fourcv_identity()
-    g.azimuthal_reference = (1, 0, 0)  # → n_phi along +longitudinal
+    g.azimuth = (1, 0, 0)  # → n_phi along +longitudinal
     angles = {"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0}
     psi = g.psi(angles)
     assert abs(psi - 0.0) < 1e-8
@@ -923,7 +1028,7 @@ def test_psi_uses_current_angles_when_none_passed():
     # Under issue #280 ub_identity, (0,0,1) places the reference
     # physically along +transverse — perpendicular to the vertical
     # scattering plane and to Q at these angles.
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     psi_implicit = g.psi()
     psi_explicit = g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
     assert abs(psi_implicit - psi_explicit) < 1e-10
@@ -948,10 +1053,10 @@ def test_psi_range_within_180():
 
 
 def test_psi_no_reference_raises():
-    """psi() raises ValueError when azimuthal_reference is None."""
+    """psi() raises ValueError when azimuth is None."""
     g = _fourcv_identity()
-    g.azimuthal_reference = None
-    with pytest.raises(ValueError, match=re.escape("azimuthal_reference")):
+    g.azimuth = None
+    with pytest.raises(ValueError, match=re.escape("azimuth")):
         g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
 
 
@@ -980,7 +1085,7 @@ def test_psi_n_parallel_to_q_raises():
     Choose a Miller index whose ``UB @ hkl`` is parallel to that Q.
 
     Under the new ub_identity the simplest such case is to set
-    ``azimuthal_reference`` to the same physical direction as Q at the
+    ``azimuth`` to the same physical direction as Q at the
     chosen motor configuration.  We pick the hkl that places n_phi
     exactly where Q lands for these angles.
     """
@@ -994,7 +1099,7 @@ def test_psi_n_parallel_to_q_raises():
     Q_phi = g.inverse(angles)
     # Q_phi here actually returns the hkl tuple; use it directly as
     # the parallel reference.
-    g.azimuthal_reference = tuple(float(v) for v in Q_phi)
+    g.azimuth = tuple(float(v) for v in Q_phi)
     with pytest.raises(ValueError, match=re.escape("parallel to Q")):
         g.psi(angles)
 
@@ -1020,20 +1125,20 @@ def test_psi_beam_parallel_to_q_raises():
     # branch.  Under the new ub_identity, ``(0, 0, 1)`` places n_phi
     # along physical +transverse (= +x in fourcv-BL), which is
     # perpendicular to the beam direction.
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     with pytest.raises(
         ValueError, match=re.escape("incident beam direction is parallel to Q")
     ):
         g.psi(angles)
 
 
-def test_psi_pa_shows_azimuthal_reference():
+def test_psi_pa_shows_azimuth():
     """pa property output includes the azimuthal reference hkl when set."""
     from helpers import fourcv
 
     g = fourcv()
     g.wavelength = 1.5406
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     assert "Azimuthal Reference" in g.pa(print=False)
     assert "0  0  1" in g.pa(print=False)
 
@@ -1434,7 +1539,7 @@ def test_psi_q_zero_raises(angles, match):
     g = fourcv()
     g.wavelength = 2 * _math.pi
     ub_identity(g.sample)
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     with pytest.raises(ValueError, match=match):
         g.psi(angles)
 
@@ -1450,7 +1555,7 @@ def test_psi_n_maps_to_zero_raises():
     g.sample.lattice = Lattice(a=1.0)
     g.sample.UB = np.zeros((3, 3))
     g.sample.U = np.zeros((3, 3))
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     with pytest.raises(ValueError, match="zero in the phi frame"):
         g.psi({"omega": 30.0, "chi": 0.0, "phi": 0.0, "ttheta": 60.0})
 
@@ -1526,7 +1631,7 @@ def test_wh_logs_debug_when_psi_unavailable(caplog):
     g = fourcv()
     g.wavelength = 1.5406
     ub_identity(g.sample)
-    # No azimuthal_reference → psi() raises → logger.debug fires
+    # No azimuth → psi() raises → logger.debug fires
     with caplog.at_level(logging.DEBUG, logger="ad_hoc_diffractometer.diffractometer"):
         g.wh(print=False)
 
@@ -1914,7 +2019,7 @@ def _sapphire_fourcv():
 
     g = fourcv()
     g.wavelength = 1.549802558
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     g.add_sample("sapphire", Lattice(a=4.785, c=12.991, gamma=120))
     g.sample = "sapphire"
     g.add_reflection(
@@ -1974,10 +2079,10 @@ def test_geometry_to_dict_top_level(key, expected, context):
         assert _sapphire_fourcv().to_dict()[key] == pytest.approx(expected)
 
 
-def test_geometry_to_dict_azimuthal_reference():
+def test_geometry_to_dict_azimuth():
     """to_dict() stores the azimuthal reference vector."""
     d = _sapphire_fourcv().to_dict()
-    assert d["azimuthal_reference"] == pytest.approx([0.0, 0.0, 1.0])
+    assert d["azimuth"] == pytest.approx([0.0, 0.0, 1.0])
 
 
 def test_geometry_to_dict_stages():
@@ -2008,8 +2113,8 @@ def test_geometry_to_dict_stage_angle_preserved():
             id="wavelength",
         ),
         pytest.param(
-            "azimuthal_reference",
-            lambda o, r: r.azimuthal_reference == pytest.approx(o.azimuthal_reference),
+            "azimuth",
+            lambda o, r: r.azimuth == pytest.approx(o.azimuth),
             does_not_raise(),
             id="azimuthal-ref",
         ),
@@ -2101,7 +2206,7 @@ def test_geometry_json_roundtrip():
         pytest.param(
             "no-azimuthal-ref",
             lambda: _no_azref_fourcv(),
-            lambda o, r: r.azimuthal_reference is None,
+            lambda o, r: r.azimuth is None,
             does_not_raise(),
             id="no-azimuthal-ref",
         ),
@@ -2210,14 +2315,14 @@ def test_geometry_to_dict_version_unknown_on_metadata_error():
         pytest.param(
             "psic",
             "fixed_psi_vertical",
-            "azimuthal_reference",
-            id="psic-fixed_psi_vertical-azimuthal_reference",
+            "azimuth",
+            id="psic-fixed_psi_vertical-azimuth",
         ),
         pytest.param(
             "psic",
             "fixed_psi_horizontal",
-            "azimuthal_reference",
-            id="psic-fixed_psi_horizontal-azimuthal_reference",
+            "azimuth",
+            id="psic-fixed_psi_horizontal-azimuth",
         ),
         pytest.param(
             "psic",
@@ -2246,8 +2351,8 @@ def test_geometry_to_dict_version_unknown_on_metadata_error():
         pytest.param(
             "fourcv",
             "fixed_psi",
-            "azimuthal_reference",
-            id="fourcv-fixed_psi-azimuthal_reference",
+            "azimuth",
+            id="fourcv-fixed_psi-azimuth",
         ),
     ],
 )

@@ -9,6 +9,7 @@ The stacking order is encoded via the parent attribute of each Stage.
 
 import builtins
 import logging
+import warnings
 
 import numpy as np
 
@@ -69,10 +70,14 @@ class AdHocDiffractometer:
         kappa4ch, kappa6c).  None for non-kappa geometries.  Set by
         the kappa demo geometries; not intended to be changed after
         construction.
-    azimuthal_reference : tuple of float or None, optional
+    azimuth : tuple of float or None, optional
         Azimuthal reference direction as Miller indices (h, k, l).  Used
         by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)
         means no reference is set.  Must be a non-zero vector.
+    azimuthal_reference : tuple of float or None, optional
+        Deprecated alias for ``azimuth``.  Accepted for backward
+        compatibility; emits :class:`DeprecationWarning` if used.  Will
+        be removed in a future release.
     modes : dict[str, ConstraintSet] or ModeDict or None, optional
         Named diffraction modes available for this geometry.  Keys are
         mode names (str); values are :class:`~mode.DiffractionMode`
@@ -104,6 +109,7 @@ class AdHocDiffractometer:
         wavelength: float | None = None,
         kappa_alpha_deg: float | None = None,
         kappa_pseudo_angle_convention=None,
+        azimuth: tuple[float, float, float] | None = None,
         azimuthal_reference: tuple[float, float, float] | None = None,
         modes: dict | ModeDict | None = None,
         default_mode: str | None = None,
@@ -116,7 +122,26 @@ class AdHocDiffractometer:
         self.wavelength = wavelength  # validated via property setter
         self.kappa_alpha_deg = kappa_alpha_deg
         self.kappa_pseudo_angle_convention = kappa_pseudo_angle_convention
-        self.azimuthal_reference = azimuthal_reference  # validated via property setter
+        # Resolve azimuth / azimuthal_reference (deprecated alias).  If both
+        # are supplied and disagree, raise; if only the deprecated form is
+        # supplied, warn and accept it.
+        if azimuthal_reference is not None:
+            if azimuth is not None and tuple(azimuth) != tuple(azimuthal_reference):
+                raise ValueError(
+                    "Cannot specify both 'azimuth' and 'azimuthal_reference' "
+                    "with different values; 'azimuthal_reference' is the "
+                    "deprecated alias for 'azimuth'."
+                )
+            warnings.warn(
+                "The 'azimuthal_reference' constructor keyword is deprecated "
+                "since v0.12.0; use 'azimuth' instead. The old name will be "
+                "removed in a future release.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            if azimuth is None:
+                azimuth = azimuthal_reference
+        self.azimuth = azimuth  # validated via property setter
         self._surface_normal: tuple[float, float, float] | None = None
         self._detector_distance: float | None = None
         self._detector_tilt: float | None = None
@@ -535,7 +560,7 @@ class AdHocDiffractometer:
         self._kappa_pseudo_angle_convention = value
 
     @property
-    def azimuthal_reference(self) -> tuple[float, float, float] | None:
+    def azimuth(self) -> tuple[float, float, float] | None:
         """
         Azimuthal reference vector as Miller indices (h, k, l), or ``None``.
 
@@ -565,30 +590,62 @@ class AdHocDiffractometer:
         Examples
         --------
         >>> g = psic()
-        >>> g.azimuthal_reference = (0, 0, 1)   # c-axis surface normal
-        >>> g.azimuthal_reference
+        >>> g.azimuth = (0, 0, 1)   # c-axis surface normal
+        >>> g.azimuth
         (0.0, 0.0, 1.0)
-        >>> g.azimuthal_reference = None          # clear reference
+        >>> g.azimuth = None          # clear reference
         """
-        return self._azimuthal_reference
+        return self._azimuth
 
-    @azimuthal_reference.setter
-    def azimuthal_reference(self, value: tuple[float, float, float] | None) -> None:
+    @azimuth.setter
+    def azimuth(self, value: tuple[float, float, float] | None) -> None:
         if value is None:
-            self._azimuthal_reference = None
+            self._azimuth = None
             return
         try:
             h, k, l = (float(x) for x in value)  # noqa: E741
         except (TypeError, ValueError) as exc:
             raise ValueError(
-                "azimuthal_reference must be a length-3 sequence of numbers "
+                "azimuth must be a length-3 sequence of numbers "
                 f"or None; got {value!r}."
             ) from exc
         if h == 0.0 and k == 0.0 and l == 0.0:
             raise ValueError(
-                "azimuthal_reference must be a non-zero vector; (0, 0, 0) is not allowed."
+                "azimuth must be a non-zero vector; (0, 0, 0) is not allowed."
             )
-        self._azimuthal_reference = (h, k, l)
+        self._azimuth = (h, k, l)
+
+    @property
+    def azimuthal_reference(self) -> tuple[float, float, float] | None:
+        """
+        Deprecated alias for :attr:`azimuth`.
+
+        .. deprecated:: 0.12.0
+            Use :attr:`azimuth` instead.  This alias will be removed in a
+            future release.
+
+        Reads and writes are forwarded to :attr:`azimuth`; every access
+        emits a :class:`DeprecationWarning`.
+        """
+        warnings.warn(
+            "AdHocDiffractometer.azimuthal_reference is deprecated since "
+            "v0.12.0; use 'azimuth' instead. The old name will be removed "
+            "in a future release.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._azimuth
+
+    @azimuthal_reference.setter
+    def azimuthal_reference(self, value: tuple[float, float, float] | None) -> None:
+        warnings.warn(
+            "AdHocDiffractometer.azimuthal_reference is deprecated since "
+            "v0.12.0; use 'azimuth' instead. The old name will be removed "
+            "in a future release.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        self.azimuth = value
 
     # ------------------------------------------------------------------
     # Diffraction modes
@@ -1041,7 +1098,7 @@ class AdHocDiffractometer:
         ValueError
             If ``self.sample.UB`` is None.
         ValueError
-            If ``self.azimuthal_reference`` is None (no reference set).
+            If ``self.azimuth`` is None (no reference set).
         ValueError
             If the reference vector is parallel to Q (ψ is undefined).
 
@@ -1061,7 +1118,7 @@ class AdHocDiffractometer:
         >>> import ad_hoc_diffractometer as ahd
         >>> g = ahd.fourcv()
         >>> g.wavelength = 1.5406
-        >>> g.azimuthal_reference = (0, 0, 1)
+        >>> g.azimuth = (0, 0, 1)
         >>> # ... set UB, move motors ...
         >>> psi = g.psi()
 
@@ -1078,10 +1135,10 @@ class AdHocDiffractometer:
                 "psi() requires a UB matrix on the active sample. "
                 "Call ub_identity() or ub_from_two_reflections_bl1967() first."
             )
-        if self.azimuthal_reference is None:
+        if self.azimuth is None:
             raise ValueError(
-                "psi() requires azimuthal_reference to be set on the geometry. "
-                "Set geometry.azimuthal_reference = (h, k, l) first."
+                "psi() requires azimuth to be set on the geometry. "
+                "Set geometry.azimuth = (h, k, l) first."
             )
 
         if angles is None:
@@ -1096,7 +1153,7 @@ class AdHocDiffractometer:
         Q_hat = Q_phi / Q_mag
 
         # Reference direction in phi frame
-        n_hkl = np.asarray(self.azimuthal_reference, dtype=float)
+        n_hkl = np.asarray(self.azimuth, dtype=float)
         n_phi = self.sample.UB @ n_hkl
         n_mag = np.linalg.norm(n_phi)
         if n_mag < 1e-14:
@@ -1153,7 +1210,7 @@ class AdHocDiffractometer:
         :meth:`is_specular`, :meth:`is_evanescent`).
 
         When ``None``, the surface calculations fall back to
-        :attr:`azimuthal_reference` if that is set.
+        :attr:`azimuth` if that is set.
 
         Setting this to ``None`` clears the surface normal.
         Setting to a non-zero (h, k, l) 3-tuple stores it.
@@ -1213,8 +1270,8 @@ class AdHocDiffractometer:
         ``"alpha_i"``                          :attr:`surface_normal`
         ``"beta_out"``                         :attr:`surface_normal`
         ``"a_eq_b"``                           :attr:`surface_normal`
-        ``"psi"``                              :attr:`azimuthal_reference`
-        ``"naz"``                              :attr:`azimuthal_reference`
+        ``"psi"``                              :attr:`azimuth`
+        ``"naz"``                              :attr:`azimuth`
         ``"omega"``                            (none)
         =====================================  =================================
 
@@ -1224,7 +1281,7 @@ class AdHocDiffractometer:
         Returns
         -------
         str or None
-            One of ``"surface_normal"``, ``"azimuthal_reference"``, or
+            One of ``"surface_normal"``, ``"azimuth"``, or
             ``None``.  ``None`` is returned when the active mode either
             has no :class:`~ad_hoc_diffractometer.mode.ReferenceConstraint`,
             uses a ReferenceConstraint that needs no vector (``"omega"``),
@@ -1240,11 +1297,11 @@ class AdHocDiffractometer:
         'surface_normal'
         >>> setattr(g, g.required_reference_vector, (0, 0, 1))
 
-        Azimuthal mode → ``azimuthal_reference``:
+        Azimuthal mode → ``azimuth``:
 
         >>> g.mode_name = "fixed_psi_vertical"
         >>> g.required_reference_vector
-        'azimuthal_reference'
+        'azimuth'
 
         OMEGA pseudo-angle mode → no vector required:
 
@@ -1255,7 +1312,7 @@ class AdHocDiffractometer:
         See Also
         --------
         surface_normal : The attribute set for surface-type reference constraints.
-        azimuthal_reference : The attribute set for psi/naz reference constraints.
+        azimuth : The attribute set for psi/naz reference constraints.
         """
         from .mode import ReferenceConstraint
 
@@ -1268,7 +1325,7 @@ class AdHocDiffractometer:
         if rc.name in {"alpha_i", "beta_out", "a_eq_b"}:
             return "surface_normal"
         if rc.name in {"psi", "naz"}:
-            return "azimuthal_reference"
+            return "azimuth"
         # "omega" pseudo-angle requires no reference vector.
         return None
 
@@ -1394,7 +1451,7 @@ class AdHocDiffractometer:
 
         αᵢ is the angle between the incoming beam and the sample surface.
         Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
-        (or ``azimuthal_reference``) to be set.
+        (or ``azimuth``) to be set.
 
         Parameters
         ----------
@@ -1429,7 +1486,7 @@ class AdHocDiffractometer:
 
         αf is the angle between the diffracted beam and the sample surface.
         Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
-        (or ``azimuthal_reference``) to be set.
+        (or ``azimuth``) to be set.
 
         Parameters
         ----------
@@ -1815,7 +1872,7 @@ class AdHocDiffractometer:
         lines.append("")
 
         # Azimuthal reference
-        az_ref = self.azimuthal_reference
+        az_ref = self.azimuth
         if az_ref is not None:
             h, k, l = az_ref  # noqa: E741
             lines.append(
@@ -2012,7 +2069,7 @@ class AdHocDiffractometer:
                 Wavelength in Å (float or None).
             ``"kappa_alpha_deg"``
                 Kappa tilt angle in degrees (float or None).
-            ``"azimuthal_reference"``
+            ``"azimuth"``
                 Miller indices [h, k, l] (list of 3 float, or None).
             ``"basis"``
                 Dict mapping physical direction names to [x, y, z] lists.
@@ -2067,11 +2124,7 @@ class AdHocDiffractometer:
             "description": self.description,
             "wavelength": self._wavelength,
             "kappa_alpha_deg": self._kappa_alpha_deg,
-            "azimuthal_reference": (
-                list(self._azimuthal_reference)
-                if self._azimuthal_reference is not None
-                else None
-            ),
+            "azimuth": (list(self._azimuth) if self._azimuth is not None else None),
             "surface_normal": (
                 list(self._surface_normal) if self._surface_normal is not None else None
             ),
@@ -2163,7 +2216,7 @@ class AdHocDiffractometer:
             description=d.get("description", ""),
             wavelength=d.get("wavelength"),
             kappa_alpha_deg=d.get("kappa_alpha_deg"),
-            azimuthal_reference=d.get("azimuthal_reference"),
+            azimuth=d.get("azimuth", d.get("azimuthal_reference")),
             modes=restored_modes if restored_modes else None,
             default_mode=d.get("mode_name"),
             cut_points=d.get("cut_points"),

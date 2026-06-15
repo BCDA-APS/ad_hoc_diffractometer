@@ -9,7 +9,7 @@ exit angle, azimuthal angle ψ, lab-frame azimuthal angle naz, and the
 SPEC ``OMEGA`` pseudo-angle (angle between Q and the chi-circle plane).
 
 These functions require the geometry's :attr:`surface_normal` or
-:attr:`azimuthal_reference` to be set before calling, **except** for
+:attr:`azimuth` to be set before calling, **except** for
 :func:`omega_pseudo`, which is a pure motor-frame quantity and needs
 neither.
 
@@ -77,14 +77,14 @@ def _require_surface_normal(geometry: AdHocDiffractometer) -> None:
         )
 
 
-def _require_azimuthal_reference(geometry: AdHocDiffractometer) -> None:
-    """Raise ValueError if azimuthal_reference is not set on the geometry."""
-    ar = geometry.azimuthal_reference
+def _require_azimuth(geometry: AdHocDiffractometer) -> None:
+    """Raise ValueError if azimuth is not set on the geometry."""
+    ar = geometry.azimuth
     if ar is None:
         raise ValueError(
-            f"geometry '{geometry.name}': azimuthal_reference must be set before "
+            f"geometry '{geometry.name}': azimuth must be set before "
             "computing the ψ angle.  "
-            "Set g.azimuthal_reference = (h, k, l) with the reference direction "
+            "Set g.azimuth = (h, k, l) with the reference direction "
             "expressed as Miller indices."
         )
 
@@ -180,7 +180,7 @@ def psi_angle(
     (also projected onto that plane).  ψ = 0 when the reference vector
     lies in the scattering plane on the same side as the incident beam.
 
-    Requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`
+    Requires :attr:`~geometry.AdHocDiffractometer.azimuth`
     to be set.
 
     Parameters
@@ -199,7 +199,7 @@ def psi_angle(
     Raises
     ------
     ValueError
-        If ``geometry.azimuthal_reference`` is ``None``.
+        If ``geometry.azimuth`` is ``None``.
     ValueError
         If the reference vector is parallel to Q (ψ is undefined).
 
@@ -207,7 +207,7 @@ def psi_angle(
     ----------
     * You (1999), eq. 23.
     """
-    _require_azimuthal_reference(geometry)
+    _require_azimuth(geometry)
     return geometry.psi(angles=angles)
 
 
@@ -223,7 +223,7 @@ def natural_psi(
     The azimuthal angle ψ is a pure phi-frame quantity: for a fixed
     crystal orientation (UB matrix) and a fixed reflection (h, k, l),
     ψ depends only on ``Q_phi = UB @ (h, k, l)`` and the azimuthal
-    reference vector ``n_phi = UB @ azimuthal_reference``.  **No motor
+    reference vector ``n_phi = UB @ azimuth``.  **No motor
     angles enter the calculation** — every motor configuration that
     brings (h, k, l) into Bragg condition produces the *same* ψ.
 
@@ -234,14 +234,14 @@ def natural_psi(
     must I request to make this reflection reachable?" before calling
     :meth:`~diffractometer.AdHocDiffractometer.forward`.
 
-    Requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`
+    Requires :attr:`~geometry.AdHocDiffractometer.azimuth`
     and :attr:`~sample.Sample.UB` to be set on the geometry.
 
     Parameters
     ----------
     geometry : AdHocDiffractometer
         The diffractometer instance.  ``geometry.sample.UB`` and
-        ``geometry.azimuthal_reference`` must be set.
+        ``geometry.azimuth`` must be set.
     h, k, l : float
         Miller indices of the reflection.
 
@@ -257,7 +257,7 @@ def natural_psi(
     Raises
     ------
     ValueError
-        If ``geometry.azimuthal_reference`` is ``None``.
+        If ``geometry.azimuth`` is ``None``.
 
     See Also
     --------
@@ -268,7 +268,7 @@ def natural_psi(
     ----------
     * You (1999), eq. 23.
     """
-    _require_azimuthal_reference(geometry)
+    _require_azimuth(geometry)
     # Local import to avoid module-load ordering issues with forward.py.
     from .forward import _compute_natural_psi
 
@@ -486,7 +486,7 @@ def omega_pseudo(
     -----
     Unlike :func:`incidence_angle`, :func:`exit_angle`, :func:`psi_angle`,
     and :func:`naz_angle`, this function does **not** require any
-    reference vector (``surface_normal`` / ``azimuthal_reference``) to be
+    reference vector (``surface_normal`` / ``azimuth``) to be
     set on the geometry.  OMEGA is a pure motor-frame quantity defined
     by the diffractometer's internal geometry.
 

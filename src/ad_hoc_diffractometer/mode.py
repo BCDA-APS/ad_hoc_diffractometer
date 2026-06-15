@@ -268,7 +268,7 @@ that *looks* like a settable input but is actually a documentation
 placeholder.  The corresponding value lives on the diffractometer under
 :attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`
 or
-:attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuthal_reference`,
+:attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuth`,
 chosen by the mode's
 :class:`ReferenceConstraint`; the ``extras`` entry is just a hint that
 documents the requirement.
@@ -316,7 +316,7 @@ class _ExtrasDict(dict):
                 f"geometry instead: use 'g.surface_normal = (h, k, l)' "
                 f"for surface-mode constraints "
                 f"(alpha_i / beta_out / a_eq_b), or "
-                f"'g.azimuthal_reference = (h, k, l)' for "
+                f"'g.azimuth = (h, k, l)' for "
                 f"psi / naz constraints.  See "
                 f"AdHocDiffractometer.required_reference_vector to "
                 f"discover which attribute the active mode needs.  "
@@ -840,7 +840,7 @@ class ReferenceConstraint:
     Constrains a physical pseudo-angle between Q and the reference vector n̂.
 
     The reference vector n̂ must be stored on the geometry as
-    ``geometry.surface_normal`` (preferred) or ``geometry.azimuthal_reference``
+    ``geometry.surface_normal`` (preferred) or ``geometry.azimuth``
     before calling ``forward()``.
 
     Valid names (from You 1999 and Lohmeier & Vlieg 1993):
@@ -936,7 +936,7 @@ class ReferenceConstraint:
         Return True when the required reference vector is set on the geometry.
 
         For ``"psi"`` and ``"naz"``: requires
-        :attr:`~geometry.AdHocDiffractometer.azimuthal_reference` to be set.
+        :attr:`~geometry.AdHocDiffractometer.azimuth` to be set.
 
         For ``"alpha_i"``, ``"beta_out"``, and ``"a_eq_b"``: requires
         :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
@@ -953,7 +953,7 @@ class ReferenceConstraint:
         if self._name == "omega":
             return True
         if self._name in {"psi", "naz"}:
-            return geometry.azimuthal_reference is not None
+            return geometry.azimuth is not None
         return geometry.surface_normal is not None
 
     def is_implemented(self, geometry: AdHocDiffractometer) -> bool:
@@ -966,7 +966,7 @@ class ReferenceConstraint:
         - ``"alpha_i"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"beta_out"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"a_eq_b"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
-        - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuthal_reference`.
+        - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuth`.
           The forward solver treats ψ as a **validation filter**: for a given
           (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for
           every Bragg solution.  The solver computes the natural ψ from UB and
@@ -985,7 +985,7 @@ class ReferenceConstraint:
         if self._name == "naz":
             return False
         if self._name == "psi":
-            return geometry.azimuthal_reference is not None
+            return geometry.azimuth is not None
         if self._name == "omega":
             # Implemented for any geometry with a chi sample stage.
             return any(s.name == "chi" for s in geometry.sample_stages)

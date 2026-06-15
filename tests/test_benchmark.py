@@ -111,11 +111,11 @@ class TestPrepareMode:
                 assert isinstance(cs.extras[key], float)
 
     def test_fixed_psi_sets_reference(self):
-        """fixed_psi modes get an azimuthal_reference if not set."""
+        """fixed_psi modes get an azimuth if not set."""
         g = _setup_geometry("fourcv")
-        assert g.azimuthal_reference is None
+        assert g.azimuth is None
         _prepare_mode(g, "fixed_psi")
-        assert g.azimuthal_reference is not None
+        assert g.azimuth is not None
 
     @pytest.mark.parametrize(
         "geometry_name, mode_name",

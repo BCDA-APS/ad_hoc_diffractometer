@@ -97,7 +97,7 @@ def _prepare_mode(geometry, mode_name: str) -> None:
     Sets ``mode_name`` on the geometry and provides the minimum setup
     required for modes that need extra configuration:
 
-    - fixed_psi modes: sets ``azimuthal_reference``
+    - fixed_psi modes: sets ``azimuth``
     - double_diffraction modes: sets h2/k2/l2 extras
     - zone modes: sets z0/z1 extras to a generic (h,k,0) plane
     - surface/reference modes (alpha_i, beta_out, a_eq_b):
@@ -117,11 +117,11 @@ def _prepare_mode(geometry, mode_name: str) -> None:
         if key in cs.extras and cs.extras[key] is REQUIRED:
             cs.extras[key] = default
 
-    # Reference-vector modes: set azimuthal_reference if needed
+    # Reference-vector modes: set azimuth if needed
     for c in cs._constraints:
         cname = getattr(c, "_name", getattr(c, "name", ""))
-        if cname == "psi" and geometry.azimuthal_reference is None:
-            geometry.azimuthal_reference = (0, 0, 1)
+        if cname == "psi" and geometry.azimuth is None:
+            geometry.azimuth = (0, 0, 1)
 
     # Surface modes: set surface_normal if needed
     for c in cs._constraints:

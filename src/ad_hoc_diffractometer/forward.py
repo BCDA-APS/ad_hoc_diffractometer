@@ -529,7 +529,7 @@ def _populate_output_extras(
                 values.append(float(compute(geometry, angles=angles)))
             except Exception as exc:  # noqa: BLE001
                 # Underlying call raised (e.g. missing surface_normal /
-                # azimuthal_reference, or psi undefined when Q ∥ n_ref).
+                # azimuth, or psi undefined when Q ∥ n_ref).
                 # Leave the slot unpopulated and record the cause for a
                 # single debug log below.  We break immediately so a
                 # later good solution does not mask the failure.
@@ -1765,7 +1765,7 @@ def _compute_natural_psi(
     Parameters
     ----------
     geometry : AdHocDiffractometer
-        Must have ``sample.UB`` and ``azimuthal_reference`` set.
+        Must have ``sample.UB`` and ``azimuth`` set.
     Q_phi : numpy.ndarray, shape (3,)
         Target scattering vector in the phi frame (``UB @ hkl``).
 
@@ -1775,7 +1775,7 @@ def _compute_natural_psi(
         ψ in degrees (−180°, +180°], or ``None`` when ψ is undefined
         (Q ∥ incident beam, or reference vector ∥ Q).
     """
-    n_hkl = geometry.azimuthal_reference
+    n_hkl = geometry.azimuth
     if n_hkl is None:
         return None  # pragma: no cover
 
@@ -1813,7 +1813,7 @@ def _is_psi_mode(geometry: AdHocDiffractometer, mode) -> bool:
     """Return True when the mode contains a psi ReferenceConstraint and the reference is set."""
     from .mode import ReferenceConstraint
 
-    if geometry.azimuthal_reference is None:
+    if geometry.azimuth is None:
         return False
     return any(
         isinstance(c, ReferenceConstraint) and c.name == "psi" for c in mode.constraints
@@ -1878,9 +1878,9 @@ def _solve_psi_mode(
         warnings.warn(
             f"forward(): ψ is undefined for this reflection in geometry "
             f"{geometry.name!r} — Q is parallel to "
-            f"azimuthal_reference={geometry.azimuthal_reference} (or to the "
+            f"azimuth={geometry.azimuth} (or to the "
             f"incident beam).  Choose a different reflection or change "
-            f"geometry.azimuthal_reference.  Returning [].",
+            f"geometry.azimuth.  Returning [].",
             UserWarning,
             stacklevel=5,
         )

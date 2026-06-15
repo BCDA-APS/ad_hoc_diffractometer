@@ -36,7 +36,7 @@ Physical convention
 The sample surface normal is specified as Miller indices ``(h, k, l)``
 via the geometry's ``surface_normal`` property (added to
 ``AdHocDiffractometer``).  If ``surface_normal`` is ``None`` the
-``azimuthal_reference`` is used as a fallback.
+``azimuth`` is used as a fallback.
 
 The surface normal in the lab frame is computed as::
 
@@ -119,7 +119,7 @@ def _surface_vectors(
     ValueError
         If ``geometry.wavelength`` is None.
     ValueError
-        If ``geometry.surface_normal`` and ``geometry.azimuthal_reference``
+        If ``geometry.surface_normal`` and ``geometry.azimuth``
         are both None (no surface normal available).
     ValueError
         If ``geometry.sample.UB`` is None.
@@ -129,11 +129,11 @@ def _surface_vectors(
 
     n_hkl = geometry.surface_normal
     if n_hkl is None:
-        n_hkl = geometry.azimuthal_reference
+        n_hkl = geometry.azimuth
     if n_hkl is None:
         raise ValueError(
             "surface calculations require geometry.surface_normal "
-            "(or geometry.azimuthal_reference as a fallback) to be set."
+            "(or geometry.azimuth as a fallback) to be set."
         )
 
     if geometry.sample.UB is None:
@@ -219,7 +219,7 @@ def alpha_i(
     ----------
     geometry : AdHocDiffractometer
         Must have ``wavelength``, ``sample.UB``, and ``surface_normal``
-        (or ``azimuthal_reference``) set.
+        (or ``azimuth``) set.
     angles : dict[str, float] or None
         Motor angles in degrees.  If ``None``, current stage angles are used.
 
@@ -270,7 +270,7 @@ def alpha_f(
     ----------
     geometry : AdHocDiffractometer
         Must have ``wavelength``, ``sample.UB``, and ``surface_normal``
-        (or ``azimuthal_reference``) set.
+        (or ``azimuth``) set.
     angles : dict[str, float] or None
         Motor angles in degrees.  If ``None``, current stage angles are used.
 
@@ -317,7 +317,7 @@ def q_components(
     ----------
     geometry : AdHocDiffractometer
         Must have ``wavelength``, ``sample.UB``, and ``surface_normal``
-        (or ``azimuthal_reference``) set.
+        (or ``azimuth``) set.
     angles : dict[str, float] or None
         Motor angles in degrees.  If ``None``, current stage angles are used.
 

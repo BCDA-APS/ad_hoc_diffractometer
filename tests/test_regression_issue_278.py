@@ -67,7 +67,7 @@ def _setup_psic_cubic():
     g.wavelength = WAVELENGTH
     g.sample.lattice = ahd.Lattice(a=4.0)
     ub_identity(g.sample)
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     g.surface_normal = (0, 0, 1)
     return g
 
@@ -169,7 +169,7 @@ def test_fixed_psi_undefined_warns_and_returns_empty(
     """When ψ is undefined for the reflection (Q ∥ reference), ``forward()``
     warns and returns ``[]``.
 
-    The warning message must mention the azimuthal_reference so the
+    The warning message must mention the azimuth so the
     user can choose a different reference direction if desired.
     """
     with context:
@@ -255,7 +255,7 @@ def test_issue_278_sapphire_reproducer_warns(h, k, l, context):  # noqa: E741
             a=4.758, b=4.758, c=12.991, alpha=90, beta=90, gamma=120
         )
         ub_identity(g.sample)
-        g.azimuthal_reference = (0, 0, 1)
+        g.azimuth = (0, 0, 1)
         g.surface_normal = (0, 0, 1)
         g.mode_name = "fixed_psi_horizontal"
 
