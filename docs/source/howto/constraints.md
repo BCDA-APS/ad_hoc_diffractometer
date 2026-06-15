@@ -309,7 +309,7 @@ print(cs.extras)
 Modes whose constraint patterns do not yet have a solver implementation
 return `False` from `is_implemented()` and raise `NotImplementedError`
 when `forward()` is called.  Some modes require a prerequisite to be
-set on the geometry (e.g. ``azimuthal_reference`` for psi modes,
+set on the geometry (e.g. ``azimuth`` for psi modes,
 ``surface_normal`` for surface modes) — they are considered stubs until
 the prerequisite is met:
 
@@ -317,11 +317,11 @@ the prerequisite is met:
 g = ahd.make_geometry("fourcv")
 g.mode_name = "fixed_psi"
 
-# Without azimuthal_reference: not implemented
+# Without azimuth: not implemented
 print(g.modes["fixed_psi"].is_implemented(g))  # False
 
-# With azimuthal_reference: implemented
-g.azimuthal_reference = (0, 0, 1)
+# With azimuth: implemented
+g.azimuth = (0, 0, 1)
 print(g.modes["fixed_psi"].is_implemented(g))  # True
 ```
 

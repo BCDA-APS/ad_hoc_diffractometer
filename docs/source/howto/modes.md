@@ -139,13 +139,13 @@ print(cs.is_implemented(g))
 ## Check if a mode is implemented
 
 Some modes require a prerequisite on the geometry.  For example,
-`fixed_psi` requires ``g.azimuthal_reference`` to be set:
+`fixed_psi` requires ``g.azimuth`` to be set:
 
 ```python
 g.mode_name = "fixed_psi"
-print(g.modes["fixed_psi"].is_implemented(g))  # False (no azimuthal_reference)
+print(g.modes["fixed_psi"].is_implemented(g))  # False (no azimuth)
 
-g.azimuthal_reference = (0, 0, 1)
+g.azimuth = (0, 0, 1)
 print(g.modes["fixed_psi"].is_implemented(g))  # True
 
 # forward() raises NotImplementedError for unimplemented modes

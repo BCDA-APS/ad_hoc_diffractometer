@@ -162,7 +162,7 @@ Attributes: `solution_index`, `constraint_repr`, `residual`, `tolerance`.
 ### NotImplementedError
 
 Raised when the active mode is `None` or its `is_implemented(geometry)`
-returns `False` (e.g. a prerequisite like ``azimuthal_reference`` or
+returns `False` (e.g. a prerequisite like ``azimuth`` or
 ``surface_normal`` is not set):
 
 ```python
@@ -172,9 +172,9 @@ try:
 except NotImplementedError as e:
     print(e)
 
-# fixed_psi requires azimuthal_reference to be set
+# fixed_psi requires azimuth to be set
 g.mode_name = "fixed_psi"
-g.azimuthal_reference = None
+g.azimuth = None
 try:
     g.forward(1, 0, 0)
 except NotImplementedError as e:
