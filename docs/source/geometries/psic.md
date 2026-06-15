@@ -150,7 +150,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 Issue #264 revision.  Vertical scattering plane (`nu = 0`) with `mu`
 fixed at the user-specified value (default 0) and azimuthal angle ψ
-validation.  Set ``g.azimuthal_reference = (h, k, l)`` before calling
+validation.  Set ``g.azimuth = (h, k, l)`` before calling
 ``forward()``.
 Override the mu pin or the psi target at run time with `g.modes["fixed_psi_vertical"].with_constraint_values(mu=..., psi=...)` — see {doc}`../howto/constraints`.
 The previous bisect(`eta`, `delta`) constraint was
@@ -164,7 +164,7 @@ validated ψ.  See {doc}`../howto/surface`.
 |---|---|
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | nu = 0, mu = constraint value, ψ = target |
-| **Extras (input)** | n̂ → set `g.azimuthal_reference = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
+| **Extras (input)** | n̂ → set `g.azimuth = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi (computed azimuth) |
 
 ### `fixed_alpha_i_fixed_chi_fixed_phi`
@@ -349,7 +349,7 @@ Override the eta pin or the psi target at run time with `g.modes["fixed_psi_hori
 |---|---|
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | delta = 0, eta = constraint value, ψ = target |
-| **Extras (input)** | n̂ → set `g.azimuthal_reference = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
+| **Extras (input)** | n̂ → set `g.azimuth = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi |
 
 ### `fixed_omega_horizontal`

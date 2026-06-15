@@ -96,7 +96,7 @@ the geometry's basis dict.
 ``n_axis`` here is the **per-stage rotation axis** vector — internal
 to the stage definition.  It is **not** the same as ``n̂`` (written as
 the ``n_hat`` key in mode ``extras``, or as
-``g.surface_normal`` / ``g.azimuthal_reference`` on the geometry),
+``g.surface_normal`` / ``g.azimuth`` on the geometry),
 which is the *user-facing reference vector* required by surface and
 azimuthal modes.  See the {ref}`glossary <glossary>` entries for
 "n̂ (reference vector)" and "Stage rotation axis" for the full
@@ -527,12 +527,12 @@ vectors may be set:
 
 - **`surface_normal`** — direction perpendicular to the sample surface;
   used by incidence/exit angle functions and surface diffraction modes.
-- **`azimuthal_reference`** — direction defining ψ = 0; used by
+- **`azimuth`** — direction defining ψ = 0; used by
   `psi_angle` and `fixed_psi_*` modes.
 
 ```python
 g.surface_normal = (0, 0, 1)    # (001)-cut sample
-g.azimuthal_reference = (1, 0, 0)
+g.azimuth = (1, 0, 0)
 ```
 
 Vectors are stored as Miller indices and converted to the lab frame

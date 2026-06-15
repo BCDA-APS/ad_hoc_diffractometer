@@ -5,7 +5,7 @@ Unit tests for ad_hoc_diffractometer.surface and geometry surface methods.
 
 Covers:
   - surface_normal property: set/get/clear, validation errors
-  - surface_normal fallback to azimuthal_reference
+  - surface_normal fallback to azimuth
   - _surface_vectors precondition errors (no wavelength, no UB, no normal,
     unknown stage name)
   - alpha_i: matches motor angle for canonical geometries (s2d2, zaxis)
@@ -204,7 +204,7 @@ def _no_surface_normal():
     g.wavelength = WAVELENGTH
     g.sample.lattice = ahd.Lattice(a=1.0)
     ub_identity(g.sample)
-    # surface_normal and azimuthal_reference both None
+    # surface_normal and azimuth both None
     return g
 
 
@@ -216,15 +216,15 @@ def _no_ub():
 
 
 # ---------------------------------------------------------------------------
-# surface_normal falls back to azimuthal_reference
+# surface_normal falls back to azimuth
 # ---------------------------------------------------------------------------
 
 
-def test_surface_normal_fallback_to_azimuthal_reference():
-    """When surface_normal is None, azimuthal_reference is used."""
+def test_surface_normal_fallback_to_azimuth():
+    """When surface_normal is None, azimuth is used."""
     g = _make_s2d2()
     g.surface_normal = None
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     # Should not raise and should produce a result
     ai = g.alpha_i({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
     assert pytest.approx(ai, abs=1e-6) == 5.0

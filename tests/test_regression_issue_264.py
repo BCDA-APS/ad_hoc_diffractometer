@@ -467,7 +467,7 @@ def test_revised_fixed_psi_round_trip(
     from ad_hoc_diffractometer.reference import psi_angle
 
     g = _setup_psic_cubic()
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     natural = _natural_psi(g, h, k, l)
     assert natural is not None, (
         f"{mode_name} ({h},{k},{l}): natural psi is undefined for this hkl"
@@ -510,7 +510,7 @@ def test_revised_fixed_psi_wrong_target_returns_empty():
     psi is undefined).
     """
     g = _setup_psic_cubic()
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     natural = _natural_psi(g, 0, 1, 0)
     assert natural is not None
 

@@ -1826,9 +1826,9 @@ def test_kappa6c_lifting_detector_qaz_filters_by_detector_limits():
 
 
 def _setup_psi(factory, ref=(0, 0, 1), a=4.0):
-    """Return a geometry with wavelength, UB=B, and azimuthal_reference set."""
+    """Return a geometry with wavelength, UB=B, and azimuth set."""
     g = _setup_cubic(factory, a=a)
-    g.azimuthal_reference = ref
+    g.azimuth = ref
     return g
 
 

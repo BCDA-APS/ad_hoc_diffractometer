@@ -2724,7 +2724,7 @@ def test_extras_n_hat_assignment_warns_pointing_at_geometry_attribute():
     assert len(captured) == 1
     msg = str(captured[0].message)
     assert "g.surface_normal" in msg
-    assert "g.azimuthal_reference" in msg
+    assert "g.azimuth" in msg
     assert "required_reference_vector" in msg
 
 

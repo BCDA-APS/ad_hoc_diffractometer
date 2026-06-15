@@ -190,7 +190,7 @@ def test_fourcv_fixed_psi_populates_psi_extra(
         from ad_hoc_diffractometer.forward import _compute_natural_psi
 
         g = _setup_cubic("fourcv")
-        g.azimuthal_reference = ref
+        g.azimuth = ref
         Q_phi = g.sample.UB @ np.array([h, k, l], dtype=float)
         natural = _compute_natural_psi(g, Q_phi)
         assert natural is not None
@@ -231,7 +231,7 @@ def test_extras_reset_when_forward_returns_no_solutions():
     from ad_hoc_diffractometer.forward import _compute_natural_psi
 
     g = _setup_cubic("fourcv")
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
 
     # Choose a psi target that differs from the natural psi by 45° so the
     # validation filter rejects every solution and returns [].

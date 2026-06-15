@@ -19,15 +19,18 @@ Azimuthal reference vector
    The reciprocal-space direction (Miller indices
    ``(h, k, l)``) about which the azimuthal angle **ψ** is measured.
    Stored on the geometry as
-   {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuthal_reference`
+   {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuth`
    and consumed by the ``"psi"`` and ``"naz"``
    {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint` modes.
-   Set with ``g.azimuthal_reference = (h, k, l)`` (a length-3 sequence
+   Set with ``g.azimuth = (h, k, l)`` (a length-3 sequence
    of numbers; ``(0, 0, 0)`` is rejected).  Default is ``None``.  In
    per-mode ``Extras (input)`` tables this same vector is referred to
    by its mathematical symbol **n̂** (rendered as the ``n_hat`` key in
    ``mode.extras``).  See {term}`n̂ (reference vector)` for the full
-   surface-form table, and {doc}`howto/surface`.
+   surface-form table, and {doc}`howto/surface`.  The attribute was
+   named ``azimuthal_reference`` before v0.12.0 (issue #298); the old
+   name remains as a deprecated forwarding alias and will be removed
+   in a future release.
 
 B matrix
    The matrix that encodes the reciprocal lattice and maps Miller indices
@@ -218,14 +221,14 @@ n̂ (reference vector)
           ``g.surface_normal = (h, k, l)``.
       * - On the geometry, when used by ``"psi"`` or ``"naz"``
           reference constraints
-        - {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuthal_reference`
+        - {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuth`
         - The actual stored vector.  Set via
-          ``g.azimuthal_reference = (h, k, l)``.
+          ``g.azimuth = (h, k, l)``.
 
    **Which attribute does the active mode need?** Use
    {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.required_reference_vector`
    to ask the geometry directly — it returns
-   ``"surface_normal"``, ``"azimuthal_reference"``, or ``None`` based
+   ``"surface_normal"``, ``"azimuth"``, or ``None`` based
    on the active mode's reference constraint.
 
    **Not to be confused with** the {term}`Stage rotation axis` (the

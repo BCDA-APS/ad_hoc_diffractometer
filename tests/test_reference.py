@@ -6,10 +6,10 @@ Unit tests for ad_hoc_diffractometer.reference — reference pseudo-angles.
 Covers:
   - incidence_angle: requires surface_normal; raises when None
   - exit_angle: requires surface_normal; raises when None
-  - psi_angle: requires azimuthal_reference; raises when None
+  - psi_angle: requires azimuth; raises when None
   - naz_angle: requires surface_normal; raises when None; vertical n̂ gives 0
   - ReferenceConstraint.is_implemented(): True when reference set, False when None
-  - Serialisation round-trip with surface_normal and azimuthal_reference set
+  - Serialisation round-trip with surface_normal and azimuth set
   - Smoke tests: reasonable output range for known geometry configurations
 """
 
@@ -121,16 +121,16 @@ def test_specular_condition_alpha_i_equals_alpha_f():
 # ---------------------------------------------------------------------------
 
 
-def test_psi_angle_raises_without_azimuthal_reference():
-    """psi_angle raises ValueError when azimuthal_reference is None."""
+def test_psi_angle_raises_without_azimuth():
+    """psi_angle raises ValueError when azimuth is None."""
     g = _setup_psic()
-    assert g.azimuthal_reference is None
-    with pytest.raises(ValueError, match=re.escape("azimuthal_reference must be set")):
+    assert g.azimuth is None
+    with pytest.raises(ValueError, match=re.escape("azimuth must be set")):
         psi_angle(g)
 
 
-def test_psi_angle_with_azimuthal_reference():
-    """psi_angle returns a float in (-180, 180] when azimuthal_reference is set.
+def test_psi_angle_with_azimuth():
+    """psi_angle returns a float in (-180, 180] when azimuth is set.
 
     Uses ``(0, 1, 0)`` instead of ``(1, 0, 0)``: under issue #280
     ub_identity the crystal a* axis is along the beam, so Q_phi(1,0,0)
@@ -138,7 +138,7 @@ def test_psi_angle_with_azimuthal_reference():
     produces a Q_phi off the beam axis.
     """
     g = _setup_psic()
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     g.mode_name = "bisecting_vertical"
     sols = g.forward(0, 1, 0)
     for s in sols:
@@ -151,10 +151,10 @@ def test_psi_angle_uses_current_angles_when_none():
     """psi_angle uses current stage angles when angles=None.
 
     Uses ``(0, 1, 0)`` for the same reason as
-    :func:`test_psi_angle_with_azimuthal_reference`.
+    :func:`test_psi_angle_with_azimuth`.
     """
     g = _setup_psic()
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     g.mode_name = "bisecting_vertical"
     sols = g.forward(0, 1, 0)
     s = sols[0]
@@ -241,11 +241,11 @@ def test_naz_angle_vertical_normal_returns_zero():
             "a_eq_b", True, "surface_normal", (0, 0, 1), True, id="a_eq_b-with-sn"
         ),
         pytest.param("a_eq_b", True, "surface_normal", None, False, id="a_eq_b-no-sn"),
-        # psi: implemented when azimuthal_reference is set
+        # psi: implemented when azimuth is set
         pytest.param(
             "psi",
             0.0,
-            "azimuthal_reference",
+            "azimuth",
             (0, 0, 1),
             True,
             id="psi-with-azref",
@@ -253,7 +253,7 @@ def test_naz_angle_vertical_normal_returns_zero():
         pytest.param(
             "psi",
             0.0,
-            "azimuthal_reference",
+            "azimuth",
             None,
             False,
             id="psi-no-azref",
@@ -262,7 +262,7 @@ def test_naz_angle_vertical_normal_returns_zero():
         pytest.param(
             "naz",
             0.0,
-            "azimuthal_reference",
+            "azimuth",
             (0, 0, 1),
             False,
             id="naz-not-implemented",
@@ -296,14 +296,10 @@ def test_reference_constraint_is_implemented(
         pytest.param(
             "a_eq_b", True, "surface_normal", (0, 0, 1), True, id="a_eq_b-with-sn"
         ),
-        pytest.param("psi", 0.0, "azimuthal_reference", None, False, id="psi-no-ar"),
-        pytest.param(
-            "psi", 0.0, "azimuthal_reference", (0, 0, 1), True, id="psi-with-ar"
-        ),
-        pytest.param("naz", 0.0, "azimuthal_reference", None, False, id="naz-no-ar"),
-        pytest.param(
-            "naz", 0.0, "azimuthal_reference", (0, 0, 1), True, id="naz-with-ar"
-        ),
+        pytest.param("psi", 0.0, "azimuth", None, False, id="psi-no-ar"),
+        pytest.param("psi", 0.0, "azimuth", (0, 0, 1), True, id="psi-with-ar"),
+        pytest.param("naz", 0.0, "azimuth", None, False, id="naz-no-ar"),
+        pytest.param("naz", 0.0, "azimuth", (0, 0, 1), True, id="naz-with-ar"),
     ],
 )
 def test_reference_constraint_has_reference_vector(
@@ -334,17 +330,17 @@ def test_surface_normal_round_trip():
     assert g2.surface_normal == (0.0, 0.0, 1.0)
 
 
-def test_azimuthal_reference_round_trip():
-    """azimuthal_reference survives to_dict / from_dict round-trip."""
+def test_azimuth_round_trip():
+    """azimuth survives to_dict / from_dict round-trip."""
     import json
 
     g = _setup_psic()
-    g.azimuthal_reference = (1, 0, 0)
+    g.azimuth = (1, 0, 0)
     d = g.to_dict()
     assert json.dumps(d)
-    assert d["azimuthal_reference"] == [1.0, 0.0, 0.0]
+    assert d["azimuth"] == [1.0, 0.0, 0.0]
     g2 = AdHocDiffractometer.from_dict(d)
-    assert g2.azimuthal_reference == (1.0, 0.0, 0.0)
+    assert g2.azimuth == (1.0, 0.0, 0.0)
 
 
 def test_surface_normal_none_serialisation():
@@ -363,14 +359,14 @@ def test_surface_normal_none_serialisation():
 
 
 def test_fixed_psi_implemented_with_azref():
-    """fixed_psi is_implemented=True when azimuthal_reference is set.
+    """fixed_psi is_implemented=True when azimuth is set.
 
-    With azimuthal_reference set, the fixed_psi forward solver is available.
+    With azimuth set, the fixed_psi forward solver is available.
     It acts as a validation filter: it returns bisecting solutions only when
     the natural psi for (h,k,l) matches the stored target.
     """
     g = _setup_psic()
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     g.mode_name = "fixed_psi_vertical"
     cs = g.modes["fixed_psi_vertical"]
     # is_implemented is True — solver available
@@ -387,9 +383,9 @@ def test_fixed_psi_implemented_with_azref():
 
 
 def test_fixed_psi_not_implemented_without_azref():
-    """fixed_psi is_implemented=False when azimuthal_reference is not set."""
+    """fixed_psi is_implemented=False when azimuth is not set."""
     g = _setup_psic()
-    assert g.azimuthal_reference is None
+    assert g.azimuth is None
     g.mode_name = "fixed_psi_vertical"
     cs = g.modes["fixed_psi_vertical"]
     assert cs.is_implemented(g) is False
@@ -580,10 +576,10 @@ def test_omega_pseudo_requires_chi_stage():
 
 
 def test_omega_pseudo_does_not_require_surface_normal():
-    """omega_pseudo works with no surface_normal or azimuthal_reference."""
+    """omega_pseudo works with no surface_normal or azimuth."""
     g = _setup_psic()
     assert g.surface_normal is None
-    assert g.azimuthal_reference is None
+    assert g.azimuth is None
     g.mode_name = "bisecting_vertical"
     sols = g.forward(1, 0, 0)
     for s in sols:
@@ -725,13 +721,13 @@ def test_reference_constraint_omega_serialization_round_trip():
 # ---------------------------------------------------------------------------
 
 
-def test_natural_psi_raises_without_azimuthal_reference():
-    """natural_psi raises ValueError when azimuthal_reference is None."""
+def test_natural_psi_raises_without_azimuth():
+    """natural_psi raises ValueError when azimuth is None."""
     g = _setup_psic()
-    # azimuthal_reference defaults to None
+    # azimuth defaults to None
     with pytest.raises(
         ValueError,
-        match=re.escape("azimuthal_reference must be set"),
+        match=re.escape("azimuth must be set"),
     ):
         natural_psi(g, 1, 0, 0)
 
@@ -755,7 +751,7 @@ def test_natural_psi_matches_expected_values(h, k, l, expected, context):  # noq
     """natural_psi returns the expected motor-angle-independent ψ value."""
     with context:
         g = _setup_psic()
-        g.azimuthal_reference = (0, 0, 1)
+        g.azimuth = (0, 0, 1)
         result = natural_psi(g, h, k, l)
         assert result == pytest.approx(expected, abs=1e-6)
 
@@ -778,7 +774,7 @@ def test_natural_psi_returns_none_when_undefined(h, k, l, context):  # noqa: E74
     """
     with context:
         g = _setup_psic()
-        g.azimuthal_reference = (0, 0, 1)
+        g.azimuth = (0, 0, 1)
         assert natural_psi(g, h, k, l) is None
 
 
@@ -790,7 +786,7 @@ def test_natural_psi_equals_psi_angle_at_bisecting_solution():
     satisfies Bragg gives the same ψ.
     """
     g = _setup_psic()
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     g.mode_name = "bisecting_vertical"
     sols = g.forward(1, 1, 0)
     assert sols, "bisecting_vertical should return at least one solution for (1,1,0)"
@@ -802,7 +798,7 @@ def test_natural_psi_equals_psi_angle_at_bisecting_solution():
 def test_natural_psi_independent_of_motor_state():
     """natural_psi depends only on UB and (h, k, l), not on stage angles."""
     g = _setup_psic()
-    g.azimuthal_reference = (0, 0, 1)
+    g.azimuth = (0, 0, 1)
     baseline = natural_psi(g, 1, 1, 0)
     # Move every stage to an arbitrary non-zero angle.
     for stage in g._stages.values():  # noqa: SLF001

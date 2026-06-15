@@ -40,7 +40,7 @@ def rotation_matrix(axis: np.ndarray, angle_deg: float) -> np.ndarray:
        of how each stage is wired in its YAML definition.  Do not
        confuse it with ``n̂`` (``n_hat`` in mode ``extras``,
        :attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`,
-       :attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuthal_reference`),
+       :attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuth`),
        which is the user-facing **reference vector** consumed by
        :class:`~ad_hoc_diffractometer.mode.ReferenceConstraint` modes.
        See the :ref:`glossary` entries for "n̂ (reference vector)" and
