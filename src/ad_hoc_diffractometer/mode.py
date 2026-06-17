@@ -39,8 +39,10 @@ over-constrain the scattered beam direction.
 condition between Q and an external reference vector n̂ (surface normal,
 polarization axis, etc.) stored on the geometry.  The named options are
 physical pseudo-angles from You (1999) and Lohmeier & Vlieg (1993):
-``"psi"``, ``"alpha_i"``, ``"beta_out"``, ``"a_eq_b"``, ``"naz"``.  At
-most one reference constraint is allowed.
+``"psi"``, ``"incidence"``, ``"emergence"``, ``"a_eq_b"``, ``"naz"``.
+``"alpha_i"`` and ``"beta_out"`` are accepted as deprecated aliases for
+``"incidence"`` and ``"emergence"`` respectively (issue #299).  At most
+one reference constraint is allowed.
 
 Classes
 -------
@@ -195,7 +197,18 @@ class ConstraintViolation(ValueError):
 # ---------------------------------------------------------------------------
 
 REFERENCE_NAMES: frozenset[str] = frozenset(
-    {"psi", "alpha_i", "beta_out", "a_eq_b", "naz", "omega"}
+    {
+        "psi",
+        "incidence",
+        "emergence",
+        "a_eq_b",
+        "naz",
+        "omega",
+        # REMOVE-AT-V1.0: legacy alias names accepted on input and
+        # canonicalized to the new names by ReferenceConstraint.__init__.
+        "alpha_i",
+        "beta_out",
+    }
 )
 """Valid reference constraint names (physical pseudo-angles).
 
@@ -206,13 +219,40 @@ the SPEC ``OMEGA`` pseudo-angle, defined entirely by the diffractometer
 geometry (no reference vector required):
 
 - ``"psi"`` — azimuthal angle of n̂ about Q (You 1999, eq. 23)
-- ``"alpha_i"`` — angle of incidence (incident beam vs. surface plane)
-- ``"beta_out"`` — angle of exit (diffracted beam vs. surface plane)
-- ``"a_eq_b"`` — relational: alpha_i = beta_out (symmetric reflection)
+- ``"incidence"`` — angle of incidence (incident beam vs. surface plane)
+- ``"emergence"`` — angle of emergence (diffracted beam vs. surface plane)
+- ``"a_eq_b"`` — relational: incidence = emergence (symmetric reflection)
 - ``"naz"`` — azimuthal angle of n̂ in the lab frame
 - ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``): angle between
   Q and the plane of the chi circle (psic family); see
   :func:`~ad_hoc_diffractometer.reference.omega_pseudo`
+
+The legacy names ``"alpha_i"`` and ``"beta_out"`` are also accepted as
+deprecated aliases for ``"incidence"`` and ``"emergence"`` respectively.
+Constructing a :class:`ReferenceConstraint` with a legacy name emits
+:class:`DeprecationWarning` and canonicalizes to the new name; the
+stored ``name`` attribute is always one of the canonical values listed
+above.  See :data:`_DEPRECATED_REFERENCE_NAME_ALIASES`.
+REMOVE-AT-V1.0: the preceding paragraph documents the deprecation
+aliases and should be deleted alongside them.
+"""
+
+# REMOVE-AT-V1.0: this entire mapping (and every site that consults it)
+# is the deprecation infrastructure for issue #299.
+_DEPRECATED_REFERENCE_NAME_ALIASES: dict[str, str] = {
+    "alpha_i": "incidence",
+    "beta_out": "emergence",
+}
+"""Mapping from deprecated reference-constraint name to its canonical form.
+
+``"alpha_i"`` / ``"beta_out"`` are kept as forwarding aliases so existing
+user code, saved sessions, and out-of-tree YAML files continue to work.
+
+:class:`ReferenceConstraint`, the YAML loader, the forward solver's output
+extras, and ``from_dict`` all consult this map.  When a legacy name is
+supplied, a :class:`DeprecationWarning` is emitted and the canonical name
+is used for all downstream storage and comparison.  Use the canonical
+names (``"incidence"`` / ``"emergence"``) in new code.
 """
 
 QAZ: str = "qaz"
@@ -315,7 +355,7 @@ class _ExtrasDict(dict):
                 f"effect on forward().  Set the reference vector on the "
                 f"geometry instead: use 'g.surface_normal = (h, k, l)' "
                 f"for surface-mode constraints "
-                f"(alpha_i / beta_out / a_eq_b), or "
+                f"(incidence / emergence / a_eq_b), or "
                 f"'g.azimuth = (h, k, l)' for "
                 f"psi / naz constraints.  See "
                 f"AdHocDiffractometer.required_reference_vector to "
@@ -847,14 +887,16 @@ class ReferenceConstraint:
 
     ``"psi"``
         Azimuthal angle of n̂ about Q (You 1999, eq. 23).
-    ``"alpha_i"``
+    ``"incidence"``
         Angle of incidence: angle between the incident beam and the surface
-        plane (perpendicular to n̂).
-    ``"beta_out"``
-        Angle of exit: angle between the diffracted beam and the surface
-        plane.
+        plane (perpendicular to n̂).  Accepts the deprecated alias
+        ``"alpha_i"`` (REMOVE-AT-V1.0).
+    ``"emergence"``
+        Angle of emergence: angle between the diffracted beam and the
+        surface plane.  Accepts the deprecated alias ``"beta_out"``
+        (REMOVE-AT-V1.0).
     ``"a_eq_b"``
-        Relational: alpha_i = beta_out (symmetric reflection).
+        Relational: ``incidence = emergence`` (symmetric reflection).
         ``value`` must be ``True``.
     ``"naz"``
         Azimuthal angle of n̂ in the lab frame (You 1999).
@@ -862,8 +904,11 @@ class ReferenceConstraint:
     Parameters
     ----------
     name : str
-        One of ``"psi"``, ``"alpha_i"``, ``"beta_out"``, ``"a_eq_b"``,
-        ``"naz"``.
+        One of ``"psi"``, ``"incidence"``, ``"emergence"``, ``"a_eq_b"``,
+        ``"naz"``, ``"omega"``.  The deprecated aliases ``"alpha_i"`` and
+        ``"beta_out"`` are also accepted (with a :class:`DeprecationWarning`)
+        and canonicalized to ``"incidence"`` and ``"emergence"`` respectively
+        before storage.  REMOVE-AT-V1.0: drop the alias clause.
     value : float or bool
         Target value in degrees (or ``True`` for ``"a_eq_b"``).
 
@@ -873,6 +918,8 @@ class ReferenceConstraint:
     ReferenceConstraint('psi', 90.0)
     >>> ReferenceConstraint("a_eq_b", True)
     ReferenceConstraint('a_eq_b', True)
+    >>> ReferenceConstraint("incidence", 5.0)
+    ReferenceConstraint('incidence', 5.0)
     """
 
     category: str = "reference"
@@ -880,10 +927,29 @@ class ReferenceConstraint:
 
     def __init__(self, name: str, value: float | bool) -> None:
         if name not in REFERENCE_NAMES:
-            raise ValueError(
-                f"ReferenceConstraint name must be one of {sorted(REFERENCE_NAMES)}; "
-                f"got {name!r}."
+            # Compose the user-visible list of valid names from the canonical
+            # set only; deprecated aliases are accepted on input but should
+            # not be advertised in the error message for invalid names.
+            canonical = sorted(
+                REFERENCE_NAMES - _DEPRECATED_REFERENCE_NAME_ALIASES.keys()
             )
+            raise ValueError(
+                f"ReferenceConstraint name must be one of {canonical}; got {name!r}."
+            )
+        # REMOVE-AT-V1.0: canonicalize deprecated aliases.  Emit a
+        # DeprecationWarning so callers see the recommended replacement,
+        # but the construction itself still succeeds.
+        if name in _DEPRECATED_REFERENCE_NAME_ALIASES:
+            import warnings
+
+            canonical_name = _DEPRECATED_REFERENCE_NAME_ALIASES[name]
+            warnings.warn(
+                f"ReferenceConstraint name {name!r} is deprecated; "
+                f"use {canonical_name!r} instead.  (issue #299)",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            name = canonical_name
         if name == "a_eq_b" and value is not True:
             raise ValueError(
                 "ReferenceConstraint('a_eq_b', value): value must be True; "
@@ -938,7 +1004,7 @@ class ReferenceConstraint:
         For ``"psi"`` and ``"naz"``: requires
         :attr:`~geometry.AdHocDiffractometer.azimuth` to be set.
 
-        For ``"alpha_i"``, ``"beta_out"``, and ``"a_eq_b"``: requires
+        For ``"incidence"``, ``"emergence"``, and ``"a_eq_b"``: requires
         :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
 
         For ``"omega"``: no reference vector is required (always returns
@@ -963,8 +1029,8 @@ class ReferenceConstraint:
 
         Implemented constraints:
 
-        - ``"alpha_i"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
-        - ``"beta_out"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+        - ``"incidence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+        - ``"emergence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"a_eq_b"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuth`.
           The forward solver treats ψ as a **validation filter**: for a given
@@ -989,7 +1055,7 @@ class ReferenceConstraint:
         if self._name == "omega":
             # Implemented for any geometry with a chi sample stage.
             return any(s.name == "chi" for s in geometry.sample_stages)
-        # alpha_i, beta_out, a_eq_b — implemented when surface_normal is set
+        # incidence, emergence, a_eq_b — implemented when surface_normal is set
         return geometry.surface_normal is not None
 
     def to_dict(self) -> dict:
@@ -1424,7 +1490,32 @@ class ConstraintSet:
                 )
             name_to_index[cname] = idx
 
-        unknown = sorted(k for k in updates if k not in name_to_index)
+        # REMOVE-AT-V1.0: accept the deprecated reference-constraint
+        # kwargs ``alpha_i`` / ``beta_out`` as aliases for ``incidence``
+        # / ``emergence``.  The alias only fires when the set actually
+        # contains the canonical constraint; otherwise the kwarg falls
+        # through to the regular unknown-key path so a genuine typo is
+        # not masked by a confusing deprecation warning followed by a
+        # KeyError.  After removal, this whole canonicalization loop
+        # becomes a single ``canonicalized = updates`` assignment (or
+        # the variable goes away entirely).
+        canonicalized: dict[str, float | bool] = {}
+        for key, new_value in updates.items():
+            canonical = _DEPRECATED_REFERENCE_NAME_ALIASES.get(key)
+            if canonical is not None and canonical in name_to_index:
+                import warnings
+
+                warnings.warn(
+                    f"with_constraint_values: kwarg {key!r} is deprecated; "
+                    f"use {canonical!r} instead.  (issue #299)",
+                    DeprecationWarning,
+                    stacklevel=2,
+                )
+                canonicalized[canonical] = new_value
+            else:
+                canonicalized[key] = new_value
+
+        unknown = sorted(k for k in canonicalized if k not in name_to_index)
         if unknown:
             available = sorted(name_to_index)
             raise KeyError(
@@ -1434,7 +1525,7 @@ class ConstraintSet:
             )
 
         new_constraints: list[AnyConstraint] = list(self._constraints)
-        for name, new_value in updates.items():
+        for name, new_value in canonicalized.items():
             idx = name_to_index[name]
             original = new_constraints[idx]
             # Each settable-value constraint is constructed with the same

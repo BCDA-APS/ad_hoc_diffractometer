@@ -472,7 +472,17 @@ def compute_forward(
 # The callables are imported lazily inside :func:`_populate_output_extras` to
 # avoid a circular import at module load time (``reference`` imports from
 # ``forward``).
-_OUTPUT_EXTRA_KEYS = ("alpha_i", "beta_out", "psi", "omega")
+_OUTPUT_EXTRA_KEYS = (
+    "incidence",
+    "emergence",
+    "psi",
+    "omega",
+    # REMOVE-AT-V1.0: deprecated aliases kept so existing extras-dict
+    # declarations continue to receive computed values until callers
+    # migrate.
+    "alpha_i",
+    "beta_out",
+)
 
 
 def _populate_output_extras(
@@ -480,7 +490,7 @@ def _populate_output_extras(
     mode,
     solutions: list[dict[str, float]],
 ) -> None:
-    """Populate output-slot extras (alpha_i, beta_out, psi, omega) per solution.
+    """Populate output-slot extras (incidence, emergence, psi, omega) per solution.
 
     Issue #292.  A subset of declarative modes (psic, sixc, zaxis, s2d2 surface
     modes; the fixed_psi_* family; fixed_omega_*) declare placeholder slots
@@ -495,10 +505,14 @@ def _populate_output_extras(
     --------
     * Only keys actually declared in ``mode.extras`` are touched.
     * A key declared but whose required reference vector is unset on the
-      geometry (e.g. ``alpha_i`` without ``surface_normal``) is left as
+      geometry (e.g. ``incidence`` without ``surface_normal``) is left as
       ``None``; a debug-level log message records why.
     * Empty ``solutions`` leaves every slot as an empty list.
     * Each successful call **replaces** the prior contents of the slot.
+    * The deprecated keys ``"alpha_i"`` / ``"beta_out"`` are populated
+      identically to their canonical counterparts
+      ``"incidence"`` / ``"emergence"``.  REMOVE-AT-V1.0: drop this
+      bullet alongside the legacy keys.
     """
     if mode is None or not getattr(mode, "extras", None):
         return
@@ -514,10 +528,13 @@ def _populate_output_extras(
     from .reference import psi_angle as _psi_angle
 
     computers: dict[str, callable] = {
-        "alpha_i": _incidence_angle,
-        "beta_out": _exit_angle,
+        "incidence": _incidence_angle,
+        "emergence": _exit_angle,
         "psi": _psi_angle,
         "omega": _omega_pseudo,
+        # REMOVE-AT-V1.0: deprecated aliases routed to the same computers.
+        "alpha_i": _incidence_angle,
+        "beta_out": _exit_angle,
     }
 
     for key in relevant:
@@ -3056,9 +3073,9 @@ def _solve_surface(
 
     Supports ReferenceConstraint modes where the constraint is:
 
-    - ``"alpha_i"`` — incidence angle fixed at target value
-    - ``"beta_out"`` — exit angle fixed at target value
-    - ``"a_eq_b"`` — symmetric reflection: alpha_i = beta_out
+    - ``"incidence"`` — incidence angle fixed at target value
+    - ``"emergence"`` — emergence angle fixed at target value
+    - ``"a_eq_b"`` — symmetric reflection: incidence = emergence
 
     The solver builds a baseline angles dict (applying all fixed sample/detector
     constraints and setting the detector stage to ttheta_deg), then performs a
@@ -3079,9 +3096,11 @@ def _solve_surface(
 
     from .mode import ReferenceConstraint
 
-    # Extract the reference constraint
+    # Extract the reference constraint.  ``rc.name`` is always canonical
+    # because :class:`ReferenceConstraint` canonicalizes the deprecated
+    # aliases (``"alpha_i"`` / ``"beta_out"``) at construction time.
     rc = next(c for c in mode.constraints if isinstance(c, ReferenceConstraint))
-    target_name = rc.name  # "alpha_i", "beta_out", or "a_eq_b"
+    target_name = rc.name  # "incidence", "emergence", or "a_eq_b"
     target_value = rc.value  # float or True
 
     # Build baseline angles dict with all fixed constraints applied
@@ -3197,18 +3216,18 @@ def _surface_residual(
 
     Returns a float residual in degrees (zero = constraint satisfied).
     """
-    from .reference import exit_angle as _beta_out
-    from .reference import incidence_angle as _alpha_i
+    from .reference import exit_angle as _emergence_angle
+    from .reference import incidence_angle as _incidence_angle
 
-    if target_name == "alpha_i":
-        ai = _alpha_i(geometry, angles=angles)
+    if target_name == "incidence":
+        ai = _incidence_angle(geometry, angles=angles)
         return ai - float(target_value)
-    if target_name == "beta_out":
-        bo = _beta_out(geometry, angles=angles)
+    if target_name == "emergence":
+        bo = _emergence_angle(geometry, angles=angles)
         return bo - float(target_value)
-    # a_eq_b: alpha_i = beta_out
-    ai = _alpha_i(geometry, angles=angles)
-    bo = _beta_out(geometry, angles=angles)
+    # a_eq_b: incidence = emergence (symmetric reflection)
+    ai = _incidence_angle(geometry, angles=angles)
+    bo = _emergence_angle(geometry, angles=angles)
     return ai - bo
 
 

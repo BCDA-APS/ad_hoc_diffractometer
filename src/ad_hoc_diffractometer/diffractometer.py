@@ -1267,8 +1267,8 @@ class AdHocDiffractometer:
         =====================================  =================================
         ReferenceConstraint name               Required attribute on the geometry
         =====================================  =================================
-        ``"alpha_i"``                          :attr:`surface_normal`
-        ``"beta_out"``                         :attr:`surface_normal`
+        ``"incidence"``                        :attr:`surface_normal`
+        ``"emergence"``                        :attr:`surface_normal`
         ``"a_eq_b"``                           :attr:`surface_normal`
         ``"psi"``                              :attr:`azimuth`
         ``"naz"``                              :attr:`azimuth`
@@ -1322,7 +1322,7 @@ class AdHocDiffractometer:
         rc: ReferenceConstraint | None = mode.reference_constraint
         if rc is None:
             return None
-        if rc.name in {"alpha_i", "beta_out", "a_eq_b"}:
+        if rc.name in {"incidence", "emergence", "a_eq_b"}:
             return "surface_normal"
         if rc.name in {"psi", "naz"}:
             return "azimuth"

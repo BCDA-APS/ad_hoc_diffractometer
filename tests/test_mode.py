@@ -737,8 +737,8 @@ def test_detector_constraint_evaluate_qaz():
     "name, value, context",
     [
         pytest.param("psi", 90.0, does_not_raise(), id="psi"),
-        pytest.param("alpha_i", 5.0, does_not_raise(), id="alpha_i"),
-        pytest.param("beta_out", 5.0, does_not_raise(), id="beta_out"),
+        pytest.param("incidence", 5.0, does_not_raise(), id="incidence"),
+        pytest.param("emergence", 5.0, does_not_raise(), id="emergence"),
         pytest.param("a_eq_b", True, does_not_raise(), id="a_eq_b-true"),
         pytest.param("naz", 0.0, does_not_raise(), id="naz"),
         pytest.param(
@@ -760,6 +760,43 @@ def test_reference_constraint_construction(name, value, context):
         rc = ReferenceConstraint(name, value)
         assert rc.name == name
         assert rc.category == "reference"
+
+
+# REMOVE-AT-V1.0: this test and its parametrize block exist solely to
+# pin the deprecation-alias canonicalization behavior; delete the whole
+# function (and its decorator) when the aliases are removed.
+@pytest.mark.parametrize(
+    "legacy_name, canonical_name, value",
+    [
+        pytest.param("alpha_i", "incidence", 5.0, id="alpha_i-to-incidence"),
+        pytest.param("beta_out", "emergence", 5.0, id="beta_out-to-emergence"),
+    ],
+)
+def test_reference_constraint_deprecated_name_canonicalized(
+    legacy_name, canonical_name, value
+):
+    """Issue #299: legacy reference-constraint names are canonicalized.
+
+    Constructing a ReferenceConstraint with a deprecated alias
+    (``"alpha_i"`` / ``"beta_out"``) emits :class:`DeprecationWarning`
+    and stores the canonical name (``"incidence"`` / ``"emergence"``).
+    The constraint behaves identically to one constructed with the
+    canonical name; this is the contract that lets existing user code
+    and saved sessions continue to work through the deprecation cycle.
+    """
+    context = pytest.warns(
+        DeprecationWarning,
+        match=re.escape(
+            f"ReferenceConstraint name {legacy_name!r} is deprecated; "
+            f"use {canonical_name!r} instead.  (issue #299)"
+        ),
+    )
+    with context:
+        rc = ReferenceConstraint(legacy_name, value)
+    assert rc.name == canonical_name
+    assert rc.value == value
+    # Equal to the constraint built directly with the canonical name.
+    assert rc == ReferenceConstraint(canonical_name, value)
 
 
 def test_reference_constraint_value_coerced_to_float():
@@ -2448,12 +2485,18 @@ def _b3_constraint_set():
     Three settable-value constraints: two SampleConstraint plus one
     ReferenceConstraint.  Used by several with_constraint_values tests
     that exercise the multi-value path.
+
+    The reference constraint is built with the canonical name
+    ``"incidence"`` (issue #299).  The YAML mode name retains its
+    historical ``fixed_alpha_i_*`` spelling because mode names are a
+    separate identifier from the constraint-name vocabulary; that
+    rename, if any, is out of scope for this issue.
     """
     return ConstraintSet(
         [
             SampleConstraint("chi", 0.0),
             SampleConstraint("phi", 0.0),
-            ReferenceConstraint("alpha_i", 0.0),
+            ReferenceConstraint("incidence", 0.0),
         ],
         computed=["mu", "eta", "nu", "delta"],
         extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
@@ -2494,10 +2537,10 @@ def _b3_constraint_set():
         ),
         pytest.param(
             _b3_constraint_set,
-            {"alpha_i": 5.0},
-            {"chi": 0.0, "phi": 0.0, "alpha_i": 5.0},
+            {"incidence": 5.0},
+            {"chi": 0.0, "phi": 0.0, "incidence": 5.0},
             does_not_raise(),
-            id="reference-alpha_i-5",
+            id="reference-incidence-5",
         ),
         pytest.param(
             # ReferenceConstraint('a_eq_b', ...) only accepts True
@@ -2516,15 +2559,15 @@ def _b3_constraint_set():
         ),
         pytest.param(
             _b3_constraint_set,
-            {"chi": 15.0, "phi": 30.0, "alpha_i": 5.0},
-            {"chi": 15.0, "phi": 30.0, "alpha_i": 5.0},
+            {"chi": 15.0, "phi": 30.0, "incidence": 5.0},
+            {"chi": 15.0, "phi": 30.0, "incidence": 5.0},
             does_not_raise(),
             id="b3-three-values",
         ),
         pytest.param(
             _b3_constraint_set,
             {},
-            {"chi": 0.0, "phi": 0.0, "alpha_i": 0.0},
+            {"chi": 0.0, "phi": 0.0, "incidence": 0.0},
             does_not_raise(),
             id="empty-updates-no-change",
         ),
@@ -2598,7 +2641,7 @@ def test_with_constraint_values_unknown_key_raises_KeyError():
         match=re.escape(
             "with_constraint_values: no constraint(s) named "
             "['cho'] in this ConstraintSet; available names "
-            "are ['alpha_i', 'chi', 'phi']."
+            "are ['chi', 'incidence', 'phi']."
         ),
     ):
         cs.with_constraint_values(cho=45.0)
@@ -2688,9 +2731,46 @@ def test_with_constraint_values_round_trips_via_to_dict():
     """Replace then restore via to_dict comparison: identical dicts."""
     cs = _b3_constraint_set()
     original_dict = cs.to_dict()
-    intermediate = cs.with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)
-    restored = intermediate.with_constraint_values(chi=0.0, phi=0.0, alpha_i=0.0)
+    intermediate = cs.with_constraint_values(chi=15.0, phi=30.0, incidence=5.0)
+    restored = intermediate.with_constraint_values(chi=0.0, phi=0.0, incidence=0.0)
     assert restored.to_dict() == original_dict
+
+
+# REMOVE-AT-V1.0: this test pins the deprecation-alias kwarg behavior
+# of with_constraint_values; delete the whole function (and its
+# decorator) when the aliases are removed.
+@pytest.mark.parametrize(
+    "legacy_kwarg, canonical_kwarg, value",
+    [
+        pytest.param("alpha_i", "incidence", 5.0, id="alpha_i-to-incidence"),
+        pytest.param("beta_out", "emergence", 5.0, id="beta_out-to-emergence"),
+    ],
+)
+def test_with_constraint_values_accepts_deprecated_alias_kwarg(
+    legacy_kwarg, canonical_kwarg, value
+):
+    """Issue #299: ``with_constraint_values`` accepts the legacy kwargs.
+
+    Passing ``alpha_i=...`` / ``beta_out=...`` is canonicalized to
+    ``incidence=...`` / ``emergence=...`` with a
+    :class:`DeprecationWarning`.  The replacement value reaches the
+    underlying :class:`ReferenceConstraint` exactly as if the canonical
+    name had been used.
+    """
+    cs = ConstraintSet(
+        [ReferenceConstraint(canonical_kwarg, 0.0)],
+        extras={"n_hat": REQUIRED},
+    )
+    with pytest.warns(
+        DeprecationWarning,
+        match=re.escape(
+            f"with_constraint_values: kwarg {legacy_kwarg!r} is deprecated; "
+            f"use {canonical_kwarg!r} instead.  (issue #299)"
+        ),
+    ):
+        new = cs.with_constraint_values(**{legacy_kwarg: value})
+    new_values = {c.name: c.value for c in new.constraints if hasattr(c, "name")}
+    assert new_values[canonical_kwarg] == value
 
 
 # ---------------------------------------------------------------------------
