@@ -522,19 +522,19 @@ def _populate_output_extras(
         return
 
     # Lazy imports — ``reference`` imports from ``forward``.
-    from .reference import exit_angle as _exit_angle
+    from .reference import emergence_angle as _emergence_angle
     from .reference import incidence_angle as _incidence_angle
     from .reference import omega_pseudo as _omega_pseudo
     from .reference import psi_angle as _psi_angle
 
     computers: dict[str, callable] = {
         "incidence": _incidence_angle,
-        "emergence": _exit_angle,
+        "emergence": _emergence_angle,
         "psi": _psi_angle,
         "omega": _omega_pseudo,
         # REMOVE-AT-V1.0: deprecated aliases routed to the same computers.
         "alpha_i": _incidence_angle,
-        "beta_out": _exit_angle,
+        "beta_out": _emergence_angle,
     }
 
     for key in relevant:
@@ -3230,7 +3230,7 @@ def _surface_residual(
 
     Returns a float residual in degrees (zero = constraint satisfied).
     """
-    from .reference import exit_angle as _emergence_angle
+    from .reference import emergence_angle as _emergence_angle
     from .reference import incidence_angle as _incidence_angle
 
     if target_name == "incidence":

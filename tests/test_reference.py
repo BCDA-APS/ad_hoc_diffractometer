@@ -5,7 +5,8 @@ Unit tests for ad_hoc_diffractometer.reference — reference pseudo-angles.
 
 Covers:
   - incidence_angle: requires surface_normal; raises when None
-  - exit_angle: requires surface_normal; raises when None
+  - emergence_angle: requires surface_normal; raises when None
+    (also accepts the deprecated alias ``exit_angle``)
   - psi_angle: requires azimuth; raises when None
   - naz_angle: requires surface_normal; raises when None; vertical n̂ gives 0
   - ReferenceConstraint.is_implemented(): True when reference set, False when None
@@ -26,7 +27,10 @@ import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer import ReferenceConstraint
 from ad_hoc_diffractometer import ub_identity
-from ad_hoc_diffractometer.reference import exit_angle
+from ad_hoc_diffractometer.reference import emergence_angle
+from ad_hoc_diffractometer.reference import (  # noqa: F401 — deprecation-test import
+    exit_angle,
+)
 from ad_hoc_diffractometer.reference import incidence_angle
 from ad_hoc_diffractometer.reference import natural_psi
 from ad_hoc_diffractometer.reference import naz_angle
@@ -79,25 +83,25 @@ def test_incidence_angle_uses_current_angles_when_none():
 
 
 # ---------------------------------------------------------------------------
-# exit_angle
+# emergence_angle
 # ---------------------------------------------------------------------------
 
 
-def test_exit_angle_raises_without_surface_normal():
-    """exit_angle raises ValueError when surface_normal is None."""
+def test_emergence_angle_raises_without_surface_normal():
+    """emergence_angle raises ValueError when surface_normal is None."""
     g = _setup_psic()
     with pytest.raises(ValueError, match=re.escape("surface_normal must be set")):
-        exit_angle(g)
+        emergence_angle(g)
 
 
-def test_exit_angle_with_surface_normal():
-    """exit_angle returns a float in [-90, 90] when surface_normal is set."""
+def test_emergence_angle_with_surface_normal():
+    """emergence_angle returns a float in [-90, 90] when surface_normal is set."""
     g = _setup_psic()
     g.surface_normal = (0, 0, 1)
     g.mode_name = "bisecting_vertical"
     sols = g.forward(1, 0, 0)
     for s in sols:
-        af = exit_angle(g, angles=s)
+        af = emergence_angle(g, angles=s)
         assert isinstance(af, float)
         assert -90.0 <= af <= 90.0
 
@@ -111,7 +115,7 @@ def test_specular_condition_alpha_i_equals_alpha_f():
     sols = g.forward(1, 0, 0)
     for s in sols:
         ai = incidence_angle(g, angles=s)
-        af = exit_angle(g, angles=s)
+        af = emergence_angle(g, angles=s)
         # At bisecting in vertical plane with transverse surface normal, ai ≈ af
         assert ai == pytest.approx(af, abs=1e-6)
 
@@ -515,7 +519,7 @@ def test_surface_beta_out_fixed_constraint_satisfied(factory, mode_name, h, k, l
     solutions = g.forward(h, k, l)
     assert len(solutions) > 0
     for sol in solutions:
-        bo = exit_angle(g, angles=sol)
+        bo = emergence_angle(g, angles=sol)
         assert bo == pytest.approx(0.0, abs=1e-4)
 
 
@@ -535,7 +539,7 @@ def test_surface_a_eq_b_constraint_satisfied(factory, mode_name, h, k, l):  # no
     assert len(solutions) > 0
     for sol in solutions:
         ai = incidence_angle(g, angles=sol)
-        bo = exit_angle(g, angles=sol)
+        bo = emergence_angle(g, angles=sol)
         assert ai == pytest.approx(bo, abs=1e-4)
 
 
@@ -804,3 +808,24 @@ def test_natural_psi_independent_of_motor_state():
     for stage in g._stages.values():  # noqa: SLF001
         stage.angle = 17.5
     assert natural_psi(g, 1, 1, 0) == pytest.approx(baseline, abs=1e-12)
+
+
+# REMOVE-AT-V1.0: deprecation-cycle coverage for the legacy long-form
+# wrapper ``reference.exit_angle``.
+
+
+def test_exit_angle_function_deprecated():
+    """exit_angle() emits DeprecationWarning and delegates to emergence_angle."""
+    g = _setup_psic()
+    g.surface_normal = (0, 0, 1)
+    g.mode_name = "bisecting_vertical"
+    sols = g.forward(1, 0, 0)
+    assert sols, "fixture should return at least one solution"
+    with pytest.warns(
+        DeprecationWarning,
+        match=r"reference\.exit_angle\(\) is deprecated; "
+        r"use ad_hoc_diffractometer\.reference\.emergence_angle",
+    ):
+        value = exit_angle(g, angles=sols[0])
+    expected = emergence_angle(g, angles=sols[0])
+    assert value == pytest.approx(expected, abs=1e-12)

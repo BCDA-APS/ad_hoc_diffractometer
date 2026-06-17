@@ -1206,8 +1206,8 @@ class AdHocDiffractometer:
 
         The surface normal defines the direction perpendicular to the sample
         surface in reciprocal space.  It is used by the surface geometry
-        calculations (:meth:`alpha_i`, :meth:`alpha_f`, :meth:`q_components`,
-        :meth:`is_specular`, :meth:`is_evanescent`).
+        calculations (:meth:`incidence`, :meth:`emergence`,
+        :meth:`q_components`, :meth:`is_specular`, :meth:`is_evanescent`).
 
         When ``None``, the surface calculations fall back to
         :attr:`azimuth` if that is set.
@@ -1445,7 +1445,7 @@ class AdHocDiffractometer:
     # Surface geometry: incidence / emergence / Q-decomposition methods
     # ------------------------------------------------------------------
 
-    def alpha_i(self, angles: dict[str, float] | None = None) -> float:
+    def incidence(self, angles: dict[str, float] | None = None) -> float:
         """
         Angle of incidence αᵢ (degrees).
 
@@ -1465,7 +1465,7 @@ class AdHocDiffractometer:
 
         See Also
         --------
-        alpha_f : Angle of emergence.
+        emergence : Angle of emergence.
 
         Examples
         --------
@@ -1473,14 +1473,14 @@ class AdHocDiffractometer:
         >>> g.wavelength = 1.5406
         >>> g.surface_normal = (0, 0, 1)
         >>> ub_identity(g.sample)
-        >>> g.alpha_i({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})
+        >>> g.incidence({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})
         5.0
         """
-        from .surface import alpha_i as _alpha_i
+        from .surface import incidence as _incidence
 
-        return _alpha_i(self, angles)
+        return _incidence(self, angles)
 
-    def alpha_f(self, angles: dict[str, float] | None = None) -> float:
+    def emergence(self, angles: dict[str, float] | None = None) -> float:
         """
         Angle of emergence αf (degrees).
 
@@ -1500,11 +1500,38 @@ class AdHocDiffractometer:
 
         See Also
         --------
-        alpha_i : Angle of incidence.
+        incidence : Angle of incidence.
         """
-        from .surface import alpha_f as _alpha_f
+        from .surface import emergence as _emergence
 
-        return _alpha_f(self, angles)
+        return _emergence(self, angles)
+
+    # REMOVE-AT-V1.0: deprecated method aliases for the canonical
+    # incidence / emergence methods.  Emit DeprecationWarning on every
+    # call and delegate to the canonical method.
+    def alpha_i(self, angles: dict[str, float] | None = None) -> float:
+        """Deprecated alias for :meth:`incidence`.  REMOVE-AT-V1.0."""
+        import warnings
+
+        warnings.warn(
+            "AdHocDiffractometer.alpha_i() is deprecated; "
+            "use .incidence() instead.  (issue #299)",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.incidence(angles)
+
+    def alpha_f(self, angles: dict[str, float] | None = None) -> float:
+        """Deprecated alias for :meth:`emergence`.  REMOVE-AT-V1.0."""
+        import warnings
+
+        warnings.warn(
+            "AdHocDiffractometer.alpha_f() is deprecated; "
+            "use .emergence() instead.  (issue #299)",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.emergence(angles)
 
     def q_components(self, angles: dict[str, float] | None = None) -> dict[str, float]:
         """
@@ -1522,7 +1549,7 @@ class AdHocDiffractometer:
 
         See Also
         --------
-        alpha_i, alpha_f : Incidence and emergence angles.
+        incidence, emergence : Incidence and emergence angles.
         """
         from .surface import q_components as _q_components
 

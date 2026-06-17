@@ -799,6 +799,49 @@ def test_reference_constraint_deprecated_name_canonicalized(
     assert rc == ReferenceConstraint(canonical_name, value)
 
 
+# REMOVE-AT-V1.0: pins the legacy-session round-trip contract — a dict
+# saved by ad_hoc_diffractometer <= v0.11.x with a legacy
+# reference-constraint name still loads via from_dict, emits one
+# DeprecationWarning, and produces a constraint stored under the
+# canonical name.
+@pytest.mark.parametrize(
+    "legacy_name, canonical_name",
+    [
+        pytest.param("alpha_i", "incidence", id="alpha_i-to-incidence"),
+        pytest.param("beta_out", "emergence", id="beta_out-to-emergence"),
+    ],
+)
+def test_reference_constraint_from_dict_accepts_legacy_name(
+    legacy_name, canonical_name
+):
+    """A saved session with a legacy reference-constraint name still loads.
+
+    ``from_dict`` calls ``__init__``, which canonicalizes the legacy
+    name and emits one :class:`DeprecationWarning`.  The reconstructed
+    constraint compares equal to one built directly with the canonical
+    name, so any subsequent ``to_dict`` write produces the canonical
+    spelling.
+    """
+    legacy_session_dict = {
+        "type": "ReferenceConstraint",
+        "name": legacy_name,
+        "value": 5.0,
+    }
+    with pytest.warns(
+        DeprecationWarning,
+        match=re.escape(
+            f"ReferenceConstraint name {legacy_name!r} is deprecated; "
+            f"use {canonical_name!r} instead.  (issue #299)"
+        ),
+    ):
+        rc = ReferenceConstraint.from_dict(legacy_session_dict)
+    assert rc.name == canonical_name
+    # A second to_dict round-trip writes the canonical name.
+    assert rc.to_dict()["name"] == canonical_name
+    # Equal to the constraint built directly with the canonical name.
+    assert rc == ReferenceConstraint(canonical_name, 5.0)
+
+
 def test_reference_constraint_value_coerced_to_float():
     rc = ReferenceConstraint("psi", 90)
     assert isinstance(rc.value, float)

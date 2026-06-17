@@ -37,8 +37,14 @@ from helpers import zaxis
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.surface import _surface_vectors
-from ad_hoc_diffractometer.surface import alpha_f
-from ad_hoc_diffractometer.surface import alpha_i
+from ad_hoc_diffractometer.surface import (  # noqa: F401 — deprecation-test imports
+    alpha_f,
+)
+from ad_hoc_diffractometer.surface import (  # noqa: F401 — deprecation-test imports
+    alpha_i,
+)
+from ad_hoc_diffractometer.surface import emergence
+from ad_hoc_diffractometer.surface import incidence
 from ad_hoc_diffractometer.surface import is_evanescent
 from ad_hoc_diffractometer.surface import is_specular
 from ad_hoc_diffractometer.surface import q_components
@@ -226,7 +232,7 @@ def test_surface_normal_fallback_to_azimuth():
     g.surface_normal = None
     g.azimuth = (0, 0, 1)
     # Should not raise and should produce a result
-    ai = g.alpha_i({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
+    ai = g.incidence({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
     assert pytest.approx(ai, abs=1e-6) == 5.0
 
 
@@ -250,7 +256,7 @@ def test_alpha_i_s2d2_equals_mu(mu, expected_ai, context):
     """In s2d2 with surface_normal=(0,0,1), alpha_i = mu exactly."""
     g = _make_s2d2()
     with context:
-        ai = g.alpha_i({"mu": mu, "Z": 0.0, "nu": 0.0, "delta": 0.0})
+        ai = g.incidence({"mu": mu, "Z": 0.0, "nu": 0.0, "delta": 0.0})
         assert ai == pytest.approx(expected_ai, abs=1e-6)
 
 
@@ -272,7 +278,7 @@ def test_alpha_i_zaxis_equals_alpha(alpha_val, expected_ai, context):
     """In zaxis with surface_normal=(0,0,1), alpha_i = alpha exactly."""
     g = _make_zaxis()
     with context:
-        ai = g.alpha_i({"alpha": alpha_val, "Z": 0.0, "delta": 10.0, "gamma": 0.0})
+        ai = g.incidence({"alpha": alpha_val, "Z": 0.0, "delta": 10.0, "gamma": 0.0})
         assert ai == pytest.approx(expected_ai, abs=1e-6)
 
 
@@ -294,7 +300,7 @@ def test_alpha_f_s2d2_equals_nu_at_delta_zero(nu, expected_af, context):
     """In s2d2 with delta=0 and surface_normal=(0,0,1), alpha_f = nu exactly."""
     g = _make_s2d2()
     with context:
-        af = g.alpha_f({"mu": 0.0, "Z": 0.0, "nu": nu, "delta": 0.0})
+        af = g.emergence({"mu": 0.0, "Z": 0.0, "nu": nu, "delta": 0.0})
         assert af == pytest.approx(expected_af, abs=1e-6)
 
 
@@ -302,7 +308,7 @@ def test_alpha_f_s2d2_zero_at_any_in_plane_delta():
     """In s2d2 with nu=0, alpha_f = 0 for any delta (in-plane only)."""
     g = _make_s2d2()
     for delta in [0.0, 10.0, 20.0, 45.0]:
-        af = g.alpha_f({"mu": 0.0, "Z": 0.0, "nu": 0.0, "delta": delta})
+        af = g.emergence({"mu": 0.0, "Z": 0.0, "nu": 0.0, "delta": delta})
         assert af == pytest.approx(0.0, abs=1e-6)
 
 
@@ -353,7 +359,7 @@ def test_alpha_f_zaxis_formula(delta, gamma, expected_af, context):
     """alpha_f for zaxis under the standard BL1967 detector composition."""
     g = _make_zaxis()
     with context:
-        af = g.alpha_f({"alpha": 0.0, "Z": 0.0, "delta": delta, "gamma": gamma})
+        af = g.emergence({"alpha": 0.0, "Z": 0.0, "delta": delta, "gamma": gamma})
         assert af == pytest.approx(expected_af, abs=1e-6)
 
 
@@ -366,7 +372,7 @@ def test_alpha_i_always_nonnegative():
     """alpha_i is always in [0°, 90°] regardless of sign of mu."""
     g = _make_s2d2()
     for mu in [-20.0, -10.0, -5.0, 0.0, 5.0, 10.0, 20.0]:
-        ai = g.alpha_i({"mu": mu, "Z": 0.0, "nu": 0.0, "delta": 0.0})
+        ai = g.incidence({"mu": mu, "Z": 0.0, "nu": 0.0, "delta": 0.0})
         assert 0.0 <= ai <= 90.0
 
 
@@ -374,7 +380,7 @@ def test_alpha_f_always_nonnegative():
     """alpha_f is always in [0°, 90°]."""
     g = _make_s2d2()
     for nu in [-20.0, -10.0, 0.0, 10.0, 20.0]:
-        af = g.alpha_f({"mu": 0.0, "Z": 0.0, "nu": nu, "delta": 0.0})
+        af = g.emergence({"mu": 0.0, "Z": 0.0, "nu": nu, "delta": 0.0})
         assert 0.0 <= af <= 90.0
 
 
@@ -531,7 +537,7 @@ def test_psic_alpha_i_from_mu():
     """In psic with surface_normal=(0,0,1), alpha_i = mu (rotation about +x)."""
     g = _make_psic()
     for mu in [0.0, 2.0, 5.0, 10.0]:
-        ai = g.alpha_i(
+        ai = g.incidence(
             {"mu": mu, "eta": 0.0, "chi": 0.0, "phi": 0.0, "nu": 0.0, "delta": 0.0}
         )
         assert ai == pytest.approx(mu, abs=1e-6)
@@ -541,7 +547,7 @@ def test_psic_alpha_f_from_nu():
     """In psic with surface_normal=(0,0,1), alpha_f = nu when delta=0."""
     g = _make_psic()
     for nu in [0.0, 2.0, 5.0, 10.0]:
-        af = g.alpha_f(
+        af = g.emergence(
             {"mu": 0.0, "eta": 0.0, "chi": 0.0, "phi": 0.0, "nu": nu, "delta": 0.0}
         )
         assert af == pytest.approx(nu, abs=1e-6)
@@ -556,8 +562,8 @@ def test_default_angles_uses_current_stage_angles():
     """When angles=None, current stage angles are used."""
     g = _make_s2d2()
     g.set_angle("mu", 5.0)
-    ai_explicit = g.alpha_i({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
-    ai_default = g.alpha_i()  # uses current angles
+    ai_explicit = g.incidence({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
+    ai_default = g.incidence()  # uses current angles
     assert ai_explicit == pytest.approx(ai_default, abs=1e-10)
 
 
@@ -566,16 +572,63 @@ def test_default_angles_uses_current_stage_angles():
 # ---------------------------------------------------------------------------
 
 
-def test_standalone_alpha_i():
+def test_standalone_incidence():
     g = _make_s2d2()
     angles = {"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0}
-    assert alpha_i(g, angles) == pytest.approx(5.0, abs=1e-6)
+    assert incidence(g, angles) == pytest.approx(5.0, abs=1e-6)
 
 
-def test_standalone_alpha_f():
+def test_standalone_emergence():
     g = _make_s2d2()
     angles = {"mu": 0.0, "Z": 0.0, "nu": 5.0, "delta": 0.0}
-    assert alpha_f(g, angles) == pytest.approx(5.0, abs=1e-6)
+    assert emergence(g, angles) == pytest.approx(5.0, abs=1e-6)
+
+
+# REMOVE-AT-V1.0: deprecation-cycle coverage for the legacy method
+# names ``alpha_i`` / ``alpha_f`` on AdHocDiffractometer, and the
+# legacy standalone functions ``surface.alpha_i`` / ``surface.alpha_f``.
+
+
+def test_geometry_alpha_i_method_deprecated():
+    g = _make_s2d2()
+    with pytest.warns(
+        DeprecationWarning,
+        match=r"AdHocDiffractometer\.alpha_i\(\) is deprecated; use \.incidence",
+    ):
+        ai = g.alpha_i({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
+    assert ai == pytest.approx(5.0, abs=1e-6)
+
+
+def test_geometry_alpha_f_method_deprecated():
+    g = _make_s2d2()
+    with pytest.warns(
+        DeprecationWarning,
+        match=r"AdHocDiffractometer\.alpha_f\(\) is deprecated; use \.emergence",
+    ):
+        af = g.alpha_f({"mu": 0.0, "Z": 0.0, "nu": 5.0, "delta": 0.0})
+    assert af == pytest.approx(5.0, abs=1e-6)
+
+
+def test_surface_alpha_i_function_deprecated():
+    g = _make_s2d2()
+    angles = {"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0}
+    with pytest.warns(
+        DeprecationWarning,
+        match=r"surface\.alpha_i\(\) is deprecated; use ad_hoc_diffractometer\.surface\.incidence",
+    ):
+        ai = alpha_i(g, angles)
+    assert ai == pytest.approx(5.0, abs=1e-6)
+
+
+def test_surface_alpha_f_function_deprecated():
+    g = _make_s2d2()
+    angles = {"mu": 0.0, "Z": 0.0, "nu": 5.0, "delta": 0.0}
+    with pytest.warns(
+        DeprecationWarning,
+        match=r"surface\.alpha_f\(\) is deprecated; use ad_hoc_diffractometer\.surface\.emergence",
+    ):
+        af = alpha_f(g, angles)
+    assert af == pytest.approx(5.0, abs=1e-6)
 
 
 def test_standalone_q_components():
@@ -642,4 +695,4 @@ def test_surface_normal_zero_in_phi_frame_raises():
     # Set UB to all-zeros (degenerate)
     g.sample.UB = np.zeros((3, 3))
     with pytest.raises(ValueError, match=re.escape("zero vector")):
-        g.alpha_i({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
+        g.incidence({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})

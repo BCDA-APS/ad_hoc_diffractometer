@@ -37,7 +37,7 @@ import numpy as np
 import pytest
 
 import ad_hoc_diffractometer as ahd
-from ad_hoc_diffractometer.reference import exit_angle
+from ad_hoc_diffractometer.reference import emergence_angle
 from ad_hoc_diffractometer.reference import incidence_angle
 from ad_hoc_diffractometer.reference import omega_pseudo
 from ad_hoc_diffractometer.reference import psi_angle
@@ -114,7 +114,7 @@ def test_psic_b3_populates_alpha_i_and_beta_out_extras(
             mode.extras["alpha_i"], mode.extras["beta_out"], sols, strict=True
         ):
             assert ai_stored == pytest.approx(incidence_angle(g, angles=sol), abs=1e-8)
-            assert bo_stored == pytest.approx(exit_angle(g, angles=sol), abs=1e-8)
+            assert bo_stored == pytest.approx(emergence_angle(g, angles=sol), abs=1e-8)
             assert ai_stored == pytest.approx(alpha_target, abs=1e-3)
 
 
