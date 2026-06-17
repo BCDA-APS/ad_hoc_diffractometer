@@ -331,3 +331,65 @@ def test_populate_extras_soft_fails_when_reference_helper_raises(monkeypatch, ca
         "leaving mode.extras['omega'] as None" in rec.getMessage()
         for rec in caplog.records
     ), "expected a debug log record naming the soft-failed slot"
+
+
+# ---------------------------------------------------------------------------
+# REMOVE-AT-V1.0: deprecation back-fill for issue #299 alias keys.
+# ---------------------------------------------------------------------------
+
+
+def test_populate_extras_back_fills_legacy_alias_slots():
+    """Canonical-slot population back-fills the legacy alias slots.
+
+    Issue #299 renamed the surface-frame output slots ``"alpha_i"`` /
+    ``"beta_out"`` to ``"incidence"`` / ``"emergence"``.  An in-tree
+    YAML mode after migration declares only the canonical slot, but
+    out-of-tree callers that read ``result.extras["alpha_i"]`` in
+    v0.11.x and earlier must continue to see the populated value
+    through the deprecation cycle.  ``_populate_output_extras`` writes
+    the same per-solution list into the legacy slot whenever the
+    canonical slot is declared, so the legacy read path keeps working
+    even after the YAML is migrated.
+
+    Hand-build a mode declaring only the canonical slots so this test
+    exercises the back-fill in isolation (the in-tree YAML still
+    declares legacy slots at the Step 1+2 boundary, and the legacy
+    slot is populated by the main computer-dict loop in that case).
+    """
+    from ad_hoc_diffractometer.mode import REQUIRED
+    from ad_hoc_diffractometer.mode import ConstraintSet
+    from ad_hoc_diffractometer.mode import ReferenceConstraint
+    from ad_hoc_diffractometer.mode import SampleConstraint
+
+    g = _setup_cubic("psic")
+    # Build a B3-style ConstraintSet that declares only the canonical
+    # extras slots — no ``alpha_i`` / ``beta_out`` keys.  The back-fill
+    # is the only path that can put values into those legacy slots.
+    g.modes["__back_fill_probe"] = ConstraintSet(
+        [
+            SampleConstraint("chi", 0.0),
+            SampleConstraint("phi", 0.0),
+            ReferenceConstraint("incidence", 0.0),
+        ],
+        computed=["mu", "eta", "nu", "delta"],
+        extras={
+            "n_hat": REQUIRED,
+            "incidence": None,
+            "emergence": None,
+        },
+        cut_points={"eta": -180.0},
+    )
+    g.surface_normal = (0, 0, 1)
+    g.mode_name = "__back_fill_probe"
+    sols = g.forward(0, 1, 1)
+    assert len(sols) > 0
+
+    extras = g.modes["__back_fill_probe"].extras
+    # Canonical slots populated as before.
+    assert isinstance(extras["incidence"], list)
+    assert isinstance(extras["emergence"], list)
+    assert len(extras["incidence"]) == len(sols)
+    # Legacy slots back-filled with the same lists (identity, not just
+    # equality — the back-fill aliases the canonical list object).
+    assert extras["alpha_i"] is extras["incidence"]
+    assert extras["beta_out"] is extras["emergence"]

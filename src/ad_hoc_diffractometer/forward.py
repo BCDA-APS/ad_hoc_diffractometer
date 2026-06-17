@@ -569,6 +569,20 @@ def _populate_output_extras(
                     failure,
                 )
 
+    # REMOVE-AT-V1.0: back-fill the legacy slot names so out-of-tree
+    # callers reading ``result.extras["alpha_i"]`` / ``["beta_out"]``
+    # continue to see the populated value after the in-tree YAML files
+    # have been migrated to declare only the canonical slots.  Without
+    # this back-fill a caller would see KeyError immediately after the
+    # YAML migration in Step 4 of the same PR, even though the canonical
+    # slot is populated.  Mirror writes use ``dict.__setitem__`` so they
+    # are not subject to any future ``_ExtrasDict`` aliasing path and
+    # do not emit spurious deprecation warnings on internal writes.
+    _LEGACY_OUTPUT_KEY_MIRROR = {"incidence": "alpha_i", "emergence": "beta_out"}
+    for canonical_key, legacy_key in _LEGACY_OUTPUT_KEY_MIRROR.items():
+        if canonical_key in mode.extras:
+            dict.__setitem__(mode.extras, legacy_key, mode.extras[canonical_key])
+
 
 # ---------------------------------------------------------------------------
 # Constraint-set dispatcher
