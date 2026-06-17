@@ -64,12 +64,12 @@ stages:
 modes:
     zaxis:
         constraints:
-            - {type: reference, name: alpha_i, value: 0.0}
+            - {type: reference, name: incidence, value: 0.0}
         computed: [Z, delta, gamma]
         extras:
             n_hat: REQUIRED
-            alpha_i: null
-            beta_out: null
+            incidence: null
+            emergence: null
 
     reflectivity:
         constraints:
@@ -77,5 +77,5 @@ modes:
         computed: [Z, delta, alpha, gamma]
         extras:
             n_hat: REQUIRED
-            alpha_i: null
-            beta_out: null
+            incidence: null
+            emergence: null

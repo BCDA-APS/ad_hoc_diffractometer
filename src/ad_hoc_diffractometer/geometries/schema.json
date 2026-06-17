@@ -238,7 +238,8 @@
                         "type": { "const": "reference" },
                         "name": {
                             "type": "string",
-                            "enum": ["psi", "alpha_i", "beta_out", "a_eq_b", "naz", "omega"]
+                            "description": "Reference-constraint pseudo-angle name. The canonical names are 'psi', 'incidence', 'emergence', 'a_eq_b', 'naz', 'omega'. The legacy names 'alpha_i' and 'beta_out' are accepted for backward compatibility (REMOVE-AT-V1.0) and rewritten to 'incidence' and 'emergence' respectively by the loader, which emits one DeprecationWarning per file (issue #299).",
+                            "enum": ["psi", "incidence", "emergence", "a_eq_b", "naz", "omega", "alpha_i", "beta_out"]
                         },
                         "value": {
                             "oneOf": [
