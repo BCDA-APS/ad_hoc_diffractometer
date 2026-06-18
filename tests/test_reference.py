@@ -242,9 +242,11 @@ def test_naz_angle_vertical_normal_returns_zero():
             "beta_out", 0.0, "surface_normal", None, False, id="beta_out-no-sn"
         ),
         pytest.param(
-            "a_eq_b", True, "surface_normal", (0, 0, 1), True, id="a_eq_b-with-sn"
+            "specular", True, "surface_normal", (0, 0, 1), True, id="specular-with-sn"
         ),
-        pytest.param("a_eq_b", True, "surface_normal", None, False, id="a_eq_b-no-sn"),
+        pytest.param(
+            "specular", True, "surface_normal", None, False, id="specular-no-sn"
+        ),
         # psi: implemented when azimuth is set
         pytest.param(
             "psi",
@@ -296,9 +298,11 @@ def test_reference_constraint_is_implemented(
         pytest.param(
             "beta_out", 0.0, "surface_normal", (0, 0, 1), True, id="beta_out-with-sn"
         ),
-        pytest.param("a_eq_b", True, "surface_normal", None, False, id="a_eq_b-no-sn"),
         pytest.param(
-            "a_eq_b", True, "surface_normal", (0, 0, 1), True, id="a_eq_b-with-sn"
+            "specular", True, "surface_normal", None, False, id="specular-no-sn"
+        ),
+        pytest.param(
+            "specular", True, "surface_normal", (0, 0, 1), True, id="specular-with-sn"
         ),
         pytest.param("psi", 0.0, "azimuth", None, False, id="psi-no-ar"),
         pytest.param("psi", 0.0, "azimuth", (0, 0, 1), True, id="psi-with-ar"),
@@ -420,9 +424,9 @@ def _setup_surface(factory, surface_normal=(0, 0, 1)):
         pytest.param(zaxis, "zaxis", id="zaxis-zaxis"),
         pytest.param(zaxis, "reflectivity", id="zaxis-reflectivity"),
         pytest.param(s2d2, "reflectivity", id="s2d2-reflectivity"),
-        pytest.param(sixc, "fixed_alpha_zaxis", id="sixc-fixed_alpha_zaxis"),
-        pytest.param(sixc, "fixed_beta_zaxis", id="sixc-fixed_beta_zaxis"),
-        pytest.param(sixc, "alpha_eq_beta_zaxis", id="sixc-alpha_eq_beta_zaxis"),
+        pytest.param(sixc, "fixed_incidence_zaxis", id="sixc-fixed_incidence_zaxis"),
+        pytest.param(sixc, "fixed_emergence_zaxis", id="sixc-fixed_emergence_zaxis"),
+        pytest.param(sixc, "specular_zaxis", id="sixc-specular_zaxis"),
     ],
 )
 def test_surface_mode_is_implemented_with_surface_normal(factory, mode_name):
@@ -437,9 +441,9 @@ def test_surface_mode_is_implemented_with_surface_normal(factory, mode_name):
         pytest.param(zaxis, "zaxis", id="zaxis-zaxis"),
         pytest.param(zaxis, "reflectivity", id="zaxis-reflectivity"),
         pytest.param(s2d2, "reflectivity", id="s2d2-reflectivity"),
-        pytest.param(sixc, "fixed_alpha_zaxis", id="sixc-fixed_alpha_zaxis"),
-        pytest.param(sixc, "fixed_beta_zaxis", id="sixc-fixed_beta_zaxis"),
-        pytest.param(sixc, "alpha_eq_beta_zaxis", id="sixc-alpha_eq_beta_zaxis"),
+        pytest.param(sixc, "fixed_incidence_zaxis", id="sixc-fixed_incidence_zaxis"),
+        pytest.param(sixc, "fixed_emergence_zaxis", id="sixc-fixed_emergence_zaxis"),
+        pytest.param(sixc, "specular_zaxis", id="sixc-specular_zaxis"),
     ],
 )
 def test_surface_mode_not_implemented_without_surface_normal(factory, mode_name):
@@ -454,15 +458,19 @@ def test_surface_mode_not_implemented_without_surface_normal(factory, mode_name)
         pytest.param(zaxis, "zaxis", 0, 1, 0, id="zaxis-zaxis"),
         pytest.param(zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"),
         pytest.param(s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
-        pytest.param(sixc, "fixed_alpha_zaxis", 0, 1, 0, id="sixc-fixed_alpha_zaxis"),
-        pytest.param(sixc, "fixed_beta_zaxis", 0, 1, 0, id="sixc-fixed_beta_zaxis"),
+        pytest.param(
+            sixc, "fixed_incidence_zaxis", 0, 1, 0, id="sixc-fixed_incidence_zaxis"
+        ),
+        pytest.param(
+            sixc, "fixed_emergence_zaxis", 0, 1, 0, id="sixc-fixed_emergence_zaxis"
+        ),
         pytest.param(
             sixc,
-            "alpha_eq_beta_zaxis",
+            "specular_zaxis",
             0,
             1,
             0,
-            id="sixc-alpha_eq_beta_zaxis",
+            id="sixc-specular_zaxis",
         ),
     ],
 )
@@ -480,7 +488,7 @@ def test_surface_mode_returns_solutions(factory, mode_name, h, k, l):  # noqa: E
         pytest.param(zaxis, "zaxis", 0, 1, 0, id="zaxis-zaxis-alpha_i=0"),
         pytest.param(
             sixc,
-            "fixed_alpha_zaxis",
+            "fixed_incidence_zaxis",
             0,
             1,
             0,
@@ -504,7 +512,7 @@ def test_surface_alpha_i_fixed_constraint_satisfied(factory, mode_name, h, k, l)
     [
         pytest.param(
             sixc,
-            "fixed_beta_zaxis",
+            "fixed_emergence_zaxis",
             0,
             1,
             0,
@@ -528,11 +536,11 @@ def test_surface_beta_out_fixed_constraint_satisfied(factory, mode_name, h, k, l
     [
         pytest.param(zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"),
         pytest.param(s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
-        pytest.param(sixc, "alpha_eq_beta_zaxis", 0, 1, 0, id="sixc-alpha_eq_beta"),
+        pytest.param(sixc, "specular_zaxis", 0, 1, 0, id="sixc-alpha_eq_beta"),
     ],
 )
 def test_surface_a_eq_b_constraint_satisfied(factory, mode_name, h, k, l):  # noqa: E741
-    """a_eq_b modes: alpha_i ≈ beta_out in all solutions."""
+    """specular modes: alpha_i ≈ beta_out in all solutions."""
     g = _setup_surface(factory)
     g.mode_name = mode_name
     solutions = g.forward(h, k, l)
@@ -671,7 +679,7 @@ def test_omega_pseudo_independent_of_chi():
         pytest.param("psi", True, id="psi"),
         pytest.param("alpha_i", True, id="alpha_i"),
         pytest.param("beta_out", True, id="beta_out"),
-        pytest.param("a_eq_b", True, id="a_eq_b"),
+        pytest.param("specular", True, id="specular"),
         pytest.param("naz", True, id="naz"),
         pytest.param("omega", True, id="omega"),
         pytest.param("not_a_pseudo_angle", False, id="invalid"),
@@ -685,7 +693,7 @@ def test_reference_constraint_accepts_omega(name, expected):
         else pytest.raises(ValueError, match=re.escape("ReferenceConstraint name"))
     )
     with context:
-        if name == "a_eq_b":
+        if name == "specular":
             ReferenceConstraint(name, True)
         else:
             ReferenceConstraint(name, 0.0)

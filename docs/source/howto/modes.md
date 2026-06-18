@@ -71,10 +71,10 @@ g.mode_name = "fixed_chi"
 sols_45 = g.forward(1, 0, 0)   # chi = 45°
 
 # Several values at once (e.g. psic B3 mode: two sample stages plus
-# the alpha_i target — three pinned values in one call):
-g.modes["fixed_alpha_i_fixed_chi_fixed_phi"] = (
-    g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
-    .with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)
+# the incidence target — three pinned values in one call):
+g.modes["fixed_incidence_fixed_chi_fixed_phi"] = (
+    g.modes["fixed_incidence_fixed_chi_fixed_phi"]
+    .with_constraint_values(chi=15.0, phi=30.0, incidence=5.0)
 )
 ```
 

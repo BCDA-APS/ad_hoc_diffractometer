@@ -739,13 +739,13 @@ def test_detector_constraint_evaluate_qaz():
         pytest.param("psi", 90.0, does_not_raise(), id="psi"),
         pytest.param("incidence", 5.0, does_not_raise(), id="incidence"),
         pytest.param("emergence", 5.0, does_not_raise(), id="emergence"),
-        pytest.param("a_eq_b", True, does_not_raise(), id="a_eq_b-true"),
+        pytest.param("specular", True, does_not_raise(), id="specular-true"),
         pytest.param("naz", 0.0, does_not_raise(), id="naz"),
         pytest.param(
-            "a_eq_b",
+            "specular",
             False,
             pytest.raises(ValueError, match=re.escape("must be True")),
-            id="a_eq_b-false-raises",
+            id="specular-false-raises",
         ),
         pytest.param(
             "unknown",
@@ -770,6 +770,7 @@ def test_reference_constraint_construction(name, value, context):
     [
         pytest.param("alpha_i", "incidence", 5.0, id="alpha_i-to-incidence"),
         pytest.param("beta_out", "emergence", 5.0, id="beta_out-to-emergence"),
+        pytest.param("a_eq_b", "specular", True, id="a_eq_b-to-specular"),
     ],
 )
 def test_reference_constraint_deprecated_name_canonicalized(
@@ -805,14 +806,15 @@ def test_reference_constraint_deprecated_name_canonicalized(
 # DeprecationWarning, and produces a constraint stored under the
 # canonical name.
 @pytest.mark.parametrize(
-    "legacy_name, canonical_name",
+    "legacy_name, canonical_name, value",
     [
-        pytest.param("alpha_i", "incidence", id="alpha_i-to-incidence"),
-        pytest.param("beta_out", "emergence", id="beta_out-to-emergence"),
+        pytest.param("alpha_i", "incidence", 5.0, id="alpha_i-to-incidence"),
+        pytest.param("beta_out", "emergence", 5.0, id="beta_out-to-emergence"),
+        pytest.param("a_eq_b", "specular", True, id="a_eq_b-to-specular"),
     ],
 )
 def test_reference_constraint_from_dict_accepts_legacy_name(
-    legacy_name, canonical_name
+    legacy_name, canonical_name, value
 ):
     """A saved session with a legacy reference-constraint name still loads.
 
@@ -825,7 +827,7 @@ def test_reference_constraint_from_dict_accepts_legacy_name(
     legacy_session_dict = {
         "type": "ReferenceConstraint",
         "name": legacy_name,
-        "value": 5.0,
+        "value": value,
     }
     with pytest.warns(
         DeprecationWarning,
@@ -839,7 +841,80 @@ def test_reference_constraint_from_dict_accepts_legacy_name(
     # A second to_dict round-trip writes the canonical name.
     assert rc.to_dict()["name"] == canonical_name
     # Equal to the constraint built directly with the canonical name.
-    assert rc == ReferenceConstraint(canonical_name, 5.0)
+    assert rc == ReferenceConstraint(canonical_name, value)
+
+
+# REMOVE-AT-V1.0: ModeDict mode-name alias-map deprecation coverage.
+@pytest.mark.parametrize(
+    "legacy_mode_name, canonical_mode_name",
+    [
+        pytest.param(
+            "fixed_alpha_i_vertical",
+            "fixed_incidence_vertical",
+            id="fixed_alpha_i_vertical-to-fixed_incidence_vertical",
+        ),
+        pytest.param(
+            "fixed_beta_out_horizontal",
+            "fixed_emergence_horizontal",
+            id="fixed_beta_out_horizontal-to-fixed_emergence_horizontal",
+        ),
+        pytest.param(
+            "alpha_eq_beta_vertical",
+            "specular_vertical",
+            id="alpha_eq_beta_vertical-to-specular_vertical",
+        ),
+    ],
+)
+def test_modedict_legacy_mode_name_canonicalized(legacy_mode_name, canonical_mode_name):
+    """Issue #299: ModeDict canonicalizes legacy mode-name aliases on access.
+
+    A read of a legacy mode-name key emits :class:`DeprecationWarning`
+    and returns the canonical mode.  ``__contains__`` returns ``True``
+    for the legacy name (no warning, since defensive ``in`` tests are
+    common).  Iteration / ``keys()`` return the canonical name only.
+    """
+    import ad_hoc_diffractometer as ahd
+
+    g = ahd.make_geometry("psic")
+
+    # __getitem__ rewrites and warns.
+    with pytest.warns(
+        DeprecationWarning,
+        match=re.escape(
+            f"Mode name {legacy_mode_name!r} read is deprecated; "
+            f"use {canonical_mode_name!r} instead.  (issue #299)"
+        ),
+    ):
+        legacy_mode = g.modes[legacy_mode_name]
+    canonical_mode = g.modes[canonical_mode_name]
+    assert legacy_mode is canonical_mode
+
+    # __contains__ accepts the legacy name without a warning.
+    assert legacy_mode_name in g.modes
+    assert canonical_mode_name in g.modes
+
+    # Iteration returns canonical names only.
+    assert canonical_mode_name in list(g.modes)
+    assert legacy_mode_name not in list(g.modes)
+
+
+def test_geometry_mode_name_setter_canonicalizes_legacy_alias():
+    """Setting ``g.mode_name`` with a legacy alias is accepted, warns, and
+    stores the canonical name so the getter never reports a deprecated
+    spelling.
+    """
+    import ad_hoc_diffractometer as ahd
+
+    g = ahd.make_geometry("psic")
+    with pytest.warns(
+        DeprecationWarning,
+        match=re.escape(
+            "Mode name 'fixed_alpha_i_vertical' set is deprecated; "
+            "use 'fixed_incidence_vertical' instead.  (issue #299)"
+        ),
+    ):
+        g.mode_name = "fixed_alpha_i_vertical"
+    assert g.mode_name == "fixed_incidence_vertical"
 
 
 def test_reference_constraint_value_coerced_to_float():
@@ -849,7 +924,7 @@ def test_reference_constraint_value_coerced_to_float():
 
 
 def test_reference_constraint_a_eq_b_value_is_true():
-    rc = ReferenceConstraint("a_eq_b", True)
+    rc = ReferenceConstraint("specular", True)
     assert rc.value is True
 
 
@@ -869,7 +944,7 @@ def test_reference_constraint_to_dict_from_dict():
 
 
 def test_reference_constraint_to_dict_from_dict_a_eq_b():
-    rc = ReferenceConstraint("a_eq_b", True)
+    rc = ReferenceConstraint("specular", True)
     d = rc.to_dict()
     assert d["value"] is True
     rc2 = ReferenceConstraint.from_dict(d)
@@ -879,12 +954,12 @@ def test_reference_constraint_to_dict_from_dict_a_eq_b():
 @pytest.mark.parametrize(
     "name, value, surface_normal, expected",
     [
-        # alpha_i/beta_out/a_eq_b: implemented when surface_normal is set
+        # alpha_i/beta_out/specular: implemented when surface_normal is set
         pytest.param("alpha_i", 0.0, (0, 0, 1), True, id="alpha_i-with-sn"),
         pytest.param("alpha_i", 0.0, None, False, id="alpha_i-no-sn"),
         pytest.param("beta_out", 0.0, (0, 0, 1), True, id="beta_out-with-sn"),
-        pytest.param("a_eq_b", True, (0, 0, 1), True, id="a_eq_b-with-sn"),
-        pytest.param("a_eq_b", True, None, False, id="a_eq_b-no-sn"),
+        pytest.param("specular", True, (0, 0, 1), True, id="specular-with-sn"),
+        pytest.param("specular", True, None, False, id="specular-no-sn"),
         # psi/naz: never implemented (no forward solver yet)
         pytest.param("psi", 0.0, (0, 0, 1), False, id="psi-not-implemented"),
         pytest.param("naz", 0.0, (0, 0, 1), False, id="naz-not-implemented"),
@@ -1012,8 +1087,8 @@ def test_reference_constraint_hash():
     rc1 = ReferenceConstraint("psi", 90.0)
     rc2 = ReferenceConstraint("psi", 90.0)
     assert hash(rc1) == hash(rc2)
-    # a_eq_b with bool value also hashable
-    rc3 = ReferenceConstraint("a_eq_b", True)
+    # specular with bool value also hashable
+    rc3 = ReferenceConstraint("specular", True)
     assert isinstance(hash(rc3), int)
 
 
@@ -1855,13 +1930,13 @@ _SIXC_MODES = {
     "bisecting_4c",
     "fixed_gamma_5c",
     "fixed_alpha_5c",
-    "fixed_alpha_zaxis",
-    "fixed_beta_zaxis",
-    "alpha_eq_beta_zaxis",
+    "fixed_incidence_zaxis",
+    "fixed_emergence_zaxis",
+    "specular_zaxis",
 }
 
 _SIXC_IMPLEMENTED = {"bisecting_4c", "fixed_gamma_5c", "fixed_alpha_5c"}
-_SIXC_STUBS = {"fixed_alpha_zaxis", "fixed_beta_zaxis", "alpha_eq_beta_zaxis"}
+_SIXC_STUBS = {"fixed_incidence_zaxis", "fixed_emergence_zaxis", "specular_zaxis"}
 
 
 def test_sixc_factory_mode_names():
@@ -1919,9 +1994,13 @@ def test_sixc_surface_mode_implemented_with_surface_normal(mode_name):
         pytest.param("bisecting_4c", True, id="bisecting_4c-has-bisect"),
         pytest.param("fixed_gamma_5c", True, id="fixed_gamma_5c-has-bisect"),
         pytest.param("fixed_alpha_5c", True, id="fixed_alpha_5c-has-bisect"),
-        pytest.param("fixed_alpha_zaxis", False, id="fixed_alpha_zaxis-no-bisect"),
-        pytest.param("fixed_beta_zaxis", False, id="fixed_beta_zaxis-no-bisect"),
-        pytest.param("alpha_eq_beta_zaxis", False, id="alpha_eq_beta_zaxis-no-bisect"),
+        pytest.param(
+            "fixed_incidence_zaxis", False, id="fixed_incidence_zaxis-no-bisect"
+        ),
+        pytest.param(
+            "fixed_emergence_zaxis", False, id="fixed_emergence_zaxis-no-bisect"
+        ),
+        pytest.param("specular_zaxis", False, id="specular_zaxis-no-bisect"),
     ],
 )
 def test_sixc_mode_has_bisect(mode_name, expected_has_bisect):
@@ -1933,20 +2012,30 @@ def test_sixc_mode_has_bisect(mode_name, expected_has_bisect):
     "mode_name, extras_key, expected_value",
     [
         pytest.param(
-            "fixed_alpha_zaxis", "n_hat", "REQUIRED", id="fixed_alpha_zaxis-n_hat"
+            "fixed_incidence_zaxis",
+            "n_hat",
+            "REQUIRED",
+            id="fixed_incidence_zaxis-n_hat",
         ),
         pytest.param(
-            "fixed_alpha_zaxis", "alpha_i", None, id="fixed_alpha_zaxis-alpha_i-output"
+            "fixed_incidence_zaxis",
+            "alpha_i",
+            None,
+            id="fixed_incidence_zaxis-alpha_i-output",
         ),
         pytest.param(
-            "fixed_beta_zaxis", "n_hat", "REQUIRED", id="fixed_beta_zaxis-n_hat"
+            "fixed_emergence_zaxis",
+            "n_hat",
+            "REQUIRED",
+            id="fixed_emergence_zaxis-n_hat",
         ),
         pytest.param(
-            "fixed_beta_zaxis", "beta_out", None, id="fixed_beta_zaxis-beta_out-output"
+            "fixed_emergence_zaxis",
+            "beta_out",
+            None,
+            id="fixed_emergence_zaxis-beta_out-output",
         ),
-        pytest.param(
-            "alpha_eq_beta_zaxis", "n_hat", "REQUIRED", id="alpha_eq_beta_zaxis-n_hat"
-        ),
+        pytest.param("specular_zaxis", "n_hat", "REQUIRED", id="specular_zaxis-n_hat"),
     ],
 )
 def test_sixc_zaxis_extras_declared(mode_name, extras_key, expected_value):
@@ -2523,7 +2612,7 @@ def test_qaz_residual_nonzero():
 
 
 def _b3_constraint_set():
-    """Build a ConstraintSet matching psic 'fixed_alpha_i_fixed_chi_fixed_phi'.
+    """Build a ConstraintSet matching psic 'fixed_incidence_fixed_chi_fixed_phi'.
 
     Three settable-value constraints: two SampleConstraint plus one
     ReferenceConstraint.  Used by several with_constraint_values tests
@@ -2586,19 +2675,19 @@ def _b3_constraint_set():
             id="reference-incidence-5",
         ),
         pytest.param(
-            # ReferenceConstraint('a_eq_b', ...) only accepts True
+            # ReferenceConstraint('specular', ...) only accepts True
             # (the constraint expresses the *boolean* condition
             # alpha_i = beta_out; there is no False variant).  This
             # case verifies the bool branch of with_constraint_values
             # by re-applying the only legal value.
             lambda: ConstraintSet(
-                [ReferenceConstraint("a_eq_b", True)],
+                [ReferenceConstraint("specular", True)],
                 extras={"n_hat": REQUIRED},
             ),
-            {"a_eq_b": True},
-            {"a_eq_b": True},
+            {"specular": True},
+            {"specular": True},
             does_not_raise(),
-            id="reference-a_eq_b-True",
+            id="reference-specular-True",
         ),
         pytest.param(
             _b3_constraint_set,

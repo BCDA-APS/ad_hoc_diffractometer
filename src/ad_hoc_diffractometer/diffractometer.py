@@ -18,6 +18,7 @@ from .constants import YHAT
 from .constants import ZHAT
 from .mode import ConstraintSet
 from .mode import ModeDict
+from .mode import _canonicalize_mode_name  # noqa: PLC2701
 from .reflection import Reflection
 from .reflection import ReflectionList
 from .sample import _DEFAULT_LATTICE
@@ -712,6 +713,12 @@ class AdHocDiffractometer:
 
     @mode_name.setter
     def mode_name(self, name: str | None) -> None:
+        # REMOVE-AT-V1.0: canonicalize legacy mode-name aliases at the
+        # setter boundary so ``self._mode_name`` always holds the
+        # canonical name and the mode_name getter never reports a
+        # deprecated spelling.
+        if name is not None:
+            name = _canonicalize_mode_name(name, operation="set")
         if name is not None and name not in self._modes:
             available = sorted(self._modes.keys())
             raise ValueError(
@@ -1269,7 +1276,7 @@ class AdHocDiffractometer:
         =====================================  =================================
         ``"incidence"``                        :attr:`surface_normal`
         ``"emergence"``                        :attr:`surface_normal`
-        ``"a_eq_b"``                           :attr:`surface_normal`
+        ``"specular"``                         :attr:`surface_normal`
         ``"psi"``                              :attr:`azimuth`
         ``"naz"``                              :attr:`azimuth`
         ``"omega"``                            (none)
@@ -1322,7 +1329,7 @@ class AdHocDiffractometer:
         rc: ReferenceConstraint | None = mode.reference_constraint
         if rc is None:
             return None
-        if rc.name in {"incidence", "emergence", "a_eq_b"}:
+        if rc.name in {"incidence", "emergence", "specular"}:
             return "surface_normal"
         if rc.name in {"psi", "naz"}:
             return "azimuth"

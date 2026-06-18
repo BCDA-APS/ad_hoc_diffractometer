@@ -72,26 +72,26 @@ See {doc}`../howto/constraints` for the extras dict pattern.
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 surface normal aligned with the Z-axis; alpha directly equals the incidence
 angle β_in, gamma directly equals the exit angle β_out.
-Override the α_i target at run time with `g.modes["zaxis"].with_constraint_values(alpha_i=...)` — see {doc}`../howto/constraints`.
+Override the α_i target at run time with `g.modes["zaxis"].with_constraint_values(incidence=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
 | **Computed** | Z, delta, gamma |
 | **Constant during** `forward()` | — |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i (= alpha), beta_out (= gamma) |
+| **Extras (output)** | incidence (= alpha), emergence (= gamma) |
 
 ### `reflectivity`
 
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
-symmetric reflection — alpha_i = beta_out (alpha = gamma).
+symmetric reflection — incidence = emergence (alpha = gamma).
 
 | | |
 |---|---|
 | **Computed** | Z, delta, alpha, gamma |
 | **Constant during** `forward()` | — |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i, beta_out |
+| **Extras (output)** | incidence, emergence |
 
 ## API reference
 

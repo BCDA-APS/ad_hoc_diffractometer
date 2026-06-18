@@ -138,9 +138,9 @@ class TestPrepareMode:
     @pytest.mark.parametrize(
         "geometry_name, mode_name",
         [
-            pytest.param("sixc", "fixed_alpha_zaxis", id="sixc-alpha-zaxis"),
-            pytest.param("sixc", "fixed_beta_zaxis", id="sixc-beta-zaxis"),
-            pytest.param("sixc", "alpha_eq_beta_zaxis", id="sixc-a-eq-b"),
+            pytest.param("sixc", "fixed_incidence_zaxis", id="sixc-alpha-zaxis"),
+            pytest.param("sixc", "fixed_emergence_zaxis", id="sixc-beta-zaxis"),
+            pytest.param("sixc", "specular_zaxis", id="sixc-a-eq-b"),
         ],
     )
     def test_surface_modes_set_normal(self, geometry_name, mode_name):
@@ -154,7 +154,7 @@ class TestPrepareMode:
         """If surface_normal is already set, _prepare_mode leaves it."""
         g = _setup_geometry("sixc")
         g.surface_normal = (1, 0, 0)
-        _prepare_mode(g, "fixed_alpha_zaxis")
+        _prepare_mode(g, "fixed_incidence_zaxis")
         assert g.surface_normal == (1.0, 0.0, 0.0)
 
 

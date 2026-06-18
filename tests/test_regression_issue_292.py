@@ -55,7 +55,7 @@ def _setup_cubic(name, a=4.0):
 
 
 # ---------------------------------------------------------------------------
-# B3 surface mode: psic / fixed_alpha_i_fixed_chi_fixed_phi
+# B3 surface mode: psic / fixed_incidence_fixed_chi_fixed_phi
 # (the only fixed_alpha_i_* mode that is currently implemented for psic).
 # ---------------------------------------------------------------------------
 
@@ -79,7 +79,7 @@ def test_psic_b3_populates_alpha_i_and_beta_out_extras(
     with context:
         g = _setup_cubic("psic")
         g.surface_normal = (0, 0, 1)
-        cs = g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
+        cs = g.modes["fixed_incidence_fixed_chi_fixed_phi"]
         # Update the reference-constraint target via the public API:
         # rebuild the constraint set with the requested alpha_i value
         # (the YAML defaults to 0.0; we want non-zero targets too).
@@ -88,7 +88,7 @@ def test_psic_b3_populates_alpha_i_and_beta_out_extras(
         from ad_hoc_diffractometer import ReferenceConstraint
         from ad_hoc_diffractometer import SampleConstraint
 
-        g.modes["fixed_alpha_i_fixed_chi_fixed_phi"] = ConstraintSet(
+        g.modes["fixed_incidence_fixed_chi_fixed_phi"] = ConstraintSet(
             [
                 SampleConstraint("chi", 0.0),
                 SampleConstraint("phi", 0.0),
@@ -97,12 +97,12 @@ def test_psic_b3_populates_alpha_i_and_beta_out_extras(
             computed=cs.computed,
             extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
         )
-        g.mode_name = "fixed_alpha_i_fixed_chi_fixed_phi"
+        g.mode_name = "fixed_incidence_fixed_chi_fixed_phi"
 
         sols = g.forward(h, k, l)
         assert len(sols) > 0
 
-        mode = g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
+        mode = g.modes["fixed_incidence_fixed_chi_fixed_phi"]
         assert isinstance(mode.extras["alpha_i"], list)
         assert isinstance(mode.extras["beta_out"], list)
         assert len(mode.extras["alpha_i"]) == len(sols)

@@ -39,7 +39,7 @@ over-constrain the scattered beam direction.
 condition between Q and an external reference vector n̂ (surface normal,
 polarization axis, etc.) stored on the geometry.  The named options are
 physical pseudo-angles from You (1999) and Lohmeier & Vlieg (1993):
-``"psi"``, ``"incidence"``, ``"emergence"``, ``"a_eq_b"``, ``"naz"``.
+``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``, ``"naz"``.
 ``"alpha_i"`` and ``"beta_out"`` are accepted as deprecated aliases for
 ``"incidence"`` and ``"emergence"`` respectively (issue #299).  At most
 one reference constraint is allowed.
@@ -201,13 +201,14 @@ REFERENCE_NAMES: frozenset[str] = frozenset(
         "psi",
         "incidence",
         "emergence",
-        "a_eq_b",
+        "specular",
         "naz",
         "omega",
         # REMOVE-AT-V1.0: legacy alias names accepted on input and
         # canonicalized to the new names by ReferenceConstraint.__init__.
         "alpha_i",
         "beta_out",
+        "a_eq_b",
     }
 )
 """Valid reference constraint names (physical pseudo-angles).
@@ -221,18 +222,18 @@ geometry (no reference vector required):
 - ``"psi"`` — azimuthal angle of n̂ about Q (You 1999, eq. 23)
 - ``"incidence"`` — angle of incidence (incident beam vs. surface plane)
 - ``"emergence"`` — angle of emergence (diffracted beam vs. surface plane)
-- ``"a_eq_b"`` — relational: incidence = emergence (symmetric reflection)
+- ``"specular"`` — specular reflection (relational: incidence = emergence)
 - ``"naz"`` — azimuthal angle of n̂ in the lab frame
 - ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``): angle between
   Q and the plane of the chi circle (psic family); see
   :func:`~ad_hoc_diffractometer.reference.omega_pseudo`
 
-The legacy names ``"alpha_i"`` and ``"beta_out"`` are also accepted as
-deprecated aliases for ``"incidence"`` and ``"emergence"`` respectively.
-Constructing a :class:`ReferenceConstraint` with a legacy name emits
-:class:`DeprecationWarning` and canonicalizes to the new name; the
-stored ``name`` attribute is always one of the canonical values listed
-above.  See :data:`_DEPRECATED_REFERENCE_NAME_ALIASES`.
+The legacy names ``"alpha_i"``, ``"beta_out"``, and ``"a_eq_b"`` are also
+accepted as deprecated aliases for ``"incidence"``, ``"emergence"``, and
+``"specular"`` respectively.  Constructing a :class:`ReferenceConstraint`
+with a legacy name emits :class:`DeprecationWarning` and canonicalizes to
+the new name; the stored ``name`` attribute is always one of the canonical
+values listed above.  See :data:`_DEPRECATED_REFERENCE_NAME_ALIASES`.
 REMOVE-AT-V1.0: the preceding paragraph documents the deprecation
 aliases and should be deleted alongside them.
 """
@@ -242,18 +243,69 @@ aliases and should be deleted alongside them.
 _DEPRECATED_REFERENCE_NAME_ALIASES: dict[str, str] = {
     "alpha_i": "incidence",
     "beta_out": "emergence",
+    "a_eq_b": "specular",
 }
 """Mapping from deprecated reference-constraint name to its canonical form.
 
-``"alpha_i"`` / ``"beta_out"`` are kept as forwarding aliases so existing
-user code, saved sessions, and out-of-tree YAML files continue to work.
+``"alpha_i"`` / ``"beta_out"`` / ``"a_eq_b"`` are kept as forwarding aliases
+so existing user code, saved sessions, and out-of-tree YAML files continue
+to work.
 
 :class:`ReferenceConstraint`, the YAML loader, the forward solver's output
 extras, and ``from_dict`` all consult this map.  When a legacy name is
 supplied, a :class:`DeprecationWarning` is emitted and the canonical name
 is used for all downstream storage and comparison.  Use the canonical
-names (``"incidence"`` / ``"emergence"``) in new code.
+names (``"incidence"``, ``"emergence"``, ``"specular"``) in new code.
 """
+
+# REMOVE-AT-V1.0: this mapping (and every site that consults it) is the
+# deprecation infrastructure for the issue #299 mode-name renames.
+_DEPRECATED_MODE_NAME_ALIASES: dict[str, str] = {
+    "fixed_alpha_i_vertical": "fixed_incidence_vertical",
+    "fixed_alpha_i_horizontal": "fixed_incidence_horizontal",
+    "fixed_alpha_i_fixed_chi_fixed_phi": "fixed_incidence_fixed_chi_fixed_phi",
+    "fixed_alpha_zaxis": "fixed_incidence_zaxis",
+    "fixed_beta_out_vertical": "fixed_emergence_vertical",
+    "fixed_beta_out_horizontal": "fixed_emergence_horizontal",
+    "fixed_beta_zaxis": "fixed_emergence_zaxis",
+    "alpha_eq_beta_vertical": "specular_vertical",
+    "alpha_eq_beta_horizontal": "specular_horizontal",
+    "alpha_eq_beta_zaxis": "specular_zaxis",
+}
+"""Mapping from deprecated mode name to its canonical form.
+
+The legacy mode-name strings are kept as forwarding aliases so existing
+user code (e.g. ``g.mode_name = "fixed_alpha_i_vertical"``) and saved
+sessions continue to work.  :class:`ModeDict`'s read / write / delete /
+membership-test methods and :attr:`AdHocDiffractometer.mode_name`'s
+setter all consult this map.  When a legacy name is supplied, a
+:class:`DeprecationWarning` is emitted and the canonical name is used
+for all downstream storage and lookup.
+"""
+
+
+def _canonicalize_mode_name(name: str, *, operation: str) -> str:
+    """REMOVE-AT-V1.0: rewrite a legacy mode-name alias to its canonical form.
+
+    Emits :class:`DeprecationWarning` when the rewrite fires.
+    ``operation`` is one of ``"read"`` / ``"write"`` / ``"delete"`` and
+    is interpolated into the warning text so the caller sees which
+    access path triggered it.  Returns ``name`` unchanged when no alias
+    applies.
+    """
+    canonical = _DEPRECATED_MODE_NAME_ALIASES.get(name)
+    if canonical is None:
+        return name
+    import warnings
+
+    warnings.warn(
+        f"Mode name {name!r} {operation} is deprecated; "
+        f"use {canonical!r} instead.  (issue #299)",
+        DeprecationWarning,
+        stacklevel=3,
+    )
+    return canonical
+
 
 QAZ: str = "qaz"
 """Special name for the qaz detector pseudo-angle (You 1999, eq. 18).
@@ -355,7 +407,7 @@ class _ExtrasDict(dict):
                 f"effect on forward().  Set the reference vector on the "
                 f"geometry instead: use 'g.surface_normal = (h, k, l)' "
                 f"for surface-mode constraints "
-                f"(incidence / emergence / a_eq_b), or "
+                f"(incidence / emergence / specular), or "
                 f"'g.azimuth = (h, k, l)' for "
                 f"psi / naz constraints.  See "
                 f"AdHocDiffractometer.required_reference_vector to "
@@ -895,29 +947,31 @@ class ReferenceConstraint:
         Angle of emergence: angle between the diffracted beam and the
         surface plane.  Accepts the deprecated alias ``"beta_out"``
         (REMOVE-AT-V1.0).
-    ``"a_eq_b"``
-        Relational: ``incidence = emergence`` (symmetric reflection).
-        ``value`` must be ``True``.
+    ``"specular"``
+        Specular reflection: relational condition ``incidence = emergence``.
+        ``value`` must be ``True``.  Accepts the deprecated alias
+        ``"a_eq_b"`` (REMOVE-AT-V1.0).
     ``"naz"``
         Azimuthal angle of n̂ in the lab frame (You 1999).
 
     Parameters
     ----------
     name : str
-        One of ``"psi"``, ``"incidence"``, ``"emergence"``, ``"a_eq_b"``,
-        ``"naz"``, ``"omega"``.  The deprecated aliases ``"alpha_i"`` and
-        ``"beta_out"`` are also accepted (with a :class:`DeprecationWarning`)
-        and canonicalized to ``"incidence"`` and ``"emergence"`` respectively
-        before storage.  REMOVE-AT-V1.0: drop the alias clause.
+        One of ``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``,
+        ``"naz"``, ``"omega"``.  The deprecated aliases ``"alpha_i"``,
+        ``"beta_out"``, and ``"a_eq_b"`` are also accepted (with a
+        :class:`DeprecationWarning`) and canonicalized to ``"incidence"``,
+        ``"emergence"``, and ``"specular"`` respectively before storage.
+        REMOVE-AT-V1.0: drop the alias clause.
     value : float or bool
-        Target value in degrees (or ``True`` for ``"a_eq_b"``).
+        Target value in degrees (or ``True`` for ``"specular"``).
 
     Examples
     --------
     >>> ReferenceConstraint("psi", 90.0)
     ReferenceConstraint('psi', 90.0)
-    >>> ReferenceConstraint("a_eq_b", True)
-    ReferenceConstraint('a_eq_b', True)
+    >>> ReferenceConstraint("specular", True)
+    ReferenceConstraint('specular', True)
     >>> ReferenceConstraint("incidence", 5.0)
     ReferenceConstraint('incidence', 5.0)
     """
@@ -950,13 +1004,13 @@ class ReferenceConstraint:
                 stacklevel=2,
             )
             name = canonical_name
-        if name == "a_eq_b" and value is not True:
+        if name == "specular" and value is not True:
             raise ValueError(
-                "ReferenceConstraint('a_eq_b', value): value must be True; "
+                "ReferenceConstraint('specular', value): value must be True; "
                 f"got {value!r}."
             )
         self._name = name
-        self._value: float | bool = True if name == "a_eq_b" else float(value)  # type: ignore[arg-type]
+        self._value: float | bool = True if name == "specular" else float(value)  # type: ignore[arg-type]
 
     @property
     def name(self) -> str:
@@ -965,7 +1019,7 @@ class ReferenceConstraint:
 
     @property
     def value(self) -> float | bool:
-        """Target value in degrees, or ``True`` for ``"a_eq_b"``."""
+        """Target value in degrees, or ``True`` for ``"specular"``."""
         return self._value
 
     def evaluate(
@@ -1004,7 +1058,7 @@ class ReferenceConstraint:
         For ``"psi"`` and ``"naz"``: requires
         :attr:`~geometry.AdHocDiffractometer.azimuth` to be set.
 
-        For ``"incidence"``, ``"emergence"``, and ``"a_eq_b"``: requires
+        For ``"incidence"``, ``"emergence"``, and ``"specular"``: requires
         :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
 
         For ``"omega"``: no reference vector is required (always returns
@@ -1031,7 +1085,7 @@ class ReferenceConstraint:
 
         - ``"incidence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"emergence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
-        - ``"a_eq_b"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+        - ``"specular"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuth`.
           The forward solver treats ψ as a **validation filter**: for a given
           (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for
@@ -1055,7 +1109,7 @@ class ReferenceConstraint:
         if self._name == "omega":
             # Implemented for any geometry with a chi sample stage.
             return any(s.name == "chi" for s in geometry.sample_stages)
-        # incidence, emergence, a_eq_b — implemented when surface_normal is set
+        # incidence, emergence, specular — implemented when surface_normal is set
         return geometry.surface_normal is not None
 
     def to_dict(self) -> dict:
@@ -1423,7 +1477,7 @@ class ConstraintSet:
             exactly match the ``.name`` attribute of an existing
             :class:`SampleConstraint`, :class:`DetectorConstraint`, or
             :class:`ReferenceConstraint` in the set.  Values are floats
-            (or ``bool`` for the ``"a_eq_b"`` :class:`ReferenceConstraint`).
+            (or ``bool`` for the ``"specular"`` :class:`ReferenceConstraint`).
 
         Returns
         -------
@@ -1636,6 +1690,12 @@ class ModeDict:
     Only :class:`ConstraintSet` instances may be stored.  Keys are mode
     names (str).  Iteration follows insertion order.
 
+    Deprecated mode-name aliases are canonicalized on every read, write,
+    delete, and membership test (issue #299).  Iteration / ``keys()`` /
+    ``values()`` / ``items()`` return canonical keys only; a legacy name
+    accessed via ``__getitem__`` returns the canonical mode but does not
+    appear under its legacy spelling in iteration.
+
     Parameters
     ----------
     modes : dict[str, ConstraintSet] or None
@@ -1668,15 +1728,26 @@ class ModeDict:
                 f"ModeDict values must be ConstraintSet instances; "
                 f"got {type(mode).__name__!r} for key {name!r}."
             )
+        # REMOVE-AT-V1.0: canonicalize legacy mode-name aliases on write.
+        name = _canonicalize_mode_name(name, operation="write")
         self._data[name] = mode
 
     def __getitem__(self, name: str) -> ConstraintSet:
+        # REMOVE-AT-V1.0: canonicalize legacy mode-name aliases on read.
+        name = _canonicalize_mode_name(name, operation="read")
         return self._data[name]
 
     def __delitem__(self, name: str) -> None:
+        # REMOVE-AT-V1.0: canonicalize legacy mode-name aliases on delete.
+        name = _canonicalize_mode_name(name, operation="delete")
         del self._data[name]
 
     def __contains__(self, name: object) -> bool:
+        # REMOVE-AT-V1.0: legacy mode-name aliases are "contained" iff the
+        # canonical name is present.  No warning here — ``in`` tests are
+        # frequently defensive and per-test warnings would be noisy.
+        if isinstance(name, str) and name in _DEPRECATED_MODE_NAME_ALIASES:
+            name = _DEPRECATED_MODE_NAME_ALIASES[name]
         return name in self._data
 
     def __len__(self) -> int:

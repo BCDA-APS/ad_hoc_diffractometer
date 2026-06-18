@@ -3089,7 +3089,7 @@ def _solve_surface(
 
     - ``"incidence"`` — incidence angle fixed at target value
     - ``"emergence"`` — emergence angle fixed at target value
-    - ``"a_eq_b"`` — symmetric reflection: incidence = emergence
+    - ``"specular"`` — specular reflection: incidence = emergence
 
     The solver builds a baseline angles dict (applying all fixed sample/detector
     constraints and setting the detector stage to ttheta_deg), then performs a
@@ -3114,7 +3114,7 @@ def _solve_surface(
     # because :class:`ReferenceConstraint` canonicalizes the deprecated
     # aliases (``"alpha_i"`` / ``"beta_out"``) at construction time.
     rc = next(c for c in mode.constraints if isinstance(c, ReferenceConstraint))
-    target_name = rc.name  # "incidence", "emergence", or "a_eq_b"
+    target_name = rc.name  # "incidence", "emergence", or "specular"
     target_value = rc.value  # float or True
 
     # Build baseline angles dict with all fixed constraints applied
@@ -3239,7 +3239,7 @@ def _surface_residual(
     if target_name == "emergence":
         bo = _emergence_angle(geometry, angles=angles)
         return bo - float(target_value)
-    # a_eq_b: incidence = emergence (symmetric reflection)
+    # specular: incidence = emergence (symmetric reflection)
     ai = _incidence_angle(geometry, angles=angles)
     bo = _emergence_angle(geometry, angles=angles)
     return ai - bo

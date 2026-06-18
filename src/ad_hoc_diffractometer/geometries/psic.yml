@@ -46,13 +46,13 @@ documentation: |
     Mode families (24 modes total):
 
     - 9 vertical-scattering-plane modes (mu = nu = 0): bisecting,
-      fixed_phi, fixed_chi, fixed_alpha_i, fixed_beta_out,
-      alpha_eq_beta, fixed_psi, fixed_omega (#264),
+      fixed_phi, fixed_chi, fixed_incidence, fixed_emergence,
+      specular, fixed_psi, fixed_omega (#264),
       double_diffraction.
 
     - 9 horizontal-scattering-plane mirror modes (eta = delta = 0).
 
-    - 1 hybrid mode fixed_alpha_i_fixed_chi_fixed_phi (#264) that
+    - 1 hybrid mode fixed_incidence_fixed_chi_fixed_phi (#264) that
       fixes chi, phi, and incidence and lets every other angle float.
 
     - 2 zone modes (You 1999 §6, SPEC ``setmode 5``): scattering vector
@@ -115,7 +115,7 @@ modes:
             - {type: detector, stage: nu,  value: 0.0}
         computed: [eta, phi, delta]
 
-    fixed_alpha_i_vertical:
+    fixed_incidence_vertical:
         constraints:
             - {type: sample,    stage: mu, value: 0.0}
             - {type: detector,  stage: nu, value: 0.0}
@@ -126,7 +126,7 @@ modes:
             incidence: null
             emergence: null
 
-    fixed_beta_out_vertical:
+    fixed_emergence_vertical:
         constraints:
             - {type: sample,    stage: mu, value: 0.0}
             - {type: detector,  stage: nu, value: 0.0}
@@ -137,11 +137,11 @@ modes:
             incidence: null
             emergence: null
 
-    alpha_eq_beta_vertical:
+    specular_vertical:
         constraints:
             - {type: sample,    stage: mu, value: 0.0}
             - {type: detector,  stage: nu, value: 0.0}
-            - {type: reference, name: a_eq_b, value: true}
+            - {type: reference, name: specular, value: true}
         computed: [eta, chi, phi, delta]
         extras:
             n_hat: REQUIRED
@@ -175,7 +175,7 @@ modes:
     # to be determined from the Bragg condition + the incidence target.
     # Two free sample stages and two free detector stages — solved by a
     # dedicated 4-D Newton.
-    fixed_alpha_i_fixed_chi_fixed_phi:
+    fixed_incidence_fixed_chi_fixed_phi:
         constraints:
             - {type: sample,    stage: chi, value: 0.0}
             - {type: sample,    stage: phi, value: 0.0}
@@ -239,7 +239,7 @@ modes:
             - {type: detector, stage: delta, value: 0.0}
         computed: [mu, phi, nu]
 
-    fixed_alpha_i_horizontal:
+    fixed_incidence_horizontal:
         constraints:
             - {type: sample,    stage: eta,   value: 0.0}
             - {type: detector,  stage: delta, value: 0.0}
@@ -250,7 +250,7 @@ modes:
             incidence: null
             emergence: null
 
-    fixed_beta_out_horizontal:
+    fixed_emergence_horizontal:
         constraints:
             - {type: sample,    stage: eta,   value: 0.0}
             - {type: detector,  stage: delta, value: 0.0}
@@ -261,11 +261,11 @@ modes:
             incidence: null
             emergence: null
 
-    alpha_eq_beta_horizontal:
+    specular_horizontal:
         constraints:
             - {type: sample,    stage: eta,   value: 0.0}
             - {type: detector,  stage: delta, value: 0.0}
-            - {type: reference, name: a_eq_b, value: true}
+            - {type: reference, name: specular, value: true}
         computed: [mu, chi, phi, nu]
         extras:
             n_hat: REQUIRED

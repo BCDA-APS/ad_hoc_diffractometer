@@ -2326,7 +2326,7 @@ def test_geometry_to_dict_version_unknown_on_metadata_error():
     [
         pytest.param(
             "psic",
-            "fixed_alpha_i_fixed_chi_fixed_phi",
+            "fixed_incidence_fixed_chi_fixed_phi",
             "surface_normal",
             id="psic-B3-surface_normal",
         ),
@@ -2397,7 +2397,7 @@ def test_required_reference_vector_usable_with_setattr():
     import ad_hoc_diffractometer as ahd
 
     g = ahd.make_geometry("psic")
-    g.mode_name = "fixed_alpha_i_fixed_chi_fixed_phi"
+    g.mode_name = "fixed_incidence_fixed_chi_fixed_phi"
     attr = g.required_reference_vector
     assert attr == "surface_normal"
     setattr(g, attr, (0, 0, 1))
