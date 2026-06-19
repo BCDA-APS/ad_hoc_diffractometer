@@ -278,7 +278,7 @@ def test_solve_surface_returns_empty_when_only_detector_stage_pinned():
         constraints=[
             SampleConstraint("omega", 0.0),
             DetectorConstraint(det_name, 0.0),
-            ReferenceConstraint("alpha_i", 0.0),
+            ReferenceConstraint("incidence", 0.0),
         ],
     )
 

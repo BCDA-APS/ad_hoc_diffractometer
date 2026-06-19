@@ -6,7 +6,6 @@ Unit tests for ad_hoc_diffractometer.reference — reference pseudo-angles.
 Covers:
   - incidence_angle: requires surface_normal; raises when None
   - emergence_angle: requires surface_normal; raises when None
-    (also accepts the deprecated alias ``exit_angle``)
   - psi_angle: requires azimuth; raises when None
   - naz_angle: requires surface_normal; raises when None; vertical n̂ gives 0
   - ReferenceConstraint.is_implemented(): True when reference set, False when None
@@ -28,9 +27,6 @@ from ad_hoc_diffractometer import AdHocDiffractometer
 from ad_hoc_diffractometer import ReferenceConstraint
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.reference import emergence_angle
-from ad_hoc_diffractometer.reference import (  # noqa: F401 — deprecation-test import
-    exit_angle,
-)
 from ad_hoc_diffractometer.reference import incidence_angle
 from ad_hoc_diffractometer.reference import natural_psi
 from ad_hoc_diffractometer.reference import naz_angle
@@ -107,7 +103,7 @@ def test_emergence_angle_with_surface_normal():
 
 
 def test_specular_condition_alpha_i_equals_alpha_f():
-    """At bisecting with surface normal ⊥ to scattering plane, alpha_i ≈ alpha_f."""
+    """At bisecting with surface normal ⊥ to scattering plane, incidence ≈ alpha_f."""
     g = _setup_psic()
     # Surface normal along transverse axis — perpendicular to the scattering plane
     g.surface_normal = (0, 0, 1)
@@ -232,14 +228,16 @@ def test_naz_angle_vertical_normal_returns_zero():
     [
         # surface-normal constraints: implemented when surface_normal is set
         pytest.param(
-            "alpha_i", 0.0, "surface_normal", (0, 0, 1), True, id="alpha_i-with-sn"
-        ),
-        pytest.param("alpha_i", 0.0, "surface_normal", None, False, id="alpha_i-no-sn"),
-        pytest.param(
-            "beta_out", 0.0, "surface_normal", (0, 0, 1), True, id="beta_out-with-sn"
+            "incidence", 0.0, "surface_normal", (0, 0, 1), True, id="incidence-with-sn"
         ),
         pytest.param(
-            "beta_out", 0.0, "surface_normal", None, False, id="beta_out-no-sn"
+            "incidence", 0.0, "surface_normal", None, False, id="incidence-no-sn"
+        ),
+        pytest.param(
+            "emergence", 0.0, "surface_normal", (0, 0, 1), True, id="emergence-with-sn"
+        ),
+        pytest.param(
+            "emergence", 0.0, "surface_normal", None, False, id="emergence-no-sn"
         ),
         pytest.param(
             "specular", True, "surface_normal", (0, 0, 1), True, id="specular-with-sn"
@@ -288,15 +286,17 @@ def test_reference_constraint_is_implemented(
 @pytest.mark.parametrize(
     "name, value, ref_attr, ref_value, expected",
     [
-        pytest.param("alpha_i", 0.0, "surface_normal", None, False, id="alpha_i-no-sn"),
         pytest.param(
-            "alpha_i", 0.0, "surface_normal", (0, 0, 1), True, id="alpha_i-with-sn"
+            "incidence", 0.0, "surface_normal", None, False, id="incidence-no-sn"
         ),
         pytest.param(
-            "beta_out", 0.0, "surface_normal", None, False, id="beta_out-no-sn"
+            "incidence", 0.0, "surface_normal", (0, 0, 1), True, id="incidence-with-sn"
         ),
         pytest.param(
-            "beta_out", 0.0, "surface_normal", (0, 0, 1), True, id="beta_out-with-sn"
+            "emergence", 0.0, "surface_normal", None, False, id="emergence-no-sn"
+        ),
+        pytest.param(
+            "emergence", 0.0, "surface_normal", (0, 0, 1), True, id="emergence-with-sn"
         ),
         pytest.param(
             "specular", True, "surface_normal", None, False, id="specular-no-sn"
@@ -485,19 +485,19 @@ def test_surface_mode_returns_solutions(factory, mode_name, h, k, l):  # noqa: E
 @pytest.mark.parametrize(
     "factory, mode_name, h, k, l",
     [
-        pytest.param(zaxis, "zaxis", 0, 1, 0, id="zaxis-zaxis-alpha_i=0"),
+        pytest.param(zaxis, "zaxis", 0, 1, 0, id="zaxis-zaxis-incidence=0"),
         pytest.param(
             sixc,
             "fixed_incidence_zaxis",
             0,
             1,
             0,
-            id="sixc-fixed_alpha-alpha_i=0",
+            id="sixc-fixed_alpha-incidence=0",
         ),
     ],
 )
 def test_surface_alpha_i_fixed_constraint_satisfied(factory, mode_name, h, k, l):  # noqa: E741
-    """alpha_i modes: incidence angle equals declared target (0°) in all solutions."""
+    """incidence modes: incidence angle equals declared target (0°) in all solutions."""
     g = _setup_surface(factory)
     g.mode_name = mode_name
     solutions = g.forward(h, k, l)
@@ -516,12 +516,12 @@ def test_surface_alpha_i_fixed_constraint_satisfied(factory, mode_name, h, k, l)
             0,
             1,
             0,
-            id="sixc-fixed_beta-beta_out=0",
+            id="sixc-fixed_beta-emergence=0",
         ),
     ],
 )
 def test_surface_beta_out_fixed_constraint_satisfied(factory, mode_name, h, k, l):  # noqa: E741
-    """beta_out modes: exit angle equals declared target (0°) in all solutions."""
+    """emergence modes: exit angle equals declared target (0°) in all solutions."""
     g = _setup_surface(factory)
     g.mode_name = mode_name
     solutions = g.forward(h, k, l)
@@ -536,11 +536,11 @@ def test_surface_beta_out_fixed_constraint_satisfied(factory, mode_name, h, k, l
     [
         pytest.param(zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"),
         pytest.param(s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
-        pytest.param(sixc, "specular_zaxis", 0, 1, 0, id="sixc-alpha_eq_beta"),
+        pytest.param(sixc, "specular_zaxis", 0, 1, 0, id="sixc-specular"),
     ],
 )
 def test_surface_a_eq_b_constraint_satisfied(factory, mode_name, h, k, l):  # noqa: E741
-    """specular modes: alpha_i ≈ beta_out in all solutions."""
+    """specular modes: incidence ≈ emergence in all solutions."""
     g = _setup_surface(factory)
     g.mode_name = mode_name
     solutions = g.forward(h, k, l)
@@ -677,8 +677,8 @@ def test_omega_pseudo_independent_of_chi():
     "name, expected",
     [
         pytest.param("psi", True, id="psi"),
-        pytest.param("alpha_i", True, id="alpha_i"),
-        pytest.param("beta_out", True, id="beta_out"),
+        pytest.param("incidence", True, id="incidence"),
+        pytest.param("emergence", True, id="emergence"),
         pytest.param("specular", True, id="specular"),
         pytest.param("naz", True, id="naz"),
         pytest.param("omega", True, id="omega"),
@@ -816,24 +816,3 @@ def test_natural_psi_independent_of_motor_state():
     for stage in g._stages.values():  # noqa: SLF001
         stage.angle = 17.5
     assert natural_psi(g, 1, 1, 0) == pytest.approx(baseline, abs=1e-12)
-
-
-# REMOVE-AT-V1.0: deprecation-cycle coverage for the legacy long-form
-# wrapper ``reference.exit_angle``.
-
-
-def test_exit_angle_function_deprecated():
-    """exit_angle() emits DeprecationWarning and delegates to emergence_angle."""
-    g = _setup_psic()
-    g.surface_normal = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
-    sols = g.forward(1, 0, 0)
-    assert sols, "fixture should return at least one solution"
-    with pytest.warns(
-        DeprecationWarning,
-        match=r"reference\.exit_angle\(\) is deprecated; "
-        r"use ad_hoc_diffractometer\.reference\.emergence_angle",
-    ):
-        value = exit_angle(g, angles=sols[0])
-    expected = emergence_angle(g, angles=sols[0])
-    assert value == pytest.approx(expected, abs=1e-12)

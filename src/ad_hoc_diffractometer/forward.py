@@ -477,11 +477,6 @@ _OUTPUT_EXTRA_KEYS = (
     "emergence",
     "psi",
     "omega",
-    # REMOVE-AT-V1.0: deprecated aliases kept so existing extras-dict
-    # declarations continue to receive computed values until callers
-    # migrate.
-    "alpha_i",
-    "beta_out",
 )
 
 
@@ -509,10 +504,6 @@ def _populate_output_extras(
       ``None``; a debug-level log message records why.
     * Empty ``solutions`` leaves every slot as an empty list.
     * Each successful call **replaces** the prior contents of the slot.
-    * The deprecated keys ``"alpha_i"`` / ``"beta_out"`` are populated
-      identically to their canonical counterparts
-      ``"incidence"`` / ``"emergence"``.  REMOVE-AT-V1.0: drop this
-      bullet alongside the legacy keys.
     """
     if mode is None or not getattr(mode, "extras", None):
         return
@@ -532,9 +523,6 @@ def _populate_output_extras(
         "emergence": _emergence_angle,
         "psi": _psi_angle,
         "omega": _omega_pseudo,
-        # REMOVE-AT-V1.0: deprecated aliases routed to the same computers.
-        "alpha_i": _incidence_angle,
-        "beta_out": _emergence_angle,
     }
 
     for key in relevant:
@@ -568,20 +556,6 @@ def _populate_output_extras(
                     geometry.name,
                     failure,
                 )
-
-    # REMOVE-AT-V1.0: back-fill the legacy slot names so out-of-tree
-    # callers reading ``result.extras["alpha_i"]`` / ``["beta_out"]``
-    # continue to see the populated value after the in-tree YAML files
-    # have been migrated to declare only the canonical slots.  Without
-    # this back-fill a caller would see KeyError immediately after the
-    # YAML migration in Step 4 of the same PR, even though the canonical
-    # slot is populated.  Mirror writes use ``dict.__setitem__`` so they
-    # are not subject to any future ``_ExtrasDict`` aliasing path and
-    # do not emit spurious deprecation warnings on internal writes.
-    _LEGACY_OUTPUT_KEY_MIRROR = {"incidence": "alpha_i", "emergence": "beta_out"}
-    for canonical_key, legacy_key in _LEGACY_OUTPUT_KEY_MIRROR.items():
-        if canonical_key in mode.extras:
-            dict.__setitem__(mode.extras, legacy_key, mode.extras[canonical_key])
 
 
 # ---------------------------------------------------------------------------
@@ -653,7 +627,7 @@ def _solve_constraint_set(
 
     # Free-detectors mode (issue #264 — both detector stages float to
     # satisfy Bragg jointly with the remaining sample stages, optionally
-    # with one ReferenceConstraint such as alpha_i).
+    # with one ReferenceConstraint such as incidence).
     if _is_free_detectors_mode(geometry, mode):
         return _solve_free_detectors(geometry, Q_phi, ttheta_deg, mode)
 
@@ -3056,7 +3030,7 @@ def _is_surface_mode(geometry: AdHocDiffractometer, mode) -> bool:
         return False
     # Defer to :func:`_is_free_detectors_mode` for psic-family modes
     # with 2 free sample stages and 2 free detector stages (issue
-    # #264 — the B3 mode ``fixed_alpha_i_fixed_chi_fixed_phi``).  The
+    # #264 — the B3 mode ``fixed_incidence_fixed_chi_fixed_phi``).  The
     # ``chi`` stage check restricts this exclusion to psic; existing
     # zaxis/s2d2/sixc surface modes (which also have free detectors)
     # stay on :func:`_solve_surface` where the legacy 1-D Newton works
@@ -3110,9 +3084,6 @@ def _solve_surface(
 
     from .mode import ReferenceConstraint
 
-    # Extract the reference constraint.  ``rc.name`` is always canonical
-    # because :class:`ReferenceConstraint` canonicalizes the deprecated
-    # aliases (``"alpha_i"`` / ``"beta_out"``) at construction time.
     rc = next(c for c in mode.constraints if isinstance(c, ReferenceConstraint))
     target_name = rc.name  # "incidence", "emergence", or "specular"
     target_value = rc.value  # float or True
@@ -3822,12 +3793,12 @@ def _is_free_detectors_mode(geometry: AdHocDiffractometer, mode) -> bool:
     Used by :func:`_solve_free_detectors` to dispatch psic-family modes
     that fix multiple sample stages and let the detector arm orient
     itself entirely from the Bragg condition (and any reference
-    constraint such as ``alpha_i``).  Examples (issue #264):
+    constraint such as ``incidence``).  Examples (issue #264):
 
     - ``lifting_detector_eta`` (3 sample fixed, 1 sample + 2 detector free)
     - revised ``lifting_detector_phi`` / ``lifting_detector_mu``
       (after step C of #264 — same shape, different fixed sample stage)
-    - ``fixed_alpha_i_fixed_chi_fixed_phi`` (2 sample fixed + alpha_i,
+    - ``fixed_incidence_fixed_chi_fixed_phi`` (2 sample fixed + incidence,
       2 sample + 2 detector free)
 
     The predicate is intentionally conservative: it requires the
@@ -3896,7 +3867,7 @@ def _solve_free_detectors(
 
     - ``lifting_detector_eta`` (B4)
     - revised ``lifting_detector_phi`` / ``lifting_detector_mu`` (C3, C4)
-    - ``fixed_alpha_i_fixed_chi_fixed_phi`` (B3, with one alpha_i row)
+    - ``fixed_incidence_fixed_chi_fixed_phi`` (B3, with one incidence row)
 
     Variables: every free sample stage plus both detector stages.
     Equations: 3 from Bragg (``Q_phi(angles) == Q_phi_target``) plus 1 per

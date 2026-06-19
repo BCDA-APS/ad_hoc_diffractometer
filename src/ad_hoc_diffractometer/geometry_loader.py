@@ -88,7 +88,6 @@ from .factories import BASIS_YOU
 from .factories import KAPPA_ALPHA_DEFAULT
 from .kappa import KappaPseudoAngleConvention
 from .kappa import kappa_axis_from_eulerian
-from .mode import _DEPRECATED_REFERENCE_NAME_ALIASES  # noqa: PLC2701
 from .mode import REQUIRED
 from .mode import BisectConstraint
 from .mode import ConstraintSet
@@ -679,81 +678,6 @@ def _is_geometry_yaml_text(text: str) -> tuple[bool, Any]:
 # ---------------------------------------------------------------------------
 
 
-def _rewrite_legacy_reference_names(
-    doc: dict[str, Any],
-    *,
-    source_label: str,
-) -> None:
-    """REMOVE-AT-V1.0: rewrite legacy reference-constraint names in place.
-
-    Walks the parsed YAML document, finds any occurrence of the
-    deprecated reference-constraint names (``"alpha_i"`` / ``"beta_out"``)
-    in mode constraint specs and extras-dict keys, rewrites them to the
-    canonical names (``"incidence"`` / ``"emergence"``), and emits one
-    :class:`DeprecationWarning` per file naming the source and listing
-    the legacy names found.
-
-    Performing the rewrite at file-load granularity (rather than per
-    constraint, as the :class:`ReferenceConstraint` constructor would
-    do) collapses what could be N warnings per file (one per legacy
-    occurrence) into a single warning that names the file.  The
-    downstream :class:`ReferenceConstraint` construction never sees a
-    legacy name and therefore does not re-warn.
-
-    Operates in-place on ``doc``.  A document containing no legacy
-    names is left untouched and no warning fires.
-    """
-    modes = doc.get("modes")
-    if not isinstance(modes, dict):
-        return
-    found: set[str] = set()
-    for mode_spec in modes.values():
-        if not isinstance(mode_spec, dict):
-            continue
-        # Rewrite constraint spec names.
-        constraints = mode_spec.get("constraints")
-        if isinstance(constraints, list):
-            for c in constraints:
-                if not isinstance(c, dict):
-                    continue
-                if c.get("type") != "reference":
-                    continue
-                cname = c.get("name")
-                if (
-                    isinstance(cname, str)
-                    and cname in _DEPRECATED_REFERENCE_NAME_ALIASES
-                ):
-                    found.add(cname)
-                    c["name"] = _DEPRECATED_REFERENCE_NAME_ALIASES[cname]
-        # Rewrite extras-dict keys.
-        extras = mode_spec.get("extras")
-        if isinstance(extras, dict):
-            legacy_keys = [
-                k for k in list(extras) if k in _DEPRECATED_REFERENCE_NAME_ALIASES
-            ]
-            for legacy_key in legacy_keys:
-                canonical_key = _DEPRECATED_REFERENCE_NAME_ALIASES[legacy_key]
-                found.add(legacy_key)
-                # Preserve insertion order: replace the legacy key with
-                # the canonical key at the same position.  If the
-                # canonical key is already present (mixed legacy /
-                # canonical declaration), drop the legacy entry.
-                if canonical_key in extras:
-                    del extras[legacy_key]
-                else:
-                    extras[canonical_key] = extras.pop(legacy_key)
-    if found:
-        warnings.warn(
-            f"{source_label}: reference-constraint names "
-            f"{sorted(found)!r} are deprecated; YAML rewritten to use "
-            f"the canonical names "
-            f"{sorted(_DEPRECATED_REFERENCE_NAME_ALIASES[n] for n in found)!r}."
-            f"  (issue #299)",
-            DeprecationWarning,
-            stacklevel=4,
-        )
-
-
 def _construct_from_doc(
     doc: dict[str, Any],
     *,
@@ -780,13 +704,6 @@ def _construct_from_doc(
         )
     _validate_marker(doc)
     _check_unknown_keys(doc, _TOP_LEVEL_KEYS, "at top level")
-
-    # REMOVE-AT-V1.0: rewrite legacy reference-constraint names and
-    # extras keys in the parsed document.  Performed here, once per
-    # file, so the downstream ReferenceConstraint construction path
-    # never sees a legacy name and does not emit per-constraint
-    # deprecation warnings.
-    _rewrite_legacy_reference_names(doc, source_label=source_label)
 
     if "name" not in doc:
         raise GeometrySchemaError(

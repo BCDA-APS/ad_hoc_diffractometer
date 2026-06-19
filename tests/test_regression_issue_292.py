@@ -3,9 +3,9 @@
 """
 Regression tests for issue #292.
 
-Issue #292 noted that the ``fixed_alpha_i_*``, ``fixed_beta_out_*``,
-``alpha_eq_beta_*`` modes (psic, sixc, zaxis, s2d2) — and by extension
-every mode declaring an ``alpha_i``, ``beta_out``, ``psi``, or ``omega``
+Issue #292 noted that the ``fixed_incidence_*``, ``fixed_emergence_*``,
+``specular_*`` modes (psic, sixc, zaxis, s2d2) — and by extension every
+mode declaring an ``incidence``, ``emergence``, ``psi``, or ``omega``
 output slot in ``mode.extras`` — left those slots at their YAML default
 of ``None`` even after a successful ``forward()`` call.  This was a
 latent contract bug: the slots advertised an output the solver never
@@ -16,10 +16,10 @@ the solver returns a non-empty list of solutions, each declared output
 slot is replaced by a Python list of per-solution float values computed
 via the corresponding helper in :mod:`ad_hoc_diffractometer.reference`:
 
-* ``alpha_i``  → :func:`~ad_hoc_diffractometer.reference.incidence_angle`
-* ``beta_out`` → :func:`~ad_hoc_diffractometer.reference.exit_angle`
-* ``psi``      → :func:`~ad_hoc_diffractometer.reference.psi_angle`
-* ``omega``    → :func:`~ad_hoc_diffractometer.reference.omega_pseudo`
+* ``incidence`` → :func:`~ad_hoc_diffractometer.reference.incidence_angle`
+* ``emergence`` → :func:`~ad_hoc_diffractometer.reference.emergence_angle`
+* ``psi``       → :func:`~ad_hoc_diffractometer.reference.psi_angle`
+* ``omega``     → :func:`~ad_hoc_diffractometer.reference.omega_pseudo`
 
 Empty solution lists reset the slot to ``[]``; a missing reference
 vector leaves the slot at ``None`` (with a debug-level log message).
@@ -55,33 +55,32 @@ def _setup_cubic(name, a=4.0):
 
 
 # ---------------------------------------------------------------------------
-# B3 surface mode: psic / fixed_incidence_fixed_chi_fixed_phi
-# (the only fixed_alpha_i_* mode that is currently implemented for psic).
+# B3 surface mode: psic / fixed_incidence_fixed_chi_fixed_phi.
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize(
-    "h, k, l, alpha_target, context",
+    "h, k, l, incidence_target, context",
     [
-        pytest.param(0, 1, 1, 0.0, does_not_raise(), id="011-ai0"),
-        pytest.param(0, 1, 1, 5.0, does_not_raise(), id="011-ai5"),
-        pytest.param(1, 1, 1, 3.0, does_not_raise(), id="111-ai3"),
+        pytest.param(0, 1, 1, 0.0, does_not_raise(), id="011-i0"),
+        pytest.param(0, 1, 1, 5.0, does_not_raise(), id="011-i5"),
+        pytest.param(1, 1, 1, 3.0, does_not_raise(), id="111-i3"),
     ],
 )
-def test_psic_b3_populates_alpha_i_and_beta_out_extras(
+def test_psic_b3_populates_incidence_and_emergence_extras(
     h,
     k,
     l,  # noqa: E741
-    alpha_target,
+    incidence_target,
     context,
 ):
-    """B3 mode populates ``extras['alpha_i']`` and ``extras['beta_out']``."""
+    """B3 mode populates ``extras['incidence']`` and ``extras['emergence']``."""
     with context:
         g = _setup_cubic("psic")
         g.surface_normal = (0, 0, 1)
         cs = g.modes["fixed_incidence_fixed_chi_fixed_phi"]
         # Update the reference-constraint target via the public API:
-        # rebuild the constraint set with the requested alpha_i value
+        # rebuild the constraint set with the requested incidence value
         # (the YAML defaults to 0.0; we want non-zero targets too).
         from ad_hoc_diffractometer import REQUIRED
         from ad_hoc_diffractometer import ConstraintSet
@@ -92,10 +91,10 @@ def test_psic_b3_populates_alpha_i_and_beta_out_extras(
             [
                 SampleConstraint("chi", 0.0),
                 SampleConstraint("phi", 0.0),
-                ReferenceConstraint("alpha_i", alpha_target),
+                ReferenceConstraint("incidence", incidence_target),
             ],
             computed=cs.computed,
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         )
         g.mode_name = "fixed_incidence_fixed_chi_fixed_phi"
 
@@ -103,19 +102,19 @@ def test_psic_b3_populates_alpha_i_and_beta_out_extras(
         assert len(sols) > 0
 
         mode = g.modes["fixed_incidence_fixed_chi_fixed_phi"]
-        assert isinstance(mode.extras["alpha_i"], list)
-        assert isinstance(mode.extras["beta_out"], list)
-        assert len(mode.extras["alpha_i"]) == len(sols)
-        assert len(mode.extras["beta_out"]) == len(sols)
+        assert isinstance(mode.extras["incidence"], list)
+        assert isinstance(mode.extras["emergence"], list)
+        assert len(mode.extras["incidence"]) == len(sols)
+        assert len(mode.extras["emergence"]) == len(sols)
 
-        # Each populated alpha_i value matches the per-solution recomputation
+        # Each populated incidence value matches the per-solution recomputation
         # and (per the mode's constraint) equals the target.
         for ai_stored, bo_stored, sol in zip(
-            mode.extras["alpha_i"], mode.extras["beta_out"], sols, strict=True
+            mode.extras["incidence"], mode.extras["emergence"], sols, strict=True
         ):
             assert ai_stored == pytest.approx(incidence_angle(g, angles=sol), abs=1e-8)
             assert bo_stored == pytest.approx(emergence_angle(g, angles=sol), abs=1e-8)
-            assert ai_stored == pytest.approx(alpha_target, abs=1e-3)
+            assert ai_stored == pytest.approx(incidence_target, abs=1e-3)
 
 
 # ---------------------------------------------------------------------------
@@ -287,7 +286,7 @@ def test_modes_without_output_slots_are_untouched():
     sols = g.forward(0, 1, 1)
     assert len(sols) > 0
     extras = g.modes["bisecting_vertical"].extras
-    for key in ("alpha_i", "beta_out", "psi", "omega"):
+    for key in ("incidence", "emergence", "psi", "omega"):
         assert key not in extras, (
             f"populate hook must not add {key!r} to a mode whose YAML did not "
             f"declare it; bisecting_vertical extras: {sorted(extras)}"
@@ -331,65 +330,3 @@ def test_populate_extras_soft_fails_when_reference_helper_raises(monkeypatch, ca
         "leaving mode.extras['omega'] as None" in rec.getMessage()
         for rec in caplog.records
     ), "expected a debug log record naming the soft-failed slot"
-
-
-# ---------------------------------------------------------------------------
-# REMOVE-AT-V1.0: deprecation back-fill for issue #299 alias keys.
-# ---------------------------------------------------------------------------
-
-
-def test_populate_extras_back_fills_legacy_alias_slots():
-    """Canonical-slot population back-fills the legacy alias slots.
-
-    Issue #299 renamed the surface-frame output slots ``"alpha_i"`` /
-    ``"beta_out"`` to ``"incidence"`` / ``"emergence"``.  An in-tree
-    YAML mode after migration declares only the canonical slot, but
-    out-of-tree callers that read ``result.extras["alpha_i"]`` in
-    v0.11.x and earlier must continue to see the populated value
-    through the deprecation cycle.  ``_populate_output_extras`` writes
-    the same per-solution list into the legacy slot whenever the
-    canonical slot is declared, so the legacy read path keeps working
-    even after the YAML is migrated.
-
-    Hand-build a mode declaring only the canonical slots so this test
-    exercises the back-fill in isolation (the in-tree YAML still
-    declares legacy slots at the Step 1+2 boundary, and the legacy
-    slot is populated by the main computer-dict loop in that case).
-    """
-    from ad_hoc_diffractometer.mode import REQUIRED
-    from ad_hoc_diffractometer.mode import ConstraintSet
-    from ad_hoc_diffractometer.mode import ReferenceConstraint
-    from ad_hoc_diffractometer.mode import SampleConstraint
-
-    g = _setup_cubic("psic")
-    # Build a B3-style ConstraintSet that declares only the canonical
-    # extras slots — no ``alpha_i`` / ``beta_out`` keys.  The back-fill
-    # is the only path that can put values into those legacy slots.
-    g.modes["__back_fill_probe"] = ConstraintSet(
-        [
-            SampleConstraint("chi", 0.0),
-            SampleConstraint("phi", 0.0),
-            ReferenceConstraint("incidence", 0.0),
-        ],
-        computed=["mu", "eta", "nu", "delta"],
-        extras={
-            "n_hat": REQUIRED,
-            "incidence": None,
-            "emergence": None,
-        },
-        cut_points={"eta": -180.0},
-    )
-    g.surface_normal = (0, 0, 1)
-    g.mode_name = "__back_fill_probe"
-    sols = g.forward(0, 1, 1)
-    assert len(sols) > 0
-
-    extras = g.modes["__back_fill_probe"].extras
-    # Canonical slots populated as before.
-    assert isinstance(extras["incidence"], list)
-    assert isinstance(extras["emergence"], list)
-    assert len(extras["incidence"]) == len(sols)
-    # Legacy slots back-filled with the same lists (identity, not just
-    # equality — the back-fill aliases the canonical list object).
-    assert extras["alpha_i"] is extras["incidence"]
-    assert extras["beta_out"] is extras["emergence"]

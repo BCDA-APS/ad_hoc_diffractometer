@@ -3172,7 +3172,7 @@ def test_psic_fixed_alpha_i_fixed_chi_fixed_phi_round_trip(
     alpha_target,
     context,
 ):
-    """Issue #264 B3: 4-D Newton with chi=phi=0 + alpha_i target."""
+    """Issue #264 B3: 4-D Newton with chi=phi=0 + incidence target."""
     from ad_hoc_diffractometer import REQUIRED
     from ad_hoc_diffractometer import ConstraintSet
     from ad_hoc_diffractometer import ReferenceConstraint
@@ -3186,20 +3186,20 @@ def test_psic_fixed_alpha_i_fixed_chi_fixed_phi_round_trip(
             [
                 SampleConstraint("chi", 0.0),
                 SampleConstraint("phi", 0.0),
-                ReferenceConstraint("alpha_i", alpha_target),
+                ReferenceConstraint("incidence", alpha_target),
             ],
             computed=["mu", "eta", "nu", "delta"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         )
         g.mode_name = "__test_b3"
         sols = g.forward(h, k, l)
-        assert len(sols) > 0, f"B3 ({h},{k},{l}) alpha_i={alpha_target}: no solutions"
+        assert len(sols) > 0, f"B3 ({h},{k},{l}) incidence={alpha_target}: no solutions"
         for sol in sols:
             assert sol["chi"] == pytest.approx(0.0, abs=1e-6)
             assert sol["phi"] == pytest.approx(0.0, abs=1e-6)
             ai = incidence_angle(g, angles=sol)
             assert ai == pytest.approx(alpha_target, abs=1e-3), (
-                f"B3 ({h},{k},{l}) alpha_i target {alpha_target}: got {ai}"
+                f"B3 ({h},{k},{l}) incidence target {alpha_target}: got {ai}"
             )
             hkl_back = g.inverse(sol)
             assert np.allclose(hkl_back, [h, k, l], atol=1e-5)

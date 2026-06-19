@@ -9,7 +9,6 @@ The stacking order is encoded via the parent attribute of each Stage.
 
 import builtins
 import logging
-import warnings
 
 import numpy as np
 
@@ -18,7 +17,6 @@ from .constants import YHAT
 from .constants import ZHAT
 from .mode import ConstraintSet
 from .mode import ModeDict
-from .mode import _canonicalize_mode_name  # noqa: PLC2701
 from .reflection import Reflection
 from .reflection import ReflectionList
 from .sample import _DEFAULT_LATTICE
@@ -75,10 +73,6 @@ class AdHocDiffractometer:
         Azimuthal reference direction as Miller indices (h, k, l).  Used
         by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)
         means no reference is set.  Must be a non-zero vector.
-    azimuthal_reference : tuple of float or None, optional
-        Deprecated alias for ``azimuth``.  Accepted for backward
-        compatibility; emits :class:`DeprecationWarning` if used.  Will
-        be removed in a future release.
     modes : dict[str, ConstraintSet] or ModeDict or None, optional
         Named diffraction modes available for this geometry.  Keys are
         mode names (str); values are :class:`~mode.DiffractionMode`
@@ -111,7 +105,6 @@ class AdHocDiffractometer:
         kappa_alpha_deg: float | None = None,
         kappa_pseudo_angle_convention=None,
         azimuth: tuple[float, float, float] | None = None,
-        azimuthal_reference: tuple[float, float, float] | None = None,
         modes: dict | ModeDict | None = None,
         default_mode: str | None = None,
         cut_points: dict[str, float] | None = None,
@@ -123,25 +116,6 @@ class AdHocDiffractometer:
         self.wavelength = wavelength  # validated via property setter
         self.kappa_alpha_deg = kappa_alpha_deg
         self.kappa_pseudo_angle_convention = kappa_pseudo_angle_convention
-        # Resolve azimuth / azimuthal_reference (deprecated alias).  If both
-        # are supplied and disagree, raise; if only the deprecated form is
-        # supplied, warn and accept it.
-        if azimuthal_reference is not None:
-            if azimuth is not None and tuple(azimuth) != tuple(azimuthal_reference):
-                raise ValueError(
-                    "Cannot specify both 'azimuth' and 'azimuthal_reference' "
-                    "with different values; 'azimuthal_reference' is the "
-                    "deprecated alias for 'azimuth'."
-                )
-            warnings.warn(
-                "The 'azimuthal_reference' constructor keyword is deprecated "
-                "since v0.12.0; use 'azimuth' instead. The old name will be "
-                "removed in a future release.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            if azimuth is None:
-                azimuth = azimuthal_reference
         self.azimuth = azimuth  # validated via property setter
         self._surface_normal: tuple[float, float, float] | None = None
         self._detector_distance: float | None = None
@@ -616,38 +590,6 @@ class AdHocDiffractometer:
             )
         self._azimuth = (h, k, l)
 
-    @property
-    def azimuthal_reference(self) -> tuple[float, float, float] | None:
-        """
-        Deprecated alias for :attr:`azimuth`.
-
-        .. deprecated:: 0.12.0
-            Use :attr:`azimuth` instead.  This alias will be removed in a
-            future release.
-
-        Reads and writes are forwarded to :attr:`azimuth`; every access
-        emits a :class:`DeprecationWarning`.
-        """
-        warnings.warn(
-            "AdHocDiffractometer.azimuthal_reference is deprecated since "
-            "v0.12.0; use 'azimuth' instead. The old name will be removed "
-            "in a future release.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self._azimuth
-
-    @azimuthal_reference.setter
-    def azimuthal_reference(self, value: tuple[float, float, float] | None) -> None:
-        warnings.warn(
-            "AdHocDiffractometer.azimuthal_reference is deprecated since "
-            "v0.12.0; use 'azimuth' instead. The old name will be removed "
-            "in a future release.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        self.azimuth = value
-
     # ------------------------------------------------------------------
     # Diffraction modes
     # ------------------------------------------------------------------
@@ -713,12 +655,6 @@ class AdHocDiffractometer:
 
     @mode_name.setter
     def mode_name(self, name: str | None) -> None:
-        # REMOVE-AT-V1.0: canonicalize legacy mode-name aliases at the
-        # setter boundary so ``self._mode_name`` always holds the
-        # canonical name and the mode_name getter never reports a
-        # deprecated spelling.
-        if name is not None:
-            name = _canonicalize_mode_name(name, operation="set")
         if name is not None and name not in self._modes:
             available = sorted(self._modes.keys())
             raise ValueError(
@@ -1513,33 +1449,6 @@ class AdHocDiffractometer:
 
         return _emergence(self, angles)
 
-    # REMOVE-AT-V1.0: deprecated method aliases for the canonical
-    # incidence / emergence methods.  Emit DeprecationWarning on every
-    # call and delegate to the canonical method.
-    def alpha_i(self, angles: dict[str, float] | None = None) -> float:
-        """Deprecated alias for :meth:`incidence`.  REMOVE-AT-V1.0."""
-        import warnings
-
-        warnings.warn(
-            "AdHocDiffractometer.alpha_i() is deprecated; "
-            "use .incidence() instead.  (issue #299)",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.incidence(angles)
-
-    def alpha_f(self, angles: dict[str, float] | None = None) -> float:
-        """Deprecated alias for :meth:`emergence`.  REMOVE-AT-V1.0."""
-        import warnings
-
-        warnings.warn(
-            "AdHocDiffractometer.alpha_f() is deprecated; "
-            "use .emergence() instead.  (issue #299)",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.emergence(angles)
-
     def q_components(self, angles: dict[str, float] | None = None) -> dict[str, float]:
         """
         Decompose Q into components parallel and perpendicular to the surface.
@@ -2250,7 +2159,7 @@ class AdHocDiffractometer:
             description=d.get("description", ""),
             wavelength=d.get("wavelength"),
             kappa_alpha_deg=d.get("kappa_alpha_deg"),
-            azimuth=d.get("azimuth", d.get("azimuthal_reference")),
+            azimuth=d.get("azimuth"),
             modes=restored_modes if restored_modes else None,
             default_mode=d.get("mode_name"),
             cut_points=d.get("cut_points"),

@@ -27,10 +27,7 @@ Azimuthal reference vector
    per-mode ``Extras (input)`` tables this same vector is referred to
    by its mathematical symbol **n̂** (rendered as the ``n_hat`` key in
    ``mode.extras``).  See {term}`n̂ (reference vector)` for the full
-   surface-form table, and {doc}`howto/surface`.  The attribute was
-   named ``azimuthal_reference`` before v0.12.0 (issue #298); the old
-   name remains as a deprecated forwarding alias and will be removed
-   in a future release.
+   surface-form table, and {doc}`howto/surface`.
 
 B matrix
    The matrix that encodes the reciprocal lattice and maps Miller indices

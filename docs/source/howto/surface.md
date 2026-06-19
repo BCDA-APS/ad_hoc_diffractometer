@@ -29,15 +29,6 @@ setattr(g, attr, (0, 0, 1))              # equivalent to g.surface_normal = ...
 `required_reference_vector` returns `'surface_normal'`,
 `'azimuth'`, or `None`.
 
-```{note}
-The `azimuth` attribute was named `azimuthal_reference` before
-v0.12.0 (issue #298).  The old name remains as a deprecated forwarding
-alias — both the property access and the constructor keyword emit
-`DeprecationWarning` — and will be removed in a future release.
-`required_reference_vector` now returns `'azimuth'` where it
-previously returned `'azimuthal_reference'`.
-```
-
 ## What the `n̂` placeholder in `mode.extras` means
 
 Every per-geometry mode table shows a row like
@@ -235,10 +226,6 @@ print(d["azimuth"])   # [1.0, 0.0, 0.0]
 g2 = AdHocDiffractometer.from_dict(d)
 print(g2.surface_normal)          # (0.0, 0.0, 1.0)
 ```
-
-`from_dict()` also accepts the legacy key `"azimuthal_reference"`
-for backward compatibility with sessions saved by
-ad_hoc_diffractometer ≤ v0.11.x (issue #298).
 
 ## Reference constraint modes
 

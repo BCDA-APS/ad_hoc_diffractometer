@@ -762,161 +762,6 @@ def test_reference_constraint_construction(name, value, context):
         assert rc.category == "reference"
 
 
-# REMOVE-AT-V1.0: this test and its parametrize block exist solely to
-# pin the deprecation-alias canonicalization behavior; delete the whole
-# function (and its decorator) when the aliases are removed.
-@pytest.mark.parametrize(
-    "legacy_name, canonical_name, value",
-    [
-        pytest.param("alpha_i", "incidence", 5.0, id="alpha_i-to-incidence"),
-        pytest.param("beta_out", "emergence", 5.0, id="beta_out-to-emergence"),
-        pytest.param("a_eq_b", "specular", True, id="a_eq_b-to-specular"),
-    ],
-)
-def test_reference_constraint_deprecated_name_canonicalized(
-    legacy_name, canonical_name, value
-):
-    """Issue #299: legacy reference-constraint names are canonicalized.
-
-    Constructing a ReferenceConstraint with a deprecated alias
-    (``"alpha_i"`` / ``"beta_out"``) emits :class:`DeprecationWarning`
-    and stores the canonical name (``"incidence"`` / ``"emergence"``).
-    The constraint behaves identically to one constructed with the
-    canonical name; this is the contract that lets existing user code
-    and saved sessions continue to work through the deprecation cycle.
-    """
-    context = pytest.warns(
-        DeprecationWarning,
-        match=re.escape(
-            f"ReferenceConstraint name {legacy_name!r} is deprecated; "
-            f"use {canonical_name!r} instead.  (issue #299)"
-        ),
-    )
-    with context:
-        rc = ReferenceConstraint(legacy_name, value)
-    assert rc.name == canonical_name
-    assert rc.value == value
-    # Equal to the constraint built directly with the canonical name.
-    assert rc == ReferenceConstraint(canonical_name, value)
-
-
-# REMOVE-AT-V1.0: pins the legacy-session round-trip contract — a dict
-# saved by ad_hoc_diffractometer <= v0.11.x with a legacy
-# reference-constraint name still loads via from_dict, emits one
-# DeprecationWarning, and produces a constraint stored under the
-# canonical name.
-@pytest.mark.parametrize(
-    "legacy_name, canonical_name, value",
-    [
-        pytest.param("alpha_i", "incidence", 5.0, id="alpha_i-to-incidence"),
-        pytest.param("beta_out", "emergence", 5.0, id="beta_out-to-emergence"),
-        pytest.param("a_eq_b", "specular", True, id="a_eq_b-to-specular"),
-    ],
-)
-def test_reference_constraint_from_dict_accepts_legacy_name(
-    legacy_name, canonical_name, value
-):
-    """A saved session with a legacy reference-constraint name still loads.
-
-    ``from_dict`` calls ``__init__``, which canonicalizes the legacy
-    name and emits one :class:`DeprecationWarning`.  The reconstructed
-    constraint compares equal to one built directly with the canonical
-    name, so any subsequent ``to_dict`` write produces the canonical
-    spelling.
-    """
-    legacy_session_dict = {
-        "type": "ReferenceConstraint",
-        "name": legacy_name,
-        "value": value,
-    }
-    with pytest.warns(
-        DeprecationWarning,
-        match=re.escape(
-            f"ReferenceConstraint name {legacy_name!r} is deprecated; "
-            f"use {canonical_name!r} instead.  (issue #299)"
-        ),
-    ):
-        rc = ReferenceConstraint.from_dict(legacy_session_dict)
-    assert rc.name == canonical_name
-    # A second to_dict round-trip writes the canonical name.
-    assert rc.to_dict()["name"] == canonical_name
-    # Equal to the constraint built directly with the canonical name.
-    assert rc == ReferenceConstraint(canonical_name, value)
-
-
-# REMOVE-AT-V1.0: ModeDict mode-name alias-map deprecation coverage.
-@pytest.mark.parametrize(
-    "legacy_mode_name, canonical_mode_name",
-    [
-        pytest.param(
-            "fixed_alpha_i_vertical",
-            "fixed_incidence_vertical",
-            id="fixed_alpha_i_vertical-to-fixed_incidence_vertical",
-        ),
-        pytest.param(
-            "fixed_beta_out_horizontal",
-            "fixed_emergence_horizontal",
-            id="fixed_beta_out_horizontal-to-fixed_emergence_horizontal",
-        ),
-        pytest.param(
-            "alpha_eq_beta_vertical",
-            "specular_vertical",
-            id="alpha_eq_beta_vertical-to-specular_vertical",
-        ),
-    ],
-)
-def test_modedict_legacy_mode_name_canonicalized(legacy_mode_name, canonical_mode_name):
-    """Issue #299: ModeDict canonicalizes legacy mode-name aliases on access.
-
-    A read of a legacy mode-name key emits :class:`DeprecationWarning`
-    and returns the canonical mode.  ``__contains__`` returns ``True``
-    for the legacy name (no warning, since defensive ``in`` tests are
-    common).  Iteration / ``keys()`` return the canonical name only.
-    """
-    import ad_hoc_diffractometer as ahd
-
-    g = ahd.make_geometry("psic")
-
-    # __getitem__ rewrites and warns.
-    with pytest.warns(
-        DeprecationWarning,
-        match=re.escape(
-            f"Mode name {legacy_mode_name!r} read is deprecated; "
-            f"use {canonical_mode_name!r} instead.  (issue #299)"
-        ),
-    ):
-        legacy_mode = g.modes[legacy_mode_name]
-    canonical_mode = g.modes[canonical_mode_name]
-    assert legacy_mode is canonical_mode
-
-    # __contains__ accepts the legacy name without a warning.
-    assert legacy_mode_name in g.modes
-    assert canonical_mode_name in g.modes
-
-    # Iteration returns canonical names only.
-    assert canonical_mode_name in list(g.modes)
-    assert legacy_mode_name not in list(g.modes)
-
-
-def test_geometry_mode_name_setter_canonicalizes_legacy_alias():
-    """Setting ``g.mode_name`` with a legacy alias is accepted, warns, and
-    stores the canonical name so the getter never reports a deprecated
-    spelling.
-    """
-    import ad_hoc_diffractometer as ahd
-
-    g = ahd.make_geometry("psic")
-    with pytest.warns(
-        DeprecationWarning,
-        match=re.escape(
-            "Mode name 'fixed_alpha_i_vertical' set is deprecated; "
-            "use 'fixed_incidence_vertical' instead.  (issue #299)"
-        ),
-    ):
-        g.mode_name = "fixed_alpha_i_vertical"
-    assert g.mode_name == "fixed_incidence_vertical"
-
-
 def test_reference_constraint_value_coerced_to_float():
     rc = ReferenceConstraint("psi", 90)
     assert isinstance(rc.value, float)
@@ -954,10 +799,10 @@ def test_reference_constraint_to_dict_from_dict_a_eq_b():
 @pytest.mark.parametrize(
     "name, value, surface_normal, expected",
     [
-        # alpha_i/beta_out/specular: implemented when surface_normal is set
-        pytest.param("alpha_i", 0.0, (0, 0, 1), True, id="alpha_i-with-sn"),
-        pytest.param("alpha_i", 0.0, None, False, id="alpha_i-no-sn"),
-        pytest.param("beta_out", 0.0, (0, 0, 1), True, id="beta_out-with-sn"),
+        # incidence/emergence/specular: implemented when surface_normal is set
+        pytest.param("incidence", 0.0, (0, 0, 1), True, id="incidence-with-sn"),
+        pytest.param("incidence", 0.0, None, False, id="incidence-no-sn"),
+        pytest.param("emergence", 0.0, (0, 0, 1), True, id="emergence-with-sn"),
         pytest.param("specular", True, (0, 0, 1), True, id="specular-with-sn"),
         pytest.param("specular", True, None, False, id="specular-no-sn"),
         # psi/naz: never implemented (no forward solver yet)
@@ -1024,7 +869,7 @@ def test_constraint_set_two_reference_raises():
         ConstraintSet(
             [
                 ReferenceConstraint("psi", 0.0),
-                ReferenceConstraint("alpha_i", 5.0),
+                ReferenceConstraint("incidence", 5.0),
             ]
         )
 
@@ -2019,9 +1864,9 @@ def test_sixc_mode_has_bisect(mode_name, expected_has_bisect):
         ),
         pytest.param(
             "fixed_incidence_zaxis",
-            "alpha_i",
+            "incidence",
             None,
-            id="fixed_incidence_zaxis-alpha_i-output",
+            id="fixed_incidence_zaxis-incidence-output",
         ),
         pytest.param(
             "fixed_emergence_zaxis",
@@ -2031,9 +1876,9 @@ def test_sixc_mode_has_bisect(mode_name, expected_has_bisect):
         ),
         pytest.param(
             "fixed_emergence_zaxis",
-            "beta_out",
+            "emergence",
             None,
-            id="fixed_emergence_zaxis-beta_out-output",
+            id="fixed_emergence_zaxis-emergence-output",
         ),
         pytest.param("specular_zaxis", "n_hat", "REQUIRED", id="specular_zaxis-n_hat"),
     ],
@@ -2148,11 +1993,13 @@ def test_s2d2_fixed_mu_is_implemented():
     "factory, mode_name, extras_key, expected_value",
     [
         pytest.param(zaxis, "zaxis", "n_hat", "REQUIRED", id="zaxis-n_hat"),
-        pytest.param(zaxis, "zaxis", "alpha_i", None, id="zaxis-alpha_i-output"),
-        pytest.param(zaxis, "zaxis", "beta_out", None, id="zaxis-beta_out-output"),
+        pytest.param(zaxis, "zaxis", "incidence", None, id="zaxis-incidence-output"),
+        pytest.param(zaxis, "zaxis", "emergence", None, id="zaxis-emergence-output"),
         pytest.param(zaxis, "reflectivity", "n_hat", "REQUIRED", id="zaxis-refl-n_hat"),
         pytest.param(s2d2, "reflectivity", "n_hat", "REQUIRED", id="s2d2-refl-n_hat"),
-        pytest.param(s2d2, "reflectivity", "alpha_i", None, id="s2d2-alpha_i-output"),
+        pytest.param(
+            s2d2, "reflectivity", "incidence", None, id="s2d2-incidence-output"
+        ),
     ],
 )
 def test_zaxis_s2d2_extras_declared(factory, mode_name, extras_key, expected_value):
@@ -2631,7 +2478,7 @@ def _b3_constraint_set():
             ReferenceConstraint("incidence", 0.0),
         ],
         computed=["mu", "eta", "nu", "delta"],
-        extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         cut_points={"eta": -180.0},
     )
 
@@ -2677,7 +2524,7 @@ def _b3_constraint_set():
         pytest.param(
             # ReferenceConstraint('specular', ...) only accepts True
             # (the constraint expresses the *boolean* condition
-            # alpha_i = beta_out; there is no False variant).  This
+            # incidence = emergence; there is no False variant).  This
             # case verifies the bool branch of with_constraint_values
             # by re-applying the only legal value.
             lambda: ConstraintSet(
@@ -2743,8 +2590,8 @@ def test_with_constraint_values_preserves_computed_extras_cut_points():
     assert new.extras is not cs.extras
     assert new.extras == cs.extras
     assert new.extras["n_hat"] is REQUIRED
-    assert new.extras["alpha_i"] is None
-    assert new.extras["beta_out"] is None
+    assert new.extras["incidence"] is None
+    assert new.extras["emergence"] is None
     # OPTIONAL sentinel identity survives too.
     cs2 = ConstraintSet(
         [SampleConstraint("chi", 0.0)],
@@ -2868,43 +2715,6 @@ def test_with_constraint_values_round_trips_via_to_dict():
     assert restored.to_dict() == original_dict
 
 
-# REMOVE-AT-V1.0: this test pins the deprecation-alias kwarg behavior
-# of with_constraint_values; delete the whole function (and its
-# decorator) when the aliases are removed.
-@pytest.mark.parametrize(
-    "legacy_kwarg, canonical_kwarg, value",
-    [
-        pytest.param("alpha_i", "incidence", 5.0, id="alpha_i-to-incidence"),
-        pytest.param("beta_out", "emergence", 5.0, id="beta_out-to-emergence"),
-    ],
-)
-def test_with_constraint_values_accepts_deprecated_alias_kwarg(
-    legacy_kwarg, canonical_kwarg, value
-):
-    """Issue #299: ``with_constraint_values`` accepts the legacy kwargs.
-
-    Passing ``alpha_i=...`` / ``beta_out=...`` is canonicalized to
-    ``incidence=...`` / ``emergence=...`` with a
-    :class:`DeprecationWarning`.  The replacement value reaches the
-    underlying :class:`ReferenceConstraint` exactly as if the canonical
-    name had been used.
-    """
-    cs = ConstraintSet(
-        [ReferenceConstraint(canonical_kwarg, 0.0)],
-        extras={"n_hat": REQUIRED},
-    )
-    with pytest.warns(
-        DeprecationWarning,
-        match=re.escape(
-            f"with_constraint_values: kwarg {legacy_kwarg!r} is deprecated; "
-            f"use {canonical_kwarg!r} instead.  (issue #299)"
-        ),
-    ):
-        new = cs.with_constraint_values(**{legacy_kwarg: value})
-    new_values = {c.name: c.value for c in new.constraints if hasattr(c, "name")}
-    assert new_values[canonical_kwarg] == value
-
-
 # ---------------------------------------------------------------------------
 # Documentation-placeholder extras warning (issue #294)
 # ---------------------------------------------------------------------------
@@ -2974,13 +2784,13 @@ def test_extras_non_placeholder_keys_never_warn():
 
     cs = ConstraintSet(
         [SampleConstraint("chi", 0.0)],
-        extras={"psi": None, "alpha_i": None, "beta_out": None, "omega": None},
+        extras={"psi": None, "incidence": None, "emergence": None, "omega": None},
     )
     with warnings.catch_warnings(record=True) as captured:
         warnings.simplefilter("always")
         cs.extras["psi"] = 12.5
-        cs.extras["alpha_i"] = 5.0
-        cs.extras["beta_out"] = 5.0
+        cs.extras["incidence"] = 5.0
+        cs.extras["emergence"] = 5.0
         cs.extras["omega"] = 0.0
         cs.extras["new_key"] = "anything"
     placeholder_warnings = [

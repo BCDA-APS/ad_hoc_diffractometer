@@ -20,7 +20,6 @@ Functions
 
 :func:`emergence_angle`
     Angle of emergence α_f between the diffracted beam and the sample surface.
-    Accepts the deprecated alias :func:`exit_angle` (REMOVE-AT-V1.0).
 
 :func:`psi_angle`
     Azimuthal angle ψ of the reference vector n̂ about Q (You 1999, eq. 23).
@@ -167,25 +166,6 @@ def emergence_angle(
     """
     _require_surface_normal(geometry)
     return geometry.emergence(angles=angles)
-
-
-# REMOVE-AT-V1.0: deprecated alias for the canonical emergence_angle
-# function.  Emit DeprecationWarning on every call and delegate.
-def exit_angle(
-    geometry: AdHocDiffractometer,
-    angles: dict[str, float] | None = None,
-) -> float:
-    """Deprecated alias for :func:`emergence_angle`.  REMOVE-AT-V1.0."""
-    import warnings
-
-    warnings.warn(
-        "ad_hoc_diffractometer.reference.exit_angle() is deprecated; "
-        "use ad_hoc_diffractometer.reference.emergence_angle() instead.  "
-        "(issue #299)",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return emergence_angle(geometry, angles)
 
 
 def psi_angle(

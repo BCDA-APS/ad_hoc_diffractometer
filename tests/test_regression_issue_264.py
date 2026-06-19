@@ -306,7 +306,7 @@ def test_fixed_alpha_i_fixed_chi_fixed_phi_routes_to_free_detectors():
     is set (otherwise the mode is a stub)."""
     g = _setup_psic_cubic()
     cs = g.modes["fixed_incidence_fixed_chi_fixed_phi"]
-    # Without surface_normal, the alpha_i ReferenceConstraint reports
+    # Without surface_normal, the incidence ReferenceConstraint reports
     # is_implemented=False, so the mode is a stub regardless of dispatch.
     assert cs.is_implemented(g) is False
     g.surface_normal = (0, 0, 1)
@@ -555,7 +555,7 @@ def test_omega_constraint_unimplemented_without_chi_stage():
 
 
 # ---------------------------------------------------------------------------
-# Issue #264 design invariant: B3 produces solutions whose alpha_i matches
+# Issue #264 design invariant: B3 produces solutions whose incidence matches
 # the requested target.
 # ---------------------------------------------------------------------------
 
@@ -566,16 +566,16 @@ def test_omega_constraint_unimplemented_without_chi_stage():
 )
 def test_b3_alpha_i_target_satisfied(alpha_target):
     """B3 ``fixed_incidence_fixed_chi_fixed_phi`` solutions satisfy
-    alpha_i == target within tolerance."""
+    incidence == target within tolerance."""
     g = _setup_psic_cubic()
     g.surface_normal = (0, 0, 1)
     cs = g.modes["fixed_incidence_fixed_chi_fixed_phi"]
-    # Override alpha_i target with the parametrized value.
+    # Override incidence target with the parametrized value.
     g.modes["__b3_test"] = ConstraintSet(
         [
             SampleConstraint("chi", 0.0),
             SampleConstraint("phi", 0.0),
-            ReferenceConstraint("alpha_i", alpha_target),
+            ReferenceConstraint("incidence", alpha_target),
         ],
         computed=cs.computed,
         extras=dict(cs.extras),
@@ -586,5 +586,5 @@ def test_b3_alpha_i_target_satisfied(alpha_target):
     for sol in sols:
         ai = incidence_angle(g, angles=sol)
         assert ai == pytest.approx(alpha_target, abs=1e-3), (
-            f"B3 alpha_i target {alpha_target}: got {ai}"
+            f"B3 incidence target {alpha_target}: got {ai}"
         )

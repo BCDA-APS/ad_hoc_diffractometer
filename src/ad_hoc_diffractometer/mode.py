@@ -40,9 +40,7 @@ condition between Q and an external reference vector n̂ (surface normal,
 polarization axis, etc.) stored on the geometry.  The named options are
 physical pseudo-angles from You (1999) and Lohmeier & Vlieg (1993):
 ``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``, ``"naz"``.
-``"alpha_i"`` and ``"beta_out"`` are accepted as deprecated aliases for
-``"incidence"`` and ``"emergence"`` respectively (issue #299).  At most
-one reference constraint is allowed.
+At most one reference constraint is allowed.
 
 Classes
 -------
@@ -204,11 +202,6 @@ REFERENCE_NAMES: frozenset[str] = frozenset(
         "specular",
         "naz",
         "omega",
-        # REMOVE-AT-V1.0: legacy alias names accepted on input and
-        # canonicalized to the new names by ReferenceConstraint.__init__.
-        "alpha_i",
-        "beta_out",
-        "a_eq_b",
     }
 )
 """Valid reference constraint names (physical pseudo-angles).
@@ -227,84 +220,7 @@ geometry (no reference vector required):
 - ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``): angle between
   Q and the plane of the chi circle (psic family); see
   :func:`~ad_hoc_diffractometer.reference.omega_pseudo`
-
-The legacy names ``"alpha_i"``, ``"beta_out"``, and ``"a_eq_b"`` are also
-accepted as deprecated aliases for ``"incidence"``, ``"emergence"``, and
-``"specular"`` respectively.  Constructing a :class:`ReferenceConstraint`
-with a legacy name emits :class:`DeprecationWarning` and canonicalizes to
-the new name; the stored ``name`` attribute is always one of the canonical
-values listed above.  See :data:`_DEPRECATED_REFERENCE_NAME_ALIASES`.
-REMOVE-AT-V1.0: the preceding paragraph documents the deprecation
-aliases and should be deleted alongside them.
 """
-
-# REMOVE-AT-V1.0: this entire mapping (and every site that consults it)
-# is the deprecation infrastructure for issue #299.
-_DEPRECATED_REFERENCE_NAME_ALIASES: dict[str, str] = {
-    "alpha_i": "incidence",
-    "beta_out": "emergence",
-    "a_eq_b": "specular",
-}
-"""Mapping from deprecated reference-constraint name to its canonical form.
-
-``"alpha_i"`` / ``"beta_out"`` / ``"a_eq_b"`` are kept as forwarding aliases
-so existing user code, saved sessions, and out-of-tree YAML files continue
-to work.
-
-:class:`ReferenceConstraint`, the YAML loader, the forward solver's output
-extras, and ``from_dict`` all consult this map.  When a legacy name is
-supplied, a :class:`DeprecationWarning` is emitted and the canonical name
-is used for all downstream storage and comparison.  Use the canonical
-names (``"incidence"``, ``"emergence"``, ``"specular"``) in new code.
-"""
-
-# REMOVE-AT-V1.0: this mapping (and every site that consults it) is the
-# deprecation infrastructure for the issue #299 mode-name renames.
-_DEPRECATED_MODE_NAME_ALIASES: dict[str, str] = {
-    "fixed_alpha_i_vertical": "fixed_incidence_vertical",
-    "fixed_alpha_i_horizontal": "fixed_incidence_horizontal",
-    "fixed_alpha_i_fixed_chi_fixed_phi": "fixed_incidence_fixed_chi_fixed_phi",
-    "fixed_alpha_zaxis": "fixed_incidence_zaxis",
-    "fixed_beta_out_vertical": "fixed_emergence_vertical",
-    "fixed_beta_out_horizontal": "fixed_emergence_horizontal",
-    "fixed_beta_zaxis": "fixed_emergence_zaxis",
-    "alpha_eq_beta_vertical": "specular_vertical",
-    "alpha_eq_beta_horizontal": "specular_horizontal",
-    "alpha_eq_beta_zaxis": "specular_zaxis",
-}
-"""Mapping from deprecated mode name to its canonical form.
-
-The legacy mode-name strings are kept as forwarding aliases so existing
-user code (e.g. ``g.mode_name = "fixed_alpha_i_vertical"``) and saved
-sessions continue to work.  :class:`ModeDict`'s read / write / delete /
-membership-test methods and :attr:`AdHocDiffractometer.mode_name`'s
-setter all consult this map.  When a legacy name is supplied, a
-:class:`DeprecationWarning` is emitted and the canonical name is used
-for all downstream storage and lookup.
-"""
-
-
-def _canonicalize_mode_name(name: str, *, operation: str) -> str:
-    """REMOVE-AT-V1.0: rewrite a legacy mode-name alias to its canonical form.
-
-    Emits :class:`DeprecationWarning` when the rewrite fires.
-    ``operation`` is one of ``"read"`` / ``"write"`` / ``"delete"`` and
-    is interpolated into the warning text so the caller sees which
-    access path triggered it.  Returns ``name`` unchanged when no alias
-    applies.
-    """
-    canonical = _DEPRECATED_MODE_NAME_ALIASES.get(name)
-    if canonical is None:
-        return name
-    import warnings
-
-    warnings.warn(
-        f"Mode name {name!r} {operation} is deprecated; "
-        f"use {canonical!r} instead.  (issue #299)",
-        DeprecationWarning,
-        stacklevel=3,
-    )
-    return canonical
 
 
 QAZ: str = "qaz"
@@ -941,16 +857,13 @@ class ReferenceConstraint:
         Azimuthal angle of n̂ about Q (You 1999, eq. 23).
     ``"incidence"``
         Angle of incidence: angle between the incident beam and the surface
-        plane (perpendicular to n̂).  Accepts the deprecated alias
-        ``"alpha_i"`` (REMOVE-AT-V1.0).
+        plane (perpendicular to n̂).
     ``"emergence"``
         Angle of emergence: angle between the diffracted beam and the
-        surface plane.  Accepts the deprecated alias ``"beta_out"``
-        (REMOVE-AT-V1.0).
+        surface plane.
     ``"specular"``
         Specular reflection: relational condition ``incidence = emergence``.
-        ``value`` must be ``True``.  Accepts the deprecated alias
-        ``"a_eq_b"`` (REMOVE-AT-V1.0).
+        ``value`` must be ``True``.
     ``"naz"``
         Azimuthal angle of n̂ in the lab frame (You 1999).
 
@@ -958,11 +871,7 @@ class ReferenceConstraint:
     ----------
     name : str
         One of ``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``,
-        ``"naz"``, ``"omega"``.  The deprecated aliases ``"alpha_i"``,
-        ``"beta_out"``, and ``"a_eq_b"`` are also accepted (with a
-        :class:`DeprecationWarning`) and canonicalized to ``"incidence"``,
-        ``"emergence"``, and ``"specular"`` respectively before storage.
-        REMOVE-AT-V1.0: drop the alias clause.
+        ``"naz"``, ``"omega"``.
     value : float or bool
         Target value in degrees (or ``True`` for ``"specular"``).
 
@@ -981,29 +890,10 @@ class ReferenceConstraint:
 
     def __init__(self, name: str, value: float | bool) -> None:
         if name not in REFERENCE_NAMES:
-            # Compose the user-visible list of valid names from the canonical
-            # set only; deprecated aliases are accepted on input but should
-            # not be advertised in the error message for invalid names.
-            canonical = sorted(
-                REFERENCE_NAMES - _DEPRECATED_REFERENCE_NAME_ALIASES.keys()
-            )
             raise ValueError(
-                f"ReferenceConstraint name must be one of {canonical}; got {name!r}."
+                f"ReferenceConstraint name must be one of "
+                f"{sorted(REFERENCE_NAMES)}; got {name!r}."
             )
-        # REMOVE-AT-V1.0: canonicalize deprecated aliases.  Emit a
-        # DeprecationWarning so callers see the recommended replacement,
-        # but the construction itself still succeeds.
-        if name in _DEPRECATED_REFERENCE_NAME_ALIASES:
-            import warnings
-
-            canonical_name = _DEPRECATED_REFERENCE_NAME_ALIASES[name]
-            warnings.warn(
-                f"ReferenceConstraint name {name!r} is deprecated; "
-                f"use {canonical_name!r} instead.  (issue #299)",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            name = canonical_name
         if name == "specular" and value is not True:
             raise ValueError(
                 "ReferenceConstraint('specular', value): value must be True; "
@@ -1507,11 +1397,11 @@ class ConstraintSet:
         ...     g.modes["fixed_chi_vertical"].with_constraint_values(chi=45.0)
         ... )
 
-        Multiple values at once (psic ``fixed_alpha_i_fixed_chi_fixed_phi``):
+        Multiple values at once (psic ``fixed_incidence_fixed_chi_fixed_phi``):
 
-        >>> g.modes["fixed_alpha_i_fixed_chi_fixed_phi"] = (
-        ...     g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
-        ...     .with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)
+        >>> g.modes["fixed_incidence_fixed_chi_fixed_phi"] = (
+        ...     g.modes["fixed_incidence_fixed_chi_fixed_phi"]
+        ...     .with_constraint_values(chi=15.0, phi=30.0, incidence=5.0)
         ... )
 
         Notes
@@ -1544,32 +1434,7 @@ class ConstraintSet:
                 )
             name_to_index[cname] = idx
 
-        # REMOVE-AT-V1.0: accept the deprecated reference-constraint
-        # kwargs ``alpha_i`` / ``beta_out`` as aliases for ``incidence``
-        # / ``emergence``.  The alias only fires when the set actually
-        # contains the canonical constraint; otherwise the kwarg falls
-        # through to the regular unknown-key path so a genuine typo is
-        # not masked by a confusing deprecation warning followed by a
-        # KeyError.  After removal, this whole canonicalization loop
-        # becomes a single ``canonicalized = updates`` assignment (or
-        # the variable goes away entirely).
-        canonicalized: dict[str, float | bool] = {}
-        for key, new_value in updates.items():
-            canonical = _DEPRECATED_REFERENCE_NAME_ALIASES.get(key)
-            if canonical is not None and canonical in name_to_index:
-                import warnings
-
-                warnings.warn(
-                    f"with_constraint_values: kwarg {key!r} is deprecated; "
-                    f"use {canonical!r} instead.  (issue #299)",
-                    DeprecationWarning,
-                    stacklevel=2,
-                )
-                canonicalized[canonical] = new_value
-            else:
-                canonicalized[key] = new_value
-
-        unknown = sorted(k for k in canonicalized if k not in name_to_index)
+        unknown = sorted(k for k in updates if k not in name_to_index)
         if unknown:
             available = sorted(name_to_index)
             raise KeyError(
@@ -1579,7 +1444,7 @@ class ConstraintSet:
             )
 
         new_constraints: list[AnyConstraint] = list(self._constraints)
-        for name, new_value in canonicalized.items():
+        for name, new_value in updates.items():
             idx = name_to_index[name]
             original = new_constraints[idx]
             # Each settable-value constraint is constructed with the same
@@ -1690,12 +1555,6 @@ class ModeDict:
     Only :class:`ConstraintSet` instances may be stored.  Keys are mode
     names (str).  Iteration follows insertion order.
 
-    Deprecated mode-name aliases are canonicalized on every read, write,
-    delete, and membership test (issue #299).  Iteration / ``keys()`` /
-    ``values()`` / ``items()`` return canonical keys only; a legacy name
-    accessed via ``__getitem__`` returns the canonical mode but does not
-    appear under its legacy spelling in iteration.
-
     Parameters
     ----------
     modes : dict[str, ConstraintSet] or None
@@ -1728,26 +1587,15 @@ class ModeDict:
                 f"ModeDict values must be ConstraintSet instances; "
                 f"got {type(mode).__name__!r} for key {name!r}."
             )
-        # REMOVE-AT-V1.0: canonicalize legacy mode-name aliases on write.
-        name = _canonicalize_mode_name(name, operation="write")
         self._data[name] = mode
 
     def __getitem__(self, name: str) -> ConstraintSet:
-        # REMOVE-AT-V1.0: canonicalize legacy mode-name aliases on read.
-        name = _canonicalize_mode_name(name, operation="read")
         return self._data[name]
 
     def __delitem__(self, name: str) -> None:
-        # REMOVE-AT-V1.0: canonicalize legacy mode-name aliases on delete.
-        name = _canonicalize_mode_name(name, operation="delete")
         del self._data[name]
 
     def __contains__(self, name: object) -> bool:
-        # REMOVE-AT-V1.0: legacy mode-name aliases are "contained" iff the
-        # canonical name is present.  No warning here — ``in`` tests are
-        # frequently defensive and per-test warnings would be noisy.
-        if isinstance(name, str) and name in _DEPRECATED_MODE_NAME_ALIASES:
-            name = _DEPRECATED_MODE_NAME_ALIASES[name]
         return name in self._data
 
     def __len__(self) -> int:

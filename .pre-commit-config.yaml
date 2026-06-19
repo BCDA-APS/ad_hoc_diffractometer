@@ -45,6 +45,15 @@ repos:
         pass_filenames: false
         always_run: true
 
+      - id: no-pre-v1.0-deprecations
+        name: Forbid deprecation-cycle infrastructure (pre-v1.0 policy)
+        language: pygrep
+        entry: '(REMOVE-AT-V1\.0|DeprecationWarning|_DEPRECATED_[A-Z_]+_ALIASES)'
+        files: ^(src/ad_hoc_diffractometer|tests)/.*\.py$
+        # See the "Operating directives (pre-v1.0)" section of AGENTS.md.
+        # Rename freely.  No aliases, no DeprecationWarning emitters,
+        # no REMOVE-AT-V1.0 markers, no alias-map constants.
+
   - repo: https://github.com/PyCQA/isort
     rev: 5.13.2
     hooks:

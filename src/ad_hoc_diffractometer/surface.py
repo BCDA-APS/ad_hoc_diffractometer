@@ -14,11 +14,11 @@ Public API
 ----------
 incidence(geometry, angles=None)
     Angle of incidence αᵢ in degrees — angle between the incoming beam
-    and the sample surface.  Accepts the deprecated alias ``alpha_i``.
+    and the sample surface.
 
 emergence(geometry, angles=None)
     Angle of emergence αf in degrees — angle between the diffracted beam
-    and the sample surface.  Accepts the deprecated alias ``alpha_f``.
+    and the sample surface.
 
 q_components(geometry, angles=None)
     Decompose Q into Q⊥ (perpendicular to sample surface) and Q‖
@@ -292,43 +292,6 @@ def emergence(
     sin_af = float(np.dot(kf_hat, n_hat))
     sin_af = max(-1.0, min(1.0, sin_af))
     return math.degrees(math.asin(abs(sin_af)))
-
-
-# REMOVE-AT-V1.0: deprecated aliases for the canonical incidence /
-# emergence functions.  Emit DeprecationWarning on every call and
-# delegate to the canonical implementation.
-def alpha_i(
-    geometry: AdHocDiffractometer,
-    angles: dict[str, float] | None = None,
-) -> float:
-    """Deprecated alias for :func:`incidence`.  REMOVE-AT-V1.0."""
-    import warnings
-
-    warnings.warn(
-        "ad_hoc_diffractometer.surface.alpha_i() is deprecated; "
-        "use ad_hoc_diffractometer.surface.incidence() instead.  "
-        "(issue #299)",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return incidence(geometry, angles)
-
-
-def alpha_f(
-    geometry: AdHocDiffractometer,
-    angles: dict[str, float] | None = None,
-) -> float:
-    """Deprecated alias for :func:`emergence`.  REMOVE-AT-V1.0."""
-    import warnings
-
-    warnings.warn(
-        "ad_hoc_diffractometer.surface.alpha_f() is deprecated; "
-        "use ad_hoc_diffractometer.surface.emergence() instead.  "
-        "(issue #299)",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return emergence(geometry, angles)
 
 
 def q_components(
