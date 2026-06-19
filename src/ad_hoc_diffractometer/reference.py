@@ -5,8 +5,8 @@ reference.py — Reference pseudo-angle computations for diffraction modes.
 
 Provides standalone functions for computing the physical pseudo-angles that
 appear in :class:`~mode.ReferenceConstraint` conditions: incidence angle,
-exit angle, azimuthal angle ψ, lab-frame azimuthal angle naz, and the
-SPEC ``OMEGA`` pseudo-angle (angle between Q and the chi-circle plane).
+emergence angle, azimuthal angle ψ, lab-frame azimuthal angle naz, and
+the SPEC ``OMEGA`` pseudo-angle (angle between Q and the chi-circle plane).
 
 These functions require the geometry's :attr:`surface_normal` or
 :attr:`azimuth` to be set before calling, **except** for
@@ -18,8 +18,8 @@ Functions
 :func:`incidence_angle`
     Angle of incidence α_i between the incident beam and the sample surface.
 
-:func:`exit_angle`
-    Angle of exit β_out between the diffracted beam and the sample surface.
+:func:`emergence_angle`
+    Angle of emergence α_f between the diffracted beam and the sample surface.
 
 :func:`psi_angle`
     Azimuthal angle ψ of the reference vector n̂ about Q (You 1999, eq. 23).
@@ -126,18 +126,18 @@ def incidence_angle(
     * Lohmeier & Vlieg (1993), §4.2.
     """
     _require_surface_normal(geometry)
-    return geometry.alpha_i(angles=angles)
+    return geometry.incidence(angles=angles)
 
 
-def exit_angle(
+def emergence_angle(
     geometry: AdHocDiffractometer,
     angles: dict[str, float] | None = None,
 ) -> float:
     """
-    Compute the angle of exit β_out in degrees.
+    Compute the angle of emergence α_f in degrees.
 
     The angle between the diffracted beam and the sample surface.
-    Positive when the diffracted beam exits through the front face.
+    Positive when the diffracted beam emerges through the front face.
 
     Requires :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
 
@@ -152,7 +152,7 @@ def exit_angle(
     Returns
     -------
     float
-        Exit angle β_out in degrees.
+        Emergence angle α_f in degrees.
 
     Raises
     ------
@@ -161,11 +161,11 @@ def exit_angle(
 
     References
     ----------
+    * Lohmeier & Vlieg (1993), §4.2, eq. 16.
     * You (1999), eq. 11.
-    * Lohmeier & Vlieg (1993), §4.2.
     """
     _require_surface_normal(geometry)
-    return geometry.alpha_f(angles=angles)
+    return geometry.emergence(angles=angles)
 
 
 def psi_angle(
@@ -484,8 +484,8 @@ def omega_pseudo(
 
     Notes
     -----
-    Unlike :func:`incidence_angle`, :func:`exit_angle`, :func:`psi_angle`,
-    and :func:`naz_angle`, this function does **not** require any
+    Unlike :func:`incidence_angle`, :func:`emergence_angle`,
+    :func:`psi_angle`, and :func:`naz_angle`, this function does **not** require any
     reference vector (``surface_normal`` / ``azimuth``) to be
     set on the geometry.  OMEGA is a pure motor-frame quantity defined
     by the diffractometer's internal geometry.

@@ -184,32 +184,32 @@ def _reference_psic() -> AdHocDiffractometer:
             ],
             computed=["eta", "phi", "delta"],
         ),
-        "fixed_alpha_i_vertical": ConstraintSet(
+        "fixed_incidence_vertical": ConstraintSet(
             [
                 SampleConstraint("mu", 0.0),
                 DetectorConstraint("nu", 0.0),
-                ReferenceConstraint("alpha_i", 0.0),
+                ReferenceConstraint("incidence", 0.0),
             ],
             computed=["eta", "chi", "phi", "delta"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
-        "fixed_beta_out_vertical": ConstraintSet(
+        "fixed_emergence_vertical": ConstraintSet(
             [
                 SampleConstraint("mu", 0.0),
                 DetectorConstraint("nu", 0.0),
-                ReferenceConstraint("beta_out", 0.0),
+                ReferenceConstraint("emergence", 0.0),
             ],
             computed=["eta", "chi", "phi", "delta"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
-        "alpha_eq_beta_vertical": ConstraintSet(
+        "specular_vertical": ConstraintSet(
             [
                 SampleConstraint("mu", 0.0),
                 DetectorConstraint("nu", 0.0),
-                ReferenceConstraint("a_eq_b", True),
+                ReferenceConstraint("specular", True),
             ],
             computed=["eta", "chi", "phi", "delta"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
         "fixed_psi_vertical": ConstraintSet(
             [
@@ -220,14 +220,14 @@ def _reference_psic() -> AdHocDiffractometer:
             computed=["eta", "chi", "phi", "delta"],
             extras={"n_hat": REQUIRED, "psi": None},
         ),
-        "fixed_alpha_i_fixed_chi_fixed_phi": ConstraintSet(
+        "fixed_incidence_fixed_chi_fixed_phi": ConstraintSet(
             [
                 SampleConstraint("chi", 0.0),
                 SampleConstraint("phi", 0.0),
-                ReferenceConstraint("alpha_i", 0.0),
+                ReferenceConstraint("incidence", 0.0),
             ],
             computed=["mu", "eta", "nu", "delta"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
         "fixed_omega_vertical": ConstraintSet(
             [
@@ -271,32 +271,32 @@ def _reference_psic() -> AdHocDiffractometer:
             ],
             computed=["mu", "phi", "nu"],
         ),
-        "fixed_alpha_i_horizontal": ConstraintSet(
+        "fixed_incidence_horizontal": ConstraintSet(
             [
                 SampleConstraint("eta", 0.0),
                 DetectorConstraint("delta", 0.0),
-                ReferenceConstraint("alpha_i", 0.0),
+                ReferenceConstraint("incidence", 0.0),
             ],
             computed=["mu", "chi", "phi", "nu"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
-        "fixed_beta_out_horizontal": ConstraintSet(
+        "fixed_emergence_horizontal": ConstraintSet(
             [
                 SampleConstraint("eta", 0.0),
                 DetectorConstraint("delta", 0.0),
-                ReferenceConstraint("beta_out", 0.0),
+                ReferenceConstraint("emergence", 0.0),
             ],
             computed=["mu", "chi", "phi", "nu"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
-        "alpha_eq_beta_horizontal": ConstraintSet(
+        "specular_horizontal": ConstraintSet(
             [
                 SampleConstraint("eta", 0.0),
                 DetectorConstraint("delta", 0.0),
-                ReferenceConstraint("a_eq_b", True),
+                ReferenceConstraint("specular", True),
             ],
             computed=["mu", "chi", "phi", "nu"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
         "fixed_psi_horizontal": ConstraintSet(
             [
@@ -721,32 +721,32 @@ def _reference_sixc() -> AdHocDiffractometer:
             ],
             computed=["omega", "chi", "phi", "delta", "gamma"],
         ),
-        "fixed_alpha_zaxis": ConstraintSet(
+        "fixed_incidence_zaxis": ConstraintSet(
             [
                 SampleConstraint("alpha", 0.0),
                 SampleConstraint("chi", 0.0),
-                ReferenceConstraint("alpha_i", 0.0),
+                ReferenceConstraint("incidence", 0.0),
             ],
             computed=["omega", "delta", "gamma"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
-        "fixed_beta_zaxis": ConstraintSet(
+        "fixed_emergence_zaxis": ConstraintSet(
             [
                 DetectorConstraint("gamma", 0.0),
                 SampleConstraint("chi", 0.0),
-                ReferenceConstraint("beta_out", 0.0),
+                ReferenceConstraint("emergence", 0.0),
             ],
             computed=["omega", "delta", "alpha"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
-        "alpha_eq_beta_zaxis": ConstraintSet(
+        "specular_zaxis": ConstraintSet(
             [
                 SampleConstraint("chi", 0.0),
                 SampleConstraint("phi", 0.0),
-                ReferenceConstraint("a_eq_b", True),
+                ReferenceConstraint("specular", True),
             ],
             computed=["omega", "delta", "alpha", "gamma"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
     }
     return AdHocDiffractometer(
@@ -777,14 +777,14 @@ def _reference_zaxis() -> AdHocDiffractometer:
     ]
     modes = {
         "zaxis": ConstraintSet(
-            [ReferenceConstraint("alpha_i", 0.0)],
+            [ReferenceConstraint("incidence", 0.0)],
             computed=["Z", "delta", "gamma"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
         "reflectivity": ConstraintSet(
-            [ReferenceConstraint("a_eq_b", True)],
+            [ReferenceConstraint("specular", True)],
             computed=["Z", "delta", "alpha", "gamma"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
     }
     return AdHocDiffractometer(
@@ -818,9 +818,9 @@ def _reference_s2d2() -> AdHocDiffractometer:
             computed=["Z", "nu", "delta"],
         ),
         "reflectivity": ConstraintSet(
-            [ReferenceConstraint("a_eq_b", True)],
+            [ReferenceConstraint("specular", True)],
             computed=["mu", "Z", "nu", "delta"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
     }
     return AdHocDiffractometer(

@@ -1386,9 +1386,9 @@ def test_sixc_round_trip(mode_name, h, k, l):  # noqa: E741
 @pytest.mark.parametrize(
     "mode_name",
     [
-        pytest.param("fixed_alpha_zaxis", id="fixed_alpha_zaxis"),
-        pytest.param("fixed_beta_zaxis", id="fixed_beta_zaxis"),
-        pytest.param("alpha_eq_beta_zaxis", id="alpha_eq_beta_zaxis"),
+        pytest.param("fixed_incidence_zaxis", id="fixed_incidence_zaxis"),
+        pytest.param("fixed_emergence_zaxis", id="fixed_emergence_zaxis"),
+        pytest.param("specular_zaxis", id="specular_zaxis"),
     ],
 )
 def test_sixc_zaxis_stub_not_implemented(mode_name):
@@ -1450,13 +1450,13 @@ _PSIC_MODES_ALL = {
     "lifting_detector_eta",
     "fixed_psi_vertical",
     "fixed_psi_horizontal",
-    "fixed_alpha_i_vertical",
-    "fixed_beta_out_vertical",
-    "alpha_eq_beta_vertical",
-    "fixed_alpha_i_fixed_chi_fixed_phi",
-    "fixed_alpha_i_horizontal",
-    "fixed_beta_out_horizontal",
-    "alpha_eq_beta_horizontal",
+    "fixed_incidence_vertical",
+    "fixed_emergence_vertical",
+    "specular_vertical",
+    "fixed_incidence_fixed_chi_fixed_phi",
+    "fixed_incidence_horizontal",
+    "fixed_emergence_horizontal",
+    "specular_horizontal",
     "fixed_omega_vertical",
     "fixed_omega_horizontal",
     "zone_vertical",
@@ -3172,7 +3172,7 @@ def test_psic_fixed_alpha_i_fixed_chi_fixed_phi_round_trip(
     alpha_target,
     context,
 ):
-    """Issue #264 B3: 4-D Newton with chi=phi=0 + alpha_i target."""
+    """Issue #264 B3: 4-D Newton with chi=phi=0 + incidence target."""
     from ad_hoc_diffractometer import REQUIRED
     from ad_hoc_diffractometer import ConstraintSet
     from ad_hoc_diffractometer import ReferenceConstraint
@@ -3186,20 +3186,20 @@ def test_psic_fixed_alpha_i_fixed_chi_fixed_phi_round_trip(
             [
                 SampleConstraint("chi", 0.0),
                 SampleConstraint("phi", 0.0),
-                ReferenceConstraint("alpha_i", alpha_target),
+                ReferenceConstraint("incidence", alpha_target),
             ],
             computed=["mu", "eta", "nu", "delta"],
-            extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+            extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         )
         g.mode_name = "__test_b3"
         sols = g.forward(h, k, l)
-        assert len(sols) > 0, f"B3 ({h},{k},{l}) alpha_i={alpha_target}: no solutions"
+        assert len(sols) > 0, f"B3 ({h},{k},{l}) incidence={alpha_target}: no solutions"
         for sol in sols:
             assert sol["chi"] == pytest.approx(0.0, abs=1e-6)
             assert sol["phi"] == pytest.approx(0.0, abs=1e-6)
             ai = incidence_angle(g, angles=sol)
             assert ai == pytest.approx(alpha_target, abs=1e-3), (
-                f"B3 ({h},{k},{l}) alpha_i target {alpha_target}: got {ai}"
+                f"B3 ({h},{k},{l}) incidence target {alpha_target}: got {ai}"
             )
             hkl_back = g.inverse(sol)
             assert np.allclose(hkl_back, [h, k, l], atol=1e-5)
@@ -3208,7 +3208,7 @@ def test_psic_fixed_alpha_i_fixed_chi_fixed_phi_round_trip(
 def test_psic_fixed_alpha_i_fixed_chi_fixed_phi_requires_surface_normal():
     """B3 mode is_implemented=False until surface_normal is set."""
     g = _setup_cubic(psic, a=4.0)
-    cs = g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
+    cs = g.modes["fixed_incidence_fixed_chi_fixed_phi"]
     assert cs.is_implemented(g) is False
     g.surface_normal = (0, 0, 1)
     assert cs.is_implemented(g) is True

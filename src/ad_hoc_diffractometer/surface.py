@@ -12,11 +12,11 @@ All functions operate on a geometry instance and a set of motor angles
 
 Public API
 ----------
-alpha_i(geometry, angles=None)
+incidence(geometry, angles=None)
     Angle of incidence αᵢ in degrees — angle between the incoming beam
     and the sample surface.
 
-alpha_f(geometry, angles=None)
+emergence(geometry, angles=None)
     Angle of emergence αf in degrees — angle between the diffracted beam
     and the sample surface.
 
@@ -203,7 +203,7 @@ def _surface_vectors(
 # ---------------------------------------------------------------------------
 
 
-def alpha_i(
+def incidence(
     geometry: AdHocDiffractometer,
     angles: dict[str, float] | None = None,
 ) -> float:
@@ -240,7 +240,7 @@ def alpha_i(
     >>> g.wavelength = 1.5406
     >>> g.surface_normal = (0, 0, 1)
     >>> ahd.ub_identity(g.sample)
-    >>> ai = g.alpha_i({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})
+    >>> ai = g.incidence({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})
     >>> round(ai, 4)
     5.0
 
@@ -255,7 +255,7 @@ def alpha_i(
     return math.degrees(math.asin(abs(sin_ai)))
 
 
-def alpha_f(
+def emergence(
     geometry: AdHocDiffractometer,
     angles: dict[str, float] | None = None,
 ) -> float:
@@ -387,8 +387,8 @@ def is_specular(
     ValueError
         If any required attribute is not set.
     """
-    ai = alpha_i(geometry, angles)
-    af = alpha_f(geometry, angles)
+    ai = incidence(geometry, angles)
+    af = emergence(geometry, angles)
     return abs(ai - af) <= atol
 
 
@@ -436,5 +436,5 @@ def is_evanescent(
             "and is not stored on the geometry.  "
             "Typical values: 0.1°–0.5° for hard X-rays."
         )
-    ai = alpha_i(geometry, angles)
+    ai = incidence(geometry, angles)
     return ai < critical_angle_deg

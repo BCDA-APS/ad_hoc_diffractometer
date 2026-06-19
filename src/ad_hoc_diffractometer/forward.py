@@ -472,7 +472,12 @@ def compute_forward(
 # The callables are imported lazily inside :func:`_populate_output_extras` to
 # avoid a circular import at module load time (``reference`` imports from
 # ``forward``).
-_OUTPUT_EXTRA_KEYS = ("alpha_i", "beta_out", "psi", "omega")
+_OUTPUT_EXTRA_KEYS = (
+    "incidence",
+    "emergence",
+    "psi",
+    "omega",
+)
 
 
 def _populate_output_extras(
@@ -480,7 +485,7 @@ def _populate_output_extras(
     mode,
     solutions: list[dict[str, float]],
 ) -> None:
-    """Populate output-slot extras (alpha_i, beta_out, psi, omega) per solution.
+    """Populate output-slot extras (incidence, emergence, psi, omega) per solution.
 
     Issue #292.  A subset of declarative modes (psic, sixc, zaxis, s2d2 surface
     modes; the fixed_psi_* family; fixed_omega_*) declare placeholder slots
@@ -495,7 +500,7 @@ def _populate_output_extras(
     --------
     * Only keys actually declared in ``mode.extras`` are touched.
     * A key declared but whose required reference vector is unset on the
-      geometry (e.g. ``alpha_i`` without ``surface_normal``) is left as
+      geometry (e.g. ``incidence`` without ``surface_normal``) is left as
       ``None``; a debug-level log message records why.
     * Empty ``solutions`` leaves every slot as an empty list.
     * Each successful call **replaces** the prior contents of the slot.
@@ -508,14 +513,14 @@ def _populate_output_extras(
         return
 
     # Lazy imports — ``reference`` imports from ``forward``.
-    from .reference import exit_angle as _exit_angle
+    from .reference import emergence_angle as _emergence_angle
     from .reference import incidence_angle as _incidence_angle
     from .reference import omega_pseudo as _omega_pseudo
     from .reference import psi_angle as _psi_angle
 
     computers: dict[str, callable] = {
-        "alpha_i": _incidence_angle,
-        "beta_out": _exit_angle,
+        "incidence": _incidence_angle,
+        "emergence": _emergence_angle,
         "psi": _psi_angle,
         "omega": _omega_pseudo,
     }
@@ -622,7 +627,7 @@ def _solve_constraint_set(
 
     # Free-detectors mode (issue #264 — both detector stages float to
     # satisfy Bragg jointly with the remaining sample stages, optionally
-    # with one ReferenceConstraint such as alpha_i).
+    # with one ReferenceConstraint such as incidence).
     if _is_free_detectors_mode(geometry, mode):
         return _solve_free_detectors(geometry, Q_phi, ttheta_deg, mode)
 
@@ -3025,7 +3030,7 @@ def _is_surface_mode(geometry: AdHocDiffractometer, mode) -> bool:
         return False
     # Defer to :func:`_is_free_detectors_mode` for psic-family modes
     # with 2 free sample stages and 2 free detector stages (issue
-    # #264 — the B3 mode ``fixed_alpha_i_fixed_chi_fixed_phi``).  The
+    # #264 — the B3 mode ``fixed_incidence_fixed_chi_fixed_phi``).  The
     # ``chi`` stage check restricts this exclusion to psic; existing
     # zaxis/s2d2/sixc surface modes (which also have free detectors)
     # stay on :func:`_solve_surface` where the legacy 1-D Newton works
@@ -3056,9 +3061,9 @@ def _solve_surface(
 
     Supports ReferenceConstraint modes where the constraint is:
 
-    - ``"alpha_i"`` — incidence angle fixed at target value
-    - ``"beta_out"`` — exit angle fixed at target value
-    - ``"a_eq_b"`` — symmetric reflection: alpha_i = beta_out
+    - ``"incidence"`` — incidence angle fixed at target value
+    - ``"emergence"`` — emergence angle fixed at target value
+    - ``"specular"`` — specular reflection: incidence = emergence
 
     The solver builds a baseline angles dict (applying all fixed sample/detector
     constraints and setting the detector stage to ttheta_deg), then performs a
@@ -3079,9 +3084,8 @@ def _solve_surface(
 
     from .mode import ReferenceConstraint
 
-    # Extract the reference constraint
     rc = next(c for c in mode.constraints if isinstance(c, ReferenceConstraint))
-    target_name = rc.name  # "alpha_i", "beta_out", or "a_eq_b"
+    target_name = rc.name  # "incidence", "emergence", or "specular"
     target_value = rc.value  # float or True
 
     # Build baseline angles dict with all fixed constraints applied
@@ -3197,18 +3201,18 @@ def _surface_residual(
 
     Returns a float residual in degrees (zero = constraint satisfied).
     """
-    from .reference import exit_angle as _beta_out
-    from .reference import incidence_angle as _alpha_i
+    from .reference import emergence_angle as _emergence_angle
+    from .reference import incidence_angle as _incidence_angle
 
-    if target_name == "alpha_i":
-        ai = _alpha_i(geometry, angles=angles)
+    if target_name == "incidence":
+        ai = _incidence_angle(geometry, angles=angles)
         return ai - float(target_value)
-    if target_name == "beta_out":
-        bo = _beta_out(geometry, angles=angles)
+    if target_name == "emergence":
+        bo = _emergence_angle(geometry, angles=angles)
         return bo - float(target_value)
-    # a_eq_b: alpha_i = beta_out
-    ai = _alpha_i(geometry, angles=angles)
-    bo = _beta_out(geometry, angles=angles)
+    # specular: incidence = emergence (symmetric reflection)
+    ai = _incidence_angle(geometry, angles=angles)
+    bo = _emergence_angle(geometry, angles=angles)
     return ai - bo
 
 
@@ -3789,12 +3793,12 @@ def _is_free_detectors_mode(geometry: AdHocDiffractometer, mode) -> bool:
     Used by :func:`_solve_free_detectors` to dispatch psic-family modes
     that fix multiple sample stages and let the detector arm orient
     itself entirely from the Bragg condition (and any reference
-    constraint such as ``alpha_i``).  Examples (issue #264):
+    constraint such as ``incidence``).  Examples (issue #264):
 
     - ``lifting_detector_eta`` (3 sample fixed, 1 sample + 2 detector free)
     - revised ``lifting_detector_phi`` / ``lifting_detector_mu``
       (after step C of #264 — same shape, different fixed sample stage)
-    - ``fixed_alpha_i_fixed_chi_fixed_phi`` (2 sample fixed + alpha_i,
+    - ``fixed_incidence_fixed_chi_fixed_phi`` (2 sample fixed + incidence,
       2 sample + 2 detector free)
 
     The predicate is intentionally conservative: it requires the
@@ -3863,7 +3867,7 @@ def _solve_free_detectors(
 
     - ``lifting_detector_eta`` (B4)
     - revised ``lifting_detector_phi`` / ``lifting_detector_mu`` (C3, C4)
-    - ``fixed_alpha_i_fixed_chi_fixed_phi`` (B3, with one alpha_i row)
+    - ``fixed_incidence_fixed_chi_fixed_phi`` (B3, with one incidence row)
 
     Variables: every free sample stage plus both detector stages.
     Equations: 3 from Bragg (``Q_phi(angles) == Q_phi_target``) plus 1 per

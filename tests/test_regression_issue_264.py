@@ -13,7 +13,7 @@ Issue #264 introduced two distinct sets of psic-mode changes:
    solver dispatch that handles them.
 
 2. Three additional psic modes were introduced or revised per the
-   @jwkim-anl review: ``fixed_alpha_i_fixed_chi_fixed_phi`` (B3),
+   @jwkim-anl review: ``fixed_incidence_fixed_chi_fixed_phi`` (B3),
    ``lifting_detector_eta`` (B4), plus the
    ``lifting_detector_phi`` / ``lifting_detector_mu`` revisions
    (C3/C4) that drop the ``qaz = 90`` constraint and fix every sample
@@ -31,7 +31,7 @@ cross-module *invariants* that must hold across the whole #264 patch:
   satisfy the Bragg condition end-to-end.
 - The dispatcher routes each new/revised mode to its intended solver
   branch (``_solve_omega_mode`` for ``fixed_omega_*``,
-  ``_solve_free_detectors`` for ``fixed_alpha_i_fixed_chi_fixed_phi``,
+  ``_solve_free_detectors`` for ``fixed_incidence_fixed_chi_fixed_phi``,
   ``lifting_detector_eta``, and the revised
   ``lifting_detector_phi`` / ``lifting_detector_mu``).
 
@@ -76,7 +76,7 @@ WAVELENGTH = 1.5406  # Cu Kα
 _ISSUE_264_NEW_MODES = {
     "fixed_omega_vertical",
     "fixed_omega_horizontal",
-    "fixed_alpha_i_fixed_chi_fixed_phi",
+    "fixed_incidence_fixed_chi_fixed_phi",
     "lifting_detector_eta",
 }
 _ISSUE_264_REVISED_MODES = {
@@ -305,8 +305,8 @@ def test_fixed_alpha_i_fixed_chi_fixed_phi_routes_to_free_detectors():
     """B3 routes to ``_solve_free_detectors`` only after ``surface_normal``
     is set (otherwise the mode is a stub)."""
     g = _setup_psic_cubic()
-    cs = g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
-    # Without surface_normal, the alpha_i ReferenceConstraint reports
+    cs = g.modes["fixed_incidence_fixed_chi_fixed_phi"]
+    # Without surface_normal, the incidence ReferenceConstraint reports
     # is_implemented=False, so the mode is a stub regardless of dispatch.
     assert cs.is_implemented(g) is False
     g.surface_normal = (0, 0, 1)
@@ -325,7 +325,7 @@ def test_fixed_alpha_i_fixed_chi_fixed_phi_routes_to_free_detectors():
     [
         pytest.param("fixed_omega_vertical", 1, 0, 0, False, id="fov-100"),
         pytest.param("fixed_omega_horizontal", 0, 0, 1, False, id="foh-001"),
-        pytest.param("fixed_alpha_i_fixed_chi_fixed_phi", 0, 1, 1, True, id="b3-011"),
+        pytest.param("fixed_incidence_fixed_chi_fixed_phi", 0, 1, 1, True, id="b3-011"),
         pytest.param("lifting_detector_eta", 1, 1, 0, False, id="le-110"),
         pytest.param("lifting_detector_phi", 1, 0, 0, False, id="lp-100"),
         # Under issue #280 ub_identity, (0,1,0) is unreachable on psic
@@ -555,7 +555,7 @@ def test_omega_constraint_unimplemented_without_chi_stage():
 
 
 # ---------------------------------------------------------------------------
-# Issue #264 design invariant: B3 produces solutions whose alpha_i matches
+# Issue #264 design invariant: B3 produces solutions whose incidence matches
 # the requested target.
 # ---------------------------------------------------------------------------
 
@@ -565,17 +565,17 @@ def test_omega_constraint_unimplemented_without_chi_stage():
     [0.0, 3.0, 7.5],
 )
 def test_b3_alpha_i_target_satisfied(alpha_target):
-    """B3 ``fixed_alpha_i_fixed_chi_fixed_phi`` solutions satisfy
-    alpha_i == target within tolerance."""
+    """B3 ``fixed_incidence_fixed_chi_fixed_phi`` solutions satisfy
+    incidence == target within tolerance."""
     g = _setup_psic_cubic()
     g.surface_normal = (0, 0, 1)
-    cs = g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
-    # Override alpha_i target with the parametrized value.
+    cs = g.modes["fixed_incidence_fixed_chi_fixed_phi"]
+    # Override incidence target with the parametrized value.
     g.modes["__b3_test"] = ConstraintSet(
         [
             SampleConstraint("chi", 0.0),
             SampleConstraint("phi", 0.0),
-            ReferenceConstraint("alpha_i", alpha_target),
+            ReferenceConstraint("incidence", alpha_target),
         ],
         computed=cs.computed,
         extras=dict(cs.extras),
@@ -586,5 +586,5 @@ def test_b3_alpha_i_target_satisfied(alpha_target):
     for sol in sols:
         ai = incidence_angle(g, angles=sol)
         assert ai == pytest.approx(alpha_target, abs=1e-3), (
-            f"B3 alpha_i target {alpha_target}: got {ai}"
+            f"B3 incidence target {alpha_target}: got {ai}"
         )

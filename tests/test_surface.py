@@ -8,9 +8,9 @@ Covers:
   - surface_normal fallback to azimuth
   - _surface_vectors precondition errors (no wavelength, no UB, no normal,
     unknown stage name)
-  - alpha_i: matches motor angle for canonical geometries (s2d2, zaxis)
-  - alpha_f: matches out-of-plane detector angle (s2d2, zaxis)
-  - alpha_i and alpha_f are symmetric: same at ai=af angles
+  - incidence: matches motor angle for canonical geometries (s2d2, zaxis)
+  - emergence: matches out-of-plane detector angle (s2d2, zaxis)
+  - incidence and emergence are symmetric: same at ai=af angles
   - q_components: Q_perp, Q_par, Q_perp_signed, Q_total
   - Q_perp ≥ 0, Q_par ≥ 0 always
   - Q_total = sqrt(Q_perp^2 + Q_par^2)
@@ -18,9 +18,9 @@ Covers:
   - is_specular: True when ai ≈ af, False otherwise
   - is_evanescent: True when ai < crit, False when ai ≥ crit, error when crit=None
   - Serialisation round-trip: surface_normal in to_dict/from_dict
-  - Standalone functions (alpha_i, alpha_f, q_components, is_specular,
+  - Standalone functions (incidence, emergence, q_components, is_specular,
     is_evanescent) imported from top-level
-  - geometry.alpha_i/alpha_f/q_components/is_specular/is_evanescent methods
+  - geometry.incidence/emergence/q_components/is_specular/is_evanescent methods
   - Default angles (None) uses current stage angles
   - psic surface: surface_normal set, UB=identity, verify ai/af/psi combination
 """
@@ -37,8 +37,8 @@ from helpers import zaxis
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.surface import _surface_vectors
-from ad_hoc_diffractometer.surface import alpha_f
-from ad_hoc_diffractometer.surface import alpha_i
+from ad_hoc_diffractometer.surface import emergence
+from ad_hoc_diffractometer.surface import incidence
 from ad_hoc_diffractometer.surface import is_evanescent
 from ad_hoc_diffractometer.surface import is_specular
 from ad_hoc_diffractometer.surface import q_components
@@ -226,12 +226,12 @@ def test_surface_normal_fallback_to_azimuth():
     g.surface_normal = None
     g.azimuth = (0, 0, 1)
     # Should not raise and should produce a result
-    ai = g.alpha_i({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
+    ai = g.incidence({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
     assert pytest.approx(ai, abs=1e-6) == 5.0
 
 
 # ---------------------------------------------------------------------------
-# alpha_i — s2d2 canonical: alpha_i = mu (surface_normal along +z, a=1)
+# incidence — s2d2 canonical: incidence = mu (surface_normal along +z, a=1)
 # ---------------------------------------------------------------------------
 
 
@@ -246,16 +246,16 @@ def test_surface_normal_fallback_to_azimuth():
         pytest.param(90.0, 90.0, does_not_raise(), id="mu=90"),
     ],
 )
-def test_alpha_i_s2d2_equals_mu(mu, expected_ai, context):
-    """In s2d2 with surface_normal=(0,0,1), alpha_i = mu exactly."""
+def test_incidence_s2d2_equals_mu(mu, expected_ai, context):
+    """In s2d2 with surface_normal=(0,0,1), incidence = mu exactly."""
     g = _make_s2d2()
     with context:
-        ai = g.alpha_i({"mu": mu, "Z": 0.0, "nu": 0.0, "delta": 0.0})
+        ai = g.incidence({"mu": mu, "Z": 0.0, "nu": 0.0, "delta": 0.0})
         assert ai == pytest.approx(expected_ai, abs=1e-6)
 
 
 # ---------------------------------------------------------------------------
-# alpha_i — zaxis canonical: alpha_i = alpha (surface_normal along +z)
+# incidence — zaxis canonical: incidence = alpha (surface_normal along +z)
 # ---------------------------------------------------------------------------
 
 
@@ -268,16 +268,16 @@ def test_alpha_i_s2d2_equals_mu(mu, expected_ai, context):
         pytest.param(20.0, 20.0, does_not_raise(), id="alpha=20"),
     ],
 )
-def test_alpha_i_zaxis_equals_alpha(alpha_val, expected_ai, context):
-    """In zaxis with surface_normal=(0,0,1), alpha_i = alpha exactly."""
+def test_incidence_zaxis_equals_alpha(alpha_val, expected_ai, context):
+    """In zaxis with surface_normal=(0,0,1), incidence = alpha exactly."""
     g = _make_zaxis()
     with context:
-        ai = g.alpha_i({"alpha": alpha_val, "Z": 0.0, "delta": 10.0, "gamma": 0.0})
+        ai = g.incidence({"alpha": alpha_val, "Z": 0.0, "delta": 10.0, "gamma": 0.0})
         assert ai == pytest.approx(expected_ai, abs=1e-6)
 
 
 # ---------------------------------------------------------------------------
-# alpha_f — s2d2: alpha_f = nu when delta = 0
+# emergence — s2d2: emergence = nu when delta = 0
 # ---------------------------------------------------------------------------
 
 
@@ -290,24 +290,24 @@ def test_alpha_i_zaxis_equals_alpha(alpha_val, expected_ai, context):
         pytest.param(20.0, 20.0, does_not_raise(), id="nu=20"),
     ],
 )
-def test_alpha_f_s2d2_equals_nu_at_delta_zero(nu, expected_af, context):
-    """In s2d2 with delta=0 and surface_normal=(0,0,1), alpha_f = nu exactly."""
+def test_emergence_s2d2_equals_nu_at_delta_zero(nu, expected_af, context):
+    """In s2d2 with delta=0 and surface_normal=(0,0,1), emergence = nu exactly."""
     g = _make_s2d2()
     with context:
-        af = g.alpha_f({"mu": 0.0, "Z": 0.0, "nu": nu, "delta": 0.0})
+        af = g.emergence({"mu": 0.0, "Z": 0.0, "nu": nu, "delta": 0.0})
         assert af == pytest.approx(expected_af, abs=1e-6)
 
 
-def test_alpha_f_s2d2_zero_at_any_in_plane_delta():
-    """In s2d2 with nu=0, alpha_f = 0 for any delta (in-plane only)."""
+def test_emergence_s2d2_zero_at_any_in_plane_delta():
+    """In s2d2 with nu=0, emergence = 0 for any delta (in-plane only)."""
     g = _make_s2d2()
     for delta in [0.0, 10.0, 20.0, 45.0]:
-        af = g.alpha_f({"mu": 0.0, "Z": 0.0, "nu": 0.0, "delta": delta})
+        af = g.emergence({"mu": 0.0, "Z": 0.0, "nu": 0.0, "delta": delta})
         assert af == pytest.approx(0.0, abs=1e-6)
 
 
 # ---------------------------------------------------------------------------
-# alpha_f — zaxis: matches geometric formula
+# emergence — zaxis: matches geometric formula
 # ---------------------------------------------------------------------------
 
 
@@ -329,7 +329,7 @@ def test_alpha_f_s2d2_zero_at_any_in_plane_delta():
         # With the surface normal along +transverse (= +z in YOU
         # basis, set by ``surface_normal = (0, 0, 1)``), the
         # out-of-plane projection is simply ``sin γ`` — i.e.
-        # ``alpha_f = γ`` independent of delta.  The earlier formula
+        # ``emergence = γ`` independent of delta.  The earlier formula
         # ``arcsin(cos δ · sin γ)`` was a baked-in expectation under
         # the pre-#280 (inner-leftmost) composition where
         # ``D = R(gamma) @ R(delta)``.
@@ -349,32 +349,32 @@ def test_alpha_f_s2d2_zero_at_any_in_plane_delta():
         ),
     ],
 )
-def test_alpha_f_zaxis_formula(delta, gamma, expected_af, context):
-    """alpha_f for zaxis under the standard BL1967 detector composition."""
+def test_emergence_zaxis_formula(delta, gamma, expected_af, context):
+    """emergence for zaxis under the standard BL1967 detector composition."""
     g = _make_zaxis()
     with context:
-        af = g.alpha_f({"alpha": 0.0, "Z": 0.0, "delta": delta, "gamma": gamma})
+        af = g.emergence({"alpha": 0.0, "Z": 0.0, "delta": delta, "gamma": gamma})
         assert af == pytest.approx(expected_af, abs=1e-6)
 
 
 # ---------------------------------------------------------------------------
-# alpha_i always in [0°, 90°]
+# incidence always in [0°, 90°]
 # ---------------------------------------------------------------------------
 
 
-def test_alpha_i_always_nonnegative():
-    """alpha_i is always in [0°, 90°] regardless of sign of mu."""
+def test_incidence_always_nonnegative():
+    """incidence is always in [0°, 90°] regardless of sign of mu."""
     g = _make_s2d2()
     for mu in [-20.0, -10.0, -5.0, 0.0, 5.0, 10.0, 20.0]:
-        ai = g.alpha_i({"mu": mu, "Z": 0.0, "nu": 0.0, "delta": 0.0})
+        ai = g.incidence({"mu": mu, "Z": 0.0, "nu": 0.0, "delta": 0.0})
         assert 0.0 <= ai <= 90.0
 
 
-def test_alpha_f_always_nonnegative():
-    """alpha_f is always in [0°, 90°]."""
+def test_emergence_always_nonnegative():
+    """emergence is always in [0°, 90°]."""
     g = _make_s2d2()
     for nu in [-20.0, -10.0, 0.0, 10.0, 20.0]:
-        af = g.alpha_f({"mu": 0.0, "Z": 0.0, "nu": nu, "delta": 0.0})
+        af = g.emergence({"mu": 0.0, "Z": 0.0, "nu": nu, "delta": 0.0})
         assert 0.0 <= af <= 90.0
 
 
@@ -453,8 +453,8 @@ def test_is_specular_true_when_ai_equals_af():
     is_specular returns True when ai = af.
 
     In s2d2 with surface_normal=(0,0,1) and a=1, the specular condition is:
-    - alpha_i = mu (verified separately)
-    - alpha_f = |nu - mu| when delta=0 (rotation of surface normal and detector
+    - incidence = mu (verified separately)
+    - emergence = |nu - mu| when delta=0 (rotation of surface normal and detector
       both about the same +x axis means their relative angle is nu - mu)
     Therefore specular (ai = af) requires nu = 2*mu.
     """
@@ -527,21 +527,21 @@ def test_is_evanescent_raises_without_critical_angle():
 # ---------------------------------------------------------------------------
 
 
-def test_psic_alpha_i_from_mu():
-    """In psic with surface_normal=(0,0,1), alpha_i = mu (rotation about +x)."""
+def test_psic_incidence_from_mu():
+    """In psic with surface_normal=(0,0,1), incidence = mu (rotation about +x)."""
     g = _make_psic()
     for mu in [0.0, 2.0, 5.0, 10.0]:
-        ai = g.alpha_i(
+        ai = g.incidence(
             {"mu": mu, "eta": 0.0, "chi": 0.0, "phi": 0.0, "nu": 0.0, "delta": 0.0}
         )
         assert ai == pytest.approx(mu, abs=1e-6)
 
 
-def test_psic_alpha_f_from_nu():
-    """In psic with surface_normal=(0,0,1), alpha_f = nu when delta=0."""
+def test_psic_emergence_from_nu():
+    """In psic with surface_normal=(0,0,1), emergence = nu when delta=0."""
     g = _make_psic()
     for nu in [0.0, 2.0, 5.0, 10.0]:
-        af = g.alpha_f(
+        af = g.emergence(
             {"mu": 0.0, "eta": 0.0, "chi": 0.0, "phi": 0.0, "nu": nu, "delta": 0.0}
         )
         assert af == pytest.approx(nu, abs=1e-6)
@@ -556,8 +556,8 @@ def test_default_angles_uses_current_stage_angles():
     """When angles=None, current stage angles are used."""
     g = _make_s2d2()
     g.set_angle("mu", 5.0)
-    ai_explicit = g.alpha_i({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
-    ai_default = g.alpha_i()  # uses current angles
+    ai_explicit = g.incidence({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
+    ai_default = g.incidence()  # uses current angles
     assert ai_explicit == pytest.approx(ai_default, abs=1e-10)
 
 
@@ -566,16 +566,16 @@ def test_default_angles_uses_current_stage_angles():
 # ---------------------------------------------------------------------------
 
 
-def test_standalone_alpha_i():
+def test_standalone_incidence():
     g = _make_s2d2()
     angles = {"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0}
-    assert alpha_i(g, angles) == pytest.approx(5.0, abs=1e-6)
+    assert incidence(g, angles) == pytest.approx(5.0, abs=1e-6)
 
 
-def test_standalone_alpha_f():
+def test_standalone_emergence():
     g = _make_s2d2()
     angles = {"mu": 0.0, "Z": 0.0, "nu": 5.0, "delta": 0.0}
-    assert alpha_f(g, angles) == pytest.approx(5.0, abs=1e-6)
+    assert emergence(g, angles) == pytest.approx(5.0, abs=1e-6)
 
 
 def test_standalone_q_components():
@@ -642,4 +642,4 @@ def test_surface_normal_zero_in_phi_frame_raises():
     # Set UB to all-zeros (degenerate)
     g.sample.UB = np.zeros((3, 3))
     with pytest.raises(ValueError, match=re.escape("zero vector")):
-        g.alpha_i({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
+        g.incidence({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})

@@ -27,10 +27,7 @@ Azimuthal reference vector
    per-mode ``Extras (input)`` tables this same vector is referred to
    by its mathematical symbol **n̂** (rendered as the ``n_hat`` key in
    ``mode.extras``).  See {term}`n̂ (reference vector)` for the full
-   surface-form table, and {doc}`howto/surface`.  The attribute was
-   named ``azimuthal_reference`` before v0.12.0 (issue #298); the old
-   name remains as a deprecated forwarding alias and will be removed
-   in a future release.
+   surface-form table, and {doc}`howto/surface`.
 
 B matrix
    The matrix that encodes the reciprocal lattice and maps Miller indices
@@ -214,8 +211,8 @@ n̂ (reference vector)
           Assigning a value here has no effect on ``forward()`` (and
           emits a ``UserWarning`` directing the caller at the geometry
           attribute below — issue #294).
-      * - On the geometry, when used by ``"alpha_i"``, ``"beta_out"``,
-          ``"a_eq_b"`` reference constraints
+      * - On the geometry, when used by ``"incidence"``, ``"emergence"``,
+          ``"specular"`` reference constraints
         - {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`
         - The actual stored vector.  Set via
           ``g.surface_normal = (h, k, l)``.
@@ -313,10 +310,10 @@ Surface normal
    the vector perpendicular to the sample surface.  Stored on the
    geometry as
    {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`
-   and consumed by the ``"alpha_i"``, ``"beta_out"``, and ``"a_eq_b"``
+   and consumed by the ``"incidence"``, ``"emergence"``, and ``"specular"``
    {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint` modes
    (plus {func}`~ad_hoc_diffractometer.reference.incidence_angle` /
-   {func}`~ad_hoc_diffractometer.reference.exit_angle` and
+   {func}`~ad_hoc_diffractometer.reference.emergence_angle` and
    {mod}`~ad_hoc_diffractometer.surface` helpers).  Set with
    ``g.surface_normal = (h, k, l)`` (a length-3 sequence of numbers;
    ``(0, 0, 0)`` is rejected).  Default is ``None``.  In per-mode

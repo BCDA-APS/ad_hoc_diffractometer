@@ -737,15 +737,15 @@ def test_detector_constraint_evaluate_qaz():
     "name, value, context",
     [
         pytest.param("psi", 90.0, does_not_raise(), id="psi"),
-        pytest.param("alpha_i", 5.0, does_not_raise(), id="alpha_i"),
-        pytest.param("beta_out", 5.0, does_not_raise(), id="beta_out"),
-        pytest.param("a_eq_b", True, does_not_raise(), id="a_eq_b-true"),
+        pytest.param("incidence", 5.0, does_not_raise(), id="incidence"),
+        pytest.param("emergence", 5.0, does_not_raise(), id="emergence"),
+        pytest.param("specular", True, does_not_raise(), id="specular-true"),
         pytest.param("naz", 0.0, does_not_raise(), id="naz"),
         pytest.param(
-            "a_eq_b",
+            "specular",
             False,
             pytest.raises(ValueError, match=re.escape("must be True")),
-            id="a_eq_b-false-raises",
+            id="specular-false-raises",
         ),
         pytest.param(
             "unknown",
@@ -769,7 +769,7 @@ def test_reference_constraint_value_coerced_to_float():
 
 
 def test_reference_constraint_a_eq_b_value_is_true():
-    rc = ReferenceConstraint("a_eq_b", True)
+    rc = ReferenceConstraint("specular", True)
     assert rc.value is True
 
 
@@ -789,7 +789,7 @@ def test_reference_constraint_to_dict_from_dict():
 
 
 def test_reference_constraint_to_dict_from_dict_a_eq_b():
-    rc = ReferenceConstraint("a_eq_b", True)
+    rc = ReferenceConstraint("specular", True)
     d = rc.to_dict()
     assert d["value"] is True
     rc2 = ReferenceConstraint.from_dict(d)
@@ -799,12 +799,12 @@ def test_reference_constraint_to_dict_from_dict_a_eq_b():
 @pytest.mark.parametrize(
     "name, value, surface_normal, expected",
     [
-        # alpha_i/beta_out/a_eq_b: implemented when surface_normal is set
-        pytest.param("alpha_i", 0.0, (0, 0, 1), True, id="alpha_i-with-sn"),
-        pytest.param("alpha_i", 0.0, None, False, id="alpha_i-no-sn"),
-        pytest.param("beta_out", 0.0, (0, 0, 1), True, id="beta_out-with-sn"),
-        pytest.param("a_eq_b", True, (0, 0, 1), True, id="a_eq_b-with-sn"),
-        pytest.param("a_eq_b", True, None, False, id="a_eq_b-no-sn"),
+        # incidence/emergence/specular: implemented when surface_normal is set
+        pytest.param("incidence", 0.0, (0, 0, 1), True, id="incidence-with-sn"),
+        pytest.param("incidence", 0.0, None, False, id="incidence-no-sn"),
+        pytest.param("emergence", 0.0, (0, 0, 1), True, id="emergence-with-sn"),
+        pytest.param("specular", True, (0, 0, 1), True, id="specular-with-sn"),
+        pytest.param("specular", True, None, False, id="specular-no-sn"),
         # psi/naz: never implemented (no forward solver yet)
         pytest.param("psi", 0.0, (0, 0, 1), False, id="psi-not-implemented"),
         pytest.param("naz", 0.0, (0, 0, 1), False, id="naz-not-implemented"),
@@ -869,7 +869,7 @@ def test_constraint_set_two_reference_raises():
         ConstraintSet(
             [
                 ReferenceConstraint("psi", 0.0),
-                ReferenceConstraint("alpha_i", 5.0),
+                ReferenceConstraint("incidence", 5.0),
             ]
         )
 
@@ -932,8 +932,8 @@ def test_reference_constraint_hash():
     rc1 = ReferenceConstraint("psi", 90.0)
     rc2 = ReferenceConstraint("psi", 90.0)
     assert hash(rc1) == hash(rc2)
-    # a_eq_b with bool value also hashable
-    rc3 = ReferenceConstraint("a_eq_b", True)
+    # specular with bool value also hashable
+    rc3 = ReferenceConstraint("specular", True)
     assert isinstance(hash(rc3), int)
 
 
@@ -1775,13 +1775,13 @@ _SIXC_MODES = {
     "bisecting_4c",
     "fixed_gamma_5c",
     "fixed_alpha_5c",
-    "fixed_alpha_zaxis",
-    "fixed_beta_zaxis",
-    "alpha_eq_beta_zaxis",
+    "fixed_incidence_zaxis",
+    "fixed_emergence_zaxis",
+    "specular_zaxis",
 }
 
 _SIXC_IMPLEMENTED = {"bisecting_4c", "fixed_gamma_5c", "fixed_alpha_5c"}
-_SIXC_STUBS = {"fixed_alpha_zaxis", "fixed_beta_zaxis", "alpha_eq_beta_zaxis"}
+_SIXC_STUBS = {"fixed_incidence_zaxis", "fixed_emergence_zaxis", "specular_zaxis"}
 
 
 def test_sixc_factory_mode_names():
@@ -1839,9 +1839,13 @@ def test_sixc_surface_mode_implemented_with_surface_normal(mode_name):
         pytest.param("bisecting_4c", True, id="bisecting_4c-has-bisect"),
         pytest.param("fixed_gamma_5c", True, id="fixed_gamma_5c-has-bisect"),
         pytest.param("fixed_alpha_5c", True, id="fixed_alpha_5c-has-bisect"),
-        pytest.param("fixed_alpha_zaxis", False, id="fixed_alpha_zaxis-no-bisect"),
-        pytest.param("fixed_beta_zaxis", False, id="fixed_beta_zaxis-no-bisect"),
-        pytest.param("alpha_eq_beta_zaxis", False, id="alpha_eq_beta_zaxis-no-bisect"),
+        pytest.param(
+            "fixed_incidence_zaxis", False, id="fixed_incidence_zaxis-no-bisect"
+        ),
+        pytest.param(
+            "fixed_emergence_zaxis", False, id="fixed_emergence_zaxis-no-bisect"
+        ),
+        pytest.param("specular_zaxis", False, id="specular_zaxis-no-bisect"),
     ],
 )
 def test_sixc_mode_has_bisect(mode_name, expected_has_bisect):
@@ -1853,20 +1857,30 @@ def test_sixc_mode_has_bisect(mode_name, expected_has_bisect):
     "mode_name, extras_key, expected_value",
     [
         pytest.param(
-            "fixed_alpha_zaxis", "n_hat", "REQUIRED", id="fixed_alpha_zaxis-n_hat"
+            "fixed_incidence_zaxis",
+            "n_hat",
+            "REQUIRED",
+            id="fixed_incidence_zaxis-n_hat",
         ),
         pytest.param(
-            "fixed_alpha_zaxis", "alpha_i", None, id="fixed_alpha_zaxis-alpha_i-output"
+            "fixed_incidence_zaxis",
+            "incidence",
+            None,
+            id="fixed_incidence_zaxis-incidence-output",
         ),
         pytest.param(
-            "fixed_beta_zaxis", "n_hat", "REQUIRED", id="fixed_beta_zaxis-n_hat"
+            "fixed_emergence_zaxis",
+            "n_hat",
+            "REQUIRED",
+            id="fixed_emergence_zaxis-n_hat",
         ),
         pytest.param(
-            "fixed_beta_zaxis", "beta_out", None, id="fixed_beta_zaxis-beta_out-output"
+            "fixed_emergence_zaxis",
+            "emergence",
+            None,
+            id="fixed_emergence_zaxis-emergence-output",
         ),
-        pytest.param(
-            "alpha_eq_beta_zaxis", "n_hat", "REQUIRED", id="alpha_eq_beta_zaxis-n_hat"
-        ),
+        pytest.param("specular_zaxis", "n_hat", "REQUIRED", id="specular_zaxis-n_hat"),
     ],
 )
 def test_sixc_zaxis_extras_declared(mode_name, extras_key, expected_value):
@@ -1979,11 +1993,13 @@ def test_s2d2_fixed_mu_is_implemented():
     "factory, mode_name, extras_key, expected_value",
     [
         pytest.param(zaxis, "zaxis", "n_hat", "REQUIRED", id="zaxis-n_hat"),
-        pytest.param(zaxis, "zaxis", "alpha_i", None, id="zaxis-alpha_i-output"),
-        pytest.param(zaxis, "zaxis", "beta_out", None, id="zaxis-beta_out-output"),
+        pytest.param(zaxis, "zaxis", "incidence", None, id="zaxis-incidence-output"),
+        pytest.param(zaxis, "zaxis", "emergence", None, id="zaxis-emergence-output"),
         pytest.param(zaxis, "reflectivity", "n_hat", "REQUIRED", id="zaxis-refl-n_hat"),
         pytest.param(s2d2, "reflectivity", "n_hat", "REQUIRED", id="s2d2-refl-n_hat"),
-        pytest.param(s2d2, "reflectivity", "alpha_i", None, id="s2d2-alpha_i-output"),
+        pytest.param(
+            s2d2, "reflectivity", "incidence", None, id="s2d2-incidence-output"
+        ),
     ],
 )
 def test_zaxis_s2d2_extras_declared(factory, mode_name, extras_key, expected_value):
@@ -2443,20 +2459,26 @@ def test_qaz_residual_nonzero():
 
 
 def _b3_constraint_set():
-    """Build a ConstraintSet matching psic 'fixed_alpha_i_fixed_chi_fixed_phi'.
+    """Build a ConstraintSet matching psic 'fixed_incidence_fixed_chi_fixed_phi'.
 
     Three settable-value constraints: two SampleConstraint plus one
     ReferenceConstraint.  Used by several with_constraint_values tests
     that exercise the multi-value path.
+
+    The reference constraint is built with the canonical name
+    ``"incidence"`` (issue #299).  The YAML mode name retains its
+    historical ``fixed_alpha_i_*`` spelling because mode names are a
+    separate identifier from the constraint-name vocabulary; that
+    rename, if any, is out of scope for this issue.
     """
     return ConstraintSet(
         [
             SampleConstraint("chi", 0.0),
             SampleConstraint("phi", 0.0),
-            ReferenceConstraint("alpha_i", 0.0),
+            ReferenceConstraint("incidence", 0.0),
         ],
         computed=["mu", "eta", "nu", "delta"],
-        extras={"n_hat": REQUIRED, "alpha_i": None, "beta_out": None},
+        extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         cut_points={"eta": -180.0},
     )
 
@@ -2494,37 +2516,37 @@ def _b3_constraint_set():
         ),
         pytest.param(
             _b3_constraint_set,
-            {"alpha_i": 5.0},
-            {"chi": 0.0, "phi": 0.0, "alpha_i": 5.0},
+            {"incidence": 5.0},
+            {"chi": 0.0, "phi": 0.0, "incidence": 5.0},
             does_not_raise(),
-            id="reference-alpha_i-5",
+            id="reference-incidence-5",
         ),
         pytest.param(
-            # ReferenceConstraint('a_eq_b', ...) only accepts True
+            # ReferenceConstraint('specular', ...) only accepts True
             # (the constraint expresses the *boolean* condition
-            # alpha_i = beta_out; there is no False variant).  This
+            # incidence = emergence; there is no False variant).  This
             # case verifies the bool branch of with_constraint_values
             # by re-applying the only legal value.
             lambda: ConstraintSet(
-                [ReferenceConstraint("a_eq_b", True)],
+                [ReferenceConstraint("specular", True)],
                 extras={"n_hat": REQUIRED},
             ),
-            {"a_eq_b": True},
-            {"a_eq_b": True},
+            {"specular": True},
+            {"specular": True},
             does_not_raise(),
-            id="reference-a_eq_b-True",
+            id="reference-specular-True",
         ),
         pytest.param(
             _b3_constraint_set,
-            {"chi": 15.0, "phi": 30.0, "alpha_i": 5.0},
-            {"chi": 15.0, "phi": 30.0, "alpha_i": 5.0},
+            {"chi": 15.0, "phi": 30.0, "incidence": 5.0},
+            {"chi": 15.0, "phi": 30.0, "incidence": 5.0},
             does_not_raise(),
             id="b3-three-values",
         ),
         pytest.param(
             _b3_constraint_set,
             {},
-            {"chi": 0.0, "phi": 0.0, "alpha_i": 0.0},
+            {"chi": 0.0, "phi": 0.0, "incidence": 0.0},
             does_not_raise(),
             id="empty-updates-no-change",
         ),
@@ -2568,8 +2590,8 @@ def test_with_constraint_values_preserves_computed_extras_cut_points():
     assert new.extras is not cs.extras
     assert new.extras == cs.extras
     assert new.extras["n_hat"] is REQUIRED
-    assert new.extras["alpha_i"] is None
-    assert new.extras["beta_out"] is None
+    assert new.extras["incidence"] is None
+    assert new.extras["emergence"] is None
     # OPTIONAL sentinel identity survives too.
     cs2 = ConstraintSet(
         [SampleConstraint("chi", 0.0)],
@@ -2598,7 +2620,7 @@ def test_with_constraint_values_unknown_key_raises_KeyError():
         match=re.escape(
             "with_constraint_values: no constraint(s) named "
             "['cho'] in this ConstraintSet; available names "
-            "are ['alpha_i', 'chi', 'phi']."
+            "are ['chi', 'incidence', 'phi']."
         ),
     ):
         cs.with_constraint_values(cho=45.0)
@@ -2688,8 +2710,8 @@ def test_with_constraint_values_round_trips_via_to_dict():
     """Replace then restore via to_dict comparison: identical dicts."""
     cs = _b3_constraint_set()
     original_dict = cs.to_dict()
-    intermediate = cs.with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)
-    restored = intermediate.with_constraint_values(chi=0.0, phi=0.0, alpha_i=0.0)
+    intermediate = cs.with_constraint_values(chi=15.0, phi=30.0, incidence=5.0)
+    restored = intermediate.with_constraint_values(chi=0.0, phi=0.0, incidence=0.0)
     assert restored.to_dict() == original_dict
 
 
@@ -2762,13 +2784,13 @@ def test_extras_non_placeholder_keys_never_warn():
 
     cs = ConstraintSet(
         [SampleConstraint("chi", 0.0)],
-        extras={"psi": None, "alpha_i": None, "beta_out": None, "omega": None},
+        extras={"psi": None, "incidence": None, "emergence": None, "omega": None},
     )
     with warnings.catch_warnings(record=True) as captured:
         warnings.simplefilter("always")
         cs.extras["psi"] = 12.5
-        cs.extras["alpha_i"] = 5.0
-        cs.extras["beta_out"] = 5.0
+        cs.extras["incidence"] = 5.0
+        cs.extras["emergence"] = 5.0
         cs.extras["omega"] = 0.0
         cs.extras["new_key"] = "anything"
     placeholder_warnings = [

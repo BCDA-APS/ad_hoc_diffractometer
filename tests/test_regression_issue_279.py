@@ -8,8 +8,8 @@ Before the fix, the surface-mode solver
 ``2θ`` angle to the **last** stage in ``geometry.detector_stages``
 unconditionally.  For psic that last stage is ``delta``, and the
 horizontal surface modes
-(``fixed_alpha_i_horizontal``, ``fixed_beta_out_horizontal``,
-``alpha_eq_beta_horizontal``) declare a
+(``fixed_incidence_horizontal``, ``fixed_emergence_horizontal``,
+``specular_horizontal``) declare a
 :class:`~ad_hoc_diffractometer.mode.DetectorConstraint` that pins
 ``delta = 0``.  The solver therefore overwrote the pinned value
 moments after applying it and left the truly active detector stage
@@ -17,8 +17,8 @@ moments after applying it and left the truly active detector stage
 ``nu = 0`` that violated the mode's own constraint.
 
 The mirror failure occurred in the vertical surface modes
-(``fixed_alpha_i_vertical``, ``fixed_beta_out_vertical``,
-``alpha_eq_beta_vertical``), where the mode pins ``nu = 0`` and
+(``fixed_incidence_vertical``, ``fixed_emergence_vertical``,
+``specular_vertical``), where the mode pins ``nu = 0`` and
 the active detector stage is ``delta`` — but the dispatch picked
 ``delta`` for both roles regardless, so the constraint happened to
 agree with the active stage by accident (the resulting ``nu = 0``
@@ -64,17 +64,17 @@ WAVELENGTH = 1.5406  # Cu Kα
 # Surface-reference modes on psic whose DetectorConstraint pins the
 # inner (delta) stage so the active detector for 2θ must be ``nu``.
 _PSIC_HORIZONTAL_SURFACE_MODES = (
-    "fixed_alpha_i_horizontal",
-    "fixed_beta_out_horizontal",
-    "alpha_eq_beta_horizontal",
+    "fixed_incidence_horizontal",
+    "fixed_emergence_horizontal",
+    "specular_horizontal",
 )
 
 # Surface-reference modes on psic whose DetectorConstraint pins the
 # outer (nu) stage so the active detector for 2θ must be ``delta``.
 _PSIC_VERTICAL_SURFACE_MODES = (
-    "fixed_alpha_i_vertical",
-    "fixed_beta_out_vertical",
-    "alpha_eq_beta_vertical",
+    "fixed_incidence_vertical",
+    "fixed_emergence_vertical",
+    "specular_vertical",
 )
 
 
@@ -170,21 +170,21 @@ def test_psic_vertical_surface_honors_nu_pin(mode_name, context):
         # must not alter the existing healthy round-trip count.
         pytest.param(
             sixc,
-            "fixed_alpha_zaxis",
+            "fixed_incidence_zaxis",
             1,
             0,
             0,
             does_not_raise(),
-            id="sixc-fixed_alpha_zaxis-100",
+            id="sixc-fixed_incidence_zaxis-100",
         ),
         pytest.param(
             sixc,
-            "alpha_eq_beta_zaxis",
+            "specular_zaxis",
             1,
             0,
             0,
             does_not_raise(),
-            id="sixc-alpha_eq_beta_zaxis-100",
+            id="sixc-specular_zaxis-100",
         ),
         # zaxis reflectivity mode: confirm at least one returned
         # solution still round-trips, i.e. the legacy path is intact.
@@ -278,7 +278,7 @@ def test_solve_surface_returns_empty_when_only_detector_stage_pinned():
         constraints=[
             SampleConstraint("omega", 0.0),
             DetectorConstraint(det_name, 0.0),
-            ReferenceConstraint("alpha_i", 0.0),
+            ReferenceConstraint("incidence", 0.0),
         ],
     )
 

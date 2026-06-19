@@ -105,44 +105,44 @@ Override at run time with `g.modes["fixed_alpha_5c"].with_constraint_values(alph
 | **Computed** | omega, chi, phi, delta, gamma |
 | **Constant during** `forward()` | alpha, gamma = 0 |
 
-### `fixed_alpha_zaxis`
+### `fixed_incidence_zaxis`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2 + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 Z-axis mode with fixed incidence angle. Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
-Override any of the three pinned values at run time with `g.modes["fixed_alpha_zaxis"].with_constraint_values(alpha=..., chi=..., phi=...)` — see {doc}`../howto/constraints`.
+Override any of the three pinned values at run time with `g.modes["fixed_incidence_zaxis"].with_constraint_values(alpha=..., chi=..., phi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
 | **Computed** | omega, delta, gamma |
 | **Constant during** `forward()` | alpha (= β_in), chi, phi |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i (incidence angle), beta_out (exit angle) |
+| **Extras (output)** | incidence (incidence angle), emergence (exit angle) |
 
-### `fixed_beta_zaxis`
+### `fixed_emergence_zaxis`
 
 {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 Z-axis mode with fixed exit angle. Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
-Override at run time with `g.modes["fixed_beta_zaxis"].with_constraint_values(gamma=..., chi=...)` — see {doc}`../howto/constraints`.
+Override at run time with `g.modes["fixed_emergence_zaxis"].with_constraint_values(gamma=..., chi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
 | **Computed** | omega, delta, alpha |
 | **Constant during** `forward()` | gamma (= β_out), chi |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i, beta_out |
+| **Extras (output)** | incidence, emergence |
 
-### `alpha_eq_beta_zaxis`
+### `specular_zaxis`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2 + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
 Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
-Override the chi or phi pin at run time with `g.modes["alpha_eq_beta_zaxis"].with_constraint_values(chi=..., phi=...)` — see {doc}`../howto/constraints`.
+Override the chi or phi pin at run time with `g.modes["specular_zaxis"].with_constraint_values(chi=..., phi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|
 | **Computed** | omega, delta, alpha, gamma |
 | **Constant during** `forward()` | chi, phi |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i, beta_out |
+| **Extras (output)** | incidence, emergence |
 
 ## API reference
 

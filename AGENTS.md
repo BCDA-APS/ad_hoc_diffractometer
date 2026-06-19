@@ -4,6 +4,50 @@ This file provides context for AI coding agents working on this project.
 
 ---
 
+## Operating directives (pre-v1.0)
+
+These rules apply for every issue and every PR until the project tags
+v1.0.  They override anything in the rest of this file or in the
+agent's general training that conflicts.
+
+### No deprecation cycles
+
+Rename freely.  Do not add forwarding aliases, `DeprecationWarning`
+emitters, alias maps, `REMOVE-AT-V1.0` markers, or any other
+deprecation-cycle infrastructure for any rename, signature change, or
+removal.  The whole package is still pre-1.0; users have no API
+stability contract yet.  Make the change cleanly, update every
+in-tree call site, document the change in `CHANGES.md`, move on.
+
+### Scope is the issue
+
+The issue text defines the scope.  If something falls under the
+issue's title or stated motivation, it is in scope by default.  Do
+not unilaterally narrow the scope or split work into "follow-up"
+issues.  If the scope is genuinely ambiguous, ask exactly one
+clarifying question, then proceed.
+
+### No volunteered follow-up issues
+
+Do not file new issues, propose new issues, or build "future v1.0
+cleanup" tracking unless the user asks.  Pre-1.0 cleanup is just
+"edit the code now."
+
+### Response length matches the request
+
+When the user asks a brief question, answer briefly: a sentence or a
+short list, no tables, no preamble, no recap.  When the user asks
+for analysis or a plan, longer is fine.  Match the form of the
+request.
+
+### When in doubt, ask one short question
+
+A single clarifying question is cheaper than building the wrong
+thing and unwinding it.  Do not stack multiple questions; ask one,
+wait, then proceed.
+
+---
+
 ## Attribution
 
 Always sign your work. Every commit message, pull request description, and

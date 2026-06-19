@@ -83,35 +83,35 @@ modes:
             - {type: detector, stage: gamma, value: 0.0}
         computed: [omega, chi, phi, delta, gamma]
 
-    fixed_alpha_zaxis:
+    fixed_incidence_zaxis:
         constraints:
             - {type: sample,    stage: alpha, value: 0.0}
             - {type: sample,    stage: chi,   value: 0.0}
-            - {type: reference, name: alpha_i, value: 0.0}
+            - {type: reference, name: incidence, value: 0.0}
         computed: [omega, delta, gamma]
         extras:
             n_hat: REQUIRED
-            alpha_i: null
-            beta_out: null
+            incidence: null
+            emergence: null
 
-    fixed_beta_zaxis:
+    fixed_emergence_zaxis:
         constraints:
             - {type: detector,  stage: gamma, value: 0.0}
             - {type: sample,    stage: chi,   value: 0.0}
-            - {type: reference, name: beta_out, value: 0.0}
+            - {type: reference, name: emergence, value: 0.0}
         computed: [omega, delta, alpha]
         extras:
             n_hat: REQUIRED
-            alpha_i: null
-            beta_out: null
+            incidence: null
+            emergence: null
 
-    alpha_eq_beta_zaxis:
+    specular_zaxis:
         constraints:
             - {type: sample,    stage: chi, value: 0.0}
             - {type: sample,    stage: phi, value: 0.0}
-            - {type: reference, name: a_eq_b, value: true}
+            - {type: reference, name: specular, value: true}
         computed: [omega, delta, alpha, gamma]
         extras:
             n_hat: REQUIRED
-            alpha_i: null
-            beta_out: null
+            incidence: null
+            emergence: null

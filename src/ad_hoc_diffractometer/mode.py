@@ -39,8 +39,8 @@ over-constrain the scattered beam direction.
 condition between Q and an external reference vector n̂ (surface normal,
 polarization axis, etc.) stored on the geometry.  The named options are
 physical pseudo-angles from You (1999) and Lohmeier & Vlieg (1993):
-``"psi"``, ``"alpha_i"``, ``"beta_out"``, ``"a_eq_b"``, ``"naz"``.  At
-most one reference constraint is allowed.
+``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``, ``"naz"``.
+At most one reference constraint is allowed.
 
 Classes
 -------
@@ -195,7 +195,14 @@ class ConstraintViolation(ValueError):
 # ---------------------------------------------------------------------------
 
 REFERENCE_NAMES: frozenset[str] = frozenset(
-    {"psi", "alpha_i", "beta_out", "a_eq_b", "naz", "omega"}
+    {
+        "psi",
+        "incidence",
+        "emergence",
+        "specular",
+        "naz",
+        "omega",
+    }
 )
 """Valid reference constraint names (physical pseudo-angles).
 
@@ -206,14 +213,15 @@ the SPEC ``OMEGA`` pseudo-angle, defined entirely by the diffractometer
 geometry (no reference vector required):
 
 - ``"psi"`` — azimuthal angle of n̂ about Q (You 1999, eq. 23)
-- ``"alpha_i"`` — angle of incidence (incident beam vs. surface plane)
-- ``"beta_out"`` — angle of exit (diffracted beam vs. surface plane)
-- ``"a_eq_b"`` — relational: alpha_i = beta_out (symmetric reflection)
+- ``"incidence"`` — angle of incidence (incident beam vs. surface plane)
+- ``"emergence"`` — angle of emergence (diffracted beam vs. surface plane)
+- ``"specular"`` — specular reflection (relational: incidence = emergence)
 - ``"naz"`` — azimuthal angle of n̂ in the lab frame
 - ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``): angle between
   Q and the plane of the chi circle (psic family); see
   :func:`~ad_hoc_diffractometer.reference.omega_pseudo`
 """
+
 
 QAZ: str = "qaz"
 """Special name for the qaz detector pseudo-angle (You 1999, eq. 18).
@@ -315,7 +323,7 @@ class _ExtrasDict(dict):
                 f"effect on forward().  Set the reference vector on the "
                 f"geometry instead: use 'g.surface_normal = (h, k, l)' "
                 f"for surface-mode constraints "
-                f"(alpha_i / beta_out / a_eq_b), or "
+                f"(incidence / emergence / specular), or "
                 f"'g.azimuth = (h, k, l)' for "
                 f"psi / naz constraints.  See "
                 f"AdHocDiffractometer.required_reference_vector to "
@@ -847,14 +855,14 @@ class ReferenceConstraint:
 
     ``"psi"``
         Azimuthal angle of n̂ about Q (You 1999, eq. 23).
-    ``"alpha_i"``
+    ``"incidence"``
         Angle of incidence: angle between the incident beam and the surface
         plane (perpendicular to n̂).
-    ``"beta_out"``
-        Angle of exit: angle between the diffracted beam and the surface
-        plane.
-    ``"a_eq_b"``
-        Relational: alpha_i = beta_out (symmetric reflection).
+    ``"emergence"``
+        Angle of emergence: angle between the diffracted beam and the
+        surface plane.
+    ``"specular"``
+        Specular reflection: relational condition ``incidence = emergence``.
         ``value`` must be ``True``.
     ``"naz"``
         Azimuthal angle of n̂ in the lab frame (You 1999).
@@ -862,17 +870,19 @@ class ReferenceConstraint:
     Parameters
     ----------
     name : str
-        One of ``"psi"``, ``"alpha_i"``, ``"beta_out"``, ``"a_eq_b"``,
-        ``"naz"``.
+        One of ``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``,
+        ``"naz"``, ``"omega"``.
     value : float or bool
-        Target value in degrees (or ``True`` for ``"a_eq_b"``).
+        Target value in degrees (or ``True`` for ``"specular"``).
 
     Examples
     --------
     >>> ReferenceConstraint("psi", 90.0)
     ReferenceConstraint('psi', 90.0)
-    >>> ReferenceConstraint("a_eq_b", True)
-    ReferenceConstraint('a_eq_b', True)
+    >>> ReferenceConstraint("specular", True)
+    ReferenceConstraint('specular', True)
+    >>> ReferenceConstraint("incidence", 5.0)
+    ReferenceConstraint('incidence', 5.0)
     """
 
     category: str = "reference"
@@ -881,16 +891,16 @@ class ReferenceConstraint:
     def __init__(self, name: str, value: float | bool) -> None:
         if name not in REFERENCE_NAMES:
             raise ValueError(
-                f"ReferenceConstraint name must be one of {sorted(REFERENCE_NAMES)}; "
-                f"got {name!r}."
+                f"ReferenceConstraint name must be one of "
+                f"{sorted(REFERENCE_NAMES)}; got {name!r}."
             )
-        if name == "a_eq_b" and value is not True:
+        if name == "specular" and value is not True:
             raise ValueError(
-                "ReferenceConstraint('a_eq_b', value): value must be True; "
+                "ReferenceConstraint('specular', value): value must be True; "
                 f"got {value!r}."
             )
         self._name = name
-        self._value: float | bool = True if name == "a_eq_b" else float(value)  # type: ignore[arg-type]
+        self._value: float | bool = True if name == "specular" else float(value)  # type: ignore[arg-type]
 
     @property
     def name(self) -> str:
@@ -899,7 +909,7 @@ class ReferenceConstraint:
 
     @property
     def value(self) -> float | bool:
-        """Target value in degrees, or ``True`` for ``"a_eq_b"``."""
+        """Target value in degrees, or ``True`` for ``"specular"``."""
         return self._value
 
     def evaluate(
@@ -938,7 +948,7 @@ class ReferenceConstraint:
         For ``"psi"`` and ``"naz"``: requires
         :attr:`~geometry.AdHocDiffractometer.azimuth` to be set.
 
-        For ``"alpha_i"``, ``"beta_out"``, and ``"a_eq_b"``: requires
+        For ``"incidence"``, ``"emergence"``, and ``"specular"``: requires
         :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
 
         For ``"omega"``: no reference vector is required (always returns
@@ -963,9 +973,9 @@ class ReferenceConstraint:
 
         Implemented constraints:
 
-        - ``"alpha_i"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
-        - ``"beta_out"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
-        - ``"a_eq_b"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+        - ``"incidence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+        - ``"emergence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+        - ``"specular"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuth`.
           The forward solver treats ψ as a **validation filter**: for a given
           (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for
@@ -989,7 +999,7 @@ class ReferenceConstraint:
         if self._name == "omega":
             # Implemented for any geometry with a chi sample stage.
             return any(s.name == "chi" for s in geometry.sample_stages)
-        # alpha_i, beta_out, a_eq_b — implemented when surface_normal is set
+        # incidence, emergence, specular — implemented when surface_normal is set
         return geometry.surface_normal is not None
 
     def to_dict(self) -> dict:
@@ -1357,7 +1367,7 @@ class ConstraintSet:
             exactly match the ``.name`` attribute of an existing
             :class:`SampleConstraint`, :class:`DetectorConstraint`, or
             :class:`ReferenceConstraint` in the set.  Values are floats
-            (or ``bool`` for the ``"a_eq_b"`` :class:`ReferenceConstraint`).
+            (or ``bool`` for the ``"specular"`` :class:`ReferenceConstraint`).
 
         Returns
         -------
@@ -1387,11 +1397,11 @@ class ConstraintSet:
         ...     g.modes["fixed_chi_vertical"].with_constraint_values(chi=45.0)
         ... )
 
-        Multiple values at once (psic ``fixed_alpha_i_fixed_chi_fixed_phi``):
+        Multiple values at once (psic ``fixed_incidence_fixed_chi_fixed_phi``):
 
-        >>> g.modes["fixed_alpha_i_fixed_chi_fixed_phi"] = (
-        ...     g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
-        ...     .with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)
+        >>> g.modes["fixed_incidence_fixed_chi_fixed_phi"] = (
+        ...     g.modes["fixed_incidence_fixed_chi_fixed_phi"]
+        ...     .with_constraint_values(chi=15.0, phi=30.0, incidence=5.0)
         ... )
 
         Notes
