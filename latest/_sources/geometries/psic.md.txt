@@ -106,11 +106,11 @@ The scattering plane is locked vertical by `mu = 0` and `nu = 0`;
 | **Computed** | eta, phi, delta |
 | **Constant during** `forward()` | chi, mu = 0, nu = 0 |
 
-### `fixed_alpha_i_vertical`
+### `fixed_incidence_vertical`
 
 Incidence angle α_i fixed at declared value (default 0°) in the
 vertical scattering plane.
-Override at run time with `g.modes["fixed_alpha_i_vertical"].with_constraint_values(alpha_i=...)` — see {doc}`../howto/constraints`.
+Override at run time with `g.modes["fixed_incidence_vertical"].with_constraint_values(incidence=...)` — see {doc}`../howto/constraints`.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -118,13 +118,13 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i (incidence angle), beta_out (exit angle) |
+| **Extras (output)** | incidence (incidence angle), emergence (exit angle) |
 
-### `fixed_beta_out_vertical`
+### `fixed_emergence_vertical`
 
 Exit angle β_out fixed at declared value (default 0°) in the
 vertical scattering plane.
-Override at run time with `g.modes["fixed_beta_out_vertical"].with_constraint_values(beta_out=...)` — see {doc}`../howto/constraints`.
+Override at run time with `g.modes["fixed_emergence_vertical"].with_constraint_values(emergence=...)` — see {doc}`../howto/constraints`.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -132,9 +132,9 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i, beta_out |
+| **Extras (output)** | incidence, emergence |
 
-### `alpha_eq_beta_vertical`
+### `specular_vertical`
 
 Symmetric reflection: α_i = β_out in the vertical scattering plane.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
@@ -144,7 +144,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | eta, chi, phi, delta |
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i, beta_out |
+| **Extras (output)** | incidence, emergence |
 
 ### `fixed_psi_vertical`
 
@@ -167,7 +167,7 @@ validated ψ.  See {doc}`../howto/surface`.
 | **Extras (input)** | n̂ → set `g.azimuth = (h, k, l)`; ψ target via `with_constraint_values(psi=...)` |
 | **Extras (output)** | psi (computed azimuth) |
 
-### `fixed_alpha_i_fixed_chi_fixed_phi`
+### `fixed_incidence_fixed_chi_fixed_phi`
 
 Issue #264.  Two sample stages (`chi`, `phi`) and the incidence angle
 α_i are all fixed; the four remaining angles `mu`, `eta`, `nu`, `delta`
@@ -175,7 +175,7 @@ are solved jointly from the Bragg condition plus the α_i target.
 This is a 4-D Newton solve that routes through the
 ``_solve_free_detectors`` solver (both detector stages float to lift
 the detector arm out of plane as needed).
-Override any of the three pinned values at run time with `g.modes["fixed_alpha_i_fixed_chi_fixed_phi"].with_constraint_values(chi=..., phi=..., alpha_i=...)` — see {doc}`../howto/constraints`.
+Override any of the three pinned values at run time with `g.modes["fixed_incidence_fixed_chi_fixed_phi"].with_constraint_values(chi=..., phi=..., incidence=...)` — see {doc}`../howto/constraints`.
 
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
@@ -184,7 +184,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | mu, eta, nu, delta |
 | **Constant during** `forward()` | chi, phi, α_i = target |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i, beta_out |
+| **Extras (output)** | incidence, emergence |
 
 ### `fixed_omega_vertical`
 
@@ -296,11 +296,11 @@ is kinematically infeasible in this mode.
 | **Computed** | mu, phi, nu |
 | **Constant during** `forward()` | chi, eta = 0, delta = 0 |
 
-### `fixed_alpha_i_horizontal`
+### `fixed_incidence_horizontal`
 
 Incidence angle α_i fixed at declared value (default 0°) in the
 horizontal scattering plane.
-Override at run time with `g.modes["fixed_alpha_i_horizontal"].with_constraint_values(alpha_i=...)` — see {doc}`../howto/constraints`.
+Override at run time with `g.modes["fixed_incidence_horizontal"].with_constraint_values(incidence=...)` — see {doc}`../howto/constraints`.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -308,13 +308,13 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | eta = 0, delta = 0 |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i, beta_out |
+| **Extras (output)** | incidence, emergence |
 
-### `fixed_beta_out_horizontal`
+### `fixed_emergence_horizontal`
 
 Exit angle β_out fixed at declared value (default 0°) in the
 horizontal scattering plane.
-Override at run time with `g.modes["fixed_beta_out_horizontal"].with_constraint_values(beta_out=...)` — see {doc}`../howto/constraints`.
+Override at run time with `g.modes["fixed_emergence_horizontal"].with_constraint_values(emergence=...)` — see {doc}`../howto/constraints`.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -322,9 +322,9 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | eta = 0, delta = 0 |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i, beta_out |
+| **Extras (output)** | incidence, emergence |
 
-### `alpha_eq_beta_horizontal`
+### `specular_horizontal`
 
 Symmetric reflection: α_i = β_out in the horizontal scattering plane.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
@@ -334,7 +334,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Computed** | mu, chi, phi, nu |
 | **Constant during** `forward()` | eta = 0, delta = 0 |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i, beta_out |
+| **Extras (output)** | incidence, emergence |
 
 ### `fixed_psi_horizontal`
 
@@ -449,23 +449,23 @@ the Hkl/Soleil `E6C` `hkl` engine, and You (1999).
 | `bisecting_vertical` | `(2,0,5,0,0)` | `bissector_vertical` | §5.1 |
 | `fixed_phi_vertical` | `(2,0,4,2,0)` | `constant_phi_vertical` | §5.2 |
 | `fixed_chi_vertical` | `(2,0,3,2,0)` | `constant_chi_vertical` | §5.2 |
-| `fixed_alpha_i_vertical` | `(2,2,2,0,0)` | — | §6.1 |
-| `fixed_beta_out_vertical` | `(2,3,2,0,0)` | — | §6.2 |
-| `alpha_eq_beta_vertical` | `(2,1,2,0,0)` | — | §6.3 |
+| `fixed_incidence_vertical` | `(2,2,2,0,0)` | — | §6.1 |
+| `fixed_emergence_vertical` | `(2,3,2,0,0)` | — | §6.2 |
 | `fixed_psi_vertical` | `(2,4,2,0,0)` | `psi_constant_vertical` | §6.4 |
-| `fixed_alpha_i_fixed_chi_fixed_phi` | `(2,2,3,4,0)` ‡ | — | §6.1 |
+| `fixed_incidence_fixed_chi_fixed_phi` | `(2,2,3,4,0)` ‡ | — | §6.1 |
 | `fixed_omega_vertical` | `setmode d1 0 0 0` | — | §5 (Q[6]) |
 | `double_diffraction_vertical` | — | `double_diffraction_vertical` | §6.5 |
+| `specular_vertical` | `(2,1,2,0,0)` | — | §6.3 |
 | `zone_vertical` | `setmode 5` | (TODO `HklEngine "zone"`) | §6 |
 | `bisecting_horizontal` | `(1,0,6,0,0)` | `bissector_horizontal` | §5.1 |
 | `fixed_phi_horizontal` | `(1,0,4,1,0)` † | — | §5.2 |
 | `fixed_chi_horizontal` | `(1,0,3,1,0)` † | — | §5.2 |
-| `fixed_alpha_i_horizontal` | `(1,2,1,0,0)` | — | §6.1 |
-| `fixed_beta_out_horizontal` | `(1,3,1,0,0)` | — | §6.2 |
-| `alpha_eq_beta_horizontal` | `(1,1,1,0,0)` | — | §6.3 |
+| `fixed_incidence_horizontal` | `(1,2,1,0,0)` | — | §6.1 |
+| `fixed_emergence_horizontal` | `(1,3,1,0,0)` | — | §6.2 |
 | `fixed_psi_horizontal` | `(1,4,1,0,0)` | `psi_constant_horizontal` | §6.4 |
 | `fixed_omega_horizontal` | `setmode d1 0 0 0` | — | §5 (Q[6]) |
 | `double_diffraction_horizontal` | — | `double_diffraction_horizontal` | §6.5 |
+| `specular_horizontal` | `(1,1,1,0,0)` | — | §6.3 |
 | `zone_horizontal` | `setmode 5` | (TODO `HklEngine "zone"`) | §6 |
 | `lifting_detector_phi` | `setmode 0 0 2 3 5` ‡ | `lifting_detector_phi` | §5.4 |
 | `lifting_detector_mu` | `setmode 0 0 1 3 4` ‡ | `lifting_detector_mu` | §5.4 |

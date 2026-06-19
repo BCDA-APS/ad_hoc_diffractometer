@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../_static/documentation_options.js?v=4ef7c848"></script>
+    <script src="../_static/documentation_options.js?v=ab3c2475"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-18 22:27 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -608,15 +608,15 @@ This is implemented for all geometries with two or more detector stages
 (psic, kappa6c) and used by the <code class="docutils literal notranslate"><span class="pre">lifting_detector_*</span></code> mode family.</p>
 <p><strong>Reference constraint</strong> — expresses a condition between Q and a reference
 vector n̂ (surface normal, polarization axis, etc.).
-The incidence/exit-angle constraints (<code class="docutils literal notranslate"><span class="pre">alpha_i</span></code>, <code class="docutils literal notranslate"><span class="pre">beta_out</span></code>,
-<code class="docutils literal notranslate"><span class="pre">a_eq_b</span></code>) are implemented when <code class="docutils literal notranslate"><span class="pre">surface_normal</span></code> is set;
+The incidence/emergence-angle constraints (<code class="docutils literal notranslate"><span class="pre">incidence</span></code>, <code class="docutils literal notranslate"><span class="pre">emergence</span></code>,
+<code class="docutils literal notranslate"><span class="pre">specular</span></code>) are implemented when <code class="docutils literal notranslate"><span class="pre">surface_normal</span></code> is set;
 <code class="docutils literal notranslate"><span class="pre">psi</span></code> and <code class="docutils literal notranslate"><span class="pre">naz</span></code> are not yet implemented as forward constraints.
 See <a class="reference internal" href="surface.html"><span class="doc">Surface Geometry and the Reference Vector</span></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
 
-<span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>       <span class="c1"># azimuthal angle of n̂ about Q</span>
-<span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;alpha_i&quot;</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>    <span class="c1"># incidence angle</span>
-<span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;a_eq_b&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>    <span class="c1"># alpha_i = beta_out (symmetric)</span>
+<span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>         <span class="c1"># azimuthal angle of n̂ about Q</span>
+<span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;incidence&quot;</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>    <span class="c1"># incidence angle</span>
+<span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;specular&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>      <span class="c1"># incidence = emergence (symmetric)</span>
 </pre></div>
 </div>
 <p><strong>Rules:</strong> at most one <a class="reference internal" href="../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a>,
@@ -688,17 +688,17 @@ readable for your case.</p>
 <p><code class="docutils literal notranslate"><span class="pre">ConstraintSet.with_constraint_values(**updates)</span></code> returns a fresh
 <code class="docutils literal notranslate"><span class="pre">ConstraintSet</span></code> with the named constraint values replaced.  Each keyword
 argument names a constraint by its <code class="docutils literal notranslate"><span class="pre">.name</span></code> attribute (a stage name for
-sample / detector constraints, a reference name like <code class="docutils literal notranslate"><span class="pre">alpha_i</span></code> /
-<code class="docutils literal notranslate"><span class="pre">beta_out</span></code> / <code class="docutils literal notranslate"><span class="pre">psi</span></code> / <code class="docutils literal notranslate"><span class="pre">a_eq_b</span></code> for reference constraints).  Constraint
+sample / detector constraints, a reference name like <code class="docutils literal notranslate"><span class="pre">incidence</span></code> /
+<code class="docutils literal notranslate"><span class="pre">emergence</span></code> / <code class="docutils literal notranslate"><span class="pre">psi</span></code> / <code class="docutils literal notranslate"><span class="pre">specular</span></code> for reference constraints).  Constraint
 order, <code class="docutils literal notranslate"><span class="pre">computed</span></code>, <code class="docutils literal notranslate"><span class="pre">extras</span></code>, and <code class="docutils literal notranslate"><span class="pre">cut_points</span></code> are preserved.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
 
 <span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="s2">&quot;psic&quot;</span><span class="p">)</span>
 
-<span class="c1"># Multiple values at once (psic B3 mode: chi, phi, and the alpha_i target):</span>
-<span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span>
-    <span class="o">.</span><span class="n">with_constraint_values</span><span class="p">(</span><span class="n">chi</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">alpha_i</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
+<span class="c1"># Multiple values at once (psic B3 mode: chi, phi, and the incidence target):</span>
+<span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_incidence_fixed_chi_fixed_phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_incidence_fixed_chi_fixed_phi&quot;</span><span class="p">]</span>
+    <span class="o">.</span><span class="n">with_constraint_values</span><span class="p">(</span><span class="n">chi</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">incidence</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
 <span class="p">)</span>
 
 <span class="c1"># Single value (psic fixed_chi_vertical: default chi=90° → 45°):</span>
@@ -753,16 +753,16 @@ values), construct a new <code class="docutils literal notranslate"><span class=
 <code class="docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
 
-<span class="c1"># psic B3 mode: pin the incidence angle alpha_i at 5° instead of the</span>
+<span class="c1"># psic B3 mode: pin the incidence angle at 5° instead of the</span>
 <span class="c1"># YAML default 0°.</span>
-<span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+<span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_incidence_fixed_chi_fixed_phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
         <span class="n">SampleConstraint</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-        <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;alpha_i&quot;</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span>  <span class="c1"># was 0.0; now 5.0</span>
+        <span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;incidence&quot;</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span>  <span class="c1"># was 0.0; now 5.0</span>
     <span class="p">],</span>
-    <span class="n">computed</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">computed</span><span class="p">,</span>
-    <span class="n">extras</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extras</span><span class="p">),</span>
+    <span class="n">computed</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_incidence_fixed_chi_fixed_phi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">computed</span><span class="p">,</span>
+    <span class="n">extras</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_incidence_fixed_chi_fixed_phi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extras</span><span class="p">),</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -1004,7 +1004,7 @@ that has <code class="docutils literal notranslate"><span class="pre">is_impleme
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-15 18:38 CDT.
+  Last updated on 2026-06-18 22:27 CDT.
   <br/>
 </p></div>
       

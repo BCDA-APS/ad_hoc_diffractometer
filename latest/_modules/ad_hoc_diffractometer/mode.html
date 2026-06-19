@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=4ef7c848"></script>
+    <script src="../../_static/documentation_options.js?v=ab3c2475"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-18 22:27 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -473,8 +473,8 @@
 <span class="sd">condition between Q and an external reference vector n̂ (surface normal,</span>
 <span class="sd">polarization axis, etc.) stored on the geometry.  The named options are</span>
 <span class="sd">physical pseudo-angles from You (1999) and Lohmeier &amp; Vlieg (1993):</span>
-<span class="sd">``&quot;psi&quot;``, ``&quot;alpha_i&quot;``, ``&quot;beta_out&quot;``, ``&quot;a_eq_b&quot;``, ``&quot;naz&quot;``.  At</span>
-<span class="sd">most one reference constraint is allowed.</span>
+<span class="sd">``&quot;psi&quot;``, ``&quot;incidence&quot;``, ``&quot;emergence&quot;``, ``&quot;specular&quot;``, ``&quot;naz&quot;``.</span>
+<span class="sd">At most one reference constraint is allowed.</span>
 
 <span class="sd">Classes</span>
 <span class="sd">-------</span>
@@ -635,7 +635,14 @@
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 <span class="n">REFERENCE_NAMES</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
-    <span class="p">{</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha_i&quot;</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">,</span> <span class="s2">&quot;a_eq_b&quot;</span><span class="p">,</span> <span class="s2">&quot;naz&quot;</span><span class="p">,</span> <span class="s2">&quot;omega&quot;</span><span class="p">}</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;psi&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;incidence&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;emergence&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;specular&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;naz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;omega&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
 <span class="p">)</span>
 <span class="sd">&quot;&quot;&quot;Valid reference constraint names (physical pseudo-angles).</span>
 
@@ -646,14 +653,15 @@
 <span class="sd">geometry (no reference vector required):</span>
 
 <span class="sd">- ``&quot;psi&quot;`` — azimuthal angle of n̂ about Q (You 1999, eq. 23)</span>
-<span class="sd">- ``&quot;alpha_i&quot;`` — angle of incidence (incident beam vs. surface plane)</span>
-<span class="sd">- ``&quot;beta_out&quot;`` — angle of exit (diffracted beam vs. surface plane)</span>
-<span class="sd">- ``&quot;a_eq_b&quot;`` — relational: alpha_i = beta_out (symmetric reflection)</span>
+<span class="sd">- ``&quot;incidence&quot;`` — angle of incidence (incident beam vs. surface plane)</span>
+<span class="sd">- ``&quot;emergence&quot;`` — angle of emergence (diffracted beam vs. surface plane)</span>
+<span class="sd">- ``&quot;specular&quot;`` — specular reflection (relational: incidence = emergence)</span>
 <span class="sd">- ``&quot;naz&quot;`` — azimuthal angle of n̂ in the lab frame</span>
 <span class="sd">- ``&quot;omega&quot;`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``): angle between</span>
 <span class="sd">  Q and the plane of the chi circle (psic family); see</span>
 <span class="sd">  :func:`~ad_hoc_diffractometer.reference.omega_pseudo`</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 
 <span class="n">QAZ</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;qaz&quot;</span>
 <span class="sd">&quot;&quot;&quot;Special name for the qaz detector pseudo-angle (You 1999, eq. 18).</span>
@@ -757,7 +765,7 @@
                 <span class="sa">f</span><span class="s2">&quot;effect on forward().  Set the reference vector on the &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;geometry instead: use &#39;g.surface_normal = (h, k, l)&#39; &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;for surface-mode constraints &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;(alpha_i / beta_out / a_eq_b), or &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(incidence / emergence / specular), or &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;&#39;g.azimuth = (h, k, l)&#39; for &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;psi / naz constraints.  See &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;AdHocDiffractometer.required_reference_vector to &quot;</span>
@@ -1358,14 +1366,14 @@
 
 <span class="sd">    ``&quot;psi&quot;``</span>
 <span class="sd">        Azimuthal angle of n̂ about Q (You 1999, eq. 23).</span>
-<span class="sd">    ``&quot;alpha_i&quot;``</span>
+<span class="sd">    ``&quot;incidence&quot;``</span>
 <span class="sd">        Angle of incidence: angle between the incident beam and the surface</span>
 <span class="sd">        plane (perpendicular to n̂).</span>
-<span class="sd">    ``&quot;beta_out&quot;``</span>
-<span class="sd">        Angle of exit: angle between the diffracted beam and the surface</span>
-<span class="sd">        plane.</span>
-<span class="sd">    ``&quot;a_eq_b&quot;``</span>
-<span class="sd">        Relational: alpha_i = beta_out (symmetric reflection).</span>
+<span class="sd">    ``&quot;emergence&quot;``</span>
+<span class="sd">        Angle of emergence: angle between the diffracted beam and the</span>
+<span class="sd">        surface plane.</span>
+<span class="sd">    ``&quot;specular&quot;``</span>
+<span class="sd">        Specular reflection: relational condition ``incidence = emergence``.</span>
 <span class="sd">        ``value`` must be ``True``.</span>
 <span class="sd">    ``&quot;naz&quot;``</span>
 <span class="sd">        Azimuthal angle of n̂ in the lab frame (You 1999).</span>
@@ -1373,17 +1381,19 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    name : str</span>
-<span class="sd">        One of ``&quot;psi&quot;``, ``&quot;alpha_i&quot;``, ``&quot;beta_out&quot;``, ``&quot;a_eq_b&quot;``,</span>
-<span class="sd">        ``&quot;naz&quot;``.</span>
+<span class="sd">        One of ``&quot;psi&quot;``, ``&quot;incidence&quot;``, ``&quot;emergence&quot;``, ``&quot;specular&quot;``,</span>
+<span class="sd">        ``&quot;naz&quot;``, ``&quot;omega&quot;``.</span>
 <span class="sd">    value : float or bool</span>
-<span class="sd">        Target value in degrees (or ``True`` for ``&quot;a_eq_b&quot;``).</span>
+<span class="sd">        Target value in degrees (or ``True`` for ``&quot;specular&quot;``).</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; ReferenceConstraint(&quot;psi&quot;, 90.0)</span>
 <span class="sd">    ReferenceConstraint(&#39;psi&#39;, 90.0)</span>
-<span class="sd">    &gt;&gt;&gt; ReferenceConstraint(&quot;a_eq_b&quot;, True)</span>
-<span class="sd">    ReferenceConstraint(&#39;a_eq_b&#39;, True)</span>
+<span class="sd">    &gt;&gt;&gt; ReferenceConstraint(&quot;specular&quot;, True)</span>
+<span class="sd">    ReferenceConstraint(&#39;specular&#39;, True)</span>
+<span class="sd">    &gt;&gt;&gt; ReferenceConstraint(&quot;incidence&quot;, 5.0)</span>
+<span class="sd">    ReferenceConstraint(&#39;incidence&#39;, 5.0)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;reference&quot;</span>
@@ -1392,16 +1402,16 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">REFERENCE_NAMES</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;ReferenceConstraint name must be one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">REFERENCE_NAMES</span><span class="p">)</span><span class="si">}</span><span class="s2">; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;ReferenceConstraint name must be one of &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">REFERENCE_NAMES</span><span class="p">)</span><span class="si">}</span><span class="s2">; got </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;a_eq_b&quot;</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;specular&quot;</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;ReferenceConstraint(&#39;a_eq_b&#39;, value): value must be True; &quot;</span>
+                <span class="s2">&quot;ReferenceConstraint(&#39;specular&#39;, value): value must be True; &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;a_eq_b&quot;</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;specular&quot;</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -1410,7 +1420,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Target value in degrees, or ``True`` for ``&quot;a_eq_b&quot;``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Target value in degrees, or ``True`` for ``&quot;specular&quot;``.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
 
 <div class="viewcode-block" id="ReferenceConstraint.evaluate">
@@ -1457,7 +1467,7 @@
 <span class="sd">        For ``&quot;psi&quot;`` and ``&quot;naz&quot;``: requires</span>
 <span class="sd">        :attr:`~geometry.AdHocDiffractometer.azimuth` to be set.</span>
 
-<span class="sd">        For ``&quot;alpha_i&quot;``, ``&quot;beta_out&quot;``, and ``&quot;a_eq_b&quot;``: requires</span>
+<span class="sd">        For ``&quot;incidence&quot;``, ``&quot;emergence&quot;``, and ``&quot;specular&quot;``: requires</span>
 <span class="sd">        :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.</span>
 
 <span class="sd">        For ``&quot;omega&quot;``: no reference vector is required (always returns</span>
@@ -1485,9 +1495,9 @@
 
 <span class="sd">        Implemented constraints:</span>
 
-<span class="sd">        - ``&quot;alpha_i&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
-<span class="sd">        - ``&quot;beta_out&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
-<span class="sd">        - ``&quot;a_eq_b&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
+<span class="sd">        - ``&quot;incidence&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
+<span class="sd">        - ``&quot;emergence&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
+<span class="sd">        - ``&quot;specular&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
 <span class="sd">        - ``&quot;psi&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.azimuth`.</span>
 <span class="sd">          The forward solver treats ψ as a **validation filter**: for a given</span>
 <span class="sd">          (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for</span>
@@ -1511,7 +1521,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span>
             <span class="c1"># Implemented for any geometry with a chi sample stage.</span>
             <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;chi&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">)</span>
-        <span class="c1"># alpha_i, beta_out, a_eq_b — implemented when surface_normal is set</span>
+        <span class="c1"># incidence, emergence, specular — implemented when surface_normal is set</span>
         <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">surface_normal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
@@ -1906,7 +1916,7 @@
 <span class="sd">            exactly match the ``.name`` attribute of an existing</span>
 <span class="sd">            :class:`SampleConstraint`, :class:`DetectorConstraint`, or</span>
 <span class="sd">            :class:`ReferenceConstraint` in the set.  Values are floats</span>
-<span class="sd">            (or ``bool`` for the ``&quot;a_eq_b&quot;`` :class:`ReferenceConstraint`).</span>
+<span class="sd">            (or ``bool`` for the ``&quot;specular&quot;`` :class:`ReferenceConstraint`).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1936,11 +1946,11 @@
 <span class="sd">        ...     g.modes[&quot;fixed_chi_vertical&quot;].with_constraint_values(chi=45.0)</span>
 <span class="sd">        ... )</span>
 
-<span class="sd">        Multiple values at once (psic ``fixed_alpha_i_fixed_chi_fixed_phi``):</span>
+<span class="sd">        Multiple values at once (psic ``fixed_incidence_fixed_chi_fixed_phi``):</span>
 
-<span class="sd">        &gt;&gt;&gt; g.modes[&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;] = (</span>
-<span class="sd">        ...     g.modes[&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;]</span>
-<span class="sd">        ...     .with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)</span>
+<span class="sd">        &gt;&gt;&gt; g.modes[&quot;fixed_incidence_fixed_chi_fixed_phi&quot;] = (</span>
+<span class="sd">        ...     g.modes[&quot;fixed_incidence_fixed_chi_fixed_phi&quot;]</span>
+<span class="sd">        ...     .with_constraint_values(chi=15.0, phi=30.0, incidence=5.0)</span>
 <span class="sd">        ... )</span>
 
 <span class="sd">        Notes</span>
@@ -2299,7 +2309,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-15 18:38 CDT.
+  Last updated on 2026-06-18 22:27 CDT.
   <br/>
 </p></div>
       

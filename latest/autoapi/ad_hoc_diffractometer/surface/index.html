@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../../_static/documentation_options.js?v=4ef7c848"></script>
+    <script src="../../../_static/documentation_options.js?v=ab3c2475"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-18 22:27 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -551,10 +551,10 @@ surface.</p>
 <section id="public-api">
 <h2>Public API<a class="headerlink" href="#public-api" title="Link to this heading">#</a></h2>
 <dl class="simple">
-<dt>alpha_i(geometry, angles=None)</dt><dd><p>Angle of incidence αᵢ in degrees — angle between the incoming beam
+<dt>incidence(geometry, angles=None)</dt><dd><p>Angle of incidence αᵢ in degrees — angle between the incoming beam
 and the sample surface.</p>
 </dd>
-<dt>alpha_f(geometry, angles=None)</dt><dd><p>Angle of emergence αf in degrees — angle between the diffracted beam
+<dt>emergence(geometry, angles=None)</dt><dd><p>Angle of emergence αf in degrees — angle between the diffracted beam
 and the sample surface.</p>
 </dd>
 <dt>q_components(geometry, angles=None)</dt><dd><p>Decompose Q into Q⊥ (perpendicular to sample surface) and Q‖
@@ -610,10 +610,10 @@ Q_par  = |Q_par_vec|
 <tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.surface._surface_vectors" title="ad_hoc_diffractometer.surface._surface_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_surface_vectors</span></code></a>(→ tuple[numpy.ndarray, numpy.ndarray, ...)</p></td>
 <td><p>Compute the vectors needed for surface angle calculations.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.surface.alpha_f" title="ad_hoc_diffractometer.surface.alpha_f"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alpha_f</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.surface.emergence" title="ad_hoc_diffractometer.surface.emergence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">emergence</span></code></a>(→ float)</p></td>
 <td><p>Compute the angle of emergence αf (degrees).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.surface.alpha_i" title="ad_hoc_diffractometer.surface.alpha_i"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alpha_i</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.surface.incidence" title="ad_hoc_diffractometer.surface.incidence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">incidence</span></code></a>(→ float)</p></td>
 <td><p>Compute the angle of incidence αᵢ (degrees).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.surface.is_evanescent" title="ad_hoc_diffractometer.surface.is_evanescent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_evanescent</span></code></a>(→ bool)</p></td>
@@ -668,10 +668,10 @@ are both None (no surface normal available).</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.surface.alpha_f">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.surface.</span></span><span class="sig-name descname"><span class="pre">alpha_f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/surface.html#alpha_f"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.surface.alpha_f" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.surface.emergence">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.surface.</span></span><span class="sig-name descname"><span class="pre">emergence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/surface.html#emergence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.surface.emergence" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
-<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.surface.alpha_f</span></code></p>
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.surface.emergence</span></code></p>
 </div>
 <p>Compute the angle of emergence αf (degrees).</p>
 <p>αf is the angle between the diffracted beam and the sample surface:</p>
@@ -701,10 +701,10 @@ are both None (no surface normal available).</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="ad_hoc_diffractometer.surface.alpha_i">
-<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.surface.</span></span><span class="sig-name descname"><span class="pre">alpha_i</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/surface.html#alpha_i"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.surface.alpha_i" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.surface.incidence">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.surface.</span></span><span class="sig-name descname"><span class="pre">incidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><span class="pre">AdHocDiffractometer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/surface.html#incidence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.surface.incidence" title="Link to this definition">#</a></dt>
 <dd><div class="import-path docutils container">
-<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.surface.alpha_i</span></code></p>
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.surface.incidence</span></code></p>
 </div>
 <p>Compute the angle of incidence αᵢ (degrees).</p>
 <p>αᵢ is the angle between the incoming beam and the sample surface
@@ -736,7 +736,7 @@ are both None (no surface normal available).</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">surface_normal</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ahd</span><span class="o">.</span><span class="n">ub_identity</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ai</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">alpha_i</span><span class="p">({</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ai</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">incidence</span><span class="p">({</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ai</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="go">5.0</span>
 </pre></div>
@@ -918,8 +918,8 @@ along the outward surface normal.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.surface._surface_vectors"><code class="docutils literal notranslate"><span class="pre">_surface_vectors()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.surface.alpha_f"><code class="docutils literal notranslate"><span class="pre">alpha_f()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.surface.alpha_i"><code class="docutils literal notranslate"><span class="pre">alpha_i()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.surface.emergence"><code class="docutils literal notranslate"><span class="pre">emergence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.surface.incidence"><code class="docutils literal notranslate"><span class="pre">incidence()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.surface.is_evanescent"><code class="docutils literal notranslate"><span class="pre">is_evanescent()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.surface.is_specular"><code class="docutils literal notranslate"><span class="pre">is_specular()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.surface.q_components"><code class="docutils literal notranslate"><span class="pre">q_components()</span></code></a></li>
@@ -959,7 +959,7 @@ along the outward surface normal.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-15 18:38 CDT.
+  Last updated on 2026-06-18 22:27 CDT.
   <br/>
 </p></div>
       

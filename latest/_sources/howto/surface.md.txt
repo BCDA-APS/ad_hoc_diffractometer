@@ -14,29 +14,20 @@ chosen by the active mode's
 
 | ReferenceConstraint name | Set on the geometry | Recipe |
 |---|---|---|
-| `alpha_i`, `beta_out`, `a_eq_b` | `surface_normal` | `g.surface_normal = (h, k, l)` |
+| `incidence`, `emergence`, `specular` | `surface_normal` | `g.surface_normal = (h, k, l)` |
 | `psi`, `naz` | `azimuth` | `g.azimuth = (h, k, l)` |
 | `omega` (SPEC pseudo-angle) | (none required) | — |
 
 Don't want to memorise the table?  Ask the geometry directly:
 
 ```python
-g.mode_name = "fixed_alpha_i_fixed_chi_fixed_phi"
+g.mode_name = "fixed_incidence_fixed_chi_fixed_phi"
 attr = g.required_reference_vector       # → 'surface_normal'
 setattr(g, attr, (0, 0, 1))              # equivalent to g.surface_normal = ...
 ```
 
 `required_reference_vector` returns `'surface_normal'`,
 `'azimuth'`, or `None`.
-
-```{note}
-The `azimuth` attribute was named `azimuthal_reference` before
-v0.12.0 (issue #298).  The old name remains as a deprecated forwarding
-alias — both the property access and the constructor keyword emit
-`DeprecationWarning` — and will be removed in a future release.
-`required_reference_vector` now returns `'azimuth'` where it
-previously returned `'azimuthal_reference'`.
-```
 
 ## What the `n̂` placeholder in `mode.extras` means
 
@@ -85,8 +76,8 @@ internally using the UB matrix.
 Two separate reference vectors may be set:
 
 - **`surface_normal`** — the direction perpendicular to the sample surface,
-  used by `alpha_i`, `alpha_f`, `incidence_angle`, `exit_angle`, and
-  surface modes (`zaxis`, `reflectivity`, `alpha_eq_beta_zaxis`).
+  used by `incidence`, `emergence`, `incidence_angle`, `emergence_angle`, and
+  surface modes (`zaxis`, `reflectivity`, `specular_zaxis`).
 - **`azimuth`** — the direction used to define ψ = 0, used by
   `psi_angle` and `fixed_psi_*` modes.
 
@@ -134,10 +125,10 @@ print(g.azimuth)   # (1.0, 0.0, 0.0)
 g.azimuth = (0, 0, 1)
 ```
 
-## Compute incidence and exit angles
+## Compute incidence and emergence angles
 
 ```python
-from ad_hoc_diffractometer import incidence_angle, exit_angle
+from ad_hoc_diffractometer import emergence_angle, incidence_angle
 
 g.surface_normal = (0, 0, 1)
 g.mode_name = "bisecting_vertical"
@@ -145,8 +136,8 @@ solutions = g.forward(1, 0, 0)
 
 for sol in solutions:
     ai = incidence_angle(g, angles=sol)
-    af = exit_angle(g, angles=sol)
-    print(f"alpha_i = {ai:.4f}°   beta_out = {af:.4f}°")
+    af = emergence_angle(g, angles=sol)
+    print(f"incidence = {ai:.4f}°   emergence = {af:.4f}°")
 ```
 
 Both functions use the current stage angles when `angles=None`:
@@ -191,10 +182,10 @@ print(f"naz = {naz:.4f}°")
 naz is the azimuthal angle of the surface normal n̂ projected onto the
 horizontal plane of the lab frame.
 
-## Symmetric reflection condition (α_i = β_out)
+## Specular reflection condition (incidence = emergence)
 
 ```python
-from ad_hoc_diffractometer import incidence_angle, exit_angle
+from ad_hoc_diffractometer import emergence_angle, incidence_angle
 
 g.surface_normal = (0, 0, 1)
 g.mode_name = "bisecting_vertical"
@@ -202,9 +193,9 @@ solutions = g.forward(1, 0, 0)
 
 for sol in solutions:
     ai = incidence_angle(g, angles=sol)
-    af = exit_angle(g, angles=sol)
+    af = emergence_angle(g, angles=sol)
     is_sym = abs(ai - af) < 0.01  # within 0.01°
-    print(f"alpha_i={ai:.3f}°  beta_out={af:.3f}°  symmetric={is_sym}")
+    print(f"incidence={ai:.3f}°  emergence={af:.3f}°  specular={is_sym}")
 ```
 
 Alternatively, use the built-in `is_specular()` method on the geometry:
@@ -236,10 +227,6 @@ g2 = AdHocDiffractometer.from_dict(d)
 print(g2.surface_normal)          # (0.0, 0.0, 1.0)
 ```
 
-`from_dict()` also accepts the legacy key `"azimuthal_reference"`
-for backward compatibility with sessions saved by
-ad_hoc_diffractometer ≤ v0.11.x (issue #298).
-
 ## Reference constraint modes
 
 Modes that use a ``ReferenceConstraint`` require the appropriate reference
@@ -270,7 +257,7 @@ only if it matches the stored target — otherwise it returns an empty list.
 
 - {doc}`constraints` — constraint framework and run-time mode customisation
 - {func}`~ad_hoc_diffractometer.reference.incidence_angle`
-- {func}`~ad_hoc_diffractometer.reference.exit_angle`
+- {func}`~ad_hoc_diffractometer.reference.emergence_angle`
 - {func}`~ad_hoc_diffractometer.reference.psi_angle`
 - {func}`~ad_hoc_diffractometer.reference.naz_angle`
 - {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`

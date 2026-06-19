@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=4ef7c848"></script>
+    <script src="../../_static/documentation_options.js?v=ab3c2475"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-18 22:27 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -443,7 +443,6 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">builtins</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -510,10 +509,6 @@
 <span class="sd">        Azimuthal reference direction as Miller indices (h, k, l).  Used</span>
 <span class="sd">        by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)</span>
 <span class="sd">        means no reference is set.  Must be a non-zero vector.</span>
-<span class="sd">    azimuthal_reference : tuple of float or None, optional</span>
-<span class="sd">        Deprecated alias for ``azimuth``.  Accepted for backward</span>
-<span class="sd">        compatibility; emits :class:`DeprecationWarning` if used.  Will</span>
-<span class="sd">        be removed in a future release.</span>
 <span class="sd">    modes : dict[str, ConstraintSet] or ModeDict or None, optional</span>
 <span class="sd">        Named diffraction modes available for this geometry.  Keys are</span>
 <span class="sd">        mode names (str); values are :class:`~mode.DiffractionMode`</span>
@@ -546,7 +541,6 @@
         <span class="n">kappa_alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">kappa_pseudo_angle_convention</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">azimuth</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">azimuthal_reference</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">modes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="n">ModeDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">default_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">cut_points</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -558,25 +552,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">wavelength</span>  <span class="c1"># validated via property setter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa_alpha_deg</span> <span class="o">=</span> <span class="n">kappa_alpha_deg</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa_pseudo_angle_convention</span> <span class="o">=</span> <span class="n">kappa_pseudo_angle_convention</span>
-        <span class="c1"># Resolve azimuth / azimuthal_reference (deprecated alias).  If both</span>
-        <span class="c1"># are supplied and disagree, raise; if only the deprecated form is</span>
-        <span class="c1"># supplied, warn and accept it.</span>
-        <span class="k">if</span> <span class="n">azimuthal_reference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">azimuth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">azimuth</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">azimuthal_reference</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Cannot specify both &#39;azimuth&#39; and &#39;azimuthal_reference&#39; &quot;</span>
-                    <span class="s2">&quot;with different values; &#39;azimuthal_reference&#39; is the &quot;</span>
-                    <span class="s2">&quot;deprecated alias for &#39;azimuth&#39;.&quot;</span>
-                <span class="p">)</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;The &#39;azimuthal_reference&#39; constructor keyword is deprecated &quot;</span>
-                <span class="s2">&quot;since v0.12.0; use &#39;azimuth&#39; instead. The old name will be &quot;</span>
-                <span class="s2">&quot;removed in a future release.&quot;</span><span class="p">,</span>
-                <span class="ne">DeprecationWarning</span><span class="p">,</span>
-                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="n">azimuth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">azimuth</span> <span class="o">=</span> <span class="n">azimuthal_reference</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span> <span class="o">=</span> <span class="n">azimuth</span>  <span class="c1"># validated via property setter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_surface_normal</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_detector_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1062,38 +1037,6 @@
                 <span class="s2">&quot;azimuth must be a non-zero vector; (0, 0, 0) is not allowed.&quot;</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_azimuth</span> <span class="o">=</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">azimuthal_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Deprecated alias for :attr:`azimuth`.</span>
-
-<span class="sd">        .. deprecated:: 0.12.0</span>
-<span class="sd">            Use :attr:`azimuth` instead.  This alias will be removed in a</span>
-<span class="sd">            future release.</span>
-
-<span class="sd">        Reads and writes are forwarded to :attr:`azimuth`; every access</span>
-<span class="sd">        emits a :class:`DeprecationWarning`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;AdHocDiffractometer.azimuthal_reference is deprecated since &quot;</span>
-            <span class="s2">&quot;v0.12.0; use &#39;azimuth&#39; instead. The old name will be removed &quot;</span>
-            <span class="s2">&quot;in a future release.&quot;</span><span class="p">,</span>
-            <span class="ne">DeprecationWarning</span><span class="p">,</span>
-            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_azimuth</span>
-
-    <span class="nd">@azimuthal_reference</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">azimuthal_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;AdHocDiffractometer.azimuthal_reference is deprecated since &quot;</span>
-            <span class="s2">&quot;v0.12.0; use &#39;azimuth&#39; instead. The old name will be removed &quot;</span>
-            <span class="s2">&quot;in a future release.&quot;</span><span class="p">,</span>
-            <span class="ne">DeprecationWarning</span><span class="p">,</span>
-            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Diffraction modes</span>
@@ -1681,8 +1624,8 @@
 
 <span class="sd">        The surface normal defines the direction perpendicular to the sample</span>
 <span class="sd">        surface in reciprocal space.  It is used by the surface geometry</span>
-<span class="sd">        calculations (:meth:`alpha_i`, :meth:`alpha_f`, :meth:`q_components`,</span>
-<span class="sd">        :meth:`is_specular`, :meth:`is_evanescent`).</span>
+<span class="sd">        calculations (:meth:`incidence`, :meth:`emergence`,</span>
+<span class="sd">        :meth:`q_components`, :meth:`is_specular`, :meth:`is_evanescent`).</span>
 
 <span class="sd">        When ``None``, the surface calculations fall back to</span>
 <span class="sd">        :attr:`azimuth` if that is set.</span>
@@ -1742,9 +1685,9 @@
 <span class="sd">        =====================================  =================================</span>
 <span class="sd">        ReferenceConstraint name               Required attribute on the geometry</span>
 <span class="sd">        =====================================  =================================</span>
-<span class="sd">        ``&quot;alpha_i&quot;``                          :attr:`surface_normal`</span>
-<span class="sd">        ``&quot;beta_out&quot;``                         :attr:`surface_normal`</span>
-<span class="sd">        ``&quot;a_eq_b&quot;``                           :attr:`surface_normal`</span>
+<span class="sd">        ``&quot;incidence&quot;``                        :attr:`surface_normal`</span>
+<span class="sd">        ``&quot;emergence&quot;``                        :attr:`surface_normal`</span>
+<span class="sd">        ``&quot;specular&quot;``                         :attr:`surface_normal`</span>
 <span class="sd">        ``&quot;psi&quot;``                              :attr:`azimuth`</span>
 <span class="sd">        ``&quot;naz&quot;``                              :attr:`azimuth`</span>
 <span class="sd">        ``&quot;omega&quot;``                            (none)</span>
@@ -1797,7 +1740,7 @@
         <span class="n">rc</span><span class="p">:</span> <span class="n">ReferenceConstraint</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">reference_constraint</span>
         <span class="k">if</span> <span class="n">rc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;alpha_i&quot;</span><span class="p">,</span> <span class="s2">&quot;beta_out&quot;</span><span class="p">,</span> <span class="s2">&quot;a_eq_b&quot;</span><span class="p">}:</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;incidence&quot;</span><span class="p">,</span> <span class="s2">&quot;emergence&quot;</span><span class="p">,</span> <span class="s2">&quot;specular&quot;</span><span class="p">}:</span>
             <span class="k">return</span> <span class="s2">&quot;surface_normal&quot;</span>
         <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="s2">&quot;naz&quot;</span><span class="p">}:</span>
             <span class="k">return</span> <span class="s2">&quot;azimuth&quot;</span>
@@ -1920,9 +1863,9 @@
     <span class="c1"># Surface geometry: incidence / emergence / Q-decomposition methods</span>
     <span class="c1"># ------------------------------------------------------------------</span>
 
-<div class="viewcode-block" id="AdHocDiffractometer.alpha_i">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.alpha_i">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">alpha_i</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="AdHocDiffractometer.incidence">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.incidence">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">incidence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Angle of incidence αᵢ (degrees).</span>
 
@@ -1942,7 +1885,7 @@
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
-<span class="sd">        alpha_f : Angle of emergence.</span>
+<span class="sd">        emergence : Angle of emergence.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1950,17 +1893,17 @@
 <span class="sd">        &gt;&gt;&gt; g.wavelength = 1.5406</span>
 <span class="sd">        &gt;&gt;&gt; g.surface_normal = (0, 0, 1)</span>
 <span class="sd">        &gt;&gt;&gt; ub_identity(g.sample)</span>
-<span class="sd">        &gt;&gt;&gt; g.alpha_i({&quot;alpha&quot;: 5.0, &quot;Z&quot;: 0.0, &quot;delta&quot;: 20.0, &quot;gamma&quot;: 0.0})</span>
+<span class="sd">        &gt;&gt;&gt; g.incidence({&quot;alpha&quot;: 5.0, &quot;Z&quot;: 0.0, &quot;delta&quot;: 20.0, &quot;gamma&quot;: 0.0})</span>
 <span class="sd">        5.0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.surface</span><span class="w"> </span><span class="kn">import</span> <span class="n">alpha_i</span> <span class="k">as</span> <span class="n">_alpha_i</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.surface</span><span class="w"> </span><span class="kn">import</span> <span class="n">incidence</span> <span class="k">as</span> <span class="n">_incidence</span>
 
-        <span class="k">return</span> <span class="n">_alpha_i</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">_incidence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="AdHocDiffractometer.alpha_f">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.alpha_f">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">alpha_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="AdHocDiffractometer.emergence">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.emergence">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emergence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Angle of emergence αf (degrees).</span>
 
@@ -1980,11 +1923,11 @@
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
-<span class="sd">        alpha_i : Angle of incidence.</span>
+<span class="sd">        incidence : Angle of incidence.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.surface</span><span class="w"> </span><span class="kn">import</span> <span class="n">alpha_f</span> <span class="k">as</span> <span class="n">_alpha_f</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.surface</span><span class="w"> </span><span class="kn">import</span> <span class="n">emergence</span> <span class="k">as</span> <span class="n">_emergence</span>
 
-        <span class="k">return</span> <span class="n">_alpha_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">_emergence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AdHocDiffractometer.q_components">
@@ -2005,7 +1948,7 @@
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
-<span class="sd">        alpha_i, alpha_f : Incidence and emergence angles.</span>
+<span class="sd">        incidence, emergence : Incidence and emergence angles.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">.surface</span><span class="w"> </span><span class="kn">import</span> <span class="n">q_components</span> <span class="k">as</span> <span class="n">_q_components</span>
 
@@ -2741,7 +2684,7 @@
             <span class="n">description</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
             <span class="n">wavelength</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;wavelength&quot;</span><span class="p">),</span>
             <span class="n">kappa_alpha_deg</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kappa_alpha_deg&quot;</span><span class="p">),</span>
-            <span class="n">azimuth</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;azimuth&quot;</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;azimuthal_reference&quot;</span><span class="p">)),</span>
+            <span class="n">azimuth</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;azimuth&quot;</span><span class="p">),</span>
             <span class="n">modes</span><span class="o">=</span><span class="n">restored_modes</span> <span class="k">if</span> <span class="n">restored_modes</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">default_mode</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mode_name&quot;</span><span class="p">),</span>
             <span class="n">cut_points</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cut_points&quot;</span><span class="p">),</span>
@@ -2937,7 +2880,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-15 18:38 CDT.
+  Last updated on 2026-06-18 22:27 CDT.
   <br/>
 </p></div>
       

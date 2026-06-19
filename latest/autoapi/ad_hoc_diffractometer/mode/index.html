@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../../_static/documentation_options.js?v=4ef7c848"></script>
+    <script src="../../../_static/documentation_options.js?v=ab3c2475"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-18 22:27 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -573,8 +573,8 @@ over-constrain the scattered beam direction.</p>
 condition between Q and an external reference vector n̂ (surface normal,
 polarization axis, etc.) stored on the geometry.  The named options are
 physical pseudo-angles from You (1999) and Lohmeier &amp; Vlieg (1993):
-<code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;alpha_i&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;naz&quot;</span></code>.  At
-most one reference constraint is allowed.</p>
+<code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;incidence&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;emergence&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;specular&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;naz&quot;</span></code>.
+At most one reference constraint is allowed.</p>
 </section>
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
@@ -1071,7 +1071,7 @@ fresh instance, even when <code class="docutils literal notranslate"><span class
 exactly match the <code class="docutils literal notranslate"><span class="pre">.name</span></code> attribute of an existing
 <a class="reference internal" href="#ad_hoc_diffractometer.mode.SampleConstraint" title="ad_hoc_diffractometer.mode.SampleConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleConstraint</span></code></a>, <a class="reference internal" href="#ad_hoc_diffractometer.mode.DetectorConstraint" title="ad_hoc_diffractometer.mode.DetectorConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectorConstraint</span></code></a>, or
 <a class="reference internal" href="#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a> in the set.  Values are floats
-(or <code class="docutils literal notranslate"><span class="pre">bool</span></code> for the <code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code> <a class="reference internal" href="#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a>).</p>
+(or <code class="docutils literal notranslate"><span class="pre">bool</span></code> for the <code class="docutils literal notranslate"><span class="pre">&quot;specular&quot;</span></code> <a class="reference internal" href="#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a>).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A new instance with the named constraints replaced.</p>
@@ -1101,10 +1101,10 @@ sample-stage names will get this error).</p></li>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Multiple values at once (psic <code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_fixed_chi_fixed_phi</span></code>):</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-<span class="gp">... </span>    <span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;</span><span class="p">]</span>
-<span class="gp">... </span>    <span class="o">.</span><span class="n">with_constraint_values</span><span class="p">(</span><span class="n">chi</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">alpha_i</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
+<p>Multiple values at once (psic <code class="docutils literal notranslate"><span class="pre">fixed_incidence_fixed_chi_fixed_phi</span></code>):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_incidence_fixed_chi_fixed_phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="s2">&quot;fixed_incidence_fixed_chi_fixed_phi&quot;</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="o">.</span><span class="n">with_constraint_values</span><span class="p">(</span><span class="n">chi</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">incidence</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1347,9 +1347,9 @@ the SPEC <code class="docutils literal notranslate"><span class="pre">OMEGA</spa
 geometry (no reference vector required):</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code> — azimuthal angle of n̂ about Q (You 1999, eq. 23)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;alpha_i&quot;</span></code> — angle of incidence (incident beam vs. surface plane)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code> — angle of exit (diffracted beam vs. surface plane)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code> — relational: alpha_i = beta_out (symmetric reflection)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;incidence&quot;</span></code> — angle of incidence (incident beam vs. surface plane)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;emergence&quot;</span></code> — angle of emergence (diffracted beam vs. surface plane)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;specular&quot;</span></code> — specular reflection (relational: incidence = emergence)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;naz&quot;</span></code> — azimuthal angle of n̂ in the lab frame</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code> — SPEC <code class="docutils literal notranslate"><span class="pre">OMEGA</span></code> pseudo-angle (<code class="docutils literal notranslate"><span class="pre">Q[6]</span></code>): angle between
 Q and the plane of the chi circle (psic family); see
@@ -1388,13 +1388,13 @@ before calling <code class="docutils literal notranslate"><span class="pre">forw
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code></dt><dd><p>Azimuthal angle of n̂ about Q (You 1999, eq. 23).</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">&quot;alpha_i&quot;</span></code></dt><dd><p>Angle of incidence: angle between the incident beam and the surface
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;incidence&quot;</span></code></dt><dd><p>Angle of incidence: angle between the incident beam and the surface
 plane (perpendicular to n̂).</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code></dt><dd><p>Angle of exit: angle between the diffracted beam and the surface
-plane.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;emergence&quot;</span></code></dt><dd><p>Angle of emergence: angle between the diffracted beam and the
+surface plane.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code></dt><dd><p>Relational: alpha_i = beta_out (symmetric reflection).
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;specular&quot;</span></code></dt><dd><p>Specular reflection: relational condition <code class="docutils literal notranslate"><span class="pre">incidence</span> <span class="pre">=</span> <span class="pre">emergence</span></code>.
 <code class="docutils literal notranslate"><span class="pre">value</span></code> must be <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&quot;naz&quot;</span></code></dt><dd><p>Azimuthal angle of n̂ in the lab frame (You 1999).</p>
@@ -1403,17 +1403,19 @@ plane.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – One of <code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;alpha_i&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;naz&quot;</span></code>.</p></li>
-<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Target value in degrees (or <code class="docutils literal notranslate"><span class="pre">True</span></code> for <code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code>).</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – One of <code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;incidence&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;emergence&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;specular&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;naz&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code>.</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Target value in degrees (or <code class="docutils literal notranslate"><span class="pre">True</span></code> for <code class="docutils literal notranslate"><span class="pre">&quot;specular&quot;</span></code>).</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>
 <span class="go">ReferenceConstraint(&#39;psi&#39;, 90.0)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;a_eq_b&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-<span class="go">ReferenceConstraint(&#39;a_eq_b&#39;, True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;specular&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="go">ReferenceConstraint(&#39;specular&#39;, True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ReferenceConstraint</span><span class="p">(</span><span class="s2">&quot;incidence&quot;</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
+<span class="go">ReferenceConstraint(&#39;incidence&#39;, 5.0)</span>
 </pre></div>
 </div>
 <dl class="py attribute">
@@ -1443,7 +1445,7 @@ reference vector infrastructure (Issue J).  Raises
 <dd><p>Return True when the required reference vector is set on the geometry.</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;naz&quot;</span></code>: requires
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">azimuth</span></code> to be set.</p>
-<p>For <code class="docutils literal notranslate"><span class="pre">&quot;alpha_i&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code>: requires
+<p>For <code class="docutils literal notranslate"><span class="pre">&quot;incidence&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;emergence&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;specular&quot;</span></code>: requires
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code> to be set.</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">&quot;omega&quot;</span></code>: no reference vector is required (always returns
 <code class="docutils literal notranslate"><span class="pre">True</span></code>); the SPEC <code class="docutils literal notranslate"><span class="pre">OMEGA</span></code> pseudo-angle is a pure motor-frame
@@ -1461,9 +1463,9 @@ solver — in that case <code class="docutils literal notranslate"><span class="
 and a forward solver is available for this constraint name.</p>
 <p>Implemented constraints:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;alpha_i&quot;</span></code> — requires <code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code> — requires <code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code> — requires <code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;incidence&quot;</span></code> — requires <code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;emergence&quot;</span></code> — requires <code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;specular&quot;</span></code> — requires <code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code> — requires <code class="xref py py-attr docutils literal notranslate"><span class="pre">azimuth</span></code>.
 The forward solver treats ψ as a <strong>validation filter</strong>: for a given
 (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for
@@ -1503,7 +1505,7 @@ for psic-family geometries (those with a sample stage named
 <dl class="py property">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.mode.ReferenceConstraint.value">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">value</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.mode.ReferenceConstraint.value" title="Link to this definition">#</a></dt>
-<dd><p>Target value in degrees, or <code class="docutils literal notranslate"><span class="pre">True</span></code> for <code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code>.</p>
+<dd><p>Target value in degrees, or <code class="docutils literal notranslate"><span class="pre">True</span></code> for <code class="docutils literal notranslate"><span class="pre">&quot;specular&quot;</span></code>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1974,7 +1976,7 @@ Zero means the constraint is satisfied.</p>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-15 18:38 CDT.
+  Last updated on 2026-06-18 22:27 CDT.
   <br/>
 </p></div>
       

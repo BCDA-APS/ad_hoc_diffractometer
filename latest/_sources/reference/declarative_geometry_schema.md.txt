@@ -284,9 +284,9 @@ any others.
 | `detector` | `stage`, `value` | {class}`~ad_hoc_diffractometer.mode.DetectorConstraint` |
 | `reference` | `name`, `value` | {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint` |
 
-For `reference`, `name` is one of `"psi"`, `"alpha_i"`, `"beta_out"`,
-`"a_eq_b"`, `"naz"`, `"omega"`; `value` is a float for the angular
-constraints and the literal `true` for `a_eq_b`.  The `"omega"` name
+For `reference`, `name` is one of `"psi"`, `"incidence"`, `"emergence"`,
+`"specular"`, `"naz"`, `"omega"`; `value` is a float for the angular
+constraints and the literal `true` for `specular`.  The `"omega"` name
 selects the SPEC `OMEGA` pseudo-angle (the angle between Q and the
 plane of the chi circle, SPEC `psic` `def OMEGA 'Q[6]'`); it applies
 to psic-family geometries (those with a sample stage named `chi`) and

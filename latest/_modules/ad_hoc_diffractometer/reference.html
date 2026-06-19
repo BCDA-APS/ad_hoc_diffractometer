@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=4ef7c848"></script>
+    <script src="../../_static/documentation_options.js?v=ab3c2475"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-18 22:27 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -439,8 +439,8 @@
 
 <span class="sd">Provides standalone functions for computing the physical pseudo-angles that</span>
 <span class="sd">appear in :class:`~mode.ReferenceConstraint` conditions: incidence angle,</span>
-<span class="sd">exit angle, azimuthal angle ψ, lab-frame azimuthal angle naz, and the</span>
-<span class="sd">SPEC ``OMEGA`` pseudo-angle (angle between Q and the chi-circle plane).</span>
+<span class="sd">emergence angle, azimuthal angle ψ, lab-frame azimuthal angle naz, and</span>
+<span class="sd">the SPEC ``OMEGA`` pseudo-angle (angle between Q and the chi-circle plane).</span>
 
 <span class="sd">These functions require the geometry&#39;s :attr:`surface_normal` or</span>
 <span class="sd">:attr:`azimuth` to be set before calling, **except** for</span>
@@ -452,8 +452,8 @@
 <span class="sd">:func:`incidence_angle`</span>
 <span class="sd">    Angle of incidence α_i between the incident beam and the sample surface.</span>
 
-<span class="sd">:func:`exit_angle`</span>
-<span class="sd">    Angle of exit β_out between the diffracted beam and the sample surface.</span>
+<span class="sd">:func:`emergence_angle`</span>
+<span class="sd">    Angle of emergence α_f between the diffracted beam and the sample surface.</span>
 
 <span class="sd">:func:`psi_angle`</span>
 <span class="sd">    Azimuthal angle ψ of the reference vector n̂ about Q (You 1999, eq. 23).</span>
@@ -568,21 +568,21 @@
 <span class="sd">    * Lohmeier &amp; Vlieg (1993), §4.2.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_require_surface_normal</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">alpha_i</span><span class="p">(</span><span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">incidence</span><span class="p">(</span><span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span></div>
 
 
 
-<div class="viewcode-block" id="exit_angle">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference.exit_angle">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">exit_angle</span><span class="p">(</span>
+<div class="viewcode-block" id="emergence_angle">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference.emergence_angle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">emergence_angle</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute the angle of exit β_out in degrees.</span>
+<span class="sd">    Compute the angle of emergence α_f in degrees.</span>
 
 <span class="sd">    The angle between the diffracted beam and the sample surface.</span>
-<span class="sd">    Positive when the diffracted beam exits through the front face.</span>
+<span class="sd">    Positive when the diffracted beam emerges through the front face.</span>
 
 <span class="sd">    Requires :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.</span>
 
@@ -597,7 +597,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
-<span class="sd">        Exit angle β_out in degrees.</span>
+<span class="sd">        Emergence angle α_f in degrees.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -606,11 +606,11 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
+<span class="sd">    * Lohmeier &amp; Vlieg (1993), §4.2, eq. 16.</span>
 <span class="sd">    * You (1999), eq. 11.</span>
-<span class="sd">    * Lohmeier &amp; Vlieg (1993), §4.2.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_require_surface_normal</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">alpha_f</span><span class="p">(</span><span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">emergence</span><span class="p">(</span><span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span></div>
 
 
 
@@ -944,8 +944,8 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Unlike :func:`incidence_angle`, :func:`exit_angle`, :func:`psi_angle`,</span>
-<span class="sd">    and :func:`naz_angle`, this function does **not** require any</span>
+<span class="sd">    Unlike :func:`incidence_angle`, :func:`emergence_angle`,</span>
+<span class="sd">    :func:`psi_angle`, and :func:`naz_angle`, this function does **not** require any</span>
 <span class="sd">    reference vector (``surface_normal`` / ``azimuth``) to be</span>
 <span class="sd">    set on the geometry.  OMEGA is a pure motor-frame quantity defined</span>
 <span class="sd">    by the diffractometer&#39;s internal geometry.</span>
@@ -1051,7 +1051,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-15 18:38 CDT.
+  Last updated on 2026-06-18 22:27 CDT.
   <br/>
 </p></div>
       

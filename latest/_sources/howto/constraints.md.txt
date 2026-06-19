@@ -61,17 +61,17 @@ This is implemented for all geometries with two or more detector stages
 
 **Reference constraint** — expresses a condition between Q and a reference
 vector n̂ (surface normal, polarization axis, etc.).
-The incidence/exit-angle constraints (``alpha_i``, ``beta_out``,
-``a_eq_b``) are implemented when ``surface_normal`` is set;
+The incidence/emergence-angle constraints (``incidence``, ``emergence``,
+``specular``) are implemented when ``surface_normal`` is set;
 ``psi`` and ``naz`` are not yet implemented as forward constraints.
 See {doc}`surface`:
 
 ```python
 from ad_hoc_diffractometer import ReferenceConstraint
 
-ReferenceConstraint("psi", 90.0)       # azimuthal angle of n̂ about Q
-ReferenceConstraint("alpha_i", 5.0)    # incidence angle
-ReferenceConstraint("a_eq_b", True)    # alpha_i = beta_out (symmetric)
+ReferenceConstraint("psi", 90.0)         # azimuthal angle of n̂ about Q
+ReferenceConstraint("incidence", 5.0)    # incidence angle
+ReferenceConstraint("specular", True)      # incidence = emergence (symmetric)
 ```
 
 **Rules:** at most one {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`,
@@ -146,8 +146,8 @@ readable for your case.
 `ConstraintSet.with_constraint_values(**updates)` returns a fresh
 `ConstraintSet` with the named constraint values replaced.  Each keyword
 argument names a constraint by its `.name` attribute (a stage name for
-sample / detector constraints, a reference name like `alpha_i` /
-`beta_out` / `psi` / `a_eq_b` for reference constraints).  Constraint
+sample / detector constraints, a reference name like `incidence` /
+`emergence` / `psi` / `specular` for reference constraints).  Constraint
 order, `computed`, `extras`, and `cut_points` are preserved.
 
 ```python
@@ -155,10 +155,10 @@ import ad_hoc_diffractometer as ahd
 
 g = ahd.make_geometry("psic")
 
-# Multiple values at once (psic B3 mode: chi, phi, and the alpha_i target):
-g.modes["fixed_alpha_i_fixed_chi_fixed_phi"] = (
-    g.modes["fixed_alpha_i_fixed_chi_fixed_phi"]
-    .with_constraint_values(chi=15.0, phi=30.0, alpha_i=5.0)
+# Multiple values at once (psic B3 mode: chi, phi, and the incidence target):
+g.modes["fixed_incidence_fixed_chi_fixed_phi"] = (
+    g.modes["fixed_incidence_fixed_chi_fixed_phi"]
+    .with_constraint_values(chi=15.0, phi=30.0, incidence=5.0)
 )
 
 # Single value (psic fixed_chi_vertical: default chi=90° → 45°):
@@ -219,16 +219,16 @@ For a reference-target value (surface modes), pass a new
 ```python
 from ad_hoc_diffractometer import ReferenceConstraint
 
-# psic B3 mode: pin the incidence angle alpha_i at 5° instead of the
+# psic B3 mode: pin the incidence angle at 5° instead of the
 # YAML default 0°.
-g.modes["fixed_alpha_i_fixed_chi_fixed_phi"] = ConstraintSet(
+g.modes["fixed_incidence_fixed_chi_fixed_phi"] = ConstraintSet(
     [
         SampleConstraint("chi", 0.0),
         SampleConstraint("phi", 0.0),
-        ReferenceConstraint("alpha_i", 5.0),  # was 0.0; now 5.0
+        ReferenceConstraint("incidence", 5.0),  # was 0.0; now 5.0
     ],
-    computed=g.modes["fixed_alpha_i_fixed_chi_fixed_phi"].computed,
-    extras=dict(g.modes["fixed_alpha_i_fixed_chi_fixed_phi"].extras),
+    computed=g.modes["fixed_incidence_fixed_chi_fixed_phi"].computed,
+    extras=dict(g.modes["fixed_incidence_fixed_chi_fixed_phi"].extras),
 )
 ```
 

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../_static/documentation_options.js?v=4ef7c848"></script>
+    <script src="../_static/documentation_options.js?v=ab3c2475"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-18 22:27 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -705,11 +705,11 @@ The scattering plane is locked vertical by <code class="docutils literal notrans
 </table>
 </div>
 </section>
-<section id="fixed-alpha-i-vertical">
-<h3><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_vertical</span></code><a class="headerlink" href="#fixed-alpha-i-vertical" title="Link to this heading">#</a></h3>
+<section id="fixed-incidence-vertical">
+<h3><code class="docutils literal notranslate"><span class="pre">fixed_incidence_vertical</span></code><a class="headerlink" href="#fixed-incidence-vertical" title="Link to this heading">#</a></h3>
 <p>Incidence angle α_i fixed at declared value (default 0°) in the
 vertical scattering plane.
-Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_alpha_i_vertical&quot;].with_constraint_values(alpha_i=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_incidence_vertical&quot;].with_constraint_values(incidence=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -728,17 +728,17 @@ Set <code class="docutils literal notranslate"><span class="pre">g.surface_norma
 <td><p>n̂ → set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
-<td><p>alpha_i (incidence angle), beta_out (exit angle)</p></td>
+<td><p>incidence (incidence angle), emergence (exit angle)</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
-<section id="fixed-beta-out-vertical">
-<h3><code class="docutils literal notranslate"><span class="pre">fixed_beta_out_vertical</span></code><a class="headerlink" href="#fixed-beta-out-vertical" title="Link to this heading">#</a></h3>
+<section id="fixed-emergence-vertical">
+<h3><code class="docutils literal notranslate"><span class="pre">fixed_emergence_vertical</span></code><a class="headerlink" href="#fixed-emergence-vertical" title="Link to this heading">#</a></h3>
 <p>Exit angle β_out fixed at declared value (default 0°) in the
 vertical scattering plane.
-Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_beta_out_vertical&quot;].with_constraint_values(beta_out=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_emergence_vertical&quot;].with_constraint_values(emergence=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -757,14 +757,14 @@ Set <code class="docutils literal notranslate"><span class="pre">g.surface_norma
 <td><p>n̂ → set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
-<td><p>alpha_i, beta_out</p></td>
+<td><p>incidence, emergence</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
-<section id="alpha-eq-beta-vertical">
-<h3><code class="docutils literal notranslate"><span class="pre">alpha_eq_beta_vertical</span></code><a class="headerlink" href="#alpha-eq-beta-vertical" title="Link to this heading">#</a></h3>
+<section id="specular-vertical">
+<h3><code class="docutils literal notranslate"><span class="pre">specular_vertical</span></code><a class="headerlink" href="#specular-vertical" title="Link to this heading">#</a></h3>
 <p>Symmetric reflection: α_i = β_out in the vertical scattering plane.
 Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -784,7 +784,7 @@ Set <code class="docutils literal notranslate"><span class="pre">g.surface_norma
 <td><p>n̂ → set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
-<td><p>alpha_i, beta_out</p></td>
+<td><p>incidence, emergence</p></td>
 </tr>
 </tbody>
 </table>
@@ -826,15 +826,15 @@ validated ψ.  See <a class="reference internal" href="../howto/surface.html"><s
 </table>
 </div>
 </section>
-<section id="fixed-alpha-i-fixed-chi-fixed-phi">
-<h3><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_fixed_chi_fixed_phi</span></code><a class="headerlink" href="#fixed-alpha-i-fixed-chi-fixed-phi" title="Link to this heading">#</a></h3>
+<section id="fixed-incidence-fixed-chi-fixed-phi">
+<h3><code class="docutils literal notranslate"><span class="pre">fixed_incidence_fixed_chi_fixed_phi</span></code><a class="headerlink" href="#fixed-incidence-fixed-chi-fixed-phi" title="Link to this heading">#</a></h3>
 <p>Issue #264.  Two sample stages (<code class="docutils literal notranslate"><span class="pre">chi</span></code>, <code class="docutils literal notranslate"><span class="pre">phi</span></code>) and the incidence angle
 α_i are all fixed; the four remaining angles <code class="docutils literal notranslate"><span class="pre">mu</span></code>, <code class="docutils literal notranslate"><span class="pre">eta</span></code>, <code class="docutils literal notranslate"><span class="pre">nu</span></code>, <code class="docutils literal notranslate"><span class="pre">delta</span></code>
 are solved jointly from the Bragg condition plus the α_i target.
 This is a 4-D Newton solve that routes through the
 <code class="docutils literal notranslate"><span class="pre">_solve_free_detectors</span></code> solver (both detector stages float to lift
 the detector arm out of plane as needed).
-Override any of the three pinned values at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_alpha_i_fixed_chi_fixed_phi&quot;].with_constraint_values(chi=...,</span> <span class="pre">phi=...,</span> <span class="pre">alpha_i=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.</p>
+Override any of the three pinned values at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_incidence_fixed_chi_fixed_phi&quot;].with_constraint_values(chi=...,</span> <span class="pre">phi=...,</span> <span class="pre">incidence=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.</p>
 <p>Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -853,7 +853,7 @@ Override any of the three pinned values at run time with <code class="docutils l
 <td><p>n̂ → set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
-<td><p>alpha_i, beta_out</p></td>
+<td><p>incidence, emergence</p></td>
 </tr>
 </tbody>
 </table>
@@ -1039,11 +1039,11 @@ is kinematically infeasible in this mode.</p>
 </table>
 </div>
 </section>
-<section id="fixed-alpha-i-horizontal">
-<h3><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_horizontal</span></code><a class="headerlink" href="#fixed-alpha-i-horizontal" title="Link to this heading">#</a></h3>
+<section id="fixed-incidence-horizontal">
+<h3><code class="docutils literal notranslate"><span class="pre">fixed_incidence_horizontal</span></code><a class="headerlink" href="#fixed-incidence-horizontal" title="Link to this heading">#</a></h3>
 <p>Incidence angle α_i fixed at declared value (default 0°) in the
 horizontal scattering plane.
-Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_alpha_i_horizontal&quot;].with_constraint_values(alpha_i=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_incidence_horizontal&quot;].with_constraint_values(incidence=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -1062,17 +1062,17 @@ Set <code class="docutils literal notranslate"><span class="pre">g.surface_norma
 <td><p>n̂ → set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
-<td><p>alpha_i, beta_out</p></td>
+<td><p>incidence, emergence</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
-<section id="fixed-beta-out-horizontal">
-<h3><code class="docutils literal notranslate"><span class="pre">fixed_beta_out_horizontal</span></code><a class="headerlink" href="#fixed-beta-out-horizontal" title="Link to this heading">#</a></h3>
+<section id="fixed-emergence-horizontal">
+<h3><code class="docutils literal notranslate"><span class="pre">fixed_emergence_horizontal</span></code><a class="headerlink" href="#fixed-emergence-horizontal" title="Link to this heading">#</a></h3>
 <p>Exit angle β_out fixed at declared value (default 0°) in the
 horizontal scattering plane.
-Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_beta_out_horizontal&quot;].with_constraint_values(beta_out=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
+Override at run time with <code class="docutils literal notranslate"><span class="pre">g.modes[&quot;fixed_emergence_horizontal&quot;].with_constraint_values(emergence=...)</span></code> — see <a class="reference internal" href="../howto/constraints.html"><span class="doc">Work with Constraints and Diffraction Modes</span></a>.
 Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -1091,14 +1091,14 @@ Set <code class="docutils literal notranslate"><span class="pre">g.surface_norma
 <td><p>n̂ → set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
-<td><p>alpha_i, beta_out</p></td>
+<td><p>incidence, emergence</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
-<section id="alpha-eq-beta-horizontal">
-<h3><code class="docutils literal notranslate"><span class="pre">alpha_eq_beta_horizontal</span></code><a class="headerlink" href="#alpha-eq-beta-horizontal" title="Link to this heading">#</a></h3>
+<section id="specular-horizontal">
+<h3><code class="docutils literal notranslate"><span class="pre">specular_horizontal</span></code><a class="headerlink" href="#specular-horizontal" title="Link to this heading">#</a></h3>
 <p>Symmetric reflection: α_i = β_out in the horizontal scattering plane.
 Set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> before calling <code class="docutils literal notranslate"><span class="pre">forward()</span></code>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -1118,7 +1118,7 @@ Set <code class="docutils literal notranslate"><span class="pre">g.surface_norma
 <td><p>n̂ → set <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Extras (output)</strong></p></td>
-<td><p>alpha_i, beta_out</p></td>
+<td><p>incidence, emergence</p></td>
 </tr>
 </tbody>
 </table>
@@ -1343,40 +1343,40 @@ the Hkl/Soleil <code class="docutils literal notranslate"><span class="pre">E6C<
 <td><p><code class="docutils literal notranslate"><span class="pre">constant_chi_vertical</span></code></p></td>
 <td><p>§5.2</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_vertical</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_incidence_vertical</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(2,2,2,0,0)</span></code></p></td>
 <td><p>—</p></td>
 <td><p>§6.1</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_beta_out_vertical</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_emergence_vertical</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(2,3,2,0,0)</span></code></p></td>
 <td><p>—</p></td>
 <td><p>§6.2</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">alpha_eq_beta_vertical</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">(2,1,2,0,0)</span></code></p></td>
-<td><p>—</p></td>
-<td><p>§6.3</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_psi_vertical</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_psi_vertical</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(2,4,2,0,0)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">psi_constant_vertical</span></code></p></td>
 <td><p>§6.4</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_fixed_chi_fixed_phi</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_incidence_fixed_chi_fixed_phi</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(2,2,3,4,0)</span></code> ‡</p></td>
 <td><p>—</p></td>
 <td><p>§6.1</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_omega_vertical</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_omega_vertical</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">setmode</span> <span class="pre">d1</span> <span class="pre">0</span> <span class="pre">0</span> <span class="pre">0</span></code></p></td>
 <td><p>—</p></td>
 <td><p>§5 (Q[6])</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">double_diffraction_vertical</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">double_diffraction_vertical</span></code></p></td>
 <td><p>—</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">double_diffraction_vertical</span></code></p></td>
 <td><p>§6.5</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">specular_vertical</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(2,1,2,0,0)</span></code></p></td>
+<td><p>—</p></td>
+<td><p>§6.3</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">zone_vertical</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">setmode</span> <span class="pre">5</span></code></p></td>
@@ -1398,35 +1398,35 @@ the Hkl/Soleil <code class="docutils literal notranslate"><span class="pre">E6C<
 <td><p>—</p></td>
 <td><p>§5.2</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_horizontal</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_incidence_horizontal</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(1,2,1,0,0)</span></code></p></td>
 <td><p>—</p></td>
 <td><p>§6.1</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_beta_out_horizontal</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_emergence_horizontal</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(1,3,1,0,0)</span></code></p></td>
 <td><p>—</p></td>
 <td><p>§6.2</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">alpha_eq_beta_horizontal</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">(1,1,1,0,0)</span></code></p></td>
-<td><p>—</p></td>
-<td><p>§6.3</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_psi_horizontal</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_psi_horizontal</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(1,4,1,0,0)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">psi_constant_horizontal</span></code></p></td>
 <td><p>§6.4</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_omega_horizontal</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fixed_omega_horizontal</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">setmode</span> <span class="pre">d1</span> <span class="pre">0</span> <span class="pre">0</span> <span class="pre">0</span></code></p></td>
 <td><p>—</p></td>
 <td><p>§5 (Q[6])</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">double_diffraction_horizontal</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">double_diffraction_horizontal</span></code></p></td>
 <td><p>—</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">double_diffraction_horizontal</span></code></p></td>
 <td><p>§6.5</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">specular_horizontal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(1,1,1,0,0)</span></code></p></td>
+<td><p>—</p></td>
+<td><p>§6.3</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">zone_horizontal</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">setmode</span> <span class="pre">5</span></code></p></td>
@@ -1551,20 +1551,20 @@ depending on the specific instrument’s <code class="docutils literal notransla
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting-vertical-default"><code class="docutils literal notranslate"><span class="pre">bisecting_vertical</span></code> <em>(default)</em></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-phi-vertical"><code class="docutils literal notranslate"><span class="pre">fixed_phi_vertical</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-chi-vertical"><code class="docutils literal notranslate"><span class="pre">fixed_chi_vertical</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-alpha-i-vertical"><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_vertical</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-beta-out-vertical"><code class="docutils literal notranslate"><span class="pre">fixed_beta_out_vertical</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-eq-beta-vertical"><code class="docutils literal notranslate"><span class="pre">alpha_eq_beta_vertical</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-incidence-vertical"><code class="docutils literal notranslate"><span class="pre">fixed_incidence_vertical</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-emergence-vertical"><code class="docutils literal notranslate"><span class="pre">fixed_emergence_vertical</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specular-vertical"><code class="docutils literal notranslate"><span class="pre">specular_vertical</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-psi-vertical"><code class="docutils literal notranslate"><span class="pre">fixed_psi_vertical</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-alpha-i-fixed-chi-fixed-phi"><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_fixed_chi_fixed_phi</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-incidence-fixed-chi-fixed-phi"><code class="docutils literal notranslate"><span class="pre">fixed_incidence_fixed_chi_fixed_phi</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-omega-vertical"><code class="docutils literal notranslate"><span class="pre">fixed_omega_vertical</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#double-diffraction-vertical"><code class="docutils literal notranslate"><span class="pre">double_diffraction_vertical</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zone-vertical"><code class="docutils literal notranslate"><span class="pre">zone_vertical</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bisecting-horizontal"><code class="docutils literal notranslate"><span class="pre">bisecting_horizontal</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-phi-horizontal"><code class="docutils literal notranslate"><span class="pre">fixed_phi_horizontal</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-chi-horizontal"><code class="docutils literal notranslate"><span class="pre">fixed_chi_horizontal</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-alpha-i-horizontal"><code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_horizontal</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-beta-out-horizontal"><code class="docutils literal notranslate"><span class="pre">fixed_beta_out_horizontal</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-eq-beta-horizontal"><code class="docutils literal notranslate"><span class="pre">alpha_eq_beta_horizontal</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-incidence-horizontal"><code class="docutils literal notranslate"><span class="pre">fixed_incidence_horizontal</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-emergence-horizontal"><code class="docutils literal notranslate"><span class="pre">fixed_emergence_horizontal</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specular-horizontal"><code class="docutils literal notranslate"><span class="pre">specular_horizontal</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-psi-horizontal"><code class="docutils literal notranslate"><span class="pre">fixed_psi_horizontal</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-omega-horizontal"><code class="docutils literal notranslate"><span class="pre">fixed_omega_horizontal</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#double-diffraction-horizontal"><code class="docutils literal notranslate"><span class="pre">double_diffraction_horizontal</span></code></a></li>
@@ -1611,7 +1611,7 @@ depending on the specific instrument’s <code class="docutils literal notransla
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-15 18:38 CDT.
+  Last updated on 2026-06-18 22:27 CDT.
   <br/>
 </p></div>
       

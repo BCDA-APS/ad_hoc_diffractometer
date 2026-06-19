@@ -31,7 +31,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:class:: AdHocDiffractometer(name: str, stages: list[~ad_hoc_diffractometer.stage.Stage], basis: dict | None = None, description: str = '', wavelength: float | None = None, kappa_alpha_deg: float | None = None, kappa_pseudo_angle_convention=None, azimuth: tuple[float, float, float] | None = None, azimuthal_reference: tuple[float, float, float] | None = None, modes: dict | ~ad_hoc_diffractometer.mode.ModeDict | None = None, default_mode: str | None = None, cut_points: dict[str, float] | None = None)
+.. py:class:: AdHocDiffractometer(name: str, stages: list[~ad_hoc_diffractometer.stage.Stage], basis: dict | None = None, description: str = '', wavelength: float | None = None, kappa_alpha_deg: float | None = None, kappa_pseudo_angle_convention=None, azimuth: tuple[float, float, float] | None = None, modes: dict | ~ad_hoc_diffractometer.mode.ModeDict | None = None, default_mode: str | None = None, cut_points: dict[str, float] | None = None)
 
    .. container:: import-path
 
@@ -79,10 +79,6 @@ Module Contents
                    by :meth:`psi` to compute the azimuthal angle ψ.  ``None`` (default)
                    means no reference is set.  Must be a non-zero vector.
    :type azimuth: tuple of float or None, optional
-   :param azimuthal_reference: Deprecated alias for ``azimuth``.  Accepted for backward
-                               compatibility; emits :class:`DeprecationWarning` if used.  Will
-                               be removed in a future release.
-   :type azimuthal_reference: tuple of float or None, optional
    :param modes: Named diffraction modes available for this geometry.  Keys are
                  mode names (str); values are :class:`~mode.DiffractionMode`
                  instances.  ``None`` (default) means no modes are declared.
@@ -207,57 +203,6 @@ Module Contents
 
 
 
-   .. py:method:: alpha_f(angles: dict[str, float] | None = None) -> float
-
-      Angle of emergence αf (degrees).
-
-      αf is the angle between the diffracted beam and the sample surface.
-      Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
-      (or ``azimuth``) to be set.
-
-      :param angles: Motor angles.  If ``None``, current stage angles are used.
-      :type angles: dict[str, float] or None
-
-      :returns: αf in degrees, in [0°, 90°].
-      :rtype: float
-
-      .. seealso::
-
-         :py:obj:`alpha_i`
-             Angle of incidence.
-
-
-
-   .. py:method:: alpha_i(angles: dict[str, float] | None = None) -> float
-
-      Angle of incidence αᵢ (degrees).
-
-      αᵢ is the angle between the incoming beam and the sample surface.
-      Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
-      (or ``azimuth``) to be set.
-
-      :param angles: Motor angles.  If ``None``, current stage angles are used.
-      :type angles: dict[str, float] or None
-
-      :returns: αᵢ in degrees, in [0°, 90°].
-      :rtype: float
-
-      .. seealso::
-
-         :py:obj:`alpha_f`
-             Angle of emergence.
-
-      .. rubric:: Examples
-
-      >>> g = zaxis()
-      >>> g.wavelength = 1.5406
-      >>> g.surface_normal = (0, 0, 1)
-      >>> ub_identity(g.sample)
-      >>> g.alpha_i({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})
-      5.0
-
-
-
    .. py:property:: azimuth
       :type: tuple[float, float, float] | None
 
@@ -289,20 +234,6 @@ Module Contents
       >>> g.azimuth
       (0.0, 0.0, 1.0)
       >>> g.azimuth = None          # clear reference
-
-
-   .. py:property:: azimuthal_reference
-      :type: tuple[float, float, float] | None
-
-
-      Deprecated alias for :attr:`azimuth`.
-
-      .. deprecated:: 0.12.0
-          Use :attr:`azimuth` instead.  This alias will be removed in a
-          future release.
-
-      Reads and writes are forwarded to :attr:`azimuth`; every access
-      emits a :class:`DeprecationWarning`.
 
 
    
@@ -411,6 +342,27 @@ Module Contents
       >>> g.detector_tilt
       0.3
       >>> g.detector_tilt = None   # clear
+
+
+   .. py:method:: emergence(angles: dict[str, float] | None = None) -> float
+
+      Angle of emergence αf (degrees).
+
+      αf is the angle between the diffracted beam and the sample surface.
+      Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
+      (or ``azimuth``) to be set.
+
+      :param angles: Motor angles.  If ``None``, current stage angles are used.
+      :type angles: dict[str, float] or None
+
+      :returns: αf in degrees, in [0°, 90°].
+      :rtype: float
+
+      .. seealso::
+
+         :py:obj:`incidence`
+             Angle of incidence.
+
 
 
    .. py:property:: energy
@@ -572,6 +524,36 @@ Module Contents
       'fourcv'
       >>> g2.wavelength
       1.5406
+
+
+
+   .. py:method:: incidence(angles: dict[str, float] | None = None) -> float
+
+      Angle of incidence αᵢ (degrees).
+
+      αᵢ is the angle between the incoming beam and the sample surface.
+      Requires ``wavelength``, ``sample.UB``, and ``surface_normal``
+      (or ``azimuth``) to be set.
+
+      :param angles: Motor angles.  If ``None``, current stage angles are used.
+      :type angles: dict[str, float] or None
+
+      :returns: αᵢ in degrees, in [0°, 90°].
+      :rtype: float
+
+      .. seealso::
+
+         :py:obj:`emergence`
+             Angle of emergence.
+
+      .. rubric:: Examples
+
+      >>> g = zaxis()
+      >>> g.wavelength = 1.5406
+      >>> g.surface_normal = (0, 0, 1)
+      >>> ub_identity(g.sample)
+      >>> g.incidence({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})
+      5.0
 
 
 
@@ -870,7 +852,7 @@ Module Contents
       :returns: * dict with keys ``"Q_perp"``, ``"Q_par"``, ``"Q_perp_signed"``,
                 * ``"Q_total"`` — all in Å⁻¹.
 
-      .. seealso:: :py:obj:`alpha_i`, :py:obj:`alpha_f`
+      .. seealso:: :py:obj:`incidence`, :py:obj:`emergence`
 
 
 
@@ -905,9 +887,9 @@ Module Contents
       =====================================  =================================
       ReferenceConstraint name               Required attribute on the geometry
       =====================================  =================================
-      ``"alpha_i"``                          :attr:`surface_normal`
-      ``"beta_out"``                         :attr:`surface_normal`
-      ``"a_eq_b"``                           :attr:`surface_normal`
+      ``"incidence"``                        :attr:`surface_normal`
+      ``"emergence"``                        :attr:`surface_normal`
+      ``"specular"``                         :attr:`surface_normal`
       ``"psi"``                              :attr:`azimuth`
       ``"naz"``                              :attr:`azimuth`
       ``"omega"``                            (none)
@@ -1109,8 +1091,8 @@ Module Contents
 
       The surface normal defines the direction perpendicular to the sample
       surface in reciprocal space.  It is used by the surface geometry
-      calculations (:meth:`alpha_i`, :meth:`alpha_f`, :meth:`q_components`,
-      :meth:`is_specular`, :meth:`is_evanescent`).
+      calculations (:meth:`incidence`, :meth:`emergence`,
+      :meth:`q_components`, :meth:`is_specular`, :meth:`is_evanescent`).
 
       When ``None``, the surface calculations fall back to
       :attr:`azimuth` if that is set.

@@ -9,8 +9,8 @@ reference
 
    Provides standalone functions for computing the physical pseudo-angles that
    appear in :class:`~mode.ReferenceConstraint` conditions: incidence angle,
-   exit angle, azimuthal angle ψ, lab-frame azimuthal angle naz, and the
-   SPEC ``OMEGA`` pseudo-angle (angle between Q and the chi-circle plane).
+   emergence angle, azimuthal angle ψ, lab-frame azimuthal angle naz, and
+   the SPEC ``OMEGA`` pseudo-angle (angle between Q and the chi-circle plane).
 
    These functions require the geometry's :attr:`surface_normal` or
    :attr:`azimuth` to be set before calling, **except** for
@@ -22,8 +22,8 @@ reference
    :func:`incidence_angle`
        Angle of incidence α_i between the incident beam and the sample surface.
 
-   :func:`exit_angle`
-       Angle of exit β_out between the diffracted beam and the sample surface.
+   :func:`emergence_angle`
+       Angle of emergence α_f between the diffracted beam and the sample surface.
 
    :func:`psi_angle`
        Azimuthal angle ψ of the reference vector n̂ about Q (You 1999, eq. 23).
@@ -63,7 +63,7 @@ Functions
    ad_hoc_diffractometer.reference._chi_stage_axis_lab
    ad_hoc_diffractometer.reference._require_azimuth
    ad_hoc_diffractometer.reference._require_surface_normal
-   ad_hoc_diffractometer.reference.exit_angle
+   ad_hoc_diffractometer.reference.emergence_angle
    ad_hoc_diffractometer.reference.incidence_angle
    ad_hoc_diffractometer.reference.natural_psi
    ad_hoc_diffractometer.reference.naz_angle
@@ -119,17 +119,17 @@ Module Contents
    Raise ValueError if surface_normal is not set on the geometry.
 
 
-.. py:function:: exit_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+.. py:function:: emergence_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
 
    .. container:: import-path
 
-      Import: ``ad_hoc_diffractometer.reference.exit_angle``
+      Import: ``ad_hoc_diffractometer.reference.emergence_angle``
 
 
-   Compute the angle of exit β_out in degrees.
+   Compute the angle of emergence α_f in degrees.
 
    The angle between the diffracted beam and the sample surface.
-   Positive when the diffracted beam exits through the front face.
+   Positive when the diffracted beam emerges through the front face.
 
    Requires :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
 
@@ -139,15 +139,15 @@ Module Contents
                   stage angles are used.
    :type angles: dict[str, float] or None
 
-   :returns: Exit angle β_out in degrees.
+   :returns: Emergence angle α_f in degrees.
    :rtype: float
 
    :raises ValueError: If ``geometry.surface_normal`` is ``None``.
 
    .. rubric:: References
 
+   * Lohmeier & Vlieg (1993), §4.2, eq. 16.
    * You (1999), eq. 11.
-   * Lohmeier & Vlieg (1993), §4.2.
 
 
 .. py:function:: incidence_angle(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
@@ -317,8 +317,8 @@ Module Contents
 
    .. rubric:: Notes
 
-   Unlike :func:`incidence_angle`, :func:`exit_angle`, :func:`psi_angle`,
-   and :func:`naz_angle`, this function does **not** require any
+   Unlike :func:`incidence_angle`, :func:`emergence_angle`,
+   :func:`psi_angle`, and :func:`naz_angle`, this function does **not** require any
    reference vector (``surface_normal`` / ``azimuth``) to be
    set on the geometry.  OMEGA is a pure motor-frame quantity defined
    by the diffractometer's internal geometry.

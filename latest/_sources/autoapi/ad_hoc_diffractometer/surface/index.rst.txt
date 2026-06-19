@@ -16,11 +16,11 @@ surface
 
    Public API
    ----------
-   alpha_i(geometry, angles=None)
+   incidence(geometry, angles=None)
        Angle of incidence αᵢ in degrees — angle between the incoming beam
        and the sample surface.
 
-   alpha_f(geometry, angles=None)
+   emergence(geometry, angles=None)
        Angle of emergence αf in degrees — angle between the diffracted beam
        and the sample surface.
 
@@ -80,8 +80,8 @@ Functions
 .. autoapisummary::
 
    ad_hoc_diffractometer.surface._surface_vectors
-   ad_hoc_diffractometer.surface.alpha_f
-   ad_hoc_diffractometer.surface.alpha_i
+   ad_hoc_diffractometer.surface.emergence
+   ad_hoc_diffractometer.surface.incidence
    ad_hoc_diffractometer.surface.is_evanescent
    ad_hoc_diffractometer.surface.is_specular
    ad_hoc_diffractometer.surface.q_components
@@ -117,11 +117,11 @@ Module Contents
    :raises ValueError: If ``geometry.sample.UB`` is None.
 
 
-.. py:function:: alpha_f(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+.. py:function:: emergence(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
 
    .. container:: import-path
 
-      Import: ``ad_hoc_diffractometer.surface.alpha_f``
+      Import: ``ad_hoc_diffractometer.surface.emergence``
 
 
    Compute the angle of emergence αf (degrees).
@@ -146,11 +146,11 @@ Module Contents
    Lohmeier & Vlieg (1993), §4.2, eq. 16.
 
 
-.. py:function:: alpha_i(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
+.. py:function:: incidence(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float] | None = None) -> float
 
    .. container:: import-path
 
-      Import: ``ad_hoc_diffractometer.surface.alpha_i``
+      Import: ``ad_hoc_diffractometer.surface.incidence``
 
 
    Compute the angle of incidence αᵢ (degrees).
@@ -178,7 +178,7 @@ Module Contents
    >>> g.wavelength = 1.5406
    >>> g.surface_normal = (0, 0, 1)
    >>> ahd.ub_identity(g.sample)
-   >>> ai = g.alpha_i({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})
+   >>> ai = g.incidence({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})
    >>> round(ai, 4)
    5.0
 

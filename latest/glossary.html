@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=4ef7c848"></script>
+    <script src="_static/documentation_options.js?v=ab3c2475"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-18 22:27 CDT"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -558,10 +558,7 @@ of numbers; <code class="docutils literal notranslate"><span class="pre">(0,</sp
 per-mode <code class="docutils literal notranslate"><span class="pre">Extras</span> <span class="pre">(input)</span></code> tables this same vector is referred to
 by its mathematical symbol <strong>n̂</strong> (rendered as the <code class="docutils literal notranslate"><span class="pre">n_hat</span></code> key in
 <code class="docutils literal notranslate"><span class="pre">mode.extras</span></code>).  See <a class="reference internal" href="#term-n-reference-vector"><span class="xref std std-term">n̂ (reference vector)</span></a> for the full
-surface-form table, and <a class="reference internal" href="howto/surface.html"><span class="doc">Surface Geometry and the Reference Vector</span></a>.  The attribute was
-named <code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code> before v0.12.0 (issue #298); the old
-name remains as a deprecated forwarding alias and will be removed
-in a future release.</p>
+surface-form table, and <a class="reference internal" href="howto/surface.html"><span class="doc">Surface Geometry and the Reference Vector</span></a>.</p>
 </dd>
 <dt id="term-B-matrix">B matrix<a class="headerlink" href="#term-B-matrix" title="Link to this term">#</a></dt><dd><p>The matrix that encodes the reciprocal lattice and maps Miller indices
 <strong>h</strong> = (h, k, l)ᵀ to the scattering vector in Cartesian crystal-frame
@@ -740,8 +737,8 @@ attribute below — issue #294).</p></li>
 </ul>
 </li>
 <li><ul>
-<li><p>On the geometry, when used by <code class="docutils literal notranslate"><span class="pre">&quot;alpha_i&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code> reference constraints</p></li>
+<li><p>On the geometry, when used by <code class="docutils literal notranslate"><span class="pre">&quot;incidence&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;emergence&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;specular&quot;</span></code> reference constraints</p></li>
 <li><p><a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal"><code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code></a></p></li>
 <li><p>The actual stored vector.  Set via
 <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>.</p></li>
@@ -832,10 +829,10 @@ stage to the innermost.</p>
 the vector perpendicular to the sample surface.  Stored on the
 geometry as
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal"><code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_normal</span></code></a>
-and consumed by the <code class="docutils literal notranslate"><span class="pre">&quot;alpha_i&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;beta_out&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;a_eq_b&quot;</span></code>
+and consumed by the <code class="docutils literal notranslate"><span class="pre">&quot;incidence&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;emergence&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;specular&quot;</span></code>
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint" title="ad_hoc_diffractometer.mode.ReferenceConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code></a> modes
 (plus <a class="reference internal" href="autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference.incidence_angle" title="ad_hoc_diffractometer.reference.incidence_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">incidence_angle()</span></code></a> /
-<a class="reference internal" href="autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference.exit_angle" title="ad_hoc_diffractometer.reference.exit_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">exit_angle()</span></code></a> and
+<a class="reference internal" href="autoapi/ad_hoc_diffractometer/reference/index.html#ad_hoc_diffractometer.reference.emergence_angle" title="ad_hoc_diffractometer.reference.emergence_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">emergence_angle()</span></code></a> and
 <a class="reference internal" href="autoapi/ad_hoc_diffractometer/surface/index.html#module-ad_hoc_diffractometer.surface" title="ad_hoc_diffractometer.surface"><code class="xref py py-mod docutils literal notranslate"><span class="pre">surface</span></code></a> helpers).  Set with
 <code class="docutils literal notranslate"><span class="pre">g.surface_normal</span> <span class="pre">=</span> <span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> (a length-3 sequence of numbers;
 <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code> is rejected).  Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.  In per-mode
@@ -984,7 +981,7 @@ See <a class="reference internal" href="autoapi/ad_hoc_diffractometer/diffractom
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-15 18:38 CDT.
+  Last updated on 2026-06-18 22:27 CDT.
   <br/>
 </p></div>
       

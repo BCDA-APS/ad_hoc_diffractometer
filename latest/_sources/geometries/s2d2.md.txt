@@ -79,7 +79,7 @@ Override at run time with `g.modes["fixed_mu"].with_constraint_values(mu=...)` �
 ### `reflectivity`
 
 {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
-symmetric reflection — incidence angle equals exit angle (alpha_i = beta_out).
+symmetric reflection — incidence = emergence.
 Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
 
 | | |
@@ -87,7 +87,7 @@ Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
 | **Computed** | mu, Z, nu, delta |
 | **Constant during** `forward()` | — |
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
-| **Extras (output)** | alpha_i, beta_out |
+| **Extras (output)** | incidence, emergence |
 
 ## API reference
 

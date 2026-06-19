@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=4ef7c848"></script>
+    <script src="../../_static/documentation_options.js?v=ab3c2475"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-15 18:38 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-18 22:27 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -446,11 +446,11 @@
 
 <span class="sd">Public API</span>
 <span class="sd">----------</span>
-<span class="sd">alpha_i(geometry, angles=None)</span>
+<span class="sd">incidence(geometry, angles=None)</span>
 <span class="sd">    Angle of incidence αᵢ in degrees — angle between the incoming beam</span>
 <span class="sd">    and the sample surface.</span>
 
-<span class="sd">alpha_f(geometry, angles=None)</span>
+<span class="sd">emergence(geometry, angles=None)</span>
 <span class="sd">    Angle of emergence αf in degrees — angle between the diffracted beam</span>
 <span class="sd">    and the sample surface.</span>
 
@@ -640,9 +640,9 @@
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="alpha_i">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.surface.alpha_i">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">alpha_i</span><span class="p">(</span>
+<div class="viewcode-block" id="incidence">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.surface.incidence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">incidence</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -679,7 +679,7 @@
 <span class="sd">    &gt;&gt;&gt; g.wavelength = 1.5406</span>
 <span class="sd">    &gt;&gt;&gt; g.surface_normal = (0, 0, 1)</span>
 <span class="sd">    &gt;&gt;&gt; ahd.ub_identity(g.sample)</span>
-<span class="sd">    &gt;&gt;&gt; ai = g.alpha_i({&quot;alpha&quot;: 5.0, &quot;Z&quot;: 0.0, &quot;delta&quot;: 20.0, &quot;gamma&quot;: 0.0})</span>
+<span class="sd">    &gt;&gt;&gt; ai = g.incidence({&quot;alpha&quot;: 5.0, &quot;Z&quot;: 0.0, &quot;delta&quot;: 20.0, &quot;gamma&quot;: 0.0})</span>
 <span class="sd">    &gt;&gt;&gt; round(ai, 4)</span>
 <span class="sd">    5.0</span>
 
@@ -695,9 +695,9 @@
 
 
 
-<div class="viewcode-block" id="alpha_f">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.surface.alpha_f">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">alpha_f</span><span class="p">(</span>
+<div class="viewcode-block" id="emergence">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.surface.emergence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">emergence</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -835,8 +835,8 @@
 <span class="sd">    ValueError</span>
 <span class="sd">        If any required attribute is not set.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ai</span> <span class="o">=</span> <span class="n">alpha_i</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
-    <span class="n">af</span> <span class="o">=</span> <span class="n">alpha_f</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
+    <span class="n">ai</span> <span class="o">=</span> <span class="n">incidence</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
+    <span class="n">af</span> <span class="o">=</span> <span class="n">emergence</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ai</span> <span class="o">-</span> <span class="n">af</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">atol</span></div>
 
 
@@ -887,7 +887,7 @@
             <span class="s2">&quot;and is not stored on the geometry.  &quot;</span>
             <span class="s2">&quot;Typical values: 0.1°–0.5° for hard X-rays.&quot;</span>
         <span class="p">)</span>
-    <span class="n">ai</span> <span class="o">=</span> <span class="n">alpha_i</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
+    <span class="n">ai</span> <span class="o">=</span> <span class="n">incidence</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ai</span> <span class="o">&lt;</span> <span class="n">critical_angle_deg</span></div>
 
 </pre></div>
@@ -928,7 +928,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-15 18:38 CDT.
+  Last updated on 2026-06-18 22:27 CDT.
   <br/>
 </p></div>
       
