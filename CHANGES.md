@@ -5,24 +5,21 @@ Issues](https://github.com/BCDA-APS/ad_hoc_diffractometer/issues) for the full
 issue tracker.  The initial project development roadmap is documented here:
 [roadmap](https://github.com/BCDA-APS/ad_hoc_diffractometer/blob/main/roadmap.md).
 
-<!--
 ## Unreleased
-
-Note any unreleased items inside the comment here.  Not visible until release.
-
-### Added
-
-- `azimuth` property and constructor kwarg as canonical name. (#298)
 
 ### Changed
 
-- `required_reference_vector` returns `"azimuth"` instead of `"azimuthal_reference"`. (#298)
+- Adopt pre-v1.0 no-deprecation policy in AGENTS.md; pre-commit hook enforces. (#299)
+- Rename `a_eq_b` reference constraint to `specular`. (#299)
+- Rename `alpha_eq_beta_*` modes to `specular_*`. (#299)
+- Rename `alpha_i` / `beta_out` reference constraints to `incidence` / `emergence`. (#299)
+- Rename `azimuthal_reference` property and kwarg to `azimuth`. (#298)
+- Rename `exit_angle` function to `emergence_angle`. (#299)
+- Rename `fixed_alpha_i_*` / `fixed_beta_out_*` modes to `fixed_incidence_*` / `fixed_emergence_*`. (#299)
+- Rename `geometry.alpha_i()` / `.alpha_f()` methods to `.incidence()` / `.emergence()`. (#299)
+- Rename `surface.alpha_i()` / `.alpha_f()` functions to `.incidence()` / `.emergence()`. (#299)
 
-### Deprecated
 
-- `azimuthal_reference` property and kwarg; use `azimuth` instead. (#298)
-
--->
 
 ## Release v0.11.1
 
