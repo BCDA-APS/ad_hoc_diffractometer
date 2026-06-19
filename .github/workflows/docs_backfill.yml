@@ -49,12 +49,12 @@ jobs:
           sudo apt-get update && sudo apt-get -y install graphviz
 
       - name: Checkout main (for tools/regenerate_switcher.py)
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: main-clone
 
       - name: Checkout tag
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.tag }}
           fetch-depth: 0
