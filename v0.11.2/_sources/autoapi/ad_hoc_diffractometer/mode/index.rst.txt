@@ -1,0 +1,1264 @@
+mode
+====
+
+.. py:module:: ad_hoc_diffractometer.mode
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.mode``
+
+   A diffraction mode specifies which degrees of freedom are constrained
+   during a diffraction calculation and which are free.  Modes are a
+   first-class concern of the geometry description.
+
+   Design
+   ------
+   The constraint system is built around the physical insight that specifying
+   (h, k, l) provides exactly 3 equations on the motor angles.  A geometry
+   with N real motor axes therefore has N − 3 free parameters after the Bragg
+   condition is satisfied.  Each free parameter must be resolved by a
+   constraint.
+
+   Four types of constraint cover all physically meaningful cases:
+
+   **Bisect constraint** (:class:`BisectConstraint`) is a relational sample
+   constraint: one named sample stage is driven to half the angle of one named
+   detector stage (e.g. ``eta = delta / 2`` in psic, ``omega = ttheta / 2``
+   in fourcv).  Both stage names are declared explicitly in the mode
+   definition — the diffractometer designer knows their axis names and states
+   them directly.  :class:`BisectConstraint` belongs to the ``"sample"``
+   category because it constrains a sample stage.
+
+   **Sample constraints** (:class:`SampleConstraint`) fix one sample motor
+   angle to a given value.  The name is a real stage name or a virtual
+   Eulerian angle name (for kappa geometries: ``"omega"``, ``"chi"``,
+   ``"phi"``).
+
+   **Detector constraints** (:class:`DetectorConstraint`) fix one detector
+   stage angle (or the pseudo-angle ``"qaz"`` from You 1999 eq. 18).  At
+   most one detector constraint is allowed — fixing two detector angles would
+   over-constrain the scattered beam direction.
+
+   **Reference constraints** (:class:`ReferenceConstraint`) express a
+   condition between Q and an external reference vector n̂ (surface normal,
+   polarization axis, etc.) stored on the geometry.  The named options are
+   physical pseudo-angles from You (1999) and Lohmeier & Vlieg (1993):
+   ``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``, ``"naz"``.
+   At most one reference constraint is allowed.
+
+   Classes
+   -------
+   :class:`BisectConstraint`
+       Relational sample constraint: ``sample_stage = detector_stage / 2``.
+       Stage names are explicit — declared by the mode designer.
+
+   :class:`SampleConstraint`
+       Constrains one sample stage to a fixed angle.
+
+   :class:`DetectorConstraint`
+       Constrains one detector stage to a fixed angle, or the pseudo-angle
+       ``"qaz"``.
+
+   :class:`ReferenceConstraint`
+       Constrains a physical pseudo-angle between Q and the reference vector.
+
+   :class:`ConstraintSet`
+       An ordered, validated collection of constraints for a diffraction mode.
+       Replaces the old ``DiffractionMode`` ABC.
+
+   :class:`ModeDict`
+       An ordered, guarded dict of named modes.  Validates that all entries
+       are :class:`ConstraintSet` instances.
+
+   .. rubric:: Notes
+
+   Cut-points control which branch of a multi-valued angle solution is
+   returned (SPEC #G4 convention).  They are stored on :class:`ConstraintSet`
+   and applied by the forward solver.
+
+   A few specialized modes are dispatched not by their constraint composition
+   but by the keys present in :attr:`ConstraintSet.extras`:
+
+   - **double_diffraction** modes carry ``h2``, ``k2``, ``l2`` extras and are
+     routed to a 4-DOF simultaneous Bragg solver.
+   - **zone** modes (You 1999 §6, SPEC ``setmode 5``) carry ``z0`` and ``z1``
+     extras (each a Miller-index 3-tuple) and confine the scattering vector
+     Q to the plane spanned by ``UB @ z0`` and ``UB @ z1``.  The solver
+     validates that the requested (h, k, l) lies in the plane and then
+     returns the bisecting solutions; off-plane requests yield an empty
+     list with a warning.
+
+   This extras-driven dispatch keeps the constraint taxonomy small while
+   allowing modes whose distinguishing input is a parameter (a secondary
+   reflection or a zone plane) rather than a fixed motor angle.
+
+   The DOF rule is geometry-dependent:
+
+   - 4-circle (N=4): 1 constraint needed
+   - 5-circle (N=5): 2 constraints needed
+   - 6-circle (N=6): 3 constraints needed
+
+   :meth:`ConstraintSet.is_fully_constrained` checks this rule against the
+   actual geometry at solve time.
+
+   .. rubric:: References
+
+   * Busing & Levy, Acta Cryst. 22, 457-464 (1967).
+   * You, J. Appl. Cryst. 32, 614-623 (1999).
+   * Lohmeier & Vlieg, J. Appl. Cryst. 26, 706-716 (1993).
+   * Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), section 3.3 and 5.
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.mode.AnyConstraint
+   ad_hoc_diffractometer.mode.OPTIONAL
+   ad_hoc_diffractometer.mode.QAZ
+   ad_hoc_diffractometer.mode.REFERENCE_NAMES
+   ad_hoc_diffractometer.mode.REQUIRED
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.mode.ConstraintViolation
+   ad_hoc_diffractometer.mode.EwaldSphereViolation
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.mode.BisectConstraint
+   ad_hoc_diffractometer.mode.ConstraintSet
+   ad_hoc_diffractometer.mode.DetectorConstraint
+   ad_hoc_diffractometer.mode.ModeDict
+   ad_hoc_diffractometer.mode.ReferenceConstraint
+   ad_hoc_diffractometer.mode.SampleConstraint
+   ad_hoc_diffractometer.mode.VirtualBisectConstraint
+   ad_hoc_diffractometer.mode._ExtrasDict
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.mode._qaz_residual
+
+
+Module Contents
+---------------
+
+.. py:data:: AnyConstraint
+
+.. py:class:: BisectConstraint(sample_stage: str, detector_stage: str)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.BisectConstraint``
+
+
+   Relational sample constraint: ``sample_stage = detector_stage / 2``.
+
+   This is the bisecting condition used in standard Eulerian diffractometer
+   modes.  Both stage names are declared explicitly in the mode definition.
+
+   :class:`BisectConstraint` belongs to the ``"sample"`` category because
+   it drives a sample stage, even though it depends on the value of a
+   detector stage.
+
+   :param sample_stage: Name of the sample stage to be driven to half the detector angle
+                        (e.g. ``"eta"`` in psic, ``"omega"`` in fourcv).
+   :type sample_stage: str
+   :param detector_stage: Name of the detector stage whose angle is halved
+                          (e.g. ``"delta"`` in psic, ``"ttheta"`` in fourcv).
+   :type detector_stage: str
+
+   .. rubric:: Examples
+
+   >>> BisectConstraint("eta", "delta")
+   BisectConstraint('eta', 'delta')
+   >>> BisectConstraint("omega", "ttheta")
+   BisectConstraint('omega', 'ttheta')
+
+
+   .. py:attribute:: category
+      :type:  str
+      :value: 'sample'
+
+
+      Constraint category identifier — always ``"sample"``.
+
+
+   .. py:property:: detector_stage
+      :type: str
+
+
+      Name of the detector stage whose angle is halved.
+
+
+   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> float
+
+      Return the constraint residual (zero when satisfied).
+
+      Residual = ``angles[sample_stage] - angles[detector_stage] / 2``.
+
+      :param angles: Current motor angles in degrees.
+      :type angles: dict[str, float]
+      :param geometry: The diffractometer (not used directly; included for protocol
+                       consistency with other constraint types).
+      :type geometry: AdHocDiffractometer
+
+      :returns: Residual in degrees.  Zero means the constraint is satisfied.
+      :rtype: float
+
+
+
+   .. py:method:: from_dict(d: dict) -> BisectConstraint
+      :classmethod:
+
+
+      Reconstruct from a dict produced by :meth:`to_dict`.
+
+
+
+   .. py:attribute:: is_bisect
+      :type:  bool
+      :value: True
+
+
+      Always ``True`` — identifies this as the bisecting relational constraint.
+
+
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
+
+      Return True when both named stages exist in the geometry.
+
+      Checks that ``sample_stage`` exists in ``geometry.sample_stages``
+      and ``detector_stage`` exists in ``geometry.detector_stages``.
+
+
+
+   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, tol: float = 1e-06) -> bool
+
+      Return True when ``|evaluate(angles, geometry)| < tol``.
+
+
+
+   .. py:attribute:: name
+      :type:  str
+      :value: 'bisect'
+
+
+      Constraint name — always ``"bisect"``.
+
+
+   .. py:property:: sample_stage
+      :type: str
+
+
+      Name of the sample stage driven to half the detector angle.
+
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable dict.
+
+
+
+.. py:class:: ConstraintSet(constraints: list[AnyConstraint], computed: list[str] | None = None, extras: dict[str, Any] | None = None, cut_points: dict[str, float] | None = None)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.ConstraintSet``
+
+
+   An ordered, validated collection of constraints for a diffraction mode.
+
+   A ``ConstraintSet`` describes one named diffraction mode by listing the
+   constraints that resolve the geometry's free degrees of freedom.  It
+   replaces the old ``BisectingMode`` / ``FixedAngleMode`` classes.
+
+   **Taxonomy rules** (enforced at construction):
+
+   - At most **one** :class:`BisectConstraint`.
+   - At most **one** :class:`DetectorConstraint`.
+   - At most **one** :class:`ReferenceConstraint`.
+   - All remaining constraints must be :class:`SampleConstraint`.
+
+   The total number of constraints needed (N − 3) depends on the geometry
+   and is checked against the actual geometry at solve time via
+   :meth:`is_fully_constrained`.
+
+   :param constraints: The constraints defining this mode, in definition order.
+   :type constraints: list of BisectConstraint | SampleConstraint | DetectorConstraint | ReferenceConstraint
+   :param computed: Stage names that the solver computes (the "writable" stages in
+                    hklpy2 terminology).  Informational; used by documentation and
+                    introspection.  ``None`` means "all stages not in ``constant_stages``".
+   :type computed: list of str or None
+   :param extras: Additional parameters the mode needs beyond (h, k, l).  Use the
+                  :data:`REQUIRED` sentinel for mandatory inputs and :data:`OPTIONAL`
+                  for optional ones.  Solver output quantities are stored here as
+                  ``None`` placeholders and populated after ``forward()`` runs.
+                  Example::
+
+                      extras={
+                          "n_hat": REQUIRED,   # surface normal, must be supplied
+                          "psi": None,         # output: populated by solver
+                      }
+   :type extras: dict[str, Any] or None
+   :param cut_points: Per-stage SPEC #G4 cut-points.  A cut-point C for stage X means
+                      the returned angle lies in ``[C, C + 360°)``.
+   :type cut_points: dict[str, float] or None
+
+   :raises ValueError: If more than one ``BisectConstraint`` is supplied.
+   :raises ValueError: If more than one ``DetectorConstraint`` is supplied.
+   :raises ValueError: If more than one ``ReferenceConstraint`` is supplied.
+   :raises ValueError: If any constraint is not a recognized constraint type.
+
+   .. rubric:: Examples
+
+   >>> # psic bisecting_vertical: BisectConstraint + mu=0 + nu=0
+   >>> cs = ConstraintSet([
+   ...     BisectConstraint("eta", "delta"),
+   ...     SampleConstraint("mu", 0.0),
+   ...     DetectorConstraint("nu", 0.0),
+   ... ])
+   >>> cs.has_bisect
+   True
+   >>> cs.bisect_stages()
+   ('eta', 'delta')
+   >>> cs.detector_constraint.name
+   'nu'
+   >>> cs.constant_stages
+   ['eta', 'mu', 'nu']
+
+   >>> # fourcv bisecting: BisectConstraint only (1 constraint for N=4)
+   >>> cs4 = ConstraintSet([BisectConstraint("omega", "ttheta")])
+   >>> cs4.has_bisect
+   True
+   >>> cs4.bisect_stages()
+   ('omega', 'ttheta')
+   >>> cs4.constant_stages
+   ['omega']
+
+
+   .. py:method:: apply_cut_point(stage_name: str, angle_deg: float) -> float
+
+      Apply the cut-point for *stage_name* to *angle_deg*.
+
+      A cut-point C means the returned angle lies in ``[C, C + 360°)``.
+      Returns *angle_deg* unchanged if no cut-point is set for this stage.
+
+
+
+   .. py:property:: bisect_constraint
+      :type: BisectConstraint | None
+
+
+      The :class:`BisectConstraint`, or ``None`` if not present.
+
+
+   .. py:method:: bisect_stages() -> tuple[str, str] | None
+
+      Return the ``(sample_stage_name, detector_stage_name)`` pair from
+      the :class:`BisectConstraint`, or ``None`` if no bisect constraint
+      is present.
+
+      The stage names are those declared explicitly in the mode definition.
+      No geometry lookup or axis-geometry heuristic is performed.
+
+      :rtype: tuple of (str, str) or None
+
+
+
+   
+
+   .. py:property:: constant_stages
+      :type: list[str]
+
+
+      Stage names held constant by this constraint set, derived from the
+      constraints themselves.
+
+      Includes:
+
+      - The sample stage from any :class:`BisectConstraint` (it is driven
+        to a fixed fraction of the detector stage, so it is not free).
+      - The name of every :class:`SampleConstraint` (fixed value).
+      - The name of every non-qaz :class:`DetectorConstraint` (frozen at
+        its declared value).
+
+      :class:`ReferenceConstraint` entries do not map to a single stage
+      name and are therefore not included.
+
+      :returns: Stage names in definition order, without duplicates.
+      :rtype: list of str
+
+
+   .. py:method:: constrained_stages(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer | None = None) -> list[str]
+
+      Return the list of stage names that are constrained (fixed or
+      relationally determined) by this constraint set.
+
+      The ``geometry`` argument is accepted for API consistency but is not
+      used — all stage names come directly from the constraint objects.
+
+      :param geometry: Accepted but unused.
+      :type geometry: AdHocDiffractometer or None
+
+      :rtype: list of str
+
+
+
+   .. py:property:: constraints
+      :type: list[AnyConstraint]
+
+
+      All constraints in definition order.
+
+
+   
+
+   .. py:property:: detector_constraint
+      :type: DetectorConstraint | None
+
+
+      The :class:`DetectorConstraint`, or ``None`` if not present.
+
+
+   
+
+   .. py:property:: fixed_sample_constraints
+      :type: list[SampleConstraint]
+
+
+      All :class:`SampleConstraint` entries (alias for :attr:`sample_constraints`).
+
+
+   .. py:method:: from_dict(d: dict) -> ConstraintSet
+      :classmethod:
+
+
+      Reconstruct from a dict produced by :meth:`to_dict`.
+
+
+
+   .. py:property:: has_bisect
+      :type: bool
+
+
+      True when a :class:`BisectConstraint` is present.
+
+
+   .. py:method:: is_fully_constrained(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
+
+      Return True when the number of constraints equals the geometry's
+      free DOF count (N − 3).
+
+      :param geometry: The diffractometer whose ``free_dof_after_bragg`` property
+                       is used.
+      :type geometry: AdHocDiffractometer
+
+      :rtype: bool
+
+
+
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
+
+      Return True when all constraints in this set have solver
+      implementations for the given geometry.
+
+      :param geometry:
+      :type geometry: AdHocDiffractometer
+
+      :rtype: bool
+
+
+
+   .. py:property:: reference_constraint
+      :type: ReferenceConstraint | None
+
+
+      The :class:`ReferenceConstraint`, or ``None`` if not present.
+
+
+   .. py:property:: sample_constraints
+      :type: list[SampleConstraint]
+
+
+      All :class:`SampleConstraint` entries (fixed-angle, not bisect).
+
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable dict.
+
+
+
+   .. py:method:: with_constraint_values(**updates: float | bool) -> ConstraintSet
+
+      Return a new :class:`ConstraintSet` with named constraint values replaced.
+
+      The receiver is left unchanged.  Each keyword argument names a
+      constraint by its ``.name`` attribute and supplies the new value.
+      Constraint order, :attr:`computed`, :attr:`extras`, and
+      :attr:`cut_points` are preserved.  The method always returns a
+      fresh instance, even when ``updates`` is empty.
+
+      :param \*\*updates: Mapping of constraint name → new value.  Each key must
+                          exactly match the ``.name`` attribute of an existing
+                          :class:`SampleConstraint`, :class:`DetectorConstraint`, or
+                          :class:`ReferenceConstraint` in the set.  Values are floats
+                          (or ``bool`` for the ``"specular"`` :class:`ReferenceConstraint`).
+      :type \*\*updates: float or bool
+
+      :returns: A new instance with the named constraints replaced.
+      :rtype: ConstraintSet
+
+      :raises KeyError: If any key in ``updates`` does not match a constraint name in
+          the set.  The message lists every unknown key at once so a
+          user can fix them all in a single edit.
+      :raises ValueError: If two constraints in the receiver share the same
+          ``.name``.  This indicates a malformed
+          :class:`ConstraintSet` (the declarative YAML loader does not
+          produce these; a user who hand-builds one with duplicate
+          sample-stage names will get this error).
+
+      .. rubric:: Examples
+
+      Single sample-stage value:
+
+      >>> import ad_hoc_diffractometer as ahd
+      >>> g = ahd.make_geometry("psic")
+      >>> g.modes["fixed_chi_vertical"] = (
+      ...     g.modes["fixed_chi_vertical"].with_constraint_values(chi=45.0)
+      ... )
+
+      Multiple values at once (psic ``fixed_incidence_fixed_chi_fixed_phi``):
+
+      >>> g.modes["fixed_incidence_fixed_chi_fixed_phi"] = (
+      ...     g.modes["fixed_incidence_fixed_chi_fixed_phi"]
+      ...     .with_constraint_values(chi=15.0, phi=30.0, incidence=5.0)
+      ... )
+
+      .. rubric:: Notes
+
+      :class:`BisectConstraint` (and :class:`VirtualBisectConstraint`)
+      carry no scalar value — they are *relational* constraints
+      between two stages.  This method intentionally ignores them: a
+      kwarg whose key happens to equal a bisect's class-level
+      ``name`` identifier (``"bisect"`` / ``"virtual_bisect"``) will
+      not match and raises :class:`KeyError` like any other unknown
+      key.  A bisect cannot be overridden by changing a value
+      because it has none.
+
+
+
+.. py:exception:: ConstraintViolation(solution_index: int, constraint_repr: str, residual: float, tolerance: float)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.ConstraintViolation``
+
+
+   Bases: :py:obj:`ValueError`
+
+
+   Raised when a forward-calculation solution violates a declared constraint.
+
+   This indicates either a solver error or an unimplemented virtual-angle
+   constraint (e.g. a kappa Eulerian pseudoangle that has not yet been
+   inverted).
+
+   :param solution_index: Zero-based index of the violating solution in the returned list.
+   :type solution_index: int
+   :param constraint_repr: Human-readable representation of the violated constraint.
+   :type constraint_repr: str
+   :param residual: The constraint residual in degrees (non-zero = violated).
+   :type residual: float
+   :param tolerance: The tolerance used for the check (from :func:`~.display.precision_atol`).
+   :type tolerance: float
+   :param Initialize self.  See help(type(self)) for accurate signature.:
+
+
+   
+
+   
+
+   
+
+   
+
+.. py:class:: DetectorConstraint(name: str, value: float)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.DetectorConstraint``
+
+
+   Constrains one detector stage angle (or the ``"qaz"`` pseudo-angle).
+
+   :param name: Detector stage name, or ``"qaz"`` for the azimuthal angle of Q
+                (You 1999, eq. 18: ``tan(qaz) = tan(delta) / sin(nu)``).
+   :type name: str
+   :param value: Fixed angle in degrees.
+   :type value: float
+
+   .. rubric:: Examples
+
+   >>> DetectorConstraint("nu", 0.0)
+   DetectorConstraint('nu', 0.0)
+   >>> DetectorConstraint("qaz", 90.0)
+   DetectorConstraint('qaz', 90.0)
+
+
+   .. py:attribute:: category
+      :type:  str
+      :value: 'detector'
+
+
+      Constraint category identifier — always ``"detector"``.
+
+
+   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> float
+
+      Return the constraint residual (zero when satisfied).
+
+      For a named detector stage: ``angles[name] - value``.
+      For ``"qaz"``: computed from the detector angles via You (1999) eq. 18.
+
+
+
+   .. py:method:: from_dict(d: dict) -> DetectorConstraint
+      :classmethod:
+
+
+      Reconstruct from a dict produced by :meth:`to_dict`.
+
+
+
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
+
+      Return True when this constraint has a solver implementation.
+
+      Fixed detector-stage constraints are implemented when the stage
+      exists in the geometry.  The ``"qaz"`` pseudo-angle constraint is
+      implemented when the geometry has at least two detector stages
+      (an outer ``nu``-like stage and an inner ``delta``-like stage),
+      which is the case for all 6-circle geometries that support
+      ``lifting_detector_*`` modes.
+
+
+
+   .. py:property:: is_qaz
+      :type: bool
+
+
+      True when this constrains the qaz pseudo-angle.
+
+
+   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, tol: float = 1e-06) -> bool
+
+      Return True when ``|evaluate(angles, geometry)| < tol``.
+
+
+
+   .. py:property:: name
+      :type: str
+
+
+      a detector stage name or ``'qaz'``.
+
+      :type: Constraint name
+
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable dict.
+
+
+
+   .. py:property:: value
+      :type: float
+
+
+      a fixed angle in degrees.
+
+      :type: Constraint value
+
+
+.. py:exception:: EwaldSphereViolation(q_mag: float, q_max: float, wavelength: float)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.EwaldSphereViolation``
+
+
+   Bases: :py:obj:`ValueError`
+
+
+   Raised when the requested reflection cannot be reached at the current wavelength.
+
+   The magnitude of the scattering vector Q exceeds the diameter of the
+   Ewald sphere (``|Q| > 4π/λ``), meaning the Bragg condition cannot be
+   satisfied regardless of motor angles.
+
+   :param q_mag: Requested scattering vector magnitude in Å⁻¹.
+   :type q_mag: float
+   :param q_max: Maximum reachable ``|Q|`` at the current wavelength (``4π/λ``) in Å⁻¹.
+   :type q_max: float
+   :param wavelength: Current wavelength in Å.
+   :type wavelength: float
+   :param Initialize self.  See help(type(self)) for accurate signature.:
+
+
+   
+
+   
+
+   
+
+.. py:class:: ModeDict(modes: dict[str, ConstraintSet] | None = None)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.ModeDict``
+
+
+   An ordered, guarded dict of named diffraction modes.
+
+   Only :class:`ConstraintSet` instances may be stored.  Keys are mode
+   names (str).  Iteration follows insertion order.
+
+   :param modes: Initial modes.  If ``None``, an empty dict is created.
+   :type modes: dict[str, ConstraintSet] or None
+
+   :raises TypeError: If any value is not a :class:`ConstraintSet` instance.
+
+   .. rubric:: Examples
+
+   >>> cs = ConstraintSet([BisectConstraint("omega", "ttheta")])
+   >>> md = ModeDict({"bisecting": cs})
+   >>> "bisecting" in md
+   True
+   >>> len(md)
+   1
+
+
+   .. py:method:: items()
+
+      Return (name, mode) pairs.
+
+
+
+   .. py:method:: keys()
+
+      Return mode names.
+
+
+
+   .. py:method:: values()
+
+      Return mode objects.
+
+
+
+.. py:data:: OPTIONAL
+   :type:  object
+
+   Sentinel marking an optional extra input in a :class:`ConstraintSet` extras dict.
+
+   Place this sentinel as the value for any key in ``ConstraintSet.extras`` that
+   *may* be supplied by the caller but has a sensible default::
+
+       cs = ConstraintSet(
+           [...],
+           extras={"azimuth": OPTIONAL},
+       )
+
+.. py:data:: QAZ
+   :type:  str
+   :value: 'qaz'
+
+
+   Special name for the qaz detector pseudo-angle (You 1999, eq. 18).
+
+   When used as the ``name`` argument to :class:`DetectorConstraint`, this
+   constrains the azimuthal angle of Q in the plane spanned by the vertical
+   and transverse axes:  ``tan(qaz) = tan(delta) / sin(nu)``.
+   Setting ``qaz = 0`` constrains scattering to the horizontal plane;
+   ``qaz = 90°`` constrains it to the vertical plane.
+
+.. py:data:: REFERENCE_NAMES
+   :type:  frozenset[str]
+
+   Valid reference constraint names (physical pseudo-angles).
+
+   The set of strings accepted by :class:`ReferenceConstraint` as the ``name``
+   argument.  Most names correspond to a physically meaningful pseudo-angle
+   between the scattering vector Q and the reference vector n̂; ``"omega"`` is
+   the SPEC ``OMEGA`` pseudo-angle, defined entirely by the diffractometer
+   geometry (no reference vector required):
+
+   - ``"psi"`` — azimuthal angle of n̂ about Q (You 1999, eq. 23)
+   - ``"incidence"`` — angle of incidence (incident beam vs. surface plane)
+   - ``"emergence"`` — angle of emergence (diffracted beam vs. surface plane)
+   - ``"specular"`` — specular reflection (relational: incidence = emergence)
+   - ``"naz"`` — azimuthal angle of n̂ in the lab frame
+   - ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``): angle between
+     Q and the plane of the chi circle (psic family); see
+     :func:`~ad_hoc_diffractometer.reference.omega_pseudo`
+
+.. py:data:: REQUIRED
+   :type:  object
+
+   Sentinel marking a required extra input in a :class:`ConstraintSet` extras dict.
+
+   Place this sentinel as the value for any key in ``ConstraintSet.extras`` that
+   *must* be supplied by the caller before :meth:`~.diffractometer.AdHocDiffractometer.forward`
+   is called::
+
+       cs = ConstraintSet(
+           [...],
+           extras={"n_hat": REQUIRED},
+       )
+
+   The forward solver should check for ``REQUIRED`` sentinels and raise a
+   descriptive error if they have not been replaced by the caller.
+
+.. py:class:: ReferenceConstraint(name: str, value: float | bool)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.ReferenceConstraint``
+
+
+   Constrains a physical pseudo-angle between Q and the reference vector n̂.
+
+   The reference vector n̂ must be stored on the geometry as
+   ``geometry.surface_normal`` (preferred) or ``geometry.azimuth``
+   before calling ``forward()``.
+
+   Valid names (from You 1999 and Lohmeier & Vlieg 1993):
+
+   ``"psi"``
+       Azimuthal angle of n̂ about Q (You 1999, eq. 23).
+   ``"incidence"``
+       Angle of incidence: angle between the incident beam and the surface
+       plane (perpendicular to n̂).
+   ``"emergence"``
+       Angle of emergence: angle between the diffracted beam and the
+       surface plane.
+   ``"specular"``
+       Specular reflection: relational condition ``incidence = emergence``.
+       ``value`` must be ``True``.
+   ``"naz"``
+       Azimuthal angle of n̂ in the lab frame (You 1999).
+
+   :param name: One of ``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``,
+                ``"naz"``, ``"omega"``.
+   :type name: str
+   :param value: Target value in degrees (or ``True`` for ``"specular"``).
+   :type value: float or bool
+
+   .. rubric:: Examples
+
+   >>> ReferenceConstraint("psi", 90.0)
+   ReferenceConstraint('psi', 90.0)
+   >>> ReferenceConstraint("specular", True)
+   ReferenceConstraint('specular', True)
+   >>> ReferenceConstraint("incidence", 5.0)
+   ReferenceConstraint('incidence', 5.0)
+
+
+   .. py:attribute:: category
+      :type:  str
+      :value: 'reference'
+
+
+      Constraint category identifier — always ``"reference"``.
+
+
+   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> float
+      :abstractmethod:
+
+
+      Return the constraint residual (zero when satisfied).
+
+      Not yet implemented — all reference constraints require the
+      reference vector infrastructure (Issue J).  Raises
+      ``NotImplementedError`` when called.
+
+
+
+   .. py:method:: from_dict(d: dict) -> ReferenceConstraint
+      :classmethod:
+
+
+      Reconstruct from a dict produced by :meth:`to_dict`.
+
+
+
+   .. py:method:: has_reference_vector(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
+
+      Return True when the required reference vector is set on the geometry.
+
+      For ``"psi"`` and ``"naz"``: requires
+      :attr:`~geometry.AdHocDiffractometer.azimuth` to be set.
+
+      For ``"incidence"``, ``"emergence"``, and ``"specular"``: requires
+      :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
+
+      For ``"omega"``: no reference vector is required (always returns
+      ``True``); the SPEC ``OMEGA`` pseudo-angle is a pure motor-frame
+      quantity.
+
+      This is a prerequisite check, separate from :meth:`is_implemented`.
+      A reference constraint can have its vector set but still lack a forward
+      solver — in that case ``has_reference_vector`` returns ``True`` but
+      ``is_implemented`` returns ``False``.
+
+
+
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
+
+      Return True when the required reference vector is set on the geometry
+      and a forward solver is available for this constraint name.
+
+      Implemented constraints:
+
+      - ``"incidence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+      - ``"emergence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+      - ``"specular"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+      - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuth`.
+        The forward solver treats ψ as a **validation filter**: for a given
+        (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for
+        every Bragg solution.  The solver computes the natural ψ from UB and
+        the reference direction; if it matches the stored target the bisecting
+        solutions are returned, otherwise an empty list is returned.  See
+        issue #176 for the full analysis.
+      - ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``).  Implemented
+        for psic-family geometries (those with a sample stage named
+        ``"chi"``); does not require any reference vector.  See
+        :func:`~ad_hoc_diffractometer.reference.omega_pseudo`.
+
+      Not yet implemented:
+
+      - ``"naz"`` — no forward solver yet.
+
+
+
+   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, tol: float = 1e-06) -> bool
+      :abstractmethod:
+
+
+      Return True when the constraint is satisfied (not yet implemented).
+
+
+
+   .. py:property:: name
+      :type: str
+
+
+      Constraint name (one of the reference pseudo-angle names).
+
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable dict.
+
+
+
+   .. py:property:: value
+      :type: float | bool
+
+
+      Target value in degrees, or ``True`` for ``"specular"``.
+
+
+.. py:class:: SampleConstraint(name: str, value: float)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.SampleConstraint``
+
+
+   Constrains one sample motor angle to a fixed value.
+
+   :param name: Stage name, or a virtual Eulerian angle name for kappa geometries
+                (e.g. ``"omega"``, ``"chi"``, ``"phi"``).
+   :type name: str
+   :param value: Fixed angle in degrees.
+   :type value: float
+
+   .. rubric:: Examples
+
+   >>> SampleConstraint("chi", 90.0)
+   SampleConstraint('chi', 90.0)
+   >>> SampleConstraint("mu", 0.0)
+   SampleConstraint('mu', 0.0)
+
+
+   .. py:attribute:: category
+      :type:  str
+      :value: 'sample'
+
+
+      Constraint category identifier — always ``"sample"``.
+
+
+   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> float
+
+      Return the constraint residual (zero when satisfied).
+
+      Residual = ``angles[name] - value``.
+
+      :param angles: Current motor angles in degrees.
+      :type angles: dict[str, float]
+      :param geometry: Not used; included for protocol consistency.
+      :type geometry: AdHocDiffractometer
+
+      :returns: Residual in degrees.  Zero means the constraint is satisfied.
+      :rtype: float
+
+
+
+   .. py:method:: from_dict(d: dict) -> SampleConstraint
+      :classmethod:
+
+
+      Reconstruct from a dict produced by :meth:`to_dict`.
+
+
+
+   .. py:attribute:: is_bisect
+      :type:  bool
+      :value: False
+
+
+      Always ``False`` — :class:`SampleConstraint` fixes a stage, does not bisect.
+
+
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
+
+      Return True when the named stage exists in the geometry, or when the
+      name is a virtual Eulerian kappa pseudoangle on a kappa geometry.
+
+      Virtual kappa angles ``"omega"``, ``"chi"``, and ``"phi"`` are
+      implemented when the geometry has a ``kappa_alpha_deg`` attribute set
+      (i.e. it is a kappa diffractometer) and contains a stage named
+      ``"kappa"``.  The kappa inversion solver (:func:`~kappa.eulerian_to_kappa`)
+      converts the virtual angle constraint to real kappa motor angles.
+
+
+
+   .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, tol: float = 1e-06) -> bool
+
+      Return True when ``|evaluate(angles, geometry)| < tol``.
+
+
+
+   .. py:property:: name
+      :type: str
+
+
+      a stage name (real or virtual Eulerian).
+
+      :type: Constraint name
+
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable dict.
+
+
+
+   .. py:property:: value
+      :type: float
+
+
+      a fixed angle in degrees.
+
+      :type: Constraint value
+
+
+.. py:class:: VirtualBisectConstraint(sample_stage: str, detector_stage: str)
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode.VirtualBisectConstraint``
+
+
+   Bases: :py:obj:`BisectConstraint`
+
+
+   True virtual bisecting constraint for kappa geometries.
+
+   Identical in structure to :class:`BisectConstraint` but
+   semantically distinct: the bisecting condition is enforced on the
+   **virtual** Eulerian omega pseudoangle rather than on a real motor
+   angle.  On a kappa diffractometer the virtual omega is computed
+   from ``(komega, kappa, kphi)`` via the Walko (2016) eq. [16]
+   relations (see :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian`).
+
+   The constraint residual is therefore::
+
+       residual = omega_virtual(angles) - angles[detector_stage] / 2
+
+   where ``omega_virtual`` depends nonlinearly on the kappa motor
+   triple.  This is the physically correct bisecting condition for a
+   kappa diffractometer; the literal ``komega = ttheta/2`` enforced by
+   :class:`BisectConstraint` is only an approximation that coincides
+   with true bisecting at ``kappa = 0``.
+
+   The dispatcher in :mod:`~ad_hoc_diffractometer.forward` routes
+   modes containing a :class:`VirtualBisectConstraint` to
+   :func:`~ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual`,
+   which solves a 2D Newton problem in virtual ``(chi, phi)`` space
+   with ``omega_virtual = ttheta/2`` enforced exactly.
+
+   :param sample_stage: Name of the *virtual* Eulerian angle to drive (typically
+                        ``"omega"``).  Stored for documentation and serialization;
+                        the solver always enforces ``omega_virtual = ttheta/2``
+                        regardless of this name.
+   :type sample_stage: str
+   :param detector_stage: Name of the detector stage whose angle is halved (e.g.
+                          ``"ttheta"`` on kappa4cv/kappa4ch, ``"delta"`` on kappa6c).
+   :type detector_stage: str
+
+   .. rubric:: Examples
+
+   >>> VirtualBisectConstraint("omega", "ttheta")
+   VirtualBisectConstraint('omega', 'ttheta')
+
+   .. rubric:: References
+
+   * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016),
+     eq. [16] — kappa pseudoangle relations.
+
+
+   .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> float
+
+      Return the constraint residual ``omega_virtual − detector/2``.
+
+      ``omega_virtual`` is computed from the kappa motor triple
+      ``(komega, kappa, kphi)`` via the geometry-aware decomposition
+      :func:`~ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes`,
+      using the per-geometry
+      :class:`~ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention`
+      attached to ``geometry``.
+
+      :param angles: Current motor angles in degrees; must include ``komega``,
+                     ``kappa``, ``kphi``, and the detector stage named by
+                     :attr:`detector_stage`.
+      :type angles: dict[str, float]
+      :param geometry: The diffractometer, used to retrieve the
+                       ``kappa_pseudo_angle_convention``.
+      :type geometry: AdHocDiffractometer
+
+      :returns: Residual in degrees.  Zero means true virtual bisecting is
+                satisfied.
+      :rtype: float
+
+      :raises KeyError: If a required motor angle is missing from ``angles``.
+      :raises ValueError: If ``geometry.kappa_pseudo_angle_convention`` is ``None``
+          (the constraint is only meaningful on kappa geometries)
+          or if the kappa triple lies outside the reachable virtual
+          range.
+
+
+
+   .. py:method:: is_implemented(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> bool
+
+      Return True when the geometry is a kappa diffractometer with
+      the required ``komega``, ``kappa``, ``kphi`` stages and the
+      named detector stage.
+
+
+
+   .. py:attribute:: name
+      :type:  str
+      :value: 'virtual_bisect'
+
+
+      Constraint name — ``"virtual_bisect"`` (overrides ``"bisect"``).
+
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable dict.
+
+
+
+.. py:class:: _ExtrasDict
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode._ExtrasDict``
+
+
+   Bases: :py:obj:`dict`
+
+
+   A dict that warns when documentation-placeholder keys are overwritten.
+
+   Issue #294.  Behaves identically to ``dict`` except that assigning a
+   non-sentinel, non-``None`` value to a key in
+   :data:`_PLACEHOLDER_EXTRA_KEYS` (currently ``{"n_hat"}``) emits a
+   :class:`UserWarning` directing the caller at the correct geometry
+   attribute.  Sentinel writes (``REQUIRED``, ``OPTIONAL``, ``None``)
+   are silent: those are legitimate construction-time states produced
+   by the YAML loader and :meth:`ConstraintSet.from_dict`.
+
+   The check is intentionally minimal — no exception, no rejection of
+   the write — because the value is harmless (it's silently ignored by
+   the solver).  The goal is only to surface the footgun to a user who
+   has misread the ``extras`` dict as a settable input bag.
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+
+.. py:function:: _qaz_residual(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, target_qaz_deg: float) -> float
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.mode._qaz_residual``
+
+
+   Compute the residual for a qaz detector constraint (You 1999, eq. 18).
+
+   ``qaz`` is the azimuthal angle of Q in the plane spanned by the
+   vertical and transverse axes::
+
+       tan(qaz) = tan(delta) / sin(nu)
+
+   where ``nu`` is the outer (vertical-axis) detector stage angle and
+   ``delta`` is the inner (transverse-axis) detector stage angle.  The
+   two detector stages are identified from ``geometry.detector_stages``
+   by position: the outermost stage (index 0) plays the role of ``nu``
+   and the innermost stage (index -1) plays the role of ``delta``.
+
+   :param angles: Current motor angles in degrees.  Must contain entries for both
+                  detector stage names.
+   :type angles: dict[str, float]
+   :param geometry: The diffractometer.  ``geometry.detector_stages`` must contain
+                    exactly two stages.
+   :type geometry: AdHocDiffractometer
+   :param target_qaz_deg: Target qaz angle in degrees.
+   :type target_qaz_deg: float
+
+   :returns: Residual in degrees: ``qaz_computed - target_qaz_deg``.
+             Zero means the constraint is satisfied.
+   :rtype: float
+
+   :raises ValueError: If the geometry has fewer than two detector stages.
+
+

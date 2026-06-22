@@ -1,0 +1,1814 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ad_hoc_diffractometer.kappa &#8212; ad_hoc_diffractometer 0.11</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+
+    <script src="../../_static/documentation_options.js?v=60336169"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/kappa';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.11.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11" />
+    <meta name="docbuild:last-update" content="2026-06-22 09:07 CDT"/>
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.11</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ad_hoc_diffractometer.kappa</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ad_hoc_diffractometer.kappa</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2026-2026 UChicago Argonne, LLC</span>
+<span class="c1"># SPDX-License-Identifier: LicenseRef-UChicago-Argonne-LLC-License</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">kappa.py — Kappa-to-Eulerian angle conversion.</span>
+
+<span class="sd">Kappa diffractometers replace the Eulerian chi circle with a kappa arm</span>
+<span class="sd">tilted at angle ``alpha_0`` from the omega axis.  This module provides</span>
+<span class="sd">**two layers** of conversion between the real motor triple</span>
+<span class="sd">``(komega, kappa, kphi)`` and the equivalent virtual Eulerian</span>
+<span class="sd">pseudoangles ``(omega, chi, phi)``:</span>
+
+<span class="sd">1. **Geometry-aware (recommended)**.  The functions</span>
+<span class="sd">   :func:`eulerian_to_kappa_axes` and :func:`kappa_to_eulerian_axes`</span>
+<span class="sd">   take a :class:`KappaPseudoAngleConvention` that names the *actual*</span>
+<span class="sd">   stage axis vectors of the kappa demo geometry (``n_komega``, ``n_kappa``,</span>
+<span class="sd">   ``n_kphi``) and the *equivalent Eulerian* chi axis (``n_chi_eq``).</span>
+<span class="sd">   The decomposition is derived directly from these axes and is correct</span>
+<span class="sd">   for any signed-axis combination — including the ``ad_hoc_diffractometer``</span>
+<span class="sd">   demo geometries that use mixed handedness or a horizontal scattering plane.</span>
+
+<span class="sd">   These are the conversions used internally by the kappa virtual-angle</span>
+<span class="sd">   solver.</span>
+
+<span class="sd">2. **Walko (2016) eq. [16] textbook formula**.  The functions</span>
+<span class="sd">   :func:`kappa_to_eulerian` and :func:`eulerian_to_kappa` implement</span>
+<span class="sd">   Walko&#39;s published closed-form relations literally:</span>
+
+<span class="sd">       chi   = 2 arcsin[sin(kappa/2) · sin(alpha_0)]</span>
+<span class="sd">       offset = arccos[cos(kappa/2) / cos(chi/2)]</span>
+<span class="sd">       omega = komega − offset</span>
+<span class="sd">       phi   = kphi   − offset</span>
+
+<span class="sd">   These are correct **only for the axis convention assumed in</span>
+<span class="sd">   Walko&#39;s derivation** (omega about the transverse axis, chi about</span>
+<span class="sd">   the longitudinal axis, phi about the transverse axis, all</span>
+<span class="sd">   right-handed in the textbook sense).  They are retained as</span>
+<span class="sd">   reference implementations of the published formula and for</span>
+<span class="sd">   backward compatibility with users who study Walko&#39;s algebra</span>
+<span class="sd">   directly.  They are **not** used inside the kappa virtual-angle</span>
+<span class="sd">   solver, because no demo geometry in this package matches the textbook</span>
+<span class="sd">   convention exactly: ``kappa4cv`` uses BL ``-TRANSVERSE`` for omega</span>
+<span class="sd">   (left-handed); ``kappa4ch`` uses ``-VERTICAL`` (horizontal</span>
+<span class="sd">   scattering plane); ``kappa6c`` uses You ``-TRANSVERSE`` (mixed</span>
+<span class="sd">   handedness with a horizontal mu base).  See issue #241 for the</span>
+<span class="sd">   diagnostic that uncovered this divergence.</span>
+
+<span class="sd">Both directions are implemented as pure-NumPy / standard-library code.</span>
+
+<span class="sd">Functions</span>
+<span class="sd">---------</span>
+<span class="sd">:func:`kappa_to_eulerian_axes`</span>
+<span class="sd">    Geometry-aware forward direction: real (komega, kappa, kphi) →</span>
+<span class="sd">    virtual (omega, chi, phi) for arbitrary signed stage axes.</span>
+
+<span class="sd">:func:`eulerian_to_kappa_axes`</span>
+<span class="sd">    Geometry-aware inverse direction: virtual (omega, chi, phi) →</span>
+<span class="sd">    real (komega, kappa, kphi) for arbitrary signed stage axes.</span>
+
+<span class="sd">:func:`kappa_to_eulerian`</span>
+<span class="sd">    Walko (2016) eq. [16] forward direction (textbook frame only).</span>
+
+<span class="sd">:func:`eulerian_to_kappa`</span>
+<span class="sd">    Walko (2016) eq. [16] inverse direction (textbook frame only).</span>
+
+<span class="sd">:func:`is_kappa_virtual_mode`</span>
+<span class="sd">    Detect whether a mode contains a virtual Eulerian-angle constraint.</span>
+
+<span class="sd">:func:`solve_kappa_virtual`</span>
+<span class="sd">    Solve the virtual-angle forward problem for a kappa geometry.</span>
+
+<span class="sd">Classes</span>
+<span class="sd">-------</span>
+<span class="sd">:class:`KappaPseudoAngleConvention`</span>
+<span class="sd">    Container holding the four signed unit axes that fully specify</span>
+<span class="sd">    the geometry-aware pseudoangle decomposition for a given kappa</span>
+<span class="sd">    demo geometry.</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+<span class="sd">The default kappa tilt angle is 50° (Walko 2016; Enraf-Nonius</span>
+<span class="sd">convention; ITC Vol. C §2.2.6).</span>
+
+<span class="sd">The geometry-aware decomposition has two solutions distinguished by</span>
+<span class="sd">the sign of kappa (the *branch* parameter).  The positive branch</span>
+<span class="sd">(``kappa ≥ 0``) is the default; the negative branch gives</span>
+<span class="sd">``kappa ≤ 0``.  The caller should choose the branch that keeps all</span>
+<span class="sd">angles within the hardware limits.</span>
+
+<span class="sd">The decomposition fails (``ValueError``) when the requested Eulerian</span>
+<span class="sd">orientation cannot be represented by any kappa motor triple — this</span>
+<span class="sd">is the kappa-arm reachability limit and is geometry-dependent (in</span>
+<span class="sd">the textbook convention it reduces to ``|chi| &lt; 2·alpha_0``).</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">* Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016), eq. [16] —</span>
+<span class="sd">  closed-form pseudoangle relations in the textbook frame.</span>
+<span class="sd">* ITC Vol. C §2.2.6 (2006).</span>
+<span class="sd">* Issue #241 — diagnostic and resolution that motivated the</span>
+<span class="sd">  geometry-aware layer.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_rotation_matrix_normalized</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdHocDiffractometer</span>
+
+<span class="c1">#: Virtual Eulerian pseudoangle names on kappa geometries.</span>
+<span class="n">KAPPA_VIRTUAL_ANGLES</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">})</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Geometry-aware pseudoangle convention</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="KappaPseudoAngleConvention">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.KappaPseudoAngleConvention">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KappaPseudoAngleConvention</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Per-geometry declaration of the four signed axes that determine</span>
+<span class="sd">    the kappa ↔ Eulerian pseudoangle decomposition.</span>
+
+<span class="sd">    A kappa geometry encodes its three sample stages</span>
+<span class="sd">    (``komega``, ``kappa``, ``kphi``) with specific signed axis vectors</span>
+<span class="sd">    in the lab frame.  An *equivalent Eulerian triple*</span>
+<span class="sd">    (``omega``, ``chi``, ``phi``) shares the outer (``omega``) and</span>
+<span class="sd">    inner (``phi``) axes with the kappa stack — by construction — and</span>
+<span class="sd">    introduces a virtual ``chi`` axis perpendicular to ``omega`` that</span>
+<span class="sd">    plays the role of the Eulerian chi rotation.</span>
+
+<span class="sd">    The four axes here are sufficient to derive the conversion in</span>
+<span class="sd">    closed form from the rotation-matrix identity</span>
+
+<span class="sd">        R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)</span>
+<span class="sd">            =  R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ).</span>
+
+<span class="sd">    The decomposition is solvable for any ``n_chi_eq`` that is</span>
+<span class="sd">    perpendicular to ``n_komega`` (and not parallel to ``n_kphi``);</span>
+<span class="sd">    it does **not** require ``n_chi_eq`` to lie in the kappa-arm</span>
+<span class="sd">    tilt plane.  Different ``n_chi_eq`` choices yield different</span>
+<span class="sd">    (and equally valid) virtual-Eulerian parametrizations of the</span>
+<span class="sd">    same kappa rotation, but with different ``(ω, χ, φ)`` values</span>
+<span class="sd">    and different bisecting-reachability sets.  Issue #284 records</span>
+<span class="sd">    the choice this package adopts (``+longitudinal`` for every</span>
+<span class="sd">    shipped kappa preset, to match the corresponding non-kappa</span>
+<span class="sd">    Eulerian preset&#39;s ``chi`` axis); see</span>
+<span class="sd">    :mod:`ad_hoc_diffractometer.geometries` for the broader</span>
+<span class="sd">    discussion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_komega : numpy.ndarray, shape (3,)</span>
+<span class="sd">        Unit axis of the outer kappa stage (= virtual ω axis).</span>
+<span class="sd">    n_kappa : numpy.ndarray, shape (3,)</span>
+<span class="sd">        Unit axis of the kappa arm.</span>
+<span class="sd">    n_kphi : numpy.ndarray, shape (3,)</span>
+<span class="sd">        Unit axis of the inner kappa stage (= virtual φ axis).</span>
+<span class="sd">    n_chi_eq : numpy.ndarray, shape (3,)</span>
+<span class="sd">        Unit axis of the equivalent Eulerian χ rotation.  Must be</span>
+<span class="sd">        perpendicular to ``n_komega`` and not parallel to ``n_kphi``;</span>
+<span class="sd">        does **not** need to lie in the kappa-arm tilt plane (see</span>
+<span class="sd">        issue #284 for the discussion).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The convention object is immutable (``frozen=True``) and arrays</span>
+<span class="sd">    are stored as a copy so the caller cannot accidentally mutate</span>
+<span class="sd">    them.  Use :func:`make_kappa_pseudo_angle_convention` to construct</span>
+<span class="sd">    one from physical-direction names + a basis dict.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    * Issue #241 — derivation and resolution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_komega</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">n_kappa</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">n_kphi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">n_chi_eq</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Normalise and freeze every axis.  ``object.__setattr__`` is</span>
+        <span class="c1"># required because the dataclass is frozen.</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;n_komega&quot;</span><span class="p">,</span> <span class="s2">&quot;n_kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;n_kphi&quot;</span><span class="p">,</span> <span class="s2">&quot;n_chi_eq&quot;</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mf">1e-14</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;KappaPseudoAngleConvention: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has zero norm.&quot;</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">/</span> <span class="n">n</span>
+            <span class="n">v</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="make_kappa_pseudo_angle_convention">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.make_kappa_pseudo_angle_convention">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_kappa_pseudo_angle_convention</span><span class="p">(</span>
+    <span class="n">n_komega</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">n_kappa</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">n_kphi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">n_chi_eq</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KappaPseudoAngleConvention</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct a :class:`KappaPseudoAngleConvention` from four axes.</span>
+
+<span class="sd">    Thin wrapper that exists so callers do not need to import the</span>
+<span class="sd">    dataclass directly; the validation lives in</span>
+<span class="sd">    :meth:`KappaPseudoAngleConvention.__post_init__`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_komega, n_kappa, n_kphi, n_chi_eq : array-like, shape (3,)</span>
+<span class="sd">        Signed axis vectors.  Will be normalized internally.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    KappaPseudoAngleConvention</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">KappaPseudoAngleConvention</span><span class="p">(</span>
+        <span class="n">n_komega</span><span class="o">=</span><span class="n">n_komega</span><span class="p">,</span>
+        <span class="n">n_kappa</span><span class="o">=</span><span class="n">n_kappa</span><span class="p">,</span>
+        <span class="n">n_kphi</span><span class="o">=</span><span class="n">n_kphi</span><span class="p">,</span>
+        <span class="n">n_chi_eq</span><span class="o">=</span><span class="n">n_chi_eq</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="kappa_axis_from_eulerian">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.kappa_axis_from_eulerian">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">kappa_axis_from_eulerian</span><span class="p">(</span>
+    <span class="n">n_komega</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">n_chi_eq</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the kappa rotation axis as a tilt of the omega axis toward</span>
+<span class="sd">    the equivalent Eulerian chi axis.</span>
+
+<span class="sd">    The canonical definition of a kappa diffractometer (Walko 2016;</span>
+<span class="sd">    ITC Vol. C §2.2.6) is that the kappa axis lies in the plane</span>
+<span class="sd">    spanned by the outer ``omega`` axis and the equivalent chi axis,</span>
+<span class="sd">    tilted by ``α`` from ``n_komega`` toward ``n_chi_eq``:</span>
+
+<span class="sd">        n_kappa = n_komega · cos(α) + n_chi_eq · sin(α)</span>
+
+<span class="sd">    This formula is **geometry-aware**: the resulting axis is correct</span>
+<span class="sd">    for any signed convention of ``n_komega`` and ``n_chi_eq``,</span>
+<span class="sd">    including the BL ``-TRANSVERSE`` orientation used by the</span>
+<span class="sd">    ``kappa4cv`` demo geometry and the BL ``-VERTICAL`` orientation used by</span>
+<span class="sd">    the ``kappa4ch`` demo geometry.</span>
+
+<span class="sd">    The historic helper :func:`~ad_hoc_diffractometer.axes.kappa_axis`</span>
+<span class="sd">    instead returns ``vertical·cos(α) + transverse·sin(α)``</span>
+<span class="sd">    unconditionally, which assumes ``n_komega = +vertical`` and is</span>
+<span class="sd">    therefore wrong for any demo geometry whose ``n_komega`` is not literally</span>
+<span class="sd">    ``+vertical``.  See issue #241 for the diagnostic that uncovered</span>
+<span class="sd">    this.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_komega : array-like, shape (3,)</span>
+<span class="sd">        Outer kappa stage axis.  Need not be normalized.</span>
+<span class="sd">    n_chi_eq : array-like, shape (3,)</span>
+<span class="sd">        Equivalent Eulerian chi axis (perpendicular to ``n_komega``).</span>
+<span class="sd">        Need not be normalized.</span>
+<span class="sd">    alpha_deg : float</span>
+<span class="sd">        Kappa tilt angle in degrees, measured from ``n_komega``</span>
+<span class="sd">        toward ``n_chi_eq``.  Typical value 50° (Enraf-Nonius</span>
+<span class="sd">        convention).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    n_kappa : numpy.ndarray, shape (3,)</span>
+<span class="sd">        Unit vector of the kappa axis in the lab frame.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``n_komega`` and ``n_chi_eq`` are not perpendicular within</span>
+<span class="sd">        ``1e-9``.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016) — kappa</span>
+<span class="sd">      arm geometry.</span>
+<span class="sd">    * ITC Vol. C, Sec. 2.2.6 (2006) — Enraf-Nonius α convention.</span>
+<span class="sd">    * Issue #241 — divergence between the canonical α definition and</span>
+<span class="sd">      the historic vertical/transverse hard-coded helper.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_om</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">n_komega</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">n_om</span> <span class="o">=</span> <span class="n">n_om</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_om</span><span class="p">)</span>
+    <span class="n">n_ch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">n_chi_eq</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">n_ch</span> <span class="o">=</span> <span class="n">n_ch</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_ch</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">n_ch</span><span class="p">)))</span> <span class="o">&gt;</span> <span class="mf">1e-9</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;kappa_axis_from_eulerian: n_komega and n_chi_eq must be &quot;</span>
+            <span class="s2">&quot;perpendicular; got dot product &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span><span class="w"> </span><span class="n">n_ch</span><span class="p">))</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_om</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_ch</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Geometry-aware kappa ↔ Eulerian decomposition (issue #241)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="_eulerian_rotation">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa._eulerian_rotation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_eulerian_rotation</span><span class="p">(</span>
+    <span class="n">convention</span><span class="p">:</span> <span class="n">KappaPseudoAngleConvention</span><span class="p">,</span>
+    <span class="n">omega_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">chi_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">phi_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compose the equivalent-Eulerian sample rotation matrix.</span>
+
+<span class="sd">    Stage order matches :func:`~orientation._compute_q_phi` under the</span>
+<span class="sd">    BL1967 standard convention (Busing &amp; Levy 1967): the outermost</span>
+<span class="sd">    stage (``omega``) is the leftmost matrix in the product, so</span>
+
+<span class="sd">        Z = R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ)</span>
+
+<span class="sd">    and ``Z · v_phi`` maps phi-frame vectors to lab-frame vectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">R_om</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">convention</span><span class="o">.</span><span class="n">n_komega</span><span class="p">,</span> <span class="n">omega_deg</span><span class="p">)</span>
+    <span class="n">R_ch</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">convention</span><span class="o">.</span><span class="n">n_chi_eq</span><span class="p">,</span> <span class="n">chi_deg</span><span class="p">)</span>
+    <span class="n">R_ph</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">convention</span><span class="o">.</span><span class="n">n_kphi</span><span class="p">,</span> <span class="n">phi_deg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">R_om</span> <span class="o">@</span> <span class="n">R_ch</span> <span class="o">@</span> <span class="n">R_ph</span></div>
+
+
+
+<div class="viewcode-block" id="_kappa_rotation">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa._kappa_rotation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_kappa_rotation</span><span class="p">(</span>
+    <span class="n">convention</span><span class="p">:</span> <span class="n">KappaPseudoAngleConvention</span><span class="p">,</span>
+    <span class="n">komega_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">kappa_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">kphi_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compose the real kappa-stack sample rotation matrix.</span>
+
+<span class="sd">    Stage order matches :func:`~orientation._compute_q_phi` under the</span>
+<span class="sd">    BL1967 standard convention (Busing &amp; Levy 1967): the outermost</span>
+<span class="sd">    stage (``komega``) is the leftmost matrix in the product, so</span>
+
+<span class="sd">        Z = R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">R_om</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">convention</span><span class="o">.</span><span class="n">n_komega</span><span class="p">,</span> <span class="n">komega_deg</span><span class="p">)</span>
+    <span class="n">R_ka</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">convention</span><span class="o">.</span><span class="n">n_kappa</span><span class="p">,</span> <span class="n">kappa_deg</span><span class="p">)</span>
+    <span class="n">R_ph</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">convention</span><span class="o">.</span><span class="n">n_kphi</span><span class="p">,</span> <span class="n">kphi_deg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">R_om</span> <span class="o">@</span> <span class="n">R_ka</span> <span class="o">@</span> <span class="n">R_ph</span></div>
+
+
+
+<div class="viewcode-block" id="_angle_about_axis">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa._angle_about_axis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_angle_about_axis</span><span class="p">(</span><span class="n">v_from</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">v_to</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the signed rotation angle (deg) about ``axis`` that takes</span>
+<span class="sd">    ``v_from`` to ``v_to``.  Both vectors are assumed to lie on the</span>
+<span class="sd">    same cone about ``axis`` (i.e. ``v_from · axis == v_to · axis``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Project onto plane perpendicular to axis</span>
+    <span class="n">p_from</span> <span class="o">=</span> <span class="n">v_from</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v_from</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">*</span> <span class="n">axis</span>
+    <span class="n">p_to</span> <span class="o">=</span> <span class="n">v_to</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v_to</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">*</span> <span class="n">axis</span>
+    <span class="n">n_from</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p_from</span><span class="p">))</span>
+    <span class="n">n_to</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p_to</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">n_from</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">or</span> <span class="n">n_to</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="c1"># Degenerate: the vectors are parallel to the axis.  Any</span>
+        <span class="c1"># rotation about the axis maps one to the other.  Return 0.</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="n">p_from</span> <span class="o">=</span> <span class="n">p_from</span> <span class="o">/</span> <span class="n">n_from</span>
+    <span class="n">p_to</span> <span class="o">=</span> <span class="n">p_to</span> <span class="o">/</span> <span class="n">n_to</span>
+    <span class="n">cos_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">p_from</span><span class="p">,</span> <span class="n">p_to</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">sin_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">p_from</span><span class="p">,</span> <span class="n">p_to</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_t</span><span class="p">,</span> <span class="n">cos_t</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="_solve_alpha_cos_beta_sin_eq_gamma">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa._solve_alpha_cos_beta_sin_eq_gamma">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_alpha_cos_beta_sin_eq_gamma</span><span class="p">(</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve ``alpha · cos(θ) + beta · sin(θ) = gamma`` for θ in degrees.</span>
+
+<span class="sd">    Returns the two solutions (or one solution duplicated, when the</span>
+<span class="sd">    discriminant is zero) in the range (-180, 180].  Raises</span>
+<span class="sd">    :class:`ValueError` when the equation has no real solution</span>
+<span class="sd">    (``|gamma| &gt; sqrt(alpha² + beta²)``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">M</span> <span class="o">&lt;</span> <span class="mf">1e-14</span><span class="p">:</span>
+        <span class="c1"># Degenerate: equation is 0 = gamma.  Any θ solves if gamma==0.</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">return</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;alpha·cos + beta·sin = gamma is unsolvable: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;alpha=</span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2">, beta=</span><span class="si">{</span><span class="n">beta</span><span class="si">}</span><span class="s2">, gamma=</span><span class="si">{</span><span class="n">gamma</span><span class="si">}</span><span class="s2"> (LHS amplitude is zero).&quot;</span>
+        <span class="p">)</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">/</span> <span class="n">M</span>
+    <span class="c1"># Allow tiny excursions from the unit interval that arise from</span>
+    <span class="c1"># floating-point error.</span>
+    <span class="k">if</span> <span class="n">ratio</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1e-9</span> <span class="ow">or</span> <span class="n">ratio</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">-</span> <span class="mf">1e-9</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;alpha·cos(θ) + beta·sin(θ) = gamma has no real solution: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;|gamma|/sqrt(alpha²+beta²) = </span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> &gt; 1.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">ratio</span><span class="p">))</span>
+    <span class="n">phi0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">phi0</span> <span class="o">+</span> <span class="n">delta</span><span class="p">),</span>
+        <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">phi0</span> <span class="o">-</span> <span class="n">delta</span><span class="p">),</span>
+    <span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="eulerian_to_kappa_axes">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.eulerian_to_kappa_axes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">eulerian_to_kappa_axes</span><span class="p">(</span>
+    <span class="n">omega_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">chi_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">phi_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">convention</span><span class="p">:</span> <span class="n">KappaPseudoAngleConvention</span><span class="p">,</span>
+    <span class="n">branch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert virtual Eulerian pseudoangles to real kappa motor angles</span>
+<span class="sd">    using the geometry&#39;s actual signed stage axes.</span>
+
+<span class="sd">    Inverts the rotation-matrix identity (with stage order matching</span>
+<span class="sd">    :func:`~orientation._compute_q_phi` — BL1967 standard convention,</span>
+<span class="sd">    Busing &amp; Levy 1967, outermost on the left)</span>
+
+<span class="sd">        R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)</span>
+<span class="sd">            =  R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ).</span>
+
+<span class="sd">    The decomposition is fully analytic and selects between the two</span>
+<span class="sd">    kappa-branch solutions via the ``branch`` parameter.</span>
+
+<span class="sd">    Algorithm</span>
+<span class="sd">    ---------</span>
+<span class="sd">    Let ``R_eul = R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ)``</span>
+<span class="sd">    be the target rotation.  Apply both sides to ``n_kphi``:</span>
+
+<span class="sd">        R(n_komega, κω) · R(n_kappa, κ) · n_kphi  =  R_eul · n_kphi</span>
+
+<span class="sd">    (since ``R(n_kphi, ·) · n_kphi = n_kphi``).  Take the dot</span>
+<span class="sd">    product with ``n_komega`` (which is invariant under ``R(n_komega, ·)``):</span>
+
+<span class="sd">        n_komega · R(n_kappa, κ) · n_kphi  =  n_komega · R_eul · n_kphi.</span>
+
+<span class="sd">    Expanding ``R(n_kappa, κ) · n_kphi`` via the Rodrigues formula</span>
+<span class="sd">    yields a single trigonometric equation in κ of the form</span>
+<span class="sd">    ``alpha·cos(κ) + beta·sin(κ) = gamma`` with two solutions</span>
+<span class="sd">    (the two kappa branches).</span>
+
+<span class="sd">    Once κ is fixed, ``κω`` is the rotation about ``n_komega`` that</span>
+<span class="sd">    takes ``R(n_kappa, κ) · n_kphi`` onto ``R_eul · n_kphi``</span>
+<span class="sd">    (these vectors lie on the same cone about ``n_komega`` by</span>
+<span class="sd">    construction).  Finally ``κφ`` is the residual rotation about</span>
+<span class="sd">    ``n_kphi`` extracted from</span>
+<span class="sd">    ``R(n_kphi, κφ) = R(n_kappa, -κ) · R(n_komega, -κω) · R_eul``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    omega_deg, chi_deg, phi_deg : float</span>
+<span class="sd">        Virtual Eulerian pseudoangles in degrees.</span>
+<span class="sd">    convention : KappaPseudoAngleConvention</span>
+<span class="sd">        Per-geometry axis declaration; see</span>
+<span class="sd">        :func:`make_kappa_pseudo_angle_convention`.</span>
+<span class="sd">    branch : {+1, -1}, optional</span>
+<span class="sd">        Branch selection.  Each branch produces a distinct kappa</span>
+<span class="sd">        triple satisfying the same Eulerian rotation.  ``+1`` (default)</span>
+<span class="sd">        selects the branch with the larger ``cos(κ)`` (equivalently</span>
+<span class="sd">        the smaller ``|κ|``); ``-1`` selects the other.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    komega, kappa, kphi : tuple of float</span>
+<span class="sd">        Real kappa motor angles in degrees, in the cut-point range</span>
+<span class="sd">        (-180, 180].</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``branch`` is not ``+1`` or ``-1``.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the requested Eulerian orientation is not reachable by</span>
+<span class="sd">        any kappa triple in the given convention (the equation in κ</span>
+<span class="sd">        has no real solution).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    For ``kappa4cv`` (BL convention), the convention is</span>
+
+<span class="sd">        n_komega = -TRANSVERSE,   n_kappa = kappa_axis(α),</span>
+<span class="sd">        n_kphi   = -TRANSVERSE,   n_chi_eq = +LONGITUDINAL.</span>
+
+<span class="sd">    Confirming the geometry-aware result against Walko (2016) eq. [16]</span>
+<span class="sd">    requires using the textbook convention exactly:</span>
+
+<span class="sd">        n_komega = +VERTICAL,     n_kappa  = +VERTICAL·cos(α) + +TRANSVERSE·sin(α),</span>
+<span class="sd">        n_kphi   = +VERTICAL,     n_chi_eq = +LONGITUDINAL.</span>
+
+<span class="sd">    See :func:`eulerian_to_kappa` for the textbook closed form.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    * Issue #241 — derivation and motivation.</span>
+<span class="sd">    * Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016) — textbook</span>
+<span class="sd">      special case.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">branch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;eulerian_to_kappa_axes: branch must be +1 or -1; got </span><span class="si">{</span><span class="n">branch</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Special case: χ = 0 reduces the kappa arm to the identity rotation</span>
+    <span class="c1"># (κ = 0).  When ``n_komega`` and ``n_kphi`` are parallel — as they</span>
+    <span class="c1"># are in every demo geometry shipped with the package — the Z matrix</span>
+    <span class="c1"># ``R(n_kphi, φ) · R(n_komega, ω)`` collapses to a single rotation</span>
+    <span class="c1"># ``R(n_komega, ω + φ·sign)`` and the (κω, κφ) split is</span>
+    <span class="c1"># one-parameter degenerate.  Pick the natural assignment</span>
+    <span class="c1"># ``(κω, κφ) = (ω, φ)`` so the round-trip</span>
+    <span class="c1"># ``kappa → eulerian → kappa`` is the identity at this point.</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">chi_deg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">omega_deg</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">phi_deg</span><span class="p">)</span>
+
+    <span class="n">R_eul</span> <span class="o">=</span> <span class="n">_eulerian_rotation</span><span class="p">(</span><span class="n">convention</span><span class="p">,</span> <span class="n">omega_deg</span><span class="p">,</span> <span class="n">chi_deg</span><span class="p">,</span> <span class="n">phi_deg</span><span class="p">)</span>
+
+    <span class="n">n_om</span> <span class="o">=</span> <span class="n">convention</span><span class="o">.</span><span class="n">n_komega</span>
+    <span class="n">n_ka</span> <span class="o">=</span> <span class="n">convention</span><span class="o">.</span><span class="n">n_kappa</span>
+    <span class="n">n_ph</span> <span class="o">=</span> <span class="n">convention</span><span class="o">.</span><span class="n">n_kphi</span>
+
+    <span class="c1"># Step 1 — solve for κ from the scalar equation</span>
+    <span class="c1">#   n_om · R(n_ka, κ) · n_ph  =  n_om · R_eul · n_ph</span>
+    <span class="c1"># (n_om is invariant under R(n_om, κω); n_ph is invariant under</span>
+    <span class="c1"># R(n_ph, κφ); the BL1967 standard composition has R(n_om, κω)</span>
+    <span class="c1"># outermost and R(n_ph, κφ) innermost, so applying both sides to</span>
+    <span class="c1"># n_ph then dotting with n_om removes both κω and κφ.)</span>
+    <span class="n">v_target</span> <span class="o">=</span> <span class="n">R_eul</span> <span class="o">@</span> <span class="n">n_ph</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">v_target</span><span class="p">))</span>
+
+    <span class="c1"># Rodrigues expansion of R(n_ka, κ) · n_ph:</span>
+    <span class="c1">#   R(n_ka, κ) · n_ph = n_ph·cos(κ) + (n_ka × n_ph)·sin(κ)</span>
+    <span class="c1">#                       + n_ka·(n_ka·n_ph)·(1 − cos(κ))</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">n_ph</span><span class="p">))</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_ka</span><span class="p">,</span> <span class="n">n_ph</span><span class="p">)))</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">n_ka</span><span class="p">))</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_ka</span><span class="p">,</span> <span class="n">n_ph</span><span class="p">))</span>
+    <span class="c1"># → (A − C)·cos(κ) + B·sin(κ) = γ − C</span>
+    <span class="n">kappa_candidates</span> <span class="o">=</span> <span class="n">_solve_alpha_cos_beta_sin_eq_gamma</span><span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">C</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">-</span> <span class="n">C</span><span class="p">)</span>
+
+    <span class="c1"># Order branches: +1 is the candidate with the larger cos(κ)</span>
+    <span class="c1"># (equivalently the smaller |κ|).  This matches the historic</span>
+    <span class="c1"># default that the +1 branch yields ``kappa = 0`` when χ = 0.</span>
+    <span class="n">kappa_candidates</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">k</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">branch</span> <span class="o">==</span> <span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">kappa_deg</span> <span class="o">=</span> <span class="n">kappa_candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">kappa_deg</span> <span class="o">=</span> <span class="n">kappa_candidates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Degeneracy at κ = 0: when the kappa rotation is the identity,</span>
+    <span class="c1"># ``R(n_komega, κω) · R(n_kphi, κφ) = R(n_komega, ω) · R(n_kphi, φ)``</span>
+    <span class="c1"># has a one-parameter family of solutions whenever ``n_komega`` is</span>
+    <span class="c1"># parallel (or anti-parallel) to ``n_kphi`` — and *all* kappa</span>
+    <span class="c1"># demo geometries in this package have that property by design (komega</span>
+    <span class="c1"># and kphi share the same physical motor axis).  Pick the</span>
+    <span class="c1"># representative that maps ``ω → κω`` and ``φ → κφ`` directly so</span>
+    <span class="c1"># the round-trip with :func:`kappa_to_eulerian_axes` is identity.</span>
+    <span class="n">parallel_axes</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">n_ph</span><span class="p">)))</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">kappa_deg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">and</span> <span class="n">parallel_axes</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">return</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">omega_deg</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">phi_deg</span><span class="p">)</span>
+
+    <span class="c1"># Step 2 — recover κω as the signed rotation about n_komega taking</span>
+    <span class="c1"># R(n_kappa, κ) · n_kphi onto R_eul · n_kphi.</span>
+    <span class="n">R_ka</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">n_ka</span><span class="p">,</span> <span class="n">kappa_deg</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">R_ka</span> <span class="o">@</span> <span class="n">n_ph</span>
+    <span class="n">komega_deg</span> <span class="o">=</span> <span class="n">_angle_about_axis</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">v_target</span><span class="p">,</span> <span class="n">n_om</span><span class="p">)</span>
+
+    <span class="c1"># Step 3 — recover κφ as the residual rotation about n_kphi.</span>
+    <span class="c1"># From R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ) = R_eul,</span>
+    <span class="c1"># we have R(n_kphi, κφ) = R(n_kappa, -κ) · R(n_komega, -κω) · R_eul.</span>
+    <span class="n">R_om_inv</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="o">-</span><span class="n">komega_deg</span><span class="p">)</span>
+    <span class="n">R_ka_inv</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">n_ka</span><span class="p">,</span> <span class="o">-</span><span class="n">kappa_deg</span><span class="p">)</span>
+    <span class="n">R_residual</span> <span class="o">=</span> <span class="n">R_ka_inv</span> <span class="o">@</span> <span class="n">R_om_inv</span> <span class="o">@</span> <span class="n">R_eul</span>
+    <span class="c1"># R_residual should be a pure rotation about n_kphi.  Recover</span>
+    <span class="c1"># the angle from the action on any vector perpendicular to n_ph.</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n_ph</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">0.9</span><span class="p">:</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">perp</span> <span class="o">=</span> <span class="n">ref</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">n_ph</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_ph</span>
+    <span class="n">perp</span> <span class="o">=</span> <span class="n">perp</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">perp</span><span class="p">)</span>
+    <span class="n">perp_rot</span> <span class="o">=</span> <span class="n">R_residual</span> <span class="o">@</span> <span class="n">perp</span>
+    <span class="n">kphi_deg</span> <span class="o">=</span> <span class="n">_angle_about_axis</span><span class="p">(</span><span class="n">perp</span><span class="p">,</span> <span class="n">perp_rot</span><span class="p">,</span> <span class="n">n_ph</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">komega_deg</span><span class="p">),</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">kappa_deg</span><span class="p">),</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">kphi_deg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="kappa_to_eulerian_axes">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.kappa_to_eulerian_axes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">kappa_to_eulerian_axes</span><span class="p">(</span>
+    <span class="n">komega_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">kappa_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">kphi_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">convention</span><span class="p">:</span> <span class="n">KappaPseudoAngleConvention</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert real kappa motor angles to virtual Eulerian pseudoangles</span>
+<span class="sd">    using the geometry&#39;s actual signed stage axes.</span>
+
+<span class="sd">    Inverts :func:`eulerian_to_kappa_axes`.  Decomposes the kappa</span>
+<span class="sd">    sample-rotation matrix (with stage order matching</span>
+<span class="sd">    :func:`~orientation._compute_q_phi` under the BL1967 standard</span>
+<span class="sd">    convention, Busing &amp; Levy 1967) as</span>
+
+<span class="sd">        R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)</span>
+<span class="sd">            =  R(n_komega, ω) · R(n_chi_eq, χ) · R(n_kphi, φ)</span>
+
+<span class="sd">    and returns ``(ω, χ, φ)``.  The decomposition has two χ branches;</span>
+<span class="sd">    this function returns the branch consistent with the input kappa</span>
+<span class="sd">    sign.</span>
+
+<span class="sd">    Algorithm</span>
+<span class="sd">    ---------</span>
+<span class="sd">    Let ``R = R(n_komega, κω) · R(n_kappa, κ) · R(n_kphi, κφ)`` be</span>
+<span class="sd">    the realized rotation.  By the same reasoning as in</span>
+<span class="sd">    :func:`eulerian_to_kappa_axes` (applied to the Eulerian-equivalent</span>
+<span class="sd">    triple):</span>
+
+<span class="sd">    1. Solve for χ from</span>
+<span class="sd">       ``n_komega · R(n_chi_eq, χ) · n_kphi  =  n_komega · R · n_kphi``.</span>
+
+<span class="sd">    2. Recover ω as the signed rotation about ``n_komega`` taking</span>
+<span class="sd">       ``R(n_chi_eq, χ) · n_kphi`` onto ``R · n_kphi``.</span>
+
+<span class="sd">    3. Recover φ from the residual rotation about ``n_kphi``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    komega_deg, kappa_deg, kphi_deg : float</span>
+<span class="sd">        Real kappa motor angles in degrees.</span>
+<span class="sd">    convention : KappaPseudoAngleConvention</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    omega, chi, phi : tuple of float</span>
+<span class="sd">        Virtual Eulerian pseudoangles in degrees, in the cut-point</span>
+<span class="sd">        range (-180, 180].  The sign of χ is chosen consistently with</span>
+<span class="sd">        the sign of ``kappa_deg``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The chi-sign convention here matches the Walko (2016) sign</span>
+<span class="sd">    convention: positive κ gives positive χ in the textbook frame.</span>
+<span class="sd">    For other conventions (e.g. left-handed komega), the sign carries</span>
+<span class="sd">    through naturally because the decomposition uses the geometry&#39;s</span>
+<span class="sd">    own signed axes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Special case: κ = 0 ⇒ χ = 0 ⇒ degenerate (ω, φ) split.  In every</span>
+    <span class="c1"># demo geometry shipped with the package ``n_komega`` and ``n_kphi`` are</span>
+    <span class="c1"># parallel, so any pair satisfying ``ω + φ = κω + κφ`` is a valid</span>
+    <span class="c1"># decomposition.  The natural assignment ``ω = κω, φ = κφ`` makes</span>
+    <span class="c1"># the round-trip ``eulerian → kappa → eulerian`` an identity at</span>
+    <span class="c1"># this point.</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">kappa_deg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">komega_deg</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">kphi_deg</span><span class="p">)</span>
+
+    <span class="n">R</span> <span class="o">=</span> <span class="n">_kappa_rotation</span><span class="p">(</span><span class="n">convention</span><span class="p">,</span> <span class="n">komega_deg</span><span class="p">,</span> <span class="n">kappa_deg</span><span class="p">,</span> <span class="n">kphi_deg</span><span class="p">)</span>
+
+    <span class="n">n_om</span> <span class="o">=</span> <span class="n">convention</span><span class="o">.</span><span class="n">n_komega</span>
+    <span class="n">n_ch</span> <span class="o">=</span> <span class="n">convention</span><span class="o">.</span><span class="n">n_chi_eq</span>
+    <span class="n">n_ph</span> <span class="o">=</span> <span class="n">convention</span><span class="o">.</span><span class="n">n_kphi</span>
+
+    <span class="c1"># Step 1 — solve for χ from the scalar equation</span>
+    <span class="c1">#   n_om · R(n_ch, χ) · n_ph  =  n_om · R · n_ph</span>
+    <span class="c1"># (Apply both sides of R_eul = R(n_om,ω) · R(n_ch,χ) · R(n_ph,φ)</span>
+    <span class="c1"># to n_ph; the inner R(n_ph,·) factor disappears.  Dotting with</span>
+    <span class="c1"># n_om removes the outer R(n_om,·) factor.)</span>
+    <span class="n">v_target</span> <span class="o">=</span> <span class="n">R</span> <span class="o">@</span> <span class="n">n_ph</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">v_target</span><span class="p">))</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">n_ph</span><span class="p">))</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">n_ch</span><span class="p">,</span> <span class="n">n_ph</span><span class="p">)))</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="n">n_ch</span><span class="p">))</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n_ch</span><span class="p">,</span> <span class="n">n_ph</span><span class="p">))</span>
+    <span class="n">chi_candidates</span> <span class="o">=</span> <span class="n">_solve_alpha_cos_beta_sin_eq_gamma</span><span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">C</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">-</span> <span class="n">C</span><span class="p">)</span>
+
+    <span class="c1"># The two χ candidates differ by reflection through the cone-axis</span>
+    <span class="c1"># plane.  Pick the one that, when fed back through</span>
+    <span class="c1"># ``eulerian_to_kappa_axes``, reproduces the input motor triple</span>
+    <span class="c1"># under the branch implied by ``sign(kappa_deg)``.</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">best_err</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+    <span class="n">target_branch</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span> <span class="k">if</span> <span class="n">kappa_deg</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">chi_deg</span> <span class="ow">in</span> <span class="n">chi_candidates</span><span class="p">:</span>
+        <span class="c1"># Recover ω from the n_komega cone identity:</span>
+        <span class="c1"># R(n_om, ω) takes R(n_ch, χ) · n_ph onto R · n_ph.</span>
+        <span class="n">R_ch</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">n_ch</span><span class="p">,</span> <span class="n">chi_deg</span><span class="p">)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">R_ch</span> <span class="o">@</span> <span class="n">n_ph</span>
+        <span class="n">omega_deg</span> <span class="o">=</span> <span class="n">_angle_about_axis</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">v_target</span><span class="p">,</span> <span class="n">n_om</span><span class="p">)</span>
+        <span class="c1"># Recover φ from the residual rotation about n_kphi.</span>
+        <span class="c1"># From R(n_om, ω) · R(n_ch, χ) · R(n_ph, φ) = R, we have</span>
+        <span class="c1"># R(n_ph, φ) = R(n_ch, -χ) · R(n_om, -ω) · R.</span>
+        <span class="n">R_om_inv</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">n_om</span><span class="p">,</span> <span class="o">-</span><span class="n">omega_deg</span><span class="p">)</span>
+        <span class="n">R_ch_inv</span> <span class="o">=</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">n_ch</span><span class="p">,</span> <span class="o">-</span><span class="n">chi_deg</span><span class="p">)</span>
+        <span class="n">R_residual</span> <span class="o">=</span> <span class="n">R_ch_inv</span> <span class="o">@</span> <span class="n">R_om_inv</span> <span class="o">@</span> <span class="n">R</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n_ph</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">0.9</span><span class="p">:</span>
+            <span class="n">ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">perp</span> <span class="o">=</span> <span class="n">ref</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">n_ph</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_ph</span>
+        <span class="n">perp</span> <span class="o">=</span> <span class="n">perp</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">perp</span><span class="p">)</span>
+        <span class="n">perp_rot</span> <span class="o">=</span> <span class="n">R_residual</span> <span class="o">@</span> <span class="n">perp</span>
+        <span class="n">phi_deg</span> <span class="o">=</span> <span class="n">_angle_about_axis</span><span class="p">(</span><span class="n">perp</span><span class="p">,</span> <span class="n">perp_rot</span><span class="p">,</span> <span class="n">n_ph</span><span class="p">)</span>
+        <span class="c1"># Round-trip error: forward through eulerian_to_kappa_axes.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ko</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">kp</span> <span class="o">=</span> <span class="n">eulerian_to_kappa_axes</span><span class="p">(</span>
+                <span class="n">omega_deg</span><span class="p">,</span> <span class="n">chi_deg</span><span class="p">,</span> <span class="n">phi_deg</span><span class="p">,</span> <span class="n">convention</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">target_branch</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">continue</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">ko</span> <span class="o">-</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">komega_deg</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">kappa_deg</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">kp</span> <span class="o">-</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">kphi_deg</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">&lt;</span> <span class="n">best_err</span><span class="p">:</span>
+            <span class="n">best_err</span> <span class="o">=</span> <span class="n">err</span>
+            <span class="n">best</span> <span class="o">=</span> <span class="p">(</span><span class="n">omega_deg</span><span class="p">,</span> <span class="n">chi_deg</span><span class="p">,</span> <span class="n">phi_deg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">best</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;kappa_to_eulerian_axes: no consistent χ branch found for &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(komega=</span><span class="si">{</span><span class="n">komega_deg</span><span class="si">}</span><span class="s2">, kappa=</span><span class="si">{</span><span class="n">kappa_deg</span><span class="si">}</span><span class="s2">, kphi=</span><span class="si">{</span><span class="n">kphi_deg</span><span class="si">}</span><span class="s2">).&quot;</span>
+        <span class="p">)</span>
+    <span class="n">omega_deg</span><span class="p">,</span> <span class="n">chi_deg</span><span class="p">,</span> <span class="n">phi_deg</span> <span class="o">=</span> <span class="n">best</span>
+    <span class="k">return</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">omega_deg</span><span class="p">),</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">chi_deg</span><span class="p">),</span> <span class="n">_wrap_180</span><span class="p">(</span><span class="n">phi_deg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_wrap_180">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa._wrap_180">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_wrap_180</span><span class="p">(</span><span class="n">angle_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap an angle in degrees to the half-open interval (-180, 180].&quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">angle_deg</span><span class="p">)</span> <span class="o">+</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span> <span class="o">-</span> <span class="mf">180.0</span>
+    <span class="c1"># The modulo yields [-180, 180); shift the −180 endpoint to +180</span>
+    <span class="c1"># so the wrap is symmetric around 0.</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="o">-</span><span class="mf">180.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">180.0</span>
+    <span class="k">return</span> <span class="n">a</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Walko (2016) eq. [16] textbook formula — backward-compatible</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="kappa_to_eulerian">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.kappa_to_eulerian">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">kappa_to_eulerian</span><span class="p">(</span>
+    <span class="n">komega</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">kappa</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">kphi</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">50.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert real kappa angles to virtual Eulerian pseudoangles using</span>
+<span class="sd">    the closed-form Walko (2016) eq. [16] formula.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">       This function implements Walko&#39;s published algebra **literally**</span>
+<span class="sd">       and is correct only for the axis convention assumed in that</span>
+<span class="sd">       paper (omega and phi about the transverse axis with the</span>
+<span class="sd">       textbook handedness; chi about the longitudinal axis).  No</span>
+<span class="sd">       demo geometry in this package matches that convention exactly.  For</span>
+<span class="sd">       any geometry-dependent calculation, use</span>
+<span class="sd">       :func:`kappa_to_eulerian_axes` with the demo geometry&#39;s</span>
+<span class="sd">       :class:`KappaPseudoAngleConvention` instead.</span>
+
+<span class="sd">       Issue #241 records the diagnostic that uncovered this</span>
+<span class="sd">       limitation.</span>
+
+<span class="sd">    Implements Walko (2016), eq. [16] — forward direction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    komega : float</span>
+<span class="sd">        Real kappa-omega angle in degrees.</span>
+<span class="sd">    kappa : float</span>
+<span class="sd">        Real kappa angle in degrees.</span>
+<span class="sd">    kphi : float</span>
+<span class="sd">        Real kappa-phi angle in degrees.</span>
+<span class="sd">    alpha_deg : float, optional</span>
+<span class="sd">        Kappa tilt angle in degrees.  Default 50°.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    omega, chi, phi : tuple of float</span>
+<span class="sd">        Virtual Eulerian pseudoangles in degrees in Walko&#39;s frame.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the combination of kappa and alpha_deg places chi outside</span>
+<span class="sd">        the reachable range (``|kappa/2|`` · sin(alpha_0) &gt; 1).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; kappa_to_eulerian(57.045, 134.756, 57.045, alpha_deg=50.0)</span>
+<span class="sd">    (-0.0, 90.0, -0.0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">kappa</span><span class="p">)</span>
+
+    <span class="n">sin_chi_half</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sin_chi_half</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;kappa_to_eulerian: kappa=</span><span class="si">{</span><span class="n">kappa</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">°, alpha_deg=</span><span class="si">{</span><span class="n">alpha_deg</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">° &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;gives |sin(chi/2)| = </span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">sin_chi_half</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> &gt; 1 — unreachable chi.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">chi_half</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">sin_chi_half</span><span class="p">)</span>
+    <span class="n">chi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">chi_half</span><span class="p">)</span>
+
+    <span class="n">cos_chi_half</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">chi_half</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cos_chi_half</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-14</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;kappa_to_eulerian: chi approaches ±180° &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(chi_half=</span><span class="si">{</span><span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">chi_half</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">°) — singularity.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">cos_ratio</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">cos_chi_half</span>
+    <span class="n">cos_ratio</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">cos_ratio</span><span class="p">))</span>  <span class="c1"># guard against float rounding</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cos_ratio</span><span class="p">))</span>
+    <span class="c1"># The sign of offset matches the sign of kappa</span>
+    <span class="k">if</span> <span class="n">kappa</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="n">offset</span>
+
+    <span class="n">omega</span> <span class="o">=</span> <span class="n">komega</span> <span class="o">-</span> <span class="n">offset</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">kphi</span> <span class="o">-</span> <span class="n">offset</span>
+
+    <span class="k">return</span> <span class="n">omega</span><span class="p">,</span> <span class="n">chi</span><span class="p">,</span> <span class="n">phi</span></div>
+
+
+
+<div class="viewcode-block" id="eulerian_to_kappa">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.eulerian_to_kappa">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">eulerian_to_kappa</span><span class="p">(</span>
+    <span class="n">omega</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">chi</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">phi</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">alpha_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">50.0</span><span class="p">,</span>
+    <span class="n">branch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert virtual Eulerian pseudoangles to real kappa angles using</span>
+<span class="sd">    the inverse of the closed-form Walko (2016) eq. [16] formula.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">       This function implements Walko&#39;s published algebra **literally**</span>
+<span class="sd">       and is correct only for the textbook axis convention; see the</span>
+<span class="sd">       warning in :func:`kappa_to_eulerian` and issue #241.  For any</span>
+<span class="sd">       geometry-dependent calculation, use</span>
+<span class="sd">       :func:`eulerian_to_kappa_axes` with the demo geometry&#39;s</span>
+<span class="sd">       :class:`KappaPseudoAngleConvention` instead.</span>
+
+<span class="sd">    Inverse of Walko (2016), eq. [16].</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    omega : float</span>
+<span class="sd">        Virtual Eulerian omega in degrees.</span>
+<span class="sd">    chi : float</span>
+<span class="sd">        Virtual Eulerian chi in degrees.</span>
+<span class="sd">    phi : float</span>
+<span class="sd">        Virtual Eulerian phi in degrees.</span>
+<span class="sd">    alpha_deg : float, optional</span>
+<span class="sd">        Kappa tilt angle in degrees.  Default 50°.</span>
+<span class="sd">    branch : {+1, -1}, optional</span>
+<span class="sd">        Branch selection.  ``+1`` gives kappa ≥ 0 (default);</span>
+<span class="sd">        ``-1`` gives kappa ≤ 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    komega, kappa, kphi : tuple of float</span>
+<span class="sd">        Real kappa motor angles in degrees in Walko&#39;s frame.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``|chi|`` ≥ 2·alpha_deg (chi outside the reachable range).</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If branch is not +1 or -1.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; eulerian_to_kappa(0.0, 90.0, 0.0, alpha_deg=50.0)</span>
+<span class="sd">    (57.04519..., 134.75594..., 57.04519...)</span>
+<span class="sd">    &gt;&gt;&gt; eulerian_to_kappa(0.0, 90.0, 0.0, alpha_deg=50.0, branch=-1)</span>
+<span class="sd">    (-57.04519..., -134.75594..., -57.04519...)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">branch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;eulerian_to_kappa: branch must be +1 or -1; got </span><span class="si">{</span><span class="n">branch</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">a0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">alpha_deg</span><span class="p">)</span>
+    <span class="n">chi_half</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">chi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="n">chi_limit</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">alpha_deg</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">chi</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">chi_limit</span> <span class="o">-</span> <span class="mf">1e-9</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;eulerian_to_kappa: |chi| = </span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">chi</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">° must be less than &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;2·alpha_deg = </span><span class="si">{</span><span class="n">chi_limit</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">° (kappa geometry limit).  &quot;</span>
+            <span class="s2">&quot;The requested chi is outside the reachable range.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Use |chi/2| to get the magnitude of kappa, then apply branch for sign.</span>
+    <span class="n">sin_kappa_half</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">chi_half</span><span class="p">))</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a0</span><span class="p">)</span>
+    <span class="c1"># Clamp for float safety (already guarded above, but defensive)</span>
+    <span class="n">sin_kappa_half</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sin_kappa_half</span><span class="p">))</span>
+    <span class="n">kappa_half</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">sin_kappa_half</span><span class="p">)</span>
+    <span class="n">kappa</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">kappa_half</span><span class="p">)</span> <span class="o">*</span> <span class="n">branch</span>
+
+    <span class="c1"># Recompute chi_half from the chosen kappa branch for consistency</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">kappa</span><span class="p">)</span>
+    <span class="n">sin_ch</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a0</span><span class="p">)</span>
+    <span class="n">ch</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sin_ch</span><span class="p">)))</span>
+
+    <span class="n">cos_ch</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cos_ch</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-14</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;eulerian_to_kappa: chi approaches ±180° — singularity.&quot;</span><span class="p">)</span>
+
+    <span class="n">cos_ratio</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">cos_ch</span>
+    <span class="n">cos_ratio</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">cos_ratio</span><span class="p">))</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cos_ratio</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">kappa</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="n">offset</span>
+
+    <span class="n">komega</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">+</span> <span class="n">offset</span>
+    <span class="n">kphi</span> <span class="o">=</span> <span class="n">phi</span> <span class="o">+</span> <span class="n">offset</span>
+
+    <span class="k">return</span> <span class="n">komega</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">kphi</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Kappa virtual-angle mode detection and solving</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="is_kappa_virtual_mode">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.is_kappa_virtual_mode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_kappa_virtual_mode</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return True when *mode* contains a virtual Eulerian angle constraint</span>
+<span class="sd">    (omega, chi, or phi) and *geometry* is a kappa diffractometer.</span>
+
+<span class="sd">    Used by :func:`~forward._solve_constraint_set` to detect when the</span>
+<span class="sd">    kappa virtual-angle solver should be dispatched.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">    mode : ConstraintSet</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleConstraint</span>
+
+    <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">stage_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="k">if</span> <span class="s2">&quot;kappa&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stage_names</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">SampleConstraint</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">KAPPA_VIRTUAL_ANGLES</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_build_eulerian_equivalent_geometry">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa._build_eulerian_equivalent_geometry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_eulerian_equivalent_geometry</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">AdHocDiffractometer</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a synthetic Eulerian-equivalent geometry from a kappa</span>
+<span class="sd">    geometry.</span>
+
+<span class="sd">    The synthetic geometry has identical outer and inner stages but</span>
+<span class="sd">    replaces the kappa triple ``(komega, kappa, kphi)`` with the</span>
+<span class="sd">    Eulerian triple ``(omega, chi, phi)`` whose axes come from the</span>
+<span class="sd">    kappa demo geometry&#39;s :class:`KappaPseudoAngleConvention`.  The result</span>
+<span class="sd">    is a standard Eulerian geometry that the existing solvers handle</span>
+<span class="sd">    natively.</span>
+
+<span class="sd">    All non-kappa stage angles (and limits) are copied verbatim from</span>
+<span class="sd">    the source geometry.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        Kappa geometry with ``kappa_pseudo_angle_convention`` set.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    eul_geom : AdHocDiffractometer</span>
+<span class="sd">        Synthetic Eulerian equivalent.  Has no modes / sample / UB</span>
+<span class="sd">        attached; intended for direct use with the low-level forward</span>
+<span class="sd">        dispatcher.</span>
+<span class="sd">    komega_name, kphi_name : str</span>
+<span class="sd">        Names of the outermost and innermost kappa stages on the</span>
+<span class="sd">        original geometry.  Returned for convenience so callers can</span>
+<span class="sd">        substitute Eulerian solutions back into the kappa motor dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.diffractometer</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdHocDiffractometer</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.stage</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stage</span>
+
+    <span class="n">convention</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_pseudo_angle_convention</span>
+    <span class="n">sample_stages</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span>
+    <span class="n">stage_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample_stages</span><span class="p">]</span>
+    <span class="n">kappa_idx</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sample_stages</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;kappa&quot;</span><span class="p">)</span>
+
+    <span class="n">komega_name</span> <span class="o">=</span> <span class="n">stage_names</span><span class="p">[</span><span class="n">kappa_idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">kphi_name</span> <span class="o">=</span> <span class="n">stage_names</span><span class="p">[</span><span class="n">kappa_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">eul_stages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Stage</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sample_stages</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">kappa_idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">eul_stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Stage</span><span class="p">(</span>
+                    <span class="s2">&quot;omega&quot;</span><span class="p">,</span>
+                    <span class="n">convention</span><span class="o">.</span><span class="n">n_komega</span><span class="p">,</span>
+                    <span class="n">parent</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
+                    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
+                    <span class="n">angle</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span>
+                    <span class="n">limits</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">limits</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="n">kappa_idx</span><span class="p">:</span>
+            <span class="n">eul_stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Stage</span><span class="p">(</span>
+                    <span class="s2">&quot;chi&quot;</span><span class="p">,</span>
+                    <span class="n">convention</span><span class="o">.</span><span class="n">n_chi_eq</span><span class="p">,</span>
+                    <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span>
+                    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
+                    <span class="n">angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">limits</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">limits</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="n">kappa_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">eul_stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Stage</span><span class="p">(</span>
+                    <span class="s2">&quot;phi&quot;</span><span class="p">,</span>
+                    <span class="n">convention</span><span class="o">.</span><span class="n">n_kphi</span><span class="p">,</span>
+                    <span class="n">parent</span><span class="o">=</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span>
+                    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
+                    <span class="n">angle</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span>
+                    <span class="n">limits</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">limits</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Outer / inner non-kappa sample stages (e.g. mu on kappa6c)</span>
+            <span class="n">eul_stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Stage</span><span class="p">(</span>
+                    <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span>
+                    <span class="n">parent</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
+                    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
+                    <span class="n">angle</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span>
+                    <span class="n">limits</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">limits</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Detector stages copied verbatim</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">:</span>
+        <span class="n">eul_stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">Stage</span><span class="p">(</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span>
+                <span class="n">parent</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;detector&quot;</span><span class="p">,</span>
+                <span class="n">angle</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span>
+                <span class="n">limits</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">limits</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">eul_geom</span> <span class="o">=</span> <span class="n">AdHocDiffractometer</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">__eulerian_equivalent&quot;</span><span class="p">,</span>
+        <span class="n">stages</span><span class="o">=</span><span class="n">eul_stages</span><span class="p">,</span>
+        <span class="n">basis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">),</span>
+        <span class="n">wavelength</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">eul_geom</span><span class="p">,</span> <span class="n">komega_name</span><span class="p">,</span> <span class="n">kphi_name</span></div>
+
+
+
+<div class="viewcode-block" id="_translate_mode_to_eulerian">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa._translate_mode_to_eulerian">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_translate_mode_to_eulerian</span><span class="p">(</span>
+    <span class="n">mode</span><span class="p">,</span>
+    <span class="n">det_stage_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rewrite a kappa virtual-angle mode onto the Eulerian-equivalent</span>
+<span class="sd">    geometry.</span>
+
+<span class="sd">    Virtual-angle ``SampleConstraint`` entries on ``omega``/``chi``/</span>
+<span class="sd">    ``phi`` already speak the Eulerian language and are passed through.</span>
+<span class="sd">    All other constraints (fixed real outer/inner stages, detector</span>
+<span class="sd">    constraints, bisect constraints) are preserved verbatim.  A</span>
+<span class="sd">    ``VirtualBisectConstraint`` is downgraded to a plain</span>
+<span class="sd">    ``BisectConstraint`` on the equivalent ``omega`` stage so the</span>
+<span class="sd">    standard analytic Eulerian bisect solver is dispatched.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectConstraint</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintSet</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleConstraint</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">VirtualBisectConstraint</span>
+
+    <span class="n">new_constraints</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">VirtualBisectConstraint</span><span class="p">):</span>
+            <span class="n">new_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">BisectConstraint</span><span class="p">(</span><span class="n">sample_stage</span><span class="o">=</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="n">detector_stage</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">detector_stage</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">SampleConstraint</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">KAPPA_VIRTUAL_ANGLES</span><span class="p">:</span>
+            <span class="n">new_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SampleConstraint</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+        <span class="n">new_constraints</span><span class="p">,</span>
+        <span class="n">computed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="n">det_stage_name</span><span class="p">],</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="solve_kappa_virtual">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/kappa/index.html#ad_hoc_diffractometer.kappa.solve_kappa_virtual">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">solve_kappa_virtual</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">Q_phi</span><span class="p">,</span>
+    <span class="n">ttheta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve a kappa virtual-angle mode: find real kappa motor angles</span>
+<span class="sd">    satisfying the virtual Eulerian-angle constraints and the Bragg</span>
+<span class="sd">    condition.</span>
+
+<span class="sd">    The solver uses the **geometry-aware** decomposition</span>
+<span class="sd">    (:func:`eulerian_to_kappa_axes`) introduced by issue #241.  The</span>
+<span class="sd">    flow is:</span>
+
+<span class="sd">    1. Build a synthetic Eulerian-equivalent geometry whose three</span>
+<span class="sd">       sample stages have axes ``(n_komega, n_chi_eq, n_kphi)`` taken</span>
+<span class="sd">       from the kappa demo geometry&#39;s</span>
+<span class="sd">       :class:`KappaPseudoAngleConvention`.</span>
+<span class="sd">    2. Translate the kappa virtual-angle mode onto the equivalent</span>
+<span class="sd">       geometry (a ``VirtualBisectConstraint`` becomes a plain</span>
+<span class="sd">       ``BisectConstraint`` on the synthetic ``omega`` stage; fixed</span>
+<span class="sd">       virtual ``SampleConstraint`` entries pass through verbatim).</span>
+<span class="sd">    3. Dispatch into the standard Eulerian forward solver</span>
+<span class="sd">       (``_solve_constraint_set``), which handles the bisect or</span>
+<span class="sd">       fixed-angle variant analytically.</span>
+<span class="sd">    4. Convert each Eulerian motor triple to kappa motors via</span>
+<span class="sd">       :func:`eulerian_to_kappa_axes` for both branches ±1, with</span>
+<span class="sd">       deduplication.</span>
+
+<span class="sd">    Each step is closed-form; no Newton iteration is required.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">        Kappa geometry with ``kappa_pseudo_angle_convention`` set.</span>
+<span class="sd">    Q_phi : array-like, shape (3,)</span>
+<span class="sd">        Scattering vector in the phi frame (Å⁻¹).</span>
+<span class="sd">    ttheta_deg : float</span>
+<span class="sd">        Detector angle (2θ) in degrees.</span>
+<span class="sd">    mode : ConstraintSet</span>
+<span class="sd">        Either a virtual-bisect mode (``VirtualBisectConstraint``) or</span>
+<span class="sd">        a fixed-virtual-angle mode (``SampleConstraint`` on one of</span>
+<span class="sd">        ``omega``, ``chi``, ``phi``).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">        One angles dict per solution, keyed by real stage names.</span>
+<span class="sd">        Cut-points, limits, and deduplication on the kappa side are</span>
+<span class="sd">        applied by the caller in :mod:`~ad_hoc_diffractometer.forward`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectorConstraint</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleConstraint</span>
+
+    <span class="n">convention</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_pseudo_angle_convention</span>
+    <span class="k">if</span> <span class="n">convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="n">det_stage</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">Q_phi_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Q_phi</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">eul_geom</span><span class="p">,</span> <span class="n">komega_name</span><span class="p">,</span> <span class="n">kphi_name</span> <span class="o">=</span> <span class="n">_build_eulerian_equivalent_geometry</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+
+    <span class="c1"># Apply the original mode&#39;s fixed sample/detector constraints to</span>
+    <span class="c1"># the equivalent geometry&#39;s live stage angles, so the synthetic</span>
+    <span class="c1"># forward computation sees the right baseline.</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">SampleConstraint</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">eul_geom</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001</span>
+            <span class="n">eul_geom</span><span class="o">.</span><span class="n">stage</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="s2">&quot;detector_constraint&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">DetectorConstraint</span><span class="p">):</span>
+        <span class="n">dc</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_constraint</span>
+        <span class="c1"># The qaz-detector branch is never reached from a kappa</span>
+        <span class="c1"># virtual-angle mode in any shipped demo geometry (qaz modes route</span>
+        <span class="c1"># through ``_solve_qaz_mode``, not through here).</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="s2">&quot;is_qaz&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">eul_geom</span><span class="o">.</span><span class="n">_stages</span>  <span class="c1"># noqa: SLF001</span>
+        <span class="p">):</span>  <span class="c1"># pragma: no branch</span>
+            <span class="n">eul_geom</span><span class="o">.</span><span class="n">stage</span><span class="p">(</span><span class="n">dc</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dc</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="n">eul_mode</span> <span class="o">=</span> <span class="n">_translate_mode_to_eulerian</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">det_stage</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># Install the synthetic mode and dispatch.  The equivalent geometry</span>
+    <span class="c1"># has no UB / sample attached, but _solve_constraint_set works in</span>
+    <span class="c1"># the phi-frame and only needs Q_phi + ttheta + mode.</span>
+    <span class="n">eul_geom</span><span class="o">.</span><span class="n">_modes</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;__synthetic__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eul_mode</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="n">eul_geom</span><span class="o">.</span><span class="n">_mode_name</span> <span class="o">=</span> <span class="s2">&quot;__synthetic__&quot;</span>  <span class="c1"># noqa: SLF001</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.forward</span><span class="w"> </span><span class="kn">import</span> <span class="n">_solve_constraint_set</span>
+
+    <span class="n">eul_solutions</span> <span class="o">=</span> <span class="n">_solve_constraint_set</span><span class="p">(</span><span class="n">eul_geom</span><span class="p">,</span> <span class="n">Q_phi_arr</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">eul_mode</span><span class="p">)</span>
+
+    <span class="c1"># Build the kappa-side baseline angles.</span>
+    <span class="n">base_angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="p">}</span>
+    <span class="n">base_angles</span><span class="p">[</span><span class="n">det_stage</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttheta_deg</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">SampleConstraint</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001</span>
+            <span class="n">base_angles</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="s2">&quot;detector_constraint&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">DetectorConstraint</span><span class="p">):</span>
+        <span class="n">dc</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_constraint</span>
+        <span class="c1"># See note above: the qaz branch is unreachable from a</span>
+        <span class="c1"># virtual-angle mode in shipped demo geometries.</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="s2">&quot;is_qaz&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dc</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span>  <span class="c1"># noqa: SLF001</span>
+        <span class="p">):</span>  <span class="c1"># pragma: no branch</span>
+            <span class="n">base_angles</span><span class="p">[</span><span class="n">dc</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dc</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">seen</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">eul_sol</span> <span class="ow">in</span> <span class="n">eul_solutions</span><span class="p">:</span>
+        <span class="n">omega_e</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">eul_sol</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">chi_e</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">eul_sol</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">phi_e</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">eul_sol</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ko</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">kp</span> <span class="o">=</span> <span class="n">eulerian_to_kappa_axes</span><span class="p">(</span>
+                    <span class="n">omega_e</span><span class="p">,</span> <span class="n">chi_e</span><span class="p">,</span> <span class="n">phi_e</span><span class="p">,</span> <span class="n">convention</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">branch</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">ko</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">kp</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="nb">abs</span><span class="p">(</span><span class="n">sig</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
+                <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sig</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
+                <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sig</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
+                <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">seen</span>
+            <span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">seen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
+            <span class="n">angles</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">base_angles</span><span class="p">)</span>
+            <span class="n">angles</span><span class="p">[</span><span class="n">komega_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ko</span>
+            <span class="n">angles</span><span class="p">[</span><span class="s2">&quot;kappa&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+            <span class="n">angles</span><span class="p">[</span><span class="n">kphi_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">kp</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-06-22 09:07 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1309 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>orientation &#8212; ad_hoc_diffractometer 0.11</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=91f10d53" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+
+    <script src="../../../_static/documentation_options.js?v=60336169"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/ad_hoc_diffractometer/orientation/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.11.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="radiation" href="../radiation/index.html" />
+    <link rel="prev" title="mode" href="../mode/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11" />
+    <meta name="docbuild:last-update" content="2026-06-22 09:07 CDT"/>
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.11</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changes.html">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer</span></code></a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../howto/index.html">How-to Guides</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/basis_vectors.html">Choose and Understand Basis Vectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/custom_geometry.html">Build a Custom Diffractometer Geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/wavelength.html">Set Wavelength / Energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/lattice.html">Define the Sample Lattice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/orient.html">Orient a Crystal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/forward.html">Forward and Inverse Computations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/modes.html">Switch Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/constraints.html">Work with Constraints and Diffraction Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/surface.html">Surface Geometry and the Reference Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/trajectory.html">Plan a Trajectory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/refine_lattice.html">Refine the Lattice Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/serialize.html">Save and Restore a Diffractometer Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/inclination.html">Set Diffractometer Inclination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/performance.html">Measure Forward/Inverse Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howto/fourcv_alignment_howto.html">Align a Four-Circle Diffractometer (<code class="docutils literal notranslate"><span class="pre">fourcv</span></code>)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../geometries/index.html">Demonstration Geometries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/fourcv.html">fourcv — Eulerian Four-Circle (vertical)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/fourch.html">fourch — Eulerian Four-Circle (horizontal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/fivec.html">fivec — Eulerian Five-Circle (Vlieg et al. 1987)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/psic.html">psic — Eulerian Six-Circle, 4S+2D (You 1999)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/sixc.html">sixc — Eulerian Six-Circle, Surface (Lohmeier &amp; Vlieg 1993)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/kappa4cv.html">kappa4cv — Kappa Four-Circle (vertical)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/kappa4ch.html">kappa4ch — Kappa Four-Circle (horizontal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/kappa6c.html">kappa6c — Kappa Six-Circle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/zaxis.html">zaxis — Z-Axis Four-Circle (Surface)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../geometries/s2d2.html">s2d2 — S2D2 General-Inclination Four-Circle</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/declarative_geometry_schema.html">Declarative Geometry Schema</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../../api.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../index.html">ad_hoc_diffractometer</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../axes/index.html">axes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../benchmark/index.html">benchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../constants/index.html">constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../conversions/index.html">conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../diffractometer/index.html">diffractometer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../display/index.html">display</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../drawing/index.html">drawing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../factories/index.html">factories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../forward/index.html">forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../geometries/index.html">geometries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../geometry_loader/index.html">geometry_loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../kappa/index.html">kappa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../lattice/index.html">lattice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mode/index.html">mode</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">orientation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../radiation/index.html">radiation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/index.html">reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../refinement/index.html">refinement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reflection/index.html">reflection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rotation/index.html">rotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sample/index.html">sample</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scan/index.html">scan</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stage/index.html">stage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../surface/index.html">surface</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../direct-lattice.html">Direct Lattice in Crystallography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problem1.html">Case Study: Describing a Diffractometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problem2.html">Case Study: Choice of Basis and the UB Matrix</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../../api.html" class="nav-link">API</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">ad_hoc_diffractometer</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">orientation</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ad_hoc_diffractometer.orientation">
+<span id="orientation"></span><h1>orientation<a class="headerlink" href="#module-ad_hoc_diffractometer.orientation" title="Link to this heading">#</a></h1>
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation</span></code></p>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>angles_to_phi_vector(geometry, **motor_angles)</dt><dd><p>Convert a set of motor angles to the scattering vector expressed in the
+phi-axis (innermost sample-stage) frame.  This is the foundational
+computation needed for U and UB matrix determination.</p>
+</dd>
+<dt>ub_from_one_reflection(sample, reflection, reference_hkl, reference_stage)</dt><dd><p>Compute a provisional U and UB from one reflection using the Rodrigues
+rotation that takes the crystal direction <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">&#64;</span> <span class="pre">reference_hkl</span></code> to the
+lab direction given by <code class="docutils literal notranslate"><span class="pre">reference_stage</span></code>.  Sets <code class="docutils literal notranslate"><span class="pre">sample.U</span></code> and
+<code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> in-place; returns UB.</p>
+</dd>
+<dt>ub_from_two_reflections_bl1967(sample, r1, r2)</dt><dd><p>Compute U and UB from two orienting reflections using the Busing &amp; Levy
+(1967) algorithm (eqs. 23-27).  Sets <code class="docutils literal notranslate"><span class="pre">sample.U</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code>
+in-place; returns UB.</p>
+</dd>
+<dt>ub_from_three_reflections_bl1967(sample, r1, r2, r3)</dt><dd><p>Compute UB directly from three reflections using the Busing &amp; Levy (1967)
+direct method (eqs. 29-31), without prior knowledge of the lattice.
+Sets <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> in-place; also sets <code class="docutils literal notranslate"><span class="pre">sample.U</span></code> if a lattice B is
+available.  Returns UB.</p>
+</dd>
+<dt>ub_identity(sample)</dt><dd><p>Set U = I, UB = B; return UB.  The crudest assumption.</p>
+</dd>
+<dt>Future functions (separate issues):</dt><dd><p>ub_from_three_reflections_bl1967 — Busing &amp; Levy 1967, eqs. 29-31  (#6)</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967)</p></li>
+<li><p>You, J. Appl. Cryst. 32, 614-623 (1999)</p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>Functions<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation._compute_q_phi" title="ad_hoc_diffractometer.orientation._compute_q_phi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_q_phi</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Compute Q_phi from angle values without mutating any geometry state.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation._compute_q_phi_cached" title="ad_hoc_diffractometer.orientation._compute_q_phi_cached"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_q_phi_cached</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Compute Q_phi using cached rotation matrices for fixed stages.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation._gram_schmidt_triple" title="ad_hoc_diffractometer.orientation._gram_schmidt_triple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_gram_schmidt_triple</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Build a right-handed orthonormal 3×3 matrix from two linearly independent</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.angles_to_phi_vector" title="ad_hoc_diffractometer.orientation.angles_to_phi_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angles_to_phi_vector</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Convert a set of motor angles to the scattering vector in the phi frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_one_reflection" title="ad_hoc_diffractometer.orientation.ub_from_one_reflection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_one_reflection</span></code></a>([reference_stage])</p></td>
+<td><p>Compute a provisional U and UB from one reflection (Rodrigues method).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Compute UB directly from three reflections (Busing &amp; Levy 1967, eqs. 29-31).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Compute U and UB from two orienting reflections (Busing &amp; Levy 1967, eqs. 23-27).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_identity" title="ad_hoc_diffractometer.orientation.ub_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ub_identity</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Set U so the crystal-Cartesian frame aligns with the physical</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation._compute_q_phi">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">_compute_q_phi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_stages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_stages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_pi_over_lambda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_eff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#_compute_q_phi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation._compute_q_phi" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation._compute_q_phi</span></code></p>
+</div>
+<p>Compute Q_phi from angle values without mutating any geometry state.</p>
+<p>This is the inner hot-path function called hundreds of times per
+forward() invocation.  It avoids all attribute mutation, dict copying,
+and save/restore overhead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample_stages</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a>) – Sample stages in stacking order (floor-most first).</p></li>
+<li><p><strong>detector_stages</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a>) – Detector stages in stacking order (floor-most first).</p></li>
+<li><p><strong>angles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Motor angles in degrees, keyed by stage name.  Stages not present
+in the dict use the stage’s current <code class="docutils literal notranslate"><span class="pre">angle</span></code> attribute.</p></li>
+<li><p><strong>two_pi_over_lambda</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Pre-computed <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">pi</span> <span class="pre">/</span> <span class="pre">wavelength</span></code>.</p></li>
+<li><p><strong>y_eff</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Pre-computed effective beam direction <code class="docutils literal notranslate"><span class="pre">R_inc.T</span> <span class="pre">&#64;</span> <span class="pre">y_hat</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Q_phi</strong> – Scattering vector in the phi frame, in Å⁻¹.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation._compute_q_phi_cached">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">_compute_q_phi_cached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_stages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_stages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_pi_over_lambda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_eff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached_Z_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">free_sample_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached_D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#_compute_q_phi_cached"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation._compute_q_phi_cached" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation._compute_q_phi_cached</span></code></p>
+</div>
+<p>Compute Q_phi using cached rotation matrices for fixed stages.</p>
+<p>When some stages have fixed angles across all Newton iterations, their
+rotation matrices are constant and can be pre-computed.  This function
+uses the cached prefix product for the fixed portion and only computes
+rotation matrices for the free stages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample_stages</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a>) – All sample stages in stacking order.</p></li>
+<li><p><strong>detector_stages</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a>) – All detector stages in stacking order.</p></li>
+<li><p><strong>angles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Motor angles in degrees.</p></li>
+<li><p><strong>two_pi_over_lambda</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>)</p></li>
+<li><p><strong>y_eff</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>)</p></li>
+<li><p><strong>cached_Z_prefix</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><em>None</em>) – Pre-computed product of rotation matrices for all sample stages
+<strong>before</strong> the first free stage.  None means no caching (compute all).</p></li>
+<li><p><strong>free_sample_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><em>None</em>) – Indices into sample_stages of the free (varying) stages.  None means
+all stages are free (no caching).</p></li>
+<li><p><strong>cached_D</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><em>None</em>) – Pre-computed detector rotation matrix.  None means compute it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Q_phi</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation._gram_schmidt_triple">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">_gram_schmidt_triple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">v2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#_gram_schmidt_triple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation._gram_schmidt_triple" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation._gram_schmidt_triple</span></code></p>
+</div>
+<p>Build a right-handed orthonormal 3×3 matrix from two linearly independent
+vectors using Gram-Schmidt orthogonalisation.</p>
+<p>The columns of the returned matrix <code class="docutils literal notranslate"><span class="pre">T</span></code> are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>t1 = v1 / |v1|
+t3 = t1 × v2 / |t1 × v2|
+t2 = t3 × t1
+</pre></div>
+</div>
+<p>so that <code class="docutils literal notranslate"><span class="pre">t1</span> <span class="pre">∥</span> <span class="pre">v1</span></code>, <code class="docutils literal notranslate"><span class="pre">t2</span></code> lies in the plane of <code class="docutils literal notranslate"><span class="pre">v1</span></code> and <code class="docutils literal notranslate"><span class="pre">v2</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">t3</span></code> is perpendicular to that plane.  The triple <code class="docutils literal notranslate"><span class="pre">(t1,</span> <span class="pre">t2,</span> <span class="pre">t3)</span></code> is
+right-handed and orthonormal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v1</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Primary vector (must be non-zero).</p></li>
+<li><p><strong>v2</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em>, </em><em>shape</em><em> (</em><em>3</em><em>,</em><em>)</em>) – Secondary vector (must not be parallel to <code class="docutils literal notranslate"><span class="pre">v1</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>T</strong> – Columns are <code class="docutils literal notranslate"><span class="pre">[t1,</span> <span class="pre">t2,</span> <span class="pre">t3]</span></code>, forming a right-handed orthonormal basis.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3, 3)</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">v1</span></code> is the zero vector or <code class="docutils literal notranslate"><span class="pre">v1</span></code> and <code class="docutils literal notranslate"><span class="pre">v2</span></code> are parallel
+(cross product is zero).</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is the Gram-Schmidt construction used in Busing &amp; Levy (1967) to
+build the orthonormal triples <code class="docutils literal notranslate"><span class="pre">Tc</span></code> (crystal frame) and <code class="docutils literal notranslate"><span class="pre">Tφ</span></code> (phi
+frame) for the two-reflection orientation algorithm (eqs. 23-27).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation.angles_to_phi_vector">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">angles_to_phi_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">motor_angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#angles_to_phi_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation.angles_to_phi_vector" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation.angles_to_phi_vector</span></code></p>
+</div>
+<p>Convert a set of motor angles to the scattering vector in the phi frame.</p>
+<p>The “phi frame” is the coordinate system seen from the innermost sample
+stage — the frame in which crystal reflections are expressed when
+computing the orientation (U) matrix.</p>
+<p>Algorithm (Busing &amp; Levy 1967, section “The phi-axis frame”):</p>
+<ol class="arabic">
+<li><p>Compute the total sample rotation matrix <code class="docutils literal notranslate"><span class="pre">Z</span></code> as the product of all
+sample stage rotation matrices in <strong>outermost-leftmost</strong> order
+(BL1967 standard convention):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Z</span> <span class="o">=</span> <span class="n">R_0</span> <span class="o">@</span> <span class="n">R_1</span> <span class="o">@</span> <span class="o">...</span> <span class="o">@</span> <span class="n">R_</span><span class="p">{</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">R_0</span></code> is the floor-most (outermost) stage and <code class="docutils literal notranslate"><span class="pre">R_{n-1}</span></code>
+is the innermost stage closest to the sample.  Z then maps phi-frame
+vectors to lab-frame vectors: <code class="docutils literal notranslate"><span class="pre">v_lab</span> <span class="pre">=</span> <span class="pre">Z</span> <span class="pre">&#64;</span> <span class="pre">v_phi</span></code>.  Stages not
+supplied keep their current <code class="docutils literal notranslate"><span class="pre">angle</span></code> attribute.</p>
+</li>
+<li><p>Compute the total detector rotation matrix <code class="docutils literal notranslate"><span class="pre">D</span></code> in the same
+outermost-leftmost order.</p></li>
+<li><p>The incident-beam unit vector in the lab frame is <code class="docutils literal notranslate"><span class="pre">ŷ</span></code> (longitudinal
+direction, <code class="docutils literal notranslate"><span class="pre">geometry.basis[&quot;longitudinal&quot;]</span></code>).</p></li>
+<li><p>The scattered-beam unit vector in the lab frame is <code class="docutils literal notranslate"><span class="pre">D</span> <span class="pre">&#64;</span> <span class="pre">ŷ</span></code>.</p></li>
+<li><p>The scattering vector in the lab frame is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Q_lab</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="n">π</span> <span class="o">/</span> <span class="n">λ</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">D</span> <span class="o">@</span> <span class="n">ŷ</span> <span class="o">-</span> <span class="n">ŷ</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Rotate Q_lab back through the sample stack:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Q_phi = Z⁻¹ @ Q_lab = Zᵀ @ Q_lab
+</pre></div>
+</div>
+<p>(Z is orthogonal, so Z⁻¹ = Zᵀ.)</p>
+</li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> (<a class="reference internal" href="../diffractometer/index.html#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer"><em>AdHocDiffractometer</em></a>) – The diffractometer geometry.  Must have <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> set (not None).</p></li>
+<li><p><strong>**motor_angles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Motor angles in degrees, keyed by stage name.  All stages present in
+the geometry may be supplied; stages not supplied keep their current
+<code class="docutils literal notranslate"><span class="pre">angle</span></code> attribute.  Only sample and detector stages affect the
+result; other stages (if any) are ignored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Q_phi</strong> – Scattering vector in the phi frame, in units of Å⁻¹.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3,)</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – If a supplied stage name does not exist in the geometry.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">geometry.wavelength</span></code> is None.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the geometry has no sample stages.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the geometry has no detector stages.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function is stateless: it does not modify the geometry’s stage
+angles.  It computes rotation matrices directly from the supplied
+<code class="docutils literal notranslate"><span class="pre">motor_angles</span></code> values, so it is safe to call from multiple threads
+on the same geometry instance.</p>
+<p>The scattering vector Q_phi is independent of which sample stage is
+designated the “phi” axis; it is expressed in the frame of the <em>last</em>
+sample stage in the stacking order (the one closest to the sample).</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">psic</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>          <span class="c1"># Cu Kα in Å</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Q_phi</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">angles_to_phi_vector</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">g</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">mu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="mf">20.97</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">41.94</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Q_phi</span>  <span class="c1"># scattering vector for sapphire (006) in phi frame</span>
+<span class="go">array([...])</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<p>Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967) — phi-axis frame
+You, J. Appl. Cryst. 32, 614-623 (1999) — psic geometry conventions</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation.ub_from_one_reflection">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">ub_from_one_reflection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_hkl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_stage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#ub_from_one_reflection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation.ub_from_one_reflection" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation.ub_from_one_reflection</span></code></p>
+</div>
+<p>Compute a provisional U and UB from one reflection (Rodrigues method).</p>
+<p>A common first step in a diffractometer alignment session: assume that
+a known high-symmetry crystal direction (<code class="docutils literal notranslate"><span class="pre">reference_hkl</span></code>) is parallel
+to a specific diffractometer axis (<code class="docutils literal notranslate"><span class="pre">reference_stage</span></code>).  This gives a
+“fake” UB sufficient to predict where to scan for a second reflection.</p>
+<p>The algorithm:</p>
+<ol class="arabic simple">
+<li><p>Compute the crystal-frame direction: <code class="docutils literal notranslate"><span class="pre">Bh</span> <span class="pre">=</span> <span class="pre">B</span> <span class="pre">&#64;</span> <span class="pre">reference_hkl</span></code>
+(normalized to <code class="docutils literal notranslate"><span class="pre">Bh_hat</span></code>).</p></li>
+<li><p>Extract the lab-frame direction from <code class="docutils literal notranslate"><span class="pre">reference_stage</span></code> (normalized
+to <code class="docutils literal notranslate"><span class="pre">r_hat</span></code>).</p></li>
+<li><p>Find the minimal rotation (Rodrigues) that takes <code class="docutils literal notranslate"><span class="pre">Bh_hat</span></code> to
+<code class="docutils literal notranslate"><span class="pre">r_hat</span></code>:
+<code class="docutils literal notranslate"><span class="pre">axis</span>&#160; <span class="pre">=</span> <span class="pre">cross(Bh_hat,</span> <span class="pre">r_hat)</span></code>
+<code class="docutils literal notranslate"><span class="pre">angle</span> <span class="pre">=</span> <span class="pre">arccos(clip(dot(Bh_hat,</span> <span class="pre">r_hat),</span> <span class="pre">-1,</span> <span class="pre">1))</span></code>
+<code class="docutils literal notranslate"><span class="pre">U</span>&#160;&#160;&#160;&#160; <span class="pre">=</span> <span class="pre">rotation_matrix(axis,</span> <span class="pre">degrees(angle))</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UB</span> <span class="pre">=</span> <span class="pre">U</span> <span class="pre">&#64;</span> <span class="pre">B</span></code></p></li>
+<li><p>Store <code class="docutils literal notranslate"><span class="pre">sample.U</span> <span class="pre">=</span> <span class="pre">U</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.UB</span> <span class="pre">=</span> <span class="pre">UB</span></code>; return <code class="docutils literal notranslate"><span class="pre">UB</span></code>.</p></li>
+</ol>
+<p>Edge cases:</p>
+<ul class="simple">
+<li><p><strong>Parallel</strong> (<code class="docutils literal notranslate"><span class="pre">angle</span> <span class="pre">≈</span> <span class="pre">0</span></code>): <code class="docutils literal notranslate"><span class="pre">Bh_hat</span></code> already points along
+<code class="docutils literal notranslate"><span class="pre">r_hat</span></code>; <code class="docutils literal notranslate"><span class="pre">U</span> <span class="pre">=</span> <span class="pre">I</span></code>.</p></li>
+<li><p><strong>Anti-parallel</strong> (<code class="docutils literal notranslate"><span class="pre">angle</span> <span class="pre">≈</span> <span class="pre">π</span></code>): choose an arbitrary perpendicular
+axis (the first vector from <code class="docutils literal notranslate"><span class="pre">[XHAT,</span> <span class="pre">YHAT,</span> <span class="pre">ZHAT]</span></code> not parallel to
+<code class="docutils literal notranslate"><span class="pre">Bh_hat</span></code>); rotate 180° about it.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The result is approximate.  If <code class="docutils literal notranslate"><span class="pre">reference_hkl</span></code> is not truly
+parallel to <code class="docutils literal notranslate"><span class="pre">reference_stage.axis</span></code> (e.g. χ = 89.32° rather than
+90.00°), predicted angles for subsequent reflections will be slightly
+wrong.  Refine with <code class="docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967()</span></code> once a
+second reflection is measured.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<a class="reference internal" href="../sample/index.html#ad_hoc_diffractometer.sample.Sample" title="ad_hoc_diffractometer.sample.Sample"><em>Sample</em></a>) – The sample whose <code class="docutils literal notranslate"><span class="pre">U</span></code> and <code class="docutils literal notranslate"><span class="pre">UB</span></code> attributes are updated in-place.
+<code class="docutils literal notranslate"><span class="pre">sample.lattice</span></code> must be set.  If <code class="docutils literal notranslate"><span class="pre">sample.parent</span></code> is set, it
+is used to resolve a string <code class="docutils literal notranslate"><span class="pre">reference_stage</span></code>.</p></li>
+<li><p><strong>reflection</strong> (<a class="reference internal" href="../reflection/index.html#ad_hoc_diffractometer.reflection.Reflection" title="ad_hoc_diffractometer.reflection.Reflection"><em>Reflection</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – A <code class="docutils literal notranslate"><span class="pre">Reflection</span></code> object or the name of a reflection in
+<code class="docutils literal notranslate"><span class="pre">sample.reflections</span></code>.</p></li>
+<li><p><strong>reference_hkl</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Miller indices of the crystal direction assumed to be aligned with
+<code class="docutils literal notranslate"><span class="pre">reference_stage</span></code>.  Default <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">1)</span></code> (c-axis).</p></li>
+<li><p><strong>reference_stage</strong> (<a class="reference internal" href="../stage/index.html#ad_hoc_diffractometer.stage.Stage" title="ad_hoc_diffractometer.stage.Stage"><em>Stage</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, or </em><em>None</em><em>, </em><em>optional</em>) – <p>The diffractometer axis assumed to be parallel to <code class="docutils literal notranslate"><span class="pre">reference_hkl</span></code>.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Stage</span></code> object: <code class="docutils literal notranslate"><span class="pre">stage.axis</span></code> is used directly (recommended;
+the sign convention is already encoded in the Stage).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code>: looked up as <code class="docutils literal notranslate"><span class="pre">sample.parent.stage(name)</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.parent</span></code> is set: defaults to
+<code class="docutils literal notranslate"><span class="pre">sample.parent.stage(&quot;phi&quot;)</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.parent</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>: raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>UB</strong> – Sets <code class="docutils literal notranslate"><span class="pre">sample.U</span></code> and <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> in-place before returning.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3, 3)</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">reflection</span></code> is a string not found in <code class="docutils literal notranslate"><span class="pre">sample.reflections</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">reference_stage</span></code> cannot be resolved (no parent, no stage).</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">reference_hkl</span></code> maps to the zero vector under B.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">psic</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">add_sample</span><span class="p">(</span><span class="s2">&quot;sapphire&quot;</span><span class="p">,</span> <span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">4.758</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">12.991</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">sample</span> <span class="o">=</span> <span class="s2">&quot;sapphire&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">add_reflection</span><span class="p">(</span><span class="s2">&quot;r1&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+<span class="gp">... </span>                 <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="mf">20.97</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
+<span class="gp">... </span>                         <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">:</span> <span class="mf">41.94</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;r1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">UB</span> <span class="o">=</span> <span class="n">ub_from_one_reflection</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span> <span class="s2">&quot;r1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">reference_hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">reference_stage</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">stage</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">ub_from_three_reflections_bl1967</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#ub_from_three_reflections_bl1967"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967</span></code></p>
+</div>
+<p>Compute UB directly from three reflections (Busing &amp; Levy 1967, eqs. 29-31).</p>
+<p>This method requires no prior knowledge of the lattice: it computes UB
+directly by matrix inversion from three measured reflections.  If a
+lattice B matrix is available on the sample, U is also derived.</p>
+<p>Algorithm (BL1967 eqs. 28-31):</p>
+<ol class="arabic">
+<li><p>For each reflection i compute the phi-frame scattering vector
+<code class="docutils literal notranslate"><span class="pre">hiφ</span> <span class="pre">=</span> <span class="pre">angles_to_phi_vector(geometry,</span> <span class="pre">**ri.angles)</span></code> (eq. 28 gives
+the magnitude; <code class="docutils literal notranslate"><span class="pre">angles_to_phi_vector</span></code> already carries the full
+vector in Å⁻¹).</p></li>
+<li><p>Stack as column matrices:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Hφ = [h1φ | h2φ | h3φ]    (3×3, columns are phi-frame vectors)
+H  = [h1  | h2  | h3 ]    (3×3, columns are Miller-index triples)
+</pre></div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UB</span> <span class="pre">=</span> <span class="pre">Hφ</span> <span class="pre">&#64;</span> <span class="pre">inv(H)</span></code>  (eq. 31).</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">sample.lattice</span></code> is set: <code class="docutils literal notranslate"><span class="pre">U</span> <span class="pre">=</span> <span class="pre">UB</span> <span class="pre">&#64;</span> <span class="pre">inv(B)</span></code> (derived from UB).</p></li>
+<li><p>Store <code class="docutils literal notranslate"><span class="pre">sample.UB</span> <span class="pre">=</span> <span class="pre">UB</span></code> (first) and <code class="docutils literal notranslate"><span class="pre">sample.U</span> <span class="pre">=</span> <span class="pre">U</span></code>; return <code class="docutils literal notranslate"><span class="pre">UB</span></code>.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<a class="reference internal" href="../sample/index.html#ad_hoc_diffractometer.sample.Sample" title="ad_hoc_diffractometer.sample.Sample"><em>Sample</em></a>) – The sample whose <code class="docutils literal notranslate"><span class="pre">UB</span></code> (and <code class="docutils literal notranslate"><span class="pre">U</span></code>) attributes are updated in-place.
+<code class="docutils literal notranslate"><span class="pre">sample.parent</span></code> must be a geometry with <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> set.</p></li>
+<li><p><strong>r1</strong> (<a class="reference internal" href="../reflection/index.html#ad_hoc_diffractometer.reflection.Reflection" title="ad_hoc_diffractometer.reflection.Reflection"><em>Reflection</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Three orienting reflections.  Each may be a <code class="docutils literal notranslate"><span class="pre">Reflection</span></code> object or
+the name of a reflection in <code class="docutils literal notranslate"><span class="pre">sample.reflections</span></code>.</p></li>
+<li><p><strong>r2</strong> (<a class="reference internal" href="../reflection/index.html#ad_hoc_diffractometer.reflection.Reflection" title="ad_hoc_diffractometer.reflection.Reflection"><em>Reflection</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Three orienting reflections.  Each may be a <code class="docutils literal notranslate"><span class="pre">Reflection</span></code> object or
+the name of a reflection in <code class="docutils literal notranslate"><span class="pre">sample.reflections</span></code>.</p></li>
+<li><p><strong>r3</strong> (<a class="reference internal" href="../reflection/index.html#ad_hoc_diffractometer.reflection.Reflection" title="ad_hoc_diffractometer.reflection.Reflection"><em>Reflection</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Three orienting reflections.  Each may be a <code class="docutils literal notranslate"><span class="pre">Reflection</span></code> object or
+the name of a reflection in <code class="docutils literal notranslate"><span class="pre">sample.reflections</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>UB</strong> – <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code> is set first (directly, via eq. 31), then
+<code class="docutils literal notranslate"><span class="pre">sample.U</span> <span class="pre">=</span> <span class="pre">UB</span> <span class="pre">&#64;</span> <span class="pre">inv(B)</span></code> is derived.  Both are set in-place.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3, 3)</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – If any of <code class="docutils literal notranslate"><span class="pre">r1</span></code>, <code class="docutils literal notranslate"><span class="pre">r2</span></code>, <code class="docutils literal notranslate"><span class="pre">r3</span></code> is a string not found in
+<code class="docutils literal notranslate"><span class="pre">sample.reflections</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If any argument is not a <code class="docutils literal notranslate"><span class="pre">Reflection</span></code> or a string.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">sample.parent</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the three Miller-index column matrix <code class="docutils literal notranslate"><span class="pre">H</span></code> is singular
+(<code class="docutils literal notranslate"><span class="pre">|det(H)|</span> <span class="pre">&lt;</span> <span class="pre">tol</span></code>), i.e. the three hkl vectors are coplanar.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">sample.parent.wavelength</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Warns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>UserWarning</strong> – If <code class="docutils literal notranslate"><span class="pre">det(H)</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>, the hkl triples form a left-handed system.
+The computation proceeds but the sign convention may give U with
+<code class="docutils literal notranslate"><span class="pre">det(U)</span> <span class="pre">=</span> <span class="pre">-1</span></code>; consider swapping r1 and r2 to make det(H) &gt; 0.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>UB is computed first (<code class="docutils literal notranslate"><span class="pre">sample.UB</span> <span class="pre">=</span> <span class="pre">Hφ</span> <span class="pre">&#64;</span> <span class="pre">H⁻¹</span></code>).  U is then derived
+as <code class="docutils literal notranslate"><span class="pre">sample.U</span> <span class="pre">=</span> <span class="pre">UB</span> <span class="pre">&#64;</span> <span class="pre">B⁻¹</span></code>.  This is the opposite order from
+<code class="docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967</span></code>, where U is computed first.</p>
+<p>The method does not require a known lattice: <code class="docutils literal notranslate"><span class="pre">H</span></code> is formed from the
+raw hkl indices, not from <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">&#64;</span> <span class="pre">hkl</span></code>.  However, if <code class="docutils literal notranslate"><span class="pre">sample.lattice</span></code>
+is the package default (cubic, a = 1 Å) rather than a measured lattice,
+the derived U will not be physically meaningful.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">det(H)</span></code> is exactly zero (degenerate reflections), <code class="docutils literal notranslate"><span class="pre">numpy.linalg.inv</span></code>
+will raise <code class="docutils literal notranslate"><span class="pre">LinAlgError</span></code>, which is caught and re-raised as <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">psic</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">add_reflection</span><span class="p">(</span><span class="s2">&quot;r1&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">add_reflection</span><span class="p">(</span><span class="s2">&quot;r2&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">add_reflection</span><span class="p">(</span><span class="s2">&quot;r3&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">UB</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">ub_from_three_reflections_bl1967</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span> <span class="s2">&quot;r1&quot;</span><span class="p">,</span> <span class="s2">&quot;r2&quot;</span><span class="p">,</span> <span class="s2">&quot;r3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<p>Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967), eqs. 28-31.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">ub_from_two_reflections_bl1967</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#ub_from_two_reflections_bl1967"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967</span></code></p>
+</div>
+<p>Compute U and UB from two orienting reflections (Busing &amp; Levy 1967, eqs. 23-27).</p>
+<p>Given two reflections with known hkl and measured motor angles, and a
+known lattice (B matrix), this function computes the orientation matrix U
+and then UB = U &#64; B, storing both on the sample.</p>
+<p>Algorithm (BL1967 eqs. 23-27):</p>
+<ol class="arabic simple">
+<li><p>For each reflection, call <code class="docutils literal notranslate"><span class="pre">angles_to_phi_vector()</span></code> to get the
+scattering vector in the phi frame: <code class="docutils literal notranslate"><span class="pre">u1φ</span></code>, <code class="docutils literal notranslate"><span class="pre">u2φ</span></code>.</p></li>
+<li><p>From hkl and the lattice B matrix: <code class="docutils literal notranslate"><span class="pre">h1c</span> <span class="pre">=</span> <span class="pre">B</span> <span class="pre">&#64;</span> <span class="pre">h1</span></code>, <code class="docutils literal notranslate"><span class="pre">h2c</span> <span class="pre">=</span> <span class="pre">B</span> <span class="pre">&#64;</span> <span class="pre">h2</span></code>.</p></li>
+<li><p>Build orthonormal triple <code class="docutils literal notranslate"><span class="pre">Tc</span></code> in the crystal frame via Gram-Schmidt:
+<code class="docutils literal notranslate"><span class="pre">t1c</span> <span class="pre">∥</span> <span class="pre">h1c</span></code>, <code class="docutils literal notranslate"><span class="pre">t2c</span></code> in the plane of <code class="docutils literal notranslate"><span class="pre">h1c</span></code> and <code class="docutils literal notranslate"><span class="pre">h2c</span></code>,
+<code class="docutils literal notranslate"><span class="pre">t3c</span> <span class="pre">=</span> <span class="pre">t1c</span> <span class="pre">×</span> <span class="pre">t2c</span></code>.</p></li>
+<li><p>Build the matching triple <code class="docutils literal notranslate"><span class="pre">Tφ</span></code> in the phi frame from <code class="docutils literal notranslate"><span class="pre">u1φ</span></code>, <code class="docutils literal notranslate"><span class="pre">u2φ</span></code>.</p></li>
+<li><p>Compute <code class="docutils literal notranslate"><span class="pre">U</span> <span class="pre">=</span> <span class="pre">Tφ</span> <span class="pre">&#64;</span> <span class="pre">Tc.T</span></code>  (eq. 27; Tc is orthogonal so Tc⁻¹ = Tc.T).</p></li>
+<li><p>Compute <code class="docutils literal notranslate"><span class="pre">UB</span> <span class="pre">=</span> <span class="pre">U</span> <span class="pre">&#64;</span> <span class="pre">B</span></code>.</p></li>
+<li><p>Store <code class="docutils literal notranslate"><span class="pre">sample.U</span> <span class="pre">=</span> <span class="pre">U</span></code>, <code class="docutils literal notranslate"><span class="pre">sample.UB</span> <span class="pre">=</span> <span class="pre">UB</span></code>; return <code class="docutils literal notranslate"><span class="pre">UB</span></code>.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<a class="reference internal" href="../sample/index.html#ad_hoc_diffractometer.sample.Sample" title="ad_hoc_diffractometer.sample.Sample"><em>Sample</em></a>) – The sample whose <code class="docutils literal notranslate"><span class="pre">U</span></code> and <code class="docutils literal notranslate"><span class="pre">UB</span></code> attributes are updated in-place.
+<code class="docutils literal notranslate"><span class="pre">sample.lattice</span></code> must be set.  <code class="docutils literal notranslate"><span class="pre">sample.parent</span></code> must be a geometry
+with <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> set (it is used to call <code class="docutils literal notranslate"><span class="pre">angles_to_phi_vector</span></code>).</p></li>
+<li><p><strong>r1</strong> (<a class="reference internal" href="../reflection/index.html#ad_hoc_diffractometer.reflection.Reflection" title="ad_hoc_diffractometer.reflection.Reflection"><em>Reflection</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, or </em><em>None</em>) – Primary orienting reflection.  If <code class="docutils literal notranslate"><span class="pre">None</span></code>, defaults to
+<code class="docutils literal notranslate"><span class="pre">sample.reflections.orienting_reflections[0]</span></code>.</p></li>
+<li><p><strong>r2</strong> (<a class="reference internal" href="../reflection/index.html#ad_hoc_diffractometer.reflection.Reflection" title="ad_hoc_diffractometer.reflection.Reflection"><em>Reflection</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, or </em><em>None</em>) – Secondary orienting reflection.  If <code class="docutils literal notranslate"><span class="pre">None</span></code>, defaults to
+<code class="docutils literal notranslate"><span class="pre">sample.reflections.orienting_reflections[1]</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>UB</strong> – Sets <code class="docutils literal notranslate"><span class="pre">sample.U</span></code> (first) and <code class="docutils literal notranslate"><span class="pre">sample.UB</span> <span class="pre">=</span> <span class="pre">sample.U</span> <span class="pre">&#64;</span> <span class="pre">B</span></code> in-place
+before returning.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3, 3)</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">r1</span></code> or <code class="docutils literal notranslate"><span class="pre">r2</span></code> is a string not found in <code class="docutils literal notranslate"><span class="pre">sample.reflections</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">r1</span></code> or <code class="docutils literal notranslate"><span class="pre">r2</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> and the required orienting reflection
+has not been designated (<code class="docutils literal notranslate"><span class="pre">setor0</span></code>/<code class="docutils literal notranslate"><span class="pre">setor1</span></code> not called).</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">sample.parent</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (needed to call
+<code class="docutils literal notranslate"><span class="pre">angles_to_phi_vector</span></code>).</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">sample.parent.wavelength</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the two reflections are parallel in the crystal frame (h1c and
+h2c collinear) or in the phi frame (u1φ and u2φ collinear).</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">r1</span></code> or <code class="docutils literal notranslate"><span class="pre">r2</span></code> is not a <code class="docutils literal notranslate"><span class="pre">Reflection</span></code>, string, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>U is computed first (<code class="docutils literal notranslate"><span class="pre">sample.U</span> <span class="pre">=</span> <span class="pre">Tφ</span> <span class="pre">&#64;</span> <span class="pre">Tc.T</span></code>), then UB is derived from
+it (<code class="docutils literal notranslate"><span class="pre">sample.UB</span> <span class="pre">=</span> <span class="pre">sample.U</span> <span class="pre">&#64;</span> <span class="pre">B</span></code>).</p>
+<p>The wavelength used for <code class="docutils literal notranslate"><span class="pre">angles_to_phi_vector</span></code> is taken from
+<code class="docutils literal notranslate"><span class="pre">sample.parent.wavelength</span></code>.  If a reflection carries its own
+<code class="docutils literal notranslate"><span class="pre">wavelength</span></code> attribute, that is <em>not</em> used here; the geometry’s
+wavelength governs the conversion from motor angles to Q_phi.</p>
+<p class="rubric">References</p>
+<p>Busing &amp; Levy, Acta Cryst. 22, 457-464 (1967), eqs. 23-27.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ad_hoc_diffractometer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ahd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">psic</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.5406</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">add_sample</span><span class="p">(</span><span class="s2">&quot;sapphire&quot;</span><span class="p">,</span> <span class="n">ahd</span><span class="o">.</span><span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">4.758</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">12.991</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">sample</span> <span class="o">=</span> <span class="s2">&quot;sapphire&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">add_reflection</span><span class="p">(</span><span class="s2">&quot;r1&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="mf">20.97</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;nu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">:</span> <span class="mf">41.94</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">add_reflection</span><span class="p">(</span><span class="s2">&quot;r2&quot;</span><span class="p">,</span> <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">angles</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="mf">23.72</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">:</span> <span class="mf">57.04</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;nu&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;delta&quot;</span><span class="p">:</span> <span class="mf">48.13</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor0</span><span class="p">(</span><span class="s2">&quot;r1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">reflections</span><span class="o">.</span><span class="n">setor1</span><span class="p">(</span><span class="s2">&quot;r2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">UB</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">ub_from_two_reflections_bl1967</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ad_hoc_diffractometer.orientation.ub_identity">
+<span class="sig-prename descclassname"><span class="pre">ad_hoc_diffractometer.orientation.</span></span><span class="sig-name descname"><span class="pre">ub_identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/orientation.html#ub_identity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.orientation.ub_identity" title="Link to this definition">#</a></dt>
+<dd><div class="import-path docutils container">
+<p>Import: <code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.orientation.ub_identity</span></code></p>
+</div>
+<p>Set U so the crystal-Cartesian frame aligns with the physical
+(longitudinal, vertical, transverse) triple, and UB = U &#64; B.</p>
+<p>The default UB placeholder used before a real UB is set by either
+reflection-based computation (<a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_one_reflection" title="ad_hoc_diffractometer.orientation.ub_from_one_reflection"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_one_reflection()</span></code></a>,
+<a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967()</span></code></a>,
+<a class="reference internal" href="#ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967" title="ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967"><code class="xref py py-func docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967()</span></code></a>) or direct assignment
+(<code class="docutils literal notranslate"><span class="pre">sample.UB</span> <span class="pre">=</span> <span class="pre">...</span></code> or <code class="docutils literal notranslate"><span class="pre">sample.U</span> <span class="pre">=</span> <span class="pre">...</span></code>).</p>
+<section id="definition-issue-280">
+<h3>Definition (issue #280)<a class="headerlink" href="#definition-issue-280" title="Link to this heading">#</a></h3>
+<p>The columns of U are the geometry’s physical-direction unit
+vectors expressed in basis-Cartesian coordinates:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">+</span><span class="n">longitudinal</span>   <span class="p">(</span><span class="n">the</span> <span class="n">beam</span> <span class="n">direction</span><span class="p">)</span>
+<span class="n">U</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">+</span><span class="n">vertical</span>
+<span class="n">U</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">+</span><span class="n">transverse</span>
+</pre></div>
+</div>
+<p>Under the Busing &amp; Levy 1967 crystal-Cartesian convention
+(a* along crystal-x, b* in the crystal-x-y plane, c*
+completing the right-handed triple), this places:</p>
+<ul class="simple">
+<li><p>the crystal a* axis physically along the beam,</p></li>
+<li><p>the crystal-y axis physically along vertical,</p></li>
+<li><p>the crystal-z axis physically along transverse.</p></li>
+</ul>
+<p>This matches the <code class="docutils literal notranslate"><span class="pre">hkl_soleil</span></code> convention (<code class="docutils literal notranslate"><span class="pre">U</span> <span class="pre">=</span> <span class="pre">identity</span></code>
+aligns a* along the beam +x; see
+<a class="reference external" href="https://people.debian.org/~picca/hkl/hkl.html">https://people.debian.org/~picca/hkl/hkl.html</a>).</p>
+</section>
+<section id="why-this-is-basis-independent">
+<h3>Why this is basis-independent<a class="headerlink" href="#why-this-is-basis-independent" title="Link to this heading">#</a></h3>
+<p>The geometry’s basis assigns Cartesian unit vectors to the three
+physical-direction labels.  The columns of U are taken directly
+from those physical-direction vectors, so the resulting
+<em>physical</em> crystal orientation does not depend on which Cartesian
+direction the basis labels assign to (vertical, longitudinal,
+transverse).  Two geometries representing the same physical
+equipment under different basis labelings (e.g. <code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code> vs
+<code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code>) produce numerically different U matrices but
+<em>identical physical Bragg orientations</em> — and therefore identical
+<code class="docutils literal notranslate"><span class="pre">forward()</span></code> results.</p>
+<p>The pre-#280 implementation set <code class="docutils literal notranslate"><span class="pre">U</span> <span class="pre">=</span> <span class="pre">numpy.eye(3)</span></code> in basis
+coordinates, which made the physical crystal orientation
+basis-dependent: under <code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code> the crystal a-axis ended up
+physically along transverse, but under <code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code> the same
+code put it along vertical, breaking basis invariance of
+<code class="docutils literal notranslate"><span class="pre">forward()</span></code> reachability and <code class="docutils literal notranslate"><span class="pre">|2θ|</span></code> for the same equipment.</p>
+</section>
+<section id="why-this-is-inclination-independent">
+<h3>Why this is inclination-independent<a class="headerlink" href="#why-this-is-inclination-independent" title="Link to this heading">#</a></h3>
+<p>U is derived from the geometry’s <em>declared</em> basis vectors (a
+property of the YAML, set once), not from the inclination-tilted
+effective beam <code class="docutils literal notranslate"><span class="pre">y_eff</span> <span class="pre">=</span> <span class="pre">R_inc.T</span> <span class="pre">&#64;</span> <span class="pre">y_hat</span></code>.  Tilting the entire
+diffractometer relative to the beamline (issue #15
+<code class="docutils literal notranslate"><span class="pre">inclination_matrix</span></code>) does not silently re-orient the crystal:
+the crystal is mounted on the diffractometer, not on the
+beamline, so its reference orientation lives in the
+diffractometer’s intrinsic frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param sample<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The sample whose <code class="docutils literal notranslate"><span class="pre">U</span></code> and <code class="docutils literal notranslate"><span class="pre">UB</span></code> attributes are updated
+in-place.  <code class="docutils literal notranslate"><span class="pre">sample.parent</span></code> must be set (the parent
+<code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> provides the basis vectors).</p>
+</dd>
+<dt class="field-even">type sample<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sample</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>UB</strong> – <code class="docutils literal notranslate"><span class="pre">UB</span> <span class="pre">=</span> <span class="pre">U</span> <span class="pre">&#64;</span> <span class="pre">B</span></code>.  Also stored on the sample as <code class="docutils literal notranslate"><span class="pre">sample.UB</span></code>.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray, shape (3, 3)</p>
+</dd>
+<dt class="field-odd">raises ValueError<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If <code class="docutils literal notranslate"><span class="pre">sample.parent</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (cannot resolve the
+geometry’s basis without a parent).</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Busing &amp; Levy, <em>Acta Cryst.</em> <strong>22</strong>, 457-464 (1967) — the
+crystal-Cartesian convention used in the B matrix.</p></li>
+<li><p>Issue #280 — the rotation-composition-order audit that
+exposed the pre-existing basis bias of the old <code class="docutils literal notranslate"><span class="pre">U</span> <span class="pre">=</span> <span class="pre">I</span></code>
+placeholder.</p></li>
+<li><p>hkl_soleil documentation — the published external convention
+this implementation matches.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../mode/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">mode</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../radiation/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">radiation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation._compute_q_phi"><code class="docutils literal notranslate"><span class="pre">_compute_q_phi()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation._compute_q_phi_cached"><code class="docutils literal notranslate"><span class="pre">_compute_q_phi_cached()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation._gram_schmidt_triple"><code class="docutils literal notranslate"><span class="pre">_gram_schmidt_triple()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation.angles_to_phi_vector"><code class="docutils literal notranslate"><span class="pre">angles_to_phi_vector()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation.ub_from_one_reflection"><code class="docutils literal notranslate"><span class="pre">ub_from_one_reflection()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation.ub_from_three_reflections_bl1967"><code class="docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation.ub_from_two_reflections_bl1967"><code class="docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ad_hoc_diffractometer.orientation.ub_identity"><code class="docutils literal notranslate"><span class="pre">ub_identity()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/autoapi/ad_hoc_diffractometer/orientation/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-06-22 09:07 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
