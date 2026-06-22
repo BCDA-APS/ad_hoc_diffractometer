@@ -7,6 +7,10 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+## Release v0.11.2
+
+Released 2026-06-22
+
 ### Changed
 
 - Adopt pre-v1.0 no-deprecation policy in AGENTS.md; pre-commit hook enforces. (#299)
@@ -18,7 +22,6 @@ issue tracker.  The initial project development roadmap is documented here:
 - Rename `fixed_alpha_i_*` / `fixed_beta_out_*` modes to `fixed_incidence_*` / `fixed_emergence_*`. (#299)
 - Rename `geometry.alpha_i()` / `.alpha_f()` methods to `.incidence()` / `.emergence()`. (#299)
 - Rename `surface.alpha_i()` / `.alpha_f()` functions to `.incidence()` / `.emergence()`. (#299)
-
 
 
 ## Release v0.11.1
