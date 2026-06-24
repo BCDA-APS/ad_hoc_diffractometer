@@ -4234,6 +4234,7 @@ def _validate_solutions(
     from .display import precision_atol
     from .mode import BisectConstraint
     from .mode import ConstraintViolation
+    from .mode import ReferenceConstraint
     from .mode import SampleConstraint
 
     if not solutions:
@@ -4243,10 +4244,15 @@ def _validate_solutions(
 
     for i, sol in enumerate(solutions):
         for c in mode.constraints:
-            # Only validate constraints that have a numeric residual we can check.
-            # BisectConstraint and SampleConstraint are the checkable ones;
-            # DetectorConstraint is applied by the solver directly (ttheta_deg);
-            # ReferenceConstraint is not yet implemented.
+            # Validate constraints that expose a numeric per-solution residual.
+            # BisectConstraint and SampleConstraint are checked against the
+            # motor angles directly; DetectorConstraint is applied by the
+            # solver (ttheta_deg) so it never appears here.
+            # ReferenceConstraint pseudo-angle residuals
+            # (incidence/emergence/specular/omega/naz) are checked too — except
+            # "psi", which is enforced upstream as a validation filter in
+            # _solve_psi_mode (its motor-frame residual is subject to ±360°
+            # azimuthal wraparound and is not a reliable per-solution check).
             if isinstance(c, BisectConstraint | SampleConstraint):
                 try:
                     residual = c.evaluate(sol, geometry)
@@ -4269,6 +4275,29 @@ def _validate_solutions(
                     raise ConstraintViolation(
                         solution_index=i,
                         constraint_repr=constraint_repr,
+                        residual=residual,
+                        tolerance=atol,
+                    )
+            elif isinstance(c, ReferenceConstraint):
+                # "psi" is enforced by the validation filter, not here.
+                if c.name == "psi":
+                    continue
+                # Skip when the required reference vector is unset (evaluate()
+                # would raise ValueError); is_implemented() already gated the
+                # solve, but a mode could in principle reach here without one.
+                if not c.has_reference_vector(geometry):
+                    continue
+                try:
+                    residual = c.evaluate(sol, geometry)
+                except (KeyError, ValueError):
+                    continue
+                if abs(residual) > atol:
+                    raise ConstraintViolation(
+                        solution_index=i,
+                        constraint_repr=(
+                            f"ReferenceConstraint({c.name!r}, {c.value!r}): "
+                            f"residual {residual!s}° exceeds tolerance"
+                        ),
                         residual=residual,
                         tolerance=atol,
                     )
