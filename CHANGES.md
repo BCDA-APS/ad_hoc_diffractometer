@@ -7,6 +7,10 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+## Release v0.11.3
+
+Released 2026-06-24
+
 ### Fixed
 
 - `ReferenceConstraint.evaluate()` computes real residuals; verified post-solve. (#304)
