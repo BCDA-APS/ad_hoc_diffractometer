@@ -918,17 +918,68 @@ class ReferenceConstraint:
         geometry: AdHocDiffractometer,
     ) -> float:
         """
-        Return the constraint residual (zero when satisfied).
+        Return the constraint residual in degrees (zero when satisfied).
 
-        Not yet implemented — all reference constraints require the
-        reference vector infrastructure (Issue J).  Raises
-        ``NotImplementedError`` when called.
+        The residual is the difference between the physical pseudo-angle
+        computed from the supplied motor angles (via the standalone
+        functions in :mod:`~ad_hoc_diffractometer.reference`) and the
+        target :attr:`value`:
+
+        - ``"incidence"`` — ``incidence_angle - value``
+        - ``"emergence"`` — ``emergence_angle - value``
+        - ``"specular"`` — ``incidence_angle - emergence_angle``
+          (the relational condition α_i = α_f; :attr:`value` is the
+          boolean flag ``True`` and does not enter the residual)
+        - ``"psi"`` — ``psi_angle - value``
+        - ``"naz"`` — ``naz_angle - value``
+        - ``"omega"`` — ``omega_pseudo - value``
+
+        Parameters
+        ----------
+        angles : dict[str, float]
+            Current motor angles in degrees, keyed by stage name.
+        geometry : AdHocDiffractometer
+            The diffractometer.  The required reference vector
+            (``surface_normal`` for incidence/emergence/specular,
+            ``azimuth`` for psi/naz) must be set, except for ``"omega"``
+            which needs no reference vector.
+
+        Returns
+        -------
+        float
+            Residual in degrees.  Zero means the constraint is satisfied.
+
+        Raises
+        ------
+        ValueError
+            If the required reference vector is not set on the geometry
+            (raised by the underlying
+            :mod:`~ad_hoc_diffractometer.reference` function).
         """
-        raise NotImplementedError(
-            f"ReferenceConstraint('{self._name}') solver is not yet implemented. "
-            "Reference constraint solvers require the reference vector "
-            "infrastructure (Issue J)."
-        )
+        # Local import to avoid module-load ordering issues (reference.py
+        # imports geometry types lazily; mirror the pattern used elsewhere
+        # in this package).
+        from . import reference
+
+        if self._name == "incidence":
+            return reference.incidence_angle(geometry, angles=angles) - float(
+                self._value
+            )
+        if self._name == "emergence":
+            return reference.emergence_angle(geometry, angles=angles) - float(
+                self._value
+            )
+        if self._name == "specular":
+            # Relational: incidence == emergence.  value is the flag True.
+            return reference.incidence_angle(
+                geometry, angles=angles
+            ) - reference.emergence_angle(geometry, angles=angles)
+        if self._name == "psi":
+            return reference.psi_angle(geometry, angles=angles) - float(self._value)
+        if self._name == "naz":
+            return reference.naz_angle(geometry, angles=angles) - float(self._value)
+        # omega
+        return reference.omega_pseudo(geometry, angles=angles) - float(self._value)
 
     def is_satisfied(
         self,
@@ -936,10 +987,8 @@ class ReferenceConstraint:
         geometry: AdHocDiffractometer,
         tol: float = 1e-6,
     ) -> bool:
-        """Return True when the constraint is satisfied (not yet implemented)."""
-        raise NotImplementedError(
-            f"ReferenceConstraint('{self._name}') is not yet implemented."
-        )
+        """Return True when ``|evaluate(angles, geometry)| < tol``."""
+        return abs(self.evaluate(angles, geometry)) < tol
 
     def has_reference_vector(self, geometry: AdHocDiffractometer) -> bool:
         """

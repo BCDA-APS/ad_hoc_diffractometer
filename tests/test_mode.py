@@ -797,39 +797,145 @@ def test_reference_constraint_to_dict_from_dict_a_eq_b():
 
 
 @pytest.mark.parametrize(
-    "name, value, surface_normal, expected",
+    "name, value, surface_normal, azimuth, expected",
     [
         # incidence/emergence/specular: implemented when surface_normal is set
-        pytest.param("incidence", 0.0, (0, 0, 1), True, id="incidence-with-sn"),
-        pytest.param("incidence", 0.0, None, False, id="incidence-no-sn"),
-        pytest.param("emergence", 0.0, (0, 0, 1), True, id="emergence-with-sn"),
-        pytest.param("specular", True, (0, 0, 1), True, id="specular-with-sn"),
-        pytest.param("specular", True, None, False, id="specular-no-sn"),
-        # psi/naz: never implemented (no forward solver yet)
-        pytest.param("psi", 0.0, (0, 0, 1), False, id="psi-not-implemented"),
-        pytest.param("naz", 0.0, (0, 0, 1), False, id="naz-not-implemented"),
+        pytest.param("incidence", 0.0, (0, 0, 1), None, True, id="incidence-with-sn"),
+        pytest.param("incidence", 0.0, None, None, False, id="incidence-no-sn"),
+        pytest.param("emergence", 0.0, (0, 0, 1), None, True, id="emergence-with-sn"),
+        pytest.param("specular", True, (0, 0, 1), None, True, id="specular-with-sn"),
+        pytest.param("specular", True, None, None, False, id="specular-no-sn"),
+        # psi: implemented (validation filter) when azimuth is set
+        pytest.param("psi", 0.0, None, (0, 0, 1), True, id="psi-with-azimuth"),
+        pytest.param("psi", 0.0, None, None, False, id="psi-no-azimuth"),
+        # naz: no forward solver yet
+        pytest.param("naz", 0.0, (0, 0, 1), None, False, id="naz-not-implemented"),
     ],
 )
-def test_reference_constraint_is_implemented(name, value, surface_normal, expected):
-    """ReferenceConstraint.is_implemented() reflects surface_normal presence and solver."""
+def test_reference_constraint_is_implemented(
+    name, value, surface_normal, azimuth, expected
+):
+    """ReferenceConstraint.is_implemented() reflects reference vector and solver."""
     g = _psic_like()
     g._surface_normal = surface_normal  # noqa: SLF001
+    g._azimuth = azimuth  # noqa: SLF001
     rc = ReferenceConstraint(name, value)
     assert rc.is_implemented(g) is expected
 
 
-def test_reference_constraint_evaluate_raises():
-    g = _psic_like()
-    rc = ReferenceConstraint("psi", 90.0)
-    with pytest.raises(NotImplementedError, match="not yet implemented"):
-        rc.evaluate({}, g)
+def _psic_reference_geometry(**kwargs):
+    """Real psic geometry with wavelength, cubic UB, and a reference vector."""
+    import ad_hoc_diffractometer as ahd
+    from ad_hoc_diffractometer import ub_identity
+
+    g = ahd.make_geometry("psic")
+    g.wavelength = 1.54
+    g.sample.lattice = ahd.Lattice(a=4.0)
+    ub_identity(g.sample)
+    for key, val in kwargs.items():
+        setattr(g, key, val)
+    return g
 
 
-def test_reference_constraint_is_satisfied_raises():
-    g = _psic_like()
-    rc = ReferenceConstraint("psi", 90.0)
-    with pytest.raises(NotImplementedError):
-        rc.is_satisfied({}, g)
+@pytest.mark.parametrize(
+    "name, value, kwargs, context",
+    [
+        pytest.param(
+            "incidence",
+            0.0,
+            {"surface_normal": (0, 0, 1)},
+            does_not_raise(),
+            id="incidence-residual",
+        ),
+        pytest.param(
+            "emergence",
+            0.0,
+            {"surface_normal": (0, 0, 1)},
+            does_not_raise(),
+            id="emergence-residual",
+        ),
+        pytest.param(
+            "specular",
+            True,
+            {"surface_normal": (0, 0, 1)},
+            does_not_raise(),
+            id="specular-residual",
+        ),
+        pytest.param(
+            "omega",
+            0.0,
+            {},
+            does_not_raise(),
+            id="omega-residual",
+        ),
+        pytest.param(
+            "incidence",
+            0.0,
+            {},
+            pytest.raises(ValueError, match=re.escape("surface_normal must be set")),
+            id="incidence-no-surface-normal-raises",
+        ),
+    ],
+)
+def test_reference_constraint_evaluate(name, value, kwargs, context):
+    """ReferenceConstraint.evaluate() returns a real pseudo-angle residual.
+
+    A solution returned by forward() satisfies its reference constraint, so
+    the residual evaluated at that solution must be ~0.  evaluate() raises
+    ValueError when the required reference vector is not set.
+    """
+    g = _psic_reference_geometry(**kwargs)
+    rc = ReferenceConstraint(name, value)
+    with context:
+        # Use the geometry's current (zeroed) angles for the raising case;
+        # for the satisfied cases use a real forward solution.
+        angles = {s.name: s.angle for s in g._stages.values()}  # noqa: SLF001
+        if "surface_normal" in kwargs or name == "omega":
+            g.mode_name = {
+                "incidence": "fixed_incidence_vertical",
+                "emergence": "fixed_emergence_vertical",
+                "specular": "specular_vertical",
+                "omega": "fixed_omega_vertical",
+            }[name]
+            sols = g.forward(1, 0, 1)
+            angles = sols[0]
+        residual = rc.evaluate(angles, g)
+        assert residual == pytest.approx(0.0, abs=1e-6)
+
+
+def test_reference_constraint_is_satisfied():
+    """is_satisfied() is True at a satisfying solution, False for a wrong target."""
+    g = _psic_reference_geometry(surface_normal=(0, 0, 1))
+    g.mode_name = "fixed_incidence_vertical"
+    sol = g.forward(1, 0, 1)[0]
+    assert ReferenceConstraint("incidence", 0.0).is_satisfied(sol, g) is True
+    assert ReferenceConstraint("incidence", 99.0).is_satisfied(sol, g) is False
+
+
+def test_reference_constraint_evaluate_psi_branch():
+    """evaluate() for the 'psi' branch returns psi_angle - target."""
+    import ad_hoc_diffractometer.reference as reference
+
+    g = _psic_reference_geometry(azimuth=(0, 0, 1))
+    angles = {s.name: s.angle for s in g._stages.values()}  # noqa: SLF001
+    angles["delta"] = 30.0  # ensure a non-degenerate Q for psi
+    angles["eta"] = 15.0
+    expected = reference.psi_angle(g, angles=angles) - 12.0
+    assert ReferenceConstraint("psi", 12.0).evaluate(angles, g) == pytest.approx(
+        expected
+    )
+
+
+def test_reference_constraint_evaluate_naz_branch():
+    """evaluate() for the 'naz' branch returns naz_angle - target."""
+    import ad_hoc_diffractometer.reference as reference
+
+    g = _psic_reference_geometry(surface_normal=(1, 0, 0))
+    angles = {s.name: s.angle for s in g._stages.values()}  # noqa: SLF001
+    expected = reference.naz_angle(g, angles=angles) - 7.0
+    assert ReferenceConstraint("naz", 7.0).evaluate(angles, g) == pytest.approx(
+        expected
+    )
 
 
 # ---------------------------------------------------------------------------
