@@ -1,0 +1,249 @@
+reflection
+==========
+
+.. py:module:: ad_hoc_diffractometer.reflection
+
+.. autoapi-nested-parse::
+
+   Import: ``ad_hoc_diffractometer.reflection``
+
+   A Reflection stores the Miller indices (hkl), the diffractometer motor
+   angles at which the reflection was observed, the wavelength used, and
+   the name of the geometry on which it was recorded.
+
+   A ReflectionList owns an ordered dict of named Reflection objects and
+   manages the primary (or1) and secondary (or2) orienting designations.
+   It is held as ``AdHocDiffractometer.reflections``.
+
+   Typical usage::
+
+       g = psic()
+       rl = g.reflections                          # ReflectionList
+       r1 = rl.add("r1", hkl=(1, 0, 0),
+                    angles={"mu": 0, "eta": 20, ...},
+                    valid_stages=set(g._stages))
+       r2 = rl.add("r2", hkl=(0, 1, 0), ...)
+       rl.setor0("r1")
+       rl.setor1("r2")
+       rl.orienting_reflections   # -> [r1, r2]
+       rl["r1"]                   # -> r1
+       del rl["r1"]
+       rl.clear()
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ad_hoc_diffractometer.reflection.Reflection
+   ad_hoc_diffractometer.reflection.ReflectionList
+
+
+Module Contents
+---------------
+
+.. py:class:: Reflection
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reflection.Reflection``
+
+
+   One observed reflection used for diffractometer orientation.
+
+   :param name: User-supplied label (e.g. ``"r1"``, ``"Si_111"``).  Set by
+                ``ReflectionList.add()``.
+   :type name: str
+   :param hkl: Miller indices (h, k, l).  Need not be integers.
+   :type hkl: tuple of float
+   :param angles: Motor angles (degrees) keyed by stage name.  Keys are specific
+                  to the geometry named in ``geometry_name`` and are validated by
+                  ``ReflectionList.add()`` before the reflection is stored.
+   :type angles: dict[str, float]
+   :param wavelength: Wavelength in Å.  If None the geometry's wavelength is assumed.
+   :type wavelength: float or None
+   :param geometry_name: Name of the geometry on which this reflection was recorded.
+                         Angle keys are only meaningful for that geometry.
+   :type geometry_name: str or None
+
+   .. rubric:: Notes
+
+   Reflections are geometry-specific: angle keys from a ``psic`` geometry
+   cannot be applied to ``kappa6c`` because the stage names differ.
+   ``ReflectionList.add()`` validates keys and records ``geometry_name``
+   so cross-geometry misuse can be detected.
+
+
+   
+
+   .. py:method:: from_dict(d: dict) -> Reflection
+      :classmethod:
+
+
+      Reconstruct a :class:`Reflection` from a dict produced by
+      :meth:`to_dict`.
+
+      :param d: Must contain ``"name"``, ``"hkl"``, ``"angles"``.
+                ``"wavelength"`` and ``"geometry_name"`` are optional (default
+                ``None``).
+      :type d: dict
+
+      :rtype: Reflection
+
+
+
+   
+
+   
+
+   
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable ``dict`` representing this reflection.
+
+      :returns: Keys: ``"name"`` (str), ``"hkl"`` (list of 3 float),
+                ``"angles"`` (dict str→float), ``"wavelength"`` (float or None),
+                ``"geometry_name"`` (str or None).
+      :rtype: dict
+
+
+
+   
+
+.. py:class:: ReflectionList(geometry_name: str, valid_stages: set[str])
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.reflection.ReflectionList``
+
+
+   Ordered, named collection of Reflection objects with or1/or2 management.
+
+   Held as ``AdHocDiffractometer.reflections``.  All mutation methods
+   validate that angle keys belong to the owning geometry.
+
+   :param geometry_name: Name of the owning ``AdHocDiffractometer``.  Stored on every
+                         reflection added through this list.
+   :type geometry_name: str
+   :param valid_stages: Stage names of the owning geometry.  Used to validate angle keys.
+   :type valid_stages: set of str
+
+   .. rubric:: Examples
+
+   >>> rl = ReflectionList(geometry_name="psic",
+   ...                     valid_stages={"mu", "eta", "chi", "phi",
+   ...                                   "nu", "delta"})
+   >>> r = rl.add("r1", hkl=(1, 0, 0), angles={"mu": 0, "eta": 20})
+   >>> rl.setor0("r1")
+   >>> rl.orienting_reflections
+   [Reflection(name='r1', ...)]
+
+
+   .. py:method:: _resolve(reflection: str | Reflection) -> str
+
+      Return the name of a reflection given a name or object.
+
+
+
+   .. py:method:: add(name: str, hkl: tuple[float, float, float], angles: dict[str, float], wavelength: float | None = None) -> Reflection
+
+      Add a named reflection, validate angle keys, and return it.
+
+      :param name: Unique label.
+      :type name: str
+      :param hkl: Miller indices.
+      :type hkl: tuple of float
+      :param angles: Motor angles; keys must be stage names of this geometry.
+      :type angles: dict[str, float]
+      :param wavelength: Wavelength in Å; stored as-is (caller supplies the geometry's
+                         current wavelength if desired).
+      :type wavelength: float or None
+
+      :raises ValueError: If ``name`` already exists or any angle key is not a valid stage.
+
+
+
+   .. py:method:: clear() -> None
+
+      Remove all reflections and clear or1/or2 designations.
+
+
+
+   .. py:method:: from_dict(d: dict) -> ReflectionList
+      :classmethod:
+
+
+      Reconstruct a :class:`ReflectionList` from a dict produced by
+      :meth:`to_dict`.
+
+      :param d: Must contain ``"reflections"`` (list of reflection dicts).
+                ``"geometry_name"``, ``"or1"``, and ``"or2"`` are optional.
+      :type d: dict
+
+      :rtype: ReflectionList
+
+
+
+   
+
+   .. py:method:: items()
+
+
+   .. py:method:: keys()
+
+
+   .. py:property:: orienting_reflections
+      :type: list[Reflection]
+
+
+      Ordered list of designated orienting reflections.
+
+      Returns ``[]``, ``[or1]``, or ``[or1, or2]``.  A secondary
+      without a primary is returned as a single-element list containing
+      the secondary.
+
+
+   .. py:method:: remove(name: str) -> None
+
+      Remove the named reflection and clear any or1/or2 designation it held.
+
+      :raises KeyError: If no reflection with that name exists.
+
+
+
+   .. py:method:: setor0(reflection: str | Reflection) -> None
+
+      Designate a reflection as primary (or1 slot, SPEC ``setor0``).
+
+      If it was previously the secondary (or2), that designation is cleared.
+      The previous or1 remains in the list without any designation.
+
+
+
+   .. py:method:: setor1(reflection: str | Reflection) -> None
+
+      Designate a reflection as secondary (or2 slot, SPEC ``setor1``).
+
+      If it was previously the primary (or1), that designation is cleared.
+      The previous or2 remains in the list without any designation.
+
+
+
+   .. py:method:: to_dict() -> dict
+
+      Return a JSON-serialisable ``dict`` representing this reflection list.
+
+      :returns: Keys: ``"geometry_name"`` (str or None), ``"reflections"`` (list
+                of reflection dicts in insertion order), ``"or1"`` (name str or
+                None), ``"or2"`` (name str or None).
+      :rtype: dict
+
+
+
+   
+
+   .. py:method:: values()
+
+

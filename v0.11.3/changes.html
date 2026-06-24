@@ -1,0 +1,1430 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Change History &#8212; ad_hoc_diffractometer 0.11</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=91f10d53" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+
+    <script src="_static/documentation_options.js?v=c44be570"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'changes';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.11.3';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Case Study: Choice of Basis and the UB Matrix" href="problem2.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11" />
+    <meta name="docbuild:last-update" content="2026-06-24 14:26 CDT"/>
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ad_hoc_diffractometer 0.11</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Change History
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/BCDA-APS/ad_hoc_diffractometer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Change History</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="change-history">
+<h1>Change History<a class="headerlink" href="#change-history" title="Link to this heading">#</a></h1>
+<p>User-facing changes by release.  For future work planning, see <a class="reference external" href="https://github.com/BCDA-APS/ad_hoc_diffractometer/issues">GitHub
+Issues</a> for the full
+issue tracker.  The initial project development roadmap is documented here:
+<a class="reference external" href="https://github.com/BCDA-APS/ad_hoc_diffractometer/blob/main/roadmap.md">roadmap</a>.</p>
+<section id="unreleased">
+<h2>Unreleased<a class="headerlink" href="#unreleased" title="Link to this heading">#</a></h2>
+</section>
+<section id="release-v0-11-3">
+<h2>Release v0.11.3<a class="headerlink" href="#release-v0-11-3" title="Link to this heading">#</a></h2>
+<p>Released 2026-06-24</p>
+<section id="fixed">
+<h3>Fixed<a class="headerlink" href="#fixed" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ReferenceConstraint.evaluate()</span></code> computes real residuals; verified post-solve. (#304)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-11-2">
+<h2>Release v0.11.2<a class="headerlink" href="#release-v0-11-2" title="Link to this heading">#</a></h2>
+<p>Released 2026-06-22</p>
+<section id="changed">
+<h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Adopt pre-v1.0 no-deprecation policy in AGENTS.md; pre-commit hook enforces. (#299)</p></li>
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">a_eq_b</span></code> reference constraint to <code class="docutils literal notranslate"><span class="pre">specular</span></code>. (#299)</p></li>
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">alpha_eq_beta_*</span></code> modes to <code class="docutils literal notranslate"><span class="pre">specular_*</span></code>. (#299)</p></li>
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">alpha_i</span></code> / <code class="docutils literal notranslate"><span class="pre">beta_out</span></code> reference constraints to <code class="docutils literal notranslate"><span class="pre">incidence</span></code> / <code class="docutils literal notranslate"><span class="pre">emergence</span></code>. (#299)</p></li>
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code> property and kwarg to <code class="docutils literal notranslate"><span class="pre">azimuth</span></code>. (#298)</p></li>
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">exit_angle</span></code> function to <code class="docutils literal notranslate"><span class="pre">emergence_angle</span></code>. (#299)</p></li>
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_*</span></code> / <code class="docutils literal notranslate"><span class="pre">fixed_beta_out_*</span></code> modes to <code class="docutils literal notranslate"><span class="pre">fixed_incidence_*</span></code> / <code class="docutils literal notranslate"><span class="pre">fixed_emergence_*</span></code>. (#299)</p></li>
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">geometry.alpha_i()</span></code> / <code class="docutils literal notranslate"><span class="pre">.alpha_f()</span></code> methods to <code class="docutils literal notranslate"><span class="pre">.incidence()</span></code> / <code class="docutils literal notranslate"><span class="pre">.emergence()</span></code>. (#299)</p></li>
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">surface.alpha_i()</span></code> / <code class="docutils literal notranslate"><span class="pre">.alpha_f()</span></code> functions to <code class="docutils literal notranslate"><span class="pre">.incidence()</span></code> / <code class="docutils literal notranslate"><span class="pre">.emergence()</span></code>. (#299)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-11-1">
+<h2>Release v0.11.1<a class="headerlink" href="#release-v0-11-1" title="Link to this heading">#</a></h2>
+<p>Released 2026-06-09</p>
+<section id="added">
+<h3>Added<a class="headerlink" href="#added" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.required_reference_vector</span></code> property. (#294)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConstraintSet.with_constraint_values()</span></code> one-call value override. (#293)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">register_geometry_yaml</span></code> in-memory registration entry point. (#288)</p></li>
+<li><p>Warn on <code class="docutils literal notranslate"><span class="pre">extras['n_hat']</span></code> assignment. (#294)</p></li>
+</ul>
+</section>
+<section id="id1">
+<h3>Changed<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Disambiguate n̂ / surface_normal / azimuthal_reference / n_axis. (#294)</p></li>
+<li><p>Document how to override fixed-axis constraint values. (#293)</p></li>
+</ul>
+</section>
+<section id="id2">
+<h3>Fixed<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Kappa equivalent-Eulerian chi axis now matches fourcv/fourch/psic. (#284)</p></li>
+<li><p>Populate alpha_i/beta_out/psi/omega output extras after <code class="docutils literal notranslate"><span class="pre">forward()</span></code>. (#292)</p></li>
+</ul>
+</section>
+<section id="maintenance">
+<h3>Maintenance<a class="headerlink" href="#maintenance" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Unify copyright automation across hklpy2 family. (#290)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-11-0">
+<h2>Release v0.11.0<a class="headerlink" href="#release-v0-11-0" title="Link to this heading">#</a></h2>
+<p>Released 2026-05-19</p>
+<section id="behavior-change">
+<h3>Behavior change<a class="headerlink" href="#behavior-change" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Rotation composition and <code class="docutils literal notranslate"><span class="pre">ub_identity</span></code> corrected. (#280)</p></li>
+<li><p>B matrix for non-cubic lattices now matches BL1967. (#280)</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>Added<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Package now available on conda-forge.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.reference.natural_psi(g,</span> <span class="pre">h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code>. (#278)</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>Changed<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">forward()</span></code> warns when a <code class="docutils literal notranslate"><span class="pre">fixed_psi*</span></code> mode target ψ is unreachable. (#278)</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>Fixed<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Doc version-switcher dropdown now shows every published version. (#273)</p></li>
+<li><p>Surface solver now respects detector pin in psic horizontal modes. (#279)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-10-1">
+<h2>Release v0.10.1<a class="headerlink" href="#release-v0-10-1" title="Link to this heading">#</a></h2>
+<p>Released 2026-05-07</p>
+<section id="breaking-changes">
+<h3>Breaking changes<a class="headerlink" href="#breaking-changes" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Repository moved to <a class="github reference external" href="https://github.com/BCDA-APS/ad_hoc_diffractometer">BCDA-APS/ad_hoc_diffractometer</a></p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>Added<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Redirect docs site root to <code class="docutils literal notranslate"><span class="pre">latest/</span></code> on GitHub Pages. (#272)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-10-0">
+<h2>Release v0.10.0<a class="headerlink" href="#release-v0-10-0" title="Link to this heading">#</a></h2>
+<p>Released 2026-05-06.</p>
+<section id="id7">
+<h3>Breaking changes<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Remove redundant psic modes. (#243)</p></li>
+<li><p>Switch to declarative YAML for demo geometries. (#267)</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>Behavior change<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>psic <code class="docutils literal notranslate"><span class="pre">fixed_chi_horizontal</span></code> switch <code class="docutils literal notranslate"><span class="pre">chi=90°</span></code> (kinematically infeasible) to <code class="docutils literal notranslate"><span class="pre">chi=0°</span></code>. (#259)</p></li>
+<li><p>psic <code class="docutils literal notranslate"><span class="pre">fixed_phi</span></code>/<code class="docutils literal notranslate"><span class="pre">fixed_chi</span></code> modes lock scattering-plane axis. (#243)</p></li>
+</ul>
+</section>
+<section id="id9">
+<h3>Added<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BASIS_DEFAULT</span></code> neutral basis used when a YAML file omits <code class="docutils literal notranslate"><span class="pre">basis:</span></code>. (#267)</p></li>
+<li><p>Declarative YAML geometry definitions and a loader. (#267)</p></li>
+<li><p>Glossary entries for zone-mode work (Azimuth, Basis, Constraint, Cut point, Double diffraction, Extras, Zone). (#266)</p></li>
+<li><p>psic and kappa6c zone modes (You §6, SPEC <code class="docutils literal notranslate"><span class="pre">setmode</span> <span class="pre">5</span></code>). (#262)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">register_geometry_file()</span></code> and <code class="docutils literal notranslate"><span class="pre">load_geometry_file()</span></code>. (#267)</p></li>
+<li><p>SPEC <code class="docutils literal notranslate"><span class="pre">OMEGA</span></code> pseudo-angle (<code class="docutils literal notranslate"><span class="pre">Q[6]</span></code>) as a <code class="docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code> name. (#264)</p></li>
+<li><p>psic <code class="docutils literal notranslate"><span class="pre">fixed_omega_vertical</span></code> and <code class="docutils literal notranslate"><span class="pre">fixed_omega_horizontal</span></code> modes. (#264)</p></li>
+<li><p>psic <code class="docutils literal notranslate"><span class="pre">fixed_alpha_i_fixed_chi_fixed_phi</span></code> mode. (#264)</p></li>
+<li><p>psic <code class="docutils literal notranslate"><span class="pre">lifting_detector_eta</span></code> mode. (#264)</p></li>
+</ul>
+</section>
+<section id="id10">
+<h3>Changed<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pyyaml</span></code> is now a runtime dependency. (#267)</p></li>
+<li><p>psic <code class="docutils literal notranslate"><span class="pre">lifting_detector_phi</span></code> and <code class="docutils literal notranslate"><span class="pre">lifting_detector_mu</span></code> drop <code class="docutils literal notranslate"><span class="pre">qaz=90</span></code> and fix every sample stage except the named one. (#264)</p></li>
+<li><p>psic <code class="docutils literal notranslate"><span class="pre">fixed_psi_vertical</span></code> drops the bisect; pins <code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">mu</span></code>. (#264)</p></li>
+<li><p>psic <code class="docutils literal notranslate"><span class="pre">fixed_psi_horizontal</span></code> drops the bisect; pins <code class="docutils literal notranslate"><span class="pre">delta</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">eta</span></code>. (#264)</p></li>
+</ul>
+</section>
+<section id="id11">
+<h3>Fixed<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>RST markup leak in the inclination how-to rendered HTML. (#257)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-9-3">
+<h2>Release v0.9.3<a class="headerlink" href="#release-v0-9-3" title="Link to this heading">#</a></h2>
+<p>Released 2026-05-04.</p>
+<section id="id12">
+<h3>Changed<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Re-focus the documentation for diffractometer-users (#255)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-9-2">
+<h2>Release v0.9.2<a class="headerlink" href="#release-v0-9-2" title="Link to this heading">#</a></h2>
+<p>Released 2026-05-01.</p>
+<section id="id13">
+<h3>Fixed<a class="headerlink" href="#id13" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Restore correct kappa axis direction in kappa4cv, kappa4ch, kappa6c presets per published references (#252)</p></li>
+</ul>
+</section>
+<section id="id14">
+<h3>Added<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Basis-invariance tests for all preset geometries (#252)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-9-1">
+<h2>Release v0.9.1<a class="headerlink" href="#release-v0-9-1" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-29.</p>
+<section id="id15">
+<h3>Behavior change<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Kappa pseudoangle conversions are now geometry-aware; re-derive saved kappa UB matrices. (#241)</p></li>
+</ul>
+</section>
+<section id="id16">
+<h3>Added<a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">KappaPseudoAngleConvention</span></code> and axis-aware kappa pseudoangle helpers. (#241)</p></li>
+<li><p>Cross-validation regression suite against <code class="docutils literal notranslate"><span class="pre">hkl_soleil</span></code> (libhkl). (#242)</p></li>
+</ul>
+</section>
+<section id="id17">
+<h3>Fixed<a class="headerlink" href="#id17" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Kappa bisecting and fixed-virtual-angle solvers return solutions for physically reachable reflections. (#241)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-9-0">
+<h2>Release v0.9.0<a class="headerlink" href="#release-v0-9-0" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-28.</p>
+<section id="id18">
+<h3>Behavior change<a class="headerlink" href="#id18" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>B / UB / <code class="docutils literal notranslate"><span class="pre">forward()</span></code> / <code class="docutils literal notranslate"><span class="pre">inverse()</span></code> results change for non-orthogonal
+lattices; re-derive saved UB matrices. (#237, #238)</p></li>
+</ul>
+</section>
+<section id="id19">
+<h3>Fixed<a class="headerlink" href="#id19" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>B matrix column layout for non-orthogonal lattices. (#237, #238)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-8-0">
+<h2>Release v0.8.0<a class="headerlink" href="#release-v0-8-0" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-28.</p>
+<p>Performance and correctness release for the <code class="docutils literal notranslate"><span class="pre">forward()</span></code> solver.  The
+slow-benchmark suite drops from ~561 s to ~56 s (~10× faster overall)
+on top of the 3-4× speedup already delivered in v0.6.0.  See #217 for
+the umbrella plan and the seven sub-issues #221–#227 for the
+individual optimisations.</p>
+<section id="id20">
+<h3>Breaking changes<a class="headerlink" href="#id20" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Kappa <strong>bisecting</strong> modes now enforce <em>true</em> virtual bisecting
+(<code class="docutils literal notranslate"><span class="pre">omega_virtual</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code>, Walko 2016 eq. [16]) instead of the
+literal motor approximation <code class="docutils literal notranslate"><span class="pre">komega</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code>.  Affected modes:
+<code class="docutils literal notranslate"><span class="pre">kappa4cv.bisecting</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch.bisecting</span></code>,
+<code class="docutils literal notranslate"><span class="pre">kappa6c.bisecting_vertical</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa6c.fixed_mu</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa6c.fixed_nu</span></code>.
+Some <code class="docutils literal notranslate"><span class="pre">(h,</span> <span class="pre">k,</span> <span class="pre">l)</span></code> reflections previously accepted as “bisecting” are
+no longer accessible in these modes because their old solutions did
+not satisfy the physical bisecting condition.  Horizontal kappa
+bisect modes (<code class="docutils literal notranslate"><span class="pre">bisecting_horizontal</span></code>, <code class="docutils literal notranslate"><span class="pre">fixed_delta</span></code>) are unchanged.
+(#226, #235)</p></li>
+</ul>
+</section>
+<section id="id21">
+<h3>Added<a class="headerlink" href="#id21" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">VirtualBisectConstraint</span></code> class — subclass of <code class="docutils literal notranslate"><span class="pre">BisectConstraint</span></code> that
+enforces a constraint on a <em>virtual</em> (Eulerian) angle computed from a
+kappa motor triple via <code class="docutils literal notranslate"><span class="pre">kappa_to_eulerian()</span></code>.  Exported from the
+top-level package namespace. (#226, #235)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rotation.rotation_matrix_and_derivative_normalized()</span></code> — returns both
+<code class="docutils literal notranslate"><span class="pre">R</span></code> and <code class="docutils literal notranslate"><span class="pre">dR/dθ</span></code> from a single trig evaluation, enabling closed-form
+Jacobians without redundant work. (#222, #229)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ForwardContext.jacobian_analytic()</span></code> — exact analytic Jacobian for
+the forward solver, computed by chain rule through the sample
+rotation matrix product. (#222, #229)</p></li>
+<li><p>Private functions and methods are now published in the AutoAPI
+reference (algorithm documentation); private attributes/data/
+properties remain hidden. (#231, #232)</p></li>
+</ul>
+</section>
+<section id="changed-performance">
+<h3>Changed (performance)<a class="headerlink" href="#changed-performance" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Analytic bisecting solver</strong> for standard Eulerian geometries:
+<code class="docutils literal notranslate"><span class="pre">(chi,</span> <span class="pre">phi)</span></code> derived directly from <code class="docutils literal notranslate"><span class="pre">atan2</span></code>/<code class="docutils literal notranslate"><span class="pre">acos</span></code> formulas applied
+to the cached <code class="docutils literal notranslate"><span class="pre">Z_prefix</span></code> and <code class="docutils literal notranslate"><span class="pre">Q_lab</span></code> vectors.  <strong>58–86× speedup</strong>
+on bisecting modes for fourcv, fourch, psic, sixc, fivec.  Newton
+retained as fallback for kappa and degenerate cases. (#223, #230)</p></li>
+<li><p><strong>Decomposed double-diffraction solver</strong>: 4D Newton-Raphson
+replaced by sequential subproblems (closed-form detector angle,
+1D outer-angle scan with sign-change detection, analytic 2D
+inner solve, scalar Ewald filter with 1D Newton refinement).
+<strong>2.9–24×</strong> per geometry; the slow-benchmark suite drops from
+561 s to 56 s (~10× overall). (#225, #234)</p></li>
+<li><p><strong>Analytic qaz detector solver</strong>: 26-seed Newton loop replaced by
+closed-form solution.  Detector-angle solve goes from ~4.7 ms to
+~0.3 µs (~13 500×); end-to-end <code class="docutils literal notranslate"><span class="pre">forward()</span></code> improves ~6 % since
+the inner sample-angle solver dominates. (#224, #233)</p></li>
+<li><p><strong>Analytic 1-free-angle solver</strong>: when the only free sample stage
+rotates about a cardinal axis (±X, ±Y, ±Z), the 3×1 system
+reduces to a single <code class="docutils literal notranslate"><span class="pre">atan2</span></code>.  <strong>8.4× speedup</strong> on representative
+fourcv cases.  Falls back to Newton for tilted/kappa axes. (#227,
+#236)</p></li>
+<li><p><strong>Analytic Jacobian</strong> in the generic Newton solver: closed-form
+derivative of the Rodrigues rotation matrix replaces the
+finite-difference Jacobian, eliminating <code class="docutils literal notranslate"><span class="pre">n_free</span></code> extra residual
+evaluations per Newton step.  <strong>1.4–2.4× per Newton step</strong> across
+every Newton path. (#222, #229)</p></li>
+<li><p><strong>Early termination in <code class="docutils literal notranslate"><span class="pre">solve_kappa_virtual()</span></code></strong>: matches the
+<code class="docutils literal notranslate"><span class="pre">_MAX_STALE</span></code> / <code class="docutils literal notranslate"><span class="pre">_MAX_SOLUTIONS</span></code> pattern from <code class="docutils literal notranslate"><span class="pre">_solve_bisecting</span></code>.
+<strong>2–6×</strong> speedup on kappa virtual-angle modes. (#221, #228)</p></li>
+</ul>
+</section>
+<section id="id22">
+<h3>Fixed<a class="headerlink" href="#id22" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Kappa bisecting modes were returning solutions whose virtual omega
+did not equal ttheta/2 (the literal <code class="docutils literal notranslate"><span class="pre">komega</span> <span class="pre">=</span> <span class="pre">ttheta/2</span></code> only
+coincides with true bisecting at <code class="docutils literal notranslate"><span class="pre">kappa</span> <span class="pre">=</span> <span class="pre">0</span></code>).  Now physically
+correct.  See breaking changes above. (#226, #235)</p></li>
+<li><p>Two docstring formatting issues in <code class="docutils literal notranslate"><span class="pre">forward.py</span></code> that produced RST
+warnings once private docstrings became visible in AutoAPI. (#232)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-7-0">
+<h2>Release v0.7.0<a class="headerlink" href="#release-v0-7-0" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-27.</p>
+<section id="id23">
+<h3>Breaking changes<a class="headerlink" href="#id23" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Standardized 14 mode names across 6 geometries to use the consistent
+<code class="docutils literal notranslate"><span class="pre">fixed_AXIS</span></code> naming convention (#220):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">constant_omega</span></code> → <code class="docutils literal notranslate"><span class="pre">fixed_omega</span></code> (fourcv, fourch, kappa4cv, kappa4ch)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">psi_constant</span></code> → <code class="docutils literal notranslate"><span class="pre">fixed_psi</span></code> (fourcv, fourch, kappa4cv, kappa4ch)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">constant_chi</span></code> → <code class="docutils literal notranslate"><span class="pre">fixed_chi</span></code> (kappa4cv, kappa4ch)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">constant_phi</span></code> → <code class="docutils literal notranslate"><span class="pre">fixed_phi</span></code> (kappa4cv, kappa4ch)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">constant_omega_noncoplanar</span></code> → <code class="docutils literal notranslate"><span class="pre">fixed_omega_noncoplanar</span></code> (fivec)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mu_fixed</span></code> → <code class="docutils literal notranslate"><span class="pre">fixed_mu</span></code> (s2d2)</p></li>
+</ul>
+</li>
+<li><p>No backward-compatibility aliases — mode names from v0.6.0 will raise
+<code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if used directly</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-6-0">
+<h2>Release v0.6.0<a class="headerlink" href="#release-v0-6-0" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-26.</p>
+<section id="id24">
+<h3>Breaking changes<a class="headerlink" href="#id24" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Renamed <code class="docutils literal notranslate"><span class="pre">LATERAL</span></code> to <code class="docutils literal notranslate"><span class="pre">TRANSVERSE</span></code> throughout (#193)</p></li>
+<li><p>Renamed <code class="docutils literal notranslate"><span class="pre">geometry.py</span></code> to <code class="docutils literal notranslate"><span class="pre">diffractometer.py</span></code> (#213)</p></li>
+<li><p>Removed legacy drawing functions; replaced by <code class="docutils literal notranslate"><span class="pre">StageAxisFigure</span></code>
+and <code class="docutils literal notranslate"><span class="pre">GeometryAxisFigure</span></code> (#209)</p></li>
+</ul>
+</section>
+<section id="id25">
+<h3>Added<a class="headerlink" href="#id25" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Benchmark tool (<code class="docutils literal notranslate"><span class="pre">benchmark.py</span></code>) (#194)</p></li>
+<li><p>Complete psic mode set with vertical/horizontal suffixes and
+surface modes (#208)</p></li>
+<li><p>Interactive Plotly geometry diagrams (#197)</p></li>
+<li><p>HOWTO: custom geometry (#192), basis vectors (#191)</p></li>
+<li><p>Diagnostic logging in <code class="docutils literal notranslate"><span class="pre">drawing.py</span></code> (#207)</p></li>
+<li><p>Arc-direction handedness tests for all preset stages (#207)</p></li>
+</ul>
+</section>
+<section id="id26">
+<h3>Changed<a class="headerlink" href="#id26" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">forward()</span></code> performance ~3-4x speedup (#195)</p></li>
+<li><p>Parent stage shown in geometry doc tables (#198)</p></li>
+<li><p>V/L/T axis labels in geometry diagrams (#204)</p></li>
+<li><p>Version switcher includes all releases; CI preserves live
+<code class="docutils literal notranslate"><span class="pre">switcher.json</span></code> on deploy (#216)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-5-0">
+<h2>Release v0.5.0<a class="headerlink" href="#release-v0-5-0" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-20.</p>
+<section id="id27">
+<h3>Breaking changes<a class="headerlink" href="#id27" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> trimmed to ~23 Tier 1 exports; preset factories moved
+to <code class="docutils literal notranslate"><span class="pre">ahd.presets.*</span></code> (#185)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BisectingMode</span></code> / <code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code> replaced by <code class="docutils literal notranslate"><span class="pre">ConstraintSet</span></code> with
+<code class="docutils literal notranslate"><span class="pre">BisectConstraint</span></code>, <code class="docutils literal notranslate"><span class="pre">SampleConstraint</span></code>, <code class="docutils literal notranslate"><span class="pre">DetectorConstraint</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code> (#148)</p></li>
+</ul>
+</section>
+<section id="id28">
+<h3>Added<a class="headerlink" href="#id28" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>57 SVG axis diagrams and graphviz stage coupling diagrams (#163)</p></li>
+<li><p>Constraint system: <code class="docutils literal notranslate"><span class="pre">ConstraintSet</span></code>, <code class="docutils literal notranslate"><span class="pre">BisectConstraint</span></code>,
+<code class="docutils literal notranslate"><span class="pre">SampleConstraint</span></code>, <code class="docutils literal notranslate"><span class="pre">DetectorConstraint</span></code>, <code class="docutils literal notranslate"><span class="pre">ReferenceConstraint</span></code>;
+<code class="docutils literal notranslate"><span class="pre">EwaldSphereViolation</span></code>, <code class="docutils literal notranslate"><span class="pre">ConstraintViolation</span></code> exceptions (#148)</p></li>
+<li><p>Diffraction modes for all 10 geometries
+(#149, #150, #151, #152, #154, #155, #156)</p></li>
+<li><p>Double-diffraction 4D simultaneous solver for 4 geometries (#184)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">drawing.py</span></code>: <code class="docutils literal notranslate"><span class="pre">geometry_dot()</span></code>, <code class="docutils literal notranslate"><span class="pre">draw_stage_axis()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">draw_geometry_axes()</span></code> (#163)</p></li>
+<li><p>HOWTO: diffractometer inclination (#164)</p></li>
+<li><p>Kappa virtual-angle dispatcher: <code class="docutils literal notranslate"><span class="pre">constant_omega</span></code>/<code class="docutils literal notranslate"><span class="pre">chi</span></code>/<code class="docutils literal notranslate"><span class="pre">phi</span></code> modes;
+<code class="docutils literal notranslate"><span class="pre">kappa.py</span></code> module (#174)</p></li>
+<li><p>Psi-constant validation filter for 6 geometries (#184)</p></li>
+<li><p>Qaz detector constraint: <code class="docutils literal notranslate"><span class="pre">lifting_detector_*</span></code> modes for psic,
+kappa6c (#177)</p></li>
+<li><p>Quick Start guide; Diátaxis User Guide restructure (#146)</p></li>
+<li><p>Surface diffraction forward solvers for sixc, zaxis, s2d2 (#175)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tools/generate_geometry_drawings.py</span></code> with <code class="docutils literal notranslate"><span class="pre">list_geometries()</span></code>
+auto-discovery (#163)</p></li>
+</ul>
+</section>
+<section id="id29">
+<h3>Changed<a class="headerlink" href="#id29" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Constraint/mode docs overhauled across all geometry pages (#173)</p></li>
+<li><p>Doc build timestamp in Chicago local time (#165)</p></li>
+<li><p>Geometry diagrams use SVG instead of PNG (#163)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">presets.py</span></code> split from <code class="docutils literal notranslate"><span class="pre">factories.py</span></code> (#185)</p></li>
+</ul>
+</section>
+<section id="id30">
+<h3>Fixed<a class="headerlink" href="#id30" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">references.md</span></code> broken links (#152)</p></li>
+<li><p>Unused variable and formatting cleanups (#172, #178)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-4-1">
+<h2>Release v0.4.1<a class="headerlink" href="#release-v0-4-1" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-13.</p>
+<p>Patch release: bug fix to <code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code> and geometry documentation improvements.</p>
+<section id="id31">
+<h3>Breaking changes<a class="headerlink" href="#id31" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code> now holds the stage at its <strong>current angle</strong> (read from
+the geometry at solve time) rather than the value stored at construction.
+Preset the stage angle with <code class="docutils literal notranslate"><span class="pre">g.set_angle(name,</span> <span class="pre">value)</span></code> before calling
+<code class="docutils literal notranslate"><span class="pre">forward()</span></code>.  The <code class="docutils literal notranslate"><span class="pre">value</span></code> argument to <code class="docutils literal notranslate"><span class="pre">FixedAngleMode(...)</span></code> is now an
+initial default only.  This also applies to the <code class="docutils literal notranslate"><span class="pre">frozen_angles</span></code> dict on
+<code class="docutils literal notranslate"><span class="pre">BisectingMode</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">mu</span></code>/<code class="docutils literal notranslate"><span class="pre">nu</span></code> in psic and kappa6c).</p></li>
+</ul>
+</section>
+<section id="id32">
+<h3>Fixed<a class="headerlink" href="#id32" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Geometry reference pages: reST <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">list-table::</span></code> directives inside MyST
+<code class="docutils literal notranslate"><span class="pre">.md</span></code> files rendered as raw source text in the browser — replaced with
+MyST-native pipe tables. (#139)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code>: stored angle value was used by the solver instead of
+the stage’s current angle, making it impossible to change the fixed value
+without replacing the mode object. (#142)</p></li>
+</ul>
+</section>
+<section id="id33">
+<h3>Changed<a class="headerlink" href="#id33" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Geometry reference pages enriched: each mode now shows specific motor
+names, class AutoAPI links, GitHub source links, and plain-language
+constraint descriptions. (#140)</p></li>
+<li><p>Pre-built geometries table in <code class="docutils literal notranslate"><span class="pre">factories.py</span></code> module docstring sorted to
+match the geometry reference page order
+(fourcv → fourch → fivec → psic → sixc → kappas → surface). (#141)</p></li>
+<li><p>Geometry page titles use a consistent pattern:
+Eulerian Four-Circle, Eulerian Five-Circle, Eulerian Six-Circle,
+Kappa Four-Circle, Kappa Six-Circle, Z-Axis, S2D2. (#140)</p></li>
+<li><p>Geometry reference toctree reordered: fivec placed between four-circle
+and six-circle Eulerianss. (#140)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">howto/modes.md</span></code> and <code class="docutils literal notranslate"><span class="pre">howto/forward.md</span></code> updated to show <code class="docutils literal notranslate"><span class="pre">g.set_angle()</span></code>
+pattern for fixed-angle modes. (#142)</p></li>
+<li><p>v1.0 criteria added to <code class="docutils literal notranslate"><span class="pre">roadmap.md</span></code>: #122 (diffraction modes) required;
+#114 (sphere of confusion) deferred. (#139)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-4-0">
+<h2>Release v0.4.0<a class="headerlink" href="#release-v0-4-0" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-13.</p>
+<p>Major documentation release plus several API improvements.  Introduces a
+complete User Guide (Concepts, How-to Guides, Geometry Reference, Glossary,
+References), AutoAPI fixes, and a set of API quality improvements.</p>
+<section id="id34">
+<h3>Breaking changes<a class="headerlink" href="#id34" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ReflectionList.setor1()</span></code> renamed to <code class="docutils literal notranslate"><span class="pre">setor0()</span></code> and <code class="docutils literal notranslate"><span class="pre">setor2()</span></code> renamed to
+<code class="docutils literal notranslate"><span class="pre">setor1()</span></code> to match the SPEC convention (primary = or0, secondary = or1).
+Update all call sites: <code class="docutils literal notranslate"><span class="pre">setor1(&quot;x&quot;)</span></code> → <code class="docutils literal notranslate"><span class="pre">setor0(&quot;x&quot;)</span></code>;
+<code class="docutils literal notranslate"><span class="pre">setor2(&quot;x&quot;)</span></code> → <code class="docutils literal notranslate"><span class="pre">setor1(&quot;x&quot;)</span></code>. (#120)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hkl_trajectory()</span></code>, <code class="docutils literal notranslate"><span class="pre">psi_trajectory()</span></code>, and <code class="docutils literal notranslate"><span class="pre">trajectory_plan()</span></code> are now
+<strong>generators</strong> (they <code class="docutils literal notranslate"><span class="pre">yield</span></code> one point dict at a time instead of returning a
+list).  Callers that iterate with <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">pt</span> <span class="pre">in</span> <span class="pre">result:</span></code> are unaffected.
+Callers that index the result directly (e.g. <code class="docutils literal notranslate"><span class="pre">result[0]</span></code>) must wrap the
+call: <code class="docutils literal notranslate"><span class="pre">list(hkl_trajectory(...))</span></code>. (#115)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">engines.py</span></code> renamed to <code class="docutils literal notranslate"><span class="pre">conversions.py</span></code>; all imports from
+<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.engines</span></code> must be updated to
+<code class="docutils literal notranslate"><span class="pre">ad_hoc_diffractometer.conversions</span></code>. (#108)</p></li>
+</ul>
+</section>
+<section id="id35">
+<h3>Added<a class="headerlink" href="#id35" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>User Guide</strong>: Concepts overview, How-to Guides (wavelength, lattice,
+orient, forward/inverse, modes, trajectory, lattice refinement,
+serialization, crystal alignment), Geometry Reference (one page per
+pre-built geometry), Glossary, and References page. (#93, #94, #95)</p></li>
+<li><p><strong>API Reference</strong>: module dependency graph (graphviz), per-layer card
+grid, AutoAPI module-prefix hidden via CSS. (#92, #102)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ahd.wh(geometry)</span></code> and <code class="docutils literal notranslate"><span class="pre">ahd.pa(geometry)</span></code> top-level convenience
+functions (SPEC-familiar status commands). (#131)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.stages_by_role(role)</span></code> — query stages with any
+arbitrary role string (enables analyzers, polarizers, slits, etc.). (#129)</p></li>
+<li><p>How-to guide: save/restore diffractometer configuration to JSON or YAML
+via <code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code>. (#132)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sphinx-tabs</span></code> extension; coordinate-convention tabs in <code class="docutils literal notranslate"><span class="pre">concepts.md</span></code>
+showing You (1999), BL (1967), NeXus, and Hkl conventions side by side
+with the project default (You 1999) as the first tab. (#93)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dollarmath</span></code> MyST extension — inline <code class="docutils literal notranslate"><span class="pre">$...$</span></code> math now renders in <code class="docutils literal notranslate"><span class="pre">.md</span></code>
+files. (#120)</p></li>
+</ul>
+</section>
+<section id="id36">
+<h3>Changed<a class="headerlink" href="#id36" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Stage.role</span></code> is now documented as an <strong>open string</strong> — any value is
+accepted, not just <code class="docutils literal notranslate"><span class="pre">&quot;sample&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;detector&quot;</span></code>. (#129)</p></li>
+<li><p>Physical direction definitions (vertical, longitudinal, transverse)
+throughout the docs and docstrings now use unambiguous, observer-free
+language: vertical = opposite to gravity; longitudinal = chosen direction
+in the plane perpendicular to vertical; transverse = completes the
+right-handed system. (#128)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">engines.py</span></code> renamed to <code class="docutils literal notranslate"><span class="pre">conversions.py</span></code> (see Breaking changes). (#108)</p></li>
+<li><p>Coordinate convention section in <code class="docutils literal notranslate"><span class="pre">concepts.md</span></code> reframed: observable
+physical directions first; Cartesian assignment shown in tabs. (#124, #125)</p></li>
+<li><p>AutoAPI: <code class="docutils literal notranslate"><span class="pre">sig-prename</span></code> (module-path prefix) hidden via <code class="docutils literal notranslate"><span class="pre">custom.css</span></code>
+so class/function signatures show short names only. (#102)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">myst_enable_extensions</span></code> now includes <code class="docutils literal notranslate"><span class="pre">dollarmath</span></code> for inline math
+in Markdown files. (#120)</p></li>
+<li><p>Notebooks rendered by <code class="docutils literal notranslate"><span class="pre">myst-nb</span></code> (no pandoc required). (#95)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fourcv_alignment_howto.ipynb</span></code> moved from <code class="docutils literal notranslate"><span class="pre">docs/source/</span></code> to
+<code class="docutils literal notranslate"><span class="pre">docs/source/howto/</span></code>. (#94)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">roadmap.md</span></code> moved from <code class="docutils literal notranslate"><span class="pre">docs/source/</span></code> to repo root (development-facing
+document). (#93)</p></li>
+</ul>
+</section>
+<section id="id37">
+<h3>Fixed<a class="headerlink" href="#id37" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>All 89 Sphinx AutoAPI warnings eliminated (duplicate descriptions,
+reST markup, ambiguous cross-references, module-prefix in signatures).
+(#92, #102)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">switcher.json</span></code> automation: <code class="docutils literal notranslate"><span class="pre">latest</span></code> is always first; versions sorted
+newest-first. (#98)</p></li>
+<li><p>Inline <code class="docutils literal notranslate"><span class="pre">$...$</span></code> math in <code class="docutils literal notranslate"><span class="pre">concepts.md</span></code> now renders correctly online. (#120)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-3-1">
+<h2>Release v0.3.1<a class="headerlink" href="#release-v0-3-1" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-12.</p>
+<p>Maintenance release: no user-facing API changes.  Exercises the new
+versioned-docs and PyPI publishing automation introduced since v0.3.0.</p>
+<section id="id38">
+<h3>Added<a class="headerlink" href="#id38" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">docs_backfill.yml</span></code>: manual-trigger GitHub Actions workflow to build and
+publish documentation for any older tagged release and update
+<code class="docutils literal notranslate"><span class="pre">switcher.json</span></code> accordingly (#91)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pypi.yml</span></code>: GitHub Actions workflow to build and publish the package to
+PyPI on every version tag, using OIDC Trusted Publishing (no API token
+required) (#97)</p></li>
+</ul>
+</section>
+<section id="id39">
+<h3>Changed<a class="headerlink" href="#id39" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">docs.yml</span></code>: on every tag push, automatically update
+<code class="docutils literal notranslate"><span class="pre">latest/_static/switcher.json</span></code> on the <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> branch — new stable
+releases are marked <code class="docutils literal notranslate"><span class="pre">preferred</span></code> and supersede pre-release entries; stale
+pre-release directories are pruned from <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> (#91)</p></li>
+<li><p>README now shows documentation and license badges (#84)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-3-0">
+<h2>Release v0.3.0<a class="headerlink" href="#release-v0-3-0" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-11.</p>
+<section id="id40">
+<h3>Fixed<a class="headerlink" href="#id40" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Stage axes corrected for <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">fourch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>;
+<code class="docutils literal notranslate"><span class="pre">v</span></code>/<code class="docutils literal notranslate"><span class="pre">h</span></code> suffix now consistently describes the scattering plane (#66)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">two_theta</span></code> stage name renamed to <code class="docutils literal notranslate"><span class="pre">ttheta</span></code> throughout (#66)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Lattice.B</span></code> corrected to include the 2π factor per BL1967/SPEC convention (#78)</p></li>
+<li><p>Duplicate geometry name in entry-point registry now raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> (#71)</p></li>
+</ul>
+</section>
+<section id="id41">
+<h3>Added<a class="headerlink" href="#id41" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>All factory functions accept <code class="docutils literal notranslate"><span class="pre">basis</span></code> as an optional argument; <code class="docutils literal notranslate"><span class="pre">BASIS_YOU</span></code>
+and <code class="docutils literal notranslate"><span class="pre">BASIS_BL</span></code> exported publicly; stage axes expressed as
+<code class="docutils literal notranslate"><span class="pre">VERTICAL</span></code>/<code class="docutils literal notranslate"><span class="pre">TRANSVERSE</span></code>/<code class="docutils literal notranslate"><span class="pre">LONGITUDINAL</span></code> local aliases (#67)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.getLogger(__name__)</span></code> in all modules; silent by default (#61)</p></li>
+<li><p>100% line and branch coverage enforced via <code class="docutils literal notranslate"><span class="pre">pytest-cov</span></code> (#60)</p></li>
+<li><p>Dynamic versioning via <code class="docutils literal notranslate"><span class="pre">hatch-vcs</span></code>; <code class="docutils literal notranslate"><span class="pre">ahd.__version__</span></code> exposed (#59)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> / <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> on all major classes; JSON round-trip (#52)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">g.wh()</span></code> and <code class="docutils literal notranslate"><span class="pre">g.pa()</span></code> status methods with <code class="docutils literal notranslate"><span class="pre">print=True</span></code> default (#51)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">azimuthal_reference</span></code> property and <code class="docutils literal notranslate"><span class="pre">psi()</span></code> method (You 1999 definition) (#11)</p></li>
+<li><p>Entry-point plugin support for geometry factories;
+<code class="docutils literal notranslate"><span class="pre">GEOMETRY_ENTRY_POINT_GROUP</span></code> constant (#37)</p></li>
+<li><p>Diffraction modes / operating constraints: <code class="docutils literal notranslate"><span class="pre">mode_name</span></code>, <code class="docutils literal notranslate"><span class="pre">BisectingMode</span></code>,
+<code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code>, <code class="docutils literal notranslate"><span class="pre">FixedAngleMode</span></code>; geometry accepts active mode (#9)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forward()</span></code>: hkl → motor angles; numerical multi-solution solver with
+seed-based bisection; returns all valid in-limits solutions (#35)</p></li>
+<li><p>Surface geometry: <code class="docutils literal notranslate"><span class="pre">alpha_i()</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha_f()</span></code>, <code class="docutils literal notranslate"><span class="pre">q_components()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">is_specular()</span></code>, <code class="docutils literal notranslate"><span class="pre">is_evanescent()</span></code> (#13)</p></li>
+<li><p>Detector geometry parameters: <code class="docutils literal notranslate"><span class="pre">detector_distance</span></code>, <code class="docutils literal notranslate"><span class="pre">detector_tilt</span></code>,
+<code class="docutils literal notranslate"><span class="pre">detector_offset</span></code> (#10)</p></li>
+<li><p>Diffractometer inclination: <code class="docutils literal notranslate"><span class="pre">inclination_matrix</span></code> property,
+<code class="docutils literal notranslate"><span class="pre">set_inclination()</span></code> (#15)</p></li>
+<li><p>Reciprocal-space trajectory computation: <code class="docutils literal notranslate"><span class="pre">hkl_trajectory()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">psi_trajectory()</span></code>, <code class="docutils literal notranslate"><span class="pre">trajectory_plan()</span></code>, <code class="docutils literal notranslate"><span class="pre">NEAREST_ANGLES</span></code> solution-key
+callable; BL1967 operational ψ definition (#14)</p></li>
+<li><p>Alternative calculation engines — coordinate conversion functions:
+<code class="docutils literal notranslate"><span class="pre">hkl_to_Q()</span></code>, <code class="docutils literal notranslate"><span class="pre">Q_to_hkl()</span></code>, <code class="docutils literal notranslate"><span class="pre">Q_to_d()</span></code>, <code class="docutils literal notranslate"><span class="pre">d_to_Q_mag()</span></code>, <code class="docutils literal notranslate"><span class="pre">hkl_to_d()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">d_to_two_theta()</span></code>, <code class="docutils literal notranslate"><span class="pre">two_theta_to_d()</span></code>, <code class="docutils literal notranslate"><span class="pre">hkl_to_two_theta()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">two_theta_to_Q_mag()</span></code>, <code class="docutils literal notranslate"><span class="pre">Q_mag_to_two_theta()</span></code> (#12)</p></li>
+<li><p>X-ray radiation constants and conversions (NIST CODATA 2022):
+<code class="docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM</span></code> = 12.398 419 843 320 026 keV·Å (exact),
+<code class="docutils literal notranslate"><span class="pre">HC_KEV_ANGSTROM_UNCERTAINTY</span></code> = 0; <code class="docutils literal notranslate"><span class="pre">XRAY_LINES</span></code> named emission line
+wavelengths (Cu, Mo, Ag, Co Kα/Kα1/Kα2);
+<code class="docutils literal notranslate"><span class="pre">wavelength_to_energy()</span></code>, <code class="docutils literal notranslate"><span class="pre">energy_to_wavelength()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">wavelength_to_wavenumber()</span></code>, <code class="docutils literal notranslate"><span class="pre">wavenumber_to_wavelength()</span></code>;
+<code class="docutils literal notranslate"><span class="pre">energy</span></code> and <code class="docutils literal notranslate"><span class="pre">wavenumber</span></code> lazy properties on <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> (#21)</p></li>
+<li><p>Neutron source support: <code class="docutils literal notranslate"><span class="pre">source_type</span></code> property (<code class="docutils literal notranslate"><span class="pre">&quot;xray&quot;</span></code> default,
+<code class="docutils literal notranslate"><span class="pre">&quot;neutron&quot;</span></code> for fixed-wavelength reactor neutrons);
+<code class="docutils literal notranslate"><span class="pre">neutron_wavelength_to_energy()</span></code>, <code class="docutils literal notranslate"><span class="pre">neutron_energy_to_wavelength()</span></code>;
+<code class="docutils literal notranslate"><span class="pre">NEUTRON_MEV_ANGSTROM2</span></code> = 81.804 210 235 2 meV·Å² (CODATA 2022),
+<code class="docutils literal notranslate"><span class="pre">NEUTRON_MEV_ANGSTROM2_UNCERTAINTY</span></code>; <code class="docutils literal notranslate"><span class="pre">energy_units</span></code> property (<code class="docutils literal notranslate"><span class="pre">&quot;keV&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;meV&quot;</span></code>); <code class="docutils literal notranslate"><span class="pre">SOURCE_TYPES</span></code>; spallation/TOF out of scope (#8)</p></li>
+<li><p>Sphinx documentation framework: <code class="docutils literal notranslate"><span class="pre">docs/source/</span></code> with <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>,
+<code class="docutils literal notranslate"><span class="pre">index.rst</span></code>, AutoAPI, myst-parser, pydata-sphinx-theme; GitHub Actions
+workflow <code class="docutils literal notranslate"><span class="pre">docs.yml</span></code> publishes to GitHub Pages on push to <code class="docutils literal notranslate"><span class="pre">main</span></code> or tag
+(#57)</p></li>
+</ul>
+</section>
+<section id="id42">
+<h3>Changed<a class="headerlink" href="#id42" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">wh()</span></code> and <code class="docutils literal notranslate"><span class="pre">pa()</span></code> refactored from property to method with <code class="docutils literal notranslate"><span class="pre">print=True</span></code>
+keyword argument; <code class="docutils literal notranslate"><span class="pre">status.py</span></code> removed from the package API and moved to
+<code class="docutils literal notranslate"><span class="pre">references/</span></code> (#51)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spec.py</span></code> removed from the package API and moved to <code class="docutils literal notranslate"><span class="pre">references/</span></code> (#76)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">summary()</span></code> on <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> now reports energy (keV or meV) and
+its units alongside wavelength (#21, #8)</p></li>
+<li><p>Test files restructured to enforce one-to-one <code class="docutils literal notranslate"><span class="pre">test_&lt;module&gt;.py</span></code> naming;
+serialisation tests redistributed from <code class="docutils literal notranslate"><span class="pre">test_export.py</span></code> into their
+natural per-module homes and rewritten as parametrized functions (#88)</p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-2">
+<h2>Release v0.2<a class="headerlink" href="#release-v0-2" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-10.</p>
+<section id="id43">
+<h3>Added<a class="headerlink" href="#id43" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Reflection</span></code> / <code class="docutils literal notranslate"><span class="pre">ReflectionList</span></code> classes: named reflections with hkl,
+motor angles, and wavelength; <code class="docutils literal notranslate"><span class="pre">setor1()</span></code> / <code class="docutils literal notranslate"><span class="pre">setor2()</span></code> designation;
+angle-key validation against geometry stages (#7)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Sample</span></code> / <code class="docutils literal notranslate"><span class="pre">SampleDict</span></code> classes: named samples with lattice, reflection
+list, U and UB matrices; active-sample guard on <code class="docutils literal notranslate"><span class="pre">SampleDict</span></code> (#25)</p></li>
+<li><p>Tolerance-aware <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> for <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> and <code class="docutils literal notranslate"><span class="pre">Reflection</span></code> (#29)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">orientation.py</span></code> — UB matrix computation module:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">angles_to_phi_vector()</span></code>: motor angles → Q in the phi frame (#4)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ub_identity()</span></code>: set U = I, UB = B</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ub_from_one_reflection()</span></code>: provisional UB from one reflection (#31)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ub_from_two_reflections_bl1967()</span></code>: BL1967 eqs. 23-27 (#5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ub_from_three_reflections_bl1967()</span></code>: BL1967 eqs. 29-31 (#6)</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer.inverse()</span></code>: motor angles → (h, k, l) (#34)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Sample.parent</span></code>: back-reference from sample to geometry (#31)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spec.py</span></code> — SPEC fourc <code class="docutils literal notranslate"><span class="pre">#G1</span></code> line support (#26):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">FourcG1</span></code> named-tuple; <code class="docutils literal notranslate"><span class="pre">parse_fourc_g1()</span></code>; <code class="docutils literal notranslate"><span class="pre">emit_fourc_g1()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">g1_to_sample()</span></code>: populate geometry from a <code class="docutils literal notranslate"><span class="pre">#G1</span></code> line</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sample_to_g1()</span></code>: emit current state as a <code class="docutils literal notranslate"><span class="pre">#G1</span></code> line</p></li>
+<li><p>Verified against three historical lines from Align4Pete.spec</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">refinement.py</span></code> — lattice and orientation refinement (#32, #33):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">refine_lattice_bl1967()</span></code>: iterative least-squares (BL1967
+§Refinement); finite-difference Jacobian; no scipy required</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">refine_lattice_simplex()</span></code>: Nelder-Mead derivative-free minimisation;
+uses scipy when available, pure-numpy fallback otherwise</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">refine_all=False</span></code> (default): refines only the free parameters for
+the current crystal system, enforcing symmetry constraints at every
+iteration; <code class="docutils literal notranslate"><span class="pre">refine_all=True</span></code> treats all six parameters as independent</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">status.py</span></code> — SPEC-style status commands (#38):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">wh(geometry)</span></code>: terse position report — current HKL, λ, motor table</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pa(geometry)</span></code>: verbose parameters — geometry, reflections, lattice
+constants (real + reciprocal), λ; modeled on Align4Pete.log output</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id44">
+<h3>Changed<a class="headerlink" href="#id44" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> now holds a <code class="docutils literal notranslate"><span class="pre">SampleDict</span></code> (<code class="docutils literal notranslate"><span class="pre">.samples</span></code>) and an
+active-sample property (<code class="docutils literal notranslate"><span class="pre">.sample</span></code>), replacing the earlier single-sample
+design</p></li>
+<li><p>All new public symbols exported from <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> and listed in
+<code class="docutils literal notranslate"><span class="pre">__all__</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="release-v0-1">
+<h2>Release v0.1<a class="headerlink" href="#release-v0-1" title="Link to this heading">#</a></h2>
+<p>Released 2026-04-09.</p>
+<section id="id45">
+<h3>Added<a class="headerlink" href="#id45" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> class: ordered rotary stages, basis validation,
+sample and detector rotation matrices, <code class="docutils literal notranslate"><span class="pre">summary()</span></code>, <code class="docutils literal notranslate"><span class="pre">check_limits()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Stage</span></code> class: rotation axis, parent stacking, motor angle limits
+(<code class="docutils literal notranslate"><span class="pre">limits</span></code>, <code class="docutils literal notranslate"><span class="pre">in_limits()</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wavelength</span></code> attribute on <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> (Å, default <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kappa_alpha_deg</span></code> property on <code class="docutils literal notranslate"><span class="pre">AdHocDiffractometer</span></code> (<code class="docutils literal notranslate"><span class="pre">None</span></code> for
+non-kappa geometries)</p></li>
+<li><p>Geometry factories: <code class="docutils literal notranslate"><span class="pre">psic</span></code>, <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">fourch</span></code>, <code class="docutils literal notranslate"><span class="pre">sixc</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4cv</span></code>,
+<code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa6c</span></code>, <code class="docutils literal notranslate"><span class="pre">zaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">s2d2</span></code>, <code class="docutils literal notranslate"><span class="pre">fivec</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list_geometries()</span></code>, <code class="docutils literal notranslate"><span class="pre">get_geometry()</span></code>, <code class="docutils literal notranslate"><span class="pre">make_geometry()</span></code> registry API</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Lattice</span></code> class: 7 crystal systems, B matrix, reciprocal and Cartesian
+lattice vectors, lazy computation, display precision</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">display.py</span></code>: <code class="docutils literal notranslate"><span class="pre">get_precision()</span></code>, <code class="docutils literal notranslate"><span class="pre">set_precision()</span></code>, <code class="docutils literal notranslate"><span class="pre">fmt()</span></code></p></li>
+<li><p>GitHub Actions CI: Python 3.10–3.13 matrix; 3.14-dev as allowed failure</p></li>
+<li><p>Pre-commit hooks: ruff (lint + format), isort, standard file checks</p></li>
+</ul>
+</section>
+<section id="id46">
+<h3>Changed<a class="headerlink" href="#id46" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Factory suffix convention: underscore removed from v/h detector suffix
+(<code class="docutils literal notranslate"><span class="pre">fourc_v</span></code> → <code class="docutils literal notranslate"><span class="pre">fourcv</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa4c_h</span></code> → <code class="docutils literal notranslate"><span class="pre">kappa4ch</span></code>, etc.)</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="problem2.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Case Study: Choice of Basis and the UB Matrix</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased">Unreleased</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-11-3">Release v0.11.3</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed">Fixed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-11-2">Release v0.11.2</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-11-1">Release v0.11.1</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Fixed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maintenance">Maintenance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-11-0">Release v0.11.0</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#behavior-change">Behavior change</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Fixed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-10-1">Release v0.10.1</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#breaking-changes">Breaking changes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Added</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-10-0">Release v0.10.0</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Breaking changes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Behavior change</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">Fixed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-9-3">Release v0.9.3</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">Changed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-9-2">Release v0.9.2</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Fixed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Added</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-9-1">Release v0.9.1</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">Behavior change</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">Fixed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-9-0">Release v0.9.0</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">Behavior change</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">Fixed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-8-0">Release v0.8.0</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">Breaking changes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id21">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed-performance">Changed (performance)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">Fixed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-7-0">Release v0.7.0</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id23">Breaking changes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-6-0">Release v0.6.0</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id24">Breaking changes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id25">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id26">Changed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-5-0">Release v0.5.0</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id27">Breaking changes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id28">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id29">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id30">Fixed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-4-1">Release v0.4.1</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id31">Breaking changes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id32">Fixed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id33">Changed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-4-0">Release v0.4.0</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id34">Breaking changes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id35">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id36">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id37">Fixed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-3-1">Release v0.3.1</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id38">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id39">Changed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-3-0">Release v0.3.0</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id40">Fixed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id41">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id42">Changed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-2">Release v0.2</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id43">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id44">Changed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#release-v0-1">Release v0.1</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id45">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id46">Changed</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/changes.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item"><p class="last-updated">
+  Last updated on 2026-06-24 14:26 CDT.
+  <br/>
+</p></div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
