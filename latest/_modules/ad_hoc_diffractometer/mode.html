@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=9f6c0710"></script>
+    <script src="../../_static/documentation_options.js?v=16ad8f83"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-22 08:43 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-24 14:22 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -1431,17 +1431,68 @@
         <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the constraint residual (zero when satisfied).</span>
+<span class="sd">        Return the constraint residual in degrees (zero when satisfied).</span>
 
-<span class="sd">        Not yet implemented — all reference constraints require the</span>
-<span class="sd">        reference vector infrastructure (Issue J).  Raises</span>
-<span class="sd">        ``NotImplementedError`` when called.</span>
+<span class="sd">        The residual is the difference between the physical pseudo-angle</span>
+<span class="sd">        computed from the supplied motor angles (via the standalone</span>
+<span class="sd">        functions in :mod:`~ad_hoc_diffractometer.reference`) and the</span>
+<span class="sd">        target :attr:`value`:</span>
+
+<span class="sd">        - ``&quot;incidence&quot;`` — ``incidence_angle - value``</span>
+<span class="sd">        - ``&quot;emergence&quot;`` — ``emergence_angle - value``</span>
+<span class="sd">        - ``&quot;specular&quot;`` — ``incidence_angle - emergence_angle``</span>
+<span class="sd">          (the relational condition α_i = α_f; :attr:`value` is the</span>
+<span class="sd">          boolean flag ``True`` and does not enter the residual)</span>
+<span class="sd">        - ``&quot;psi&quot;`` — ``psi_angle - value``</span>
+<span class="sd">        - ``&quot;naz&quot;`` — ``naz_angle - value``</span>
+<span class="sd">        - ``&quot;omega&quot;`` — ``omega_pseudo - value``</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        angles : dict[str, float]</span>
+<span class="sd">            Current motor angles in degrees, keyed by stage name.</span>
+<span class="sd">        geometry : AdHocDiffractometer</span>
+<span class="sd">            The diffractometer.  The required reference vector</span>
+<span class="sd">            (``surface_normal`` for incidence/emergence/specular,</span>
+<span class="sd">            ``azimuth`` for psi/naz) must be set, except for ``&quot;omega&quot;``</span>
+<span class="sd">            which needs no reference vector.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Residual in degrees.  Zero means the constraint is satisfied.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the required reference vector is not set on the geometry</span>
+<span class="sd">            (raised by the underlying</span>
+<span class="sd">            :mod:`~ad_hoc_diffractometer.reference` function).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;ReferenceConstraint(&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&#39;) solver is not yet implemented. &quot;</span>
-            <span class="s2">&quot;Reference constraint solvers require the reference vector &quot;</span>
-            <span class="s2">&quot;infrastructure (Issue J).&quot;</span>
-        <span class="p">)</span></div>
+        <span class="c1"># Local import to avoid module-load ordering issues (reference.py</span>
+        <span class="c1"># imports geometry types lazily; mirror the pattern used elsewhere</span>
+        <span class="c1"># in this package).</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">reference</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;incidence&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">incidence_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;emergence&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">emergence_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;specular&quot;</span><span class="p">:</span>
+            <span class="c1"># Relational: incidence == emergence.  value is the flag True.</span>
+            <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">incidence_angle</span><span class="p">(</span>
+                <span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span>
+            <span class="p">)</span> <span class="o">-</span> <span class="n">reference</span><span class="o">.</span><span class="n">emergence_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">psi_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;naz&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">naz_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
+        <span class="c1"># omega</span>
+        <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">omega_pseudo</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ReferenceConstraint.is_satisfied">
@@ -1452,10 +1503,8 @@
         <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
         <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True when the constraint is satisfied (not yet implemented).&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;ReferenceConstraint(&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&#39;) is not yet implemented.&quot;</span>
-        <span class="p">)</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True when ``|evaluate(angles, geometry)| &lt; tol``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">geometry</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">tol</span></div>
 
 
 <div class="viewcode-block" id="ReferenceConstraint.has_reference_vector">
@@ -2309,7 +2358,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-22 08:43 CDT.
+  Last updated on 2026-06-24 14:22 CDT.
   <br/>
 </p></div>
       

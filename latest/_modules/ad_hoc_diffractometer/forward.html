@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=9f6c0710"></script>
+    <script src="../../_static/documentation_options.js?v=16ad8f83"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-22 08:43 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-24 14:22 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -4796,6 +4796,7 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">precision_atol</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">BisectConstraint</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstraintViolation</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceConstraint</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleConstraint</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">solutions</span><span class="p">:</span>
@@ -4805,10 +4806,15 @@
 
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">solutions</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span>
-            <span class="c1"># Only validate constraints that have a numeric residual we can check.</span>
-            <span class="c1"># BisectConstraint and SampleConstraint are the checkable ones;</span>
-            <span class="c1"># DetectorConstraint is applied by the solver directly (ttheta_deg);</span>
-            <span class="c1"># ReferenceConstraint is not yet implemented.</span>
+            <span class="c1"># Validate constraints that expose a numeric per-solution residual.</span>
+            <span class="c1"># BisectConstraint and SampleConstraint are checked against the</span>
+            <span class="c1"># motor angles directly; DetectorConstraint is applied by the</span>
+            <span class="c1"># solver (ttheta_deg) so it never appears here.</span>
+            <span class="c1"># ReferenceConstraint pseudo-angle residuals</span>
+            <span class="c1"># (incidence/emergence/specular/omega/naz) are checked too — except</span>
+            <span class="c1"># &quot;psi&quot;, which is enforced upstream as a validation filter in</span>
+            <span class="c1"># _solve_psi_mode (its motor-frame residual is subject to ±360°</span>
+            <span class="c1"># azimuthal wraparound and is not a reliable per-solution check).</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">BisectConstraint</span> <span class="o">|</span> <span class="n">SampleConstraint</span><span class="p">):</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">residual</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
@@ -4831,6 +4837,29 @@
                     <span class="k">raise</span> <span class="n">ConstraintViolation</span><span class="p">(</span>
                         <span class="n">solution_index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
                         <span class="n">constraint_repr</span><span class="o">=</span><span class="n">constraint_repr</span><span class="p">,</span>
+                        <span class="n">residual</span><span class="o">=</span><span class="n">residual</span><span class="p">,</span>
+                        <span class="n">tolerance</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ReferenceConstraint</span><span class="p">):</span>
+                <span class="c1"># &quot;psi&quot; is enforced by the validation filter, not here.</span>
+                <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="c1"># Skip when the required reference vector is unset (evaluate()</span>
+                <span class="c1"># would raise ValueError); is_implemented() already gated the</span>
+                <span class="c1"># solve, but a mode could in principle reach here without one.</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="o">.</span><span class="n">has_reference_vector</span><span class="p">(</span><span class="n">geometry</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">residual</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">atol</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">ConstraintViolation</span><span class="p">(</span>
+                        <span class="n">solution_index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                        <span class="n">constraint_repr</span><span class="o">=</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;ReferenceConstraint(</span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="si">!r}</span><span class="s2">): &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;residual </span><span class="si">{</span><span class="n">residual</span><span class="si">!s}</span><span class="s2">° exceeds tolerance&quot;</span>
+                        <span class="p">),</span>
                         <span class="n">residual</span><span class="o">=</span><span class="n">residual</span><span class="p">,</span>
                         <span class="n">tolerance</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span>
                     <span class="p">)</span></div>
@@ -4895,7 +4924,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-22 08:43 CDT.
+  Last updated on 2026-06-24 14:22 CDT.
   <br/>
 </p></div>
       

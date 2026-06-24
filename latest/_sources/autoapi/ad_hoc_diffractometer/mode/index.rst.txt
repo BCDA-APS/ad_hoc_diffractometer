@@ -888,14 +888,37 @@ Module Contents
 
 
    .. py:method:: evaluate(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer) -> float
-      :abstractmethod:
 
+      Return the constraint residual in degrees (zero when satisfied).
 
-      Return the constraint residual (zero when satisfied).
+      The residual is the difference between the physical pseudo-angle
+      computed from the supplied motor angles (via the standalone
+      functions in :mod:`~ad_hoc_diffractometer.reference`) and the
+      target :attr:`value`:
 
-      Not yet implemented — all reference constraints require the
-      reference vector infrastructure (Issue J).  Raises
-      ``NotImplementedError`` when called.
+      - ``"incidence"`` — ``incidence_angle - value``
+      - ``"emergence"`` — ``emergence_angle - value``
+      - ``"specular"`` — ``incidence_angle - emergence_angle``
+        (the relational condition α_i = α_f; :attr:`value` is the
+        boolean flag ``True`` and does not enter the residual)
+      - ``"psi"`` — ``psi_angle - value``
+      - ``"naz"`` — ``naz_angle - value``
+      - ``"omega"`` — ``omega_pseudo - value``
+
+      :param angles: Current motor angles in degrees, keyed by stage name.
+      :type angles: dict[str, float]
+      :param geometry: The diffractometer.  The required reference vector
+                       (``surface_normal`` for incidence/emergence/specular,
+                       ``azimuth`` for psi/naz) must be set, except for ``"omega"``
+                       which needs no reference vector.
+      :type geometry: AdHocDiffractometer
+
+      :returns: Residual in degrees.  Zero means the constraint is satisfied.
+      :rtype: float
+
+      :raises ValueError: If the required reference vector is not set on the geometry
+          (raised by the underlying
+          :mod:`~ad_hoc_diffractometer.reference` function).
 
 
 
@@ -957,10 +980,8 @@ Module Contents
 
 
    .. py:method:: is_satisfied(angles: dict[str, float], geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, tol: float = 1e-06) -> bool
-      :abstractmethod:
 
-
-      Return True when the constraint is satisfied (not yet implemented).
+      Return True when ``|evaluate(angles, geometry)| < tol``.
 
 
 
