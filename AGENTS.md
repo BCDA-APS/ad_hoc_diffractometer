@@ -63,12 +63,14 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
 
 ## Issue and PR workflow
 
-1. **Before writing any code**, set the issue status to "In progress" on the
-   GitHub project board:
+1. **Before writing any code**, *if the issue is on one or more project
+   boards*, set the issue status to "In progress" on each of those boards:
    ```bash
    # Find the project item ID for the issue, then update its status field
    gh api graphql -f query='...'   # see project board queries below
    ```
+   If the issue is on no project board, skip this step — there is no board
+   status to set.
 
 2. **Open a PR** with a body that includes a closing reference as a bullet,
    followed by any remarks and the agent/model signature:
@@ -82,10 +84,18 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
    The `closes #N` keyword triggers GitHub automation: when the PR is merged
    the issue is closed and the project card moves to "Done" automatically.
 
-   Every PR must also have its **milestone** and **project board** set,
-   and its project board status must be set to **"In Progress"**.
-   Issues and PRs may belong to **more than one project board** — add the
-   card to every board that tracks the work.
+   **Mirror the issue's milestone and boards onto the PR.**  The PR
+   inherits whatever the issue has — no more, no less:
+
+   - If the issue is assigned to a **milestone**, set the PR to the same
+     milestone.  If the issue has no milestone, the PR gets none.
+   - If the issue is on one or more **project boards**, add the PR to the
+     same board(s) and set its status to **"In Progress"**.  If the issue
+     is on no board, the PR gets no board.
+
+   A PR is always created (the no-board / no-milestone case simply means
+   the PR has no board or milestone either) — the absence of a board or
+   milestone is never a reason to skip the PR.
 
    Status field IDs and the corresponding option IDs are project-
    specific.  Discover them per board with the GraphQL query
@@ -98,12 +108,12 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
 
    **Match the issue's boards.**  Before creating the PR, query the
    issue's `projectItems` to discover every board it belongs to.  Add the
-   PR to **all** of those boards — not just the one implied by the domain
-   table above.
+   PR to **all** of those boards (and only those).
 
    **Set "In review" when code is complete.**  Once the PR is pushed, set its
    project board status to **"In review"** (on boards that have that status;
-   leave "In Progress" where only Todo / In Progress / Done exist).
+   leave "In Progress" where only Todo / In Progress / Done exist).  Skip
+   this when the issue (and therefore the PR) is on no board.
 
    ```bash
    # Set milestone when creating the PR
