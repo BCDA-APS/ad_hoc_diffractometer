@@ -7,6 +7,12 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+### Fixed
+
+- psic `fixed_incidence_*` / `fixed_emergence_*` solutions now reproduce the requested hkl. (#307)
+- psic `fixed_psi_vertical` no longer returns empty at the natural ψ. (#306)
+
+
 ## Release v0.11.3
 
 Released 2026-06-24

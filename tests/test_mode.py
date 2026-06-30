@@ -849,7 +849,7 @@ def _psic_reference_geometry(**kwargs):
         ),
         pytest.param(
             "emergence",
-            0.0,
+            5.0,
             {"surface_normal": (0, 0, 1)},
             does_not_raise(),
             id="emergence-residual",
@@ -897,8 +897,19 @@ def test_reference_constraint_evaluate(name, value, kwargs, context):
                 "specular": "specular_vertical",
                 "omega": "fixed_omega_vertical",
             }[name]
+            # Drive forward() with the same (accessible) target the residual
+            # is checked against, so the returned solution genuinely both
+            # reproduces (1, 0, 1) and satisfies the reference angle.
+            if name in {"incidence", "emergence"}:
+                g._modes[g.mode_name] = g.mode.with_constraint_values(  # noqa: SLF001
+                    **{name: value}
+                )
+                g.mode_name = g.mode_name
             sols = g.forward(1, 0, 1)
             angles = sols[0]
+            # The solution must reproduce the requested reflection (issue #307).
+            rt = g.inverse(angles)
+            assert rt == pytest.approx((1.0, 0.0, 1.0), abs=1e-3)
         residual = rc.evaluate(angles, g)
         assert residual == pytest.approx(0.0, abs=1e-6)
 
