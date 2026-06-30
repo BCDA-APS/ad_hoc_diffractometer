@@ -7,6 +7,11 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+
+## Release v0.11.4
+
+Released 2026-06-30
+
 ### Fixed
 
 - psic `fixed_incidence_*` / `fixed_emergence_*` solutions now reproduce the requested hkl. (#307)
