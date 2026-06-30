@@ -1104,10 +1104,63 @@ def _solve_bisecting(
         # Solve 1D: find the single angle that satisfies Q_phi.
         return _solve_one_free_angle(geometry, angles, free_sample[0], Q_phi, mode)
 
-    # The two remaining free stages are chi_stage and phi_stage.
-    # By convention (BL1967, You1999) the stacking order is:
-    #   [outermost ... chi_stage, phi_stage] (phi closest to sample)
-    # The last two free stages in stacking order play the chi/phi roles.
+    # Two or more free sample stages: solve the inner chi/phi pair against
+    # the Bragg condition with every earlier free stage frozen at its value
+    # in ``angles``.  Callers that must also solve an outer free stage (e.g.
+    # the psic ``fixed_psi_*`` / surface families with eta, chi, phi all
+    # free) scan that outer stage and call :func:`_solve_chi_phi_bragg`
+    # per outer-angle value (issues #306, #307).
+    return _solve_chi_phi_bragg(geometry, angles, free_sample, Q_phi, mode)
+
+
+def _solve_chi_phi_bragg(
+    geometry: AdHocDiffractometer,
+    angles: dict[str, float],
+    free_sample: list,
+    Q_phi: np.ndarray,
+    mode,
+    fast_only: bool = False,
+) -> list[dict[str, float]]:
+    """
+    Solve the inner ``(chi, phi)`` sample pair for the Bragg condition.
+
+    Given a baseline ``angles`` dict in which every stage except the last
+    two entries of ``free_sample`` is already fixed (detector at 2θ, fixed
+    sample/detector constraints applied, and any *outer* free sample stage
+    pinned at its value in ``angles``), find the ``(chi, phi)`` settings of
+    the last two free sample stages that place ``Q_phi`` on the Ewald
+    sphere.
+
+    This is the inner kernel shared by :func:`_solve_fixed_sample` (two
+    free sample stages) and :func:`_solve_reference_three_sample` (three
+    free sample stages, where the outer stage is scanned externally and
+    pinned in ``angles`` before each call).
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+    angles : dict[str, float]
+        Baseline angles; the last two ``free_sample`` stages are overwritten.
+    free_sample : list of Stage
+        Free sample stages in stacking order; the last two are chi/phi.
+    Q_phi : numpy.ndarray, shape (3,)
+    mode : ConstraintSet
+    fast_only : bool, optional
+        When ``True`` and the chi/phi pair is standard Eulerian, return the
+        analytic-fast-path result (possibly empty) without running the
+        expensive multi-seed Newton fallback.  This is used by the
+        outer-stage scan in :func:`_solve_reference_three_sample`, where the
+        inner solve is invoked dozens of times and the Newton fallback's
+        cost on the (common) no-solution case dominates.  Default ``False``.
+
+    Returns
+    -------
+    list of dict[str, float]
+        Bragg-valid solutions (after cut points and limit checks).
+    """
+    # The two innermost free stages play the chi/phi roles.  By convention
+    # (BL1967, You1999) the stacking order is
+    #   [outermost ... chi_stage, phi_stage] (phi closest to sample).
     chi_stage = free_sample[-2]
     phi_stage = free_sample[-1]
 
@@ -1147,7 +1200,11 @@ def _solve_bisecting(
             if solutions:
                 return solutions
         # If analytic solver returned nothing (degenerate case), fall through
-        # to the Newton solver below.
+        # to the Newton solver below — unless the caller requested the
+        # analytic-only fast path (outer-stage scan), in which case an
+        # empty result simply means "no Bragg branch at this outer angle".
+        if fast_only:
+            return []
 
     # --- Newton fallback for non-standard axes or degenerate cases ---
 
@@ -1927,25 +1984,47 @@ def _solve_psi_mode(
     # bisect was dropped in favor of a SampleConstraint + a
     # DetectorConstraint pinning the scattering plane (nu = 0 for
     # vertical, delta = 0 for horizontal) plus the psi reference.  Once
-    # ψ is validated, delegate to ``_solve_fixed_sample`` which handles
-    # the remaining free sample stages plus the active detector at
-    # ttheta.
+    # ψ is validated it imposes no further restriction (every Bragg
+    # solution shares the natural ψ for a given hkl + UB), so the mode is
+    # degenerate in the third free sample angle.  The conventional
+    # resolution — and the one the corresponding ``bisecting_*`` mode
+    # uses — is the bisecting geometry: the lone free sample stage that
+    # is neither chi nor phi takes ttheta/2, paired with the active
+    # detector stage at ttheta.  Build that synthetic bisecting mode and
+    # delegate, so ``fixed_psi_vertical`` reproduces ``bisecting_vertical``
+    # (issue #306) instead of freezing the outer stage at its current
+    # value (which left ``forward()`` with no solutions).
     if (
         any(s.name == "chi" for s in geometry.sample_stages)
         and mode.detector_constraint is not None
         and len(mode.fixed_sample_constraints) >= 1
     ):
-        stripped = ConstraintSet(
-            [
-                c
-                for c in mode.constraints
-                if not (isinstance(c, ReferenceConstraint) and c.name == "psi")
-            ],
+        other_constraints = [
+            c
+            for c in mode.constraints
+            if not (isinstance(c, ReferenceConstraint) and c.name == "psi")
+        ]
+        # The active detector stage carries ttheta (the one NOT pinned by
+        # the mode's DetectorConstraint).
+        pinned_det = mode.detector_constraint.name
+        active_det = next(
+            s.name for s in geometry.detector_stages if s.name != pinned_det
+        )
+        # The bisecting sample stage is the free sample stage that is
+        # neither chi nor phi (eta for vertical, mu for horizontal).
+        fixed_sample_names = {c.name for c in mode.fixed_sample_constraints}
+        bisect_sample = next(
+            s.name
+            for s in geometry.sample_stages
+            if s.name not in fixed_sample_names and s.name not in {"chi", "phi"}
+        )
+        synthetic = ConstraintSet(
+            [BisectConstraint(bisect_sample, active_det)] + other_constraints,
             computed=mode.computed,
             extras=mode.extras,
             cut_points=mode.cut_points,
         )
-        return _solve_fixed_sample(geometry, Q_phi, ttheta_deg, stripped)
+        return _solve_bisecting(geometry, Q_phi, ttheta_deg, synthetic)
 
     # fourcv, fourch, kappa4cv, kappa4ch: no BisectConstraint in the mode.
     # Build a synthetic bisecting mode using the geometry's natural
@@ -3050,6 +3129,165 @@ def _is_surface_mode(geometry: AdHocDiffractometer, mode) -> bool:
     return True
 
 
+def _solve_reference_three_sample(
+    geometry: AdHocDiffractometer,
+    Q_phi: np.ndarray,
+    ttheta_deg: float,
+    mode,
+    free_sample: list,
+    reference_residual: callable,
+) -> list[dict[str, float]]:
+    """
+    Solve three free sample stages against Bragg plus one reference angle.
+
+    Used by the psic ``fixed_incidence_*`` / ``fixed_emergence_*`` families
+    (and any future mode) where three sample stages are free — an outer
+    rocking stage (``eta`` or ``mu``) plus the inner Eulerian pair
+    (``chi``, ``phi``) — and a single :class:`~mode.ReferenceConstraint`
+    (incidence, emergence, ...) selects discrete settings from the
+    one-parameter Bragg family (issues #306, #307).
+
+    Strategy: the inner ``(chi, phi)`` pair is solved against the Bragg
+    condition by :func:`_solve_chi_phi_bragg` for any fixed value of the
+    outer stage, so the three-angle problem reduces to a 1-D root find on
+    the outer stage.  Scan the outer stage over a coarse grid; at each
+    sample evaluate the reference residual on every Bragg-valid inner
+    solution; bracket sign changes (per Bragg branch) and refine by
+    bisection.  Every returned solution reproduces the requested ``hkl``
+    by construction because the inner solve always enforces Bragg.
+
+    Parameters
+    ----------
+    geometry : AdHocDiffractometer
+    Q_phi : numpy.ndarray, shape (3,)
+    ttheta_deg : float
+    mode : ConstraintSet
+    free_sample : list of Stage
+        The free sample stages in stacking order: ``[outer, chi, phi]``.
+    reference_residual : callable
+        ``reference_residual(angles) -> float``; zero when the reference
+        constraint (incidence/emergence/...) is satisfied.
+
+    Returns
+    -------
+    list of dict[str, float]
+    """
+    # Build the baseline angle dict with all fixed constraints applied.
+    angles: dict[str, float] = {
+        s.name: s.angle
+        for s in list(geometry._stages.values())  # noqa: SLF001
+    }
+    for c in mode.fixed_sample_constraints:
+        if c.name in geometry._stages:  # noqa: SLF001  # pragma: no branch
+            angles[c.name] = float(c.value)
+
+    det_constraint = mode.detector_constraint
+    pinned_det: str | None = None
+    # The psic vertical/horizontal reference modes that reach this solver
+    # always pin one detector stage (nu=0 or delta=0); the unpinned case is
+    # defensive for any future caller.
+    if det_constraint is not None and not det_constraint.is_qaz:  # pragma: no branch
+        angles[det_constraint.name] = det_constraint.value
+        pinned_det = det_constraint.name
+
+    # The active detector stage carries ttheta (the one not pinned).
+    free_det_stages = [s for s in geometry.detector_stages if s.name != pinned_det]
+    if not free_det_stages:  # pragma: no cover
+        return []
+    angles[free_det_stages[-1].name] = ttheta_deg
+
+    outer_stage = free_sample[0]
+    outer_name = outer_stage.name
+    inner_free = free_sample[1:]  # [chi, phi]
+
+    def _bragg_solutions_at(outer_deg: float) -> list[dict[str, float]]:
+        """Bragg-valid full solutions with the outer stage pinned."""
+        base = dict(angles)
+        base[outer_name] = outer_deg
+        return _solve_chi_phi_bragg(
+            geometry, base, inner_free, Q_phi, mode, fast_only=True
+        )
+
+    def _match(sol: dict[str, float], pool: list[dict[str, float]]):
+        """Return the pool entry closest to ``sol`` in (chi, phi), or None."""
+        if not pool:
+            return None
+        chi_n, phi_n = inner_free[-2].name, inner_free[-1].name
+        best = None
+        best_d = 1e9
+        for cand in pool:
+            d = abs(cand[chi_n] - sol[chi_n]) + abs(cand[phi_n] - sol[phi_n])
+            if d < best_d:
+                best_d = d
+                best = cand
+        # Only treat as the same branch when reasonably close.
+        return best if best_d < 30.0 else None
+
+    # Coarse scan of the outer stage across its limits.
+    lim_lo, lim_hi = outer_stage.limits
+    n_steps = 72
+    grid = list(np.linspace(lim_lo, lim_hi, n_steps + 1))
+
+    solutions: list[dict[str, float]] = []
+
+    def _record(sol: dict[str, float]) -> None:
+        _apply_cut_points(sol, mode, geometry)
+        for existing in solutions:
+            if all(
+                abs(existing.get(k, 0.0) - sol.get(k, 0.0)) < 1e-3 for k in sol
+            ):  # pragma: no cover - defensive against duplicate outer branches
+                return
+        if _check_limits(geometry, sol):  # pragma: no branch
+            solutions.append(sol)
+
+    prev_outer = grid[0]
+    prev_sols = _bragg_solutions_at(prev_outer)
+    prev_res = {id(s): reference_residual(s) for s in prev_sols}
+
+    for outer in grid[1:]:
+        cur_sols = _bragg_solutions_at(outer)
+        cur_res = {id(s): reference_residual(s) for s in cur_sols}
+
+        for cs in cur_sols:
+            r_cur = cur_res[id(cs)]
+            # Exact hit on the grid.
+            if abs(r_cur) < 1e-7:
+                _record(dict(cs))
+                continue
+            match = _match(cs, prev_sols)
+            if match is None:
+                continue
+            r_prev = prev_res[id(match)]
+            if r_prev * r_cur >= 0:
+                continue
+            # Sign change between prev_outer and outer on this branch:
+            # refine the outer angle by bisection.
+            a, b = prev_outer, outer
+            ra = r_prev
+            refined: dict[str, float] | None = None
+            for _ in range(60):  # pragma: no branch - converges before exhausting
+                m = 0.5 * (a + b)
+                pool = _bragg_solutions_at(m)
+                mid = _match(cs, pool)
+                if mid is None:  # pragma: no cover
+                    break
+                rm = reference_residual(mid)
+                if abs(rm) < 1e-9:
+                    refined = dict(mid)
+                    break
+                if ra * rm < 0:
+                    b = m
+                else:
+                    a, ra = m, rm
+                refined = dict(mid)
+            if refined is not None:  # pragma: no branch
+                _record(refined)
+
+        prev_outer, prev_sols, prev_res = outer, cur_sols, cur_res
+
+    return solutions
+
+
 def _solve_surface(
     geometry: AdHocDiffractometer,
     Q_phi: np.ndarray,
@@ -3137,10 +3375,36 @@ def _solve_surface(
                 return [angles]
         return []
 
+    # psic ``fixed_incidence_*`` / ``fixed_emergence_*`` families leave
+    # three sample stages free — an outer rocking stage (eta or mu) plus
+    # the inner Eulerian pair (chi, phi).  The legacy 1-D Newton below
+    # rocks only the first free stage and leaves the other two at their
+    # current values, so it enforced the surface residual on motor
+    # settings that did NOT reproduce the requested hkl (issue #307).
+    # Route that case to the outer-stage scan, which solves the inner
+    # chi/phi pair against the Bragg condition for each outer value and
+    # roots the scan on the surface residual, so every returned solution
+    # is Bragg-valid by construction.  Geometries without a chi stage
+    # (zaxis, s2d2, sixc) keep the legacy 1-D Newton, which works thanks
+    # to their constrained sample stack (issues #279, #304).
+    inner_is_chi_phi = (
+        len(free_sample) >= 3
+        and free_sample[-2].name == "chi"
+        and free_sample[-1].name == "phi"
+    )
+    if inner_is_chi_phi:
+
+        def _ref_residual(trial: dict[str, float]) -> float:
+            return _surface_residual(trial, geometry, target_name, target_value)
+
+        return _solve_reference_three_sample(
+            geometry, Q_phi, ttheta_deg, mode, free_sample, _ref_residual
+        )
+
     if len(free_sample) > 1:  # pragma: no branch
-        # More than one free sample stage — use the first one (rocking stage)
-        # and leave others at current values.  This handles cases where the
-        # reference constraint only restricts one angle.
+        # More than one free sample stage but not the psic chi/phi family
+        # — use the first one (rocking stage) and leave others at current
+        # values.  The reference constraint restricts only one angle here.
         pass
 
     free_stage = free_sample[0]

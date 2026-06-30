@@ -160,6 +160,17 @@ def test_reference_mode_solves_without_spurious_violation(
         g = _setup_cubic(geometry, **{ref_attr: ref_val})
         g.mode_name = mode_name
         assert g.mode.is_implemented(g)
+        # The mode default emergence target (0°) is physically inaccessible
+        # for cubic (1, 0, 1) with surface_normal (0, 0, 1): the achievable
+        # emergence range is ~0.7°–56°, so emergence=0 yields no Bragg-valid
+        # solution.  Use an accessible target so the test exercises the
+        # verification loop on real solutions rather than (formerly) on
+        # the buggy wrong-hkl output (issues #304, #307).
+        if mode_name == "fixed_emergence_vertical":
+            g._modes[mode_name] = g.mode.with_constraint_values(  # noqa: SLF001
+                emergence=5.0
+            )
+            g.mode_name = mode_name
         sols = g.forward(1, 0, 1)
         assert len(sols) > 0
         # Re-running the verification loop explicitly must not raise.
