@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=7412f171"></script>
+    <script src="../../_static/documentation_options.js?v=b95d7483"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-24 14:25 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-30 15:11 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -1573,10 +1573,66 @@
         <span class="c1"># Solve 1D: find the single angle that satisfies Q_phi.</span>
         <span class="k">return</span> <span class="n">_solve_one_free_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">free_sample</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
-    <span class="c1"># The two remaining free stages are chi_stage and phi_stage.</span>
-    <span class="c1"># By convention (BL1967, You1999) the stacking order is:</span>
-    <span class="c1">#   [outermost ... chi_stage, phi_stage] (phi closest to sample)</span>
-    <span class="c1"># The last two free stages in stacking order play the chi/phi roles.</span>
+    <span class="c1"># Two or more free sample stages: solve the inner chi/phi pair against</span>
+    <span class="c1"># the Bragg condition with every earlier free stage frozen at its value</span>
+    <span class="c1"># in ``angles``.  Callers that must also solve an outer free stage (e.g.</span>
+    <span class="c1"># the psic ``fixed_psi_*`` / surface families with eta, chi, phi all</span>
+    <span class="c1"># free) scan that outer stage and call :func:`_solve_chi_phi_bragg`</span>
+    <span class="c1"># per outer-angle value (issues #306, #307).</span>
+    <span class="k">return</span> <span class="n">_solve_chi_phi_bragg</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">free_sample</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_solve_chi_phi_bragg">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/forward/index.html#ad_hoc_diffractometer.forward._solve_chi_phi_bragg">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_chi_phi_bragg</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">free_sample</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+    <span class="n">fast_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve the inner ``(chi, phi)`` sample pair for the Bragg condition.</span>
+
+<span class="sd">    Given a baseline ``angles`` dict in which every stage except the last</span>
+<span class="sd">    two entries of ``free_sample`` is already fixed (detector at 2θ, fixed</span>
+<span class="sd">    sample/detector constraints applied, and any *outer* free sample stage</span>
+<span class="sd">    pinned at its value in ``angles``), find the ``(chi, phi)`` settings of</span>
+<span class="sd">    the last two free sample stages that place ``Q_phi`` on the Ewald</span>
+<span class="sd">    sphere.</span>
+
+<span class="sd">    This is the inner kernel shared by :func:`_solve_fixed_sample` (two</span>
+<span class="sd">    free sample stages) and :func:`_solve_reference_three_sample` (three</span>
+<span class="sd">    free sample stages, where the outer stage is scanned externally and</span>
+<span class="sd">    pinned in ``angles`` before each call).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">    angles : dict[str, float]</span>
+<span class="sd">        Baseline angles; the last two ``free_sample`` stages are overwritten.</span>
+<span class="sd">    free_sample : list of Stage</span>
+<span class="sd">        Free sample stages in stacking order; the last two are chi/phi.</span>
+<span class="sd">    Q_phi : numpy.ndarray, shape (3,)</span>
+<span class="sd">    mode : ConstraintSet</span>
+<span class="sd">    fast_only : bool, optional</span>
+<span class="sd">        When ``True`` and the chi/phi pair is standard Eulerian, return the</span>
+<span class="sd">        analytic-fast-path result (possibly empty) without running the</span>
+<span class="sd">        expensive multi-seed Newton fallback.  This is used by the</span>
+<span class="sd">        outer-stage scan in :func:`_solve_reference_three_sample`, where the</span>
+<span class="sd">        inner solve is invoked dozens of times and the Newton fallback&#39;s</span>
+<span class="sd">        cost on the (common) no-solution case dominates.  Default ``False``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">        Bragg-valid solutions (after cut points and limit checks).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The two innermost free stages play the chi/phi roles.  By convention</span>
+    <span class="c1"># (BL1967, You1999) the stacking order is</span>
+    <span class="c1">#   [outermost ... chi_stage, phi_stage] (phi closest to sample).</span>
     <span class="n">chi_stage</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">phi_stage</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
@@ -1616,7 +1672,11 @@
             <span class="k">if</span> <span class="n">solutions</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">solutions</span>
         <span class="c1"># If analytic solver returned nothing (degenerate case), fall through</span>
-        <span class="c1"># to the Newton solver below.</span>
+        <span class="c1"># to the Newton solver below — unless the caller requested the</span>
+        <span class="c1"># analytic-only fast path (outer-stage scan), in which case an</span>
+        <span class="c1"># empty result simply means &quot;no Bragg branch at this outer angle&quot;.</span>
+        <span class="k">if</span> <span class="n">fast_only</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
 
     <span class="c1"># --- Newton fallback for non-standard axes or degenerate cases ---</span>
 
@@ -2423,25 +2483,47 @@
     <span class="c1"># bisect was dropped in favor of a SampleConstraint + a</span>
     <span class="c1"># DetectorConstraint pinning the scattering plane (nu = 0 for</span>
     <span class="c1"># vertical, delta = 0 for horizontal) plus the psi reference.  Once</span>
-    <span class="c1"># ψ is validated, delegate to ``_solve_fixed_sample`` which handles</span>
-    <span class="c1"># the remaining free sample stages plus the active detector at</span>
-    <span class="c1"># ttheta.</span>
+    <span class="c1"># ψ is validated it imposes no further restriction (every Bragg</span>
+    <span class="c1"># solution shares the natural ψ for a given hkl + UB), so the mode is</span>
+    <span class="c1"># degenerate in the third free sample angle.  The conventional</span>
+    <span class="c1"># resolution — and the one the corresponding ``bisecting_*`` mode</span>
+    <span class="c1"># uses — is the bisecting geometry: the lone free sample stage that</span>
+    <span class="c1"># is neither chi nor phi takes ttheta/2, paired with the active</span>
+    <span class="c1"># detector stage at ttheta.  Build that synthetic bisecting mode and</span>
+    <span class="c1"># delegate, so ``fixed_psi_vertical`` reproduces ``bisecting_vertical``</span>
+    <span class="c1"># (issue #306) instead of freezing the outer stage at its current</span>
+    <span class="c1"># value (which left ``forward()`` with no solutions).</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="nb">any</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;chi&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">)</span>
         <span class="ow">and</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_constraint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">fixed_sample_constraints</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span>
     <span class="p">):</span>
-        <span class="n">stripped</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">c</span>
-                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ReferenceConstraint</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;psi&quot;</span><span class="p">)</span>
-            <span class="p">],</span>
+        <span class="n">other_constraints</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">c</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">constraints</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ReferenceConstraint</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;psi&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="c1"># The active detector stage carries ttheta (the one NOT pinned by</span>
+        <span class="c1"># the mode&#39;s DetectorConstraint).</span>
+        <span class="n">pinned_det</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_constraint</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">active_det</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">pinned_det</span>
+        <span class="p">)</span>
+        <span class="c1"># The bisecting sample stage is the free sample stage that is</span>
+        <span class="c1"># neither chi nor phi (eta for vertical, mu for horizontal).</span>
+        <span class="n">fixed_sample_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">fixed_sample_constraints</span><span class="p">}</span>
+        <span class="n">bisect_sample</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fixed_sample_names</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">synthetic</span> <span class="o">=</span> <span class="n">ConstraintSet</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">BisectConstraint</span><span class="p">(</span><span class="n">bisect_sample</span><span class="p">,</span> <span class="n">active_det</span><span class="p">)]</span> <span class="o">+</span> <span class="n">other_constraints</span><span class="p">,</span>
             <span class="n">computed</span><span class="o">=</span><span class="n">mode</span><span class="o">.</span><span class="n">computed</span><span class="p">,</span>
             <span class="n">extras</span><span class="o">=</span><span class="n">mode</span><span class="o">.</span><span class="n">extras</span><span class="p">,</span>
             <span class="n">cut_points</span><span class="o">=</span><span class="n">mode</span><span class="o">.</span><span class="n">cut_points</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">_solve_fixed_sample</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">stripped</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_solve_bisecting</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">synthetic</span><span class="p">)</span>
 
     <span class="c1"># fourcv, fourch, kappa4cv, kappa4ch: no BisectConstraint in the mode.</span>
     <span class="c1"># Build a synthetic bisecting mode using the geometry&#39;s natural</span>
@@ -3568,6 +3650,168 @@
 
 
 
+<div class="viewcode-block" id="_solve_reference_three_sample">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/forward/index.html#ad_hoc_diffractometer.forward._solve_reference_three_sample">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_reference_three_sample</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
+    <span class="n">Q_phi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ttheta_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">,</span>
+    <span class="n">free_sample</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">reference_residual</span><span class="p">:</span> <span class="nb">callable</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve three free sample stages against Bragg plus one reference angle.</span>
+
+<span class="sd">    Used by the psic ``fixed_incidence_*`` / ``fixed_emergence_*`` families</span>
+<span class="sd">    (and any future mode) where three sample stages are free — an outer</span>
+<span class="sd">    rocking stage (``eta`` or ``mu``) plus the inner Eulerian pair</span>
+<span class="sd">    (``chi``, ``phi``) — and a single :class:`~mode.ReferenceConstraint`</span>
+<span class="sd">    (incidence, emergence, ...) selects discrete settings from the</span>
+<span class="sd">    one-parameter Bragg family (issues #306, #307).</span>
+
+<span class="sd">    Strategy: the inner ``(chi, phi)`` pair is solved against the Bragg</span>
+<span class="sd">    condition by :func:`_solve_chi_phi_bragg` for any fixed value of the</span>
+<span class="sd">    outer stage, so the three-angle problem reduces to a 1-D root find on</span>
+<span class="sd">    the outer stage.  Scan the outer stage over a coarse grid; at each</span>
+<span class="sd">    sample evaluate the reference residual on every Bragg-valid inner</span>
+<span class="sd">    solution; bracket sign changes (per Bragg branch) and refine by</span>
+<span class="sd">    bisection.  Every returned solution reproduces the requested ``hkl``</span>
+<span class="sd">    by construction because the inner solve always enforces Bragg.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : AdHocDiffractometer</span>
+<span class="sd">    Q_phi : numpy.ndarray, shape (3,)</span>
+<span class="sd">    ttheta_deg : float</span>
+<span class="sd">    mode : ConstraintSet</span>
+<span class="sd">    free_sample : list of Stage</span>
+<span class="sd">        The free sample stages in stacking order: ``[outer, chi, phi]``.</span>
+<span class="sd">    reference_residual : callable</span>
+<span class="sd">        ``reference_residual(angles) -&gt; float``; zero when the reference</span>
+<span class="sd">        constraint (incidence/emergence/...) is satisfied.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict[str, float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Build the baseline angle dict with all fixed constraints applied.</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">angle</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>  <span class="c1"># noqa: SLF001</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">fixed_sample_constraints</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="p">:</span>  <span class="c1"># noqa: SLF001  # pragma: no branch</span>
+            <span class="n">angles</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="n">det_constraint</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">detector_constraint</span>
+    <span class="n">pinned_det</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># The psic vertical/horizontal reference modes that reach this solver</span>
+    <span class="c1"># always pin one detector stage (nu=0 or delta=0); the unpinned case is</span>
+    <span class="c1"># defensive for any future caller.</span>
+    <span class="k">if</span> <span class="n">det_constraint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
+        <span class="n">angles</span><span class="p">[</span><span class="n">det_constraint</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">pinned_det</span> <span class="o">=</span> <span class="n">det_constraint</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="c1"># The active detector stage carries ttheta (the one not pinned).</span>
+    <span class="n">free_det_stages</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">pinned_det</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">free_det_stages</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">angles</span><span class="p">[</span><span class="n">free_det_stages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttheta_deg</span>
+
+    <span class="n">outer_stage</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">outer_name</span> <span class="o">=</span> <span class="n">outer_stage</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">inner_free</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># [chi, phi]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_bragg_solutions_at</span><span class="p">(</span><span class="n">outer_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Bragg-valid full solutions with the outer stage pinned.&quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+        <span class="n">base</span><span class="p">[</span><span class="n">outer_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">outer_deg</span>
+        <span class="k">return</span> <span class="n">_solve_chi_phi_bragg</span><span class="p">(</span>
+            <span class="n">geometry</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">inner_free</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">fast_only</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_match</span><span class="p">(</span><span class="n">sol</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">pool</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the pool entry closest to ``sol`` in (chi, phi), or None.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pool</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">chi_n</span><span class="p">,</span> <span class="n">phi_n</span> <span class="o">=</span> <span class="n">inner_free</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">inner_free</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">best</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">best_d</span> <span class="o">=</span> <span class="mf">1e9</span>
+        <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">pool</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cand</span><span class="p">[</span><span class="n">chi_n</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="p">[</span><span class="n">chi_n</span><span class="p">])</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cand</span><span class="p">[</span><span class="n">phi_n</span><span class="p">]</span> <span class="o">-</span> <span class="n">sol</span><span class="p">[</span><span class="n">phi_n</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">best_d</span><span class="p">:</span>
+                <span class="n">best_d</span> <span class="o">=</span> <span class="n">d</span>
+                <span class="n">best</span> <span class="o">=</span> <span class="n">cand</span>
+        <span class="c1"># Only treat as the same branch when reasonably close.</span>
+        <span class="k">return</span> <span class="n">best</span> <span class="k">if</span> <span class="n">best_d</span> <span class="o">&lt;</span> <span class="mf">30.0</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="c1"># Coarse scan of the outer stage across its limits.</span>
+    <span class="n">lim_lo</span><span class="p">,</span> <span class="n">lim_hi</span> <span class="o">=</span> <span class="n">outer_stage</span><span class="o">.</span><span class="n">limits</span>
+    <span class="n">n_steps</span> <span class="o">=</span> <span class="mi">72</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lim_lo</span><span class="p">,</span> <span class="n">lim_hi</span><span class="p">,</span> <span class="n">n_steps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">solutions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_record</span><span class="p">(</span><span class="n">sol</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_apply_cut_points</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">existing</span> <span class="ow">in</span> <span class="n">solutions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span>
+                <span class="nb">abs</span><span class="p">(</span><span class="n">existing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">sol</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-3</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sol</span>
+            <span class="p">):</span>  <span class="c1"># pragma: no cover - defensive against duplicate outer branches</span>
+                <span class="k">return</span>
+        <span class="k">if</span> <span class="n">_check_limits</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>  <span class="c1"># pragma: no branch</span>
+            <span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+
+    <span class="n">prev_outer</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">prev_sols</span> <span class="o">=</span> <span class="n">_bragg_solutions_at</span><span class="p">(</span><span class="n">prev_outer</span><span class="p">)</span>
+    <span class="n">prev_res</span> <span class="o">=</span> <span class="p">{</span><span class="nb">id</span><span class="p">(</span><span class="n">s</span><span class="p">):</span> <span class="n">reference_residual</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">prev_sols</span><span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">outer</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">cur_sols</span> <span class="o">=</span> <span class="n">_bragg_solutions_at</span><span class="p">(</span><span class="n">outer</span><span class="p">)</span>
+        <span class="n">cur_res</span> <span class="o">=</span> <span class="p">{</span><span class="nb">id</span><span class="p">(</span><span class="n">s</span><span class="p">):</span> <span class="n">reference_residual</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">cur_sols</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">cs</span> <span class="ow">in</span> <span class="n">cur_sols</span><span class="p">:</span>
+            <span class="n">r_cur</span> <span class="o">=</span> <span class="n">cur_res</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">cs</span><span class="p">)]</span>
+            <span class="c1"># Exact hit on the grid.</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r_cur</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-7</span><span class="p">:</span>
+                <span class="n">_record</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">cs</span><span class="p">))</span>
+                <span class="k">continue</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">_match</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">prev_sols</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">r_prev</span> <span class="o">=</span> <span class="n">prev_res</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">match</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">r_prev</span> <span class="o">*</span> <span class="n">r_cur</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="c1"># Sign change between prev_outer and outer on this branch:</span>
+            <span class="c1"># refine the outer angle by bisection.</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">prev_outer</span><span class="p">,</span> <span class="n">outer</span>
+            <span class="n">ra</span> <span class="o">=</span> <span class="n">r_prev</span>
+            <span class="n">refined</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">):</span>  <span class="c1"># pragma: no branch - converges before exhausting</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
+                <span class="n">pool</span> <span class="o">=</span> <span class="n">_bragg_solutions_at</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+                <span class="n">mid</span> <span class="o">=</span> <span class="n">_match</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">pool</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">mid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+                    <span class="k">break</span>
+                <span class="n">rm</span> <span class="o">=</span> <span class="n">reference_residual</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rm</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">:</span>
+                    <span class="n">refined</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span>
+                    <span class="k">break</span>
+                <span class="k">if</span> <span class="n">ra</span> <span class="o">*</span> <span class="n">rm</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">b</span> <span class="o">=</span> <span class="n">m</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">a</span><span class="p">,</span> <span class="n">ra</span> <span class="o">=</span> <span class="n">m</span><span class="p">,</span> <span class="n">rm</span>
+                <span class="n">refined</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">refined</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
+                <span class="n">_record</span><span class="p">(</span><span class="n">refined</span><span class="p">)</span>
+
+        <span class="n">prev_outer</span><span class="p">,</span> <span class="n">prev_sols</span><span class="p">,</span> <span class="n">prev_res</span> <span class="o">=</span> <span class="n">outer</span><span class="p">,</span> <span class="n">cur_sols</span><span class="p">,</span> <span class="n">cur_res</span>
+
+    <span class="k">return</span> <span class="n">solutions</span></div>
+
+
+
 <div class="viewcode-block" id="_solve_surface">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/forward/index.html#ad_hoc_diffractometer.forward._solve_surface">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_solve_surface</span><span class="p">(</span>
@@ -3657,10 +3901,36 @@
                 <span class="k">return</span> <span class="p">[</span><span class="n">angles</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">[]</span>
 
+    <span class="c1"># psic ``fixed_incidence_*`` / ``fixed_emergence_*`` families leave</span>
+    <span class="c1"># three sample stages free — an outer rocking stage (eta or mu) plus</span>
+    <span class="c1"># the inner Eulerian pair (chi, phi).  The legacy 1-D Newton below</span>
+    <span class="c1"># rocks only the first free stage and leaves the other two at their</span>
+    <span class="c1"># current values, so it enforced the surface residual on motor</span>
+    <span class="c1"># settings that did NOT reproduce the requested hkl (issue #307).</span>
+    <span class="c1"># Route that case to the outer-stage scan, which solves the inner</span>
+    <span class="c1"># chi/phi pair against the Bragg condition for each outer value and</span>
+    <span class="c1"># roots the scan on the surface residual, so every returned solution</span>
+    <span class="c1"># is Bragg-valid by construction.  Geometries without a chi stage</span>
+    <span class="c1"># (zaxis, s2d2, sixc) keep the legacy 1-D Newton, which works thanks</span>
+    <span class="c1"># to their constrained sample stack (issues #279, #304).</span>
+    <span class="n">inner_is_chi_phi</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">free_sample</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span>
+        <span class="ow">and</span> <span class="n">free_sample</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;chi&quot;</span>
+        <span class="ow">and</span> <span class="n">free_sample</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;phi&quot;</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">inner_is_chi_phi</span><span class="p">:</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_ref_residual</span><span class="p">(</span><span class="n">trial</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_surface_residual</span><span class="p">(</span><span class="n">trial</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">target_value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_solve_reference_three_sample</span><span class="p">(</span>
+            <span class="n">geometry</span><span class="p">,</span> <span class="n">Q_phi</span><span class="p">,</span> <span class="n">ttheta_deg</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">free_sample</span><span class="p">,</span> <span class="n">_ref_residual</span>
+        <span class="p">)</span>
+
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_sample</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
-        <span class="c1"># More than one free sample stage — use the first one (rocking stage)</span>
-        <span class="c1"># and leave others at current values.  This handles cases where the</span>
-        <span class="c1"># reference constraint only restricts one angle.</span>
+        <span class="c1"># More than one free sample stage but not the psic chi/phi family</span>
+        <span class="c1"># — use the first one (rocking stage) and leave others at current</span>
+        <span class="c1"># values.  The reference constraint restricts only one angle here.</span>
         <span class="k">pass</span>
 
     <span class="n">free_stage</span> <span class="o">=</span> <span class="n">free_sample</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -4924,7 +5194,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-24 14:25 CDT.
+  Last updated on 2026-06-30 15:11 CDT.
   <br/>
 </p></div>
       

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../../_static/documentation_options.js?v=7412f171"></script>
+    <script src="../../../_static/documentation_options.js?v=b95d7483"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-24 14:25 CDT"/>
+    <meta name="docbuild:last-update" content="2026-06-30 15:11 CDT"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -836,7 +836,7 @@ means the beam strikes the geometric center of the detector.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.detector_rotation_matrix">
-<span class="sig-name descname"><span class="pre">detector_rotation_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer.detector_rotation_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.detector_rotation_matrix" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">detector_rotation_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer.detector_rotation_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.detector_rotation_matrix" title="Link to this definition">#</a></dt>
 <dd><p>Compute the total detector rotation matrix.</p>
 <p>Composition follows the same outermost-leftmost convention as
 <a class="reference internal" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.sample_rotation_matrix" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.sample_rotation_matrix"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sample_rotation_matrix()</span></code></a>:</p>
@@ -848,7 +848,7 @@ means the beam strikes the geometric center of the detector.</p>
 <dd class="field-odd"><p><strong>D</strong></p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3, 3)</p>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a>, shape (3, 3)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1113,7 +1113,7 @@ Requires <code class="docutils literal notranslate"><span class="pre">wavelength
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inclination_matrix">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">inclination_matrix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inclination_matrix" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">inclination_matrix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inclination_matrix" title="Link to this definition">#</a></dt>
 <dd><p>3×3 rotation matrix describing the diffractometer inclination
 relative to the incident beam direction.</p>
 <p>When the entire diffractometer is mounted at a non-zero angle with
@@ -1188,7 +1188,7 @@ motor angles.</p>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">self.wavelength</span></code> is None.</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the active sample has no UB matrix set
 (<code class="docutils literal notranslate"><span class="pre">sample.UB</span> <span class="pre">is</span> <span class="pre">None</span></code>).</p></li>
-<li><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.LinAlgError.html#numpy.linalg.LinAlgError" title="(in NumPy v2.4)"><strong>numpy.linalg.LinAlgError</strong></a> – If the UB matrix is singular and cannot be inverted.</p></li>
+<li><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.LinAlgError.html#numpy.linalg.LinAlgError" title="(in NumPy v2.5)"><strong>numpy.linalg.LinAlgError</strong></a> – If the UB matrix is singular and cannot be inverted.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1546,7 +1546,7 @@ or no mode is active.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.sample_rotation_matrix">
-<span class="sig-name descname"><span class="pre">sample_rotation_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer.sample_rotation_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.sample_rotation_matrix" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sample_rotation_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer.sample_rotation_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.sample_rotation_matrix" title="Link to this definition">#</a></dt>
 <dd><p>Compute the total sample rotation matrix.</p>
 <p>Composition follows the BL1967 standard convention (Busing &amp;
 Levy, <em>Acta Cryst.</em> 22, 457-464, 1967): the outermost
@@ -1562,7 +1562,7 @@ to lab-frame vectors: <code class="docutils literal notranslate"><span class="pr
 <dd class="field-odd"><p><strong>Z</strong></p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a>, shape (3, 3)</p>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a>, shape (3, 3)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1584,7 +1584,7 @@ invariants intact.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.set_inclination">
-<span class="sig-name descname"><span class="pre">set_inclination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer.set_inclination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.set_inclination" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">set_inclination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/ad_hoc_diffractometer/diffractometer.html#AdHocDiffractometer.set_inclination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.set_inclination" title="Link to this definition">#</a></dt>
 <dd><p>Set the inclination matrix from a rotation axis and angle.</p>
 <p>Convenience wrapper around <a class="reference internal" href="#ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inclination_matrix" title="ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.inclination_matrix"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inclination_matrix</span></code></a> that uses the
 <a class="reference internal" href="../rotation/index.html#ad_hoc_diffractometer.rotation.rotation_matrix" title="ad_hoc_diffractometer.rotation.rotation_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">rotation_matrix()</span></code></a> function to build R from an axis
@@ -2092,7 +2092,7 @@ capture the string instead.</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-24 14:25 CDT.
+  Last updated on 2026-06-30 15:11 CDT.
   <br/>
 </p></div>
       

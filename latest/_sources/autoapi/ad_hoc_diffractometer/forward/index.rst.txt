@@ -115,6 +115,7 @@ Functions
    ad_hoc_diffractometer.forward._solve_bisecting
    ad_hoc_diffractometer.forward._solve_bisecting_analytic
    ad_hoc_diffractometer.forward._solve_bisecting_kappa_virtual
+   ad_hoc_diffractometer.forward._solve_chi_phi_bragg
    ad_hoc_diffractometer.forward._solve_constraint_set
    ad_hoc_diffractometer.forward._solve_constraint_set_no_omega
    ad_hoc_diffractometer.forward._solve_double_diffraction
@@ -126,6 +127,7 @@ Functions
    ad_hoc_diffractometer.forward._solve_one_free_angle_analytic
    ad_hoc_diffractometer.forward._solve_psi_mode
    ad_hoc_diffractometer.forward._solve_qaz_mode
+   ad_hoc_diffractometer.forward._solve_reference_three_sample
    ad_hoc_diffractometer.forward._solve_surface
    ad_hoc_diffractometer.forward._solve_two_angles
    ad_hoc_diffractometer.forward._solve_zone
@@ -781,6 +783,49 @@ Module Contents
      Walko-only implementation.
 
 
+.. py:function:: _solve_chi_phi_bragg(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float], free_sample: list, Q_phi: ~numpy.ndarray, mode, fast_only: bool = False) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_chi_phi_bragg``
+
+
+   Solve the inner ``(chi, phi)`` sample pair for the Bragg condition.
+
+   Given a baseline ``angles`` dict in which every stage except the last
+   two entries of ``free_sample`` is already fixed (detector at 2θ, fixed
+   sample/detector constraints applied, and any *outer* free sample stage
+   pinned at its value in ``angles``), find the ``(chi, phi)`` settings of
+   the last two free sample stages that place ``Q_phi`` on the Ewald
+   sphere.
+
+   This is the inner kernel shared by :func:`_solve_fixed_sample` (two
+   free sample stages) and :func:`_solve_reference_three_sample` (three
+   free sample stages, where the outer stage is scanned externally and
+   pinned in ``angles`` before each call).
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param angles: Baseline angles; the last two ``free_sample`` stages are overwritten.
+   :type angles: dict[str, float]
+   :param free_sample: Free sample stages in stacking order; the last two are chi/phi.
+   :type free_sample: list of Stage
+   :param Q_phi:
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param mode:
+   :type mode: ConstraintSet
+   :param fast_only: When ``True`` and the chi/phi pair is standard Eulerian, return the
+                     analytic-fast-path result (possibly empty) without running the
+                     expensive multi-seed Newton fallback.  This is used by the
+                     outer-stage scan in :func:`_solve_reference_three_sample`, where the
+                     inner solve is invoked dozens of times and the Newton fallback's
+                     cost on the (common) no-solution case dominates.  Default ``False``.
+   :type fast_only: bool, optional
+
+   :returns: Bragg-valid solutions (after cut points and limit checks).
+   :rtype: list of dict[str, float]
+
+
 .. py:function:: _solve_constraint_set(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode) -> list[dict[str, float]]
 
    .. container:: import-path
@@ -1157,6 +1202,48 @@ Module Contents
    :type ttheta_deg: float
    :param mode:
    :type mode: ConstraintSet
+
+   :rtype: list of dict[str, float]
+
+
+.. py:function:: _solve_reference_three_sample(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, Q_phi: ~numpy.ndarray, ttheta_deg: float, mode, free_sample: list, reference_residual: callable) -> list[dict[str, float]]
+
+   .. container:: import-path
+
+      Import: ``ad_hoc_diffractometer.forward._solve_reference_three_sample``
+
+
+   Solve three free sample stages against Bragg plus one reference angle.
+
+   Used by the psic ``fixed_incidence_*`` / ``fixed_emergence_*`` families
+   (and any future mode) where three sample stages are free — an outer
+   rocking stage (``eta`` or ``mu``) plus the inner Eulerian pair
+   (``chi``, ``phi``) — and a single :class:`~mode.ReferenceConstraint`
+   (incidence, emergence, ...) selects discrete settings from the
+   one-parameter Bragg family (issues #306, #307).
+
+   Strategy: the inner ``(chi, phi)`` pair is solved against the Bragg
+   condition by :func:`_solve_chi_phi_bragg` for any fixed value of the
+   outer stage, so the three-angle problem reduces to a 1-D root find on
+   the outer stage.  Scan the outer stage over a coarse grid; at each
+   sample evaluate the reference residual on every Bragg-valid inner
+   solution; bracket sign changes (per Bragg branch) and refine by
+   bisection.  Every returned solution reproduces the requested ``hkl``
+   by construction because the inner solve always enforces Bragg.
+
+   :param geometry:
+   :type geometry: AdHocDiffractometer
+   :param Q_phi:
+   :type Q_phi: numpy.ndarray, shape (3,)
+   :param ttheta_deg:
+   :type ttheta_deg: float
+   :param mode:
+   :type mode: ConstraintSet
+   :param free_sample: The free sample stages in stacking order: ``[outer, chi, phi]``.
+   :type free_sample: list of Stage
+   :param reference_residual: ``reference_residual(angles) -> float``; zero when the reference
+                              constraint (incidence/emergence/...) is satisfied.
+   :type reference_residual: callable
 
    :rtype: list of dict[str, float]
 
