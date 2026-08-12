@@ -1191,10 +1191,10 @@ def _solve_chi_phi_bragg(
                     solutions.append(sol)
             if solutions:
                 return solutions
-         # If analytic solver returned nothing (degenerate case), fall through
-         # to the Newton solver below.  The Newton fallback finds solutions
-         # the analytic path missed and is necessary for modes like
-         # specular_vertical with high-symmetry reflections (#311).
+        # If analytic solver returned nothing (degenerate case), fall through
+        # to the Newton solver below.  The Newton fallback finds solutions
+        # the analytic path missed and is necessary for modes like
+        # specular_vertical with high-symmetry reflections (#311).
 
     # --- Newton fallback for non-standard axes or degenerate cases ---
 
@@ -3194,9 +3194,7 @@ def _solve_reference_three_sample(
         """Bragg-valid full solutions with the outer stage pinned."""
         base = dict(angles)
         base[outer_name] = outer_deg
-        return _solve_chi_phi_bragg(
-            geometry, base, inner_free, Q_phi, mode
-        )
+        return _solve_chi_phi_bragg(geometry, base, inner_free, Q_phi, mode)
 
     def _match(sol: dict[str, float], pool: list[dict[str, float]]):
         """Return the pool entry closest to ``sol`` in (chi, phi), or None."""
