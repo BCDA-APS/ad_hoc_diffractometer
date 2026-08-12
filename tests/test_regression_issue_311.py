@@ -164,23 +164,41 @@ class TestFixedPsiHorizontal00L:
 # ============================================================================
 
 
-@pytest.mark.skip(
-    reason="Issue #311: specular modes fail on (0,0,L) — analytic chi/phi solver singularity"
-)
 class TestSpecularVertical00L:
     """Test specular_vertical on (0,0,L) reflections.
 
-    NOTE: Skipped pending fix of deep bug in _solve_bisecting_analytic
-    for (0,0,L) reflections with standard Eulerian geometries.
-    See issue #311 for details.
+    NOTE: The intended regression here is the reported wild-angle behavior
+    on (0,0,L). Whether this exact setup is physically reachable remains
+    under investigation in issue #311.
     """
 
     @pytest.mark.parametrize(
         "l_value, context",
         [
-            pytest.param(1, does_not_raise(), id="001"),
-            pytest.param(2, does_not_raise(), id="002"),
-            pytest.param(3, does_not_raise(), id="003"),
+            pytest.param(
+                1,
+                does_not_raise(),
+                id="001",
+                marks=pytest.mark.skip(
+                    reason="Issue #311: specular (0,0,L) reachability unresolved pending user validation"
+                ),
+            ),
+            pytest.param(
+                2,
+                does_not_raise(),
+                id="002",
+                marks=pytest.mark.skip(
+                    reason="Issue #311: specular (0,0,L) reachability unresolved pending user validation"
+                ),
+            ),
+            pytest.param(
+                3,
+                does_not_raise(),
+                id="003",
+                marks=pytest.mark.skip(
+                    reason="Issue #311: specular (0,0,L) reachability unresolved pending user validation"
+                ),
+            ),
         ],
     )
     def test_specular_vertical_produces_reasonable_angles(
@@ -235,22 +253,33 @@ class TestSpecularVertical00L:
                 )
 
 
-@pytest.mark.skip(
-    reason="Issue #311: specular modes fail on (0,0,L) — analytic chi/phi solver singularity"
-)
 class TestSpecularHorizontal00L:
     """Test specular_horizontal on (0,0,L) reflections.
 
-    NOTE: Skipped pending fix of deep bug in _solve_bisecting_analytic
-    for (0,0,L) reflections with standard Eulerian geometries.
-    See issue #311 for details.
+    NOTE: The intended regression here is the reported wild-angle behavior
+    on (0,0,L). Whether this exact setup is physically reachable remains
+    under investigation in issue #311.
     """
 
     @pytest.mark.parametrize(
         "l_value, context",
         [
-            pytest.param(1, does_not_raise(), id="001"),
-            pytest.param(2, does_not_raise(), id="002"),
+            pytest.param(
+                1,
+                does_not_raise(),
+                id="001",
+                marks=pytest.mark.skip(
+                    reason="Issue #311: specular (0,0,L) reachability unresolved pending user validation"
+                ),
+            ),
+            pytest.param(
+                2,
+                does_not_raise(),
+                id="002",
+                marks=pytest.mark.skip(
+                    reason="Issue #311: specular (0,0,L) reachability unresolved pending user validation"
+                ),
+            ),
         ],
     )
     def test_specular_horizontal_produces_reasonable_angles(
@@ -281,6 +310,26 @@ class TestSpecularHorizontal00L:
                 assert inverse_hkl[0] == pytest.approx(0, abs=1e-4)
                 assert inverse_hkl[1] == pytest.approx(0, abs=1e-4)
                 assert inverse_hkl[2] == pytest.approx(l_value, abs=1e-4)
+
+    def test_specular_horizontal_incidence_equals_emergence(self, cubic_psic_geometry):
+        """specular_horizontal should enforce incidence == emergence."""
+        with does_not_raise():
+            from ad_hoc_diffractometer.reference import emergence_angle
+            from ad_hoc_diffractometer.reference import incidence_angle
+
+            g = cubic_psic_geometry
+            g.mode_name = "specular_horizontal"
+            g.surface_normal = (0, 0, 1)
+
+            solutions = g.forward(1, 1, 1)
+            assert len(solutions) > 0
+
+            for sol in solutions:
+                inc = incidence_angle(g, angles=sol)
+                em = emergence_angle(g, angles=sol)
+                assert inc == pytest.approx(em, abs=1e-6), (
+                    f"incidence={inc:.4f}° != emergence={em:.4f}°"
+                )
 
 
 # ============================================================================

@@ -3217,6 +3217,7 @@ def _solve_reference_three_sample(
     grid = list(np.linspace(lim_lo, lim_hi, n_steps + 1))
 
     solutions: list[dict[str, float]] = []
+    exact_hit_tol = 1e-7
 
     def _record(sol: dict[str, float]) -> None:
         _apply_cut_points(sol, mode, geometry)
@@ -3231,6 +3232,9 @@ def _solve_reference_three_sample(
     prev_outer = grid[0]
     prev_sols = _bragg_solutions_at(prev_outer)
     prev_res = {id(s): reference_residual(s) for s in prev_sols}
+    for ps in prev_sols:
+        if abs(prev_res[id(ps)]) < exact_hit_tol:
+            _record(dict(ps))
 
     for outer in grid[1:]:
         cur_sols = _bragg_solutions_at(outer)
@@ -3239,13 +3243,16 @@ def _solve_reference_three_sample(
         for cs in cur_sols:
             r_cur = cur_res[id(cs)]
             # Exact hit on the grid.
-            if abs(r_cur) < 1e-7:
+            if abs(r_cur) < exact_hit_tol:
                 _record(dict(cs))
                 continue
             match = _match(cs, prev_sols)
             if match is None:
                 continue
             r_prev = prev_res[id(match)]
+            if abs(r_prev) < exact_hit_tol:
+                _record(dict(match))
+                continue
             if r_prev * r_cur >= 0:
                 continue
             # Sign change between prev_outer and outer on this branch:
