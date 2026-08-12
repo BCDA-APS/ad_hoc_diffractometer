@@ -1119,7 +1119,6 @@ def _solve_chi_phi_bragg(
     free_sample: list,
     Q_phi: np.ndarray,
     mode,
-    fast_only: bool = False,
 ) -> list[dict[str, float]]:
     """
     Solve the inner ``(chi, phi)`` sample pair for the Bragg condition.
@@ -1145,13 +1144,6 @@ def _solve_chi_phi_bragg(
         Free sample stages in stacking order; the last two are chi/phi.
     Q_phi : numpy.ndarray, shape (3,)
     mode : ConstraintSet
-    fast_only : bool, optional
-        When ``True`` and the chi/phi pair is standard Eulerian, return the
-        analytic-fast-path result (possibly empty) without running the
-        expensive multi-seed Newton fallback.  This is used by the
-        outer-stage scan in :func:`_solve_reference_three_sample`, where the
-        inner solve is invoked dozens of times and the Newton fallback's
-        cost on the (common) no-solution case dominates.  Default ``False``.
 
     Returns
     -------
@@ -1199,12 +1191,10 @@ def _solve_chi_phi_bragg(
                     solutions.append(sol)
             if solutions:
                 return solutions
-        # If analytic solver returned nothing (degenerate case), fall through
-        # to the Newton solver below — unless the caller requested the
-        # analytic-only fast path (outer-stage scan), in which case an
-        # empty result simply means "no Bragg branch at this outer angle".
-        if fast_only:
-            return []
+         # If analytic solver returned nothing (degenerate case), fall through
+         # to the Newton solver below.  The Newton fallback finds solutions
+         # the analytic path missed and is necessary for modes like
+         # specular_vertical with high-symmetry reflections (#311).
 
     # --- Newton fallback for non-standard axes or degenerate cases ---
 
@@ -3205,7 +3195,7 @@ def _solve_reference_three_sample(
         base = dict(angles)
         base[outer_name] = outer_deg
         return _solve_chi_phi_bragg(
-            geometry, base, inner_free, Q_phi, mode, fast_only=True
+            geometry, base, inner_free, Q_phi, mode
         )
 
     def _match(sol: dict[str, float], pool: list[dict[str, float]]):
