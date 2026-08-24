@@ -3,10 +3,12 @@
 """
 Regression tests for issue #311: Review of psic modes.
 
-Issue #311 reports problems with 7 psic modes across three categories:
+Issue #311 reports problems with several psic modes across these categories:
   1. fixed_psi_vertical/horizontal — produce warnings on (0,0,L) reflections
   2. specular_vertical/horizontal — produce wild angles for (0,0,L)
   3. fixed_incidence_fixed_chi_fixed_phi (B3) — sign reversal
+  4. fixed_incidence_horizontal — first-returned solution lands in an
+     unusable sector (mu near -175 degrees) for the user's silicon setup
 
 These tests establish expected behavior and catch regressions.
 """
@@ -157,6 +159,144 @@ class TestFixedPsiHorizontal00L:
                 assert inverse_hkl[0] == pytest.approx(0, abs=1e-4)
                 assert inverse_hkl[1] == pytest.approx(0, abs=1e-4)
                 assert inverse_hkl[2] == pytest.approx(l_value, abs=1e-4)
+
+
+# ============================================================================
+# Issue #4: fixed_incidence_horizontal — usable-sector solution ordering
+# ============================================================================
+
+
+# User's reproduction from issue #311 (jwkim-anl):
+# psic + silicon (a = 5.431020511 A), wavelength = 1.0 A, two orienting
+# reflections r1=(0,0,1), r2=(1,0,0), giving this UB matrix.  See
+# https://github.com/BCDA-APS/ad_hoc_diffractometer/issues/311#issuecomment-5297950124
+_USER_UB = [
+    [-1.154618419645732, -0.04035334558817401, -0.06051094675842551],
+    [0.038270567505341864, -1.1555686250759807, 0.04037546985230229],
+    [-0.0618492590139825, 0.038293895111577325, 1.1546176462013615],
+]
+
+# The user's reported forward() first solution for each (h,k,l) — the
+# "particular sector that may not be usable" (mu near -175 degrees).
+# Transcribed verbatim from issue #311 comment 5297950124.
+_USER_REPORTED = {
+    (1, 0, 1): {"mu": -175.8013, "chi": -131.9901, "phi": 0.7091, "nu": 14.962},
+    (0, 1, 1): {"mu": -177.0856, "chi": -137.0068, "phi": 91.5125, "nu": 14.962},
+    (1, 1, 1): {"mu": -177.5156, "chi": -124.6334, "phi": 48.7367, "nu": 18.351},
+    (-1, 0, 1): {"mu": -175.4275, "chi": 138.1135, "phi": -4.2414, "nu": 14.962},
+    (0, -1, 1): {"mu": -177.4248, "chi": 133.2207, "phi": 84.248, "nu": 14.962},
+    (-1, -1, 1): {"mu": -177.2406, "chi": 126.2755, "phi": 37.6394, "nu": 18.351},
+    (-1, 1, 1): {"mu": -172.5756, "chi": -128.7906, "phi": 134.6596, "nu": 18.351},
+    (1, -1, 1): {"mu": -172.9547, "chi": 121.7757, "phi": 131.0813, "nu": 18.351},
+}
+
+
+@pytest.fixture
+def user_silicon_psic_geometry():
+    """psic geometry with the user's silicon UB from issue #311.
+
+    Uses the UB matrix the user obtained from calc_UB(r1, r2) rather than
+    re-deriving it from the orienting reflections, so the regression
+    reproduces the exact numbers reported in the issue.
+    """
+    import numpy as np
+
+    g = ahd.make_geometry("psic")
+    g.wavelength = 1.0
+    g.sample.lattice = ahd.Lattice(a=5.431020511)  # cubic silicon
+    g.sample.UB = np.array(_USER_UB)
+    g.mode_name = "fixed_incidence_horizontal"
+    g.surface_normal = (0, 0, 1)
+    g.modes[g.mode_name] = g.mode.with_constraint_values(incidence=5)
+    g.mode_name = g.mode_name
+    return g
+
+
+class TestFixedIncidenceHorizontalSector:
+    """fixed_incidence_horizontal solution sector for the user's setup.
+
+    Marked slow_benchmark: each forward() in this mode runs the exhaustive
+    three-free-sample Bragg solver (~20-30 s per call), too slow for the
+    default suite.  Run with: pytest -m slow_benchmark.
+
+    The user reports that forward() returns, as its first solution, a
+    physically unusable branch (mu near -175 degrees).  These tests document
+    that the reported sector solution is present and round-trips, and that a
+    usable low-|mu| branch also exists among the solutions.
+    """
+
+    @pytest.mark.slow_benchmark
+    @pytest.mark.parametrize(
+        "hkl, expected, context",
+        [
+            pytest.param(
+                hkl,
+                expected,
+                does_not_raise(),
+                id="".join(f"{i:+d}" for i in hkl),
+            )
+            for hkl, expected in _USER_REPORTED.items()
+        ],
+    )
+    def test_reported_sector_solution_present_and_round_trips(
+        self, user_silicon_psic_geometry, hkl, expected, context
+    ):
+        """The user's reported first solution is reproduced and round-trips."""
+        with context:
+            g = user_silicon_psic_geometry
+
+            solutions = g.forward(*hkl)
+            assert len(solutions) > 0, f"No solutions for {hkl}"
+
+            # The reported unusable-sector solution must be among them.
+            match = None
+            for sol in solutions:
+                if all(
+                    sol[axis] == pytest.approx(value, abs=1e-3)
+                    for axis, value in expected.items()
+                ):
+                    match = sol
+                    break
+            assert match is not None, (
+                f"Reported {hkl} sector solution {expected} not found among {solutions}"
+            )
+
+            inverse_hkl = g.inverse(angles=match)
+            assert inverse_hkl[0] == pytest.approx(hkl[0], abs=1e-4)
+            assert inverse_hkl[1] == pytest.approx(hkl[1], abs=1e-4)
+            assert inverse_hkl[2] == pytest.approx(hkl[2], abs=1e-4)
+
+    @pytest.mark.slow_benchmark
+    @pytest.mark.parametrize(
+        "hkl, context",
+        [
+            pytest.param((1, 0, 1), does_not_raise(), id="101"),
+            pytest.param((1, 1, 1), does_not_raise(), id="111"),
+        ],
+    )
+    def test_usable_low_mu_branch_exists(
+        self, user_silicon_psic_geometry, hkl, context
+    ):
+        """A usable low-|mu| branch also exists among the solutions.
+
+        The user's complaint is solution ordering: the first-returned
+        branch is the unusable mu near -175 degrees sector, but a usable
+        branch (|mu| < 90) is present and valid.
+        """
+        with context:
+            g = user_silicon_psic_geometry
+
+            solutions = g.forward(*hkl)
+            usable = [s for s in solutions if abs(s["mu"]) < 90]
+            assert usable, (
+                "No usable low-|mu| branch found among "
+                f"fixed_incidence_horizontal solutions for {hkl}: {solutions}"
+            )
+            for sol in usable:
+                inverse_hkl = g.inverse(angles=sol)
+                assert inverse_hkl[0] == pytest.approx(hkl[0], abs=1e-4)
+                assert inverse_hkl[1] == pytest.approx(hkl[1], abs=1e-4)
+                assert inverse_hkl[2] == pytest.approx(hkl[2], abs=1e-4)
 
 
 # ============================================================================
