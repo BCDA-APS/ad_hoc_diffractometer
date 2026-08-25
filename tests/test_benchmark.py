@@ -140,7 +140,7 @@ class TestPrepareMode:
         [
             pytest.param("sixc", "fixed_incidence_zaxis", id="sixc-alpha-zaxis"),
             pytest.param("sixc", "fixed_emergence_zaxis", id="sixc-beta-zaxis"),
-            pytest.param("sixc", "specular_zaxis", id="sixc-a-eq-b"),
+            pytest.param("sixc", "incidence_equals_emergence_zaxis", id="sixc-a-eq-b"),
         ],
     )
     def test_surface_modes_set_normal(self, geometry_name, mode_name):

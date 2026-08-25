@@ -1150,7 +1150,7 @@ class AdHocDiffractometer:
         The surface normal defines the direction perpendicular to the sample
         surface in reciprocal space.  It is used by the surface geometry
         calculations (:meth:`incidence`, :meth:`emergence`,
-        :meth:`q_components`, :meth:`is_specular`, :meth:`is_evanescent`).
+        :meth:`q_components`, :meth:`is_incidence_equal_emergence`, :meth:`is_evanescent`).
 
         When ``None``, the surface calculations fall back to
         :attr:`azimuth` if that is set.
@@ -1212,7 +1212,7 @@ class AdHocDiffractometer:
         =====================================  =================================
         ``"incidence"``                        :attr:`surface_normal`
         ``"emergence"``                        :attr:`surface_normal`
-        ``"specular"``                         :attr:`surface_normal`
+        ``"incidence_equals_emergence"``       :attr:`surface_normal`
         ``"psi"``                              :attr:`azimuth`
         ``"naz"``                              :attr:`azimuth`
         ``"omega"``                            (none)
@@ -1265,7 +1265,7 @@ class AdHocDiffractometer:
         rc: ReferenceConstraint | None = mode.reference_constraint
         if rc is None:
             return None
-        if rc.name in {"incidence", "emergence", "specular"}:
+        if rc.name in {"incidence", "emergence", "incidence_equals_emergence"}:
             return "surface_normal"
         if rc.name in {"psi", "naz"}:
             return "azimuth"
@@ -1471,7 +1471,7 @@ class AdHocDiffractometer:
 
         return _q_components(self, angles)
 
-    def is_specular(
+    def is_incidence_equal_emergence(
         self,
         angles: dict[str, float] | None = None,
         atol: float = 0.01,
@@ -1489,9 +1489,9 @@ class AdHocDiffractometer:
         -------
         bool
         """
-        from .surface import is_specular as _is_specular
+        from .surface import is_incidence_equal_emergence as _is
 
-        return _is_specular(self, angles, atol)
+        return _is(self, angles, atol)
 
     def is_evanescent(
         self,

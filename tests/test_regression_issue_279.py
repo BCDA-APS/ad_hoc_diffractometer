@@ -9,7 +9,7 @@ Before the fix, the surface-mode solver
 unconditionally.  For psic that last stage is ``delta``, and the
 horizontal surface modes
 (``fixed_incidence_horizontal``, ``fixed_emergence_horizontal``,
-``specular_horizontal``) declare a
+``incidence_equals_emergence_horizontal``) declare a
 :class:`~ad_hoc_diffractometer.mode.DetectorConstraint` that pins
 ``delta = 0``.  The solver therefore overwrote the pinned value
 moments after applying it and left the truly active detector stage
@@ -18,7 +18,7 @@ moments after applying it and left the truly active detector stage
 
 The mirror failure occurred in the vertical surface modes
 (``fixed_incidence_vertical``, ``fixed_emergence_vertical``,
-``specular_vertical``), where the mode pins ``nu = 0`` and
+``incidence_equals_emergence_vertical``), where the mode pins ``nu = 0`` and
 the active detector stage is ``delta`` — but the dispatch picked
 ``delta`` for both roles regardless, so the constraint happened to
 agree with the active stage by accident (the resulting ``nu = 0``
@@ -66,7 +66,7 @@ WAVELENGTH = 1.5406  # Cu Kα
 _PSIC_HORIZONTAL_SURFACE_MODES = (
     "fixed_incidence_horizontal",
     "fixed_emergence_horizontal",
-    "specular_horizontal",
+    "incidence_equals_emergence_horizontal",
 )
 
 # Surface-reference modes on psic whose DetectorConstraint pins the
@@ -74,7 +74,7 @@ _PSIC_HORIZONTAL_SURFACE_MODES = (
 _PSIC_VERTICAL_SURFACE_MODES = (
     "fixed_incidence_vertical",
     "fixed_emergence_vertical",
-    "specular_vertical",
+    "incidence_equals_emergence_vertical",
 )
 
 
@@ -179,23 +179,28 @@ def test_psic_vertical_surface_honors_nu_pin(mode_name, context):
         ),
         pytest.param(
             sixc,
-            "specular_zaxis",
+            "incidence_equals_emergence_zaxis",
             1,
             0,
             0,
             does_not_raise(),
-            id="sixc-specular_zaxis-100",
+            id="sixc-incidence_equals_emergence_zaxis-100",
         ),
         # zaxis reflectivity mode: confirm at least one returned
         # solution still round-trips, i.e. the legacy path is intact.
+        # Uses the specular (0,0,1) reflection: with signed incidence /
+        # emergence, the equal-angle (reflectivity) condition only admits
+        # front-face solutions when Q is along the surface normal, i.e.
+        # for (0,0,L).  Off-normal reflections no longer produce spurious
+        # back-exit "equal magnitude" matches (see issue #311).
         pytest.param(
             zaxis,
             "reflectivity",
+            0,
+            0,
             1,
-            0,
-            0,
             does_not_raise(),
-            id="zaxis-reflectivity-100",
+            id="zaxis-reflectivity-001",
         ),
     ],
 )

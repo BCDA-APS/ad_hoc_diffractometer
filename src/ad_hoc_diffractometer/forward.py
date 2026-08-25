@@ -1194,7 +1194,7 @@ def _solve_chi_phi_bragg(
         # If analytic solver returned nothing (degenerate case), fall through
         # to the Newton solver below.  The Newton fallback finds solutions
         # the analytic path missed and is necessary for modes like
-        # specular_vertical with high-symmetry reflections (#311).
+        # incidence_equals_emergence_vertical with high-symmetry reflections (#311).
 
     # --- Newton fallback for non-standard axes or degenerate cases ---
 
@@ -3296,7 +3296,7 @@ def _solve_surface(
 
     - ``"incidence"`` — incidence angle fixed at target value
     - ``"emergence"`` — emergence angle fixed at target value
-    - ``"specular"`` — specular reflection: incidence = emergence
+    - ``"incidence_equals_emergence"`` — incidence = emergence
 
     The solver builds a baseline angles dict (applying all fixed sample/detector
     constraints and setting the detector stage to ttheta_deg), then performs a
@@ -3318,7 +3318,7 @@ def _solve_surface(
     from .mode import ReferenceConstraint
 
     rc = next(c for c in mode.constraints if isinstance(c, ReferenceConstraint))
-    target_name = rc.name  # "incidence", "emergence", or "specular"
+    target_name = rc.name  # "incidence", "emergence", or "incidence_equals_emergence"
     target_value = rc.value  # float or True
 
     # Build baseline angles dict with all fixed constraints applied
@@ -3469,7 +3469,7 @@ def _surface_residual(
     if target_name == "emergence":
         bo = _emergence_angle(geometry, angles=angles)
         return bo - float(target_value)
-    # specular: incidence = emergence (symmetric reflection)
+    # incidence_equals_emergence: incidence = emergence (symmetric reflection)
     ai = _incidence_angle(geometry, angles=angles)
     bo = _emergence_angle(geometry, angles=angles)
     return ai - bo
@@ -4508,7 +4508,7 @@ def _validate_solutions(
             # motor angles directly; DetectorConstraint is applied by the
             # solver (ttheta_deg) so it never appears here.
             # ReferenceConstraint pseudo-angle residuals
-            # (incidence/emergence/specular/omega/naz) are checked too — except
+            # (incidence/emergence/incidence_equals_emergence/omega/naz) are checked too — except
             # "psi", which is enforced upstream as a validation filter in
             # _solve_psi_mode (its motor-frame residual is subject to ±360°
             # azimuthal wraparound and is not a reliable per-solution check).

@@ -131,11 +131,11 @@ Override at run time with `g.modes["fixed_emergence_zaxis"].with_constraint_valu
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | incidence, emergence |
 
-### `specular_zaxis`
+### `incidence_equals_emergence_zaxis`
 
 {class}`~ad_hoc_diffractometer.mode.SampleConstraint` × 2 + {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint`:
-Z-axis mode, symmetric reflection (α = γ, β_in = β_out). Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
-Override the chi or phi pin at run time with `g.modes["specular_zaxis"].with_constraint_values(chi=..., phi=...)` — see {doc}`../howto/constraints`.
+Z-axis mode, incidence-equals-emergence (α_i = α_f) condition. Requires ``g.surface_normal = (h, k, l)`` — see {doc}`../howto/surface`.
+Override the chi or phi pin at run time with `g.modes["incidence_equals_emergence_zaxis"].with_constraint_values(chi=..., phi=...)` — see {doc}`../howto/constraints`.
 
 | | |
 |---|---|

@@ -357,7 +357,7 @@ reference vector n̂ (surface normal, polarization axis, etc.):
 from ad_hoc_diffractometer import ReferenceConstraint
 
 ReferenceConstraint("incidence", 5.0)  # incidence angle fixed
-ReferenceConstraint("specular", True)    # incidence = emergence (symmetric)
+ReferenceConstraint("incidence_equals_emergence", True)    # incidence = emergence (alpha_i = alpha_f); not true specular
 ```
 
 Taxonomy rules: at most one {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`,

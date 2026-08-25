@@ -7,6 +7,20 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+### Breaking changes
+
+- Rename `is_specular()` method to `is_incidence_equal_emergence()`. (#311)
+- Rename `specular` reference constraint to `incidence_equals_emergence`. (#311)
+- Rename `specular_*` modes to `incidence_equals_emergence_*`. (#311)
+
+### Behavior change
+
+- `incidence` / `emergence` angles are now signed (−90° to 90°). (#311)
+
+### Fixed
+
+- Surface equal-angle modes no longer return below-surface solutions. (#311)
+
 
 ## Release v0.11.4
 

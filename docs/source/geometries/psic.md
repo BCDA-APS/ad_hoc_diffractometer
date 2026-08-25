@@ -134,9 +134,10 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | incidence, emergence |
 
-### `specular_vertical`
+### `incidence_equals_emergence_vertical`
 
-Symmetric reflection: α_i = β_out in the vertical scattering plane.
+Incidence-equals-emergence (α_i = α_f) condition in the vertical
+scattering plane.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -324,9 +325,10 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | incidence, emergence |
 
-### `specular_horizontal`
+### `incidence_equals_emergence_horizontal`
 
-Symmetric reflection: α_i = β_out in the horizontal scattering plane.
+Incidence-equals-emergence (α_i = α_f) condition in the horizontal
+scattering plane.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -455,7 +457,7 @@ the Hkl/Soleil `E6C` `hkl` engine, and You (1999).
 | `fixed_incidence_fixed_chi_fixed_phi` | `(2,2,3,4,0)` ‡ | — | §6.1 |
 | `fixed_omega_vertical` | `setmode d1 0 0 0` | — | §5 (Q[6]) |
 | `double_diffraction_vertical` | — | `double_diffraction_vertical` | §6.5 |
-| `specular_vertical` | `(2,1,2,0,0)` | — | §6.3 |
+| `incidence_equals_emergence_vertical` | `(2,1,2,0,0)` | — | §6.3 |
 | `zone_vertical` | `setmode 5` | (TODO `HklEngine "zone"`) | §6 |
 | `bisecting_horizontal` | `(1,0,6,0,0)` | `bissector_horizontal` | §5.1 |
 | `fixed_phi_horizontal` | `(1,0,4,1,0)` † | — | §5.2 |
@@ -465,7 +467,7 @@ the Hkl/Soleil `E6C` `hkl` engine, and You (1999).
 | `fixed_psi_horizontal` | `(1,4,1,0,0)` | `psi_constant_horizontal` | §6.4 |
 | `fixed_omega_horizontal` | `setmode d1 0 0 0` | — | §5 (Q[6]) |
 | `double_diffraction_horizontal` | — | `double_diffraction_horizontal` | §6.5 |
-| `specular_horizontal` | `(1,1,1,0,0)` | — | §6.3 |
+| `incidence_equals_emergence_horizontal` | `(1,1,1,0,0)` | — | §6.3 |
 | `zone_horizontal` | `setmode 5` | (TODO `HklEngine "zone"`) | §6 |
 | `lifting_detector_phi` | `setmode 0 0 2 3 5` ‡ | `lifting_detector_phi` | §5.4 |
 | `lifting_detector_mu` | `setmode 0 0 1 3 4` ‡ | `lifting_detector_mu` | §5.4 |

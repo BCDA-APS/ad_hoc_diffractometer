@@ -4,7 +4,7 @@
 Regression tests for issue #292.
 
 Issue #292 noted that the ``fixed_incidence_*``, ``fixed_emergence_*``,
-``specular_*`` modes (psic, sixc, zaxis, s2d2) — and by extension every
+``incidence_equals_emergence_*`` modes (psic, sixc, zaxis, s2d2) — and by extension every
 mode declaring an ``incidence``, ``emergence``, ``psi``, or ``omega``
 output slot in ``mode.extras`` — left those slots at their YAML default
 of ``None`` even after a successful ``forward()`` call.  This was a

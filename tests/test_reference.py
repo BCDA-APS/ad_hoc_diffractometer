@@ -102,7 +102,7 @@ def test_emergence_angle_with_surface_normal():
         assert -90.0 <= af <= 90.0
 
 
-def test_specular_condition_alpha_i_equals_alpha_f():
+def test_incidence_equals_emergence_condition_alpha_i_equals_alpha_f():
     """At bisecting with surface normal ⊥ to scattering plane, incidence ≈ alpha_f."""
     g = _setup_psic()
     # Surface normal along transverse axis — perpendicular to the scattering plane
@@ -240,10 +240,20 @@ def test_naz_angle_vertical_normal_returns_zero():
             "emergence", 0.0, "surface_normal", None, False, id="emergence-no-sn"
         ),
         pytest.param(
-            "specular", True, "surface_normal", (0, 0, 1), True, id="specular-with-sn"
+            "incidence_equals_emergence",
+            True,
+            "surface_normal",
+            (0, 0, 1),
+            True,
+            id="in_eq_em-with-sn",
         ),
         pytest.param(
-            "specular", True, "surface_normal", None, False, id="specular-no-sn"
+            "incidence_equals_emergence",
+            True,
+            "surface_normal",
+            None,
+            False,
+            id="in_eq_em-no-sn",
         ),
         # psi: implemented when azimuth is set
         pytest.param(
@@ -299,10 +309,20 @@ def test_reference_constraint_is_implemented(
             "emergence", 0.0, "surface_normal", (0, 0, 1), True, id="emergence-with-sn"
         ),
         pytest.param(
-            "specular", True, "surface_normal", None, False, id="specular-no-sn"
+            "incidence_equals_emergence",
+            True,
+            "surface_normal",
+            None,
+            False,
+            id="in_eq_em-no-sn",
         ),
         pytest.param(
-            "specular", True, "surface_normal", (0, 0, 1), True, id="specular-with-sn"
+            "incidence_equals_emergence",
+            True,
+            "surface_normal",
+            (0, 0, 1),
+            True,
+            id="in_eq_em-with-sn",
         ),
         pytest.param("psi", 0.0, "azimuth", None, False, id="psi-no-ar"),
         pytest.param("psi", 0.0, "azimuth", (0, 0, 1), True, id="psi-with-ar"),
@@ -426,7 +446,11 @@ def _setup_surface(factory, surface_normal=(0, 0, 1)):
         pytest.param(s2d2, "reflectivity", id="s2d2-reflectivity"),
         pytest.param(sixc, "fixed_incidence_zaxis", id="sixc-fixed_incidence_zaxis"),
         pytest.param(sixc, "fixed_emergence_zaxis", id="sixc-fixed_emergence_zaxis"),
-        pytest.param(sixc, "specular_zaxis", id="sixc-specular_zaxis"),
+        pytest.param(
+            sixc,
+            "incidence_equals_emergence_zaxis",
+            id="sixc-incidence_equals_emergence_zaxis",
+        ),
     ],
 )
 def test_surface_mode_is_implemented_with_surface_normal(factory, mode_name):
@@ -443,7 +467,11 @@ def test_surface_mode_is_implemented_with_surface_normal(factory, mode_name):
         pytest.param(s2d2, "reflectivity", id="s2d2-reflectivity"),
         pytest.param(sixc, "fixed_incidence_zaxis", id="sixc-fixed_incidence_zaxis"),
         pytest.param(sixc, "fixed_emergence_zaxis", id="sixc-fixed_emergence_zaxis"),
-        pytest.param(sixc, "specular_zaxis", id="sixc-specular_zaxis"),
+        pytest.param(
+            sixc,
+            "incidence_equals_emergence_zaxis",
+            id="sixc-incidence_equals_emergence_zaxis",
+        ),
     ],
 )
 def test_surface_mode_not_implemented_without_surface_normal(factory, mode_name):
@@ -466,11 +494,11 @@ def test_surface_mode_not_implemented_without_surface_normal(factory, mode_name)
         ),
         pytest.param(
             sixc,
-            "specular_zaxis",
+            "incidence_equals_emergence_zaxis",
             0,
             1,
             0,
-            id="sixc-specular_zaxis",
+            id="sixc-incidence_equals_emergence_zaxis",
         ),
     ],
 )
@@ -536,11 +564,11 @@ def test_surface_beta_out_fixed_constraint_satisfied(factory, mode_name, h, k, l
     [
         pytest.param(zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"),
         pytest.param(s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
-        pytest.param(sixc, "specular_zaxis", 0, 1, 0, id="sixc-specular"),
+        pytest.param(sixc, "incidence_equals_emergence_zaxis", 0, 1, 0, id="sixc-in_eq_em"),
     ],
 )
 def test_surface_a_eq_b_constraint_satisfied(factory, mode_name, h, k, l):  # noqa: E741
-    """specular modes: incidence ≈ emergence in all solutions."""
+    """incidence_equals_emergence modes: incidence ≈ emergence in all solutions."""
     g = _setup_surface(factory)
     g.mode_name = mode_name
     solutions = g.forward(h, k, l)
@@ -679,7 +707,7 @@ def test_omega_pseudo_independent_of_chi():
         pytest.param("psi", True, id="psi"),
         pytest.param("incidence", True, id="incidence"),
         pytest.param("emergence", True, id="emergence"),
-        pytest.param("specular", True, id="specular"),
+        pytest.param("incidence_equals_emergence", True, id="in_eq_em"),
         pytest.param("naz", True, id="naz"),
         pytest.param("omega", True, id="omega"),
         pytest.param("not_a_pseudo_angle", False, id="invalid"),
@@ -693,7 +721,7 @@ def test_reference_constraint_accepts_omega(name, expected):
         else pytest.raises(ValueError, match=re.escape("ReferenceConstraint name"))
     )
     with context:
-        if name == "specular":
+        if name == "incidence_equals_emergence":
             ReferenceConstraint(name, True)
         else:
             ReferenceConstraint(name, 0.0)

@@ -1388,7 +1388,9 @@ def test_sixc_round_trip(mode_name, h, k, l):  # noqa: E741
     [
         pytest.param("fixed_incidence_zaxis", id="fixed_incidence_zaxis"),
         pytest.param("fixed_emergence_zaxis", id="fixed_emergence_zaxis"),
-        pytest.param("specular_zaxis", id="specular_zaxis"),
+        pytest.param(
+            "incidence_equals_emergence_zaxis", id="incidence_equals_emergence_zaxis"
+        ),
     ],
 )
 def test_sixc_zaxis_stub_not_implemented(mode_name):
@@ -1452,11 +1454,11 @@ _PSIC_MODES_ALL = {
     "fixed_psi_horizontal",
     "fixed_incidence_vertical",
     "fixed_emergence_vertical",
-    "specular_vertical",
+    "incidence_equals_emergence_vertical",
     "fixed_incidence_fixed_chi_fixed_phi",
     "fixed_incidence_horizontal",
     "fixed_emergence_horizontal",
-    "specular_horizontal",
+    "incidence_equals_emergence_horizontal",
     "fixed_omega_vertical",
     "fixed_omega_horizontal",
     "zone_vertical",
@@ -3179,9 +3181,7 @@ def test_psic_fixed_omega_horizontal_nonzero_target():
     assert len(sols) > 0
     for sol in sols:
         om = omega_pseudo(g, angles=sol)
-        assert om == pytest.approx(5.0, abs=1e-3), (
-            f"omega=5° target: got OMEGA={om}"
-        )
+        assert om == pytest.approx(5.0, abs=1e-3), f"omega=5° target: got OMEGA={om}"
         hkl_back = g.inverse(sol)
         assert np.allclose(hkl_back, [1, 0, 0], atol=1e-5)
 

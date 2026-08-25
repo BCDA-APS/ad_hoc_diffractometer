@@ -5,7 +5,7 @@ Regression tests for issue #311: Review of psic modes.
 
 Issue #311 reports problems with several psic modes across these categories:
   1. fixed_psi_vertical/horizontal — produce warnings on (0,0,L) reflections
-  2. specular_vertical/horizontal — produce wild angles for (0,0,L)
+  2. incidence_equals_emergence_vertical/horizontal — produce wild angles for (0,0,L)
   3. fixed_incidence_fixed_chi_fixed_phi (B3) — sign reversal
   4. fixed_incidence_horizontal — first-returned solution lands in an
      unusable sector (mu near -175 degrees) for the user's silicon setup
@@ -274,22 +274,42 @@ class TestFixedIncidenceHorizontalSector:
             pytest.param((1, 1, 1), does_not_raise(), id="111"),
         ],
     )
-    def test_usable_low_mu_branch_exists(
+    def test_usable_positive_incidence_branch_exists(
         self, user_silicon_psic_geometry, hkl, context
     ):
-        """A usable low-|mu| branch also exists among the solutions.
+        """A usable positive-incidence branch also exists among the solutions.
 
         The user's complaint is solution ordering: the first-returned
-        branch is the unusable mu near -175 degrees sector, but a usable
-        branch (|mu| < 90) is present and valid.
+        branch is the unusable mu near -175 degrees sector.  jwkim-anl
+        noted that a low-|mu| branch such as mu = -5.8 degrees is *not*
+        usable either, because it gives a negative (below-surface)
+        incidence angle.  With the signed incidence convention (issue
+        #311) every returned solution now satisfies the +5 degrees
+        incidence target, and a genuinely usable branch with positive mu
+        (front-face, no wraparound) is present, e.g. mu = +9.87 degrees
+        for (1,0,1).
         """
         with context:
+            from ad_hoc_diffractometer.reference import incidence_angle
+
             g = user_silicon_psic_geometry
 
             solutions = g.forward(*hkl)
-            usable = [s for s in solutions if abs(s["mu"]) < 90]
+            assert solutions, f"No solutions for {hkl}"
+
+            # Signed incidence: every returned branch must meet the +5 target
+            # (below-surface / negative-incidence branches are no longer
+            # returned).
+            for sol in solutions:
+                assert incidence_angle(g, angles=sol) == pytest.approx(5.0, abs=1e-3), (
+                    f"branch does not meet +5 incidence target: {sol}"
+                )
+
+            # A usable branch with positive mu (front-face, no wraparound)
+            # is present and round-trips.
+            usable = [s for s in solutions if 0 < s["mu"] < 90]
             assert usable, (
-                "No usable low-|mu| branch found among "
+                "No usable positive-mu branch found among "
                 f"fixed_incidence_horizontal solutions for {hkl}: {solutions}"
             )
             for sol in usable:
@@ -300,12 +320,12 @@ class TestFixedIncidenceHorizontalSector:
 
 
 # ============================================================================
-# Issue #2: specular_vertical/horizontal — (0,0,L) produces wild angles
+# Issue #2: incidence_equals_emergence_vertical/horizontal — (0,0,L) produces wild angles
 # ============================================================================
 
 
-class TestSpecularVertical00L:
-    """Test specular_vertical on (0,0,L) reflections.
+class TestIncidenceEqualsEmergenceVertical00L:
+    """Test incidence_equals_emergence_vertical on (0,0,L) reflections.
 
     NOTE: The intended regression here is the reported wild-angle behavior
     on (0,0,L). Whether this exact setup is physically reachable remains
@@ -320,7 +340,7 @@ class TestSpecularVertical00L:
                 does_not_raise(),
                 id="001",
                 marks=pytest.mark.skip(
-                    reason="Issue #311: specular (0,0,L) reachability unresolved pending user validation"
+                    reason="Issue #311: incidence_equals_emergence (0,0,L) reachability unresolved pending user validation"
                 ),
             ),
             pytest.param(
@@ -328,7 +348,7 @@ class TestSpecularVertical00L:
                 does_not_raise(),
                 id="002",
                 marks=pytest.mark.skip(
-                    reason="Issue #311: specular (0,0,L) reachability unresolved pending user validation"
+                    reason="Issue #311: incidence_equals_emergence (0,0,L) reachability unresolved pending user validation"
                 ),
             ),
             pytest.param(
@@ -336,22 +356,22 @@ class TestSpecularVertical00L:
                 does_not_raise(),
                 id="003",
                 marks=pytest.mark.skip(
-                    reason="Issue #311: specular (0,0,L) reachability unresolved pending user validation"
+                    reason="Issue #311: incidence_equals_emergence (0,0,L) reachability unresolved pending user validation"
                 ),
             ),
         ],
     )
-    def test_specular_vertical_produces_reasonable_angles(
+    def test_incidence_equals_emergence_vertical_produces_reasonable_angles(
         self, cubic_psic_geometry, l_value, context
     ):
         """
-        specular_vertical should produce physically reasonable angles for (0,0,L).
+        incidence_equals_emergence_vertical should produce physically reasonable angles for (0,0,L).
 
         Specifically, eta should NOT be ±175°, ±170°, etc. (wraparound artifacts).
         """
         with context:
             g = cubic_psic_geometry
-            g.mode_name = "specular_vertical"
+            g.mode_name = "incidence_equals_emergence_vertical"
             g.surface_normal = (0, 0, 1)  # Surface normal along z
 
             solutions = g.forward(0, 0, l_value)
@@ -372,14 +392,14 @@ class TestSpecularVertical00L:
                 assert inverse_hkl[1] == pytest.approx(0, abs=1e-4)
                 assert inverse_hkl[2] == pytest.approx(l_value, abs=1e-4)
 
-    def test_specular_vertical_incidence_equals_emergence(self, cubic_psic_geometry):
-        """specular_vertical should enforce incidence == emergence."""
+    def test_incidence_equals_emergence_vertical_enforced(self, cubic_psic_geometry):
+        """incidence_equals_emergence_vertical should enforce incidence == emergence."""
         with does_not_raise():
             from ad_hoc_diffractometer.reference import emergence_angle
             from ad_hoc_diffractometer.reference import incidence_angle
 
             g = cubic_psic_geometry
-            g.mode_name = "specular_vertical"
+            g.mode_name = "incidence_equals_emergence_vertical"
             g.surface_normal = (0, 0, 1)
 
             solutions = g.forward(1, 1, 1)
@@ -393,8 +413,8 @@ class TestSpecularVertical00L:
                 )
 
 
-class TestSpecularHorizontal00L:
-    """Test specular_horizontal on (0,0,L) reflections.
+class TestIncidenceEqualsEmergenceHorizontal00L:
+    """Test incidence_equals_emergence_horizontal on (0,0,L) reflections.
 
     NOTE: The intended regression here is the reported wild-angle behavior
     on (0,0,L). Whether this exact setup is physically reachable remains
@@ -409,7 +429,7 @@ class TestSpecularHorizontal00L:
                 does_not_raise(),
                 id="001",
                 marks=pytest.mark.skip(
-                    reason="Issue #311: specular (0,0,L) reachability unresolved pending user validation"
+                    reason="Issue #311: incidence_equals_emergence (0,0,L) reachability unresolved pending user validation"
                 ),
             ),
             pytest.param(
@@ -417,22 +437,22 @@ class TestSpecularHorizontal00L:
                 does_not_raise(),
                 id="002",
                 marks=pytest.mark.skip(
-                    reason="Issue #311: specular (0,0,L) reachability unresolved pending user validation"
+                    reason="Issue #311: incidence_equals_emergence (0,0,L) reachability unresolved pending user validation"
                 ),
             ),
         ],
     )
-    def test_specular_horizontal_produces_reasonable_angles(
+    def test_incidence_equals_emergence_horizontal_produces_reasonable_angles(
         self, cubic_psic_geometry, l_value, context
     ):
         """
-        specular_horizontal should produce reasonable angles for (0,0,L).
+        incidence_equals_emergence_horizontal should produce reasonable angles for (0,0,L).
 
         Specifically, mu should NOT be ±175°, ±170°, etc.
         """
         with context:
             g = cubic_psic_geometry
-            g.mode_name = "specular_horizontal"
+            g.mode_name = "incidence_equals_emergence_horizontal"
             g.surface_normal = (0, 0, 1)
 
             solutions = g.forward(0, 0, l_value)
@@ -451,14 +471,14 @@ class TestSpecularHorizontal00L:
                 assert inverse_hkl[1] == pytest.approx(0, abs=1e-4)
                 assert inverse_hkl[2] == pytest.approx(l_value, abs=1e-4)
 
-    def test_specular_horizontal_incidence_equals_emergence(self, cubic_psic_geometry):
-        """specular_horizontal should enforce incidence == emergence."""
+    def test_incidence_equals_emergence_horizontal_enforced(self, cubic_psic_geometry):
+        """incidence_equals_emergence_horizontal should enforce incidence == emergence."""
         with does_not_raise():
             from ad_hoc_diffractometer.reference import emergence_angle
             from ad_hoc_diffractometer.reference import incidence_angle
 
             g = cubic_psic_geometry
-            g.mode_name = "specular_horizontal"
+            g.mode_name = "incidence_equals_emergence_horizontal"
             g.surface_normal = (0, 0, 1)
 
             solutions = g.forward(1, 1, 1)
