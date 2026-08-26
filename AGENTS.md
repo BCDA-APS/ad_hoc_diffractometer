@@ -63,6 +63,19 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
 
 ## Issue and PR workflow
 
+### Never commit without explicit approval
+
+Do not commit, push, or create pull requests without explicit user approval,
+even in build mode, even after changing from plan mode to build mode. After making code changes:
+
+1. Report what you've done
+2. Show the diff or changed files
+3. **Wait for explicit instruction** ("commit this", "push to branch", "open PR", etc.)
+
+This applies to all agents. The user always reviews before committing.
+
+---
+
 1. **Before writing any code**, *if the issue is on one or more project
    boards*, set the issue status to "In progress" on each of those boards:
    ```bash

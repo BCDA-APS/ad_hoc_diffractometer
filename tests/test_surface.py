@@ -15,12 +15,12 @@ Covers:
   - Q_perp ≥ 0, Q_par ≥ 0 always
   - Q_total = sqrt(Q_perp^2 + Q_par^2)
   - Q_total matches (2π/λ)|kf - ki| from Bragg
-  - is_specular: True when ai ≈ af, False otherwise
+  - is_incidence_equal_emergence: True when ai ≈ af, False otherwise
   - is_evanescent: True when ai < crit, False when ai ≥ crit, error when crit=None
   - Serialisation round-trip: surface_normal in to_dict/from_dict
-  - Standalone functions (incidence, emergence, q_components, is_specular,
-    is_evanescent) imported from top-level
-  - geometry.incidence/emergence/q_components/is_specular/is_evanescent methods
+  - Standalone functions (incidence, emergence, q_components,
+    is_incidence_equal_emergence, is_evanescent) imported from top-level
+  - geometry.incidence/emergence/q_components/is_incidence_equal_emergence/is_evanescent methods
   - Default angles (None) uses current stage angles
   - psic surface: surface_normal set, UB=identity, verify ai/af/psi combination
 """
@@ -40,7 +40,7 @@ from ad_hoc_diffractometer.surface import _surface_vectors
 from ad_hoc_diffractometer.surface import emergence
 from ad_hoc_diffractometer.surface import incidence
 from ad_hoc_diffractometer.surface import is_evanescent
-from ad_hoc_diffractometer.surface import is_specular
+from ad_hoc_diffractometer.surface import is_incidence_equal_emergence
 from ad_hoc_diffractometer.surface import q_components
 
 WAVELENGTH = 1.5406  # Cu Kα
@@ -358,24 +358,32 @@ def test_emergence_zaxis_formula(delta, gamma, expected_af, context):
 
 
 # ---------------------------------------------------------------------------
-# incidence always in [0°, 90°]
+# incidence / emergence are signed (in [-90°, 90°])
 # ---------------------------------------------------------------------------
 
 
-def test_incidence_always_nonnegative():
-    """incidence is always in [0°, 90°] regardless of sign of mu."""
+def test_incidence_signed_tracks_mu():
+    """incidence is signed: positive for front-face, negative below-surface.
+
+    In s2d2 with surface_normal along z, the incidence angle equals mu.
+    """
     g = _make_s2d2()
     for mu in [-20.0, -10.0, -5.0, 0.0, 5.0, 10.0, 20.0]:
         ai = g.incidence({"mu": mu, "Z": 0.0, "nu": 0.0, "delta": 0.0})
-        assert 0.0 <= ai <= 90.0
+        assert -90.0 <= ai <= 90.0
+        assert ai == pytest.approx(mu, abs=1e-6)
 
 
-def test_emergence_always_nonnegative():
-    """emergence is always in [0°, 90°]."""
+def test_emergence_signed_tracks_nu():
+    """emergence is signed: positive for a front-face exit, negative below.
+
+    In s2d2 with surface_normal along z, the emergence angle equals nu.
+    """
     g = _make_s2d2()
     for nu in [-20.0, -10.0, 0.0, 10.0, 20.0]:
         af = g.emergence({"mu": 0.0, "Z": 0.0, "nu": nu, "delta": 0.0})
-        assert 0.0 <= af <= 90.0
+        assert -90.0 <= af <= 90.0
+        assert af == pytest.approx(nu, abs=1e-6)
 
 
 # ---------------------------------------------------------------------------
@@ -419,7 +427,7 @@ def test_q_total_matches_bragg():
     """Q_total = (2π/λ) |kf - ki| matches the Bragg law magnitude."""
 
     g = _make_s2d2()
-    # At specular with mu=nu=5, delta=10, in-plane:
+    # At incidence = emergence with mu=nu=5, delta=10, in-plane:
     angles = {"mu": 5.0, "Z": 0.0, "nu": 5.0, "delta": 10.0}
     qc = g.q_components(angles)
     # Bragg: |Q| = (2π/λ) * 2 sin(theta) where 2theta ≈ delta (in-plane approximation)
@@ -444,32 +452,37 @@ def test_q_perp_signed_positive_outward():
 
 
 # ---------------------------------------------------------------------------
-# is_specular
+# is_incidence_equal_emergence
 # ---------------------------------------------------------------------------
 
 
-def test_is_specular_true_when_ai_equals_af():
+def test_is_incidence_equal_emergence_true_when_ai_equals_af():
     """
-    is_specular returns True when ai = af.
+    is_incidence_equal_emergence returns True when ai = af.
 
-    In s2d2 with surface_normal=(0,0,1) and a=1, the specular condition is:
+    In s2d2 with surface_normal=(0,0,1) and a=1, the incidence = emergence
+    condition is:
     - incidence = mu (verified separately)
     - emergence = |nu - mu| when delta=0 (rotation of surface normal and detector
       both about the same +x axis means their relative angle is nu - mu)
-    Therefore specular (ai = af) requires nu = 2*mu.
+    Therefore incidence = emergence (ai = af) requires nu = 2*mu.
     """
     g = _make_s2d2()
-    # mu=5 -> ai=5; nu=10 -> af=|10-5|=5 -> specular
-    result = g.is_specular({"mu": 5.0, "Z": 0.0, "nu": 10.0, "delta": 0.0})
+    # mu=5 -> ai=5; nu=10 -> af=|10-5|=5 -> incidence = emergence
+    result = g.is_incidence_equal_emergence(
+        {"mu": 5.0, "Z": 0.0, "nu": 10.0, "delta": 0.0}
+    )
     assert result is True
 
 
-def test_is_specular_false_when_ai_not_equal_af():
-    """is_specular returns False when ai ≠ af."""
+def test_is_incidence_equal_emergence_false_when_ai_not_equal_af():
+    """is_incidence_equal_emergence returns False when ai ≠ af."""
     g = _make_s2d2()
     # mu=5 -> ai=5; nu=0 -> af=5 ... actually af=5 at nu=0!
-    # Use nu=7 -> af=|7-5|=2 ≠ 5 -> not specular
-    result = g.is_specular({"mu": 5.0, "Z": 0.0, "nu": 7.0, "delta": 0.0})
+    # Use nu=7 -> af=|7-5|=2 ≠ 5 -> incidence ≠ emergence
+    result = g.is_incidence_equal_emergence(
+        {"mu": 5.0, "Z": 0.0, "nu": 7.0, "delta": 0.0}
+    )
     assert result is False
 
 
@@ -480,13 +493,13 @@ def test_is_specular_false_when_ai_not_equal_af():
         pytest.param(0.01, False, does_not_raise(), id="outside-atol-0.01"),
     ],
 )
-def test_is_specular_atol(atol, is_spec, context):
-    """is_specular respects the atol parameter."""
+def test_is_incidence_equal_emergence_atol(atol, is_spec, context):
+    """is_incidence_equal_emergence respects the atol parameter."""
     g = _make_s2d2()
     # mu=5 -> ai=5; nu=10.2 -> af=|10.2-5|=5.2 -> difference=0.2 deg
     angles = {"mu": 5.0, "Z": 0.0, "nu": 10.2, "delta": 0.0}
     with context:
-        result = g.is_specular(angles, atol=atol)
+        result = g.is_incidence_equal_emergence(angles, atol=atol)
         assert result is is_spec
 
 
@@ -585,10 +598,13 @@ def test_standalone_q_components():
     assert "Q_perp" in qc and "Q_par" in qc
 
 
-def test_standalone_is_specular():
+def test_standalone_is_incidence_equal_emergence():
     g = _make_s2d2()
-    # specular: mu=5 -> ai=5; nu=10 -> af=5
-    assert is_specular(g, {"mu": 5.0, "Z": 0.0, "nu": 10.0, "delta": 0.0}) is True
+    # incidence = emergence: mu=5 -> ai=5; nu=10 -> af=5
+    assert (
+        is_incidence_equal_emergence(g, {"mu": 5.0, "Z": 0.0, "nu": 10.0, "delta": 0.0})
+        is True
+    )
 
 
 def test_standalone_is_evanescent():

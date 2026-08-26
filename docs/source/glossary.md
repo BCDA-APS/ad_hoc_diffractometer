@@ -212,7 +212,7 @@ n̂ (reference vector)
           emits a ``UserWarning`` directing the caller at the geometry
           attribute below — issue #294).
       * - On the geometry, when used by ``"incidence"``, ``"emergence"``,
-          ``"specular"`` reference constraints
+          ``"incidence_equals_emergence"`` reference constraints
         - {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`
         - The actual stored vector.  Set via
           ``g.surface_normal = (h, k, l)``.
@@ -310,7 +310,7 @@ Surface normal
    the vector perpendicular to the sample surface.  Stored on the
    geometry as
    {attr}`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`
-   and consumed by the ``"incidence"``, ``"emergence"``, and ``"specular"``
+   and consumed by the ``"incidence"``, ``"emergence"``, and ``"incidence_equals_emergence"``
    {class}`~ad_hoc_diffractometer.mode.ReferenceConstraint` modes
    (plus {func}`~ad_hoc_diffractometer.reference.incidence_angle` /
    {func}`~ad_hoc_diffractometer.reference.emergence_angle` and

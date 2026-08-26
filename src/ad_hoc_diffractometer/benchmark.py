@@ -100,7 +100,7 @@ def _prepare_mode(geometry, mode_name: str) -> None:
     - fixed_psi modes: sets ``azimuth``
     - double_diffraction modes: sets h2/k2/l2 extras
     - zone modes: sets z0/z1 extras to a generic (h,k,0) plane
-    - surface/reference modes (incidence, emergence, specular):
+    - surface/reference modes (incidence, emergence, incidence_equals_emergence):
       sets ``surface_normal``
     """
     geometry.mode_name = mode_name
@@ -126,7 +126,7 @@ def _prepare_mode(geometry, mode_name: str) -> None:
     # Surface modes: set surface_normal if needed.
     for c in cs._constraints:
         cname = getattr(c, "_name", getattr(c, "name", ""))
-        if cname in ("incidence", "emergence", "specular"):
+        if cname in ("incidence", "emergence", "incidence_equals_emergence"):
             if geometry.surface_normal is None:
                 geometry.surface_normal = (0, 0, 1)
 

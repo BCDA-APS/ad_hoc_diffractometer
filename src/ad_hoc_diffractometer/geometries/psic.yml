@@ -47,7 +47,7 @@ documentation: |
 
     - 9 vertical-scattering-plane modes (mu = nu = 0): bisecting,
       fixed_phi, fixed_chi, fixed_incidence, fixed_emergence,
-      specular, fixed_psi, fixed_omega (#264),
+      incidence_equals_emergence, fixed_psi, fixed_omega (#264),
       double_diffraction.
 
     - 9 horizontal-scattering-plane mirror modes (eta = delta = 0).
@@ -137,11 +137,11 @@ modes:
             incidence: null
             emergence: null
 
-    specular_vertical:
+    incidence_equals_emergence_vertical:
         constraints:
             - {type: sample,    stage: mu, value: 0.0}
             - {type: detector,  stage: nu, value: 0.0}
-            - {type: reference, name: specular, value: true}
+            - {type: reference, name: incidence_equals_emergence, value: true}
         computed: [eta, chi, phi, delta]
         extras:
             n_hat: REQUIRED
@@ -261,11 +261,11 @@ modes:
             incidence: null
             emergence: null
 
-    specular_horizontal:
+    incidence_equals_emergence_horizontal:
         constraints:
             - {type: sample,    stage: eta,   value: 0.0}
             - {type: detector,  stage: delta, value: 0.0}
-            - {type: reference, name: specular, value: true}
+            - {type: reference, name: incidence_equals_emergence, value: true}
         computed: [mu, chi, phi, nu]
         extras:
             n_hat: REQUIRED
