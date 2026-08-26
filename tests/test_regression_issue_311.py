@@ -599,6 +599,38 @@ class TestB3SignCorrectness:
                     raise
                 # Small residual is acceptable for this edge case
 
+    def test_b3_unreachable_incidence_returns_empty(self, cubic_psic_geometry):
+        """B3 returns [] when the incidence target is unreachable.
+
+        An incidence target of 89.9 degrees cannot be satisfied for the
+        (0,0,1) reflection in this geometry, so every seed of the
+        free-detector Levenberg-Marquardt solver fails to converge and is
+        discarded, and ``forward()`` returns an empty list.  This exercises
+        the solver's non-convergence / discard path in
+        ``forward._solve_free_detectors``.
+        """
+        with does_not_raise():
+            from ad_hoc_diffractometer import ConstraintSet
+            from ad_hoc_diffractometer import ReferenceConstraint
+            from ad_hoc_diffractometer import REQUIRED
+            from ad_hoc_diffractometer import SampleConstraint
+
+            g = cubic_psic_geometry
+            g.surface_normal = (0, 0, 1)
+            computed = g.modes["fixed_incidence_fixed_chi_fixed_phi"].computed
+            g.modes["fixed_incidence_fixed_chi_fixed_phi"] = ConstraintSet(
+                [
+                    SampleConstraint("chi", 0.0),
+                    SampleConstraint("phi", 0.0),
+                    ReferenceConstraint("incidence", 89.9),
+                ],
+                computed=computed,
+                extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
+            )
+            g.mode_name = "fixed_incidence_fixed_chi_fixed_phi"
+
+            assert g.forward(0, 0, 1) == []
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
