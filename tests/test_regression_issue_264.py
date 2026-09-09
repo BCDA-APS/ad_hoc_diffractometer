@@ -71,6 +71,9 @@ from ad_hoc_diffractometer.forward import _is_free_detectors_mode
 from ad_hoc_diffractometer.forward import _is_omega_mode
 from ad_hoc_diffractometer.reference import incidence_angle
 from ad_hoc_diffractometer.reference import omega_pseudo
+from helpers import ANGLE_DEGREES_TIGHT_ATOL
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import TIGHT_ATOL
 
 WAVELENGTH = 1.5406  # Cu Kα
 
@@ -174,7 +177,7 @@ def test_omega_is_angle_between_q_and_chi_circle_plane():
     # positive projection on the chi axis.
     sin_om = float(np.dot(Q_hat, chi_axis_lab))
     expected_om = np.degrees(np.arcsin(np.clip(sin_om, -1.0, 1.0)))
-    assert om == pytest.approx(expected_om, abs=1e-9), (
+    assert om == pytest.approx(expected_om, abs=TIGHT_ATOL), (
         f"omega_pseudo() = {om}, expected {expected_om}"
     )
 
@@ -274,7 +277,7 @@ def test_issue_264_mode_round_trip(
     assert len(sols) > 0, f"{mode_name} ({h},{k},{l}): no solutions"
     for sol in sols:
         hkl_back = g.inverse(sol)
-        assert np.allclose(hkl_back, [h, k, l], atol=1e-5), (
+        assert np.allclose(hkl_back, [h, k, l], atol=ANGLE_DEGREES_TIGHT_ATOL), (
             f"{mode_name} ({h},{k},{l}): inverse mismatch {hkl_back}"
         )
 
@@ -417,12 +420,12 @@ def test_revised_fixed_psi_round_trip(
     for sol in sols:
         # psi target satisfied
         psi = psi_angle(g, angles=sol)
-        assert psi == pytest.approx(natural, abs=1e-3), (
+        assert psi == pytest.approx(natural, abs=ANGLE_DEGREES_ATOL), (
             f"{mode_name} ({h},{k},{l}): expected psi={natural}, got {psi}"
         )
         # Bragg round-trip
         hkl_back = g.inverse(sol)
-        assert np.allclose(hkl_back, [h, k, l], atol=1e-5)
+        assert np.allclose(hkl_back, [h, k, l], atol=ANGLE_DEGREES_TIGHT_ATOL)
 
 
 def test_revised_fixed_psi_wrong_target_returns_empty():
@@ -509,6 +512,6 @@ def test_b3_alpha_i_target_satisfied(alpha_target):
     assert len(sols) > 0
     for sol in sols:
         ai = incidence_angle(g, angles=sol)
-        assert ai == pytest.approx(alpha_target, abs=1e-3), (
+        assert ai == pytest.approx(alpha_target, abs=ANGLE_DEGREES_ATOL), (
             f"B3 incidence target {alpha_target}: got {ai}"
         )

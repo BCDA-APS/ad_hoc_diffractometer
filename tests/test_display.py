@@ -22,6 +22,7 @@ from ad_hoc_diffractometer.display import fmt
 from ad_hoc_diffractometer.display import get_precision
 from ad_hoc_diffractometer.display import precision_atol
 from ad_hoc_diffractometer.display import set_precision
+from helpers import LOOSE_ATOL
 
 _DEFAULT = 6  # matches conftest._DISPLAY_DEFAULT
 
@@ -152,8 +153,8 @@ def test_allclose(a, b, digits, expected, context):
 
 
 def test_allclose_explicit_atol():
-    assert allclose(1.0, 1.05, atol=0.1) is True
-    assert allclose(1.0, 1.15, atol=0.1) is False
+    assert allclose(1.0, 1.05, atol=LOOSE_ATOL) is True
+    assert allclose(1.0, 1.15, atol=LOOSE_ATOL) is False
 
 
 def test_allclose_uses_package_default():

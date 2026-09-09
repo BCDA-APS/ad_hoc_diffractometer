@@ -27,6 +27,7 @@ from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
 from ad_hoc_diffractometer.stage import Stage
+from helpers import IDENTITY_ATOL
 
 # ---------------------------------------------------------------------------
 # Stage construction
@@ -97,7 +98,7 @@ def test_stage_construction(name, axis, parent, role, angle, context):
 def test_stage_rotation_matrix(axis, angle_deg, expected_R, context):
     with context:
         s = Stage("test", axis, angle=angle_deg)
-        np.testing.assert_allclose(s.rotation_matrix(), expected_R, atol=1e-10)
+        np.testing.assert_allclose(s.rotation_matrix(), expected_R, atol=IDENTITY_ATOL)
 
 
 # ---------------------------------------------------------------------------

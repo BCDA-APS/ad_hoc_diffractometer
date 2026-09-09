@@ -38,6 +38,10 @@ from ad_hoc_diffractometer.scan import _pick_solution
 from ad_hoc_diffractometer.scan import hkl_trajectory
 from ad_hoc_diffractometer.scan import psi_trajectory
 from ad_hoc_diffractometer.scan import trajectory_plan
+from helpers import EXACT_ATOL
+from helpers import HKL_ATOL
+from helpers import LOOSE_ATOL
+from helpers import PRECISE_ATOL
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -66,7 +70,7 @@ def _setup(factory, a=4.0, *, mode=None):
     return g
 
 
-def _round_trip_ok(g, angles, hkl, atol=1e-4):
+def _round_trip_ok(g, angles, hkl, atol=HKL_ATOL):
     """Return True if g.inverse(angles) ≈ hkl."""
     return np.allclose(g.inverse(angles), hkl, atol=atol)
 
@@ -237,9 +241,9 @@ def test_hkl_points(trajectory, n_points, expected_first, expected_last, context
         points = _hkl_points(trajectory, n_points)
         assert len(points) == n_points
         if expected_first is not None:
-            assert np.allclose(points[0], expected_first, atol=1e-12)
+            assert np.allclose(points[0], expected_first, atol=EXACT_ATOL)
         if expected_last is not None:
-            assert np.allclose(points[-1], expected_last, atol=1e-12)
+            assert np.allclose(points[-1], expected_last, atol=EXACT_ATOL)
 
 
 def test_hkl_points_transverse_perpendicular():
@@ -451,8 +455,8 @@ class TestHklTrajectory:
             )
         )
         assert len(result) == 3
-        assert np.allclose(result[0]["hkl"], (0.5, 0.0, 0.0), atol=1e-12)
-        assert np.allclose(result[2]["hkl"], (1.5, 0.0, 0.0), atol=1e-12)
+        assert np.allclose(result[0]["hkl"], (0.5, 0.0, 0.0), atol=EXACT_ATOL)
+        assert np.allclose(result[2]["hkl"], (1.5, 0.0, 0.0), atol=EXACT_ATOL)
 
     def test_transverse_perpendicular(self):
         """Transverse points lie perpendicular to Q_ref from center."""
@@ -640,14 +644,14 @@ class TestPsiTrajectory:
         """
         g = _setup(kappa4cv)
         self._psi_round_trip(
-            g, hkl=(2, 1, 0), targets=list(range(-60, 61, 30)), atol=0.1
+            g, hkl=(2, 1, 0), targets=list(range(-60, 61, 30)), atol=LOOSE_ATOL
         )
 
     def test_psi_zero_at_base(self):
         """psi_actual = 0 when psi_target = 0 (base forward() solution)."""
         g = _setup(fourcv)
         result = list(psi_trajectory(g, *HKL_TEST, [0.0]))
-        assert result[0]["psi_actual"] == pytest.approx(0.0, abs=1e-6)
+        assert result[0]["psi_actual"] == pytest.approx(0.0, abs=PRECISE_ATOL)
 
     def test_psi_smooth_motion_nearest_angles(self):
         """phi values vary smoothly across a dense ψ sweep (no large jumps)."""
@@ -726,8 +730,8 @@ class TestTrajectoryPlan:
         g = _setup(fourcv)
         plan = list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=5))
         assert len(plan) == 5
-        assert np.allclose(plan[0]["hkl"], (1, 0, 0), atol=1e-12)
-        assert np.allclose(plan[-1]["hkl"], (2, 0, 0), atol=1e-12)
+        assert np.allclose(plan[0]["hkl"], (1, 0, 0), atol=EXACT_ATOL)
+        assert np.allclose(plan[-1]["hkl"], (2, 0, 0), atol=EXACT_ATOL)
 
     def test_hkl_space_round_trip(self):
         """All accessible points satisfy inverse(angles) ≈ hkl."""
@@ -742,8 +746,8 @@ class TestTrajectoryPlan:
         """space='Q': endpoints are exact despite Q interpolation."""
         g = _setup(fourcv)
         plan = list(trajectory_plan(g, (1, 0, 0), (2, 0, 0), n_points=5, space="Q"))
-        assert np.allclose(plan[0]["hkl"], (1, 0, 0), atol=1e-12)
-        assert np.allclose(plan[-1]["hkl"], (2, 0, 0), atol=1e-12)
+        assert np.allclose(plan[0]["hkl"], (1, 0, 0), atol=EXACT_ATOL)
+        assert np.allclose(plan[-1]["hkl"], (2, 0, 0), atol=EXACT_ATOL)
 
     def test_q_space_equal_dq_steps(self):
         """space='Q': consecutive Q-vector differences are equal in magnitude."""
@@ -767,10 +771,10 @@ class TestTrajectoryPlan:
         plan_hkl = list(
             trajectory_plan(g, (1, 0, 0), (0, 0, 2), n_points=n, space="hkl")
         )
-        assert np.allclose(plan_q[0]["hkl"], (1, 0, 0), atol=1e-12)
-        assert np.allclose(plan_q[-1]["hkl"], (0, 0, 2), atol=1e-12)
-        assert np.allclose(plan_hkl[0]["hkl"], (1, 0, 0), atol=1e-12)
-        assert np.allclose(plan_hkl[-1]["hkl"], (0, 0, 2), atol=1e-12)
+        assert np.allclose(plan_q[0]["hkl"], (1, 0, 0), atol=EXACT_ATOL)
+        assert np.allclose(plan_q[-1]["hkl"], (0, 0, 2), atol=EXACT_ATOL)
+        assert np.allclose(plan_hkl[0]["hkl"], (1, 0, 0), atol=EXACT_ATOL)
+        assert np.allclose(plan_hkl[-1]["hkl"], (0, 0, 2), atol=EXACT_ATOL)
 
     def test_inaccessible_points_flagged(self):
         """Points with no valid solution are accessible=False."""

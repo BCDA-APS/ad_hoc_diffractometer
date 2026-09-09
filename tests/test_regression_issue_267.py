@@ -34,6 +34,7 @@ from ad_hoc_diffractometer.mode import ReferenceConstraint
 from ad_hoc_diffractometer.mode import SampleConstraint
 from ad_hoc_diffractometer.mode import VirtualBisectConstraint
 from ad_hoc_diffractometer.stage import Stage
+from helpers import EXACT_ATOL
 
 # ---------------------------------------------------------------------------
 # Hand-built reference geometries
@@ -952,7 +953,7 @@ def _assert_geometries_equivalent(
             np.testing.assert_allclose(
                 getattr(decl_conv, axis_name),
                 getattr(ref_conv, axis_name),
-                atol=1e-12,
+                atol=EXACT_ATOL,
                 err_msg=f"kappa_pseudo_angle_convention.{axis_name} differs",
             )
 

@@ -38,6 +38,8 @@ from ad_hoc_diffractometer.conversions import hkl_to_Q
 from ad_hoc_diffractometer.conversions import hkl_to_two_theta
 from ad_hoc_diffractometer.conversions import two_theta_to_d
 from ad_hoc_diffractometer.conversions import two_theta_to_Q_mag
+from helpers import COARSE_ATOL
+from helpers import IDENTITY_ATOL
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -76,7 +78,7 @@ class TestHklToQ:
         long_hat = np.asarray(s.parent.basis["longitudinal"], dtype=float)
         long_hat = long_hat / np.linalg.norm(long_hat)
         expected = (TWO_PI / A_CUBIC) * long_hat
-        assert Q == pytest.approx(expected, abs=1e-10)
+        assert Q == pytest.approx(expected, abs=IDENTITY_ATOL)
 
     def test_cubic_110(self):
         """(1,1,0) gives |Q| = 2π/a * sqrt(2)."""
@@ -119,7 +121,7 @@ class TestQToHkl:
         for hkl in [(1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 1, 0), (2, 1, 3)]:
             Q = hkl_to_Q(s, *hkl)
             result = Q_to_hkl(s, *Q)
-            assert result == pytest.approx(hkl, abs=1e-10)
+            assert result == pytest.approx(hkl, abs=IDENTITY_ATOL)
 
     def test_no_ub_raises(self):
         """Raises ValueError when UB is not set."""
@@ -237,7 +239,7 @@ class TestBraggLaw:
         """2θ for Si (111) at Cu Kα ≈ 28.44°."""
         d_si_111 = 3.1356  # Å
         two_theta = d_to_two_theta(d_si_111, WAVELENGTH)
-        assert two_theta == pytest.approx(28.44, abs=0.01)
+        assert two_theta == pytest.approx(28.44, abs=COARSE_ATOL)
 
     def test_round_trip(self):
         """d → 2θ → d recovers the original d."""

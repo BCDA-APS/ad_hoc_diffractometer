@@ -33,6 +33,10 @@ import pytest
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import Lattice
+from helpers import COARSE_ATOL
+from helpers import EXACT_ATOL
+from helpers import IDENTITY_ATOL
+from helpers import IDENTITY_RTOL
 
 # ---------------------------------------------------------------------------
 # Crystal system deduction and default parameter filling
@@ -185,7 +189,7 @@ def test_lattice_system_deduction(kwargs, expected_system, expected_params, cont
             np.testing.assert_allclose(
                 getattr(lat, param),
                 expected_val,
-                atol=1e-12,
+                atol=EXACT_ATOL,
                 err_msg=f"Mismatch in {param}",
             )
 
@@ -526,7 +530,7 @@ def test_lattice_cartesian_a1_along_x(kwargs, expected_a1, context):
     with context:
         lat = Lattice(**kwargs)
         a1, _, _ = lat.cartesian_lattice_vectors
-        np.testing.assert_allclose(a1, expected_a1, atol=1e-12)
+        np.testing.assert_allclose(a1, expected_a1, atol=EXACT_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -559,15 +563,15 @@ def test_lattice_reciprocal_orthogonality(kwargs, context):
         a1, a2, a3 = lat.cartesian_lattice_vectors
         b1, b2, b3 = lat.reciprocal_lattice_vectors
         twopi = 2 * np.pi
-        np.testing.assert_allclose(np.dot(b1, a1), twopi, atol=1e-10)
-        np.testing.assert_allclose(np.dot(b2, a2), twopi, atol=1e-10)
-        np.testing.assert_allclose(np.dot(b3, a3), twopi, atol=1e-10)
-        np.testing.assert_allclose(np.dot(b1, a2), 0.0, atol=1e-10)
-        np.testing.assert_allclose(np.dot(b1, a3), 0.0, atol=1e-10)
-        np.testing.assert_allclose(np.dot(b2, a1), 0.0, atol=1e-10)
-        np.testing.assert_allclose(np.dot(b2, a3), 0.0, atol=1e-10)
-        np.testing.assert_allclose(np.dot(b3, a1), 0.0, atol=1e-10)
-        np.testing.assert_allclose(np.dot(b3, a2), 0.0, atol=1e-10)
+        np.testing.assert_allclose(np.dot(b1, a1), twopi, atol=IDENTITY_ATOL)
+        np.testing.assert_allclose(np.dot(b2, a2), twopi, atol=IDENTITY_ATOL)
+        np.testing.assert_allclose(np.dot(b3, a3), twopi, atol=IDENTITY_ATOL)
+        np.testing.assert_allclose(np.dot(b1, a2), 0.0, atol=IDENTITY_ATOL)
+        np.testing.assert_allclose(np.dot(b1, a3), 0.0, atol=IDENTITY_ATOL)
+        np.testing.assert_allclose(np.dot(b2, a1), 0.0, atol=IDENTITY_ATOL)
+        np.testing.assert_allclose(np.dot(b2, a3), 0.0, atol=IDENTITY_ATOL)
+        np.testing.assert_allclose(np.dot(b3, a1), 0.0, atol=IDENTITY_ATOL)
+        np.testing.assert_allclose(np.dot(b3, a2), 0.0, atol=IDENTITY_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -585,10 +589,10 @@ def test_lattice_B_cubic_diagonal(a, context):
         B = lat.B
         twopi_over_a = 2 * np.pi / a
         np.testing.assert_allclose(
-            np.diag(B), [twopi_over_a, twopi_over_a, twopi_over_a], atol=1e-12
+            np.diag(B), [twopi_over_a, twopi_over_a, twopi_over_a], atol=EXACT_ATOL
         )
         off = B - np.diag(np.diag(B))
-        np.testing.assert_allclose(off, np.zeros((3, 3)), atol=1e-12)
+        np.testing.assert_allclose(off, np.zeros((3, 3)), atol=EXACT_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -617,11 +621,11 @@ def test_lattice_B_bl1967_convention(kwargs, context):
         b1, b2, b3 = lat.reciprocal_lattice_vectors
         B = lat.B
         rec_matrix = np.column_stack([b1, b2, b3])
-        np.testing.assert_allclose(rec_matrix, B, atol=1e-10)
+        np.testing.assert_allclose(rec_matrix, B, atol=IDENTITY_ATOL)
         # Verify the BL1967 action: B @ h == h*b1 + k*b2 + l*b3
         for hkl in ([1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1]):
             expected = hkl[0] * b1 + hkl[1] * b2 + hkl[2] * b3
-            np.testing.assert_allclose(B @ np.array(hkl), expected, atol=1e-10)
+            np.testing.assert_allclose(B @ np.array(hkl), expected, atol=IDENTITY_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -741,7 +745,7 @@ def test_lattice_B_lower_symmetry_d_spacing(lattice_kwargs, full_params, h, k, l
     d_expected = _d_spacing_from_metric(**full_params, h=h, k=k, l=l)
     Q_expected_mag = 2.0 * np.pi / d_expected
 
-    np.testing.assert_allclose(Q_mag, Q_expected_mag, rtol=1e-10)
+    np.testing.assert_allclose(Q_mag, Q_expected_mag, rtol=IDENTITY_RTOL)
 
 
 @pytest.mark.parametrize(
@@ -774,14 +778,14 @@ def test_lattice_B_lower_symmetry_columns_are_reciprocal(lattice_kwargs):
     b1, b2, b3 = lat.reciprocal_lattice_vectors
     B = lat.B
 
-    np.testing.assert_allclose(B[:, 0], b1, atol=1e-12)
-    np.testing.assert_allclose(B[:, 1], b2, atol=1e-12)
-    np.testing.assert_allclose(B[:, 2], b3, atol=1e-12)
+    np.testing.assert_allclose(B[:, 0], b1, atol=EXACT_ATOL)
+    np.testing.assert_allclose(B[:, 1], b2, atol=EXACT_ATOL)
+    np.testing.assert_allclose(B[:, 2], b3, atol=EXACT_ATOL)
 
     # B @ unit-h returns the corresponding reciprocal vector.
-    np.testing.assert_allclose(B @ np.array([1.0, 0.0, 0.0]), b1, atol=1e-12)
-    np.testing.assert_allclose(B @ np.array([0.0, 1.0, 0.0]), b2, atol=1e-12)
-    np.testing.assert_allclose(B @ np.array([0.0, 0.0, 1.0]), b3, atol=1e-12)
+    np.testing.assert_allclose(B @ np.array([1.0, 0.0, 0.0]), b1, atol=EXACT_ATOL)
+    np.testing.assert_allclose(B @ np.array([0.0, 1.0, 0.0]), b2, atol=EXACT_ATOL)
+    np.testing.assert_allclose(B @ np.array([0.0, 0.0, 1.0]), b3, atol=EXACT_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -1071,8 +1075,8 @@ def test_lattice_eq_outside_default_tolerance():
 
 
 def test_lattice_eq_explicit_atol():
-    assert Lattice(a=5.431).__eq__(Lattice(a=5.432), atol=0.01) is True
-    assert Lattice(a=5.431).__eq__(Lattice(a=5.451), atol=0.01) is False
+    assert Lattice(a=5.431).__eq__(Lattice(a=5.432), atol=COARSE_ATOL) is True
+    assert Lattice(a=5.431).__eq__(Lattice(a=5.451), atol=COARSE_ATOL) is False
 
 
 def test_lattice_eq_not_implemented_for_non_lattice():

@@ -24,6 +24,7 @@ from ad_hoc_diffractometer.axes import parse_axis
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
+from helpers import EXACT_ATOL
 
 # ---------------------------------------------------------------------------
 # parse_axis()
@@ -247,7 +248,7 @@ def test_axis_from_physical(direction, sign, expected, context):
 def test_kappa_axis(alpha_deg, expected, context):
     with context:
         result = kappa_axis(alpha_deg)
-        np.testing.assert_allclose(result, expected, atol=1e-12)
+        np.testing.assert_allclose(result, expected, atol=EXACT_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -261,7 +262,7 @@ def test_kappa_axis(alpha_deg, expected, context):
 def test_kappa_axis_is_unit_vector(alpha_deg, context):
     with context:
         ax = kappa_axis(alpha_deg)
-        np.testing.assert_allclose(np.linalg.norm(ax), 1.0, atol=1e-12)
+        np.testing.assert_allclose(np.linalg.norm(ax), 1.0, atol=EXACT_ATOL)
 
 
 def test_kappa_axis_bad_basis():
@@ -277,4 +278,4 @@ def test_kappa_axis_with_explicit_basis():
     basis = {"vertical": XHAT, "longitudinal": YHAT, "transverse": ZHAT}
     ax = kappa_axis(50.0, basis=basis)
     expected = np.cos(np.deg2rad(50.0)) * XHAT + np.sin(np.deg2rad(50.0)) * ZHAT
-    np.testing.assert_allclose(ax, expected, atol=1e-12)
+    np.testing.assert_allclose(ax, expected, atol=EXACT_ATOL)

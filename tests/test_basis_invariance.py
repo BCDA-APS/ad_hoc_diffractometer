@@ -26,6 +26,8 @@ import pytest
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.factories import BASIS_BL
 from ad_hoc_diffractometer.factories import BASIS_YOU
+from helpers import EXACT_ATOL
+from helpers import TIGHT_ATOL
 
 # Preset registry — all 10 geometries.  The detector-stage name (last
 # detector stage) and the default mode used for the |2θ| comparison
@@ -87,7 +89,7 @@ def test_q_magnitude_is_basis_invariant(preset_name, h, k, l, context):  # noqa:
         hkl = np.array([h, k, l], dtype=float)
         q_bl = float(np.linalg.norm(g_bl.sample.UB @ hkl))
         q_yo = float(np.linalg.norm(g_yo.sample.UB @ hkl))
-        assert q_bl == pytest.approx(q_yo, abs=1e-12), (
+        assert q_bl == pytest.approx(q_yo, abs=EXACT_ATOL), (
             f"{preset_name}: |Q| differs between BL ({q_bl:.6e}) and "
             f"You ({q_yo:.6e}) for ({h},{k},{l})"
         )
@@ -144,7 +146,7 @@ def test_two_theta_is_basis_invariant(
         )
         tt_bl = abs(sols_bl[0][det_name])
         tt_yo = abs(sols_yo[0][det_name])
-        assert tt_bl == pytest.approx(tt_yo, abs=1e-9), (
+        assert tt_bl == pytest.approx(tt_yo, abs=TIGHT_ATOL), (
             f"{preset_name}: |{det_name}| differs between BL ({tt_bl:.6e}) "
             f"and You ({tt_yo:.6e}) for ({h},{k},{l})"
         )

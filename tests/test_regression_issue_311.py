@@ -21,10 +21,10 @@ import pytest
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.reference import natural_psi
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import HKL_ATOL
 
-# Tolerances (degrees / reciprocal-lattice units) used across the tests.
-HKL_ATOL = 1e-4  # hkl round-trip and incidence==emergence agreement
-ANGLE_DEGREES_ATOL = 1e-3  # sector match and 4-DOF Newton engineering residual
+# Physical-range limits specific to these tests (not tolerances).
 ANGLE_RANGE_LIMIT = 180.0  # a physical stage angle must lie within +/- this
 FRONT_FACE_MU_LIMIT = 90.0  # a usable, non-wraparound mu is in (0, this)
 

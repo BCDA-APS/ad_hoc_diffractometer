@@ -58,6 +58,8 @@ from helpers import zaxis
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import ub_identity
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import NUMERIC_ATOL
 
 WAVELENGTH = 1.5406  # Cu Kα
 
@@ -110,14 +112,14 @@ def test_psic_horizontal_surface_honors_delta_pin(mode_name, context):
         sols = g.forward(1, 0, 0)
         assert sols, f"{mode_name}: expected at least one candidate solution"
         for sol in sols:
-            assert sol["delta"] == pytest.approx(0.0, abs=1e-8), (
+            assert sol["delta"] == pytest.approx(0.0, abs=NUMERIC_ATOL), (
                 f"{mode_name}: delta pin violated, delta={sol['delta']}, nu={sol['nu']}"
             )
             # The 2θ magnitude for (1,0,0) on a=4 Å with λ=1.5406 Å is
             # 2·arcsin(λ / 2a) ≈ 22.206°.  nu must be at ±2θ (the sign
             # depends on the sample-stage seeding chosen by the Newton
             # search).
-            assert abs(sol["nu"]) == pytest.approx(22.2062, abs=1e-3), (
+            assert abs(sol["nu"]) == pytest.approx(22.2062, abs=ANGLE_DEGREES_ATOL), (
                 f"{mode_name}: nu should carry the 2θ magnitude, "
                 f"nu={sol['nu']}, delta={sol['delta']}"
             )
@@ -148,10 +150,12 @@ def test_psic_vertical_surface_honors_nu_pin(mode_name, context):
         sols = g.forward(1, 0, 0)
         assert sols, f"{mode_name}: expected at least one candidate solution"
         for sol in sols:
-            assert sol["nu"] == pytest.approx(0.0, abs=1e-8), (
+            assert sol["nu"] == pytest.approx(0.0, abs=NUMERIC_ATOL), (
                 f"{mode_name}: nu pin violated, nu={sol['nu']}, delta={sol['delta']}"
             )
-            assert abs(sol["delta"]) == pytest.approx(22.2062, abs=1e-3), (
+            assert abs(sol["delta"]) == pytest.approx(
+                22.2062, abs=ANGLE_DEGREES_ATOL
+            ), (
                 f"{mode_name}: delta should carry the 2θ magnitude, "
                 f"delta={sol['delta']}, nu={sol['nu']}"
             )

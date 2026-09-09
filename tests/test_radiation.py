@@ -43,6 +43,7 @@ from ad_hoc_diffractometer.radiation import neutron_wavelength_to_energy
 from ad_hoc_diffractometer.radiation import wavelength_to_energy
 from ad_hoc_diffractometer.radiation import wavelength_to_wavenumber
 from ad_hoc_diffractometer.radiation import wavenumber_to_wavelength
+from helpers import HKL_ATOL
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -83,7 +84,7 @@ def test_XRAY_LINES_positive():
 
 def test_Cu_Ka_known_value():
     """Cu Kα weighted mean ≈ 1.5406 Å."""
-    assert XRAY_LINES["Cu_Ka"] == pytest.approx(1.5406, abs=0.0001)
+    assert XRAY_LINES["Cu_Ka"] == pytest.approx(1.5406, abs=HKL_ATOL)
 
 
 def test_Cu_Ka1_less_than_Ka2():

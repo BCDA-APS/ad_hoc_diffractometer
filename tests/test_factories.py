@@ -41,6 +41,7 @@ from ad_hoc_diffractometer import make_geometry
 from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
+from helpers import EXACT_ATOL
 
 # ---------------------------------------------------------------------------
 # list_geometries()
@@ -195,7 +196,7 @@ def test_make_geometry_kappa_alpha_forwarded():
     expected = np.cos(np.deg2rad(45)) * np.array([1, 0, 0]) + np.sin(
         np.deg2rad(45)
     ) * np.array([0, 0, 1])
-    np.testing.assert_allclose(g.stage("kappa").axis, expected, atol=1e-12)
+    np.testing.assert_allclose(g.stage("kappa").axis, expected, atol=EXACT_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -705,7 +706,9 @@ def test_geometry_parent_chain(factory, stage_name, expected_parent, context):
 def test_geometry_axes(factory, stage_name, expected_axis, context):
     with context:
         g = factory()
-        np.testing.assert_allclose(g.stage(stage_name).axis, expected_axis, atol=1e-12)
+        np.testing.assert_allclose(
+            g.stage(stage_name).axis, expected_axis, atol=EXACT_ATOL
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -772,7 +775,7 @@ def test_kappa_alpha_deg_matches_axis_vector(factory, alpha_deg, context):
         cos_a = np.cos(np.deg2rad(alpha_deg))
         sin_a = np.sin(np.deg2rad(alpha_deg))
         expected_axis = cos_a * from_vec + sin_a * to_vec
-        np.testing.assert_allclose(kax, expected_axis, atol=1e-12)
+        np.testing.assert_allclose(kax, expected_axis, atol=EXACT_ATOL)
 
 
 # ---------------------------------------------------------------------------

@@ -57,6 +57,8 @@ from ad_hoc_diffractometer.constants import ZHAT
 from ad_hoc_diffractometer.mode import OPTIONAL
 from ad_hoc_diffractometer.mode import ModeDict
 from ad_hoc_diffractometer.stage import Stage
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import PRECISE_ATOL
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -806,7 +808,12 @@ def test_reference_constraint_to_dict_from_dict_a_eq_b():
         pytest.param("incidence", 0.0, None, None, False, id="incidence-no-sn"),
         pytest.param("emergence", 0.0, (0, 0, 1), None, True, id="emergence-with-sn"),
         pytest.param(
-            "incidence_equals_emergence", True, (0, 0, 1), None, True, id="in_eq_em-with-sn"
+            "incidence_equals_emergence",
+            True,
+            (0, 0, 1),
+            None,
+            True,
+            id="in_eq_em-with-sn",
         ),
         pytest.param(
             "incidence_equals_emergence", True, None, None, False, id="in_eq_em-no-sn"
@@ -915,9 +922,9 @@ def test_reference_constraint_evaluate(name, value, kwargs, context):
             angles = sols[0]
             # The solution must reproduce the requested reflection (issue #307).
             rt = g.inverse(angles)
-            assert rt == pytest.approx((1.0, 0.0, 1.0), abs=1e-3)
+            assert rt == pytest.approx((1.0, 0.0, 1.0), abs=ANGLE_DEGREES_ATOL)
         residual = rc.evaluate(angles, g)
-        assert residual == pytest.approx(0.0, abs=1e-6)
+        assert residual == pytest.approx(0.0, abs=PRECISE_ATOL)
 
 
 def test_reference_constraint_is_satisfied():
@@ -2548,7 +2555,7 @@ def test_qaz_residual_satisfied(
     with context:
         residual = _qaz_residual(angles, g, target_qaz_deg)
         assert math.isfinite(residual)
-        assert residual == pytest.approx(expected_residual, abs=1e-6)
+        assert residual == pytest.approx(expected_residual, abs=PRECISE_ATOL)
 
 
 def test_qaz_residual_few_detector_stages_raises():
@@ -2585,7 +2592,7 @@ def test_qaz_residual_nonzero():
         "delta": delta_deg,
     }
     residual = _qaz_residual(angles, g, 90.0)
-    assert residual == pytest.approx(qaz_actual - 90.0, abs=1e-6)
+    assert residual == pytest.approx(qaz_actual - 90.0, abs=PRECISE_ATOL)
     assert abs(residual) > 1e-3  # not satisfied
 
 

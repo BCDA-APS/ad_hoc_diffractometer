@@ -35,6 +35,8 @@ from helpers import psic
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.forward import _is_zone_mode
+from helpers import IDENTITY_ATOL
+from helpers import NUMERIC_ATOL
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -264,9 +266,9 @@ def test_zone_in_plane_round_trip(factory, mode_name, z0, z1, hkl):
             f"{factory.__name__}/{mode_name}: {hkl} is in the zone plane "
             f"but unreachable in this scattering geometry."
         )
-    assert cs.extras["in_plane_residual"] == pytest.approx(0.0, abs=1e-10)
+    assert cs.extras["in_plane_residual"] == pytest.approx(0.0, abs=IDENTITY_ATOL)
     for sol in sols:
-        np.testing.assert_allclose(g.inverse(sol), hkl, atol=1e-8)
+        np.testing.assert_allclose(g.inverse(sol), hkl, atol=NUMERIC_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -397,7 +399,7 @@ def test_zone_constant_stages(
         pytest.skip(f"{factory.__name__}/{mode_name}: {in_plane_hkl} unreachable.")
     for sol in sols:
         for stage, expected in constant_stage_values.items():
-            assert sol[stage] == pytest.approx(expected, abs=1e-10), (
+            assert sol[stage] == pytest.approx(expected, abs=IDENTITY_ATOL), (
                 f"{factory.__name__}/{mode_name}: stage {stage!r} should "
                 f"be {expected}, got {sol[stage]} for hkl={in_plane_hkl}."
             )

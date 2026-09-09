@@ -31,6 +31,10 @@ from ad_hoc_diffractometer.reference import incidence_angle
 from ad_hoc_diffractometer.reference import natural_psi
 from ad_hoc_diffractometer.reference import naz_angle
 from ad_hoc_diffractometer.reference import psi_angle
+from helpers import EXACT_ATOL
+from helpers import HKL_ATOL
+from helpers import PRECISE_ATOL
+from helpers import TIGHT_ATOL
 
 WAVELENGTH = 1.5406
 
@@ -113,7 +117,7 @@ def test_incidence_equals_emergence_condition_alpha_i_equals_alpha_f():
         ai = incidence_angle(g, angles=s)
         af = emergence_angle(g, angles=s)
         # In the vertical bisecting geometry with transverse surface normal, ai ≈ af
-        assert ai == pytest.approx(af, abs=1e-6)
+        assert ai == pytest.approx(af, abs=PRECISE_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -532,7 +536,7 @@ def test_surface_alpha_i_fixed_constraint_satisfied(factory, mode_name, h, k, l)
     assert len(solutions) > 0
     for sol in solutions:
         ai = incidence_angle(g, angles=sol)
-        assert ai == pytest.approx(0.0, abs=1e-4)
+        assert ai == pytest.approx(0.0, abs=HKL_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -556,7 +560,7 @@ def test_surface_beta_out_fixed_constraint_satisfied(factory, mode_name, h, k, l
     assert len(solutions) > 0
     for sol in solutions:
         bo = emergence_angle(g, angles=sol)
-        assert bo == pytest.approx(0.0, abs=1e-4)
+        assert bo == pytest.approx(0.0, abs=HKL_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -578,7 +582,7 @@ def test_surface_a_eq_b_constraint_satisfied(factory, mode_name, h, k, l):  # no
     for sol in solutions:
         ai = incidence_angle(g, angles=sol)
         bo = emergence_angle(g, angles=sol)
-        assert ai == pytest.approx(bo, abs=1e-4)
+        assert ai == pytest.approx(bo, abs=HKL_ATOL)
 
 
 def test_surface_mode_not_implemented_raises():
@@ -647,7 +651,7 @@ def test_omega_pseudo_zero_at_fixed_omega_vertical():
     assert len(sols) > 0
     for s in sols:
         om = omega_pseudo(g, angles=s)
-        assert om == pytest.approx(0.0, abs=1e-6), (
+        assert om == pytest.approx(0.0, abs=PRECISE_ATOL), (
             f"OMEGA should be 0 in the bisecting geometry; got {om} for {s}"
         )
 
@@ -663,7 +667,7 @@ def test_omega_pseudo_zero_at_fixed_omega_horizontal():
     assert len(sols) > 0
     for s in sols:
         om = omega_pseudo(g, angles=s)
-        assert om == pytest.approx(0.0, abs=1e-6), (
+        assert om == pytest.approx(0.0, abs=PRECISE_ATOL), (
             f"OMEGA should be 0 in the horizontal bisecting geometry; got {om} for {s}"
         )
 
@@ -684,7 +688,7 @@ def test_omega_pseudo_independent_of_phi():
     angles_b["phi"] = 73.0
     om_a = omega_pseudo(g, angles=angles_a)
     om_b = omega_pseudo(g, angles=angles_b)
-    assert om_a == pytest.approx(om_b, abs=1e-9), (
+    assert om_a == pytest.approx(om_b, abs=TIGHT_ATOL), (
         f"OMEGA must be independent of phi; got {om_a} vs {om_b}"
     )
 
@@ -706,7 +710,7 @@ def test_omega_pseudo_independent_of_chi():
     angles_b["chi"] = 91.0
     om_a = omega_pseudo(g, angles=angles_a)
     om_b = omega_pseudo(g, angles=angles_b)
-    assert om_a == pytest.approx(om_b, abs=1e-9)
+    assert om_a == pytest.approx(om_b, abs=TIGHT_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -801,7 +805,7 @@ def test_natural_psi_matches_expected_values(h, k, l, expected, context):  # noq
         g = _setup_psic()
         g.azimuth = (0, 0, 1)
         result = natural_psi(g, h, k, l)
-        assert result == pytest.approx(expected, abs=1e-6)
+        assert result == pytest.approx(expected, abs=PRECISE_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -840,7 +844,7 @@ def test_natural_psi_equals_psi_angle_at_bisecting_solution():
     assert sols, "fixed_omega_vertical should return at least one solution for (1,1,0)"
     nat = natural_psi(g, 1, 1, 0)
     for sol in sols:
-        assert psi_angle(g, angles=sol) == pytest.approx(nat, abs=1e-6)
+        assert psi_angle(g, angles=sol) == pytest.approx(nat, abs=PRECISE_ATOL)
 
 
 def test_natural_psi_independent_of_motor_state():
@@ -851,4 +855,4 @@ def test_natural_psi_independent_of_motor_state():
     # Move every stage to an arbitrary non-zero angle.
     for stage in g._stages.values():  # noqa: SLF001
         stage.angle = 17.5
-    assert natural_psi(g, 1, 1, 0) == pytest.approx(baseline, abs=1e-12)
+    assert natural_psi(g, 1, 1, 0) == pytest.approx(baseline, abs=EXACT_ATOL)

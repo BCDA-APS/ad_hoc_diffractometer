@@ -54,6 +54,11 @@ import pytest
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.orientation import angles_to_phi_vector
 from ad_hoc_diffractometer.rotation import rotation_matrix
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import EXACT_ATOL
+from helpers import IDENTITY_ATOL
+from helpers import MACHINE_ATOL
+from helpers import TIGHT_ATOL
 
 # ---------------------------------------------------------------------------
 # Hand-derived fixed-orientation expectations
@@ -186,7 +191,7 @@ def test_angles_to_phi_vector_matches_hand_derived(geom_name, motor_angles):
     np.testing.assert_allclose(
         actual,
         expected,
-        atol=1e-12,
+        atol=EXACT_ATOL,
         err_msg=(
             f"{geom_name}: angles_to_phi_vector disagrees with BL1967 "
             f"standard outermost-leftmost composition (issue #280)."
@@ -216,11 +221,11 @@ def test_angles_to_phi_vector_satisfies_bragg_for_forward_solution():
 
     expected = _expected_q_phi(g, sol)
     actual = angles_to_phi_vector(g, **sol)
-    np.testing.assert_allclose(actual, expected, atol=1e-12)
+    np.testing.assert_allclose(actual, expected, atol=EXACT_ATOL)
 
     # And the Bragg condition.
     target = g.sample.UB @ np.array([1.0, 1.0, 0.0])
-    np.testing.assert_allclose(actual, target, atol=1e-9)
+    np.testing.assert_allclose(actual, target, atol=TIGHT_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -249,7 +254,7 @@ def test_sample_rotation_matrix_maps_phi_to_lab():
     for s in g.sample_stages:
         Z_bl1967 = Z_bl1967 @ rotation_matrix(s.axis, s.angle)
 
-    np.testing.assert_allclose(Z_pkg, Z_bl1967, atol=1e-14)
+    np.testing.assert_allclose(Z_pkg, Z_bl1967, atol=MACHINE_ATOL)
 
     # And ``Z_pkg`` must NOT equal the reversed (buggy) product (which
     # would be Z_pkg.T for orthogonal axis sets — but the chain here
@@ -257,7 +262,7 @@ def test_sample_rotation_matrix_maps_phi_to_lab():
     Z_reversed = np.eye(3)
     for s in reversed(list(g.sample_stages)):
         Z_reversed = Z_reversed @ rotation_matrix(s.axis, s.angle)
-    assert not np.allclose(Z_pkg, Z_reversed, atol=1e-3), (
+    assert not np.allclose(Z_pkg, Z_reversed, atol=ANGLE_DEGREES_ATOL), (
         "Sample rotation matrix unexpectedly equals the inner-leftmost "
         "(pre-#280) product — the composition order may have regressed."
     )
@@ -302,7 +307,7 @@ def test_double_diffraction_degenerate_phi_path():
     Q_phi = g.sample.UB @ np.array([0.0, 0.0, 1.0])
     n_phi = g.stage("phi")._axis_hat  # noqa: SLF001
     cos_angle = abs(float(np.dot(Q_phi, n_phi)) / np.linalg.norm(Q_phi))
-    assert cos_angle == pytest.approx(1.0, abs=1e-10), (
+    assert cos_angle == pytest.approx(1.0, abs=IDENTITY_ATOL), (
         "Setup precondition: Q_phi must be parallel to the phi axis "
         "to trigger the degenerate-DD path."
     )
@@ -314,7 +319,7 @@ def test_double_diffraction_degenerate_phi_path():
     # Every returned solution (if any) must satisfy primary Bragg.
     for sol in solutions:
         Q = angles_to_phi_vector(g, **sol)
-        assert np.allclose(Q, Q_phi, atol=1e-3), (
+        assert np.allclose(Q, Q_phi, atol=ANGLE_DEGREES_ATOL), (
             f"Degenerate-DD solution {sol} does not satisfy primary Bragg."
         )
 
@@ -356,13 +361,13 @@ def test_B_matrix_is_upper_triangular(lattice_kwargs, expected_diagonal_only):
     """
     lat = ahd.Lattice(**lattice_kwargs)
     B = lat.B
-    assert B[1, 0] == pytest.approx(0.0, abs=1e-12)
-    assert B[2, 0] == pytest.approx(0.0, abs=1e-12)
-    assert B[2, 1] == pytest.approx(0.0, abs=1e-12)
+    assert B[1, 0] == pytest.approx(0.0, abs=EXACT_ATOL)
+    assert B[2, 0] == pytest.approx(0.0, abs=EXACT_ATOL)
+    assert B[2, 1] == pytest.approx(0.0, abs=EXACT_ATOL)
     if expected_diagonal_only:
-        assert B[0, 1] == pytest.approx(0.0, abs=1e-12)
-        assert B[0, 2] == pytest.approx(0.0, abs=1e-12)
-        assert B[1, 2] == pytest.approx(0.0, abs=1e-12)
+        assert B[0, 1] == pytest.approx(0.0, abs=EXACT_ATOL)
+        assert B[0, 2] == pytest.approx(0.0, abs=EXACT_ATOL)
+        assert B[1, 2] == pytest.approx(0.0, abs=EXACT_ATOL)
     else:
         # At least one upper-triangular entry must be nonzero for a
         # non-orthogonal cell.
@@ -383,9 +388,9 @@ def test_b_matrix_standalone_assembles_columns():
 
     b1, b2, b3 = reciprocal_vectors(4.0, 5.0, 6.0, 80.0, 85.0, 95.0)
     B = b_matrix(b1, b2, b3)
-    np.testing.assert_allclose(B[:, 0], b1, atol=1e-12)
-    np.testing.assert_allclose(B[:, 1], b2, atol=1e-12)
-    np.testing.assert_allclose(B[:, 2], b3, atol=1e-12)
+    np.testing.assert_allclose(B[:, 0], b1, atol=EXACT_ATOL)
+    np.testing.assert_allclose(B[:, 1], b2, atol=EXACT_ATOL)
+    np.testing.assert_allclose(B[:, 2], b3, atol=EXACT_ATOL)
 
 
 def test_B_matrix_matches_bl1967_closed_form():
@@ -429,7 +434,7 @@ def test_B_matrix_matches_bl1967_closed_form():
             [0.0, 0.0, 2 * math.pi / c],
         ]
     )
-    np.testing.assert_allclose(lat.B, expected, atol=1e-12)
+    np.testing.assert_allclose(lat.B, expected, atol=EXACT_ATOL)
 
 
 def test_direct_reciprocal_duality_preserved():
@@ -446,9 +451,9 @@ def test_direct_reciprocal_duality_preserved():
         b1, b2, b3 = lat.reciprocal_lattice_vectors
         two_pi = 2.0 * math.pi
         # Diagonal: bᵢ · aᵢ = 2π
-        np.testing.assert_allclose(np.dot(b1, a1), two_pi, atol=1e-10)
-        np.testing.assert_allclose(np.dot(b2, a2), two_pi, atol=1e-10)
-        np.testing.assert_allclose(np.dot(b3, a3), two_pi, atol=1e-10)
+        np.testing.assert_allclose(np.dot(b1, a1), two_pi, atol=IDENTITY_ATOL)
+        np.testing.assert_allclose(np.dot(b2, a2), two_pi, atol=IDENTITY_ATOL)
+        np.testing.assert_allclose(np.dot(b3, a3), two_pi, atol=IDENTITY_ATOL)
         # Off-diagonal: bᵢ · aⱼ = 0
         for u, v in [
             (b1, a2),
@@ -458,4 +463,4 @@ def test_direct_reciprocal_duality_preserved():
             (b3, a1),
             (b3, a2),
         ]:
-            np.testing.assert_allclose(np.dot(u, v), 0.0, atol=1e-10)
+            np.testing.assert_allclose(np.dot(u, v), 0.0, atol=IDENTITY_ATOL)

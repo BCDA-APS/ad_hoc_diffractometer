@@ -17,6 +17,7 @@ import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.drawing import _physical_label
 from ad_hoc_diffractometer.factories import BASIS_BL
 from ad_hoc_diffractometer.factories import BASIS_YOU
+from helpers import IDENTITY_ATOL
 
 # ---------------------------------------------------------------------------
 # _physical_label
@@ -160,6 +161,6 @@ def test_arc_direction_handedness(geometry_name, stage_name, context):
 
         # -- invariant: frame handedness must match direction --
         handedness = np.dot(np.cross(perp1_d, perp2_d), axis_d)
-        assert handedness == pytest.approx(float(direction), abs=1e-10), (
+        assert handedness == pytest.approx(float(direction), abs=IDENTITY_ATOL), (
             f"{geometry_name}/{stage_name}: expected {direction}, got {handedness}"
         )

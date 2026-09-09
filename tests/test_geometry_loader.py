@@ -52,6 +52,7 @@ from ad_hoc_diffractometer.mode import BisectConstraint
 from ad_hoc_diffractometer.mode import DetectorConstraint
 from ad_hoc_diffractometer.mode import ReferenceConstraint
 from ad_hoc_diffractometer.mode import SampleConstraint
+from helpers import EXACT_ATOL
 
 # ---------------------------------------------------------------------------
 # Test fixtures
@@ -1028,12 +1029,12 @@ def test_kappa_chi_eq_numeric_vector_form():
     expected_kappa = np.cos(math.radians(50.0)) * np.array([1.0, 0.0, 0.0]) + np.sin(
         math.radians(50.0)
     ) * np.array([0.0, 0.0, 1.0])
-    np.testing.assert_allclose(g.stage("kappa").axis, expected_kappa, atol=1e-12)
+    np.testing.assert_allclose(g.stage("kappa").axis, expected_kappa, atol=EXACT_ATOL)
     # The synthesized convention's n_chi_eq is auto-derived as the
     # first basis direction perpendicular to n_komega; for BL with
     # n_komega = -transverse that yields +longitudinal.
     np.testing.assert_allclose(
-        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 1.0, 0.0], atol=1e-12
+        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 1.0, 0.0], atol=EXACT_ATOL
     )
 
 
@@ -1087,7 +1088,9 @@ def test_kappa_default_alpha_when_kappa_chi_eq_present():
     # using the numeric komega vector; sanity-check it's a unit vector.
     import numpy as np
 
-    np.testing.assert_allclose(np.linalg.norm(g._stages["kappa"].axis), 1.0, atol=1e-12)  # noqa: SLF001
+    np.testing.assert_allclose(
+        np.linalg.norm(g._stages["kappa"].axis), 1.0, atol=EXACT_ATOL
+    )  # noqa: SLF001
 
 
 def test_axis_invalid_form_rejected():
@@ -1200,7 +1203,9 @@ def test_axis_kappa_eulerian_inner_numeric_vector_form():
         },
     }
     g = load_geometry_file(_yaml_doc_to_text(doc))
-    np.testing.assert_allclose(np.linalg.norm(g._stages["kappa"].axis), 1.0, atol=1e-12)  # noqa: SLF001
+    np.testing.assert_allclose(
+        np.linalg.norm(g._stages["kappa"].axis), 1.0, atol=EXACT_ATOL
+    )  # noqa: SLF001
 
 
 def test_kappa_synthesis_missing_canonical_stage_names_raises():

@@ -34,6 +34,7 @@ import pytest
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.reference import natural_psi
+from helpers import ANGLE_DEGREES_ATOL
 
 
 def _silicon_psic():
@@ -108,4 +109,4 @@ def test_fixed_psi_vertical_solutions_round_trip():
     assert sols
     for sol in sols:
         rt = g.inverse(sol)
-        assert rt == pytest.approx((0.0, 0.0, 1.0), abs=1e-3)
+        assert rt == pytest.approx((0.0, 0.0, 1.0), abs=ANGLE_DEGREES_ATOL)

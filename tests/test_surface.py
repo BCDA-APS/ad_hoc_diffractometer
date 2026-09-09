@@ -42,6 +42,9 @@ from ad_hoc_diffractometer.surface import incidence
 from ad_hoc_diffractometer.surface import is_evanescent
 from ad_hoc_diffractometer.surface import is_incidence_equal_emergence
 from ad_hoc_diffractometer.surface import q_components
+from helpers import EXACT_ATOL
+from helpers import IDENTITY_ATOL
+from helpers import PRECISE_ATOL
 
 WAVELENGTH = 1.5406  # Cu Kα
 
@@ -227,7 +230,7 @@ def test_surface_normal_fallback_to_azimuth():
     g.azimuth = (0, 0, 1)
     # Should not raise and should produce a result
     ai = g.incidence({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
-    assert pytest.approx(ai, abs=1e-6) == 5.0
+    assert pytest.approx(ai, abs=PRECISE_ATOL) == 5.0
 
 
 # ---------------------------------------------------------------------------
@@ -251,7 +254,7 @@ def test_incidence_s2d2_equals_mu(mu, expected_ai, context):
     g = _make_s2d2()
     with context:
         ai = g.incidence({"mu": mu, "Z": 0.0, "nu": 0.0, "delta": 0.0})
-        assert ai == pytest.approx(expected_ai, abs=1e-6)
+        assert ai == pytest.approx(expected_ai, abs=PRECISE_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -273,7 +276,7 @@ def test_incidence_zaxis_equals_alpha(alpha_val, expected_ai, context):
     g = _make_zaxis()
     with context:
         ai = g.incidence({"alpha": alpha_val, "Z": 0.0, "delta": 10.0, "gamma": 0.0})
-        assert ai == pytest.approx(expected_ai, abs=1e-6)
+        assert ai == pytest.approx(expected_ai, abs=PRECISE_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -295,7 +298,7 @@ def test_emergence_s2d2_equals_nu_at_delta_zero(nu, expected_af, context):
     g = _make_s2d2()
     with context:
         af = g.emergence({"mu": 0.0, "Z": 0.0, "nu": nu, "delta": 0.0})
-        assert af == pytest.approx(expected_af, abs=1e-6)
+        assert af == pytest.approx(expected_af, abs=PRECISE_ATOL)
 
 
 def test_emergence_s2d2_zero_at_any_in_plane_delta():
@@ -303,7 +306,7 @@ def test_emergence_s2d2_zero_at_any_in_plane_delta():
     g = _make_s2d2()
     for delta in [0.0, 10.0, 20.0, 45.0]:
         af = g.emergence({"mu": 0.0, "Z": 0.0, "nu": 0.0, "delta": delta})
-        assert af == pytest.approx(0.0, abs=1e-6)
+        assert af == pytest.approx(0.0, abs=PRECISE_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -354,7 +357,7 @@ def test_emergence_zaxis_formula(delta, gamma, expected_af, context):
     g = _make_zaxis()
     with context:
         af = g.emergence({"alpha": 0.0, "Z": 0.0, "delta": delta, "gamma": gamma})
-        assert af == pytest.approx(expected_af, abs=1e-6)
+        assert af == pytest.approx(expected_af, abs=PRECISE_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -371,7 +374,7 @@ def test_incidence_signed_tracks_mu():
     for mu in [-20.0, -10.0, -5.0, 0.0, 5.0, 10.0, 20.0]:
         ai = g.incidence({"mu": mu, "Z": 0.0, "nu": 0.0, "delta": 0.0})
         assert -90.0 <= ai <= 90.0
-        assert ai == pytest.approx(mu, abs=1e-6)
+        assert ai == pytest.approx(mu, abs=PRECISE_ATOL)
 
 
 def test_emergence_signed_tracks_nu():
@@ -383,7 +386,7 @@ def test_emergence_signed_tracks_nu():
     for nu in [-20.0, -10.0, 0.0, 10.0, 20.0]:
         af = g.emergence({"mu": 0.0, "Z": 0.0, "nu": nu, "delta": 0.0})
         assert -90.0 <= af <= 90.0
-        assert af == pytest.approx(nu, abs=1e-6)
+        assert af == pytest.approx(nu, abs=PRECISE_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -412,7 +415,7 @@ def test_q_components_pythagoras():
     for mu, nu, delta in [(5.0, 5.0, 10.0), (2.0, 3.0, 15.0), (0.0, 0.0, 20.0)]:
         qc = g.q_components({"mu": mu, "Z": 0.0, "nu": nu, "delta": delta})
         assert qc["Q_total"] ** 2 == pytest.approx(
-            qc["Q_perp"] ** 2 + qc["Q_par"] ** 2, abs=1e-10
+            qc["Q_perp"] ** 2 + qc["Q_par"] ** 2, abs=IDENTITY_ATOL
         )
 
 
@@ -420,7 +423,7 @@ def test_q_components_perp_signed_consistent():
     """Q_perp = |Q_perp_signed|."""
     g = _make_s2d2()
     qc = g.q_components({"mu": 5.0, "Z": 0.0, "nu": 5.0, "delta": 10.0})
-    assert qc["Q_perp"] == pytest.approx(abs(qc["Q_perp_signed"]), abs=1e-12)
+    assert qc["Q_perp"] == pytest.approx(abs(qc["Q_perp_signed"]), abs=EXACT_ATOL)
 
 
 def test_q_total_matches_bragg():
@@ -440,7 +443,7 @@ def test_q_perp_in_plane_is_zero():
     """When mu=nu=0 (all in plane), Q_perp = 0."""
     g = _make_s2d2()
     qc = g.q_components({"mu": 0.0, "Z": 0.0, "nu": 0.0, "delta": 20.0})
-    assert qc["Q_perp"] == pytest.approx(0.0, abs=1e-10)
+    assert qc["Q_perp"] == pytest.approx(0.0, abs=IDENTITY_ATOL)
 
 
 def test_q_perp_signed_positive_outward():
@@ -547,7 +550,7 @@ def test_psic_incidence_from_mu():
         ai = g.incidence(
             {"mu": mu, "eta": 0.0, "chi": 0.0, "phi": 0.0, "nu": 0.0, "delta": 0.0}
         )
-        assert ai == pytest.approx(mu, abs=1e-6)
+        assert ai == pytest.approx(mu, abs=PRECISE_ATOL)
 
 
 def test_psic_emergence_from_nu():
@@ -557,7 +560,7 @@ def test_psic_emergence_from_nu():
         af = g.emergence(
             {"mu": 0.0, "eta": 0.0, "chi": 0.0, "phi": 0.0, "nu": nu, "delta": 0.0}
         )
-        assert af == pytest.approx(nu, abs=1e-6)
+        assert af == pytest.approx(nu, abs=PRECISE_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -571,7 +574,7 @@ def test_default_angles_uses_current_stage_angles():
     g.set_angle("mu", 5.0)
     ai_explicit = g.incidence({"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0})
     ai_default = g.incidence()  # uses current angles
-    assert ai_explicit == pytest.approx(ai_default, abs=1e-10)
+    assert ai_explicit == pytest.approx(ai_default, abs=IDENTITY_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -582,13 +585,13 @@ def test_default_angles_uses_current_stage_angles():
 def test_standalone_incidence():
     g = _make_s2d2()
     angles = {"mu": 5.0, "Z": 0.0, "nu": 0.0, "delta": 0.0}
-    assert incidence(g, angles) == pytest.approx(5.0, abs=1e-6)
+    assert incidence(g, angles) == pytest.approx(5.0, abs=PRECISE_ATOL)
 
 
 def test_standalone_emergence():
     g = _make_s2d2()
     angles = {"mu": 0.0, "Z": 0.0, "nu": 5.0, "delta": 0.0}
-    assert emergence(g, angles) == pytest.approx(5.0, abs=1e-6)
+    assert emergence(g, angles) == pytest.approx(5.0, abs=PRECISE_ATOL)
 
 
 def test_standalone_q_components():

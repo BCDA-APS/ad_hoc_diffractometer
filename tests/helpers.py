@@ -19,6 +19,37 @@ from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
 
 # ---------------------------------------------------------------------------
+# Shared numerical tolerances.
+#
+# Absolute tolerances (``abs=`` / ``atol=``) for pytest.approx and
+# numpy.allclose comparisons, named by the precision each expresses so
+# that the intent — and any future change — lives in one place instead
+# of being scattered as bare float literals throughout the suite.
+# Ordered from tightest to loosest.
+#
+# The dimensionless / generic-numerical tolerances are unit-agnostic.
+# Where a tolerance is specific to a quantity in a given unit, the name
+# says so (e.g. ``ANGLE_DEGREES_ATOL``), leaving room to add radian- or
+# millimetre-scoped tolerances later without overloading a broad name.
+# ---------------------------------------------------------------------------
+
+MACHINE_ATOL = 1e-14  # floating-point round-off (identity / algebraic checks)
+EXACT_ATOL = 1e-12  # results expected exact up to round-off
+IDENTITY_ATOL = 1e-10  # matrix / vector identities; exact-arithmetic agreement
+TIGHT_ATOL = 1e-9  # tight numerical agreement
+NUMERIC_ATOL = 1e-8  # general numerical-solver agreement
+PRECISE_ATOL = 1e-6  # precise numerical agreement (angles, hkl)
+ANGLE_DEGREES_TIGHT_ATOL = 1e-5  # tight solver angle residual (degrees)
+HKL_ATOL = 1e-4  # hkl round-trip and incidence==emergence agreement
+ANGLE_DEGREES_ATOL = 1e-3  # angle agreement in degrees (sector, 4-DOF Newton)
+COARSE_ATOL = 1e-2  # coarse agreement (reachability, display rounding)
+LOOSE_ATOL = 1e-1  # loose agreement (order-of-magnitude / seed checks)
+
+# Relative tolerances (``rtol=``).
+IDENTITY_RTOL = 1e-10
+PRECISE_RTOL = 1e-6
+
+# ---------------------------------------------------------------------------
 # Reference rotation matrices (right-handed, about the standard axes)
 # ---------------------------------------------------------------------------
 

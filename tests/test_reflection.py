@@ -22,6 +22,8 @@ from helpers import psic
 
 from ad_hoc_diffractometer import Reflection
 from ad_hoc_diffractometer.reflection import ReflectionList
+from helpers import COARSE_ATOL
+from helpers import ANGLE_DEGREES_ATOL
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -213,8 +215,8 @@ def test_reflection_eq_explicit_atol():
     r2 = Reflection(
         name="r1", hkl=(1.005, 0.0, 0.0), angles={"mu": 20.0}, geometry_name="psic"
     )
-    assert r1.__eq__(r2, atol=0.01) is True
-    assert r1.__eq__(r2, atol=0.001) is False
+    assert r1.__eq__(r2, atol=COARSE_ATOL) is True
+    assert r1.__eq__(r2, atol=ANGLE_DEGREES_ATOL) is False
 
 
 def test_reflection_eq_angles_tolerance():

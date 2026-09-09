@@ -77,6 +77,9 @@ from contextlib import nullcontext as does_not_raise
 import numpy as np
 import pytest
 from helpers import psic
+from helpers import EXACT_ATOL
+from helpers import NUMERIC_ATOL
+from helpers import PRECISE_ATOL
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import ub_identity
@@ -146,7 +149,7 @@ def test_mode_contains_plane_lock_sample_constraint(
             f"mode {mode_name!r} is missing the plane-lock "
             f"SampleConstraint on {locked_stage!r}"
         )
-        assert names[locked_stage] == pytest.approx(locked_value, abs=1e-12)
+        assert names[locked_stage] == pytest.approx(locked_value, abs=EXACT_ATOL)
         # No BisectConstraint must remain in the affected modes.
         assert not cs.has_bisect, (
             f"mode {mode_name!r} must not contain a BisectConstraint after #243"
@@ -212,7 +215,7 @@ def test_fixed_vertical_modes_lock_mu(mode_name, locked_stage, h, k, l):  # noqa
         f"forward({h},{k},{l}) returned no solutions for {mode_name!r}"
     )
     for sol in solutions:
-        assert sol[locked_stage] == pytest.approx(0.0, abs=1e-8), (
+        assert sol[locked_stage] == pytest.approx(0.0, abs=NUMERIC_ATOL), (
             f"{mode_name}: {locked_stage}={sol[locked_stage]!r} (expected 0)"
         )
 
@@ -227,7 +230,7 @@ def test_fixed_phi_horizontal_locks_eta(h, k, l):  # noqa: E741
         f"forward({h},{k},{l}) returned no solutions for fixed_phi_horizontal"
     )
     for sol in solutions:
-        assert sol["eta"] == pytest.approx(0.0, abs=1e-8), (
+        assert sol["eta"] == pytest.approx(0.0, abs=NUMERIC_ATOL), (
             f"fixed_phi_horizontal: eta={sol['eta']!r} (expected 0)"
         )
 
@@ -249,7 +252,7 @@ def test_fixed_chi_horizontal_locks_eta(h, k, l):  # noqa: E741
         f"forward({h},{k},{l}) returned no solutions for fixed_chi_horizontal"
     )
     for sol in solutions:
-        assert sol["eta"] == pytest.approx(0.0, abs=1e-8), (
+        assert sol["eta"] == pytest.approx(0.0, abs=NUMERIC_ATOL), (
             f"fixed_chi_horizontal: eta={sol['eta']!r} (expected 0)"
         )
 
@@ -282,7 +285,7 @@ def test_round_trip_forward_inverse(mode_name, h, k, l):  # noqa: E741
     assert len(solutions) > 0
     for sol in solutions:
         hkl_back = g.inverse(sol)
-        np.testing.assert_allclose(hkl_back, [h, k, l], atol=1e-6)
+        np.testing.assert_allclose(hkl_back, [h, k, l], atol=PRECISE_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -358,13 +361,13 @@ def test_full_plane_lock_invariants(
     solutions = g.forward(h, k, l)
     assert len(solutions) > 0
     for sol in solutions:
-        assert sol[sample_lock] == pytest.approx(0.0, abs=1e-8), (
+        assert sol[sample_lock] == pytest.approx(0.0, abs=NUMERIC_ATOL), (
             f"{mode_name}: {sample_lock}={sol[sample_lock]!r} (expected 0)"
         )
-        assert sol[detector_lock] == pytest.approx(0.0, abs=1e-8), (
+        assert sol[detector_lock] == pytest.approx(0.0, abs=NUMERIC_ATOL), (
             f"{mode_name}: {detector_lock}={sol[detector_lock]!r} (expected 0)"
         )
-        assert sol[fixed_stage] == pytest.approx(fixed_value, abs=1e-6), (
+        assert sol[fixed_stage] == pytest.approx(fixed_value, abs=PRECISE_ATOL), (
             f"{mode_name}: {fixed_stage}={sol[fixed_stage]!r} (expected {fixed_value})"
         )
 

@@ -36,6 +36,14 @@ from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.orientation import angles_to_phi_vector
 from ad_hoc_diffractometer.reflection import ReflectionList
 from ad_hoc_diffractometer.sample import Sample
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import EXACT_ATOL
+from helpers import IDENTITY_ATOL
+from helpers import IDENTITY_RTOL
+from helpers import MACHINE_ATOL
+from helpers import PRECISE_ATOL
+from helpers import PRECISE_RTOL
+from helpers import TIGHT_ATOL
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -87,10 +95,10 @@ def test_ub_identity_sets_U_to_physical_direction_triple(psic_geom):
             np.asarray(psic_geom.basis["transverse"], dtype=float),
         ]
     )
-    np.testing.assert_allclose(psic_geom.sample.U, expected_U, atol=1e-12)
+    np.testing.assert_allclose(psic_geom.sample.U, expected_U, atol=EXACT_ATOL)
     # U is orthogonal by construction.
     np.testing.assert_allclose(
-        psic_geom.sample.U @ psic_geom.sample.U.T, np.eye(3), atol=1e-12
+        psic_geom.sample.U @ psic_geom.sample.U.T, np.eye(3), atol=EXACT_ATOL
     )
 
 
@@ -109,7 +117,7 @@ def test_ub_identity_sets_UB_to_U_times_B(psic_geom):
     np.testing.assert_allclose(
         psic_geom.sample.UB,
         U_expected @ psic_geom.sample.lattice.B,
-        atol=1e-12,
+        atol=EXACT_ATOL,
     )
 
 
@@ -192,7 +200,7 @@ def test_ub_one_refl_none_with_parent_defaults_to_phi(sapphire_geom):
         reference_hkl=(0, 0, 1),
         reference_stage=None,
     )
-    np.testing.assert_allclose(UB_explicit, UB_default, atol=1e-12)
+    np.testing.assert_allclose(UB_explicit, UB_default, atol=EXACT_ATOL)
 
 
 def test_ub_one_refl_none_no_parent_raises():
@@ -269,7 +277,7 @@ def test_ub_one_refl_U_is_orthonormal(sapphire_geom):
         reference_stage=g.stage("phi"),
     )
     U = g.sample.U
-    np.testing.assert_allclose(U.T @ U, np.eye(3), atol=1e-10)
+    np.testing.assert_allclose(U.T @ U, np.eye(3), atol=IDENTITY_ATOL)
     assert abs(np.linalg.det(U) - 1.0) < 1e-10
 
 
@@ -282,7 +290,9 @@ def test_ub_one_refl_UB_equals_U_at_B(sapphire_geom):
         reference_hkl=(0, 0, 1),
         reference_stage=g.stage("phi"),
     )
-    np.testing.assert_allclose(g.sample.UB, g.sample.U @ g.sample.lattice.B, atol=1e-12)
+    np.testing.assert_allclose(
+        g.sample.UB, g.sample.U @ g.sample.lattice.B, atol=EXACT_ATOL
+    )
 
 
 def test_ub_one_refl_crystal_direction_maps_to_stage_axis(sapphire_geom):
@@ -300,7 +310,7 @@ def test_ub_one_refl_crystal_direction_maps_to_stage_axis(sapphire_geom):
     q = g.sample.UB @ reference_hkl
     q_hat = q / np.linalg.norm(q)
     r_hat = phi_axis / np.linalg.norm(phi_axis)
-    np.testing.assert_allclose(np.abs(np.dot(q_hat, r_hat)), 1.0, atol=1e-10)
+    np.testing.assert_allclose(np.abs(np.dot(q_hat, r_hat)), 1.0, atol=IDENTITY_ATOL)
 
 
 def test_ub_one_refl_updates_sample_in_place(sapphire_geom):
@@ -347,7 +357,7 @@ def test_ub_one_refl_parallel_gives_identity_U(psic_geom):
         reference_hkl=(1, 0, 0),
         reference_stage=g.stage("mu"),  # mu axis = +XHAT
     )
-    np.testing.assert_allclose(g.sample.U, np.eye(3), atol=1e-10)
+    np.testing.assert_allclose(g.sample.U, np.eye(3), atol=IDENTITY_ATOL)
 
 
 def test_ub_one_refl_antipara_U_is_rotation_matrix(psic_geom):
@@ -375,7 +385,7 @@ def test_ub_one_refl_antipara_U_is_rotation_matrix(psic_geom):
         reference_stage=g.stage("phi"),  # phi = -ZHAT = (0,0,-1)
     )
     U = g.sample.U
-    np.testing.assert_allclose(U.T @ U, np.eye(3), atol=1e-10)
+    np.testing.assert_allclose(U.T @ U, np.eye(3), atol=IDENTITY_ATOL)
     assert abs(np.linalg.det(U) - 1.0) < 1e-10
 
 
@@ -435,7 +445,7 @@ def test_angles_to_phi_vector_all_zero_gives_zero(psic_geom):
     """All motor angles zero → no scattering → Q_phi = 0."""
     psic_geom.wavelength = _LAMBDA_CU_KA
     Q = angles_to_phi_vector(psic_geom, mu=0, eta=0, chi=0, phi=0, nu=0, delta=0)
-    np.testing.assert_allclose(Q, np.zeros(3), atol=1e-12)
+    np.testing.assert_allclose(Q, np.zeros(3), atol=EXACT_ATOL)
 
 
 def test_angles_to_phi_vector_returns_array_shape(psic_geom):
@@ -450,7 +460,9 @@ def test_angles_to_phi_vector_magnitude_bragg(psic_geom):
     """|Q_phi| equals (4π/λ)·sin(2θ/2) — the Bragg scattering-vector magnitude."""
     psic_geom.wavelength = _LAMBDA_CU_KA
     Q = angles_to_phi_vector(psic_geom, **_SAPPHIRE_ANGLES)
-    np.testing.assert_allclose(np.linalg.norm(Q), _Q_MAG_SAPPHIRE_006, rtol=1e-6)
+    np.testing.assert_allclose(
+        np.linalg.norm(Q), _Q_MAG_SAPPHIRE_006, rtol=PRECISE_RTOL
+    )
 
 
 def test_angles_to_phi_vector_explicit_components_psic_sapphire(psic_geom):
@@ -491,7 +503,7 @@ def test_angles_to_phi_vector_explicit_components_psic_sapphire(psic_geom):
     psic_geom.wavelength = _LAMBDA_CU_KA
     Q = angles_to_phi_vector(psic_geom, **_SAPPHIRE_ANGLES)
     expected = np.array([0.0, 0.0, _Q_MAG_SAPPHIRE_006])
-    np.testing.assert_allclose(Q, expected, atol=1e-9)
+    np.testing.assert_allclose(Q, expected, atol=TIGHT_ATOL)
 
 
 # --- invariance / dependence properties -------------------------------------
@@ -505,7 +517,7 @@ def test_angles_to_phi_vector_magnitude_invariant_to_phi_rotation(psic_geom):
     for phi_deg in (0.0, 30.0, 60.0, 90.0, 135.0, 180.0):
         base["phi"] = phi_deg
         norms.append(np.linalg.norm(angles_to_phi_vector(psic_geom, **base)))
-    np.testing.assert_allclose(norms, norms[0], rtol=1e-10)
+    np.testing.assert_allclose(norms, norms[0], rtol=IDENTITY_RTOL)
 
 
 def test_angles_to_phi_vector_magnitude_invariant_to_sample_rotation(psic_geom):
@@ -527,7 +539,7 @@ def test_angles_to_phi_vector_magnitude_invariant_to_sample_rotation(psic_geom):
         np.linalg.norm(angles_to_phi_vector(psic_geom, **{**detector_angles, **sample}))
         for sample in sample_angle_sets
     ]
-    np.testing.assert_allclose(norms, norms[0], rtol=1e-10)
+    np.testing.assert_allclose(norms, norms[0], rtol=IDENTITY_RTOL)
 
 
 def test_angles_to_phi_vector_fourcv_all_zero_gives_zero():
@@ -535,7 +547,7 @@ def test_angles_to_phi_vector_fourcv_all_zero_gives_zero():
     g = fourcv()
     g.wavelength = 1.0
     Q = angles_to_phi_vector(g, omega=0, chi=0, phi=0, ttheta=0)
-    np.testing.assert_allclose(Q, np.zeros(3), atol=1e-12)
+    np.testing.assert_allclose(Q, np.zeros(3), atol=EXACT_ATOL)
 
 
 def test_angles_to_phi_vector_fourcv_bisecting_magnitude():
@@ -554,7 +566,7 @@ def test_angles_to_phi_vector_fourcv_bisecting_magnitude():
     expected_mag = (
         4.0 * math.pi / _LAMBDA_CU_KA * math.sin(math.radians(ttheta_deg / 2.0))
     )
-    np.testing.assert_allclose(np.linalg.norm(Q), expected_mag, rtol=1e-6)
+    np.testing.assert_allclose(np.linalg.norm(Q), expected_mag, rtol=PRECISE_RTOL)
 
 
 # --- angle restoration ------------------------------------------------------
@@ -603,7 +615,7 @@ def test_angles_to_phi_vector_partial_angles_uses_current(psic_geom):
     # Should equal the result when all angles are passed explicitly
     Q_explicit = angles_to_phi_vector(psic_geom, **_SAPPHIRE_ANGLES)
 
-    np.testing.assert_allclose(Q_none, Q_explicit, atol=1e-12)
+    np.testing.assert_allclose(Q_none, Q_explicit, atol=EXACT_ATOL)
 
 
 # --- error cases ------------------------------------------------------------
@@ -678,7 +690,7 @@ def test_two_refl_U_is_orthonormal(two_refl_geom):
     """U returned by BL1967 must satisfy U.T @ U = I and det(U) = 1."""
     ub_from_two_reflections_bl1967(two_refl_geom.sample)
     U = two_refl_geom.sample.U
-    np.testing.assert_allclose(U.T @ U, np.eye(3), atol=1e-10)
+    np.testing.assert_allclose(U.T @ U, np.eye(3), atol=IDENTITY_ATOL)
     assert abs(np.linalg.det(U) - 1.0) < 1e-10
 
 
@@ -689,14 +701,14 @@ def test_two_refl_UB_equals_U_at_B(two_refl_geom):
     np.testing.assert_allclose(
         two_refl_geom.sample.UB,
         two_refl_geom.sample.U @ B,
-        atol=1e-12,
+        atol=EXACT_ATOL,
     )
 
 
 def test_two_refl_U_identity_for_aligned_crystal(two_refl_geom):
     """When motor angles are consistent with U=I, BL1967 must recover U=I."""
     ub_from_two_reflections_bl1967(two_refl_geom.sample)
-    np.testing.assert_allclose(two_refl_geom.sample.U, np.eye(3), atol=1e-10)
+    np.testing.assert_allclose(two_refl_geom.sample.U, np.eye(3), atol=IDENTITY_ATOL)
 
 
 def test_two_refl_returns_UB_array(two_refl_geom):
@@ -724,7 +736,7 @@ def test_two_refl_r1_direction_exactly_reproduced(two_refl_geom):
     q1 = UB @ np.array(_R1_HKL_2PI, dtype=float)
     q1_hat = q1 / np.linalg.norm(q1)
     u1_hat = u1_phi / np.linalg.norm(u1_phi)
-    np.testing.assert_allclose(q1_hat, u1_hat, atol=1e-10)
+    np.testing.assert_allclose(q1_hat, u1_hat, atol=IDENTITY_ATOL)
 
 
 def test_two_refl_r2_direction_exactly_reproduced_when_consistent(two_refl_geom):
@@ -735,7 +747,7 @@ def test_two_refl_r2_direction_exactly_reproduced_when_consistent(two_refl_geom)
     q2 = UB @ np.array(_R2_HKL_2PI, dtype=float)
     q2_hat = q2 / np.linalg.norm(q2)
     u2_hat = u2_phi / np.linalg.norm(u2_phi)
-    np.testing.assert_allclose(q2_hat, u2_hat, atol=1e-10)
+    np.testing.assert_allclose(q2_hat, u2_hat, atol=IDENTITY_ATOL)
 
 
 # --- reflection argument variants -------------------------------------------
@@ -745,7 +757,7 @@ def test_two_refl_string_args(two_refl_geom):
     """r1 and r2 may be supplied as name strings."""
     UB = ub_from_two_reflections_bl1967(two_refl_geom.sample, r1="r1", r2="r2")
     assert UB.shape == (3, 3)
-    np.testing.assert_allclose(two_refl_geom.sample.U, np.eye(3), atol=1e-10)
+    np.testing.assert_allclose(two_refl_geom.sample.U, np.eye(3), atol=IDENTITY_ATOL)
 
 
 def test_two_refl_reflection_objects(two_refl_geom):
@@ -763,7 +775,7 @@ def test_two_refl_none_uses_setor0_setor0(two_refl_geom):
     two_refl_geom.sample.U = None
     two_refl_geom.sample.UB = None
     UB_explicit = ub_from_two_reflections_bl1967(two_refl_geom.sample, r1="r1", r2="r2")
-    np.testing.assert_allclose(UB_default, UB_explicit, atol=1e-12)
+    np.testing.assert_allclose(UB_default, UB_explicit, atol=EXACT_ATOL)
 
 
 def test_two_refl_mixed_string_and_object(two_refl_geom):
@@ -915,7 +927,7 @@ def test_three_refl_UB_times_h_equals_h_phi_r1(three_refl_geom):
     UB = ub_from_three_reflections_bl1967(g.sample, "r1", "r2", "r3")
     h_phi = angles_to_phi_vector(g, **_R1_ANG_2PI)
     np.testing.assert_allclose(
-        UB @ np.array(_R1_HKL_2PI, dtype=float), h_phi, atol=1e-10
+        UB @ np.array(_R1_HKL_2PI, dtype=float), h_phi, atol=IDENTITY_ATOL
     )
 
 
@@ -925,7 +937,7 @@ def test_three_refl_UB_times_h_equals_h_phi_r2(three_refl_geom):
     UB = ub_from_three_reflections_bl1967(g.sample, "r1", "r2", "r3")
     h_phi = angles_to_phi_vector(g, **_R2_ANG_2PI)
     np.testing.assert_allclose(
-        UB @ np.array(_R2_HKL_2PI, dtype=float), h_phi, atol=1e-10
+        UB @ np.array(_R2_HKL_2PI, dtype=float), h_phi, atol=IDENTITY_ATOL
     )
 
 
@@ -934,27 +946,29 @@ def test_three_refl_UB_times_h_equals_h_phi_r3(three_refl_geom):
     g = three_refl_geom
     UB = ub_from_three_reflections_bl1967(g.sample, "r1", "r2", "r3")
     h_phi = angles_to_phi_vector(g, **_R3_ANG)
-    np.testing.assert_allclose(UB @ np.array(_R3_HKL, dtype=float), h_phi, atol=1e-10)
+    np.testing.assert_allclose(
+        UB @ np.array(_R3_HKL, dtype=float), h_phi, atol=IDENTITY_ATOL
+    )
 
 
 def test_three_refl_U_is_orthonormal(three_refl_geom):
     """U returned by BL1967 must satisfy U.T @ U = I and det(U) = 1."""
     ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "r3")
     U = three_refl_geom.sample.U
-    np.testing.assert_allclose(U.T @ U, np.eye(3), atol=1e-10)
+    np.testing.assert_allclose(U.T @ U, np.eye(3), atol=IDENTITY_ATOL)
     assert abs(np.linalg.det(U) - 1.0) < 1e-10
 
 
 def test_three_refl_U_identity_for_aligned_crystal(three_refl_geom):
     """When angles are consistent with U=I and B=I, BL1967 must recover U=I."""
     ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "r3")
-    np.testing.assert_allclose(three_refl_geom.sample.U, np.eye(3), atol=1e-10)
+    np.testing.assert_allclose(three_refl_geom.sample.U, np.eye(3), atol=IDENTITY_ATOL)
 
 
 def test_three_refl_UB_equals_B_for_identity_crystal(three_refl_geom):
     """When U=I and B=I (a=2π), UB must equal B = I."""
     UB = ub_from_three_reflections_bl1967(three_refl_geom.sample, "r1", "r2", "r3")
-    np.testing.assert_allclose(UB, three_refl_geom.sample.lattice.B, atol=1e-10)
+    np.testing.assert_allclose(UB, three_refl_geom.sample.lattice.B, atol=IDENTITY_ATOL)
 
 
 def test_three_refl_UB_is_computed_first(three_refl_geom):
@@ -1398,7 +1412,7 @@ def test_inverse_real_wavelength_fourcv_sapphire():
     ub_from_two_reflections_bl1967(g.sample)
 
     hkl = g.inverse({"ttheta": 41.9419, "omega": 20.97, "chi": 90.0, "phi": 0.0})
-    np.testing.assert_allclose(hkl, [0.0, 0.0, 6.0], atol=1e-3)
+    np.testing.assert_allclose(hkl, [0.0, 0.0, 6.0], atol=ANGLE_DEGREES_ATOL)
 
 
 def test_inverse_real_wavelength_psic_silicon():
@@ -1472,8 +1486,8 @@ def test_inverse_real_wavelength_psic_silicon():
 
     hkl1 = g.inverse(r1_angles)
     hkl2 = g.inverse(r2_angles)
-    np.testing.assert_allclose(hkl1, [0.0, 0.0, 2.0], atol=1e-6)
-    np.testing.assert_allclose(hkl2, [2.0, 0.0, 0.0], atol=1e-6)
+    np.testing.assert_allclose(hkl1, [0.0, 0.0, 2.0], atol=PRECISE_ATOL)
+    np.testing.assert_allclose(hkl2, [2.0, 0.0, 0.0], atol=PRECISE_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -1514,4 +1528,4 @@ def test_compute_q_phi_cached_no_caching_fallback(psic_geom):
         cached_D=None,
     )
 
-    np.testing.assert_allclose(Q_fallback, Q_uncached, atol=1e-14)
+    np.testing.assert_allclose(Q_fallback, Q_uncached, atol=MACHINE_ATOL)
