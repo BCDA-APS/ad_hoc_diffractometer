@@ -783,7 +783,7 @@ Module Contents
      Walko-only implementation.
 
 
-.. py:function:: _solve_chi_phi_bragg(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float], free_sample: list, Q_phi: ~numpy.ndarray, mode, fast_only: bool = False) -> list[dict[str, float]]
+.. py:function:: _solve_chi_phi_bragg(geometry: ~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer, angles: dict[str, float], free_sample: list, Q_phi: ~numpy.ndarray, mode) -> list[dict[str, float]]
 
    .. container:: import-path
 
@@ -814,13 +814,6 @@ Module Contents
    :type Q_phi: numpy.ndarray, shape (3,)
    :param mode:
    :type mode: ConstraintSet
-   :param fast_only: When ``True`` and the chi/phi pair is standard Eulerian, return the
-                     analytic-fast-path result (possibly empty) without running the
-                     expensive multi-seed Newton fallback.  This is used by the
-                     outer-stage scan in :func:`_solve_reference_three_sample`, where the
-                     inner solve is invoked dozens of times and the Newton fallback's
-                     cost on the (common) no-solution case dominates.  Default ``False``.
-   :type fast_only: bool, optional
 
    :returns: Bragg-valid solutions (after cut points and limit checks).
    :rtype: list of dict[str, float]
@@ -1261,7 +1254,7 @@ Module Contents
 
    - ``"incidence"`` — incidence angle fixed at target value
    - ``"emergence"`` — emergence angle fixed at target value
-   - ``"specular"`` — specular reflection: incidence = emergence
+   - ``"incidence_equals_emergence"`` — incidence = emergence
 
    The solver builds a baseline angles dict (applying all fixed sample/detector
    constraints and setting the detector stage to ttheta_deg), then performs a

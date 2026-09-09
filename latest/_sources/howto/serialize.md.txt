@@ -167,13 +167,13 @@ and cut points:
 import ad_hoc_diffractometer as ahd
 
 g = ahd.make_geometry("psic")
-g.mode_name = "bisecting_vertical"
+g.mode_name = "fixed_omega_vertical"
 
 d = g.to_dict()
 g2 = ahd.AdHocDiffractometer.from_dict(d)
 
 assert set(g2.modes.keys()) == set(g.modes.keys())
-assert g2.mode_name == "bisecting_vertical"
+assert g2.mode_name == "fixed_omega_vertical"
 ```
 
 ## Typical workflow

@@ -79,7 +79,7 @@ Module Contents
    Return the B matrix for a complete six-parameter dict.
 
 
-.. py:function:: _active_cell_params(lat: ~ad_hoc_diffractometer.lattice.Lattice, refine_all: bool) -> tuple[str, Ellipsis]
+.. py:function:: _active_cell_params(lat: ~ad_hoc_diffractometer.lattice.Lattice, refine_all: bool) -> tuple[str, ...]
 
    .. container:: import-path
 
@@ -97,7 +97,7 @@ Module Contents
    :rtype: tuple of str — the active parameter names.
 
 
-.. py:function:: _apply_delta(full_params: dict, free_params: dict, UB: ~numpy.ndarray, delta_p: ~numpy.ndarray, active_cell: tuple[str, Ellipsis], system: str, refine_all: bool, refine_cell: bool, refine_orientation: bool) -> tuple[dict, dict, ~numpy.ndarray]
+.. py:function:: _apply_delta(full_params: dict, free_params: dict, UB: ~numpy.ndarray, delta_p: ~numpy.ndarray, active_cell: tuple[str, ...], system: str, refine_all: bool, refine_cell: bool, refine_orientation: bool) -> tuple[dict, dict, ~numpy.ndarray]
 
    .. container:: import-path
 
@@ -107,7 +107,7 @@ Module Contents
    Apply parameter update delta_p; return (new_full_params, new_free_params, new_UB).
 
 
-.. py:function:: _build_jacobian_and_residuals(geometry, refl_list: list, UB: ~numpy.ndarray, full_params: dict, free_params: dict, active_cell: tuple[str, Ellipsis], system: str, refine_all: bool, refine_cell: bool, refine_orientation: bool) -> tuple[~numpy.ndarray, ~numpy.ndarray]
+.. py:function:: _build_jacobian_and_residuals(geometry, refl_list: list, UB: ~numpy.ndarray, full_params: dict, free_params: dict, active_cell: tuple[str, ...], system: str, refine_all: bool, refine_cell: bool, refine_orientation: bool) -> tuple[~numpy.ndarray, ~numpy.ndarray]
 
    .. container:: import-path
 
@@ -147,7 +147,7 @@ Module Contents
    :rtype: numpy.ndarray, shape (3, 3)
 
 
-.. py:function:: _free_params_for_system(system: str) -> tuple[str, Ellipsis]
+.. py:function:: _free_params_for_system(system: str) -> tuple[str, ...]
 
    .. container:: import-path
 

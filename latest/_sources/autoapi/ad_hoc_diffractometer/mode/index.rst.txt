@@ -43,7 +43,7 @@ mode
    condition between Q and an external reference vector n̂ (surface normal,
    polarization axis, etc.) stored on the geometry.  The named options are
    physical pseudo-angles from You (1999) and Lohmeier & Vlieg (1993):
-   ``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``, ``"naz"``.
+   ``"psi"``, ``"incidence"``, ``"emergence"``, ``"incidence_equals_emergence"``, ``"naz"``.
    At most one reference constraint is allowed.
 
    Classes
@@ -517,7 +517,7 @@ Module Contents
                           exactly match the ``.name`` attribute of an existing
                           :class:`SampleConstraint`, :class:`DetectorConstraint`, or
                           :class:`ReferenceConstraint` in the set.  Values are floats
-                          (or ``bool`` for the ``"specular"`` :class:`ReferenceConstraint`).
+                          (or ``bool`` for the ``"incidence_equals_emergence"`` :class:`ReferenceConstraint`).
       :type \*\*updates: float or bool
 
       :returns: A new instance with the named constraints replaced.
@@ -811,7 +811,7 @@ Module Contents
    - ``"psi"`` — azimuthal angle of n̂ about Q (You 1999, eq. 23)
    - ``"incidence"`` — angle of incidence (incident beam vs. surface plane)
    - ``"emergence"`` — angle of emergence (diffracted beam vs. surface plane)
-   - ``"specular"`` — specular reflection (relational: incidence = emergence)
+   - ``"incidence_equals_emergence"`` — relational: incidence = emergence
    - ``"naz"`` — azimuthal angle of n̂ in the lab frame
    - ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``): angle between
      Q and the plane of the chi circle (psic family); see
@@ -857,24 +857,24 @@ Module Contents
    ``"emergence"``
        Angle of emergence: angle between the diffracted beam and the
        surface plane.
-   ``"specular"``
-       Specular reflection: relational condition ``incidence = emergence``.
+   ``"incidence_equals_emergence"``
+       Relational condition ``incidence = emergence``.
        ``value`` must be ``True``.
    ``"naz"``
        Azimuthal angle of n̂ in the lab frame (You 1999).
 
-   :param name: One of ``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``,
+   :param name: One of ``"psi"``, ``"incidence"``, ``"emergence"``, ``"incidence_equals_emergence"``,
                 ``"naz"``, ``"omega"``.
    :type name: str
-   :param value: Target value in degrees (or ``True`` for ``"specular"``).
+   :param value: Target value in degrees (or ``True`` for ``"incidence_equals_emergence"``).
    :type value: float or bool
 
    .. rubric:: Examples
 
    >>> ReferenceConstraint("psi", 90.0)
    ReferenceConstraint('psi', 90.0)
-   >>> ReferenceConstraint("specular", True)
-   ReferenceConstraint('specular', True)
+   >>> ReferenceConstraint("incidence_equals_emergence", True)
+   ReferenceConstraint('incidence_equals_emergence', True)
    >>> ReferenceConstraint("incidence", 5.0)
    ReferenceConstraint('incidence', 5.0)
 
@@ -898,7 +898,7 @@ Module Contents
 
       - ``"incidence"`` — ``incidence_angle - value``
       - ``"emergence"`` — ``emergence_angle - value``
-      - ``"specular"`` — ``incidence_angle - emergence_angle``
+      - ``"incidence_equals_emergence"`` — ``incidence_angle - emergence_angle``
         (the relational condition α_i = α_f; :attr:`value` is the
         boolean flag ``True`` and does not enter the residual)
       - ``"psi"`` — ``psi_angle - value``
@@ -908,7 +908,7 @@ Module Contents
       :param angles: Current motor angles in degrees, keyed by stage name.
       :type angles: dict[str, float]
       :param geometry: The diffractometer.  The required reference vector
-                       (``surface_normal`` for incidence/emergence/specular,
+                       (``surface_normal`` for incidence/emergence/incidence_equals_emergence,
                        ``azimuth`` for psi/naz) must be set, except for ``"omega"``
                        which needs no reference vector.
       :type geometry: AdHocDiffractometer
@@ -937,7 +937,7 @@ Module Contents
       For ``"psi"`` and ``"naz"``: requires
       :attr:`~geometry.AdHocDiffractometer.azimuth` to be set.
 
-      For ``"incidence"``, ``"emergence"``, and ``"specular"``: requires
+      For ``"incidence"``, ``"emergence"``, and ``"incidence_equals_emergence"``: requires
       :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
 
       For ``"omega"``: no reference vector is required (always returns
@@ -960,7 +960,7 @@ Module Contents
 
       - ``"incidence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
       - ``"emergence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
-      - ``"specular"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+      - ``"incidence_equals_emergence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
       - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuth`.
         The forward solver treats ψ as a **validation filter**: for a given
         (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for
@@ -1002,7 +1002,7 @@ Module Contents
       :type: float | bool
 
 
-      Target value in degrees, or ``True`` for ``"specular"``.
+      Target value in degrees, or ``True`` for ``"incidence_equals_emergence"``.
 
 
 .. py:class:: SampleConstraint(name: str, value: float)

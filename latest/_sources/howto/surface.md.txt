@@ -14,7 +14,7 @@ chosen by the active mode's
 
 | ReferenceConstraint name | Set on the geometry | Recipe |
 |---|---|---|
-| `incidence`, `emergence`, `specular` | `surface_normal` | `g.surface_normal = (h, k, l)` |
+| `incidence`, `emergence`, `incidence_equals_emergence` | `surface_normal` | `g.surface_normal = (h, k, l)` |
 | `psi`, `naz` | `azimuth` | `g.azimuth = (h, k, l)` |
 | `omega` (SPEC pseudo-angle) | (none required) | — |
 
@@ -77,7 +77,7 @@ Two separate reference vectors may be set:
 
 - **`surface_normal`** — the direction perpendicular to the sample surface,
   used by `incidence`, `emergence`, `incidence_angle`, `emergence_angle`, and
-  surface modes (`zaxis`, `reflectivity`, `specular_zaxis`).
+  surface modes (`zaxis`, `reflectivity`, `incidence_equals_emergence_zaxis`).
 - **`azimuth`** — the direction used to define ψ = 0, used by
   `psi_angle` and `fixed_psi_*` modes.
 
@@ -131,7 +131,7 @@ g.azimuth = (0, 0, 1)
 from ad_hoc_diffractometer import emergence_angle, incidence_angle
 
 g.surface_normal = (0, 0, 1)
-g.mode_name = "bisecting_vertical"
+g.mode_name = "fixed_omega_vertical"
 solutions = g.forward(1, 0, 0)
 
 for sol in solutions:
@@ -139,6 +139,12 @@ for sol in solutions:
     af = emergence_angle(g, angles=sol)
     print(f"incidence = {ai:.4f}°   emergence = {af:.4f}°")
 ```
+
+Both functions return **signed** angles in the range `[-90°, 90°]`.  A
+positive value means the beam is on the front face of the surface (the
+same side as **n̂**); a negative value means the ray passes below the
+surface (the back face).  The angle is no longer forced nonnegative via
+`abs()`.
 
 Both functions use the current stage angles when `angles=None`:
 
@@ -156,7 +162,7 @@ ai = incidence_angle(g)   # uses current stage angles
 from ad_hoc_diffractometer import psi_angle
 
 g.azimuth = (0, 0, 1)
-g.mode_name = "bisecting_vertical"
+g.mode_name = "fixed_omega_vertical"
 solutions = g.forward(1, 0, 0)
 
 for sol in solutions:
@@ -182,30 +188,37 @@ print(f"naz = {naz:.4f}°")
 naz is the azimuthal angle of the surface normal n̂ projected onto the
 horizontal plane of the lab frame.
 
-## Specular reflection condition (incidence = emergence)
+## Incidence-equals-emergence condition (α_i = α_f)
 
 ```python
 from ad_hoc_diffractometer import emergence_angle, incidence_angle
 
 g.surface_normal = (0, 0, 1)
-g.mode_name = "bisecting_vertical"
+g.mode_name = "fixed_omega_vertical"
 solutions = g.forward(1, 0, 0)
 
 for sol in solutions:
     ai = incidence_angle(g, angles=sol)
     af = emergence_angle(g, angles=sol)
-    is_sym = abs(ai - af) < 0.01  # within 0.01°
-    print(f"incidence={ai:.3f}°  emergence={af:.3f}°  specular={is_sym}")
+    is_eq = abs(ai - af) < 0.01  # within 0.01°
+    print(f"incidence={ai:.3f}°  emergence={af:.3f}°  incidence_eq_emergence={is_eq}")
 ```
 
-Alternatively, use the built-in `is_specular()` method on the geometry:
+Alternatively, use the built-in `is_incidence_equal_emergence()` method on
+the geometry:
 
 ```python
 for sol in solutions:
     for name, value in sol.items():
         g.set_angle(name, value)
-    print(f"specular: {g.is_specular()}")
+    print(f"incidence equals emergence: {g.is_incidence_equal_emergence()}")
 ```
+
+The equal-angle condition (α_i = α_f) is not, by itself, the true
+specular (mirror) condition.  True specular (mirror) reflection
+additionally requires the scattering vector **Q** to be parallel to the
+surface normal (zero in-plane momentum transfer); the
+incidence-equals-emergence condition alone does not guarantee that.
 
 ## Serialization
 

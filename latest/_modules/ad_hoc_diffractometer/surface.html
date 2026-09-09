@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=b95d7483"></script>
+    <script src="../../_static/documentation_options.js?v=c3e40a07"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,7 +50,7 @@
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/surface';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.21.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-30 15:11 CDT"/>
+    <meta name="docbuild:last-update" content="2026-09-09 13:47 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -434,7 +434,7 @@
   <h1>Source code for ad_hoc_diffractometer.surface</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (c) 2026-2026 UChicago Argonne, LLC</span>
 <span class="c1"># SPDX-License-Identifier: LicenseRef-UChicago-Argonne-LLC-License</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">surface.py — Surface geometry calculations.</span>
 
 <span class="sd">Provides incidence angle αᵢ, emergence angle αf, and Q-vector decomposition</span>
@@ -458,7 +458,7 @@
 <span class="sd">    Decompose Q into Q⊥ (perpendicular to sample surface) and Q‖</span>
 <span class="sd">    (parallel to sample surface) in Å⁻¹.  Returns a named dict.</span>
 
-<span class="sd">is_specular(geometry, angles=None, atol=0.01)</span>
+<span class="sd">is_incidence_equal_emergence(geometry, angles=None, atol=0.01)</span>
 <span class="sd">    Return True when αᵢ ≈ αf within ``atol`` degrees.</span>
 
 <span class="sd">is_evanescent(geometry, angles=None, critical_angle_deg=None)</span>
@@ -468,7 +468,7 @@
 <span class="sd">Physical convention</span>
 <span class="sd">-------------------</span>
 <span class="sd">The sample surface normal is specified as Miller indices ``(h, k, l)``</span>
-<span class="sd">via the geometry&#39;s ``surface_normal`` property (added to</span>
+<span class="sd">via the geometry's ``surface_normal`` property (added to</span>
 <span class="sd">``AdHocDiffractometer``).  If ``surface_normal`` is ``None`` the</span>
 <span class="sd">``azimuth`` is used as a fallback.</span>
 
@@ -478,7 +478,7 @@
 <span class="sd">    n_lab = Z @ n_phi            (Z = sample rotation matrix)</span>
 <span class="sd">    n̂_lab = n_lab / |n_lab|</span>
 
-<span class="sd">The incident beam direction in the lab frame is the ``&#39;longitudinal&#39;``</span>
+<span class="sd">The incident beam direction in the lab frame is the ``'longitudinal'``</span>
 <span class="sd">basis vector (``+ŷ``) — the beam travels along +y.</span>
 
 <span class="sd">The diffracted beam direction in the lab frame is ``D @ ŷ`` where D is</span>
@@ -502,7 +502,7 @@
 <span class="sd">* Lohmeier &amp; Vlieg, J. Appl. Cryst. 26, 706-716 (1993) §4.2</span>
 <span class="sd">* You, J. Appl. Cryst. 32, 614-623 (1999), eqs. 10-11</span>
 <span class="sd">* Vlieg et al., J. Appl. Cryst. 20, 330-337 (1987)</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -529,7 +529,7 @@
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Compute the vectors needed for surface angle calculations.</span>
 
 <span class="sd">    Parameters</span>
@@ -559,24 +559,24 @@
 <span class="sd">        are both None (no surface normal available).</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If ``geometry.sample.UB`` is None.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">wavelength</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;surface calculations require geometry.wavelength to be set.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"surface calculations require geometry.wavelength to be set."</span><span class="p">)</span>
 
     <span class="n">n_hkl</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">surface_normal</span>
     <span class="k">if</span> <span class="n">n_hkl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">n_hkl</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">azimuth</span>
     <span class="k">if</span> <span class="n">n_hkl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;surface calculations require geometry.surface_normal &quot;</span>
-            <span class="s2">&quot;(or geometry.azimuth as a fallback) to be set.&quot;</span>
+            <span class="s2">"surface calculations require geometry.surface_normal "</span>
+            <span class="s2">"(or geometry.azimuth as a fallback) to be set."</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">UB</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;surface calculations require a UB matrix on the active sample. &quot;</span>
-            <span class="s2">&quot;Set one with ub_identity(), ub_from_one_reflection(), or &quot;</span>
-            <span class="s2">&quot;assign sample.UB directly.&quot;</span>
+            <span class="s2">"surface calculations require a UB matrix on the active sample. "</span>
+            <span class="s2">"Set one with ub_identity(), ub_from_one_reflection(), or "</span>
+            <span class="s2">"assign sample.UB directly."</span>
         <span class="p">)</span>
 
     <span class="c1"># Resolve current angles</span>
@@ -605,7 +605,7 @@
         <span class="n">D</span> <span class="o">=</span> <span class="n">D</span> <span class="o">@</span> <span class="n">_rotation_matrix_normalized</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">_axis_hat</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>  <span class="c1"># noqa: SLF001</span>
 
     <span class="c1"># Incident-beam direction: longitudinal basis vector (normalized)</span>
-    <span class="n">y_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">&quot;longitudinal&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">y_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">basis</span><span class="p">[</span><span class="s2">"longitudinal"</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">y_hat</span> <span class="o">=</span> <span class="n">y_raw</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y_raw</span><span class="p">)</span>
 
     <span class="c1"># Diffracted-beam direction</span>
@@ -618,8 +618,8 @@
     <span class="n">n_phi_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n_phi</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">n_phi_norm</span> <span class="o">&lt;</span> <span class="mf">1e-14</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;Surface normal UB @ n_hkl is the zero vector. &quot;</span>
-            <span class="s2">&quot;Check the surface_normal Miller indices and the UB matrix.&quot;</span>
+            <span class="s2">"Surface normal UB @ n_hkl is the zero vector. "</span>
+            <span class="s2">"Check the surface_normal Miller indices and the UB matrix."</span>
         <span class="p">)</span>
     <span class="n">n_phi</span> <span class="o">=</span> <span class="n">n_phi</span> <span class="o">/</span> <span class="n">n_phi_norm</span>
 
@@ -646,13 +646,18 @@
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Compute the angle of incidence αᵢ (degrees).</span>
 
 <span class="sd">    αᵢ is the angle between the incoming beam and the sample surface</span>
 <span class="sd">    (complement of the angle between the beam and the surface normal)::</span>
 
-<span class="sd">        sin(αᵢ) = |ŷ · n̂_lab|</span>
+<span class="sd">        sin(αᵢ) = -(ŷ · n̂_lab)</span>
+
+<span class="sd">    The sign is preserved: αᵢ is positive when the beam strikes the front</span>
+<span class="sd">    face of the surface (the incoming beam travels against the outward</span>
+<span class="sd">    surface normal) and negative when the beam illuminates the surface</span>
+<span class="sd">    from behind (below-surface geometry).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -665,7 +670,8 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
-<span class="sd">        αᵢ in degrees, in [0°, 90°].</span>
+<span class="sd">        αᵢ in degrees, in [-90°, 90°].  Positive for front-face</span>
+<span class="sd">        illumination, negative for below-surface geometry.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -679,19 +685,21 @@
 <span class="sd">    &gt;&gt;&gt; g.wavelength = 1.5406</span>
 <span class="sd">    &gt;&gt;&gt; g.surface_normal = (0, 0, 1)</span>
 <span class="sd">    &gt;&gt;&gt; ahd.ub_identity(g.sample)</span>
-<span class="sd">    &gt;&gt;&gt; ai = g.incidence({&quot;alpha&quot;: 5.0, &quot;Z&quot;: 0.0, &quot;delta&quot;: 20.0, &quot;gamma&quot;: 0.0})</span>
+<span class="sd">    &gt;&gt;&gt; ai = g.incidence({"alpha": 5.0, "Z": 0.0, "delta": 20.0, "gamma": 0.0})</span>
 <span class="sd">    &gt;&gt;&gt; round(ai, 4)</span>
 <span class="sd">    5.0</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Lohmeier &amp; Vlieg (1993), §4.2, eq. 15.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">y_hat</span><span class="p">,</span> <span class="n">_kf_hat</span><span class="p">,</span> <span class="n">n_hat</span><span class="p">,</span> <span class="n">_Q_lab</span> <span class="o">=</span> <span class="n">_surface_vectors</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
-    <span class="n">sin_ai</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">n_hat</span><span class="p">))</span>
+    <span class="c1"># Incoming beam travels against the outward normal for front-face</span>
+    <span class="c1"># illumination, so negate the dot product to make αᵢ positive there.</span>
+    <span class="n">sin_ai</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">n_hat</span><span class="p">))</span>
     <span class="c1"># Clamp for numerical safety</span>
     <span class="n">sin_ai</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sin_ai</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">sin_ai</span><span class="p">)))</span></div>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">sin_ai</span><span class="p">))</span></div>
 
 
 
@@ -701,12 +709,16 @@
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Compute the angle of emergence αf (degrees).</span>
 
 <span class="sd">    αf is the angle between the diffracted beam and the sample surface::</span>
 
-<span class="sd">        sin(αf) = |k̂f · n̂_lab|</span>
+<span class="sd">        sin(αf) = k̂f · n̂_lab</span>
+
+<span class="sd">    The sign is preserved: αf is positive when the diffracted beam leaves</span>
+<span class="sd">    through the front face (along the outward surface normal) and negative</span>
+<span class="sd">    when it exits below the surface.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -719,7 +731,8 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
-<span class="sd">        αf in degrees, in [0°, 90°].</span>
+<span class="sd">        αf in degrees, in [-90°, 90°].  Positive when the diffracted beam</span>
+<span class="sd">        leaves through the front face, negative for a below-surface exit.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -729,11 +742,11 @@
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Lohmeier &amp; Vlieg (1993), §4.2, eq. 16.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">_y_hat</span><span class="p">,</span> <span class="n">kf_hat</span><span class="p">,</span> <span class="n">n_hat</span><span class="p">,</span> <span class="n">_Q_lab</span> <span class="o">=</span> <span class="n">_surface_vectors</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
     <span class="n">sin_af</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">kf_hat</span><span class="p">,</span> <span class="n">n_hat</span><span class="p">))</span>
     <span class="n">sin_af</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sin_af</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">sin_af</span><span class="p">)))</span></div>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">sin_af</span><span class="p">))</span></div>
 
 
 
@@ -743,7 +756,7 @@
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Decompose Q into components perpendicular and parallel to the sample surface.</span>
 
 <span class="sd">    ``Q_perp`` is the component of Q along the surface normal (out-of-plane).</span>
@@ -769,14 +782,14 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    dict with keys:</span>
-<span class="sd">        ``&quot;Q_perp&quot;`` : float</span>
+<span class="sd">        ``"Q_perp"`` : float</span>
 <span class="sd">            Magnitude of the out-of-plane component (Å⁻¹), always ≥ 0.</span>
-<span class="sd">        ``&quot;Q_par&quot;`` : float</span>
+<span class="sd">        ``"Q_par"`` : float</span>
 <span class="sd">            Magnitude of the in-plane component (Å⁻¹), always ≥ 0.</span>
-<span class="sd">        ``&quot;Q_perp_signed&quot;`` : float</span>
+<span class="sd">        ``"Q_perp_signed"`` : float</span>
 <span class="sd">            Signed out-of-plane component (Å⁻¹); positive when Q points</span>
 <span class="sd">            along the outward surface normal.</span>
-<span class="sd">        ``&quot;Q_total&quot;`` : float</span>
+<span class="sd">        ``"Q_total"`` : float</span>
 <span class="sd">            Total \|Q\| (Å⁻¹).</span>
 
 <span class="sd">    Raises</span>
@@ -787,7 +800,7 @@
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Lohmeier &amp; Vlieg (1993), §4.2, eq. 17.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">_y_hat</span><span class="p">,</span> <span class="n">_kf_hat</span><span class="p">,</span> <span class="n">n_hat</span><span class="p">,</span> <span class="n">Q_lab</span> <span class="o">=</span> <span class="n">_surface_vectors</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
 
     <span class="n">Q_perp_signed</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Q_lab</span><span class="p">,</span> <span class="n">n_hat</span><span class="p">))</span>
@@ -797,26 +810,30 @@
     <span class="n">Q_total</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Q_lab</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;Q_perp&quot;</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Q_perp_signed</span><span class="p">),</span>
-        <span class="s2">&quot;Q_par&quot;</span><span class="p">:</span> <span class="n">Q_par</span><span class="p">,</span>
-        <span class="s2">&quot;Q_perp_signed&quot;</span><span class="p">:</span> <span class="n">Q_perp_signed</span><span class="p">,</span>
-        <span class="s2">&quot;Q_total&quot;</span><span class="p">:</span> <span class="n">Q_total</span><span class="p">,</span>
+        <span class="s2">"Q_perp"</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Q_perp_signed</span><span class="p">),</span>
+        <span class="s2">"Q_par"</span><span class="p">:</span> <span class="n">Q_par</span><span class="p">,</span>
+        <span class="s2">"Q_perp_signed"</span><span class="p">:</span> <span class="n">Q_perp_signed</span><span class="p">,</span>
+        <span class="s2">"Q_total"</span><span class="p">:</span> <span class="n">Q_total</span><span class="p">,</span>
     <span class="p">}</span></div>
 
 
 
-<div class="viewcode-block" id="is_specular">
-<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.surface.is_specular">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">is_specular</span><span class="p">(</span>
+<div class="viewcode-block" id="is_incidence_equal_emergence">
+<a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/surface/index.html#ad_hoc_diffractometer.surface.is_incidence_equal_emergence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_incidence_equal_emergence</span><span class="p">(</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Return True when αᵢ ≈ αf within ``atol`` degrees.</span>
 
-<span class="sd">    The specular condition (αᵢ = αf) is the constraint used in</span>
-<span class="sd">    reflectometry and specular surface diffraction.</span>
+<span class="sd">    This tests the equal-angle condition αᵢ = αf only.  It is **not** the</span>
+<span class="sd">    true specular (mirror) condition: αᵢ = αf can hold for many</span>
+<span class="sd">    configurations that carry a nonzero in-plane momentum transfer.  True</span>
+<span class="sd">    specular reflection additionally requires the scattering vector Q to</span>
+<span class="sd">    be parallel to the surface normal (in-plane Q = 0); use</span>
+<span class="sd">    :func:`q_components` and check ``Q_par ≈ 0`` for that.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -834,7 +851,7 @@
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If any required attribute is not set.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ai</span> <span class="o">=</span> <span class="n">incidence</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
     <span class="n">af</span> <span class="o">=</span> <span class="n">emergence</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ai</span> <span class="o">-</span> <span class="n">af</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">atol</span></div>
@@ -848,7 +865,7 @@
     <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">critical_angle_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Return True when αᵢ is below the critical angle (evanescent / surface-sensitive).</span>
 
 <span class="sd">    If ``critical_angle_deg`` is ``None`` the function raises ``ValueError``</span>
@@ -879,13 +896,13 @@
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; g.is_evanescent(critical_angle_deg=0.2)</span>
 <span class="sd">    True   # if αᵢ &lt; 0.2°</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">critical_angle_deg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;is_evanescent() requires critical_angle_deg to be supplied. &quot;</span>
-            <span class="s2">&quot;The critical angle depends on the material&#39;s electron density &quot;</span>
-            <span class="s2">&quot;and is not stored on the geometry.  &quot;</span>
-            <span class="s2">&quot;Typical values: 0.1°–0.5° for hard X-rays.&quot;</span>
+            <span class="s2">"is_evanescent() requires critical_angle_deg to be supplied. "</span>
+            <span class="s2">"The critical angle depends on the material's electron density "</span>
+            <span class="s2">"and is not stored on the geometry.  "</span>
+            <span class="s2">"Typical values: 0.1°–0.5° for hard X-rays."</span>
         <span class="p">)</span>
     <span class="n">ai</span> <span class="o">=</span> <span class="n">incidence</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ai</span> <span class="o">&lt;</span> <span class="n">critical_angle_deg</span></div>
@@ -919,8 +936,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -928,7 +945,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-30 15:11 CDT.
+  Last updated on 2026-09-09 13:47 CDT.
   <br/>
 </p></div>
       

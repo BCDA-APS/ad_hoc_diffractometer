@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=b95d7483"></script>
+    <script src="../../_static/documentation_options.js?v=c3e40a07"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,7 +50,7 @@
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/factories';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.21.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-30 15:11 CDT"/>
+    <meta name="docbuild:last-update" content="2026-09-09 13:47 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -434,7 +434,7 @@
   <h1>Source code for ad_hoc_diffractometer.factories</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (c) 2026-2026 UChicago Argonne, LLC</span>
 <span class="c1"># SPDX-License-Identifier: LicenseRef-UChicago-Argonne-LLC-License</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">factories.py — geometry registry and shared definitions.</span>
 
 <span class="sd">This module provides the **geometry registry** infrastructure: the</span>
@@ -458,16 +458,16 @@
 
 <span class="sd">    import ad_hoc_diffractometer as ahd</span>
 
-<span class="sd">    g = ahd.make_geometry(&quot;fourcv&quot;)</span>
+<span class="sd">    g = ahd.make_geometry("fourcv")</span>
 
 <span class="sd">Extension via entry points</span>
 <span class="sd">--------------------------</span>
 <span class="sd">Third-party packages can contribute additional geometries by</span>
-<span class="sd">declaring an entry point in the ``&quot;ad_hoc_diffractometer.geometries&quot;``</span>
+<span class="sd">declaring an entry point in the ``"ad_hoc_diffractometer.geometries"``</span>
 <span class="sd">group in their ``pyproject.toml``::</span>
 
-<span class="sd">    [project.entry-points.&quot;ad_hoc_diffractometer.geometries&quot;]</span>
-<span class="sd">    my_geom = &quot;my_package.module:my_geometry_function&quot;</span>
+<span class="sd">    [project.entry-points."ad_hoc_diffractometer.geometries"]</span>
+<span class="sd">    my_geom = "my_package.module:my_geometry_function"</span>
 
 <span class="sd">Each geometry function must accept no required arguments (it may accept</span>
 <span class="sd">keyword arguments) and return an ``AdHocDiffractometer`` instance.</span>
@@ -493,17 +493,17 @@
 
 <span class="sd">    @register_geometry</span>
 <span class="sd">    def my_geometry(basis=BASIS_YOU):</span>
-<span class="sd">        VERTICAL     = basis[&quot;vertical&quot;]</span>
-<span class="sd">        TRANSVERSE   = basis[&quot;transverse&quot;]</span>
-<span class="sd">        LONGITUDINAL = basis[&quot;longitudinal&quot;]</span>
+<span class="sd">        VERTICAL     = basis["vertical"]</span>
+<span class="sd">        TRANSVERSE   = basis["transverse"]</span>
+<span class="sd">        LONGITUDINAL = basis["longitudinal"]</span>
 <span class="sd">        stages = [</span>
-<span class="sd">            Stage(&quot;omega&quot;, -TRANSVERSE,      role=&quot;sample&quot;),</span>
-<span class="sd">            Stage(&quot;chi&quot;,   +LONGITUDINAL, parent=&quot;omega&quot;, role=&quot;sample&quot;),</span>
-<span class="sd">            Stage(&quot;phi&quot;,   -TRANSVERSE,      parent=&quot;chi&quot;,   role=&quot;sample&quot;),</span>
-<span class="sd">            Stage(&quot;ttheta&quot;, -TRANSVERSE,     role=&quot;detector&quot;),</span>
+<span class="sd">            Stage("omega", -TRANSVERSE,      role="sample"),</span>
+<span class="sd">            Stage("chi",   +LONGITUDINAL, parent="omega", role="sample"),</span>
+<span class="sd">            Stage("phi",   -TRANSVERSE,      parent="chi",   role="sample"),</span>
+<span class="sd">            Stage("ttheta", -TRANSVERSE,     role="detector"),</span>
 <span class="sd">        ]</span>
 <span class="sd">        return AdHocDiffractometer(</span>
-<span class="sd">            name=&quot;my_geometry&quot;, stages=stages, basis=basis,</span>
+<span class="sd">            name="my_geometry", stages=stages, basis=basis,</span>
 <span class="sd">        )</span>
 
 <span class="sd">The two public basis dicts ``BASIS_YOU`` and ``BASIS_BL`` are available</span>
@@ -518,7 +518,7 @@
 <span class="sd">* ITC Vol. C, Sec. 2.2.6 (2006)</span>
 <span class="sd">  DOI:10.1107/97809553602060000577</span>
 <span class="sd">* D.A. Walko, Ref. Module Mater. Sci. Mater. Eng. (2016)</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -536,25 +536,25 @@
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 <span class="n">_GEOMETRY_REGISTRY</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="sd">&quot;&quot;&quot;Maps geometry name to a callable that returns a configured</span>
+<span class="sd">"""Maps geometry name to a callable that returns a configured</span>
 <span class="sd">``AdHocDiffractometer``.</span>
 
 <span class="sd">Populated first by ``@register_geometry`` at import time, then supplemented</span>
 <span class="sd">by installed third-party entry points the first time :func:`list_geometries`</span>
 <span class="sd">or :func:`get_geometry` is called.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="n">_EP_LOADED</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="sd">&quot;&quot;&quot;``True`` once entry-point discovery has run, so it only runs once.&quot;&quot;&quot;</span>
+<span class="sd">"""``True`` once entry-point discovery has run, so it only runs once."""</span>
 
-<span class="n">GEOMETRY_ENTRY_POINT_GROUP</span> <span class="o">=</span> <span class="s2">&quot;ad_hoc_diffractometer.geometries&quot;</span>
-<span class="sd">&quot;&quot;&quot;Entry-point group name for geometry plugins.&quot;&quot;&quot;</span>
+<span class="n">GEOMETRY_ENTRY_POINT_GROUP</span> <span class="o">=</span> <span class="s2">"ad_hoc_diffractometer.geometries"</span>
+<span class="sd">"""Entry-point group name for geometry plugins."""</span>
 
 
 <div class="viewcode-block" id="get_geometry">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.get_geometry">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Return the registered geometry callable by name.</span>
 
 <span class="sd">    This is the primitive lookup — it returns the callable that</span>
@@ -565,7 +565,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    name : str</span>
 <span class="sd">        Name of the geometry, as registered by @register_geometry</span>
-<span class="sd">        (e.g. &#39;psic&#39;, &#39;fourcv&#39;, &#39;kappa4cv&#39;).</span>
+<span class="sd">        (e.g. 'psic', 'fourcv', 'kappa4cv').</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -582,18 +582,18 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from ad_hoc_diffractometer import get_geometry</span>
-<span class="sd">    &gt;&gt;&gt; make_psic = get_geometry(&quot;psic&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; make_psic = get_geometry("psic")</span>
 <span class="sd">    &gt;&gt;&gt; make_psic()</span>
-<span class="sd">    AdHocDiffractometer(name=&#39;psic&#39;, ...)</span>
-<span class="sd">    &gt;&gt;&gt; get_geometry(&quot;kappa4cv&quot;)(alpha_deg=50)</span>
-<span class="sd">    AdHocDiffractometer(name=&#39;kappa4cv&#39;, ...)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    AdHocDiffractometer(name='psic', ...)</span>
+<span class="sd">    &gt;&gt;&gt; get_geometry("kappa4cv")(alpha_deg=50)</span>
+<span class="sd">    AdHocDiffractometer(name='kappa4cv', ...)</span>
+<span class="sd">    """</span>
     <span class="n">_load_entry_point_geometries</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_GEOMETRY_REGISTRY</span><span class="p">:</span>
         <span class="n">available</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_GEOMETRY_REGISTRY</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;No geometry named </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> is registered. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Available geometries: </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"No geometry named </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> is registered. "</span>
+            <span class="sa">f</span><span class="s2">"Available geometries: </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">_GEOMETRY_REGISTRY</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
 
@@ -602,12 +602,12 @@
 <div class="viewcode-block" id="list_geometries">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.list_geometries">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_geometries</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Return a copy of the geometry registry as {name: callable}.</span>
 
 <span class="sd">    Includes all built-in geometries (registered via ``@register_geometry``</span>
 <span class="sd">    at import time) plus any third-party geometry plugins installed as</span>
-<span class="sd">    entry points in the ``&quot;ad_hoc_diffractometer.geometries&quot;`` group.</span>
+<span class="sd">    entry points in the ``"ad_hoc_diffractometer.geometries"`` group.</span>
 
 <span class="sd">    Entry-point discovery runs automatically the first time this function</span>
 <span class="sd">    is called; subsequent calls use the already-populated registry.</span>
@@ -615,7 +615,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    dict</span>
-<span class="sd">        Keys are geometry names (e.g. ``&#39;psic&#39;``, ``&#39;fourcv&#39;``).</span>
+<span class="sd">        Keys are geometry names (e.g. ``'psic'``, ``'fourcv'``).</span>
 <span class="sd">        Values are callables that return a configured</span>
 <span class="sd">        ``AdHocDiffractometer``.</span>
 
@@ -623,11 +623,11 @@
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from ad_hoc_diffractometer import list_geometries</span>
 <span class="sd">    &gt;&gt;&gt; sorted(list_geometries())</span>
-<span class="sd">    [&#39;fivec&#39;, &#39;fourch&#39;, &#39;fourcv&#39;, &#39;kappa4ch&#39;, &#39;kappa4cv&#39;, &#39;kappa6c&#39;,</span>
-<span class="sd">     &#39;psic&#39;, &#39;s2d2&#39;, &#39;sixc&#39;, &#39;zaxis&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; list_geometries()[&#39;psic&#39;]()   # instantiate by name</span>
-<span class="sd">    AdHocDiffractometer(name=&#39;psic&#39;, ...)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    ['fivec', 'fourch', 'fourcv', 'kappa4ch', 'kappa4cv', 'kappa6c',</span>
+<span class="sd">     'psic', 's2d2', 'sixc', 'zaxis']</span>
+<span class="sd">    &gt;&gt;&gt; list_geometries()['psic']()   # instantiate by name</span>
+<span class="sd">    AdHocDiffractometer(name='psic', ...)</span>
+<span class="sd">    """</span>
     <span class="n">_load_entry_point_geometries</span><span class="p">()</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_GEOMETRY_REGISTRY</span><span class="p">)</span></div>
 
@@ -636,10 +636,10 @@
 <div class="viewcode-block" id="_load_entry_point_geometries">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories._load_entry_point_geometries">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_load_entry_point_geometries</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Discover and load geometry callables from installed entry points.</span>
 
-<span class="sd">    Scans the ``&quot;ad_hoc_diffractometer.geometries&quot;`` entry-point group</span>
+<span class="sd">    Scans the ``"ad_hoc_diffractometer.geometries"`` entry-point group</span>
 <span class="sd">    for all installed packages (including this package itself) and adds</span>
 <span class="sd">    any geometry callables not already present in ``_GEOMETRY_REGISTRY``.</span>
 
@@ -671,7 +671,7 @@
 <span class="sd">    ValueError</span>
 <span class="sd">        If an entry-point name duplicates an already-registered geometry</span>
 <span class="sd">        name.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">global</span> <span class="n">_EP_LOADED</span>  <span class="c1"># noqa: PLW0603</span>
     <span class="k">if</span> <span class="n">_EP_LOADED</span><span class="p">:</span>
         <span class="k">return</span>
@@ -685,7 +685,7 @@
 
         <span class="n">_register_packaged_geometries</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001 — non-fatal at import time</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;packaged geometry loader failed: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"packaged geometry loader failed: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">eps</span> <span class="o">=</span> <span class="n">entry_points</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="n">GEOMETRY_ENTRY_POINT_GROUP</span><span class="p">)</span>
@@ -693,35 +693,35 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">factory</span> <span class="o">=</span> <span class="n">ep</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Skipping broken entry point </span><span class="si">%r</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Skipping broken entry point </span><span class="si">%r</span><span class="s2">: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">ep</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">_GEOMETRY_REGISTRY</span><span class="p">:</span>
                 <span class="n">existing</span> <span class="o">=</span> <span class="n">_GEOMETRY_REGISTRY</span><span class="p">[</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">existing</span> <span class="ow">is</span> <span class="n">factory</span><span class="p">:</span>
                     <span class="c1"># Same callable re-declared via entry point (e.g. a built-in</span>
-                    <span class="c1"># that is both @register_geometry&#39;d and listed in pyproject.toml).</span>
+                    <span class="c1"># that is both @register_geometry'd and listed in pyproject.toml).</span>
                     <span class="c1"># This is not a conflict — skip silently.</span>
                     <span class="k">continue</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Geometry name </span><span class="si">{</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> is already registered. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Each geometry name must be unique across all installed &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;packages. The entry point </span><span class="si">{</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> from </span><span class="si">{</span><span class="n">ep</span><span class="o">.</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;conflicts with the existing registration &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">existing</span><span class="si">!r}</span><span class="s2">. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Rename the geometry in your package to resolve this conflict.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Geometry name </span><span class="si">{</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> is already registered. "</span>
+                    <span class="sa">f</span><span class="s2">"Each geometry name must be unique across all installed "</span>
+                    <span class="sa">f</span><span class="s2">"packages. The entry point </span><span class="si">{</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> from </span><span class="si">{</span><span class="n">ep</span><span class="o">.</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> "</span>
+                    <span class="sa">f</span><span class="s2">"conflicts with the existing registration "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">existing</span><span class="si">!r}</span><span class="s2">. "</span>
+                    <span class="sa">f</span><span class="s2">"Rename the geometry in your package to resolve this conflict."</span>
                 <span class="p">)</span>
             <span class="n">_GEOMETRY_REGISTRY</span><span class="p">[</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">factory</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
         <span class="k">raise</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;entry_points() failed; no plugins loaded: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"entry_points() failed; no plugins loaded: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="make_geometry">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.make_geometry">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Instantiate a geometry by name, passing keyword arguments to its</span>
 <span class="sd">    constructor callable.</span>
 
@@ -732,7 +732,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    name : str</span>
-<span class="sd">        Name of the geometry (e.g. &#39;psic&#39;, &#39;fourcv&#39;, &#39;kappa4cv&#39;).</span>
+<span class="sd">        Name of the geometry (e.g. 'psic', 'fourcv', 'kappa4cv').</span>
 <span class="sd">    **kwargs</span>
 <span class="sd">        Keyword arguments forwarded to the geometry constructor.  Most</span>
 <span class="sd">        demo geometries take no arguments; kappa demo geometries accept</span>
@@ -751,13 +751,13 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from ad_hoc_diffractometer import make_geometry</span>
-<span class="sd">    &gt;&gt;&gt; make_geometry(&quot;psic&quot;)</span>
-<span class="sd">    AdHocDiffractometer(name=&#39;psic&#39;, ...)</span>
-<span class="sd">    &gt;&gt;&gt; make_geometry(&quot;kappa4cv&quot;, alpha_deg=50)</span>
-<span class="sd">    AdHocDiffractometer(name=&#39;kappa4cv&#39;, ...)</span>
-<span class="sd">    &gt;&gt;&gt; make_geometry(&quot;kappa6c&quot;, alpha_deg=55)</span>
-<span class="sd">    AdHocDiffractometer(name=&#39;kappa6c&#39;, ...)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; make_geometry("psic")</span>
+<span class="sd">    AdHocDiffractometer(name='psic', ...)</span>
+<span class="sd">    &gt;&gt;&gt; make_geometry("kappa4cv", alpha_deg=50)</span>
+<span class="sd">    AdHocDiffractometer(name='kappa4cv', ...)</span>
+<span class="sd">    &gt;&gt;&gt; make_geometry("kappa6c", alpha_deg=55)</span>
+<span class="sd">    AdHocDiffractometer(name='kappa6c', ...)</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">get_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">)(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -765,17 +765,17 @@
 <div class="viewcode-block" id="register_geometry">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.register_geometry">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_geometry</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Decorator that registers a geometry callable in _GEOMETRY_REGISTRY.</span>
 
 <span class="sd">    The function is stored under its own ``__name__``, so the registry</span>
-<span class="sd">    key is always identical to the callable&#39;s name.  The function is</span>
+<span class="sd">    key is always identical to the callable's name.  The function is</span>
 <span class="sd">    returned unchanged; this decorator has no runtime effect on the</span>
 <span class="sd">    callable itself.</span>
 
 <span class="sd">    Third-party packages do **not** need to use this decorator — they</span>
 <span class="sd">    can instead declare an entry point in the</span>
-<span class="sd">    ``&quot;ad_hoc_diffractometer.geometries&quot;`` group in their</span>
+<span class="sd">    ``"ad_hoc_diffractometer.geometries"`` group in their</span>
 <span class="sd">    ``pyproject.toml`` and the geometry will be discovered automatically.</span>
 
 <span class="sd">    Example</span>
@@ -785,7 +785,7 @@
 <span class="sd">        @register_geometry</span>
 <span class="sd">        def psic() -&gt; AdHocDiffractometer:</span>
 <span class="sd">            ...</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">_GEOMETRY_REGISTRY</span><span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
     <span class="k">return</span> <span class="n">func</span></div>
 
@@ -796,57 +796,57 @@
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 <span class="n">BASIS_YOU</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;vertical&quot;</span><span class="p">:</span> <span class="n">XHAT</span><span class="p">,</span>
-    <span class="s2">&quot;longitudinal&quot;</span><span class="p">:</span> <span class="n">YHAT</span><span class="p">,</span>
-    <span class="s2">&quot;transverse&quot;</span><span class="p">:</span> <span class="n">ZHAT</span><span class="p">,</span>
+    <span class="s2">"vertical"</span><span class="p">:</span> <span class="n">XHAT</span><span class="p">,</span>
+    <span class="s2">"longitudinal"</span><span class="p">:</span> <span class="n">YHAT</span><span class="p">,</span>
+    <span class="s2">"transverse"</span><span class="p">:</span> <span class="n">ZHAT</span><span class="p">,</span>
 <span class="p">}</span>
-<span class="sd">&quot;&quot;&quot;Basis vector dictionary for the You (1999) coordinate convention.</span>
+<span class="sd">"""Basis vector dictionary for the You (1999) coordinate convention.</span>
 
 <span class="sd">Maps physical direction names to Cartesian unit vectors:</span>
 
-<span class="sd">- ``&quot;vertical&quot;`` → ``XHAT`` (+x, opposite to gravitational acceleration)</span>
-<span class="sd">- ``&quot;longitudinal&quot;`` → ``YHAT`` (+y, along the beam)</span>
-<span class="sd">- ``&quot;transverse&quot;`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)</span>
+<span class="sd">- ``"vertical"`` → ``XHAT`` (+x, opposite to gravitational acceleration)</span>
+<span class="sd">- ``"longitudinal"`` → ``YHAT`` (+y, along the beam)</span>
+<span class="sd">- ``"transverse"`` → ``ZHAT`` (+z, completes the right-handed system: vertical × longitudinal)</span>
 
 <span class="sd">Default basis used by ``psic``, ``sixc``, ``kappa6c``,</span>
 <span class="sd">``zaxis``, ``s2d2``, and ``fivec`` (in :mod:`ad_hoc_diffractometer.geometries`).</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="n">BASIS_BL</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;vertical&quot;</span><span class="p">:</span> <span class="n">ZHAT</span><span class="p">,</span>
-    <span class="s2">&quot;longitudinal&quot;</span><span class="p">:</span> <span class="n">YHAT</span><span class="p">,</span>
-    <span class="s2">&quot;transverse&quot;</span><span class="p">:</span> <span class="n">XHAT</span><span class="p">,</span>
+    <span class="s2">"vertical"</span><span class="p">:</span> <span class="n">ZHAT</span><span class="p">,</span>
+    <span class="s2">"longitudinal"</span><span class="p">:</span> <span class="n">YHAT</span><span class="p">,</span>
+    <span class="s2">"transverse"</span><span class="p">:</span> <span class="n">XHAT</span><span class="p">,</span>
 <span class="p">}</span>
-<span class="sd">&quot;&quot;&quot;Basis vector dictionary for the Busing &amp; Levy (1967) coordinate convention.</span>
+<span class="sd">"""Basis vector dictionary for the Busing &amp; Levy (1967) coordinate convention.</span>
 
 <span class="sd">Maps physical direction names to Cartesian unit vectors:</span>
 
-<span class="sd">- ``&quot;transverse&quot;`` → +x</span>
-<span class="sd">- ``&quot;longitudinal&quot;`` → +y (along the beam)</span>
-<span class="sd">- ``&quot;vertical&quot;`` → +z (opposite to gravitational acceleration)</span>
+<span class="sd">- ``"transverse"`` → +x</span>
+<span class="sd">- ``"longitudinal"`` → +y (along the beam)</span>
+<span class="sd">- ``"vertical"`` → +z (opposite to gravitational acceleration)</span>
 
 <span class="sd">Used by ``fourcv``, ``fourch``, ``kappa4cv``, and ``kappa4ch``</span>
 <span class="sd">(in :mod:`ad_hoc_diffractometer.geometries`).</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="n">BASIS_DEFAULT</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;vertical&quot;</span><span class="p">:</span> <span class="n">YHAT</span><span class="p">,</span>
-    <span class="s2">&quot;longitudinal&quot;</span><span class="p">:</span> <span class="n">ZHAT</span><span class="p">,</span>
-    <span class="s2">&quot;transverse&quot;</span><span class="p">:</span> <span class="n">XHAT</span><span class="p">,</span>
+    <span class="s2">"vertical"</span><span class="p">:</span> <span class="n">YHAT</span><span class="p">,</span>
+    <span class="s2">"longitudinal"</span><span class="p">:</span> <span class="n">ZHAT</span><span class="p">,</span>
+    <span class="s2">"transverse"</span><span class="p">:</span> <span class="n">XHAT</span><span class="p">,</span>
 <span class="p">}</span>
-<span class="sd">&quot;&quot;&quot;Neutral basis used by the declarative geometry loader when a YAML file</span>
+<span class="sd">"""Neutral basis used by the declarative geometry loader when a YAML file</span>
 <span class="sd">omits the ``basis:`` key (issue #267).</span>
 
 <span class="sd">Maps physical direction names to Cartesian unit vectors:</span>
 
-<span class="sd">- ``&quot;vertical&quot;`` → ``YHAT`` (+y)</span>
-<span class="sd">- ``&quot;longitudinal&quot;`` → ``ZHAT`` (+z)</span>
-<span class="sd">- ``&quot;transverse&quot;`` → ``XHAT`` (+x)</span>
+<span class="sd">- ``"vertical"`` → ``YHAT`` (+y)</span>
+<span class="sd">- ``"longitudinal"`` → ``ZHAT`` (+z)</span>
+<span class="sd">- ``"transverse"`` → ``XHAT`` (+x)</span>
 
 <span class="sd">This basis is **deliberately distinct** from both :data:`BASIS_YOU` (You</span>
 <span class="sd">1999) and :data:`BASIS_BL` (Busing &amp; Levy 1967) so that the package</span>
-<span class="sd">does not appear to espouse either literature convention as a &quot;project</span>
-<span class="sd">default.&quot;  YAML files that should match a literature convention must</span>
+<span class="sd">does not appear to espouse either literature convention as a "project</span>
+<span class="sd">default."  YAML files that should match a literature convention must</span>
 <span class="sd">declare the basis explicitly (``basis: BL``, ``basis: YOU``, or an</span>
 <span class="sd">explicit mapping); files that omit the key opt into this neutral</span>
 <span class="sd">fallback.</span>
@@ -860,14 +860,14 @@
 <span class="sd">- ``BASIS_DEFAULT`` uses ``(transverse, vertical, longitudinal) = (X, Y, Z)``,</span>
 <span class="sd">  i.e. ``(vertical, longitudinal, transverse) = (Y, Z, X)`` — the</span>
 <span class="sd">  remaining cyclic permutation.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
 <span class="c1"># Kappa angle default</span>
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 <span class="n">KAPPA_ALPHA_DEFAULT</span> <span class="o">=</span> <span class="mf">50.0</span>
-<span class="sd">&quot;&quot;&quot;Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C).&quot;&quot;&quot;</span>
+<span class="sd">"""Default kappa tilt angle in degrees (Walko 2016; Enraf-Nonius; ITC Vol. C)."""</span>
 </pre></div>
 
                 </article>
@@ -897,8 +897,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -906,7 +906,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-30 15:11 CDT.
+  Last updated on 2026-09-09 13:47 CDT.
   <br/>
 </p></div>
       

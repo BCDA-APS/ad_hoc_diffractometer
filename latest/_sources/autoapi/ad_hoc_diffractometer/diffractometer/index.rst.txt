@@ -660,7 +660,7 @@ Module Contents
 
 
 
-   .. py:method:: is_specular(angles: dict[str, float] | None = None, atol: float = 0.01) -> bool
+   .. py:method:: is_incidence_equal_emergence(angles: dict[str, float] | None = None, atol: float = 0.01) -> bool
 
       Return True when αᵢ ≈ αf within ``atol`` degrees.
 
@@ -889,7 +889,7 @@ Module Contents
       =====================================  =================================
       ``"incidence"``                        :attr:`surface_normal`
       ``"emergence"``                        :attr:`surface_normal`
-      ``"specular"``                         :attr:`surface_normal`
+      ``"incidence_equals_emergence"``       :attr:`surface_normal`
       ``"psi"``                              :attr:`azimuth`
       ``"naz"``                              :attr:`azimuth`
       ``"omega"``                            (none)
@@ -1092,7 +1092,7 @@ Module Contents
       The surface normal defines the direction perpendicular to the sample
       surface in reciprocal space.  It is used by the surface geometry
       calculations (:meth:`incidence`, :meth:`emergence`,
-      :meth:`q_components`, :meth:`is_specular`, :meth:`is_evanescent`).
+      :meth:`q_components`, :meth:`is_incidence_equal_emergence`, :meth:`is_evanescent`).
 
       When ``None``, the surface calculations fall back to
       :attr:`azimuth` if that is set.

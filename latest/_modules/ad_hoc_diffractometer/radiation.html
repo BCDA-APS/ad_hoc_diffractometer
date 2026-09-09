@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=b95d7483"></script>
+    <script src="../../_static/documentation_options.js?v=c3e40a07"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,7 +50,7 @@
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/radiation';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.21.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-30 15:11 CDT"/>
+    <meta name="docbuild:last-update" content="2026-09-09 13:47 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -434,7 +434,7 @@
   <h1>Source code for ad_hoc_diffractometer.radiation</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (c) 2026-2026 UChicago Argonne, LLC</span>
 <span class="c1"># SPDX-License-Identifier: LicenseRef-UChicago-Argonne-LLC-License</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">radiation.py — Wavelength, energy, and wave-number conversions.</span>
 
 <span class="sd">Provides named constants for common laboratory X-ray emission lines,</span>
@@ -446,10 +446,10 @@
 
 <span class="sd">This module supports two source types:</span>
 
-<span class="sd">``&quot;xray&quot;`` (default)</span>
+<span class="sd">``"xray"`` (default)</span>
 <span class="sd">    Photon energy: E (keV) = hc/λ = 12.39842 / λ (Å).</span>
 
-<span class="sd">``&quot;neutron&quot;``</span>
+<span class="sd">``"neutron"``</span>
 <span class="sd">    Fixed-wavelength **reactor** neutrons only.  Energy via the de Broglie</span>
 <span class="sd">    relation: E (meV) = h²/(2 m_n λ²) = 81.8042 / λ² (Å).</span>
 <span class="sd">    Spallation/time-of-flight sources sweep the full spectrum with each</span>
@@ -472,7 +472,7 @@
 <span class="sd">    0.0000000415 meV·Å² — propagated from CODATA 2022 m_n uncertainty.</span>
 
 <span class="sd">SOURCE_TYPES : tuple[str, ...]</span>
-<span class="sd">    Valid source-type strings: ``(&quot;xray&quot;, &quot;neutron&quot;)``.</span>
+<span class="sd">    Valid source-type strings: ``("xray", "neutron")``.</span>
 
 <span class="sd">XRAY_LINES : dict[str, float]</span>
 <span class="sd">    Named X-ray emission line wavelengths in Å.</span>
@@ -504,7 +504,7 @@
 <span class="sd">NIST CODATA 2018 — hc = 12398.42 eV·Å = 12.39842 keV·Å</span>
 <span class="sd">NIST neutron scattering — h²/(2 m_n) = 81.8042 meV·Å²</span>
 <span class="sd">de Broglie relation — λ = h/p, E = p²/(2 m_n)</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -531,60 +531,60 @@
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 <span class="n">HC_KEV_ANGSTROM</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">12.398419843320026</span>
-<span class="sd">&quot;&quot;&quot;hc = 12.398 419 843 320 026 keV·Å.</span>
+<span class="sd">"""hc = 12.398 419 843 320 026 keV·Å.</span>
 
 <span class="sd">Exact (h, c, and e are all defined SI constants since 2019).</span>
 <span class="sd">Source: NIST CODATA 2022.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="n">HC_KEV_ANGSTROM_UNCERTAINTY</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
-<span class="sd">&quot;&quot;&quot;Uncertainty of :data:`HC_KEV_ANGSTROM` in keV·Å.</span>
+<span class="sd">"""Uncertainty of :data:`HC_KEV_ANGSTROM` in keV·Å.</span>
 
 <span class="sd">Exactly **0.0** — not a placeholder.  The 2019 redefinition of the SI</span>
-<span class="sd">fixed the numerical values of Planck&#39;s constant *h* and the speed of light</span>
+<span class="sd">fixed the numerical values of Planck's constant *h* and the speed of light</span>
 <span class="sd">*c* exactly; their product *hc* therefore has zero uncertainty by</span>
 <span class="sd">definition.  Reference: BIPM SI Brochure, 9th edition (2019); NIST CODATA 2022.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="n">NEUTRON_MEV_ANGSTROM2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">81.8042102352</span>
-<span class="sd">&quot;&quot;&quot;h²/(2 m_n) = 81.804 210 235 2 meV·Å².</span>
+<span class="sd">"""h²/(2 m_n) = 81.804 210 235 2 meV·Å².</span>
 
 <span class="sd">Used for reactor-neutron kinetic energy via the de Broglie relation.</span>
 <span class="sd">Source: NIST CODATA 2022; m_n = 1.674 927 500 56(85) × 10⁻²⁷ kg.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="n">NEUTRON_MEV_ANGSTROM2_UNCERTAINTY</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0000000415</span>
-<span class="sd">&quot;&quot;&quot;Uncertainty of :data:`NEUTRON_MEV_ANGSTROM2` in meV·Å².</span>
+<span class="sd">"""Uncertainty of :data:`NEUTRON_MEV_ANGSTROM2` in meV·Å².</span>
 
 <span class="sd">Propagated from the CODATA 2022 uncertainty in the neutron mass m_n.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
-<span class="n">SOURCE_TYPES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;xray&quot;</span><span class="p">,</span> <span class="s2">&quot;neutron&quot;</span><span class="p">)</span>
-<span class="sd">&quot;&quot;&quot;Valid source-type strings for :attr:`AdHocDiffractometer.source_type`.</span>
+<span class="n">SOURCE_TYPES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"xray"</span><span class="p">,</span> <span class="s2">"neutron"</span><span class="p">)</span>
+<span class="sd">"""Valid source-type strings for :attr:`AdHocDiffractometer.source_type`.</span>
 
-<span class="sd">``&quot;xray&quot;`` uses hc/λ (keV); ``&quot;neutron&quot;`` uses de Broglie h²/(2 m_n λ²) (meV).</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">``"xray"`` uses hc/λ (keV); ``"neutron"`` uses de Broglie h²/(2 m_n λ²) (meV).</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
 <span class="c1"># Named X-ray emission lines (wavelengths in Å)</span>
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 <span class="n">XRAY_LINES</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;Cu_Ka&quot;</span><span class="p">:</span> <span class="mf">1.54060</span><span class="p">,</span>  <span class="c1"># Cu Kα  weighted mean (2·Kα1 + Kα2) / 3</span>
-    <span class="s2">&quot;Cu_Ka1&quot;</span><span class="p">:</span> <span class="mf">1.54056</span><span class="p">,</span>  <span class="c1"># Cu Kα1</span>
-    <span class="s2">&quot;Cu_Ka2&quot;</span><span class="p">:</span> <span class="mf">1.54439</span><span class="p">,</span>  <span class="c1"># Cu Kα2</span>
-    <span class="s2">&quot;Mo_Ka&quot;</span><span class="p">:</span> <span class="mf">0.71073</span><span class="p">,</span>  <span class="c1"># Mo Kα  weighted mean</span>
-    <span class="s2">&quot;Mo_Ka1&quot;</span><span class="p">:</span> <span class="mf">0.70930</span><span class="p">,</span>  <span class="c1"># Mo Kα1</span>
-    <span class="s2">&quot;Ag_Ka&quot;</span><span class="p">:</span> <span class="mf">0.56087</span><span class="p">,</span>  <span class="c1"># Ag Kα  weighted mean</span>
-    <span class="s2">&quot;Ag_Ka1&quot;</span><span class="p">:</span> <span class="mf">0.55941</span><span class="p">,</span>  <span class="c1"># Ag Kα1</span>
-    <span class="s2">&quot;Co_Ka&quot;</span><span class="p">:</span> <span class="mf">1.79021</span><span class="p">,</span>  <span class="c1"># Co Kα  weighted mean</span>
-    <span class="s2">&quot;Co_Ka1&quot;</span><span class="p">:</span> <span class="mf">1.78897</span><span class="p">,</span>  <span class="c1"># Co Kα1</span>
+    <span class="s2">"Cu_Ka"</span><span class="p">:</span> <span class="mf">1.54060</span><span class="p">,</span>  <span class="c1"># Cu Kα  weighted mean (2·Kα1 + Kα2) / 3</span>
+    <span class="s2">"Cu_Ka1"</span><span class="p">:</span> <span class="mf">1.54056</span><span class="p">,</span>  <span class="c1"># Cu Kα1</span>
+    <span class="s2">"Cu_Ka2"</span><span class="p">:</span> <span class="mf">1.54439</span><span class="p">,</span>  <span class="c1"># Cu Kα2</span>
+    <span class="s2">"Mo_Ka"</span><span class="p">:</span> <span class="mf">0.71073</span><span class="p">,</span>  <span class="c1"># Mo Kα  weighted mean</span>
+    <span class="s2">"Mo_Ka1"</span><span class="p">:</span> <span class="mf">0.70930</span><span class="p">,</span>  <span class="c1"># Mo Kα1</span>
+    <span class="s2">"Ag_Ka"</span><span class="p">:</span> <span class="mf">0.56087</span><span class="p">,</span>  <span class="c1"># Ag Kα  weighted mean</span>
+    <span class="s2">"Ag_Ka1"</span><span class="p">:</span> <span class="mf">0.55941</span><span class="p">,</span>  <span class="c1"># Ag Kα1</span>
+    <span class="s2">"Co_Ka"</span><span class="p">:</span> <span class="mf">1.79021</span><span class="p">,</span>  <span class="c1"># Co Kα  weighted mean</span>
+    <span class="s2">"Co_Ka1"</span><span class="p">:</span> <span class="mf">1.78897</span><span class="p">,</span>  <span class="c1"># Co Kα1</span>
 <span class="p">}</span>
-<span class="sd">&quot;&quot;&quot;Common laboratory X-ray emission line wavelengths in Å.</span>
+<span class="sd">"""Common laboratory X-ray emission line wavelengths in Å.</span>
 
 <span class="sd">Weighted means (Kα) use the standard 2:1 weighting of Kα1 and Kα2.</span>
 <span class="sd">Values from NIST X-Ray Transition Energies Database.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
 <span class="c1"># Conversion functions</span>
@@ -594,7 +594,7 @@
 <div class="viewcode-block" id="wavelength_to_energy">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.wavelength_to_energy">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">wavelength_to_energy</span><span class="p">(</span><span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert wavelength to photon energy for X-rays.</span>
 
 <span class="sd">    E (keV) = hc / λ = 12.39842 / λ (Å)</span>
@@ -619,10 +619,10 @@
 <span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
 <span class="sd">    &gt;&gt;&gt; round(ahd.wavelength_to_energy(1.5406), 4)</span>
 <span class="sd">    8.0478</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;wavelength_to_energy(): wavelength must be &gt; 0 Å; got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"wavelength_to_energy(): wavelength must be &gt; 0 Å; got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">HC_KEV_ANGSTROM</span> <span class="o">/</span> <span class="n">wavelength</span></div>
 
@@ -631,7 +631,7 @@
 <div class="viewcode-block" id="energy_to_wavelength">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.energy_to_wavelength">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">energy_to_wavelength</span><span class="p">(</span><span class="n">energy_kev</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert photon energy to wavelength for X-rays.</span>
 
 <span class="sd">    λ (Å) = hc / E = 12.39842 / E (keV)</span>
@@ -656,10 +656,10 @@
 <span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
 <span class="sd">    &gt;&gt;&gt; round(ahd.energy_to_wavelength(8.047), 4)</span>
 <span class="sd">    1.5408</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">energy_kev</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;energy_to_wavelength(): energy must be &gt; 0 keV; got </span><span class="si">{</span><span class="n">energy_kev</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"energy_to_wavelength(): energy must be &gt; 0 keV; got </span><span class="si">{</span><span class="n">energy_kev</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">HC_KEV_ANGSTROM</span> <span class="o">/</span> <span class="n">energy_kev</span></div>
 
@@ -668,7 +668,7 @@
 <div class="viewcode-block" id="wavelength_to_wavenumber">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.wavelength_to_wavenumber">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">wavelength_to_wavenumber</span><span class="p">(</span><span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert wavelength to wave number k.</span>
 
 <span class="sd">    k (Å⁻¹) = 2π / λ (Å)</span>
@@ -693,10 +693,10 @@
 <span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
 <span class="sd">    &gt;&gt;&gt; round(ahd.wavelength_to_wavenumber(1.0), 6)</span>
 <span class="sd">    6.283185</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;wavelength_to_wavenumber(): wavelength must be &gt; 0 Å; got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"wavelength_to_wavenumber(): wavelength must be &gt; 0 Å; got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavelength</span></div>
 
@@ -705,7 +705,7 @@
 <div class="viewcode-block" id="wavenumber_to_wavelength">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.wavenumber_to_wavelength">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">wavenumber_to_wavelength</span><span class="p">(</span><span class="n">wavenumber</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert wave number k to wavelength.</span>
 
 <span class="sd">    λ (Å) = 2π / k (Å⁻¹)</span>
@@ -730,10 +730,10 @@
 <span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
 <span class="sd">    &gt;&gt;&gt; round(ahd.wavenumber_to_wavelength(6.283185), 6)</span>
 <span class="sd">    1.0</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">wavenumber</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;wavenumber_to_wavelength(): wavenumber must be &gt; 0 Å⁻¹; got </span><span class="si">{</span><span class="n">wavenumber</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"wavenumber_to_wavelength(): wavenumber must be &gt; 0 Å⁻¹; got </span><span class="si">{</span><span class="n">wavenumber</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavenumber</span></div>
 
@@ -747,7 +747,7 @@
 <div class="viewcode-block" id="neutron_wavelength_to_energy">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.neutron_wavelength_to_energy">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">neutron_wavelength_to_energy</span><span class="p">(</span><span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert wavelength to neutron kinetic energy (de Broglie relation).</span>
 
 <span class="sd">    E (meV) = h² / (2 m_n λ²) = 81.8042 / λ² (Å)</span>
@@ -779,11 +779,11 @@
 <span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
 <span class="sd">    &gt;&gt;&gt; round(ahd.neutron_wavelength_to_energy(1.8), 4)</span>
 <span class="sd">    25.2482</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;neutron_wavelength_to_energy(): wavelength must be &gt; 0 Å; &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="s2">"neutron_wavelength_to_energy(): wavelength must be &gt; 0 Å; "</span>
+            <span class="sa">f</span><span class="s2">"got </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">NEUTRON_MEV_ANGSTROM2</span> <span class="o">/</span> <span class="p">(</span><span class="n">wavelength</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
@@ -792,7 +792,7 @@
 <div class="viewcode-block" id="neutron_energy_to_wavelength">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/radiation/index.html#ad_hoc_diffractometer.radiation.neutron_energy_to_wavelength">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">neutron_energy_to_wavelength</span><span class="p">(</span><span class="n">energy_mev</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert neutron kinetic energy to wavelength (de Broglie relation).</span>
 
 <span class="sd">    λ (Å) = sqrt(h² / (2 m_n E)) = sqrt(81.8042 / E (meV))</span>
@@ -819,10 +819,10 @@
 <span class="sd">    &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
 <span class="sd">    &gt;&gt;&gt; round(ahd.neutron_energy_to_wavelength(25.0), 4)</span>
 <span class="sd">    1.809</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">energy_mev</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;neutron_energy_to_wavelength(): energy must be &gt; 0 meV; got </span><span class="si">{</span><span class="n">energy_mev</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"neutron_energy_to_wavelength(): energy must be &gt; 0 meV; got </span><span class="si">{</span><span class="n">energy_mev</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">NEUTRON_MEV_ANGSTROM2</span> <span class="o">/</span> <span class="n">energy_mev</span><span class="p">)</span></div>
 
@@ -855,8 +855,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -864,7 +864,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-30 15:11 CDT.
+  Last updated on 2026-09-09 13:47 CDT.
   <br/>
 </p></div>
       

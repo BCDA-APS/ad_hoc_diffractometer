@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=b95d7483"></script>
+    <script src="../../_static/documentation_options.js?v=c3e40a07"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,7 +50,7 @@
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/mode';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.21.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-30 15:11 CDT"/>
+    <meta name="docbuild:last-update" content="2026-09-09 13:47 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -434,7 +434,7 @@
   <h1>Source code for ad_hoc_diffractometer.mode</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (c) 2026-2026 UChicago Argonne, LLC</span>
 <span class="c1"># SPDX-License-Identifier: LicenseRef-UChicago-Argonne-LLC-License</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">mode.py — Diffraction mode / operating constraints.</span>
 
 <span class="sd">A diffraction mode specifies which degrees of freedom are constrained</span>
@@ -456,16 +456,16 @@
 <span class="sd">detector stage (e.g. ``eta = delta / 2`` in psic, ``omega = ttheta / 2``</span>
 <span class="sd">in fourcv).  Both stage names are declared explicitly in the mode</span>
 <span class="sd">definition — the diffractometer designer knows their axis names and states</span>
-<span class="sd">them directly.  :class:`BisectConstraint` belongs to the ``&quot;sample&quot;``</span>
+<span class="sd">them directly.  :class:`BisectConstraint` belongs to the ``"sample"``</span>
 <span class="sd">category because it constrains a sample stage.</span>
 
 <span class="sd">**Sample constraints** (:class:`SampleConstraint`) fix one sample motor</span>
 <span class="sd">angle to a given value.  The name is a real stage name or a virtual</span>
-<span class="sd">Eulerian angle name (for kappa geometries: ``&quot;omega&quot;``, ``&quot;chi&quot;``,</span>
-<span class="sd">``&quot;phi&quot;``).</span>
+<span class="sd">Eulerian angle name (for kappa geometries: ``"omega"``, ``"chi"``,</span>
+<span class="sd">``"phi"``).</span>
 
 <span class="sd">**Detector constraints** (:class:`DetectorConstraint`) fix one detector</span>
-<span class="sd">stage angle (or the pseudo-angle ``&quot;qaz&quot;`` from You 1999 eq. 18).  At</span>
+<span class="sd">stage angle (or the pseudo-angle ``"qaz"`` from You 1999 eq. 18).  At</span>
 <span class="sd">most one detector constraint is allowed — fixing two detector angles would</span>
 <span class="sd">over-constrain the scattered beam direction.</span>
 
@@ -473,7 +473,7 @@
 <span class="sd">condition between Q and an external reference vector n̂ (surface normal,</span>
 <span class="sd">polarization axis, etc.) stored on the geometry.  The named options are</span>
 <span class="sd">physical pseudo-angles from You (1999) and Lohmeier &amp; Vlieg (1993):</span>
-<span class="sd">``&quot;psi&quot;``, ``&quot;incidence&quot;``, ``&quot;emergence&quot;``, ``&quot;specular&quot;``, ``&quot;naz&quot;``.</span>
+<span class="sd">``"psi"``, ``"incidence"``, ``"emergence"``, ``"incidence_equals_emergence"``, ``"naz"``.</span>
 <span class="sd">At most one reference constraint is allowed.</span>
 
 <span class="sd">Classes</span>
@@ -487,7 +487,7 @@
 
 <span class="sd">:class:`DetectorConstraint`</span>
 <span class="sd">    Constrains one detector stage to a fixed angle, or the pseudo-angle</span>
-<span class="sd">    ``&quot;qaz&quot;``.</span>
+<span class="sd">    ``"qaz"``.</span>
 
 <span class="sd">:class:`ReferenceConstraint`</span>
 <span class="sd">    Constrains a physical pseudo-angle between Q and the reference vector.</span>
@@ -538,7 +538,7 @@
 <span class="sd">* You, J. Appl. Cryst. 32, 614-623 (1999).</span>
 <span class="sd">* Lohmeier &amp; Vlieg, J. Appl. Cryst. 26, 706-716 (1993).</span>
 <span class="sd">* Walko, Ref. Module Mater. Sci. Mater. Eng. (2016), section 3.3 and 5.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -559,7 +559,7 @@
 <div class="viewcode-block" id="EwaldSphereViolation">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.EwaldSphereViolation">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EwaldSphereViolation</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Raised when the requested reflection cannot be reached at the current wavelength.</span>
 
 <span class="sd">    The magnitude of the scattering vector Q exceeds the diameter of the</span>
@@ -574,16 +574,16 @@
 <span class="sd">        Maximum reachable ``|Q|`` at the current wavelength (``4π/λ``) in Å⁻¹.</span>
 <span class="sd">    wavelength : float</span>
 <span class="sd">        Current wavelength in Å.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_mag</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">q_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_mag</span> <span class="o">=</span> <span class="n">q_mag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_max</span> <span class="o">=</span> <span class="n">q_max</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">wavelength</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;|Q| = </span><span class="si">{</span><span class="n">q_mag</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2"> Å⁻¹ exceeds the Ewald sphere &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;(max = </span><span class="si">{</span><span class="n">q_max</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2"> Å⁻¹) at λ = </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2"> Å.  &quot;</span>
-            <span class="s2">&quot;The reflection cannot be reached.&quot;</span>
+            <span class="sa">f</span><span class="s2">"|Q| = </span><span class="si">{</span><span class="n">q_mag</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2"> Å⁻¹ exceeds the Ewald sphere "</span>
+            <span class="sa">f</span><span class="s2">"(max = </span><span class="si">{</span><span class="n">q_max</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2"> Å⁻¹) at λ = </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s2"> Å.  "</span>
+            <span class="s2">"The reflection cannot be reached."</span>
         <span class="p">)</span></div>
 
 
@@ -591,7 +591,7 @@
 <div class="viewcode-block" id="ConstraintViolation">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintViolation">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConstraintViolation</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Raised when a forward-calculation solution violates a declared constraint.</span>
 
 <span class="sd">    This indicates either a solver error or an unimplemented virtual-angle</span>
@@ -608,7 +608,7 @@
 <span class="sd">        The constraint residual in degrees (non-zero = violated).</span>
 <span class="sd">    tolerance : float</span>
 <span class="sd">        The tolerance used for the check (from :func:`~.display.precision_atol`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -622,10 +622,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">residual</span> <span class="o">=</span> <span class="n">residual</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span> <span class="o">=</span> <span class="n">tolerance</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Solution </span><span class="si">{</span><span class="n">solution_index</span><span class="si">}</span><span class="s2"> violates </span><span class="si">{</span><span class="n">constraint_repr</span><span class="si">}</span><span class="s2"> &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;beyond tolerance (</span><span class="si">{</span><span class="n">tolerance</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">°): residual = </span><span class="si">{</span><span class="n">residual</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2">°.  &quot;</span>
-            <span class="s2">&quot;This indicates a solver error or an unimplemented virtual-angle &quot;</span>
-            <span class="s2">&quot;constraint (e.g. kappa Eulerian pseudoangle).&quot;</span>
+            <span class="sa">f</span><span class="s2">"Solution </span><span class="si">{</span><span class="n">solution_index</span><span class="si">}</span><span class="s2"> violates </span><span class="si">{</span><span class="n">constraint_repr</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="sa">f</span><span class="s2">"beyond tolerance (</span><span class="si">{</span><span class="n">tolerance</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">°): residual = </span><span class="si">{</span><span class="n">residual</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2">°.  "</span>
+            <span class="s2">"This indicates a solver error or an unimplemented virtual-angle "</span>
+            <span class="s2">"constraint (e.g. kappa Eulerian pseudoangle)."</span>
         <span class="p">)</span></div>
 
 
@@ -636,46 +636,46 @@
 
 <span class="n">REFERENCE_NAMES</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
     <span class="p">{</span>
-        <span class="s2">&quot;psi&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;incidence&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;emergence&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;specular&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;naz&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;omega&quot;</span><span class="p">,</span>
+        <span class="s2">"psi"</span><span class="p">,</span>
+        <span class="s2">"incidence"</span><span class="p">,</span>
+        <span class="s2">"emergence"</span><span class="p">,</span>
+        <span class="s2">"incidence_equals_emergence"</span><span class="p">,</span>
+        <span class="s2">"naz"</span><span class="p">,</span>
+        <span class="s2">"omega"</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">)</span>
-<span class="sd">&quot;&quot;&quot;Valid reference constraint names (physical pseudo-angles).</span>
+<span class="sd">"""Valid reference constraint names (physical pseudo-angles).</span>
 
 <span class="sd">The set of strings accepted by :class:`ReferenceConstraint` as the ``name``</span>
 <span class="sd">argument.  Most names correspond to a physically meaningful pseudo-angle</span>
-<span class="sd">between the scattering vector Q and the reference vector n̂; ``&quot;omega&quot;`` is</span>
+<span class="sd">between the scattering vector Q and the reference vector n̂; ``"omega"`` is</span>
 <span class="sd">the SPEC ``OMEGA`` pseudo-angle, defined entirely by the diffractometer</span>
 <span class="sd">geometry (no reference vector required):</span>
 
-<span class="sd">- ``&quot;psi&quot;`` — azimuthal angle of n̂ about Q (You 1999, eq. 23)</span>
-<span class="sd">- ``&quot;incidence&quot;`` — angle of incidence (incident beam vs. surface plane)</span>
-<span class="sd">- ``&quot;emergence&quot;`` — angle of emergence (diffracted beam vs. surface plane)</span>
-<span class="sd">- ``&quot;specular&quot;`` — specular reflection (relational: incidence = emergence)</span>
-<span class="sd">- ``&quot;naz&quot;`` — azimuthal angle of n̂ in the lab frame</span>
-<span class="sd">- ``&quot;omega&quot;`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``): angle between</span>
+<span class="sd">- ``"psi"`` — azimuthal angle of n̂ about Q (You 1999, eq. 23)</span>
+<span class="sd">- ``"incidence"`` — angle of incidence (incident beam vs. surface plane)</span>
+<span class="sd">- ``"emergence"`` — angle of emergence (diffracted beam vs. surface plane)</span>
+<span class="sd">- ``"incidence_equals_emergence"`` — relational: incidence = emergence</span>
+<span class="sd">- ``"naz"`` — azimuthal angle of n̂ in the lab frame</span>
+<span class="sd">- ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``): angle between</span>
 <span class="sd">  Q and the plane of the chi circle (psic family); see</span>
 <span class="sd">  :func:`~ad_hoc_diffractometer.reference.omega_pseudo`</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
-<span class="n">QAZ</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;qaz&quot;</span>
-<span class="sd">&quot;&quot;&quot;Special name for the qaz detector pseudo-angle (You 1999, eq. 18).</span>
+<span class="n">QAZ</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"qaz"</span>
+<span class="sd">"""Special name for the qaz detector pseudo-angle (You 1999, eq. 18).</span>
 
 <span class="sd">When used as the ``name`` argument to :class:`DetectorConstraint`, this</span>
 <span class="sd">constrains the azimuthal angle of Q in the plane spanned by the vertical</span>
 <span class="sd">and transverse axes:  ``tan(qaz) = tan(delta) / sin(nu)``.</span>
 <span class="sd">Setting ``qaz = 0`` constrains scattering to the horizontal plane;</span>
 <span class="sd">``qaz = 90°`` constrains it to the vertical plane.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># Sentinel objects for extras dict values.</span>
 <span class="n">REQUIRED</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
-<span class="sd">&quot;&quot;&quot;Sentinel marking a required extra input in a :class:`ConstraintSet` extras dict.</span>
+<span class="sd">"""Sentinel marking a required extra input in a :class:`ConstraintSet` extras dict.</span>
 
 <span class="sd">Place this sentinel as the value for any key in ``ConstraintSet.extras`` that</span>
 <span class="sd">*must* be supplied by the caller before :meth:`~.diffractometer.AdHocDiffractometer.forward`</span>
@@ -683,45 +683,45 @@
 
 <span class="sd">    cs = ConstraintSet(</span>
 <span class="sd">        [...],</span>
-<span class="sd">        extras={&quot;n_hat&quot;: REQUIRED},</span>
+<span class="sd">        extras={"n_hat": REQUIRED},</span>
 <span class="sd">    )</span>
 
 <span class="sd">The forward solver should check for ``REQUIRED`` sentinels and raise a</span>
 <span class="sd">descriptive error if they have not been replaced by the caller.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="n">OPTIONAL</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
-<span class="sd">&quot;&quot;&quot;Sentinel marking an optional extra input in a :class:`ConstraintSet` extras dict.</span>
+<span class="sd">"""Sentinel marking an optional extra input in a :class:`ConstraintSet` extras dict.</span>
 
 <span class="sd">Place this sentinel as the value for any key in ``ConstraintSet.extras`` that</span>
 <span class="sd">*may* be supplied by the caller but has a sensible default::</span>
 
 <span class="sd">    cs = ConstraintSet(</span>
 <span class="sd">        [...],</span>
-<span class="sd">        extras={&quot;azimuth&quot;: OPTIONAL},</span>
+<span class="sd">        extras={"azimuth": OPTIONAL},</span>
 <span class="sd">    )</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
 <span class="c1"># Documentation-placeholder extras keys (issue #294)</span>
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
-<span class="n">_PLACEHOLDER_EXTRA_KEYS</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;n_hat&quot;</span><span class="p">})</span>
-<span class="sd">&quot;&quot;&quot;Extras-dict keys that are *documentation hints*, not settable input slots.</span>
+<span class="n">_PLACEHOLDER_EXTRA_KEYS</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"n_hat"</span><span class="p">})</span>
+<span class="sd">"""Extras-dict keys that are *documentation hints*, not settable input slots.</span>
 
 <span class="sd">Issue #294.  Some ``extras`` entries on a</span>
-<span class="sd">:class:`ConstraintSet` — currently only ``&quot;n_hat&quot;`` — name a quantity</span>
+<span class="sd">:class:`ConstraintSet` — currently only ``"n_hat"`` — name a quantity</span>
 <span class="sd">that *looks* like a settable input but is actually a documentation</span>
 <span class="sd">placeholder.  The corresponding value lives on the diffractometer under</span>
 <span class="sd">:attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.surface_normal`</span>
 <span class="sd">or</span>
 <span class="sd">:attr:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.azimuth`,</span>
-<span class="sd">chosen by the mode&#39;s</span>
+<span class="sd">chosen by the mode's</span>
 <span class="sd">:class:`ReferenceConstraint`; the ``extras`` entry is just a hint that</span>
 <span class="sd">documents the requirement.</span>
 
-<span class="sd">A user who naively assigns ``cs.extras[&quot;n_hat&quot;] = (0, 0, 1)`` sees no</span>
+<span class="sd">A user who naively assigns ``cs.extras["n_hat"] = (0, 0, 1)`` sees no</span>
 <span class="sd">effect on :meth:`~ad_hoc_diffractometer.diffractometer.AdHocDiffractometer.forward`</span>
 <span class="sd">and is confused.  :class:`_ExtrasDict` (below) wraps the ``extras``</span>
 <span class="sd">dict and emits a :class:`UserWarning` whenever a placeholder key in</span>
@@ -733,44 +733,44 @@
 <span class="sd">is raised — because the assignment is harmless (silently ignored by</span>
 <span class="sd">the solver).  The goal is to surface the footgun to a user who has</span>
 <span class="sd">misread the ``extras`` dict as a settable input bag.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <div class="viewcode-block" id="_ExtrasDict">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode._ExtrasDict">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">_ExtrasDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dict that warns when documentation-placeholder keys are overwritten.</span>
+<span class="w">    </span><span class="sd">"""A dict that warns when documentation-placeholder keys are overwritten.</span>
 
 <span class="sd">    Issue #294.  Behaves identically to ``dict`` except that assigning a</span>
 <span class="sd">    non-sentinel, non-``None`` value to a key in</span>
-<span class="sd">    :data:`_PLACEHOLDER_EXTRA_KEYS` (currently ``{&quot;n_hat&quot;}``) emits a</span>
+<span class="sd">    :data:`_PLACEHOLDER_EXTRA_KEYS` (currently ``{"n_hat"}``) emits a</span>
 <span class="sd">    :class:`UserWarning` directing the caller at the correct geometry</span>
 <span class="sd">    attribute.  Sentinel writes (``REQUIRED``, ``OPTIONAL``, ``None``)</span>
 <span class="sd">    are silent: those are legitimate construction-time states produced</span>
 <span class="sd">    by the YAML loader and :meth:`ConstraintSet.from_dict`.</span>
 
 <span class="sd">    The check is intentionally minimal — no exception, no rejection of</span>
-<span class="sd">    the write — because the value is harmless (it&#39;s silently ignored by</span>
+<span class="sd">    the write — because the value is harmless (it's silently ignored by</span>
 <span class="sd">    the solver).  The goal is only to surface the footgun to a user who</span>
 <span class="sd">    has misread the ``extras`` dict as a settable input bag.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_PLACEHOLDER_EXTRA_KEYS</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">REQUIRED</span><span class="p">,</span> <span class="n">OPTIONAL</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;extras[</span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">] is a documentation placeholder, not a &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;settable input slot.  Assigning a value here has no &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;effect on forward().  Set the reference vector on the &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;geometry instead: use &#39;g.surface_normal = (h, k, l)&#39; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;for surface-mode constraints &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;(incidence / emergence / specular), or &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&#39;g.azimuth = (h, k, l)&#39; for &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;psi / naz constraints.  See &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;AdHocDiffractometer.required_reference_vector to &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;discover which attribute the active mode needs.  &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;(issue #294)&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"extras[</span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">] is a documentation placeholder, not a "</span>
+                <span class="sa">f</span><span class="s2">"settable input slot.  Assigning a value here has no "</span>
+                <span class="sa">f</span><span class="s2">"effect on forward().  Set the reference vector on the "</span>
+                <span class="sa">f</span><span class="s2">"geometry instead: use 'g.surface_normal = (h, k, l)' "</span>
+                <span class="sa">f</span><span class="s2">"for surface-mode constraints "</span>
+                <span class="sa">f</span><span class="s2">"(incidence / emergence / incidence_equals_emergence), or "</span>
+                <span class="sa">f</span><span class="s2">"'g.azimuth = (h, k, l)' for "</span>
+                <span class="sa">f</span><span class="s2">"psi / naz constraints.  See "</span>
+                <span class="sa">f</span><span class="s2">"AdHocDiffractometer.required_reference_vector to "</span>
+                <span class="sa">f</span><span class="s2">"discover which attribute the active mode needs.  "</span>
+                <span class="sa">f</span><span class="s2">"(issue #294)"</span><span class="p">,</span>
                 <span class="ne">UserWarning</span><span class="p">,</span>
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="p">)</span>
@@ -786,13 +786,13 @@
 <div class="viewcode-block" id="BisectConstraint">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BisectConstraint</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Relational sample constraint: ``sample_stage = detector_stage / 2``.</span>
 
 <span class="sd">    This is the bisecting condition used in standard Eulerian diffractometer</span>
 <span class="sd">    modes.  Both stage names are declared explicitly in the mode definition.</span>
 
-<span class="sd">    :class:`BisectConstraint` belongs to the ``&quot;sample&quot;`` category because</span>
+<span class="sd">    :class:`BisectConstraint` belongs to the ``"sample"`` category because</span>
 <span class="sd">    it drives a sample stage, even though it depends on the value of a</span>
 <span class="sd">    detector stage.</span>
 
@@ -800,27 +800,27 @@
 <span class="sd">    ----------</span>
 <span class="sd">    sample_stage : str</span>
 <span class="sd">        Name of the sample stage to be driven to half the detector angle</span>
-<span class="sd">        (e.g. ``&quot;eta&quot;`` in psic, ``&quot;omega&quot;`` in fourcv).</span>
+<span class="sd">        (e.g. ``"eta"`` in psic, ``"omega"`` in fourcv).</span>
 <span class="sd">    detector_stage : str</span>
 <span class="sd">        Name of the detector stage whose angle is halved</span>
-<span class="sd">        (e.g. ``&quot;delta&quot;`` in psic, ``&quot;ttheta&quot;`` in fourcv).</span>
+<span class="sd">        (e.g. ``"delta"`` in psic, ``"ttheta"`` in fourcv).</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; BisectConstraint(&quot;eta&quot;, &quot;delta&quot;)</span>
-<span class="sd">    BisectConstraint(&#39;eta&#39;, &#39;delta&#39;)</span>
-<span class="sd">    &gt;&gt;&gt; BisectConstraint(&quot;omega&quot;, &quot;ttheta&quot;)</span>
-<span class="sd">    BisectConstraint(&#39;omega&#39;, &#39;ttheta&#39;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; BisectConstraint("eta", "delta")</span>
+<span class="sd">    BisectConstraint('eta', 'delta')</span>
+<span class="sd">    &gt;&gt;&gt; BisectConstraint("omega", "ttheta")</span>
+<span class="sd">    BisectConstraint('omega', 'ttheta')</span>
+<span class="sd">    """</span>
 
-    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sample&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constraint category identifier — always ``&quot;sample&quot;``.&quot;&quot;&quot;</span>
+    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"sample"</span>
+<span class="w">    </span><span class="sd">"""Constraint category identifier — always ``"sample"``."""</span>
 
     <span class="n">is_bisect</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Always ``True`` — identifies this as the bisecting relational constraint.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Always ``True`` — identifies this as the bisecting relational constraint."""</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bisect&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constraint name — always ``&quot;bisect&quot;``.&quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"bisect"</span>
+<span class="w">    </span><span class="sd">"""Constraint name — always ``"bisect"``."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">detector_stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sample_stage</span><span class="p">)</span>
@@ -828,12 +828,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of the sample stage driven to half the detector angle.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Name of the sample stage driven to half the detector angle."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detector_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of the detector stage whose angle is halved.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Name of the detector stage whose angle is halved."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span>
 
 <div class="viewcode-block" id="BisectConstraint.evaluate">
@@ -843,7 +843,7 @@
         <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the constraint residual (zero when satisfied).</span>
 
 <span class="sd">        Residual = ``angles[sample_stage] - angles[detector_stage] / 2``.</span>
@@ -860,7 +860,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            Residual in degrees.  Zero means the constraint is satisfied.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">angles</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span><span class="p">]</span> <span class="o">-</span> <span class="n">angles</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span></div>
 
 
@@ -872,19 +872,19 @@
         <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
         <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True when ``|evaluate(angles, geometry)| &lt; tol``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return True when ``|evaluate(angles, geometry)| &lt; tol``."""</span>
         <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">geometry</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">tol</span></div>
 
 
 <div class="viewcode-block" id="BisectConstraint.is_implemented">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint.is_implemented">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_implemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return True when both named stages exist in the geometry.</span>
 
 <span class="sd">        Checks that ``sample_stage`` exists in ``geometry.sample_stages``</span>
 <span class="sd">        and ``detector_stage`` exists in ``geometry.detector_stages``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">sample_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">}</span>
         <span class="n">detector_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">}</span>
         <span class="k">return</span> <span class="p">(</span>
@@ -896,11 +896,11 @@
 <div class="viewcode-block" id="BisectConstraint.to_dict">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a JSON-serialisable dict.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a JSON-serialisable dict."""</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;BisectConstraint&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;sample_stage&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span><span class="p">,</span>
-            <span class="s2">&quot;detector_stage&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"BisectConstraint"</span><span class="p">,</span>
+            <span class="s2">"sample_stage"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span><span class="p">,</span>
+            <span class="s2">"detector_stage"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
@@ -908,12 +908,12 @@
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.BisectConstraint.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BisectConstraint</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct from a dict produced by :meth:`to_dict`.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">sample_stage</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;sample_stage&quot;</span><span class="p">],</span> <span class="n">detector_stage</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;detector_stage&quot;</span><span class="p">])</span></div>
+<span class="w">        </span><span class="sd">"""Reconstruct from a dict produced by :meth:`to_dict`."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">sample_stage</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">"sample_stage"</span><span class="p">],</span> <span class="n">detector_stage</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">"detector_stage"</span><span class="p">])</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;BisectConstraint(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="si">!r}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"BisectConstraint(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="si">!r}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BisectConstraint</span><span class="p">):</span>
@@ -931,7 +931,7 @@
 <div class="viewcode-block" id="VirtualBisectConstraint">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.VirtualBisectConstraint">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VirtualBisectConstraint</span><span class="p">(</span><span class="n">BisectConstraint</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    True virtual bisecting constraint for kappa geometries.</span>
 
 <span class="sd">    Identical in structure to :class:`BisectConstraint` but</span>
@@ -961,26 +961,26 @@
 <span class="sd">    ----------</span>
 <span class="sd">    sample_stage : str</span>
 <span class="sd">        Name of the *virtual* Eulerian angle to drive (typically</span>
-<span class="sd">        ``&quot;omega&quot;``).  Stored for documentation and serialization;</span>
+<span class="sd">        ``"omega"``).  Stored for documentation and serialization;</span>
 <span class="sd">        the solver always enforces ``omega_virtual = ttheta/2``</span>
 <span class="sd">        regardless of this name.</span>
 <span class="sd">    detector_stage : str</span>
 <span class="sd">        Name of the detector stage whose angle is halved (e.g.</span>
-<span class="sd">        ``&quot;ttheta&quot;`` on kappa4cv/kappa4ch, ``&quot;delta&quot;`` on kappa6c).</span>
+<span class="sd">        ``"ttheta"`` on kappa4cv/kappa4ch, ``"delta"`` on kappa6c).</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; VirtualBisectConstraint(&quot;omega&quot;, &quot;ttheta&quot;)</span>
-<span class="sd">    VirtualBisectConstraint(&#39;omega&#39;, &#39;ttheta&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; VirtualBisectConstraint("omega", "ttheta")</span>
+<span class="sd">    VirtualBisectConstraint('omega', 'ttheta')</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    * D. A. Walko, *Ref. Module Mater. Sci. Mater. Eng.* (2016),</span>
 <span class="sd">      eq. [16] — kappa pseudoangle relations.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;virtual_bisect&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constraint name — ``&quot;virtual_bisect&quot;`` (overrides ``&quot;bisect&quot;``).&quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"virtual_bisect"</span>
+<span class="w">    </span><span class="sd">"""Constraint name — ``"virtual_bisect"`` (overrides ``"bisect"``)."""</span>
 
 <div class="viewcode-block" id="VirtualBisectConstraint.evaluate">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.VirtualBisectConstraint.evaluate">[docs]</a>
@@ -989,7 +989,7 @@
         <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the constraint residual ``omega_virtual − detector/2``.</span>
 
 <span class="sd">        ``omega_virtual`` is computed from the kappa motor triple</span>
@@ -1024,19 +1024,19 @@
 <span class="sd">            (the constraint is only meaningful on kappa geometries)</span>
 <span class="sd">            or if the kappa triple lies outside the reachable virtual</span>
 <span class="sd">            range.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">.kappa</span><span class="w"> </span><span class="kn">import</span> <span class="n">kappa_to_eulerian_axes</span>
 
         <span class="n">convention</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_pseudo_angle_convention</span>
         <span class="k">if</span> <span class="n">convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;VirtualBisectConstraint requires &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;geometry.kappa_pseudo_angle_convention to be set; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> is not a kappa geometry.&quot;</span>
+                <span class="sa">f</span><span class="s2">"VirtualBisectConstraint requires "</span>
+                <span class="sa">f</span><span class="s2">"geometry.kappa_pseudo_angle_convention to be set; "</span>
+                <span class="sa">f</span><span class="s2">"geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> is not a kappa geometry."</span>
             <span class="p">)</span>
-        <span class="n">komega</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="s2">&quot;komega&quot;</span><span class="p">]</span>
-        <span class="n">kappa</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="s2">&quot;kappa&quot;</span><span class="p">]</span>
-        <span class="n">kphi</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="s2">&quot;kphi&quot;</span><span class="p">]</span>
+        <span class="n">komega</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="s2">"komega"</span><span class="p">]</span>
+        <span class="n">kappa</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="s2">"kappa"</span><span class="p">]</span>
+        <span class="n">kphi</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="s2">"kphi"</span><span class="p">]</span>
         <span class="n">omega_v</span><span class="p">,</span> <span class="n">_chi_v</span><span class="p">,</span> <span class="n">_phi_v</span> <span class="o">=</span> <span class="n">kappa_to_eulerian_axes</span><span class="p">(</span>
             <span class="n">komega</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">kphi</span><span class="p">,</span> <span class="n">convention</span>
         <span class="p">)</span>
@@ -1046,15 +1046,15 @@
 <div class="viewcode-block" id="VirtualBisectConstraint.is_implemented">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.VirtualBisectConstraint.is_implemented">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_implemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return True when the geometry is a kappa diffractometer with</span>
 <span class="sd">        the required ``komega``, ``kappa``, ``kphi`` stages and the</span>
 <span class="sd">        named detector stage.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="n">sample_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">}</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">{</span><span class="s2">&quot;komega&quot;</span><span class="p">,</span> <span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="s2">&quot;kphi&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">sample_names</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">{</span><span class="s2">"komega"</span><span class="p">,</span> <span class="s2">"kappa"</span><span class="p">,</span> <span class="s2">"kphi"</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">sample_names</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="n">detector_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span> <span class="ow">in</span> <span class="n">detector_names</span></div>
@@ -1063,17 +1063,17 @@
 <div class="viewcode-block" id="VirtualBisectConstraint.to_dict">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.VirtualBisectConstraint.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a JSON-serialisable dict.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a JSON-serialisable dict."""</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;VirtualBisectConstraint&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;sample_stage&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span><span class="p">,</span>
-            <span class="s2">&quot;detector_stage&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"VirtualBisectConstraint"</span><span class="p">,</span>
+            <span class="s2">"sample_stage"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span><span class="p">,</span>
+            <span class="s2">"detector_stage"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;VirtualBisectConstraint(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="si">!r}</span><span class="s2">)&quot;</span>
+            <span class="sa">f</span><span class="s2">"VirtualBisectConstraint(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="si">!r}</span><span class="s2">)"</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -1086,7 +1086,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span>
-            <span class="p">(</span><span class="s2">&quot;VirtualBisectConstraint&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="p">)</span>
+            <span class="p">(</span><span class="s2">"VirtualBisectConstraint"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_stage</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector_stage</span><span class="p">)</span>
         <span class="p">)</span></div>
 
 
@@ -1094,30 +1094,30 @@
 <div class="viewcode-block" id="SampleConstraint">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SampleConstraint</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Constrains one sample motor angle to a fixed value.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    name : str</span>
 <span class="sd">        Stage name, or a virtual Eulerian angle name for kappa geometries</span>
-<span class="sd">        (e.g. ``&quot;omega&quot;``, ``&quot;chi&quot;``, ``&quot;phi&quot;``).</span>
+<span class="sd">        (e.g. ``"omega"``, ``"chi"``, ``"phi"``).</span>
 <span class="sd">    value : float</span>
 <span class="sd">        Fixed angle in degrees.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; SampleConstraint(&quot;chi&quot;, 90.0)</span>
-<span class="sd">    SampleConstraint(&#39;chi&#39;, 90.0)</span>
-<span class="sd">    &gt;&gt;&gt; SampleConstraint(&quot;mu&quot;, 0.0)</span>
-<span class="sd">    SampleConstraint(&#39;mu&#39;, 0.0)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; SampleConstraint("chi", 90.0)</span>
+<span class="sd">    SampleConstraint('chi', 90.0)</span>
+<span class="sd">    &gt;&gt;&gt; SampleConstraint("mu", 0.0)</span>
+<span class="sd">    SampleConstraint('mu', 0.0)</span>
+<span class="sd">    """</span>
 
-    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sample&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constraint category identifier — always ``&quot;sample&quot;``.&quot;&quot;&quot;</span>
+    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"sample"</span>
+<span class="w">    </span><span class="sd">"""Constraint category identifier — always ``"sample"``."""</span>
 
     <span class="n">is_bisect</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Always ``False`` — :class:`SampleConstraint` fixes a stage, does not bisect.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Always ``False`` — :class:`SampleConstraint` fixes a stage, does not bisect."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -1125,12 +1125,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constraint name: a stage name (real or virtual Eulerian).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Constraint name: a stage name (real or virtual Eulerian)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constraint value: a fixed angle in degrees.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Constraint value: a fixed angle in degrees."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
 
 <div class="viewcode-block" id="SampleConstraint.evaluate">
@@ -1140,7 +1140,7 @@
         <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the constraint residual (zero when satisfied).</span>
 
 <span class="sd">        Residual = ``angles[name] - value``.</span>
@@ -1156,7 +1156,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            Residual in degrees.  Zero means the constraint is satisfied.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">angles</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span></div>
 
 
@@ -1168,41 +1168,41 @@
         <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
         <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True when ``|evaluate(angles, geometry)| &lt; tol``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return True when ``|evaluate(angles, geometry)| &lt; tol``."""</span>
         <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">geometry</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">tol</span></div>
 
 
 <div class="viewcode-block" id="SampleConstraint.is_implemented">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint.is_implemented">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_implemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return True when the named stage exists in the geometry, or when the</span>
 <span class="sd">        name is a virtual Eulerian kappa pseudoangle on a kappa geometry.</span>
 
-<span class="sd">        Virtual kappa angles ``&quot;omega&quot;``, ``&quot;chi&quot;``, and ``&quot;phi&quot;`` are</span>
+<span class="sd">        Virtual kappa angles ``"omega"``, ``"chi"``, and ``"phi"`` are</span>
 <span class="sd">        implemented when the geometry has a ``kappa_alpha_deg`` attribute set</span>
 <span class="sd">        (i.e. it is a kappa diffractometer) and contains a stage named</span>
-<span class="sd">        ``&quot;kappa&quot;``.  The kappa inversion solver (:func:`~kappa.eulerian_to_kappa`)</span>
+<span class="sd">        ``"kappa"``.  The kappa inversion solver (:func:`~kappa.eulerian_to_kappa`)</span>
 <span class="sd">        converts the virtual angle constraint to real kappa motor angles.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">stage_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">_stages</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>  <span class="c1"># noqa: SLF001</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">in</span> <span class="n">stage_names</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="c1"># Virtual Eulerian pseudoangles on kappa geometries</span>
-        <span class="n">_KAPPA_VIRTUAL</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;omega&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">}</span>
+        <span class="n">_KAPPA_VIRTUAL</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"omega"</span><span class="p">,</span> <span class="s2">"chi"</span><span class="p">,</span> <span class="s2">"phi"</span><span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">in</span> <span class="n">_KAPPA_VIRTUAL</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;kappa&quot;</span> <span class="ow">in</span> <span class="n">stage_names</span>
+            <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">kappa_alpha_deg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">"kappa"</span> <span class="ow">in</span> <span class="n">stage_names</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="SampleConstraint.to_dict">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a JSON-serialisable dict.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a JSON-serialisable dict."""</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;SampleConstraint&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
-            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"SampleConstraint"</span><span class="p">,</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+            <span class="s2">"value"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
@@ -1210,12 +1210,12 @@
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.SampleConstraint.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SampleConstraint</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct from a dict produced by :meth:`to_dict`.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span></div>
+<span class="w">        </span><span class="sd">"""Reconstruct from a dict produced by :meth:`to_dict`."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">"value"</span><span class="p">])</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SampleConstraint(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="si">!r}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"SampleConstraint(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="si">!r}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">SampleConstraint</span><span class="p">):</span>
@@ -1230,27 +1230,27 @@
 <div class="viewcode-block" id="DetectorConstraint">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DetectorConstraint</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Constrains one detector stage angle (or the ``&quot;qaz&quot;`` pseudo-angle).</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Constrains one detector stage angle (or the ``"qaz"`` pseudo-angle).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    name : str</span>
-<span class="sd">        Detector stage name, or ``&quot;qaz&quot;`` for the azimuthal angle of Q</span>
+<span class="sd">        Detector stage name, or ``"qaz"`` for the azimuthal angle of Q</span>
 <span class="sd">        (You 1999, eq. 18: ``tan(qaz) = tan(delta) / sin(nu)``).</span>
 <span class="sd">    value : float</span>
 <span class="sd">        Fixed angle in degrees.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; DetectorConstraint(&quot;nu&quot;, 0.0)</span>
-<span class="sd">    DetectorConstraint(&#39;nu&#39;, 0.0)</span>
-<span class="sd">    &gt;&gt;&gt; DetectorConstraint(&quot;qaz&quot;, 90.0)</span>
-<span class="sd">    DetectorConstraint(&#39;qaz&#39;, 90.0)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; DetectorConstraint("nu", 0.0)</span>
+<span class="sd">    DetectorConstraint('nu', 0.0)</span>
+<span class="sd">    &gt;&gt;&gt; DetectorConstraint("qaz", 90.0)</span>
+<span class="sd">    DetectorConstraint('qaz', 90.0)</span>
+<span class="sd">    """</span>
 
-    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;detector&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constraint category identifier — always ``&quot;detector&quot;``.&quot;&quot;&quot;</span>
+    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"detector"</span>
+<span class="w">    </span><span class="sd">"""Constraint category identifier — always ``"detector"``."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -1258,17 +1258,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constraint name: a detector stage name or ``&#39;qaz&#39;``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Constraint name: a detector stage name or ``'qaz'``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constraint value: a fixed angle in degrees.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Constraint value: a fixed angle in degrees."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_qaz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;True when this constrains the qaz pseudo-angle.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""True when this constrains the qaz pseudo-angle."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="n">QAZ</span>
 
 <div class="viewcode-block" id="DetectorConstraint.evaluate">
@@ -1278,12 +1278,12 @@
         <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the constraint residual (zero when satisfied).</span>
 
 <span class="sd">        For a named detector stage: ``angles[name] - value``.</span>
-<span class="sd">        For ``&quot;qaz&quot;``: computed from the detector angles via You (1999) eq. 18.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        For ``"qaz"``: computed from the detector angles via You (1999) eq. 18.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_qaz_residual</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">angles</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span></div>
@@ -1297,23 +1297,23 @@
         <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
         <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True when ``|evaluate(angles, geometry)| &lt; tol``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return True when ``|evaluate(angles, geometry)| &lt; tol``."""</span>
         <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">geometry</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">tol</span></div>
 
 
 <div class="viewcode-block" id="DetectorConstraint.is_implemented">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint.is_implemented">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_implemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return True when this constraint has a solver implementation.</span>
 
 <span class="sd">        Fixed detector-stage constraints are implemented when the stage</span>
-<span class="sd">        exists in the geometry.  The ``&quot;qaz&quot;`` pseudo-angle constraint is</span>
+<span class="sd">        exists in the geometry.  The ``"qaz"`` pseudo-angle constraint is</span>
 <span class="sd">        implemented when the geometry has at least two detector stages</span>
 <span class="sd">        (an outer ``nu``-like stage and an inner ``delta``-like stage),</span>
 <span class="sd">        which is the case for all 6-circle geometries that support</span>
 <span class="sd">        ``lifting_detector_*`` modes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_qaz</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span>
         <span class="n">det_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span><span class="p">}</span>
@@ -1323,11 +1323,11 @@
 <div class="viewcode-block" id="DetectorConstraint.to_dict">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a JSON-serialisable dict.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a JSON-serialisable dict."""</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;DetectorConstraint&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
-            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"DetectorConstraint"</span><span class="p">,</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+            <span class="s2">"value"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
@@ -1335,12 +1335,12 @@
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.DetectorConstraint.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DetectorConstraint</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct from a dict produced by :meth:`to_dict`.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span></div>
+<span class="w">        </span><span class="sd">"""Reconstruct from a dict produced by :meth:`to_dict`."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">"value"</span><span class="p">])</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;DetectorConstraint(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="si">!r}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"DetectorConstraint(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="si">!r}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">DetectorConstraint</span><span class="p">):</span>
@@ -1355,7 +1355,7 @@
 <div class="viewcode-block" id="ReferenceConstraint">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ReferenceConstraint</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Constrains a physical pseudo-angle between Q and the reference vector n̂.</span>
 
 <span class="sd">    The reference vector n̂ must be stored on the geometry as</span>
@@ -1364,63 +1364,65 @@
 
 <span class="sd">    Valid names (from You 1999 and Lohmeier &amp; Vlieg 1993):</span>
 
-<span class="sd">    ``&quot;psi&quot;``</span>
+<span class="sd">    ``"psi"``</span>
 <span class="sd">        Azimuthal angle of n̂ about Q (You 1999, eq. 23).</span>
-<span class="sd">    ``&quot;incidence&quot;``</span>
+<span class="sd">    ``"incidence"``</span>
 <span class="sd">        Angle of incidence: angle between the incident beam and the surface</span>
 <span class="sd">        plane (perpendicular to n̂).</span>
-<span class="sd">    ``&quot;emergence&quot;``</span>
+<span class="sd">    ``"emergence"``</span>
 <span class="sd">        Angle of emergence: angle between the diffracted beam and the</span>
 <span class="sd">        surface plane.</span>
-<span class="sd">    ``&quot;specular&quot;``</span>
-<span class="sd">        Specular reflection: relational condition ``incidence = emergence``.</span>
+<span class="sd">    ``"incidence_equals_emergence"``</span>
+<span class="sd">        Relational condition ``incidence = emergence``.</span>
 <span class="sd">        ``value`` must be ``True``.</span>
-<span class="sd">    ``&quot;naz&quot;``</span>
+<span class="sd">    ``"naz"``</span>
 <span class="sd">        Azimuthal angle of n̂ in the lab frame (You 1999).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    name : str</span>
-<span class="sd">        One of ``&quot;psi&quot;``, ``&quot;incidence&quot;``, ``&quot;emergence&quot;``, ``&quot;specular&quot;``,</span>
-<span class="sd">        ``&quot;naz&quot;``, ``&quot;omega&quot;``.</span>
+<span class="sd">        One of ``"psi"``, ``"incidence"``, ``"emergence"``, ``"incidence_equals_emergence"``,</span>
+<span class="sd">        ``"naz"``, ``"omega"``.</span>
 <span class="sd">    value : float or bool</span>
-<span class="sd">        Target value in degrees (or ``True`` for ``&quot;specular&quot;``).</span>
+<span class="sd">        Target value in degrees (or ``True`` for ``"incidence_equals_emergence"``).</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; ReferenceConstraint(&quot;psi&quot;, 90.0)</span>
-<span class="sd">    ReferenceConstraint(&#39;psi&#39;, 90.0)</span>
-<span class="sd">    &gt;&gt;&gt; ReferenceConstraint(&quot;specular&quot;, True)</span>
-<span class="sd">    ReferenceConstraint(&#39;specular&#39;, True)</span>
-<span class="sd">    &gt;&gt;&gt; ReferenceConstraint(&quot;incidence&quot;, 5.0)</span>
-<span class="sd">    ReferenceConstraint(&#39;incidence&#39;, 5.0)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; ReferenceConstraint("psi", 90.0)</span>
+<span class="sd">    ReferenceConstraint('psi', 90.0)</span>
+<span class="sd">    &gt;&gt;&gt; ReferenceConstraint("incidence_equals_emergence", True)</span>
+<span class="sd">    ReferenceConstraint('incidence_equals_emergence', True)</span>
+<span class="sd">    &gt;&gt;&gt; ReferenceConstraint("incidence", 5.0)</span>
+<span class="sd">    ReferenceConstraint('incidence', 5.0)</span>
+<span class="sd">    """</span>
 
-    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;reference&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constraint category identifier — always ``&quot;reference&quot;``.&quot;&quot;&quot;</span>
+    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"reference"</span>
+<span class="w">    </span><span class="sd">"""Constraint category identifier — always ``"reference"``."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">REFERENCE_NAMES</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;ReferenceConstraint name must be one of &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">REFERENCE_NAMES</span><span class="p">)</span><span class="si">}</span><span class="s2">; got </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"ReferenceConstraint name must be one of "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">REFERENCE_NAMES</span><span class="p">)</span><span class="si">}</span><span class="s2">; got </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">."</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;specular&quot;</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"incidence_equals_emergence"</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;ReferenceConstraint(&#39;specular&#39;, value): value must be True; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="s2">"ReferenceConstraint('incidence_equals_emergence', value): "</span>
+                <span class="sa">f</span><span class="s2">"value must be True; got </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">."</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;specular&quot;</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="kc">True</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"incidence_equals_emergence"</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constraint name (one of the reference pseudo-angle names).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Constraint name (one of the reference pseudo-angle names)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Target value in degrees, or ``True`` for ``&quot;specular&quot;``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Target value in degrees, or ``True`` for ``"incidence_equals_emergence"``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
 
 <div class="viewcode-block" id="ReferenceConstraint.evaluate">
@@ -1430,7 +1432,7 @@
         <span class="n">angles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the constraint residual in degrees (zero when satisfied).</span>
 
 <span class="sd">        The residual is the difference between the physical pseudo-angle</span>
@@ -1438,14 +1440,14 @@
 <span class="sd">        functions in :mod:`~ad_hoc_diffractometer.reference`) and the</span>
 <span class="sd">        target :attr:`value`:</span>
 
-<span class="sd">        - ``&quot;incidence&quot;`` — ``incidence_angle - value``</span>
-<span class="sd">        - ``&quot;emergence&quot;`` — ``emergence_angle - value``</span>
-<span class="sd">        - ``&quot;specular&quot;`` — ``incidence_angle - emergence_angle``</span>
+<span class="sd">        - ``"incidence"`` — ``incidence_angle - value``</span>
+<span class="sd">        - ``"emergence"`` — ``emergence_angle - value``</span>
+<span class="sd">        - ``"incidence_equals_emergence"`` — ``incidence_angle - emergence_angle``</span>
 <span class="sd">          (the relational condition α_i = α_f; :attr:`value` is the</span>
 <span class="sd">          boolean flag ``True`` and does not enter the residual)</span>
-<span class="sd">        - ``&quot;psi&quot;`` — ``psi_angle - value``</span>
-<span class="sd">        - ``&quot;naz&quot;`` — ``naz_angle - value``</span>
-<span class="sd">        - ``&quot;omega&quot;`` — ``omega_pseudo - value``</span>
+<span class="sd">        - ``"psi"`` — ``psi_angle - value``</span>
+<span class="sd">        - ``"naz"`` — ``naz_angle - value``</span>
+<span class="sd">        - ``"omega"`` — ``omega_pseudo - value``</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1453,8 +1455,8 @@
 <span class="sd">            Current motor angles in degrees, keyed by stage name.</span>
 <span class="sd">        geometry : AdHocDiffractometer</span>
 <span class="sd">            The diffractometer.  The required reference vector</span>
-<span class="sd">            (``surface_normal`` for incidence/emergence/specular,</span>
-<span class="sd">            ``azimuth`` for psi/naz) must be set, except for ``&quot;omega&quot;``</span>
+<span class="sd">            (``surface_normal`` for incidence/emergence/incidence_equals_emergence,</span>
+<span class="sd">            ``azimuth`` for psi/naz) must be set, except for ``"omega"``</span>
 <span class="sd">            which needs no reference vector.</span>
 
 <span class="sd">        Returns</span>
@@ -1468,28 +1470,28 @@
 <span class="sd">            If the required reference vector is not set on the geometry</span>
 <span class="sd">            (raised by the underlying</span>
 <span class="sd">            :mod:`~ad_hoc_diffractometer.reference` function).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Local import to avoid module-load ordering issues (reference.py</span>
         <span class="c1"># imports geometry types lazily; mirror the pattern used elsewhere</span>
         <span class="c1"># in this package).</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">reference</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;incidence&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">"incidence"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">incidence_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;emergence&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">"emergence"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">emergence_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;specular&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">"incidence_equals_emergence"</span><span class="p">:</span>
             <span class="c1"># Relational: incidence == emergence.  value is the flag True.</span>
             <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">incidence_angle</span><span class="p">(</span>
                 <span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span>
             <span class="p">)</span> <span class="o">-</span> <span class="n">reference</span><span class="o">.</span><span class="n">emergence_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">"psi"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">psi_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;naz&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">"naz"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">naz_angle</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
         <span class="c1"># omega</span>
         <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">omega_pseudo</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span></div>
@@ -1503,23 +1505,23 @@
         <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
         <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True when ``|evaluate(angles, geometry)| &lt; tol``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return True when ``|evaluate(angles, geometry)| &lt; tol``."""</span>
         <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">geometry</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">tol</span></div>
 
 
 <div class="viewcode-block" id="ReferenceConstraint.has_reference_vector">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint.has_reference_vector">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_reference_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return True when the required reference vector is set on the geometry.</span>
 
-<span class="sd">        For ``&quot;psi&quot;`` and ``&quot;naz&quot;``: requires</span>
+<span class="sd">        For ``"psi"`` and ``"naz"``: requires</span>
 <span class="sd">        :attr:`~geometry.AdHocDiffractometer.azimuth` to be set.</span>
 
-<span class="sd">        For ``&quot;incidence&quot;``, ``&quot;emergence&quot;``, and ``&quot;specular&quot;``: requires</span>
+<span class="sd">        For ``"incidence"``, ``"emergence"``, and ``"incidence_equals_emergence"``: requires</span>
 <span class="sd">        :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.</span>
 
-<span class="sd">        For ``&quot;omega&quot;``: no reference vector is required (always returns</span>
+<span class="sd">        For ``"omega"``: no reference vector is required (always returns</span>
 <span class="sd">        ``True``); the SPEC ``OMEGA`` pseudo-angle is a pure motor-frame</span>
 <span class="sd">        quantity.</span>
 
@@ -1527,10 +1529,10 @@
 <span class="sd">        A reference constraint can have its vector set but still lack a forward</span>
 <span class="sd">        solver — in that case ``has_reference_vector`` returns ``True`` but</span>
 <span class="sd">        ``is_implemented`` returns ``False``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">"omega"</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="s2">&quot;naz&quot;</span><span class="p">}:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"psi"</span><span class="p">,</span> <span class="s2">"naz"</span><span class="p">}:</span>
             <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">azimuth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">surface_normal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
@@ -1538,50 +1540,50 @@
 <div class="viewcode-block" id="ReferenceConstraint.is_implemented">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint.is_implemented">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_implemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return True when the required reference vector is set on the geometry</span>
 <span class="sd">        and a forward solver is available for this constraint name.</span>
 
 <span class="sd">        Implemented constraints:</span>
 
-<span class="sd">        - ``&quot;incidence&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
-<span class="sd">        - ``&quot;emergence&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
-<span class="sd">        - ``&quot;specular&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
-<span class="sd">        - ``&quot;psi&quot;`` — requires :attr:`~geometry.AdHocDiffractometer.azimuth`.</span>
+<span class="sd">        - ``"incidence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
+<span class="sd">        - ``"emergence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
+<span class="sd">        - ``"incidence_equals_emergence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`</span>
+<span class="sd">        - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuth`.</span>
 <span class="sd">          The forward solver treats ψ as a **validation filter**: for a given</span>
 <span class="sd">          (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for</span>
 <span class="sd">          every Bragg solution.  The solver computes the natural ψ from UB and</span>
 <span class="sd">          the reference direction; if it matches the stored target the bisecting</span>
 <span class="sd">          solutions are returned, otherwise an empty list is returned.  See</span>
 <span class="sd">          issue #176 for the full analysis.</span>
-<span class="sd">        - ``&quot;omega&quot;`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``).  Implemented</span>
+<span class="sd">        - ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``).  Implemented</span>
 <span class="sd">          for psic-family geometries (those with a sample stage named</span>
-<span class="sd">          ``&quot;chi&quot;``); does not require any reference vector.  See</span>
+<span class="sd">          ``"chi"``); does not require any reference vector.  See</span>
 <span class="sd">          :func:`~ad_hoc_diffractometer.reference.omega_pseudo`.</span>
 
 <span class="sd">        Not yet implemented:</span>
 
-<span class="sd">        - ``&quot;naz&quot;`` — no forward solver yet.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;naz&quot;</span><span class="p">:</span>
+<span class="sd">        - ``"naz"`` — no forward solver yet.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">"naz"</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;psi&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">"psi"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">azimuth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;omega&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s2">"omega"</span><span class="p">:</span>
             <span class="c1"># Implemented for any geometry with a chi sample stage.</span>
-            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;chi&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">)</span>
-        <span class="c1"># incidence, emergence, specular — implemented when surface_normal is set</span>
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"chi"</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">geometry</span><span class="o">.</span><span class="n">sample_stages</span><span class="p">)</span>
+        <span class="c1"># incidence, emergence, incidence_equals_emergence — implemented when surface_normal is set</span>
         <span class="k">return</span> <span class="n">geometry</span><span class="o">.</span><span class="n">surface_normal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="ReferenceConstraint.to_dict">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a JSON-serialisable dict.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a JSON-serialisable dict."""</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;ReferenceConstraint&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
-            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"ReferenceConstraint"</span><span class="p">,</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+            <span class="s2">"value"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
@@ -1589,12 +1591,12 @@
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ReferenceConstraint.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReferenceConstraint</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct from a dict produced by :meth:`to_dict`.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span></div>
+<span class="w">        </span><span class="sd">"""Reconstruct from a dict produced by :meth:`to_dict`."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">"value"</span><span class="p">])</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ReferenceConstraint(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="si">!r}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"ReferenceConstraint(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="si">!r}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ReferenceConstraint</span><span class="p">):</span>
@@ -1621,11 +1623,11 @@
 <div class="viewcode-block" id="ConstraintSet">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConstraintSet</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    An ordered, validated collection of constraints for a diffraction mode.</span>
 
 <span class="sd">    A ``ConstraintSet`` describes one named diffraction mode by listing the</span>
-<span class="sd">    constraints that resolve the geometry&#39;s free degrees of freedom.  It</span>
+<span class="sd">    constraints that resolve the geometry's free degrees of freedom.  It</span>
 <span class="sd">    replaces the old ``BisectingMode`` / ``FixedAngleMode`` classes.</span>
 
 <span class="sd">    **Taxonomy rules** (enforced at construction):</span>
@@ -1644,9 +1646,9 @@
 <span class="sd">    constraints : list of BisectConstraint | SampleConstraint | DetectorConstraint | ReferenceConstraint</span>
 <span class="sd">        The constraints defining this mode, in definition order.</span>
 <span class="sd">    computed : list of str or None</span>
-<span class="sd">        Stage names that the solver computes (the &quot;writable&quot; stages in</span>
+<span class="sd">        Stage names that the solver computes (the "writable" stages in</span>
 <span class="sd">        hklpy2 terminology).  Informational; used by documentation and</span>
-<span class="sd">        introspection.  ``None`` means &quot;all stages not in ``constant_stages``&quot;.</span>
+<span class="sd">        introspection.  ``None`` means "all stages not in ``constant_stages``".</span>
 <span class="sd">    extras : dict[str, Any] or None</span>
 <span class="sd">        Additional parameters the mode needs beyond (h, k, l).  Use the</span>
 <span class="sd">        :data:`REQUIRED` sentinel for mandatory inputs and :data:`OPTIONAL`</span>
@@ -1655,8 +1657,8 @@
 <span class="sd">        Example::</span>
 
 <span class="sd">            extras={</span>
-<span class="sd">                &quot;n_hat&quot;: REQUIRED,   # surface normal, must be supplied</span>
-<span class="sd">                &quot;psi&quot;: None,         # output: populated by solver</span>
+<span class="sd">                "n_hat": REQUIRED,   # surface normal, must be supplied</span>
+<span class="sd">                "psi": None,         # output: populated by solver</span>
 <span class="sd">            }</span>
 <span class="sd">    cut_points : dict[str, float] or None</span>
 <span class="sd">        Per-stage SPEC #G4 cut-points.  A cut-point C for stage X means</span>
@@ -1677,28 +1679,28 @@
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; # psic bisecting_vertical: BisectConstraint + mu=0 + nu=0</span>
 <span class="sd">    &gt;&gt;&gt; cs = ConstraintSet([</span>
-<span class="sd">    ...     BisectConstraint(&quot;eta&quot;, &quot;delta&quot;),</span>
-<span class="sd">    ...     SampleConstraint(&quot;mu&quot;, 0.0),</span>
-<span class="sd">    ...     DetectorConstraint(&quot;nu&quot;, 0.0),</span>
+<span class="sd">    ...     BisectConstraint("eta", "delta"),</span>
+<span class="sd">    ...     SampleConstraint("mu", 0.0),</span>
+<span class="sd">    ...     DetectorConstraint("nu", 0.0),</span>
 <span class="sd">    ... ])</span>
 <span class="sd">    &gt;&gt;&gt; cs.has_bisect</span>
 <span class="sd">    True</span>
 <span class="sd">    &gt;&gt;&gt; cs.bisect_stages()</span>
-<span class="sd">    (&#39;eta&#39;, &#39;delta&#39;)</span>
+<span class="sd">    ('eta', 'delta')</span>
 <span class="sd">    &gt;&gt;&gt; cs.detector_constraint.name</span>
-<span class="sd">    &#39;nu&#39;</span>
+<span class="sd">    'nu'</span>
 <span class="sd">    &gt;&gt;&gt; cs.constant_stages</span>
-<span class="sd">    [&#39;eta&#39;, &#39;mu&#39;, &#39;nu&#39;]</span>
+<span class="sd">    ['eta', 'mu', 'nu']</span>
 
 <span class="sd">    &gt;&gt;&gt; # fourcv bisecting: BisectConstraint only (1 constraint for N=4)</span>
-<span class="sd">    &gt;&gt;&gt; cs4 = ConstraintSet([BisectConstraint(&quot;omega&quot;, &quot;ttheta&quot;)])</span>
+<span class="sd">    &gt;&gt;&gt; cs4 = ConstraintSet([BisectConstraint("omega", "ttheta")])</span>
 <span class="sd">    &gt;&gt;&gt; cs4.has_bisect</span>
 <span class="sd">    True</span>
 <span class="sd">    &gt;&gt;&gt; cs4.bisect_stages()</span>
-<span class="sd">    (&#39;omega&#39;, &#39;ttheta&#39;)</span>
+<span class="sd">    ('omega', 'ttheta')</span>
 <span class="sd">    &gt;&gt;&gt; cs4.constant_stages</span>
-<span class="sd">    [&#39;omega&#39;]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    ['omega']</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1714,18 +1716,18 @@
 
         <span class="k">if</span> <span class="n">bisect_count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;ConstraintSet: at most one BisectConstraint is allowed; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">bisect_count</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"ConstraintSet: at most one BisectConstraint is allowed; "</span>
+                <span class="sa">f</span><span class="s2">"got </span><span class="si">{</span><span class="n">bisect_count</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">det_count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;ConstraintSet: at most one DetectorConstraint is allowed; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">det_count</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"ConstraintSet: at most one DetectorConstraint is allowed; "</span>
+                <span class="sa">f</span><span class="s2">"got </span><span class="si">{</span><span class="n">det_count</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">ref_count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;ConstraintSet: at most one ReferenceConstraint is allowed; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">ref_count</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"ConstraintSet: at most one ReferenceConstraint is allowed; "</span>
+                <span class="sa">f</span><span class="s2">"got </span><span class="si">{</span><span class="n">ref_count</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
@@ -1736,9 +1738,9 @@
                 <span class="o">|</span> <span class="n">ReferenceConstraint</span><span class="p">,</span>
             <span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;ConstraintSet: all constraints must be BisectConstraint, &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;SampleConstraint, DetectorConstraint, or ReferenceConstraint; &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"ConstraintSet: all constraints must be BisectConstraint, "</span>
+                    <span class="sa">f</span><span class="s2">"SampleConstraint, DetectorConstraint, or ReferenceConstraint; "</span>
+                    <span class="sa">f</span><span class="s2">"got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">."</span>
                 <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyConstraint</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
@@ -1746,7 +1748,7 @@
             <span class="nb">list</span><span class="p">(</span><span class="n">computed</span><span class="p">)</span> <span class="k">if</span> <span class="n">computed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
         <span class="c1"># Use _ExtrasDict so a later assignment to a placeholder key</span>
-        <span class="c1"># (e.g. ``cs.extras[&quot;n_hat&quot;] = (0, 0, 1)``) warns the caller —</span>
+        <span class="c1"># (e.g. ``cs.extras["n_hat"] = (0, 0, 1)``) warns the caller —</span>
         <span class="c1"># see issue #294.  Construction-time values bypass the warning</span>
         <span class="c1"># path because we populate via super().__setitem__ semantics</span>
         <span class="c1"># (the dict() copy uses internal C-level assignment).</span>
@@ -1759,12 +1761,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyConstraint</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;All constraints in definition order.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""All constraints in definition order."""</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bisect_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BisectConstraint</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The :class:`BisectConstraint`, or ``None`` if not present.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The :class:`BisectConstraint`, or ``None`` if not present."""</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">BisectConstraint</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">c</span>
@@ -1772,12 +1774,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SampleConstraint</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;All :class:`SampleConstraint` entries (fixed-angle, not bisect).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""All :class:`SampleConstraint` entries (fixed-angle, not bisect)."""</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">SampleConstraint</span><span class="p">)]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detector_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DetectorConstraint</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The :class:`DetectorConstraint`, or ``None`` if not present.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The :class:`DetectorConstraint`, or ``None`` if not present."""</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">DetectorConstraint</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">c</span>
@@ -1785,7 +1787,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">reference_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReferenceConstraint</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The :class:`ReferenceConstraint`, or ``None`` if not present.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The :class:`ReferenceConstraint`, or ``None`` if not present."""</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ReferenceConstraint</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">c</span>
@@ -1793,17 +1795,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_bisect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;True when a :class:`BisectConstraint` is present.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""True when a :class:`BisectConstraint` is present."""</span>
         <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">BisectConstraint</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fixed_sample_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SampleConstraint</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;All :class:`SampleConstraint` entries (alias for :attr:`sample_constraints`).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""All :class:`SampleConstraint` entries (alias for :attr:`sample_constraints`)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_constraints</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">constant_stages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Stage names held constant by this constraint set, derived from the</span>
 <span class="sd">        constraints themselves.</span>
 
@@ -1822,7 +1824,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        list of str</span>
 <span class="sd">            Stage names in definition order, without duplicates.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">constrained_stages</span><span class="p">()</span>
 
     <span class="c1"># ------------------------------------------------------------------</span>
@@ -1832,8 +1834,8 @@
 <div class="viewcode-block" id="ConstraintSet.is_fully_constrained">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet.is_fully_constrained">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_fully_constrained</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return True when the number of constraints equals the geometry&#39;s</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return True when the number of constraints equals the geometry's</span>
 <span class="sd">        free DOF count (N − 3).</span>
 
 <span class="sd">        Parameters</span>
@@ -1845,14 +1847,14 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)</span> <span class="o">==</span> <span class="n">geometry</span><span class="o">.</span><span class="n">free_dof_after_bragg</span></div>
 
 
 <div class="viewcode-block" id="ConstraintSet.is_implemented">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet.is_implemented">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_implemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return True when all constraints in this set have solver</span>
 <span class="sd">        implementations for the given geometry.</span>
 
@@ -1863,7 +1865,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)</span></div>
 
 
@@ -1872,7 +1874,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">constrained_stages</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the list of stage names that are constrained (fixed or</span>
 <span class="sd">        relationally determined) by this constraint set.</span>
 
@@ -1887,7 +1889,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list of str</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">BisectConstraint</span><span class="p">):</span>
@@ -1905,12 +1907,12 @@
 <div class="viewcode-block" id="ConstraintSet.apply_cut_point">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet.apply_cut_point">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">apply_cut_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">angle_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Apply the cut-point for *stage_name* to *angle_deg*.</span>
 
 <span class="sd">        A cut-point C means the returned angle lies in ``[C, C + 360°)``.</span>
 <span class="sd">        Returns *angle_deg* unchanged if no cut-point is set for this stage.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">stage_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_points</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">angle_deg</span>
         <span class="n">cut</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_points</span><span class="p">[</span><span class="n">stage_name</span><span class="p">]</span>
@@ -1925,7 +1927,7 @@
 <div class="viewcode-block" id="ConstraintSet.bisect_stages">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet.bisect_stages">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">bisect_stages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the ``(sample_stage_name, detector_stage_name)`` pair from</span>
 <span class="sd">        the :class:`BisectConstraint`, or ``None`` if no bisect constraint</span>
 <span class="sd">        is present.</span>
@@ -1936,7 +1938,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        tuple of (str, str) or None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">bc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bisect_constraint</span>
         <span class="k">if</span> <span class="n">bc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -1950,7 +1952,7 @@
 <div class="viewcode-block" id="ConstraintSet.with_constraint_values">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet.with_constraint_values">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">with_constraint_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">updates</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConstraintSet</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new :class:`ConstraintSet` with named constraint values replaced.</span>
+<span class="w">        </span><span class="sd">"""Return a new :class:`ConstraintSet` with named constraint values replaced.</span>
 
 <span class="sd">        The receiver is left unchanged.  Each keyword argument names a</span>
 <span class="sd">        constraint by its ``.name`` attribute and supplies the new value.</span>
@@ -1965,7 +1967,7 @@
 <span class="sd">            exactly match the ``.name`` attribute of an existing</span>
 <span class="sd">            :class:`SampleConstraint`, :class:`DetectorConstraint`, or</span>
 <span class="sd">            :class:`ReferenceConstraint` in the set.  Values are floats</span>
-<span class="sd">            (or ``bool`` for the ``&quot;specular&quot;`` :class:`ReferenceConstraint`).</span>
+<span class="sd">            (or ``bool`` for the ``"incidence_equals_emergence"`` :class:`ReferenceConstraint`).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1990,15 +1992,15 @@
 <span class="sd">        Single sample-stage value:</span>
 
 <span class="sd">        &gt;&gt;&gt; import ad_hoc_diffractometer as ahd</span>
-<span class="sd">        &gt;&gt;&gt; g = ahd.make_geometry(&quot;psic&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; g.modes[&quot;fixed_chi_vertical&quot;] = (</span>
-<span class="sd">        ...     g.modes[&quot;fixed_chi_vertical&quot;].with_constraint_values(chi=45.0)</span>
+<span class="sd">        &gt;&gt;&gt; g = ahd.make_geometry("psic")</span>
+<span class="sd">        &gt;&gt;&gt; g.modes["fixed_chi_vertical"] = (</span>
+<span class="sd">        ...     g.modes["fixed_chi_vertical"].with_constraint_values(chi=45.0)</span>
 <span class="sd">        ... )</span>
 
 <span class="sd">        Multiple values at once (psic ``fixed_incidence_fixed_chi_fixed_phi``):</span>
 
-<span class="sd">        &gt;&gt;&gt; g.modes[&quot;fixed_incidence_fixed_chi_fixed_phi&quot;] = (</span>
-<span class="sd">        ...     g.modes[&quot;fixed_incidence_fixed_chi_fixed_phi&quot;]</span>
+<span class="sd">        &gt;&gt;&gt; g.modes["fixed_incidence_fixed_chi_fixed_phi"] = (</span>
+<span class="sd">        ...     g.modes["fixed_incidence_fixed_chi_fixed_phi"]</span>
 <span class="sd">        ...     .with_constraint_values(chi=15.0, phi=30.0, incidence=5.0)</span>
 <span class="sd">        ... )</span>
 
@@ -2007,12 +2009,12 @@
 <span class="sd">        :class:`BisectConstraint` (and :class:`VirtualBisectConstraint`)</span>
 <span class="sd">        carry no scalar value — they are *relational* constraints</span>
 <span class="sd">        between two stages.  This method intentionally ignores them: a</span>
-<span class="sd">        kwarg whose key happens to equal a bisect&#39;s class-level</span>
-<span class="sd">        ``name`` identifier (``&quot;bisect&quot;`` / ``&quot;virtual_bisect&quot;``) will</span>
+<span class="sd">        kwarg whose key happens to equal a bisect's class-level</span>
+<span class="sd">        ``name`` identifier (``"bisect"`` / ``"virtual_bisect"``) will</span>
 <span class="sd">        not match and raises :class:`KeyError` like any other unknown</span>
 <span class="sd">        key.  A bisect cannot be overridden by changing a value</span>
 <span class="sd">        because it has none.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Build a {name: index} map of constraints that have a settable</span>
         <span class="c1"># scalar value (SampleConstraint, DetectorConstraint,</span>
         <span class="c1"># ReferenceConstraint).  Bisect constraints are deliberately</span>
@@ -2026,9 +2028,9 @@
             <span class="n">cname</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span>
             <span class="k">if</span> <span class="n">cname</span> <span class="ow">in</span> <span class="n">name_to_index</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;with_constraint_values: this ConstraintSet contains &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;two constraints both named </span><span class="si">{</span><span class="n">cname</span><span class="si">!r}</span><span class="s2">; cannot resolve &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;an override unambiguously.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"with_constraint_values: this ConstraintSet contains "</span>
+                    <span class="sa">f</span><span class="s2">"two constraints both named </span><span class="si">{</span><span class="n">cname</span><span class="si">!r}</span><span class="s2">; cannot resolve "</span>
+                    <span class="sa">f</span><span class="s2">"an override unambiguously."</span>
                 <span class="p">)</span>
             <span class="n">name_to_index</span><span class="p">[</span><span class="n">cname</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
 
@@ -2036,9 +2038,9 @@
         <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
             <span class="n">available</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">name_to_index</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;with_constraint_values: no constraint(s) named &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unknown</span><span class="si">!r}</span><span class="s2"> in this ConstraintSet; available names &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;are </span><span class="si">{</span><span class="n">available</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"with_constraint_values: no constraint(s) named "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">unknown</span><span class="si">!r}</span><span class="s2"> in this ConstraintSet; available names "</span>
+                <span class="sa">f</span><span class="s2">"are </span><span class="si">{</span><span class="n">available</span><span class="si">!r}</span><span class="s2">."</span>
             <span class="p">)</span>
 
         <span class="n">new_constraints</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyConstraint</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)</span>
@@ -2068,25 +2070,25 @@
 <div class="viewcode-block" id="ConstraintSet.to_dict">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a JSON-serialisable dict.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a JSON-serialisable dict."""</span>
         <span class="c1"># extras: replace sentinel objects with string markers</span>
         <span class="n">extras_serial</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extras</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="n">REQUIRED</span><span class="p">:</span>
-                <span class="n">extras_serial</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;__REQUIRED__&quot;</span>
+                <span class="n">extras_serial</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"__REQUIRED__"</span>
             <span class="k">elif</span> <span class="n">v</span> <span class="ow">is</span> <span class="n">OPTIONAL</span><span class="p">:</span>
-                <span class="n">extras_serial</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;__OPTIONAL__&quot;</span>
+                <span class="n">extras_serial</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"__OPTIONAL__"</span>
             <span class="k">elif</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">extras_serial</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">extras_serial</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;ConstraintSet&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;constraints&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">],</span>
-            <span class="s2">&quot;computed&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computed</span><span class="p">,</span>
-            <span class="s2">&quot;extras&quot;</span><span class="p">:</span> <span class="n">extras_serial</span><span class="p">,</span>
-            <span class="s2">&quot;cut_points&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_points</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"ConstraintSet"</span><span class="p">,</span>
+            <span class="s2">"constraints"</span><span class="p">:</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">],</span>
+            <span class="s2">"computed"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computed</span><span class="p">,</span>
+            <span class="s2">"extras"</span><span class="p">:</span> <span class="n">extras_serial</span><span class="p">,</span>
+            <span class="s2">"cut_points"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_points</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
@@ -2094,47 +2096,47 @@
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ConstraintSet.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConstraintSet</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct from a dict produced by :meth:`to_dict`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Reconstruct from a dict produced by :meth:`to_dict`."""</span>
         <span class="n">constraints</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyConstraint</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">cd</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constraints&quot;</span><span class="p">,</span> <span class="p">[]):</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">&quot;BisectConstraint&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">cd</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"constraints"</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">"BisectConstraint"</span><span class="p">:</span>
                 <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BisectConstraint</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cd</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">&quot;VirtualBisectConstraint&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">"VirtualBisectConstraint"</span><span class="p">:</span>
                 <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">VirtualBisectConstraint</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cd</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">&quot;SampleConstraint&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">"SampleConstraint"</span><span class="p">:</span>
                 <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SampleConstraint</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cd</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">&quot;DetectorConstraint&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">"DetectorConstraint"</span><span class="p">:</span>
                 <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DetectorConstraint</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cd</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">&quot;ReferenceConstraint&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">"ReferenceConstraint"</span><span class="p">:</span>
                 <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ReferenceConstraint</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cd</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;ConstraintSet.from_dict: unknown constraint type </span><span class="si">{</span><span class="n">t</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"ConstraintSet.from_dict: unknown constraint type </span><span class="si">{</span><span class="n">t</span><span class="si">!r}</span><span class="s2">."</span>
                 <span class="p">)</span>
 
         <span class="c1"># Restore extras sentinels</span>
-        <span class="n">extras_raw</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;extras&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">extras_raw</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"extras"</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">extras</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">extras_raw</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;__REQUIRED__&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">"__REQUIRED__"</span><span class="p">:</span>
                 <span class="n">extras</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">REQUIRED</span>
-            <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;__OPTIONAL__&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">"__OPTIONAL__"</span><span class="p">:</span>
                 <span class="n">extras</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">OPTIONAL</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">extras</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">,</span>
-            <span class="n">computed</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;computed&quot;</span><span class="p">),</span>
+            <span class="n">computed</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"computed"</span><span class="p">),</span>
             <span class="n">extras</span><span class="o">=</span><span class="n">extras</span><span class="p">,</span>
-            <span class="n">cut_points</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cut_points&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+            <span class="n">cut_points</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"cut_points"</span><span class="p">,</span> <span class="p">{}),</span>
         <span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">parts</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ConstraintSet([</span><span class="si">{</span><span class="n">parts</span><span class="si">}</span><span class="s2">])&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"ConstraintSet([</span><span class="si">{</span><span class="n">parts</span><span class="si">}</span><span class="s2">])"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ConstraintSet</span><span class="p">):</span>
@@ -2157,7 +2159,7 @@
 <div class="viewcode-block" id="ModeDict">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ModeDict">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ModeDict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    An ordered, guarded dict of named diffraction modes.</span>
 
 <span class="sd">    Only :class:`ConstraintSet` instances may be stored.  Keys are mode</span>
@@ -2175,13 +2177,13 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; cs = ConstraintSet([BisectConstraint(&quot;omega&quot;, &quot;ttheta&quot;)])</span>
-<span class="sd">    &gt;&gt;&gt; md = ModeDict({&quot;bisecting&quot;: cs})</span>
-<span class="sd">    &gt;&gt;&gt; &quot;bisecting&quot; in md</span>
+<span class="sd">    &gt;&gt;&gt; cs = ConstraintSet([BisectConstraint("omega", "ttheta")])</span>
+<span class="sd">    &gt;&gt;&gt; md = ModeDict({"bisecting": cs})</span>
+<span class="sd">    &gt;&gt;&gt; "bisecting" in md</span>
 <span class="sd">    True</span>
 <span class="sd">    &gt;&gt;&gt; len(md)</span>
 <span class="sd">    1</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConstraintSet</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConstraintSet</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -2192,8 +2194,8 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">ConstraintSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">ConstraintSet</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;ModeDict values must be ConstraintSet instances; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> for key </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"ModeDict values must be ConstraintSet instances; "</span>
+                <span class="sa">f</span><span class="s2">"got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> for key </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">."</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span>
 
@@ -2213,7 +2215,7 @@
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ModeDict(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="si">!r}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"ModeDict(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="si">!r}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ModeDict</span><span class="p">):</span>
@@ -2223,21 +2225,21 @@
 <div class="viewcode-block" id="ModeDict.keys">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ModeDict.keys">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return mode names.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return mode names."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ModeDict.values">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ModeDict.values">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return mode objects.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return mode objects."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ModeDict.items">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/mode/index.html#ad_hoc_diffractometer.mode.ModeDict.items">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return (name, mode) pairs.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return (name, mode) pairs."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div>
 </div>
 
@@ -2255,7 +2257,7 @@
     <span class="n">geometry</span><span class="p">:</span> <span class="n">AdHocDiffractometer</span><span class="p">,</span>
     <span class="n">target_qaz_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Compute the residual for a qaz detector constraint (You 1999, eq. 18).</span>
 
 <span class="sd">    ``qaz`` is the azimuthal angle of Q in the plane spanned by the</span>
@@ -2290,14 +2292,14 @@
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If the geometry has fewer than two detector stages.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 
     <span class="n">det_stages</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">detector_stages</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">det_stages</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;_qaz_residual requires at least 2 detector stages; &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">det_stages</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"_qaz_residual requires at least 2 detector stages; "</span>
+            <span class="sa">f</span><span class="s2">"geometry </span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">det_stages</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
     <span class="c1"># Outer detector stage (nu-like): det_stages[0]</span>
     <span class="c1"># Inner detector stage (delta-like): det_stages[-1]</span>
@@ -2349,8 +2351,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -2358,7 +2360,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-30 15:11 CDT.
+  Last updated on 2026-09-09 13:47 CDT.
   <br/>
 </p></div>
       

@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=91f10d53" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=b95d7483"></script>
+    <script src="../../_static/documentation_options.js?v=c3e40a07"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,7 +50,7 @@
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ad_hoc_diffractometer/benchmark';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.21.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://BCDA-APS.github.io/ad_hoc_diffractometer/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -63,7 +63,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-06-30 15:11 CDT"/>
+    <meta name="docbuild:last-update" content="2026-09-09 13:47 CDT"/>
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -434,7 +434,7 @@
   <h1>Source code for ad_hoc_diffractometer.benchmark</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (c) 2026-2026 UChicago Argonne, LLC</span>
 <span class="c1"># SPDX-License-Identifier: LicenseRef-UChicago-Argonne-LLC-License</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">benchmark.py — forward/inverse performance measurement.</span>
 
 <span class="sd">Measures the throughput (operations per second) and round-trip accuracy</span>
@@ -451,14 +451,14 @@
 <span class="sd">    from ad_hoc_diffractometer.benchmark import benchmark_all, benchmark_geometry</span>
 
 <span class="sd">    results = benchmark_all()</span>
-<span class="sd">    results = benchmark_geometry(&quot;fourcv&quot;)</span>
+<span class="sd">    results = benchmark_geometry("fourcv")</span>
 
 <span class="sd">Each result is a dict with keys:</span>
 
 <span class="sd">- ``geometry`` (str): geometry name</span>
 <span class="sd">- ``mode`` (str): mode name</span>
-<span class="sd">- ``status`` (str): one of ``&quot;ok&quot;``, ``&quot;no_solutions&quot;``,</span>
-<span class="sd">  ``&quot;not_implemented&quot;``, ``&quot;error&quot;``</span>
+<span class="sd">- ``status`` (str): one of ``"ok"``, ``"no_solutions"``,</span>
+<span class="sd">  ``"not_implemented"``, ``"error"``</span>
 <span class="sd">- ``forward_ops_per_sec`` (float or None)</span>
 <span class="sd">- ``inverse_ops_per_sec`` (float or None)</span>
 <span class="sd">- ``forward_inverse_ratio`` (float or None): dimensionless ratio</span>
@@ -472,8 +472,8 @@
 <span class="sd">- ``round_trip_max_error`` (float or None)</span>
 <span class="sd">- ``n_reflections`` (int): number of reflections attempted</span>
 <span class="sd">- ``n_solutions`` (int): total solutions returned</span>
-<span class="sd">- ``error_message`` (str or None): exception text when status is ``&quot;error&quot;``</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">- ``error_message`` (str or None): exception text when status is ``"error"``</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -493,10 +493,10 @@
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 <span class="n">DEFAULT_WAVELENGTH</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5406</span>
-<span class="sd">&quot;&quot;&quot;Cu Kα wavelength in Å.&quot;&quot;&quot;</span>
+<span class="sd">"""Cu Kα wavelength in Å."""</span>
 
 <span class="n">DEFAULT_LATTICE_A</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span>
-<span class="sd">&quot;&quot;&quot;Cubic lattice parameter in Å.&quot;&quot;&quot;</span>
+<span class="sd">"""Cubic lattice parameter in Å."""</span>
 
 <span class="n">DEFAULT_REFLECTIONS</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
@@ -505,10 +505,10 @@
     <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
 <span class="p">]</span>
-<span class="sd">&quot;&quot;&quot;Reflections to benchmark.  All reachable with a=4 Å at Cu Kα.&quot;&quot;&quot;</span>
+<span class="sd">"""Reflections to benchmark.  All reachable with a=4 Å at Cu Kα."""</span>
 
 <span class="n">DEFAULT_N_ITER</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="sd">&quot;&quot;&quot;Number of timing iterations per operation.&quot;&quot;&quot;</span>
+<span class="sd">"""Number of timing iterations per operation."""</span>
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -519,7 +519,7 @@
 <div class="viewcode-block" id="_setup_geometry">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/benchmark/index.html#ad_hoc_diffractometer.benchmark._setup_geometry">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_setup_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a geometry with a standard cubic sample and UB = B.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Create a geometry with a standard cubic sample and UB = B."""</span>
     <span class="n">g</span> <span class="o">=</span> <span class="n">make_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="n">g</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">DEFAULT_WAVELENGTH</span>
     <span class="n">g</span><span class="o">.</span><span class="n">sample</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">Lattice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">DEFAULT_LATTICE_A</span><span class="p">)</span>
@@ -531,7 +531,7 @@
 <div class="viewcode-block" id="_prepare_mode">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/benchmark/index.html#ad_hoc_diffractometer.benchmark._prepare_mode">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_mode</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">mode_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Activate a mode and configure any special prerequisites.</span>
+<span class="w">    </span><span class="sd">"""Activate a mode and configure any special prerequisites.</span>
 
 <span class="sd">    Sets ``mode_name`` on the geometry and provides the minimum setup</span>
 <span class="sd">    required for modes that need extra configuration:</span>
@@ -539,33 +539,33 @@
 <span class="sd">    - fixed_psi modes: sets ``azimuth``</span>
 <span class="sd">    - double_diffraction modes: sets h2/k2/l2 extras</span>
 <span class="sd">    - zone modes: sets z0/z1 extras to a generic (h,k,0) plane</span>
-<span class="sd">    - surface/reference modes (incidence, emergence, specular):</span>
+<span class="sd">    - surface/reference modes (incidence, emergence, incidence_equals_emergence):</span>
 <span class="sd">      sets ``surface_normal``</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">geometry</span><span class="o">.</span><span class="n">mode_name</span> <span class="o">=</span> <span class="n">mode_name</span>
     <span class="n">cs</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">modes</span><span class="p">[</span><span class="n">mode_name</span><span class="p">]</span>
 
     <span class="c1"># Double-diffraction modes: replace REQUIRED sentinels with values</span>
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;h2&quot;</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"h2"</span><span class="p">,</span> <span class="s2">"k2"</span><span class="p">,</span> <span class="s2">"l2"</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cs</span><span class="o">.</span><span class="n">extras</span> <span class="ow">and</span> <span class="n">cs</span><span class="o">.</span><span class="n">extras</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="n">REQUIRED</span><span class="p">:</span>
-            <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;h2&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">}</span>
+            <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"h2"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">"k2"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">"l2"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">}</span>
             <span class="n">cs</span><span class="o">.</span><span class="n">extras</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
     <span class="c1"># Zone modes: replace REQUIRED z0/z1 sentinels with a generic plane</span>
-    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">&quot;z0&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="p">(</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))):</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"z0"</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="p">(</span><span class="s2">"z1"</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))):</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cs</span><span class="o">.</span><span class="n">extras</span> <span class="ow">and</span> <span class="n">cs</span><span class="o">.</span><span class="n">extras</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="n">REQUIRED</span><span class="p">:</span>
             <span class="n">cs</span><span class="o">.</span><span class="n">extras</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
 
     <span class="c1"># Reference-vector modes: set azimuth if needed</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cs</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
-        <span class="n">cname</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;_name&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">cname</span> <span class="o">==</span> <span class="s2">&quot;psi&quot;</span> <span class="ow">and</span> <span class="n">geometry</span><span class="o">.</span><span class="n">azimuth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cname</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">"_name"</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">cname</span> <span class="o">==</span> <span class="s2">"psi"</span> <span class="ow">and</span> <span class="n">geometry</span><span class="o">.</span><span class="n">azimuth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">geometry</span><span class="o">.</span><span class="n">azimuth</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Surface modes: set surface_normal if needed.</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cs</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
-        <span class="n">cname</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;_name&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">cname</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;incidence&quot;</span><span class="p">,</span> <span class="s2">&quot;emergence&quot;</span><span class="p">,</span> <span class="s2">&quot;specular&quot;</span><span class="p">):</span>
+        <span class="n">cname</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">"_name"</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">cname</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"incidence"</span><span class="p">,</span> <span class="s2">"emergence"</span><span class="p">,</span> <span class="s2">"incidence_equals_emergence"</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">surface_normal</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">geometry</span><span class="o">.</span><span class="n">surface_normal</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
 
@@ -574,11 +574,11 @@
 <div class="viewcode-block" id="_time_forward">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/benchmark/index.html#ad_hoc_diffractometer.benchmark._time_forward">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_time_forward</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">reflections</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Time forward() calls and collect solutions.</span>
+<span class="w">    </span><span class="sd">"""Time forward() calls and collect solutions.</span>
 
 <span class="sd">    Returns (ops_per_sec, all_solutions) where all_solutions is a list</span>
 <span class="sd">    of (hkl, solutions) pairs from the final iteration.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">all_solutions</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
@@ -590,7 +590,7 @@
     <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 
     <span class="n">total_ops</span> <span class="o">=</span> <span class="n">n_iter</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">reflections</span><span class="p">)</span>
-    <span class="n">ops_per_sec</span> <span class="o">=</span> <span class="n">total_ops</span> <span class="o">/</span> <span class="n">elapsed</span> <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+    <span class="n">ops_per_sec</span> <span class="o">=</span> <span class="n">total_ops</span> <span class="o">/</span> <span class="n">elapsed</span> <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ops_per_sec</span><span class="p">,</span> <span class="n">all_solutions</span></div>
 
 
@@ -598,7 +598,7 @@
 <div class="viewcode-block" id="_time_inverse">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/benchmark/index.html#ad_hoc_diffractometer.benchmark._time_inverse">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_time_inverse</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">solutions_by_hkl</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Time inverse() calls and measure round-trip error.</span>
+<span class="w">    </span><span class="sd">"""Time inverse() calls and measure round-trip error.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -606,7 +606,7 @@
 <span class="sd">        Output from _time_forward.</span>
 
 <span class="sd">    Returns (ops_per_sec, max_error).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Flatten to (hkl, angle_dict) pairs</span>
     <span class="n">pairs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">hkl</span><span class="p">,</span> <span class="n">solutions</span> <span class="ow">in</span> <span class="n">solutions_by_hkl</span><span class="p">:</span>
@@ -628,7 +628,7 @@
     <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 
     <span class="n">total_ops</span> <span class="o">=</span> <span class="n">n_iter</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span>
-    <span class="n">ops_per_sec</span> <span class="o">=</span> <span class="n">total_ops</span> <span class="o">/</span> <span class="n">elapsed</span> <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+    <span class="n">ops_per_sec</span> <span class="o">=</span> <span class="n">total_ops</span> <span class="o">/</span> <span class="n">elapsed</span> <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ops_per_sec</span><span class="p">,</span> <span class="n">max_error</span></div>
 
 
@@ -647,12 +647,12 @@
     <span class="n">reflections</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">n_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_N_ITER</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Benchmark a single geometry + mode combination.</span>
+<span class="w">    </span><span class="sd">"""Benchmark a single geometry + mode combination.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    geometry_name : str</span>
-<span class="sd">        Name of a registered geometry (e.g. ``&quot;fourcv&quot;``).</span>
+<span class="sd">        Name of a registered geometry (e.g. ``"fourcv"``).</span>
 <span class="sd">    mode_name : str</span>
 <span class="sd">        Name of a mode declared on the geometry.</span>
 <span class="sd">    reflections : list of (h, k, l) or None</span>
@@ -667,21 +667,21 @@
 <span class="sd">        ``forward_ops_per_sec``, ``inverse_ops_per_sec``,</span>
 <span class="sd">        ``round_trip_max_error``, ``n_reflections``, ``n_solutions``,</span>
 <span class="sd">        ``error_message``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">reflections</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">reflections</span> <span class="o">=</span> <span class="n">DEFAULT_REFLECTIONS</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;geometry&quot;</span><span class="p">:</span> <span class="n">geometry_name</span><span class="p">,</span>
-        <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="n">mode_name</span><span class="p">,</span>
-        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;forward_ops_per_sec&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s2">&quot;inverse_ops_per_sec&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s2">&quot;forward_inverse_ratio&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s2">&quot;round_trip_max_error&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s2">&quot;n_reflections&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">reflections</span><span class="p">),</span>
-        <span class="s2">&quot;n_solutions&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;error_message&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"geometry"</span><span class="p">:</span> <span class="n">geometry_name</span><span class="p">,</span>
+        <span class="s2">"mode"</span><span class="p">:</span> <span class="n">mode_name</span><span class="p">,</span>
+        <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"ok"</span><span class="p">,</span>
+        <span class="s2">"forward_ops_per_sec"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"inverse_ops_per_sec"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"forward_inverse_ratio"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"round_trip_max_error"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"n_reflections"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">reflections</span><span class="p">),</span>
+        <span class="s2">"n_solutions"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"error_message"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -691,16 +691,16 @@
         <span class="n">fwd_ops</span><span class="p">,</span> <span class="n">solutions_by_hkl</span> <span class="o">=</span> <span class="n">_time_forward</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">reflections</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
         <span class="n">n_solutions</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sols</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">sols</span> <span class="ow">in</span> <span class="n">solutions_by_hkl</span><span class="p">)</span>
 
-        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;forward_ops_per_sec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fwd_ops</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;n_solutions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_solutions</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"forward_ops_per_sec"</span><span class="p">]</span> <span class="o">=</span> <span class="n">fwd_ops</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"n_solutions"</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_solutions</span>
 
         <span class="k">if</span> <span class="n">n_solutions</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;no_solutions&quot;</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"no_solutions"</span>
             <span class="k">return</span> <span class="n">result</span>
 
         <span class="n">inv_ops</span><span class="p">,</span> <span class="n">max_err</span> <span class="o">=</span> <span class="n">_time_inverse</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">solutions_by_hkl</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;inverse_ops_per_sec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inv_ops</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;round_trip_max_error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_err</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"inverse_ops_per_sec"</span><span class="p">]</span> <span class="o">=</span> <span class="n">inv_ops</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"round_trip_max_error"</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_err</span>
 
         <span class="c1"># Workstation-independent ratio: forward speed as a fraction of</span>
         <span class="c1"># inverse speed.  Higher is better.  Since inverse() is a single</span>
@@ -708,14 +708,14 @@
         <span class="c1"># machine; the ratio captures pure algorithmic efficiency of the</span>
         <span class="c1"># forward solver.</span>
         <span class="k">if</span> <span class="n">fwd_ops</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">inv_ops</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
-            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;forward_inverse_ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fwd_ops</span> <span class="o">/</span> <span class="n">inv_ops</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">"forward_inverse_ratio"</span><span class="p">]</span> <span class="o">=</span> <span class="n">fwd_ops</span> <span class="o">/</span> <span class="n">inv_ops</span>
 
     <span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;not_implemented&quot;</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;error_message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"not_implemented"</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"error_message"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;error_message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"error"</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"error_message"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span></div>
 
@@ -730,12 +730,12 @@
     <span class="n">n_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_N_ITER</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Benchmark all modes of a single geometry.</span>
+<span class="w">    </span><span class="sd">"""Benchmark all modes of a single geometry.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    name : str</span>
-<span class="sd">        Name of a registered geometry (e.g. ``&quot;fourcv&quot;``).</span>
+<span class="sd">        Name of a registered geometry (e.g. ``"fourcv"``).</span>
 <span class="sd">    reflections : list of (h, k, l) or None</span>
 <span class="sd">        Reflections to use.  Defaults to :data:`DEFAULT_REFLECTIONS`.</span>
 <span class="sd">    n_iter : int</span>
@@ -747,7 +747,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    list of dict</span>
 <span class="sd">        One result dict per mode.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">g</span> <span class="o">=</span> <span class="n">make_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="n">mode_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
@@ -771,7 +771,7 @@
     <span class="n">n_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_N_ITER</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Benchmark all modes of all registered geometries.</span>
+<span class="w">    </span><span class="sd">"""Benchmark all modes of all registered geometries.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -786,7 +786,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    list of dict</span>
 <span class="sd">        One result dict per geometry+mode combination.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">list_geometries</span><span class="p">()):</span>
         <span class="n">results</span> <span class="o">=</span> <span class="n">benchmark_geometry</span><span class="p">(</span>
@@ -812,16 +812,16 @@
 <div class="viewcode-block" id="_print_results">
 <a class="viewcode-back" href="../../autoapi/ad_hoc_diffractometer/benchmark/index.html#ad_hoc_diffractometer.benchmark._print_results">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">_print_results</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print a formatted table of benchmark results to stdout.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Print a formatted table of benchmark results to stdout."""</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">builtins</span>
 
     <span class="n">header</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;geometry&#39;</span><span class="si">:</span><span class="s2">&lt;12s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;mode&#39;</span><span class="si">:</span><span class="s2">&lt;32s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;status&#39;</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">_STATUS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="s1">&#39;fwd ops/s&#39;</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;inv ops/s&#39;</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="s1">&#39;fwd/inv&#39;</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="s1">&#39;round-trip err&#39;</span><span class="si">:</span><span class="s2">&gt;14s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;solns&#39;</span><span class="si">:</span><span class="s2">&gt;5s</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'geometry'</span><span class="si">:</span><span class="s2">&lt;12s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">'mode'</span><span class="si">:</span><span class="s2">&lt;32s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">'status'</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">_STATUS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">'fwd ops/s'</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">'inv ops/s'</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">'fwd/inv'</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">'round-trip err'</span><span class="si">:</span><span class="s2">&gt;14s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="s1">'solns'</span><span class="si">:</span><span class="s2">&gt;5s</span><span class="si">}</span><span class="s2">"</span>
     <span class="p">)</span>
-    <span class="n">separator</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="n">separator</span> <span class="o">=</span> <span class="s2">"-"</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
 
     <span class="n">builtins</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
@@ -829,28 +829,28 @@
 
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
         <span class="n">fwd</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;forward_ops_per_sec&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;forward_ops_per_sec&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;-&#39;</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'forward_ops_per_sec'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">"</span>
+            <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">"forward_ops_per_sec"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'-'</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
         <span class="n">inv</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;inverse_ops_per_sec&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;inverse_ops_per_sec&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;-&#39;</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'inverse_ops_per_sec'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">"</span>
+            <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">"inverse_ops_per_sec"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'-'</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">_OPS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
         <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;forward_inverse_ratio&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;7.4f</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;forward_inverse_ratio&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;-&#39;</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'forward_inverse_ratio'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;7.4f</span><span class="si">}</span><span class="s2">"</span>
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"forward_inverse_ratio"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'-'</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
         <span class="n">err</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;round_trip_max_error&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;14.2e</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;round_trip_max_error&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;-&#39;</span><span class="si">:</span><span class="s2">&gt;14s</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'round_trip_max_error'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;14.2e</span><span class="si">}</span><span class="s2">"</span>
+            <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">"round_trip_max_error"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'-'</span><span class="si">:</span><span class="s2">&gt;14s</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
         <span class="n">builtins</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;12s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;32s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">_STATUS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">fwd</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">inv</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">ratio</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;n_solutions&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;5d</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'geometry'</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;12s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'mode'</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;32s</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'status'</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">_STATUS_WIDTH</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">fwd</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">inv</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">ratio</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'n_solutions'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;5d</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
     <span class="n">builtins</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span></div>
@@ -861,7 +861,7 @@
 <span class="c1"># CLI entry point: python -m ad_hoc_diffractometer.benchmark</span>
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
     <span class="n">benchmark_all</span><span class="p">()</span>
 </pre></div>
 
@@ -892,8 +892,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -901,7 +901,7 @@
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-06-30 15:11 CDT.
+  Last updated on 2026-09-09 13:47 CDT.
   <br/>
 </p></div>
       

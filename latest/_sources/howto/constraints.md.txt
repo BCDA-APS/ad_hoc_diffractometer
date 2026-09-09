@@ -62,7 +62,7 @@ This is implemented for all geometries with two or more detector stages
 **Reference constraint** — expresses a condition between Q and a reference
 vector n̂ (surface normal, polarization axis, etc.).
 The incidence/emergence-angle constraints (``incidence``, ``emergence``,
-``specular``) are implemented when ``surface_normal`` is set;
+``incidence_equals_emergence``) are implemented when ``surface_normal`` is set;
 ``psi`` and ``naz`` are not yet implemented as forward constraints.
 See {doc}`surface`:
 
@@ -71,7 +71,7 @@ from ad_hoc_diffractometer import ReferenceConstraint
 
 ReferenceConstraint("psi", 90.0)         # azimuthal angle of n̂ about Q
 ReferenceConstraint("incidence", 5.0)    # incidence angle
-ReferenceConstraint("specular", True)      # incidence = emergence (symmetric)
+ReferenceConstraint("incidence_equals_emergence", True)      # incidence = emergence (alpha_i = alpha_f)
 ```
 
 **Rules:** at most one {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`,
@@ -147,7 +147,7 @@ readable for your case.
 `ConstraintSet` with the named constraint values replaced.  Each keyword
 argument names a constraint by its `.name` attribute (a stage name for
 sample / detector constraints, a reference name like `incidence` /
-`emergence` / `psi` / `specular` for reference constraints).  Constraint
+`emergence` / `psi` / `incidence_equals_emergence` for reference constraints).  Constraint
 order, `computed`, `extras`, and `cut_points` are preserved.
 
 ```python
