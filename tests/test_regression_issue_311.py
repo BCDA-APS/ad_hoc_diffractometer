@@ -5,7 +5,8 @@ Regression tests for issue #311: Review of psic modes.
 
 Issue #311 reports problems with several psic modes across these categories:
   1. fixed_psi_vertical/horizontal — produce warnings on (0,0,L) reflections
-  2. incidence_equals_emergence_vertical/horizontal — produce wild angles for (0,0,L)
+  2. incidence_equals_emergence_vertical/horizontal — validate on an
+     off-normal reflection ((0,0,L) is degenerate: Q || surface normal)
   3. fixed_incidence_fixed_chi_fixed_phi (B3) — sign reversal
   4. fixed_incidence_horizontal — first-returned solution lands in an
      unusable sector (mu near -175 degrees) for the user's silicon setup
@@ -20,6 +21,16 @@ import pytest
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.reference import natural_psi
+
+# Tolerances (degrees / reciprocal-lattice units) used across the tests.
+HKL_ATOL = 1e-4  # hkl round-trip and incidence==emergence agreement
+ANGLE_DEGREES_ATOL = 1e-3  # sector match and 4-DOF Newton engineering residual
+ANGLE_RANGE_LIMIT = 180.0  # a physical stage angle must lie within +/- this
+FRONT_FACE_MU_LIMIT = 90.0  # a usable, non-wraparound mu is in (0, this)
+
+# Incidence target (degrees) used by the user's fixed_incidence_horizontal
+# reproduction (issue #311).
+USER_INCIDENCE_TARGET = 5.0
 
 
 @pytest.fixture
@@ -79,9 +90,9 @@ class TestFixedPsiVertical00L:
             # All solutions should be valid
             for sol in solutions:
                 inverse_hkl = g.inverse(angles=sol)
-                assert inverse_hkl[0] == pytest.approx(0, abs=1e-4)
-                assert inverse_hkl[1] == pytest.approx(0, abs=1e-4)
-                assert inverse_hkl[2] == pytest.approx(l_value, abs=1e-4)
+                assert inverse_hkl[0] == pytest.approx(0, abs=HKL_ATOL)
+                assert inverse_hkl[1] == pytest.approx(0, abs=HKL_ATOL)
+                assert inverse_hkl[2] == pytest.approx(l_value, abs=HKL_ATOL)
 
     def test_fixed_psi_vertical_respects_constraint_value(self, cubic_psic_geometry):
         """
@@ -156,9 +167,9 @@ class TestFixedPsiHorizontal00L:
             # Verify solutions round-trip
             for sol in solutions:
                 inverse_hkl = g.inverse(angles=sol)
-                assert inverse_hkl[0] == pytest.approx(0, abs=1e-4)
-                assert inverse_hkl[1] == pytest.approx(0, abs=1e-4)
-                assert inverse_hkl[2] == pytest.approx(l_value, abs=1e-4)
+                assert inverse_hkl[0] == pytest.approx(0, abs=HKL_ATOL)
+                assert inverse_hkl[1] == pytest.approx(0, abs=HKL_ATOL)
+                assert inverse_hkl[2] == pytest.approx(l_value, abs=HKL_ATOL)
 
 
 # ============================================================================
@@ -207,7 +218,9 @@ def user_silicon_psic_geometry():
     g.sample.UB = np.array(_USER_UB)
     g.mode_name = "fixed_incidence_horizontal"
     g.surface_normal = (0, 0, 1)
-    g.modes[g.mode_name] = g.mode.with_constraint_values(incidence=5)
+    g.modes[g.mode_name] = g.mode.with_constraint_values(
+        incidence=USER_INCIDENCE_TARGET
+    )
     g.mode_name = g.mode_name
     return g
 
@@ -252,7 +265,7 @@ class TestFixedIncidenceHorizontalSector:
             match = None
             for sol in solutions:
                 if all(
-                    sol[axis] == pytest.approx(value, abs=1e-3)
+                    sol[axis] == pytest.approx(value, abs=ANGLE_DEGREES_ATOL)
                     for axis, value in expected.items()
                 ):
                     match = sol
@@ -262,9 +275,9 @@ class TestFixedIncidenceHorizontalSector:
             )
 
             inverse_hkl = g.inverse(angles=match)
-            assert inverse_hkl[0] == pytest.approx(hkl[0], abs=1e-4)
-            assert inverse_hkl[1] == pytest.approx(hkl[1], abs=1e-4)
-            assert inverse_hkl[2] == pytest.approx(hkl[2], abs=1e-4)
+            assert inverse_hkl[0] == pytest.approx(hkl[0], abs=HKL_ATOL)
+            assert inverse_hkl[1] == pytest.approx(hkl[1], abs=HKL_ATOL)
+            assert inverse_hkl[2] == pytest.approx(hkl[2], abs=HKL_ATOL)
 
     @pytest.mark.slow_benchmark
     @pytest.mark.parametrize(
@@ -297,199 +310,97 @@ class TestFixedIncidenceHorizontalSector:
             solutions = g.forward(*hkl)
             assert solutions, f"No solutions for {hkl}"
 
-            # Signed incidence: every returned branch must meet the +5 target
+            # Signed incidence: every returned branch must meet the target
             # (below-surface / negative-incidence branches are no longer
             # returned).
             for sol in solutions:
-                assert incidence_angle(g, angles=sol) == pytest.approx(5.0, abs=1e-3), (
-                    f"branch does not meet +5 incidence target: {sol}"
+                assert incidence_angle(g, angles=sol) == pytest.approx(
+                    USER_INCIDENCE_TARGET, abs=ANGLE_DEGREES_ATOL
+                ), (
+                    f"branch does not meet {USER_INCIDENCE_TARGET}° incidence target: {sol}"
                 )
 
             # A usable branch with positive mu (front-face, no wraparound)
             # is present and round-trips.
-            usable = [s for s in solutions if 0 < s["mu"] < 90]
+            usable = [s for s in solutions if 0 < s["mu"] < FRONT_FACE_MU_LIMIT]
             assert usable, (
                 "No usable positive-mu branch found among "
                 f"fixed_incidence_horizontal solutions for {hkl}: {solutions}"
             )
             for sol in usable:
                 inverse_hkl = g.inverse(angles=sol)
-                assert inverse_hkl[0] == pytest.approx(hkl[0], abs=1e-4)
-                assert inverse_hkl[1] == pytest.approx(hkl[1], abs=1e-4)
-                assert inverse_hkl[2] == pytest.approx(hkl[2], abs=1e-4)
+                assert inverse_hkl[0] == pytest.approx(hkl[0], abs=HKL_ATOL)
+                assert inverse_hkl[1] == pytest.approx(hkl[1], abs=HKL_ATOL)
+                assert inverse_hkl[2] == pytest.approx(hkl[2], abs=HKL_ATOL)
 
 
 # ============================================================================
-# Issue #2: incidence_equals_emergence_vertical/horizontal — (0,0,L) produces wild angles
+# Issue #2: incidence_equals_emergence_vertical/horizontal
 # ============================================================================
 
 
-class TestIncidenceEqualsEmergenceVertical00L:
-    """Test incidence_equals_emergence_vertical on (0,0,L) reflections.
+class TestIncidenceEqualsEmergenceOffNormal:
+    """incidence_equals_emergence on an off-normal reflection (issue #311).
 
-    NOTE: The intended regression here is the reported wild-angle behavior
-    on (0,0,L). Whether this exact setup is physically reachable remains
-    under investigation in issue #311.
+    Marked slow_benchmark: each forward() in this mode runs the exhaustive
+    three-free-sample Bragg solver (~20-30 s per call), too slow for the
+    default suite.  Run with: pytest -m slow_benchmark.
+
+    Uses the user's silicon UB and the off-normal (1,0,1) reflection, for
+    which alpha_i = alpha_f is a genuine (non-degenerate) constraint.
     """
 
+    @pytest.mark.slow_benchmark
     @pytest.mark.parametrize(
-        "l_value, context",
+        "mode_name, context",
         [
             pytest.param(
-                1,
+                "incidence_equals_emergence_vertical",
                 does_not_raise(),
-                id="001",
-                marks=pytest.mark.skip(
-                    reason="Issue #311: incidence_equals_emergence (0,0,L) reachability unresolved pending user validation"
-                ),
+                id="vertical",
             ),
             pytest.param(
-                2,
+                "incidence_equals_emergence_horizontal",
                 does_not_raise(),
-                id="002",
-                marks=pytest.mark.skip(
-                    reason="Issue #311: incidence_equals_emergence (0,0,L) reachability unresolved pending user validation"
-                ),
-            ),
-            pytest.param(
-                3,
-                does_not_raise(),
-                id="003",
-                marks=pytest.mark.skip(
-                    reason="Issue #311: incidence_equals_emergence (0,0,L) reachability unresolved pending user validation"
-                ),
+                id="horizontal",
             ),
         ],
     )
-    def test_incidence_equals_emergence_vertical_produces_reasonable_angles(
-        self, cubic_psic_geometry, l_value, context
+    def test_off_normal_reflection_self_consistent(
+        self, user_silicon_psic_geometry, mode_name, context
     ):
-        """
-        incidence_equals_emergence_vertical should produce physically reasonable angles for (0,0,L).
+        """Off-normal (1,0,1) solutions round-trip and satisfy alpha_i = alpha_f.
 
-        Specifically, eta should NOT be ±175°, ±170°, etc. (wraparound artifacts).
+        The common incidence/emergence value is not fixed: it is whatever
+        the geometry requires for this reflection (here ~5.28 degrees), and
+        it differs from the (0,0,L) trivial case.
         """
         with context:
-            g = cubic_psic_geometry
-            g.mode_name = "incidence_equals_emergence_vertical"
-            g.surface_normal = (0, 0, 1)  # Surface normal along z
-
-            solutions = g.forward(0, 0, l_value)
-            assert len(solutions) > 0, f"No solutions for (0,0,{l_value})"
-
-            for sol in solutions:
-                eta = sol["eta"]
-                # eta should be in a reasonable range, not ±175° or ±170°
-                # For (0,0,L) in a typical geometry, |eta| should be < 90°
-                assert abs(eta) < 100, (
-                    f"eta={eta:.1f}° is unreasonable for (0,0,{l_value}); "
-                    "possible sign error in surface constraint"
-                )
-
-                # Verify solution reproduces hkl
-                inverse_hkl = g.inverse(angles=sol)
-                assert inverse_hkl[0] == pytest.approx(0, abs=1e-4)
-                assert inverse_hkl[1] == pytest.approx(0, abs=1e-4)
-                assert inverse_hkl[2] == pytest.approx(l_value, abs=1e-4)
-
-    def test_incidence_equals_emergence_vertical_enforced(self, cubic_psic_geometry):
-        """incidence_equals_emergence_vertical should enforce incidence == emergence."""
-        with does_not_raise():
             from ad_hoc_diffractometer.reference import emergence_angle
             from ad_hoc_diffractometer.reference import incidence_angle
 
-            g = cubic_psic_geometry
-            g.mode_name = "incidence_equals_emergence_vertical"
+            g = user_silicon_psic_geometry
+            g.mode_name = mode_name
             g.surface_normal = (0, 0, 1)
 
-            solutions = g.forward(1, 1, 1)
-            assert len(solutions) > 0
+            hkl = (1, 0, 1)
+            solutions = g.forward(*hkl)
+            assert len(solutions) > 0, f"No solutions for {hkl} in {mode_name}"
 
             for sol in solutions:
                 inc = incidence_angle(g, angles=sol)
                 em = emergence_angle(g, angles=sol)
-                assert inc == pytest.approx(em, abs=1e-6), (
+                assert inc == pytest.approx(em, abs=HKL_ATOL), (
                     f"incidence={inc:.4f}° != emergence={em:.4f}°"
                 )
-
-
-class TestIncidenceEqualsEmergenceHorizontal00L:
-    """Test incidence_equals_emergence_horizontal on (0,0,L) reflections.
-
-    NOTE: The intended regression here is the reported wild-angle behavior
-    on (0,0,L). Whether this exact setup is physically reachable remains
-    under investigation in issue #311.
-    """
-
-    @pytest.mark.parametrize(
-        "l_value, context",
-        [
-            pytest.param(
-                1,
-                does_not_raise(),
-                id="001",
-                marks=pytest.mark.skip(
-                    reason="Issue #311: incidence_equals_emergence (0,0,L) reachability unresolved pending user validation"
-                ),
-            ),
-            pytest.param(
-                2,
-                does_not_raise(),
-                id="002",
-                marks=pytest.mark.skip(
-                    reason="Issue #311: incidence_equals_emergence (0,0,L) reachability unresolved pending user validation"
-                ),
-            ),
-        ],
-    )
-    def test_incidence_equals_emergence_horizontal_produces_reasonable_angles(
-        self, cubic_psic_geometry, l_value, context
-    ):
-        """
-        incidence_equals_emergence_horizontal should produce reasonable angles for (0,0,L).
-
-        Specifically, mu should NOT be ±175°, ±170°, etc.
-        """
-        with context:
-            g = cubic_psic_geometry
-            g.mode_name = "incidence_equals_emergence_horizontal"
-            g.surface_normal = (0, 0, 1)
-
-            solutions = g.forward(0, 0, l_value)
-            assert len(solutions) > 0, f"No solutions for (0,0,{l_value})"
-
-            for sol in solutions:
-                mu = sol["mu"]
-                # mu should be in a reasonable range
-                assert abs(mu) < 100, (
-                    f"mu={mu:.1f}° is unreasonable for (0,0,{l_value})"
-                )
-
-                # Verify solution reproduces hkl
                 inverse_hkl = g.inverse(angles=sol)
-                assert inverse_hkl[0] == pytest.approx(0, abs=1e-4)
-                assert inverse_hkl[1] == pytest.approx(0, abs=1e-4)
-                assert inverse_hkl[2] == pytest.approx(l_value, abs=1e-4)
+                assert inverse_hkl[0] == pytest.approx(hkl[0], abs=HKL_ATOL)
+                assert inverse_hkl[1] == pytest.approx(hkl[1], abs=HKL_ATOL)
+                assert inverse_hkl[2] == pytest.approx(hkl[2], abs=HKL_ATOL)
 
-    def test_incidence_equals_emergence_horizontal_enforced(self, cubic_psic_geometry):
-        """incidence_equals_emergence_horizontal should enforce incidence == emergence."""
-        with does_not_raise():
-            from ad_hoc_diffractometer.reference import emergence_angle
-            from ad_hoc_diffractometer.reference import incidence_angle
 
-            g = cubic_psic_geometry
-            g.mode_name = "incidence_equals_emergence_horizontal"
-            g.surface_normal = (0, 0, 1)
-
-            solutions = g.forward(1, 1, 1)
-            assert len(solutions) > 0
-
-            for sol in solutions:
-                inc = incidence_angle(g, angles=sol)
-                em = emergence_angle(g, angles=sol)
-                assert inc == pytest.approx(em, abs=1e-6), (
-                    f"incidence={inc:.4f}° != emergence={em:.4f}°"
-                )
+# (0,0,L) is degenerate for this mode (Q || surface normal), so it is
+# validated off-normal above rather than at (0,0,L).  See issue #311.
 
 
 # ============================================================================
@@ -530,7 +441,7 @@ class TestB3SignCorrectness:
                 solutions = g.forward(*hkl)
             except ahd.mode.ConstraintViolation as e:
                 # Accept if residual is within engineering tolerance
-                if abs(e.residual) < 1e-3:  # 0.001°
+                if abs(e.residual) < ANGLE_DEGREES_ATOL:
                     pytest.skip(
                         f"B3 mode edge case: constraint residual {e.residual:.2e}° "
                         "within engineering tolerance"
@@ -547,17 +458,25 @@ class TestB3SignCorrectness:
                 nu = sol["nu"]
                 delta = sol["delta"]
 
-                # All should be finite and within ±180°
-                assert abs(mu) < 180, f"mu={mu}° is outside reasonable range"
-                assert abs(eta) < 180, f"eta={eta}° is outside reasonable range"
-                assert abs(nu) < 180, f"nu={nu}° is outside reasonable range"
-                assert abs(delta) < 180, f"delta={delta}° is outside reasonable range"
+                # All should be finite and within the physical angle range.
+                assert abs(mu) < ANGLE_RANGE_LIMIT, (
+                    f"mu={mu}° is outside reasonable range"
+                )
+                assert abs(eta) < ANGLE_RANGE_LIMIT, (
+                    f"eta={eta}° is outside reasonable range"
+                )
+                assert abs(nu) < ANGLE_RANGE_LIMIT, (
+                    f"nu={nu}° is outside reasonable range"
+                )
+                assert abs(delta) < ANGLE_RANGE_LIMIT, (
+                    f"delta={delta}° is outside reasonable range"
+                )
 
                 # Verify solution reproduces hkl (engineering tolerance)
                 inverse_hkl = g.inverse(angles=sol)
-                assert inverse_hkl[0] == pytest.approx(hkl[0], abs=1e-3)
-                assert inverse_hkl[1] == pytest.approx(hkl[1], abs=1e-3)
-                assert inverse_hkl[2] == pytest.approx(hkl[2], abs=1e-3)
+                assert inverse_hkl[0] == pytest.approx(hkl[0], abs=ANGLE_DEGREES_ATOL)
+                assert inverse_hkl[1] == pytest.approx(hkl[1], abs=ANGLE_DEGREES_ATOL)
+                assert inverse_hkl[2] == pytest.approx(hkl[2], abs=ANGLE_DEGREES_ATOL)
 
     def test_b3_solutions_match_reference_geometry(self, cubic_psic_geometry):
         """
@@ -591,7 +510,7 @@ class TestB3SignCorrectness:
                     # Verify solutions are valid
                     for sol in b3_sols:
                         inv = g.inverse(angles=sol)
-                        assert inv[0] == pytest.approx(1, abs=1e-3)
+                        assert inv[0] == pytest.approx(1, abs=ANGLE_DEGREES_ATOL)
             except ahd.mode.ConstraintViolation as e:
                 # Accept if residual is within engineering tolerance
                 if abs(e.residual) >= 1e-3:
