@@ -208,10 +208,10 @@ def test_angles_to_phi_vector_satisfies_bragg_for_forward_solution():
     g.wavelength = WAVELENGTH
     g.sample.lattice = ahd.Lattice(a=4.0)
     ahd.ub_identity(g.sample)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
 
     sols = g.forward(1, 1, 0)
-    assert sols, "psic bisecting_vertical (1,1,0) must have at least one solution"
+    assert sols, "psic fixed_omega_vertical (1,1,0) must have at least one solution"
     sol = sols[0]
 
     expected = _expected_q_phi(g, sol)

@@ -131,7 +131,7 @@ g.azimuth = (0, 0, 1)
 from ad_hoc_diffractometer import emergence_angle, incidence_angle
 
 g.surface_normal = (0, 0, 1)
-g.mode_name = "bisecting_vertical"
+g.mode_name = "fixed_omega_vertical"
 solutions = g.forward(1, 0, 0)
 
 for sol in solutions:
@@ -162,7 +162,7 @@ ai = incidence_angle(g)   # uses current stage angles
 from ad_hoc_diffractometer import psi_angle
 
 g.azimuth = (0, 0, 1)
-g.mode_name = "bisecting_vertical"
+g.mode_name = "fixed_omega_vertical"
 solutions = g.forward(1, 0, 0)
 
 for sol in solutions:
@@ -194,7 +194,7 @@ horizontal plane of the lab frame.
 from ad_hoc_diffractometer import emergence_angle, incidence_angle
 
 g.surface_normal = (0, 0, 1)
-g.mode_name = "bisecting_vertical"
+g.mode_name = "fixed_omega_vertical"
 solutions = g.forward(1, 0, 0)
 
 for sol in solutions:

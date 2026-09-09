@@ -9,6 +9,7 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ### Breaking changes
 
+- Remove redundant psic `bisecting_*` modes; use `fixed_omega_*`. (#313)
 - Rename `is_specular()` method to `is_incidence_equal_emergence()`. (#311)
 - Rename `specular` reference constraint to `incidence_equals_emergence`. (#311)
 - Rename `specular_*` modes to `incidence_equals_emergence_*`. (#311)

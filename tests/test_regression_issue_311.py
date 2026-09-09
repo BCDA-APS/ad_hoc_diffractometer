@@ -69,7 +69,7 @@ class TestFixedPsiVertical00L:
         fixed_psi_vertical should find solutions for (0,0,L) reflections.
 
         When the constraint psi value matches the natural psi,
-        solutions should be found (same as bisecting_vertical).
+        solutions should be found (same as fixed_omega_vertical).
         """
         with context:
             g = cubic_psic_geometry
@@ -103,9 +103,9 @@ class TestFixedPsiVertical00L:
             g.azimuth = (0, -1, 0)
 
             # Use (1,1,0) reflection where natural_psi is well-defined
-            g.mode_name = "bisecting_vertical"
+            g.mode_name = "fixed_omega_vertical"
             sols = g.forward(1, 1, 0)
-            assert len(sols) > 0, "No bisecting solutions for (1,1,0)"
+            assert len(sols) > 0, "No bisecting-geometry solutions for (1,1,0)"
 
             natural_psi_110 = natural_psi(g, 1, 1, 0)
             assert natural_psi_110 is not None, "natural_psi returned None for (1,1,0)"
@@ -144,7 +144,7 @@ class TestFixedPsiHorizontal00L:
         fixed_psi_horizontal should find solutions for (0,0,L) reflections.
 
         When the constraint psi value matches the natural psi,
-        solutions should be found (same as bisecting_horizontal).
+        solutions should be found (same as fixed_omega_horizontal).
         """
         with context:
             g = cubic_psic_geometry
@@ -489,8 +489,8 @@ class TestB3SignCorrectness:
         with does_not_raise():
             g = cubic_psic_geometry
 
-            # Get bisecting solution for reference
-            g.mode_name = "bisecting_vertical"
+            # Get bisecting-geometry solution for reference
+            g.mode_name = "fixed_omega_vertical"
             bisect_sols = g.forward(1, 0, 0)
             assert len(bisect_sols) > 0
 

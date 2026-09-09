@@ -81,9 +81,9 @@ WAVELENGTH = 1.54
         pytest.param("fourch", "bisecting", does_not_raise(), id="fourch-bisecting"),
         pytest.param(
             "psic",
-            "bisecting_vertical",
+            "fixed_omega_vertical",
             does_not_raise(),
-            id="psic-bisecting_vertical",
+            id="psic-fixed_omega_vertical",
         ),
         pytest.param(
             "kappa6c",

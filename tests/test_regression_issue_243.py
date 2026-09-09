@@ -407,12 +407,15 @@ def test_removed_redundant_modes_absent(removed_mode):
 # phi-axis (phi-rotation degenerate; analytic decomposition cannot
 # enumerate the multiple phi-equivalent solutions).  The Newton solver
 # then generates the phi-representatives.  Reflection ``(0, 0, 1)`` on
-# psic bisecting_horizontal puts ``Q_phi`` along ``+z`` while the
-# phi-axis is ``-z``, satisfying this condition.
+# psic fixed_omega_horizontal (the horizontal bisecting geometry at
+# omega = 0) puts ``Q_phi`` along ``+z`` while the phi-axis is ``-z``,
+# satisfying this condition.  fixed_omega_horizontal at omega = 0
+# short-circuits to ``_solve_bisecting`` (see forward._solve_omega_mode),
+# so it still exercises the analytic fallthrough branch.
 # ---------------------------------------------------------------------------
 
 
-def test_bisecting_horizontal_analytic_empty_fallthrough():
+def test_fixed_omega_horizontal_analytic_empty_fallthrough():
     """Analytic returns empty for phi-degenerate target; Newton fills in.
 
     The historic assertion (``solutions == []``) used reflection
@@ -423,12 +426,12 @@ def test_bisecting_horizontal_analytic_empty_fallthrough():
 
     The replacement assertion still exercises the fallthrough branch
     (verified via a monkey-patched spy in
-    ``test_bisecting_horizontal_analytic_returns_empty``) and confirms
+    ``test_fixed_omega_horizontal_analytic_returns_empty``) and confirms
     the Newton fallback finishes with correct, round-tripping
     solutions.
     """
     g = _setup_psic_cubic()
-    g.mode_name = "bisecting_horizontal"
+    g.mode_name = "fixed_omega_horizontal"
     solutions = g.forward(0, 0, 1)
     assert len(solutions) >= 1
     for sol in solutions:
@@ -438,12 +441,12 @@ def test_bisecting_horizontal_analytic_empty_fallthrough():
         assert abs(hkl_back[2] - 1.0) < 1e-6
 
 
-def test_bisecting_horizontal_analytic_returns_empty():
+def test_fixed_omega_horizontal_analytic_returns_empty():
     """Verify the analytic solver returns ``[]`` on the phi-degenerate target."""
     from ad_hoc_diffractometer import forward as fmod
 
     g = _setup_psic_cubic()
-    g.mode_name = "bisecting_horizontal"
+    g.mode_name = "fixed_omega_horizontal"
 
     captured: list[list[tuple[float, float]]] = []
     orig = fmod._solve_bisecting_analytic

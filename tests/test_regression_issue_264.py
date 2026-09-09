@@ -24,8 +24,11 @@ The per-module unit tests in ``tests/test_reference.py``,
 already cover the individual pieces; this file collects the
 cross-module *invariants* that must hold across the whole #264 patch:
 
-- OMEGA = 0 ⇔ bisecting (the central physical equivalence claimed by
-  @jwkim-anl in the issue thread).
+- OMEGA = 0 is the bisecting geometry: ``omega_pseudo`` evaluates to 0
+  at every ``fixed_omega_*`` (target 0) solution.  The dedicated
+  bisecting psic modes were removed in #313 (``fixed_omega_*`` at
+  omega = 0 is now the sole bisecting geometry), so there is no separate
+  mode left to compare against.
 - Every mode named by issue #264 is present in the registry, has the
   expected ``is_implemented`` status, and produces solutions that
   satisfy the Bragg condition end-to-end.
@@ -52,7 +55,6 @@ sample stages plus the active detector at ``2θ``.
 from __future__ import annotations
 
 import re
-from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
@@ -109,84 +111,6 @@ def test_issue_264_mode_present(mode_name):
     """Every #264 mode is registered in the psic mode dict."""
     g = psic()
     assert mode_name in g.modes
-
-
-# ---------------------------------------------------------------------------
-# OMEGA = 0 ⇔ bisecting (the @jwkim-anl equivalence)
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    "h, k, l, context",
-    [
-        pytest.param(1, 0, 0, does_not_raise(), id="100"),
-        pytest.param(0, 1, 1, does_not_raise(), id="011"),
-        pytest.param(1, 1, 1, does_not_raise(), id="111"),
-    ],
-)
-def test_omega_zero_equals_bisecting_vertical(h, k, l, context):  # noqa: E741
-    """OMEGA = 0 ⇒ bisecting_vertical (vertical scattering plane).
-
-    @jwkim-anl wrote on issue #264:
-        "Yes. This is including bisecting mode. If omega is fixed at 0,
-        it is bisecting."
-
-    Verifies the equivalence numerically: the solution sets returned
-    by ``bisecting_vertical`` and ``fixed_omega_vertical`` (target 0)
-    must agree motor-for-motor for every reachable reflection.
-    """
-    with context:
-        g = _setup_psic_cubic()
-
-        g.mode_name = "bisecting_vertical"
-        bisect_sols = g.forward(h, k, l)
-        g.mode_name = "fixed_omega_vertical"
-        omega_sols = g.forward(h, k, l)
-
-        assert len(bisect_sols) == len(omega_sols), (
-            f"({h},{k},{l}): bisecting returned {len(bisect_sols)} sols, "
-            f"omega=0 returned {len(omega_sols)}"
-        )
-
-        bisect_sorted = sorted(bisect_sols, key=lambda s: (s["eta"], s["chi"]))
-        omega_sorted = sorted(omega_sols, key=lambda s: (s["eta"], s["chi"]))
-        for b, o in zip(bisect_sorted, omega_sorted, strict=False):
-            for stage in ("mu", "eta", "chi", "phi", "nu", "delta"):
-                assert b[stage] == pytest.approx(o[stage], abs=1e-6), (
-                    f"({h},{k},{l}) stage {stage}: "
-                    f"bisecting={b[stage]}, omega=0={o[stage]}"
-                )
-            # Independent confirmation: omega_pseudo evaluates to 0 in
-            # both solution sets.
-            assert omega_pseudo(g, angles=b) == pytest.approx(0.0, abs=1e-7)
-            assert omega_pseudo(g, angles=o) == pytest.approx(0.0, abs=1e-7)
-
-
-@pytest.mark.parametrize(
-    "h, k, l, context",
-    [
-        pytest.param(0, 0, 1, does_not_raise(), id="001"),
-        pytest.param(1, 0, 1, does_not_raise(), id="101"),
-    ],
-)
-def test_omega_zero_equals_bisecting_horizontal(h, k, l, context):  # noqa: E741
-    """OMEGA = 0 ⇒ bisecting_horizontal (horizontal scattering plane)."""
-    with context:
-        g = _setup_psic_cubic()
-
-        g.mode_name = "bisecting_horizontal"
-        bisect_sols = g.forward(h, k, l)
-        g.mode_name = "fixed_omega_horizontal"
-        omega_sols = g.forward(h, k, l)
-
-        assert len(bisect_sols) == len(omega_sols)
-        bisect_sorted = sorted(bisect_sols, key=lambda s: s["mu"])
-        omega_sorted = sorted(omega_sols, key=lambda s: s["mu"])
-        for b, o in zip(bisect_sorted, omega_sorted, strict=False):
-            for stage in ("mu", "eta", "chi", "phi", "nu", "delta"):
-                assert b[stage] == pytest.approx(o[stage], abs=1e-6)
-            assert omega_pseudo(g, angles=b) == pytest.approx(0.0, abs=1e-7)
-            assert omega_pseudo(g, angles=o) == pytest.approx(0.0, abs=1e-7)
 
 
 # ---------------------------------------------------------------------------

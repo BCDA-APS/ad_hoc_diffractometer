@@ -43,14 +43,15 @@ documentation: |
     mechanically independent.
 
 
-    Mode families (24 modes total):
+    Mode families (22 modes total):
 
-    - 9 vertical-scattering-plane modes (mu = nu = 0): bisecting,
+    - 8 vertical-scattering-plane modes (mu = nu = 0):
       fixed_phi, fixed_chi, fixed_incidence, fixed_emergence,
       incidence_equals_emergence, fixed_psi, fixed_omega (#264),
-      double_diffraction.
+      double_diffraction.  (fixed_omega at omega = 0 is the vertical
+      bisecting geometry.)
 
-    - 9 horizontal-scattering-plane mirror modes (eta = delta = 0).
+    - 8 horizontal-scattering-plane mirror modes (eta = delta = 0).
 
     - 1 hybrid mode fixed_incidence_fixed_chi_fixed_phi (#264) that
       fixes chi, phi, and incidence and lets every other angle float.
@@ -93,14 +94,6 @@ stages:
 # Horizontal bisect pair: mu(vertical)    <-> nu(vertical)       => mu  = nu/2
 modes:
     # ── Vertical scattering plane ───────────────────────────────────────
-    bisecting_vertical:
-        default: true
-        constraints:
-            - {type: bisect,   stage1: eta, stage2: delta}
-            - {type: sample,   stage: mu, value: 0.0}
-            - {type: detector, stage: nu, value: 0.0}
-        computed: [eta, chi, phi, delta]
-
     fixed_phi_vertical:
         constraints:
             - {type: sample,   stage: phi, value: 0.0}
@@ -188,9 +181,10 @@ modes:
 
     # SPEC ``setmode d1 0 0 0`` family — issue #264.
     # OMEGA = angle between Q and the plane of the chi circle
-    # (SPEC psic ``def OMEGA 'Q[6]'``).  At OMEGA = 0 the mode reduces
-    # to bisecting_vertical.
+    # (SPEC psic ``def OMEGA 'Q[6]'``).  At OMEGA = 0 this is the vertical
+    # bisecting geometry (eta = delta / 2).
     fixed_omega_vertical:
+        default: true
         constraints:
             - {type: sample,    stage: mu, value: 0.0}
             - {type: detector,  stage: nu, value: 0.0}
@@ -210,13 +204,6 @@ modes:
             l2: REQUIRED
 
     # ── Horizontal scattering plane ─────────────────────────────────────
-    bisecting_horizontal:
-        constraints:
-            - {type: bisect,   stage1: mu, stage2: nu}
-            - {type: sample,   stage: eta,   value: 0.0}
-            - {type: detector, stage: delta, value: 0.0}
-        computed: [mu, chi, phi, nu]
-
     fixed_phi_horizontal:
         constraints:
             - {type: sample,   stage: phi,   value: 0.0}
@@ -294,7 +281,7 @@ modes:
 
     # SPEC ``setmode d1 0 0 0`` family — issue #264 (horizontal mirror).
     # OMEGA = angle between Q and the plane of the chi circle.
-    # At OMEGA = 0 the mode reduces to bisecting_horizontal.
+    # At OMEGA = 0 this is the horizontal bisecting geometry (mu = nu / 2).
     fixed_omega_horizontal:
         constraints:
             - {type: sample,    stage: eta,   value: 0.0}

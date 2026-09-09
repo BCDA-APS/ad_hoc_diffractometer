@@ -273,14 +273,17 @@ def test_fourcv_bisecting_ttheta_from_bragg():
     ],
 )
 def test_psic_bisecting_round_trip(a, h, k, l):  # noqa: E741
-    """psic bisecting round-trip: inverse(forward(hkl)) == hkl."""
+    """psic bisecting geometry round-trip via the default fixed_omega_vertical.
+
+    fixed_omega_vertical at omega = 0 is the vertical bisecting geometry.
+    """
     g = _setup_cubic(psic, a=a)
-    assert g.mode_name == "bisecting_vertical"
+    assert g.mode_name == "fixed_omega_vertical"
     assert _round_trip_ok(g, h, k, l)
 
 
 def test_psic_bisecting_frozen_mu_nu():
-    """In psic bisecting mode, mu and nu must be 0 in all solutions."""
+    """In the psic bisecting geometry, mu and nu must be 0 in all solutions."""
     g = _setup_cubic(psic, a=4.0)
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
@@ -289,7 +292,7 @@ def test_psic_bisecting_frozen_mu_nu():
 
 
 def test_psic_bisecting_eta_equals_delta_half():
-    """In psic bisecting mode, eta must equal delta/2."""
+    """In the psic bisecting geometry, eta must equal delta/2."""
     g = _setup_cubic(psic, a=4.0)
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
@@ -1439,10 +1442,8 @@ def test_sixc_four_circle_omega_equals_delta_half():
 # ---------------------------------------------------------------------------
 
 _PSIC_MODES_ALL = {
-    "bisecting_vertical",
     "fixed_chi_vertical",
     "fixed_phi_vertical",
-    "bisecting_horizontal",
     "fixed_chi_horizontal",
     "fixed_phi_horizontal",
     "double_diffraction_vertical",
@@ -1466,10 +1467,8 @@ _PSIC_MODES_ALL = {
 }
 
 _PSIC_MODES_IMPLEMENTED = {
-    "bisecting_vertical",
     "fixed_chi_vertical",
     "fixed_phi_vertical",
-    "bisecting_horizontal",
     "fixed_chi_horizontal",
     "fixed_phi_horizontal",
     "double_diffraction_vertical",
@@ -2417,17 +2416,17 @@ def test_double_diffraction_secondary_on_ewald_sphere(
         ),
         pytest.param(
             psic,
-            "bisecting_vertical",
+            "fixed_omega_vertical",
             (1, 0, 0),
             does_not_raise(),
-            id="psic-bisecting-100",
+            id="psic-fixed_omega_vertical-100",
         ),
         pytest.param(
             psic,
-            "bisecting_vertical",
+            "fixed_omega_vertical",
             (1, 1, 1),
             does_not_raise(),
-            id="psic-bisecting-111",
+            id="psic-fixed_omega_vertical-111",
         ),
         pytest.param(
             fourcv, "fixed_chi", (1, 0, 0), does_not_raise(), id="fourcv-fixed_chi-100"
@@ -3092,7 +3091,7 @@ def test_kappa_bisecting_post_processing_limits_rejection(monkeypatch):
     ],
 )
 def test_psic_fixed_omega_round_trip(mode_name, h, k, l, context):  # noqa: E741
-    """fixed_omega_* modes (target = 0) round-trip and reduce to bisecting."""
+    """fixed_omega_* modes (target = 0) round-trip; this is the bisecting geometry."""
     from ad_hoc_diffractometer.reference import omega_pseudo
 
     with context:
@@ -3110,24 +3109,6 @@ def test_psic_fixed_omega_round_trip(mode_name, h, k, l, context):  # noqa: E741
             om = omega_pseudo(g, angles=sol)
             assert om == pytest.approx(0.0, abs=1e-5), (
                 f"{mode_name} ({h},{k},{l}): expected OMEGA=0, got {om}"
-            )
-
-
-def test_psic_fixed_omega_vertical_matches_bisecting():
-    """fixed_omega_vertical (omega=0) yields the bisecting_vertical solutions."""
-    g = _setup_cubic(psic, a=4.0)
-    g.mode_name = "bisecting_vertical"
-    bisect_sols = g.forward(1, 0, 0)
-    g.mode_name = "fixed_omega_vertical"
-    omega_sols = g.forward(1, 0, 0)
-    assert len(bisect_sols) == len(omega_sols)
-    # Compare matching solutions (sort by eta)
-    bisect_sorted = sorted(bisect_sols, key=lambda s: s["eta"])
-    omega_sorted = sorted(omega_sols, key=lambda s: s["eta"])
-    for b, o in zip(bisect_sorted, omega_sorted, strict=False):
-        for stage in ("mu", "eta", "chi", "phi", "nu", "delta"):
-            assert b[stage] == pytest.approx(o[stage], abs=1e-6), (
-                f"stage {stage}: bisect={b[stage]}, omega={o[stage]}"
             )
 
 

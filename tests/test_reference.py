@@ -61,7 +61,7 @@ def test_incidence_angle_with_surface_normal():
     """incidence_angle returns a float in [-90, 90] when surface_normal is set."""
     g = _setup_psic()
     g.surface_normal = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 0, 0)
     assert len(sols) > 0
     for s in sols:
@@ -94,7 +94,7 @@ def test_emergence_angle_with_surface_normal():
     """emergence_angle returns a float in [-90, 90] when surface_normal is set."""
     g = _setup_psic()
     g.surface_normal = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 0, 0)
     for s in sols:
         af = emergence_angle(g, angles=s)
@@ -103,16 +103,16 @@ def test_emergence_angle_with_surface_normal():
 
 
 def test_incidence_equals_emergence_condition_alpha_i_equals_alpha_f():
-    """At bisecting with surface normal ⊥ to scattering plane, incidence ≈ alpha_f."""
+    """At the bisecting geometry with surface normal ⊥ to scattering plane, incidence ≈ alpha_f."""
     g = _setup_psic()
     # Surface normal along transverse axis — perpendicular to the scattering plane
     g.surface_normal = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 0, 0)
     for s in sols:
         ai = incidence_angle(g, angles=s)
         af = emergence_angle(g, angles=s)
-        # At bisecting in vertical plane with transverse surface normal, ai ≈ af
+        # In the vertical bisecting geometry with transverse surface normal, ai ≈ af
         assert ai == pytest.approx(af, abs=1e-6)
 
 
@@ -139,7 +139,7 @@ def test_psi_angle_with_azimuth():
     """
     g = _setup_psic()
     g.azimuth = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(0, 1, 0)
     for s in sols:
         psi = psi_angle(g, angles=s)
@@ -155,7 +155,7 @@ def test_psi_angle_uses_current_angles_when_none():
     """
     g = _setup_psic()
     g.azimuth = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(0, 1, 0)
     s = sols[0]
     for name, value in s.items():
@@ -564,7 +564,9 @@ def test_surface_beta_out_fixed_constraint_satisfied(factory, mode_name, h, k, l
     [
         pytest.param(zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"),
         pytest.param(s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
-        pytest.param(sixc, "incidence_equals_emergence_zaxis", 0, 1, 0, id="sixc-in_eq_em"),
+        pytest.param(
+            sixc, "incidence_equals_emergence_zaxis", 0, 1, 0, id="sixc-in_eq_em"
+        ),
     ],
 )
 def test_surface_a_eq_b_constraint_satisfied(factory, mode_name, h, k, l):  # noqa: E741
@@ -620,7 +622,7 @@ def test_omega_pseudo_does_not_require_surface_normal():
     g = _setup_psic()
     assert g.surface_normal is None
     assert g.azimuth is None
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 0, 0)
     for s in sols:
         om = omega_pseudo(g, angles=s)
@@ -634,29 +636,35 @@ def test_omega_pseudo_uses_current_angles_when_none():
     assert isinstance(om, float)
 
 
-def test_omega_pseudo_zero_at_bisecting_vertical():
-    """At bisecting_vertical (mu=nu=0, eta=delta/2), OMEGA = 0."""
+def test_omega_pseudo_zero_at_fixed_omega_vertical():
+    """At fixed_omega_vertical (mu=nu=0, eta=delta/2), OMEGA = 0.
+
+    This is the vertical bisecting geometry (issue #313).
+    """
     g = _setup_psic()
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 0, 0)
     assert len(sols) > 0
     for s in sols:
         om = omega_pseudo(g, angles=s)
         assert om == pytest.approx(0.0, abs=1e-6), (
-            f"OMEGA should be 0 at bisecting; got {om} for {s}"
+            f"OMEGA should be 0 in the bisecting geometry; got {om} for {s}"
         )
 
 
-def test_omega_pseudo_zero_at_bisecting_horizontal():
-    """At bisecting_horizontal (eta=delta=0, mu=nu/2), OMEGA = 0."""
+def test_omega_pseudo_zero_at_fixed_omega_horizontal():
+    """At fixed_omega_horizontal (eta=delta=0, mu=nu/2), OMEGA = 0.
+
+    This is the horizontal bisecting geometry (issue #313).
+    """
     g = _setup_psic()
-    g.mode_name = "bisecting_horizontal"
+    g.mode_name = "fixed_omega_horizontal"
     sols = g.forward(0, 0, 1)
     assert len(sols) > 0
     for s in sols:
         om = omega_pseudo(g, angles=s)
         assert om == pytest.approx(0.0, abs=1e-6), (
-            f"OMEGA should be 0 at bisecting_horizontal; got {om} for {s}"
+            f"OMEGA should be 0 in the horizontal bisecting geometry; got {om} for {s}"
         )
 
 
@@ -827,9 +835,9 @@ def test_natural_psi_equals_psi_angle_at_bisecting_solution():
     """
     g = _setup_psic()
     g.azimuth = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 1, 0)
-    assert sols, "bisecting_vertical should return at least one solution for (1,1,0)"
+    assert sols, "fixed_omega_vertical should return at least one solution for (1,1,0)"
     nat = natural_psi(g, 1, 1, 0)
     for sol in sols:
         assert psi_angle(g, angles=sol) == pytest.approx(nat, abs=1e-6)

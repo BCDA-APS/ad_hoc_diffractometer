@@ -299,10 +299,11 @@ Available modes depend on the geometry.
 g = ahd.make_geometry("fourcv")
 g.mode_name = "bisecting"
 
-# Six-circle psic uses named variants
+# Six-circle psic uses named variants; fixed_omega_* at omega = 0 is the
+# bisecting geometry (the default is fixed_omega_vertical).
 g = ahd.make_geometry("psic")
-g.mode_name = "bisecting_vertical"   # vertical scattering plane
-g.mode_name = "bisecting_horizontal" # horizontal scattering plane
+g.mode_name = "fixed_omega_vertical"   # vertical scattering plane
+g.mode_name = "fixed_omega_horizontal" # horizontal scattering plane
 ```
 
 Modes can also be added at run time:

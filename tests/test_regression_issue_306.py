@@ -7,7 +7,8 @@ Issue #306: for geometry ``psic``, mode ``fixed_psi_vertical``,
 ``forward(h, k, l)`` returned an empty solution list even when the ``psi``
 constraint target equaled the reflection's natural ψ (so the ψ validation
 filter passed and no ``UserWarning`` was emitted).  The same reflection
-solved normally in ``bisecting_vertical``.
+solved normally in ``fixed_omega_vertical`` (the vertical bisecting
+geometry).
 
 Root cause: once ψ is validated it imposes no further restriction (every
 Bragg solution shares the natural ψ for a given hkl + UB), so the psic
@@ -20,7 +21,8 @@ frozen, so the result was empty.
 Fix: ``_solve_psi_mode`` now routes the psic ``fixed_psi_*`` family to a
 synthetic bisecting ConstraintSet (the lone non-chi/non-phi free sample
 stage takes ttheta/2, paired with the active detector), so
-``fixed_psi_vertical`` reproduces ``bisecting_vertical``.
+``fixed_psi_vertical`` reproduces the bisecting geometry
+(``fixed_omega_vertical`` at omega = 0).
 """
 
 from __future__ import annotations
@@ -72,8 +74,12 @@ def _set_psi(g, hkl):
         pytest.param((1, 0, 0), does_not_raise(), id="100"),
     ],
 )
-def test_fixed_psi_vertical_matches_bisecting(hkl, context):
-    """fixed_psi_vertical returns the same solution set as bisecting_vertical."""
+def test_fixed_psi_vertical_matches_fixed_omega(hkl, context):
+    """fixed_psi_vertical returns the same solution set as fixed_omega_vertical.
+
+    fixed_omega_vertical at omega = 0 is the vertical bisecting geometry
+    (issue #313).
+    """
     with context:
         g = _silicon_psic()
         _set_psi(g, hkl)
@@ -81,12 +87,13 @@ def test_fixed_psi_vertical_matches_bisecting(hkl, context):
             warnings.simplefilter("error")  # any ψ filter warning would raise
             psi_sols = g.forward(*hkl)
 
-        g.mode_name = "bisecting_vertical"
+        g.mode_name = "fixed_omega_vertical"
         bis_sols = g.forward(*hkl)
 
         assert len(psi_sols) == len(bis_sols)
         assert len(psi_sols) > 0
-        # Each psi-mode solution matches a bisecting solution motor-for-motor.
+        # Each psi-mode solution matches a bisecting-geometry solution
+        # motor-for-motor.
         for ps in psi_sols:
             assert any(all(abs(ps[k] - bs[k]) < 1e-4 for k in ps) for bs in bis_sols)
 

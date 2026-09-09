@@ -160,14 +160,6 @@ def _reference_psic() -> AdHocDiffractometer:
     ]
     modes = {
         # ── Vertical scattering plane ───────────────────────────────────
-        "bisecting_vertical": ConstraintSet(
-            [
-                BisectConstraint("eta", "delta"),
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
-        ),
         "fixed_phi_vertical": ConstraintSet(
             [
                 SampleConstraint("phi", 0.0),
@@ -247,14 +239,6 @@ def _reference_psic() -> AdHocDiffractometer:
             extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
         ),
         # ── Horizontal scattering plane ────────────────────────────────
-        "bisecting_horizontal": ConstraintSet(
-            [
-                BisectConstraint("mu", "nu"),
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-        ),
         "fixed_phi_horizontal": ConstraintSet(
             [
                 SampleConstraint("phi", 0.0),
@@ -376,7 +360,7 @@ def _reference_psic() -> AdHocDiffractometer:
             "(transverse detector, vertical scattering plane, synchrotron)"
         ),
         modes=modes,
-        default_mode="bisecting_vertical",
+        default_mode="fixed_omega_vertical",
     )
 
 

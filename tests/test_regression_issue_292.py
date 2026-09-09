@@ -280,16 +280,16 @@ def test_extras_overwritten_on_subsequent_forward_calls():
 
 
 def test_modes_without_output_slots_are_untouched():
-    """``bisecting_vertical`` declares no output-slot extras: nothing is added."""
+    """``fixed_phi_vertical`` declares no output-slot extras: nothing is added."""
     g = _setup_cubic("psic")
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_phi_vertical"
     sols = g.forward(0, 1, 1)
     assert len(sols) > 0
-    extras = g.modes["bisecting_vertical"].extras
+    extras = g.modes["fixed_phi_vertical"].extras
     for key in ("incidence", "emergence", "psi", "omega"):
         assert key not in extras, (
             f"populate hook must not add {key!r} to a mode whose YAML did not "
-            f"declare it; bisecting_vertical extras: {sorted(extras)}"
+            f"declare it; fixed_phi_vertical extras: {sorted(extras)}"
         )
 
 

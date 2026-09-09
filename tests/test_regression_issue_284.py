@@ -146,7 +146,7 @@ def test_kappa_bisecting_sapphire_reflections_solve(
             "kappa6c",
             "psic",
             "bisecting_vertical",
-            "bisecting_vertical",
+            "fixed_omega_vertical",
             does_not_raise(),
             id="kappa6c-psic",
         ),

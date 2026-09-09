@@ -2227,9 +2227,9 @@ def test_geometry_to_dict_version_unknown_on_metadata_error():
         ),
         pytest.param(
             "psic",
-            "bisecting_vertical",
+            "fixed_phi_vertical",
             None,
-            id="psic-bisecting-no-reference-constraint",
+            id="psic-fixed_phi-no-reference-constraint",
         ),
         pytest.param(
             "zaxis",
