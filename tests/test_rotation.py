@@ -20,6 +20,10 @@ from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
 from ad_hoc_diffractometer.rotation import _rotation_matrix_and_derivative_normalized
 from ad_hoc_diffractometer.rotation import rotation_matrix
+from helpers import EXACT_ATOL
+from helpers import IDENTITY_ATOL
+from helpers import MACHINE_ATOL
+from helpers import PRECISE_ATOL
 
 # ---------------------------------------------------------------------------
 # rotation_matrix() — correctness
@@ -74,7 +78,7 @@ def test_rotation_matrix(axis, angle_deg, expected, context):
     with context:
         R = rotation_matrix(axis, angle_deg)
         assert R.shape == (3, 3)
-        np.testing.assert_allclose(R, expected, atol=1e-10)
+        np.testing.assert_allclose(R, expected, atol=IDENTITY_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -97,7 +101,7 @@ def test_rotation_matrix(axis, angle_deg, expected, context):
 def test_rotation_matrix_orthogonal(axis, angle_deg, context):
     with context:
         R = rotation_matrix(axis, angle_deg)
-        np.testing.assert_allclose(R @ R.T, np.eye(3), atol=1e-10)
+        np.testing.assert_allclose(R @ R.T, np.eye(3), atol=IDENTITY_ATOL)
         assert abs(np.linalg.det(R) - 1.0) < 1e-10
 
 
@@ -131,7 +135,7 @@ def test_rotation_matrix_and_derivative_R_matches(axis, angle_deg, context):
         n = n / np.linalg.norm(n)
         R, _dR = _rotation_matrix_and_derivative_normalized(n, angle_deg)
         R_expected = rotation_matrix(axis, angle_deg)
-        np.testing.assert_allclose(R, R_expected, atol=1e-14)
+        np.testing.assert_allclose(R, R_expected, atol=MACHINE_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -168,7 +172,7 @@ def test_rotation_matrix_and_derivative_dR_vs_finite_difference(
         h_rad = np.deg2rad(h_deg)
         dR_fd = (R_plus - R_minus) / (2 * h_rad)
 
-        np.testing.assert_allclose(dR, dR_fd, atol=1e-6)
+        np.testing.assert_allclose(dR, dR_fd, atol=PRECISE_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -196,4 +200,6 @@ def test_rotation_matrix_and_derivative_dR_antisymmetric_product(
         R, dR = _rotation_matrix_and_derivative_normalized(n, angle_deg)
         product = R.T @ dR
         # R^T dR should be antisymmetric: product + product.T == 0
-        np.testing.assert_allclose(product + product.T, np.zeros((3, 3)), atol=1e-12)
+        np.testing.assert_allclose(
+            product + product.T, np.zeros((3, 3)), atol=EXACT_ATOL
+        )

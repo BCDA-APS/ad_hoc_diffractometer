@@ -38,6 +38,9 @@ import numpy as np
 from helpers import fourcv
 
 import ad_hoc_diffractometer as ahd
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import EXACT_ATOL
+from helpers import IDENTITY_RTOL
 
 # ---------------------------------------------------------------------------
 # Sapphire crystal — canonical reproducer from the issue
@@ -56,9 +59,15 @@ def test_sapphire_b1_magnitude():
     """``|b1| == 2π / (a · sin γ)`` for hexagonal sapphire."""
     lat = ahd.Lattice(**SAPPHIRE_KWARGS)
     b1, b2, b3 = lat.reciprocal_lattice_vectors
-    np.testing.assert_allclose(np.linalg.norm(b1), SAPPHIRE_B1_MAG_EXPECTED, rtol=1e-10)
-    np.testing.assert_allclose(np.linalg.norm(b2), SAPPHIRE_B1_MAG_EXPECTED, rtol=1e-10)
-    np.testing.assert_allclose(np.linalg.norm(b3), SAPPHIRE_B3_MAG_EXPECTED, rtol=1e-10)
+    np.testing.assert_allclose(
+        np.linalg.norm(b1), SAPPHIRE_B1_MAG_EXPECTED, rtol=IDENTITY_RTOL
+    )
+    np.testing.assert_allclose(
+        np.linalg.norm(b2), SAPPHIRE_B1_MAG_EXPECTED, rtol=IDENTITY_RTOL
+    )
+    np.testing.assert_allclose(
+        np.linalg.norm(b3), SAPPHIRE_B3_MAG_EXPECTED, rtol=IDENTITY_RTOL
+    )
 
 
 def test_sapphire_B_at_100_equals_b1():
@@ -74,8 +83,10 @@ def test_sapphire_B_at_100_equals_b1():
     b1, _, _ = lat.reciprocal_lattice_vectors
     Q = lat.B @ np.array([1.0, 0.0, 0.0])
 
-    np.testing.assert_allclose(Q, b1, atol=1e-12)
-    np.testing.assert_allclose(np.linalg.norm(Q), SAPPHIRE_B1_MAG_EXPECTED, rtol=1e-10)
+    np.testing.assert_allclose(Q, b1, atol=EXACT_ATOL)
+    np.testing.assert_allclose(
+        np.linalg.norm(Q), SAPPHIRE_B1_MAG_EXPECTED, rtol=IDENTITY_RTOL
+    )
 
 
 def test_sapphire_B_at_006_unchanged_by_fix():
@@ -90,11 +101,11 @@ def test_sapphire_B_at_006_unchanged_by_fix():
     lat = ahd.Lattice(**SAPPHIRE_KWARGS)
     Q = lat.B @ np.array([0.0, 0.0, 6.0])
     np.testing.assert_allclose(
-        np.linalg.norm(Q), 6.0 * SAPPHIRE_B3_MAG_EXPECTED, rtol=1e-10
+        np.linalg.norm(Q), 6.0 * SAPPHIRE_B3_MAG_EXPECTED, rtol=IDENTITY_RTOL
     )
     # Direction is along z (within the BL1967 crystal Cartesian frame)
-    np.testing.assert_allclose(Q[0], 0.0, atol=1e-12)
-    np.testing.assert_allclose(Q[1], 0.0, atol=1e-12)
+    np.testing.assert_allclose(Q[0], 0.0, atol=EXACT_ATOL)
+    np.testing.assert_allclose(Q[1], 0.0, atol=EXACT_ATOL)
 
 
 def test_sapphire_bragg_2theta_at_100():
@@ -115,7 +126,7 @@ def test_sapphire_bragg_2theta_at_100():
     sin_theta = wavelength * Q_mag / (4.0 * math.pi)
     two_theta = 2.0 * math.degrees(math.asin(sin_theta))
 
-    np.testing.assert_allclose(two_theta, 21.5551, atol=1e-3)
+    np.testing.assert_allclose(two_theta, 21.5551, atol=ANGLE_DEGREES_ATOL)
 
 
 def test_sapphire_forward_2theta_matches_hkl_soleil():
@@ -143,4 +154,4 @@ def test_sapphire_forward_2theta_matches_hkl_soleil():
 
     # All solutions must report the analytical Bragg 2θ.
     for sol in solutions:
-        np.testing.assert_allclose(sol["ttheta"], 21.5551, atol=1e-3)
+        np.testing.assert_allclose(sol["ttheta"], 21.5551, atol=ANGLE_DEGREES_ATOL)

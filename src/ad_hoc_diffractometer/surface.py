@@ -24,7 +24,7 @@ q_components(geometry, angles=None)
     Decompose Q into Q⊥ (perpendicular to sample surface) and Q‖
     (parallel to sample surface) in Å⁻¹.  Returns a named dict.
 
-is_specular(geometry, angles=None, atol=0.01)
+is_incidence_equal_emergence(geometry, angles=None, atol=0.01)
     Return True when αᵢ ≈ αf within ``atol`` degrees.
 
 is_evanescent(geometry, angles=None, critical_angle_deg=None)
@@ -213,7 +213,12 @@ def incidence(
     αᵢ is the angle between the incoming beam and the sample surface
     (complement of the angle between the beam and the surface normal)::
 
-        sin(αᵢ) = |ŷ · n̂_lab|
+        sin(αᵢ) = -(ŷ · n̂_lab)
+
+    The sign is preserved: αᵢ is positive when the beam strikes the front
+    face of the surface (the incoming beam travels against the outward
+    surface normal) and negative when the beam illuminates the surface
+    from behind (below-surface geometry).
 
     Parameters
     ----------
@@ -226,7 +231,8 @@ def incidence(
     Returns
     -------
     float
-        αᵢ in degrees, in [0°, 90°].
+        αᵢ in degrees, in [-90°, 90°].  Positive for front-face
+        illumination, negative for below-surface geometry.
 
     Raises
     ------
@@ -249,10 +255,12 @@ def incidence(
     Lohmeier & Vlieg (1993), §4.2, eq. 15.
     """
     y_hat, _kf_hat, n_hat, _Q_lab = _surface_vectors(geometry, angles)
-    sin_ai = float(np.dot(y_hat, n_hat))
+    # Incoming beam travels against the outward normal for front-face
+    # illumination, so negate the dot product to make αᵢ positive there.
+    sin_ai = -float(np.dot(y_hat, n_hat))
     # Clamp for numerical safety
     sin_ai = max(-1.0, min(1.0, sin_ai))
-    return math.degrees(math.asin(abs(sin_ai)))
+    return math.degrees(math.asin(sin_ai))
 
 
 def emergence(
@@ -264,7 +272,11 @@ def emergence(
 
     αf is the angle between the diffracted beam and the sample surface::
 
-        sin(αf) = |k̂f · n̂_lab|
+        sin(αf) = k̂f · n̂_lab
+
+    The sign is preserved: αf is positive when the diffracted beam leaves
+    through the front face (along the outward surface normal) and negative
+    when it exits below the surface.
 
     Parameters
     ----------
@@ -277,7 +289,8 @@ def emergence(
     Returns
     -------
     float
-        αf in degrees, in [0°, 90°].
+        αf in degrees, in [-90°, 90°].  Positive when the diffracted beam
+        leaves through the front face, negative for a below-surface exit.
 
     Raises
     ------
@@ -291,7 +304,7 @@ def emergence(
     _y_hat, kf_hat, n_hat, _Q_lab = _surface_vectors(geometry, angles)
     sin_af = float(np.dot(kf_hat, n_hat))
     sin_af = max(-1.0, min(1.0, sin_af))
-    return math.degrees(math.asin(abs(sin_af)))
+    return math.degrees(math.asin(sin_af))
 
 
 def q_components(
@@ -359,7 +372,7 @@ def q_components(
     }
 
 
-def is_specular(
+def is_incidence_equal_emergence(
     geometry: AdHocDiffractometer,
     angles: dict[str, float] | None = None,
     atol: float = 0.01,
@@ -367,8 +380,12 @@ def is_specular(
     """
     Return True when αᵢ ≈ αf within ``atol`` degrees.
 
-    The specular condition (αᵢ = αf) is the constraint used in
-    reflectometry and specular surface diffraction.
+    This tests the equal-angle condition αᵢ = αf only.  It is **not** the
+    true specular (mirror) condition: αᵢ = αf can hold for many
+    configurations that carry a nonzero in-plane momentum transfer.  True
+    specular reflection additionally requires the scattering vector Q to
+    be parallel to the surface normal (in-plane Q = 0); use
+    :func:`q_components` and check ``Q_par ≈ 0`` for that.
 
     Parameters
     ----------

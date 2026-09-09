@@ -47,7 +47,7 @@ mode; ``E6C`` has the same six axes as ad_hoc's ``psic`` (with the
 | ``fourch`` / ``bisecting``         | ``E4CH`` / ``bissector``      |
 | ``kappa4cv`` / ``bisecting``       | ``K4CV`` / ``bissector``      |
 | ``kappa6c`` / ``bisecting_vertical`` | ``K6C`` / ``bissector_vertical`` |
-| ``psic`` / ``bisecting_vertical``  | ``E6C`` / ``bissector_vertical`` |
+| ``psic`` / ``fixed_omega_vertical`` | ``E6C`` / ``bissector_vertical`` |
 
 The ``zaxis`` pairing was deferred: ad_hoc's ``zaxis`` mode is not yet
 implemented in :mod:`ad_hoc_diffractometer.forward`
@@ -190,7 +190,7 @@ WAVELENGTH_TRICLINIC = 1.5498  # Å
 # For cubic silicon a=5.43102 with identity U:
 #   d_110 = a / sqrt(2) = 3.8403,  2θ_110 @ λ=1   = 14.9526°
 #   d_100 = a            = 5.43102, 2θ_100 @ λ=1   = 10.5647°
-# In bissector mode the omega = ttheta/2.
+# In bisector mode the omega = ttheta/2.
 CUBIC_SEEDS = (
     (
         (1, 1, 0),
@@ -508,7 +508,7 @@ PAIRINGS = [
     ),
     pytest.param(
         "psic",
-        "bisecting_vertical",
+        "fixed_omega_vertical",
         "E6C",
         "bissector_vertical",
         "eulerian",

@@ -31,6 +31,8 @@ import pytest
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.reference import incidence_angle
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import HKL_ATOL
 
 
 def _silicon_psic():
@@ -80,8 +82,12 @@ def test_fixed_incidence_solutions_round_trip(hkl, incidence, context):
         assert sols, "expected at least one accessible solution"
         for sol in sols:
             rt = g.inverse(sol)
-            assert rt == pytest.approx(tuple(float(v) for v in hkl), abs=1e-3)
-            assert incidence_angle(g, angles=sol) == pytest.approx(incidence, abs=1e-4)
+            assert rt == pytest.approx(
+                tuple(float(v) for v in hkl), abs=ANGLE_DEGREES_ATOL
+            )
+            assert incidence_angle(g, angles=sol) == pytest.approx(
+                incidence, abs=HKL_ATOL
+            )
 
 
 def test_fixed_incidence_inaccessible_returns_empty():

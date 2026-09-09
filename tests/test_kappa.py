@@ -27,6 +27,10 @@ from helpers import psic
 
 from ad_hoc_diffractometer.kappa import eulerian_to_kappa
 from ad_hoc_diffractometer.kappa import kappa_to_eulerian
+from helpers import EXACT_ATOL
+from helpers import IDENTITY_ATOL
+from helpers import LOOSE_ATOL
+from helpers import NUMERIC_ATOL
 
 # ---------------------------------------------------------------------------
 # Known values from Walko (2016) eq. [16] at alpha_0 = 50°
@@ -107,9 +111,9 @@ def test_kappa_to_eulerian(
     expected_phi,
 ):
     omega, chi, phi = kappa_to_eulerian(komega, kappa, kphi, alpha_deg=alpha_deg)
-    assert omega == pytest.approx(expected_omega, abs=1e-8)
-    assert chi == pytest.approx(expected_chi, abs=1e-8)
-    assert phi == pytest.approx(expected_phi, abs=1e-8)
+    assert omega == pytest.approx(expected_omega, abs=NUMERIC_ATOL)
+    assert chi == pytest.approx(expected_chi, abs=NUMERIC_ATOL)
+    assert phi == pytest.approx(expected_phi, abs=NUMERIC_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -174,9 +178,9 @@ def test_eulerian_to_kappa(
     komega, kappa, kphi = eulerian_to_kappa(
         omega, chi, phi, alpha_deg=alpha_deg, branch=branch
     )
-    assert komega == pytest.approx(expected_komega, abs=1e-8)
-    assert abs(kappa) == pytest.approx(abs(expected_kappa), abs=1e-8)
-    assert kphi == pytest.approx(expected_kphi, abs=1e-8)
+    assert komega == pytest.approx(expected_komega, abs=NUMERIC_ATOL)
+    assert abs(kappa) == pytest.approx(abs(expected_kappa), abs=NUMERIC_ATOL)
+    assert kphi == pytest.approx(expected_kphi, abs=NUMERIC_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -208,9 +212,9 @@ def test_round_trip_eulerian_kappa_eulerian(omega, chi, phi, alpha_deg, branch):
         omega, chi, phi, alpha_deg=alpha_deg, branch=branch
     )
     o2, c2, p2 = kappa_to_eulerian(komega, kappa, kphi, alpha_deg=alpha_deg)
-    assert o2 == pytest.approx(omega, abs=1e-10)
-    assert c2 == pytest.approx(chi, abs=1e-10)
-    assert p2 == pytest.approx(phi, abs=1e-10)
+    assert o2 == pytest.approx(omega, abs=IDENTITY_ATOL)
+    assert c2 == pytest.approx(chi, abs=IDENTITY_ATOL)
+    assert p2 == pytest.approx(phi, abs=IDENTITY_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -231,9 +235,9 @@ def test_round_trip_kappa_eulerian_kappa(komega, kappa, kphi, alpha_deg):
     ko2, k2, kp2 = eulerian_to_kappa(
         omega, chi, phi, alpha_deg=alpha_deg, branch=branch
     )
-    assert ko2 == pytest.approx(komega, abs=1e-8)
-    assert k2 == pytest.approx(kappa, abs=1e-8)
-    assert kp2 == pytest.approx(kphi, abs=1e-8)
+    assert ko2 == pytest.approx(komega, abs=NUMERIC_ATOL)
+    assert k2 == pytest.approx(kappa, abs=NUMERIC_ATOL)
+    assert kp2 == pytest.approx(kphi, abs=NUMERIC_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -259,8 +263,8 @@ def test_both_branches_give_opposite_chi():
     _, k2, _ = eulerian_to_kappa(0.0, 45.0, 0.0, branch=-1)
     _, c1, _ = kappa_to_eulerian(0.0, k1, 0.0)
     _, c2, _ = kappa_to_eulerian(0.0, k2, 0.0)
-    assert c1 == pytest.approx(45.0, abs=1e-10)
-    assert c2 == pytest.approx(-45.0, abs=1e-10)
+    assert c1 == pytest.approx(45.0, abs=IDENTITY_ATOL)
+    assert c2 == pytest.approx(-45.0, abs=IDENTITY_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -337,7 +341,7 @@ def test_kappa_to_eulerian_chi_half_near_90():
     # This is ABOVE the chi limit (2*50=100), but kappa_to_eulerian accepts it
     # because it's the forward direction (real -> virtual).
     omega, chi, phi = kappa_to_eulerian(0.0, 180.0, 0.0, alpha_deg=50.0)
-    assert abs(chi) == pytest.approx(2 * 50.0, abs=0.1)  # chi ≈ 100°
+    assert abs(chi) == pytest.approx(2 * 50.0, abs=LOOSE_ATOL)  # chi ≈ 100°
 
 
 # ---------------------------------------------------------------------------
@@ -590,10 +594,10 @@ def test_kappa_axis_from_eulerian_correct_tilt():
     n_ch = np.array([0.0, 1.0, 0.0])
     n_kappa = kappa_axis_from_eulerian(n_om, n_ch, 30.0)
     expected = math.cos(math.radians(30)) * n_om + math.sin(math.radians(30)) * n_ch
-    np.testing.assert_allclose(n_kappa, expected, atol=1e-12)
+    np.testing.assert_allclose(n_kappa, expected, atol=EXACT_ATOL)
     # Angle between komega and kappa is exactly α
     angle = math.degrees(math.acos(float(np.dot(n_om, n_kappa))))
-    assert angle == pytest.approx(30.0, abs=1e-10)
+    assert angle == pytest.approx(30.0, abs=IDENTITY_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -684,6 +688,6 @@ def test_eulerian_to_kappa_axes_chi_zero_degenerate():
     # Trigger the chi=0 + parallel-axes short-circuit explicitly
     # (the function returns immediately before computing R_eul).
     ko, k, kp = eulerian_to_kappa_axes(20.0, 0.0, 35.0, convention, branch=+1)
-    assert ko == pytest.approx(20.0, abs=1e-12)
+    assert ko == pytest.approx(20.0, abs=EXACT_ATOL)
     assert k == 0.0
-    assert kp == pytest.approx(35.0, abs=1e-12)
+    assert kp == pytest.approx(35.0, abs=EXACT_ATOL)

@@ -4,7 +4,7 @@
 Regression tests for issue #292.
 
 Issue #292 noted that the ``fixed_incidence_*``, ``fixed_emergence_*``,
-``specular_*`` modes (psic, sixc, zaxis, s2d2) — and by extension every
+``incidence_equals_emergence_*`` modes (psic, sixc, zaxis, s2d2) — and by extension every
 mode declaring an ``incidence``, ``emergence``, ``psi``, or ``omega``
 output slot in ``mode.extras`` — left those slots at their YAML default
 of ``None`` even after a successful ``forward()`` call.  This was a
@@ -41,6 +41,9 @@ from ad_hoc_diffractometer.reference import emergence_angle
 from ad_hoc_diffractometer.reference import incidence_angle
 from ad_hoc_diffractometer.reference import omega_pseudo
 from ad_hoc_diffractometer.reference import psi_angle
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import NUMERIC_ATOL
+from helpers import PRECISE_ATOL
 
 WAVELENGTH = 1.5406  # Cu Kα
 
@@ -112,9 +115,13 @@ def test_psic_b3_populates_incidence_and_emergence_extras(
         for ai_stored, bo_stored, sol in zip(
             mode.extras["incidence"], mode.extras["emergence"], sols, strict=True
         ):
-            assert ai_stored == pytest.approx(incidence_angle(g, angles=sol), abs=1e-8)
-            assert bo_stored == pytest.approx(emergence_angle(g, angles=sol), abs=1e-8)
-            assert ai_stored == pytest.approx(incidence_target, abs=1e-3)
+            assert ai_stored == pytest.approx(
+                incidence_angle(g, angles=sol), abs=NUMERIC_ATOL
+            )
+            assert bo_stored == pytest.approx(
+                emergence_angle(g, angles=sol), abs=NUMERIC_ATOL
+            )
+            assert ai_stored == pytest.approx(incidence_target, abs=ANGLE_DEGREES_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -159,7 +166,9 @@ def test_psic_fixed_omega_populates_omega_extra(
         assert isinstance(mode.extras["omega"], list)
         assert len(mode.extras["omega"]) == len(sols)
         for stored, sol in zip(mode.extras["omega"], sols, strict=True):
-            assert stored == pytest.approx(omega_pseudo(g, angles=sol), abs=1e-8)
+            assert stored == pytest.approx(
+                omega_pseudo(g, angles=sol), abs=NUMERIC_ATOL
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -207,13 +216,13 @@ def test_fourcv_fixed_psi_populates_psi_extra(
         assert isinstance(mode.extras["psi"], list)
         assert len(mode.extras["psi"]) == len(sols)
         for stored, sol in zip(mode.extras["psi"], sols, strict=True):
-            assert stored == pytest.approx(psi_angle(g, angles=sol), abs=1e-6)
+            assert stored == pytest.approx(psi_angle(g, angles=sol), abs=PRECISE_ATOL)
             # And by the validation-filter property, every solution must
             # have the natural psi (modulo 360).
             assert (
-                stored == pytest.approx(natural, abs=1e-3)
-                or stored == pytest.approx(natural - 360.0, abs=1e-3)
-                or stored == pytest.approx(natural + 360.0, abs=1e-3)
+                stored == pytest.approx(natural, abs=ANGLE_DEGREES_ATOL)
+                or stored == pytest.approx(natural - 360.0, abs=ANGLE_DEGREES_ATOL)
+                or stored == pytest.approx(natural + 360.0, abs=ANGLE_DEGREES_ATOL)
             )
 
 
@@ -280,16 +289,16 @@ def test_extras_overwritten_on_subsequent_forward_calls():
 
 
 def test_modes_without_output_slots_are_untouched():
-    """``bisecting_vertical`` declares no output-slot extras: nothing is added."""
+    """``fixed_phi_vertical`` declares no output-slot extras: nothing is added."""
     g = _setup_cubic("psic")
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_phi_vertical"
     sols = g.forward(0, 1, 1)
     assert len(sols) > 0
-    extras = g.modes["bisecting_vertical"].extras
+    extras = g.modes["fixed_phi_vertical"].extras
     for key in ("incidence", "emergence", "psi", "omega"):
         assert key not in extras, (
             f"populate hook must not add {key!r} to a mode whose YAML did not "
-            f"declare it; bisecting_vertical extras: {sorted(extras)}"
+            f"declare it; fixed_phi_vertical extras: {sorted(extras)}"
         )
 
 

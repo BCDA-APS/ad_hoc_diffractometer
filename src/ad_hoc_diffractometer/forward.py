@@ -1119,7 +1119,6 @@ def _solve_chi_phi_bragg(
     free_sample: list,
     Q_phi: np.ndarray,
     mode,
-    fast_only: bool = False,
 ) -> list[dict[str, float]]:
     """
     Solve the inner ``(chi, phi)`` sample pair for the Bragg condition.
@@ -1145,13 +1144,6 @@ def _solve_chi_phi_bragg(
         Free sample stages in stacking order; the last two are chi/phi.
     Q_phi : numpy.ndarray, shape (3,)
     mode : ConstraintSet
-    fast_only : bool, optional
-        When ``True`` and the chi/phi pair is standard Eulerian, return the
-        analytic-fast-path result (possibly empty) without running the
-        expensive multi-seed Newton fallback.  This is used by the
-        outer-stage scan in :func:`_solve_reference_three_sample`, where the
-        inner solve is invoked dozens of times and the Newton fallback's
-        cost on the (common) no-solution case dominates.  Default ``False``.
 
     Returns
     -------
@@ -1200,11 +1192,9 @@ def _solve_chi_phi_bragg(
             if solutions:
                 return solutions
         # If analytic solver returned nothing (degenerate case), fall through
-        # to the Newton solver below — unless the caller requested the
-        # analytic-only fast path (outer-stage scan), in which case an
-        # empty result simply means "no Bragg branch at this outer angle".
-        if fast_only:
-            return []
+        # to the Newton solver below.  The Newton fallback finds solutions
+        # the analytic path missed and is necessary for modes like
+        # incidence_equals_emergence_vertical with high-symmetry reflections (#311).
 
     # --- Newton fallback for non-standard axes or degenerate cases ---
 
@@ -3204,9 +3194,7 @@ def _solve_reference_three_sample(
         """Bragg-valid full solutions with the outer stage pinned."""
         base = dict(angles)
         base[outer_name] = outer_deg
-        return _solve_chi_phi_bragg(
-            geometry, base, inner_free, Q_phi, mode, fast_only=True
-        )
+        return _solve_chi_phi_bragg(geometry, base, inner_free, Q_phi, mode)
 
     def _match(sol: dict[str, float], pool: list[dict[str, float]]):
         """Return the pool entry closest to ``sol`` in (chi, phi), or None."""
@@ -3229,6 +3217,7 @@ def _solve_reference_three_sample(
     grid = list(np.linspace(lim_lo, lim_hi, n_steps + 1))
 
     solutions: list[dict[str, float]] = []
+    exact_hit_tol = 1e-7
 
     def _record(sol: dict[str, float]) -> None:
         _apply_cut_points(sol, mode, geometry)
@@ -3243,6 +3232,9 @@ def _solve_reference_three_sample(
     prev_outer = grid[0]
     prev_sols = _bragg_solutions_at(prev_outer)
     prev_res = {id(s): reference_residual(s) for s in prev_sols}
+    for ps in prev_sols:
+        if abs(prev_res[id(ps)]) < exact_hit_tol:
+            _record(dict(ps))
 
     for outer in grid[1:]:
         cur_sols = _bragg_solutions_at(outer)
@@ -3251,13 +3243,16 @@ def _solve_reference_three_sample(
         for cs in cur_sols:
             r_cur = cur_res[id(cs)]
             # Exact hit on the grid.
-            if abs(r_cur) < 1e-7:
+            if abs(r_cur) < exact_hit_tol:
                 _record(dict(cs))
                 continue
             match = _match(cs, prev_sols)
             if match is None:
                 continue
             r_prev = prev_res[id(match)]
+            if abs(r_prev) < exact_hit_tol:
+                _record(dict(match))
+                continue
             if r_prev * r_cur >= 0:
                 continue
             # Sign change between prev_outer and outer on this branch:
@@ -3301,7 +3296,7 @@ def _solve_surface(
 
     - ``"incidence"`` — incidence angle fixed at target value
     - ``"emergence"`` — emergence angle fixed at target value
-    - ``"specular"`` — specular reflection: incidence = emergence
+    - ``"incidence_equals_emergence"`` — incidence = emergence
 
     The solver builds a baseline angles dict (applying all fixed sample/detector
     constraints and setting the detector stage to ttheta_deg), then performs a
@@ -3323,7 +3318,7 @@ def _solve_surface(
     from .mode import ReferenceConstraint
 
     rc = next(c for c in mode.constraints if isinstance(c, ReferenceConstraint))
-    target_name = rc.name  # "incidence", "emergence", or "specular"
+    target_name = rc.name  # "incidence", "emergence", or "incidence_equals_emergence"
     target_value = rc.value  # float or True
 
     # Build baseline angles dict with all fixed constraints applied
@@ -3474,7 +3469,7 @@ def _surface_residual(
     if target_name == "emergence":
         bo = _emergence_angle(geometry, angles=angles)
         return bo - float(target_value)
-    # specular: incidence = emergence (symmetric reflection)
+    # incidence_equals_emergence: incidence = emergence (symmetric reflection)
     ai = _incidence_angle(geometry, angles=angles)
     bo = _emergence_angle(geometry, angles=angles)
     return ai - bo
@@ -4513,7 +4508,7 @@ def _validate_solutions(
             # motor angles directly; DetectorConstraint is applied by the
             # solver (ttheta_deg) so it never appears here.
             # ReferenceConstraint pseudo-angle residuals
-            # (incidence/emergence/specular/omega/naz) are checked too — except
+            # (incidence/emergence/incidence_equals_emergence/omega/naz) are checked too — except
             # "psi", which is enforced upstream as a validation filter in
             # _solve_psi_mode (its motor-frame residual is subject to ±360°
             # azimuthal wraparound and is not a reliable per-solution check).

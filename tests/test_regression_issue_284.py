@@ -66,6 +66,9 @@ from ad_hoc_diffractometer.geometry_loader import load_geometry_file
 from ad_hoc_diffractometer.kappa import KappaPseudoAngleConvention
 from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
 from ad_hoc_diffractometer.orientation import angles_to_phi_vector
+from helpers import EXACT_ATOL
+from helpers import IDENTITY_ATOL
+from helpers import NUMERIC_ATOL
 
 SAPPHIRE = dict(a=4.7589, b=4.7589, c=12.99119, alpha=90.0, beta=90.0, gamma=120.0)
 WAVELENGTH = 1.54
@@ -122,7 +125,7 @@ def test_kappa_bisecting_sapphire_reflections_solve(
         for sol in sols:
             angles = {k: sol[k] for k in sol}
             Q = angles_to_phi_vector(g, **angles)
-            np.testing.assert_allclose(Q, target, atol=1e-8)
+            np.testing.assert_allclose(Q, target, atol=NUMERIC_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -146,7 +149,7 @@ def test_kappa_bisecting_sapphire_reflections_solve(
             "kappa6c",
             "psic",
             "bisecting_vertical",
-            "bisecting_vertical",
+            "fixed_omega_vertical",
             does_not_raise(),
             id="kappa6c-psic",
         ),
@@ -307,7 +310,7 @@ def test_eulerian_to_kappa_axes_preserves_q(
 
     Q_kap = angles_to_phi_vector(g_k, **kap_angles)
 
-    np.testing.assert_allclose(Q_kap, Q_eul, atol=1e-10)
+    np.testing.assert_allclose(Q_kap, Q_eul, atol=IDENTITY_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -343,7 +346,7 @@ def test_n_chi_eq_matches_basis_longitudinal(
         np.testing.assert_allclose(
             g.kappa_pseudo_angle_convention.n_chi_eq,
             g.basis[expected_basis_label],
-            atol=1e-12,
+            atol=EXACT_ATOL,
         )
 
 
@@ -415,7 +418,7 @@ def test_kappa_eulerian_chi_explicit_override():
     # Explicit override: n_chi_eq is +vertical (not the auto-derived
     # +longitudinal).
     np.testing.assert_allclose(
-        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 0.0, 1.0], atol=1e-12
+        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 0.0, 1.0], atol=EXACT_ATOL
     )
 
 
@@ -425,7 +428,7 @@ def test_kappa_eulerian_chi_auto_derived_when_absent():
     text = _kappa_yaml_doc()  # no kappa_eulerian_chi
     g = load_geometry_file(text)
     np.testing.assert_allclose(
-        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 1.0, 0.0], atol=1e-12
+        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 1.0, 0.0], atol=EXACT_ATOL
     )
 
 
@@ -435,7 +438,7 @@ def test_kappa_eulerian_chi_numeric_vector_form():
     doc["kappa_eulerian_chi"] = [0.0, 0.0, 1.0]
     g = load_geometry_file(yaml.safe_dump(doc))
     np.testing.assert_allclose(
-        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 0.0, 1.0], atol=1e-12
+        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 0.0, 1.0], atol=EXACT_ATOL
     )
 
 
@@ -503,7 +506,7 @@ def test_kappa_eulerian_chi_auto_derivation_walks_basis_fallback():
     # +longitudinal is parallel to n_komega; +vertical is the next
     # perpendicular basis direction.
     np.testing.assert_allclose(
-        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 0.0, 1.0], atol=1e-12
+        g.kappa_pseudo_angle_convention.n_chi_eq, [0.0, 0.0, 1.0], atol=EXACT_ATOL
     )
 
 
@@ -633,7 +636,7 @@ def test_kappa_arm_axis_in_canonical_plane(
     g = ahd.make_geometry(kappa_name)
     with context:
         np.testing.assert_allclose(
-            g.stage("kappa").axis, expected_kappa_axis_in_plane, atol=1e-12
+            g.stage("kappa").axis, expected_kappa_axis_in_plane, atol=EXACT_ATOL
         )
 
 

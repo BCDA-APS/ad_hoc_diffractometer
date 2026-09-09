@@ -45,6 +45,14 @@ from ad_hoc_diffractometer.forward import _apply_cut_points
 from ad_hoc_diffractometer.forward import _check_limits
 from ad_hoc_diffractometer.forward import compute_forward
 from ad_hoc_diffractometer.stage import Stage
+from helpers import ANGLE_DEGREES_TIGHT_ATOL
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import EXACT_ATOL
+from helpers import HKL_ATOL
+from helpers import IDENTITY_ATOL
+from helpers import NUMERIC_ATOL
+from helpers import PRECISE_ATOL
+from helpers import TIGHT_ATOL
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -62,7 +70,7 @@ def _setup_cubic(factory, a=1.0):
     return g
 
 
-def _round_trip_ok(g, h, k, l, atol=1e-8):  # noqa: E741
+def _round_trip_ok(g, h, k, l, atol=NUMERIC_ATOL):  # noqa: E741
     """
     Return True if every forward solution round-trips back to (h, k, l)
     via inverse(), and the list is non-empty.
@@ -234,7 +242,7 @@ def test_fourcv_bisecting_omega_equals_ttheta_half():
     g = _setup_cubic(fourcv, a=4.0)
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
-        assert sol["omega"] == pytest.approx(sol["ttheta"] / 2.0, abs=1e-10)
+        assert sol["omega"] == pytest.approx(sol["ttheta"] / 2.0, abs=IDENTITY_ATOL)
 
 
 def test_fourcv_bisecting_ttheta_from_bragg():
@@ -257,7 +265,7 @@ def test_fourcv_bisecting_ttheta_from_bragg():
     solutions = g.forward(h, k, l)
     assert len(solutions) > 0
     for sol in solutions:
-        assert sol["ttheta"] == pytest.approx(ttheta_expected, abs=1e-8)
+        assert sol["ttheta"] == pytest.approx(ttheta_expected, abs=NUMERIC_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -273,27 +281,30 @@ def test_fourcv_bisecting_ttheta_from_bragg():
     ],
 )
 def test_psic_bisecting_round_trip(a, h, k, l):  # noqa: E741
-    """psic bisecting round-trip: inverse(forward(hkl)) == hkl."""
+    """psic bisecting geometry round-trip via the default fixed_omega_vertical.
+
+    fixed_omega_vertical at omega = 0 is the vertical bisecting geometry.
+    """
     g = _setup_cubic(psic, a=a)
-    assert g.mode_name == "bisecting_vertical"
+    assert g.mode_name == "fixed_omega_vertical"
     assert _round_trip_ok(g, h, k, l)
 
 
 def test_psic_bisecting_frozen_mu_nu():
-    """In psic bisecting mode, mu and nu must be 0 in all solutions."""
+    """In the psic bisecting geometry, mu and nu must be 0 in all solutions."""
     g = _setup_cubic(psic, a=4.0)
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
-        assert sol["mu"] == pytest.approx(0.0, abs=1e-10)
-        assert sol["nu"] == pytest.approx(0.0, abs=1e-10)
+        assert sol["mu"] == pytest.approx(0.0, abs=IDENTITY_ATOL)
+        assert sol["nu"] == pytest.approx(0.0, abs=IDENTITY_ATOL)
 
 
 def test_psic_bisecting_eta_equals_delta_half():
-    """In psic bisecting mode, eta must equal delta/2."""
+    """In the psic bisecting geometry, eta must equal delta/2."""
     g = _setup_cubic(psic, a=4.0)
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
-        assert sol["eta"] == pytest.approx(sol["delta"] / 2.0, abs=1e-10)
+        assert sol["eta"] == pytest.approx(sol["delta"] / 2.0, abs=IDENTITY_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -382,7 +393,7 @@ def test_kappa4_fixed_kphi_value_in_solution(factory):
     solutions = g.forward(0, 1, 0)
     assert len(solutions) > 0
     for sol in solutions:
-        assert sol["kphi"] == pytest.approx(0.0, abs=1e-8)
+        assert sol["kphi"] == pytest.approx(0.0, abs=NUMERIC_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -411,7 +422,7 @@ def test_kappa4_virtual_angle_round_trip(factory, mode_name, h, k, l):  # noqa: 
     g.mode_name = mode_name
     assert g.modes[mode_name].is_implemented(g)
     # Newton-Raphson converges to ~1e-6; use looser tolerance for these modes
-    assert _round_trip_ok(g, h, k, l, atol=1e-4)
+    assert _round_trip_ok(g, h, k, l, atol=HKL_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -457,7 +468,9 @@ def test_kappa4_virtual_angle_constraint_satisfied(
             g.kappa_pseudo_angle_convention,
         )
         virtual_vals = {"omega": o, "chi": c, "phi": p}
-        assert virtual_vals[virtual_angle] == pytest.approx(expected_value, abs=1e-4)
+        assert virtual_vals[virtual_angle] == pytest.approx(
+            expected_value, abs=HKL_ATOL
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -480,9 +493,9 @@ def test_psic_fixed_chi_uses_constraint_value():
     g.mode_name = "fixed_chi_vertical"
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
-        assert sol["chi"] == pytest.approx(90.0, abs=1e-6)
-        assert sol["mu"] == pytest.approx(0.0, abs=1e-6)
-        assert sol["nu"] == pytest.approx(0.0, abs=1e-6)
+        assert sol["chi"] == pytest.approx(90.0, abs=PRECISE_ATOL)
+        assert sol["mu"] == pytest.approx(0.0, abs=PRECISE_ATOL)
+        assert sol["nu"] == pytest.approx(0.0, abs=PRECISE_ATOL)
 
 
 def test_fourcv_fixed_chi_value_respected():
@@ -492,7 +505,7 @@ def test_fourcv_fixed_chi_value_respected():
     solutions = g.forward(1, 0, 0)
     assert len(solutions) > 0
     for sol in solutions:
-        assert sol["chi"] == pytest.approx(90.0, abs=1e-8)
+        assert sol["chi"] == pytest.approx(90.0, abs=NUMERIC_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -582,7 +595,7 @@ def test_four_circle_fixed_omega_value_in_solution(factory, h, k, l):  # noqa: E
     solutions = g.forward(h, k, l)
     assert len(solutions) > 0
     for sol in solutions:
-        assert sol["omega"] == pytest.approx(0.0, abs=1e-8)
+        assert sol["omega"] == pytest.approx(0.0, abs=NUMERIC_ATOL)
 
 
 def test_four_circle_fixed_omega_unreachable_along_phi_axis():
@@ -660,9 +673,9 @@ def test_four_circle_fixed_angle_constraint_value_in_solution(
     solutions = g.forward(h, k, l)
     assert len(solutions) > 0
     for sol in solutions:
-        assert sol[expected_fixed_stage] == pytest.approx(expected_value, abs=1e-8), (
-            f"{expected_fixed_stage} not at {expected_value} in {sol}"
-        )
+        assert sol[expected_fixed_stage] == pytest.approx(
+            expected_value, abs=NUMERIC_ATOL
+        ), f"{expected_fixed_stage} not at {expected_value} in {sol}"
 
 
 @pytest.mark.parametrize(
@@ -887,7 +900,7 @@ def test_q_along_z_degenerate_chi_90():
     for sol in solutions:
         # Every solution must round-trip correctly
         hkl_back = g.inverse(sol)
-        assert np.allclose(hkl_back, [0, 0, 1], atol=1e-5)
+        assert np.allclose(hkl_back, [0, 0, 1], atol=ANGLE_DEGREES_TIGHT_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -1033,7 +1046,7 @@ def test_apply_cut_points(
         g.cut_points.update(geom_cut_points)
         angles = {"phi": angle_in}
         _apply_cut_points(angles, mode, g)
-        assert angles["phi"] == pytest.approx(expected_out, abs=1e-10)
+        assert angles["phi"] == pytest.approx(expected_out, abs=IDENTITY_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -1262,7 +1275,7 @@ def test_fixed_sample_one_free():
     assert len(result) > 0
     for sol in result:
         hkl_back = g.inverse(sol)
-        assert np.allclose(hkl_back, [1, 0, 0], atol=1e-5)
+        assert np.allclose(hkl_back, [1, 0, 0], atol=ANGLE_DEGREES_TIGHT_ATOL)
 
 
 def test_fixed_sample_with_detector_constraint():
@@ -1348,7 +1361,7 @@ def test_fivec_constraint_value_in_solution(mode_name, stage, expected_value):
     solutions = g.forward(1, 0, 0)
     assert len(solutions) > 0
     for sol in solutions:
-        assert sol[stage] == pytest.approx(expected_value, abs=1e-8)
+        assert sol[stage] == pytest.approx(expected_value, abs=NUMERIC_ATOL)
 
 
 def test_fivec_bisecting_omega_equals_ttheta_half():
@@ -1356,7 +1369,7 @@ def test_fivec_bisecting_omega_equals_ttheta_half():
     g = _setup_cubic(fivec, a=4.0)
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
-        assert sol["omega"] == pytest.approx(sol["ttheta"] / 2.0, abs=1e-10)
+        assert sol["omega"] == pytest.approx(sol["ttheta"] / 2.0, abs=IDENTITY_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -1388,7 +1401,9 @@ def test_sixc_round_trip(mode_name, h, k, l):  # noqa: E741
     [
         pytest.param("fixed_incidence_zaxis", id="fixed_incidence_zaxis"),
         pytest.param("fixed_emergence_zaxis", id="fixed_emergence_zaxis"),
-        pytest.param("specular_zaxis", id="specular_zaxis"),
+        pytest.param(
+            "incidence_equals_emergence_zaxis", id="incidence_equals_emergence_zaxis"
+        ),
     ],
 )
 def test_sixc_zaxis_stub_not_implemented(mode_name):
@@ -1412,7 +1427,7 @@ def test_sixc_four_circle_matches_fourcv():
     # ttheta/delta should match between the two geometries
     ttheta_fourcv = sols_fourcv[0]["ttheta"]
     delta_sixc = sols_sixc[0]["delta"]
-    assert delta_sixc == pytest.approx(ttheta_fourcv, abs=1e-8)
+    assert delta_sixc == pytest.approx(ttheta_fourcv, abs=NUMERIC_ATOL)
 
 
 def test_sixc_four_circle_alpha_gamma_frozen():
@@ -1420,8 +1435,8 @@ def test_sixc_four_circle_alpha_gamma_frozen():
     g = _setup_cubic(sixc, a=4.0)
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
-        assert sol["alpha"] == pytest.approx(0.0, abs=1e-8)
-        assert sol["gamma"] == pytest.approx(0.0, abs=1e-8)
+        assert sol["alpha"] == pytest.approx(0.0, abs=NUMERIC_ATOL)
+        assert sol["gamma"] == pytest.approx(0.0, abs=NUMERIC_ATOL)
 
 
 def test_sixc_four_circle_omega_equals_delta_half():
@@ -1429,7 +1444,7 @@ def test_sixc_four_circle_omega_equals_delta_half():
     g = _setup_cubic(sixc, a=4.0)
     solutions = g.forward(1, 0, 0)
     for sol in solutions:
-        assert sol["omega"] == pytest.approx(sol["delta"] / 2.0, abs=1e-10)
+        assert sol["omega"] == pytest.approx(sol["delta"] / 2.0, abs=IDENTITY_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -1437,10 +1452,8 @@ def test_sixc_four_circle_omega_equals_delta_half():
 # ---------------------------------------------------------------------------
 
 _PSIC_MODES_ALL = {
-    "bisecting_vertical",
     "fixed_chi_vertical",
     "fixed_phi_vertical",
-    "bisecting_horizontal",
     "fixed_chi_horizontal",
     "fixed_phi_horizontal",
     "double_diffraction_vertical",
@@ -1452,11 +1465,11 @@ _PSIC_MODES_ALL = {
     "fixed_psi_horizontal",
     "fixed_incidence_vertical",
     "fixed_emergence_vertical",
-    "specular_vertical",
+    "incidence_equals_emergence_vertical",
     "fixed_incidence_fixed_chi_fixed_phi",
     "fixed_incidence_horizontal",
     "fixed_emergence_horizontal",
-    "specular_horizontal",
+    "incidence_equals_emergence_horizontal",
     "fixed_omega_vertical",
     "fixed_omega_horizontal",
     "zone_vertical",
@@ -1464,10 +1477,8 @@ _PSIC_MODES_ALL = {
 }
 
 _PSIC_MODES_IMPLEMENTED = {
-    "bisecting_vertical",
     "fixed_chi_vertical",
     "fixed_phi_vertical",
-    "bisecting_horizontal",
     "fixed_chi_horizontal",
     "fixed_phi_horizontal",
     "double_diffraction_vertical",
@@ -1598,9 +1609,9 @@ def test_kappa6c_bisecting_vertical_invariants():
         omega_virtual, _chi_v, _phi_v = kappa_to_eulerian_axes(
             sol["komega"], sol["kappa"], sol["kphi"], conv
         )
-        assert omega_virtual == pytest.approx(sol["delta"] / 2.0, abs=1e-8)
-        assert sol["mu"] == pytest.approx(0.0, abs=1e-8)
-        assert sol["nu"] == pytest.approx(0.0, abs=1e-8)
+        assert omega_virtual == pytest.approx(sol["delta"] / 2.0, abs=NUMERIC_ATOL)
+        assert sol["mu"] == pytest.approx(0.0, abs=NUMERIC_ATOL)
+        assert sol["nu"] == pytest.approx(0.0, abs=NUMERIC_ATOL)
 
 
 def test_kappa6c_bisecting_horizontal_invariants():
@@ -1617,9 +1628,9 @@ def test_kappa6c_bisecting_horizontal_invariants():
     solutions = g.forward(0, 0, 1)
     assert len(solutions) > 0
     for sol in solutions:
-        assert sol["mu"] == pytest.approx(sol["nu"] / 2.0, abs=1e-10)
-        assert sol["komega"] == pytest.approx(0.0, abs=1e-8)
-        assert sol["delta"] == pytest.approx(0.0, abs=1e-8)
+        assert sol["mu"] == pytest.approx(sol["nu"] / 2.0, abs=IDENTITY_ATOL)
+        assert sol["komega"] == pytest.approx(0.0, abs=NUMERIC_ATOL)
+        assert sol["delta"] == pytest.approx(0.0, abs=NUMERIC_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -1683,7 +1694,7 @@ def test_qaz_residual(nu_deg, delta_deg, target_qaz_deg, expected_residual):
         "delta": delta_deg,
     }
     residual = _qaz_residual(angles, g, target_qaz_deg)
-    assert residual == pytest.approx(expected_residual, abs=1e-6)
+    assert residual == pytest.approx(expected_residual, abs=PRECISE_ATOL)
 
 
 def test_psic_lifting_detector_mu_limits_filter_solutions():
@@ -1770,12 +1781,12 @@ def test_psic_lifting_detector_round_trip(mode_name, h, k, l):  # noqa: E741
     fixed_samples = {"mu", "eta", "chi", "phi"} - {free_sample}
     for sol in solutions:
         for stage in fixed_samples:
-            assert sol[stage] == pytest.approx(0.0, abs=1e-6), (
+            assert sol[stage] == pytest.approx(0.0, abs=PRECISE_ATOL), (
                 f"{mode_name}: sample stage {stage!r} should be fixed at 0, "
                 f"got {sol[stage]:.6f}"
             )
         hkl_back = g.inverse(sol)
-        assert np.allclose(hkl_back, [h, k, l], atol=1e-5)
+        assert np.allclose(hkl_back, [h, k, l], atol=ANGLE_DEGREES_TIGHT_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -1797,7 +1808,7 @@ def test_kappa6c_lifting_detector_qaz_satisfied(mode_name, h, k, l):  # noqa: E7
         nu_deg = sol["nu"]
         delta_deg = sol["delta"]
         qaz_computed = _qaz_from_angles(nu_deg, delta_deg)
-        assert qaz_computed == pytest.approx(90.0, abs=1e-4), (
+        assert qaz_computed == pytest.approx(90.0, abs=HKL_ATOL), (
             f"{mode_name}: expected qaz=90, got {qaz_computed:.6f} "
             f"(nu={nu_deg:.4f}, delta={delta_deg:.4f})"
         )
@@ -2098,7 +2109,7 @@ def test_fixed_psi_psi_verified_in_solutions(
     assert len(solutions) > 0, f"No solutions for {mode_name} ({h},{k},{l})"
     for sol in solutions:
         psi_check = g.psi(angles=sol)
-        assert psi_check == pytest.approx(natural, abs=1e-3), (
+        assert psi_check == pytest.approx(natural, abs=ANGLE_DEGREES_ATOL), (
             f"psi mismatch: expected {natural:.4f}, got {psi_check:.4f}"
         )
 
@@ -2333,7 +2344,7 @@ def test_double_diffraction_round_trip(
     # May return 0 solutions if no simultaneous diffraction exists
     for sol in solutions:
         hkl_back = g.inverse(sol)
-        assert np.allclose(hkl_back, [h, k, l], atol=1e-6), (
+        assert np.allclose(hkl_back, [h, k, l], atol=PRECISE_ATOL), (
             f"Round-trip failed: {[h, k, l]} -> {sol} -> {hkl_back}"
         )
 
@@ -2415,17 +2426,17 @@ def test_double_diffraction_secondary_on_ewald_sphere(
         ),
         pytest.param(
             psic,
-            "bisecting_vertical",
+            "fixed_omega_vertical",
             (1, 0, 0),
             does_not_raise(),
-            id="psic-bisecting-100",
+            id="psic-fixed_omega_vertical-100",
         ),
         pytest.param(
             psic,
-            "bisecting_vertical",
+            "fixed_omega_vertical",
             (1, 1, 1),
             does_not_raise(),
-            id="psic-bisecting-111",
+            id="psic-fixed_omega_vertical-111",
         ),
         pytest.param(
             fourcv, "fixed_chi", (1, 0, 0), does_not_raise(), id="fourcv-fixed_chi-100"
@@ -2494,7 +2505,7 @@ def test_jacobian_analytic_vs_fd(factory, mode_name, hkl, context):
             Q_minus = ctx.q_phi(sol_minus)
             J_fd[:, i] = (Q_plus - Q_minus) / (2 * h_deg)
 
-        np.testing.assert_allclose(J_analytic, J_fd, atol=1e-5)
+        np.testing.assert_allclose(J_analytic, J_fd, atol=ANGLE_DEGREES_TIGHT_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -2546,7 +2557,9 @@ def test_jacobian_analytic_1d(factory, mode_name, hkl, context):
         sol_minus[name] = sol[name] - h_deg
         J_fd_col = (ctx.q_phi(sol_plus) - ctx.q_phi(sol_minus)) / (2 * h_deg)
 
-        np.testing.assert_allclose(J_analytic[:, 0], J_fd_col, atol=1e-5)
+        np.testing.assert_allclose(
+            J_analytic[:, 0], J_fd_col, atol=ANGLE_DEGREES_TIGHT_ATOL
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -2710,7 +2723,7 @@ def test_one_free_angle_analytic_round_trip():
     assert len(sols) >= 1
     for sol in sols:
         hkl_back = g.inverse(sol)
-        assert np.allclose(hkl_back, [1.0, 0.0, 0.0], atol=1e-9)
+        assert np.allclose(hkl_back, [1.0, 0.0, 0.0], atol=TIGHT_ATOL)
 
 
 def test_one_free_angle_analytic_matches_newton():
@@ -2724,7 +2737,7 @@ def test_one_free_angle_analytic_matches_newton():
 
     # Force fallback to Newton by monkeypatching the cardinal-axis check.
     orig_check = fmod._is_cardinal_axis
-    fmod._is_cardinal_axis = lambda n, atol=1e-12: False
+    fmod._is_cardinal_axis = lambda n, atol=EXACT_ATOL: False
     try:
         sols_newton = g.forward(1, 0, 0)
     finally:
@@ -2732,7 +2745,7 @@ def test_one_free_angle_analytic_matches_newton():
     assert len(sols_newton) == 1
     phi_newton = sols_newton[0]["phi"]
 
-    # Same branch, agreement to atol=1e-9 (in degrees → much tighter than radians).
+    # Same branch, agreement to atol=TIGHT_ATOL (in degrees → much tighter than radians).
     diff = abs((phi_analytic - phi_newton + 180.0) % 360.0 - 180.0)
     assert diff < math.degrees(1e-9)
 
@@ -3090,7 +3103,7 @@ def test_kappa_bisecting_post_processing_limits_rejection(monkeypatch):
     ],
 )
 def test_psic_fixed_omega_round_trip(mode_name, h, k, l, context):  # noqa: E741
-    """fixed_omega_* modes (target = 0) round-trip and reduce to bisecting."""
+    """fixed_omega_* modes (target = 0) round-trip; this is the bisecting geometry."""
     from ad_hoc_diffractometer.reference import omega_pseudo
 
     with context:
@@ -3101,31 +3114,13 @@ def test_psic_fixed_omega_round_trip(mode_name, h, k, l, context):  # noqa: E741
         for sol in sols:
             # Round-trip Bragg
             hkl_back = g.inverse(sol)
-            assert np.allclose(hkl_back, [h, k, l], atol=1e-6), (
+            assert np.allclose(hkl_back, [h, k, l], atol=PRECISE_ATOL), (
                 f"{mode_name} ({h},{k},{l}): inverse mismatch {hkl_back}"
             )
             # OMEGA pseudo-angle = 0 in every solution
             om = omega_pseudo(g, angles=sol)
-            assert om == pytest.approx(0.0, abs=1e-5), (
+            assert om == pytest.approx(0.0, abs=ANGLE_DEGREES_TIGHT_ATOL), (
                 f"{mode_name} ({h},{k},{l}): expected OMEGA=0, got {om}"
-            )
-
-
-def test_psic_fixed_omega_vertical_matches_bisecting():
-    """fixed_omega_vertical (omega=0) yields the bisecting_vertical solutions."""
-    g = _setup_cubic(psic, a=4.0)
-    g.mode_name = "bisecting_vertical"
-    bisect_sols = g.forward(1, 0, 0)
-    g.mode_name = "fixed_omega_vertical"
-    omega_sols = g.forward(1, 0, 0)
-    assert len(bisect_sols) == len(omega_sols)
-    # Compare matching solutions (sort by eta)
-    bisect_sorted = sorted(bisect_sols, key=lambda s: s["eta"])
-    omega_sorted = sorted(omega_sols, key=lambda s: s["eta"])
-    for b, o in zip(bisect_sorted, omega_sorted, strict=False):
-        for stage in ("mu", "eta", "chi", "phi", "nu", "delta"):
-            assert b[stage] == pytest.approx(o[stage], abs=1e-6), (
-                f"stage {stage}: bisect={b[stage]}, omega={o[stage]}"
             )
 
 
@@ -3151,10 +3146,41 @@ def test_psic_fixed_omega_nonzero_target():
     assert len(sols) > 0
     for sol in sols:
         om = omega_pseudo(g, angles=sol)
-        assert om == pytest.approx(5.0, abs=1e-3), f"omega=5° target: got OMEGA={om}"
+        assert om == pytest.approx(5.0, abs=ANGLE_DEGREES_ATOL), (
+            f"omega=5° target: got OMEGA={om}"
+        )
         # Bragg still satisfied
         hkl_back = g.inverse(sol)
-        assert np.allclose(hkl_back, [1, 0, 0], atol=1e-5)
+        assert np.allclose(hkl_back, [1, 0, 0], atol=ANGLE_DEGREES_TIGHT_ATOL)
+
+
+def test_psic_fixed_omega_horizontal_nonzero_target():
+    """fixed_omega_horizontal with omega=5° produces solutions with OMEGA=5°."""
+    from ad_hoc_diffractometer import ConstraintSet
+    from ad_hoc_diffractometer import DetectorConstraint
+    from ad_hoc_diffractometer import ReferenceConstraint
+    from ad_hoc_diffractometer import SampleConstraint
+    from ad_hoc_diffractometer.reference import omega_pseudo
+
+    g = _setup_cubic(psic, a=4.0)
+    g.modes["__test_omega_horizontal_5"] = ConstraintSet(
+        [
+            SampleConstraint("eta", 0.0),
+            DetectorConstraint("delta", 0.0),
+            ReferenceConstraint("omega", 5.0),
+        ],
+        computed=["mu", "chi", "phi", "nu"],
+    )
+    g.mode_name = "__test_omega_horizontal_5"
+    sols = g.forward(1, 0, 0)
+    assert len(sols) > 0
+    for sol in sols:
+        om = omega_pseudo(g, angles=sol)
+        assert om == pytest.approx(5.0, abs=ANGLE_DEGREES_ATOL), (
+            f"omega=5° target: got OMEGA={om}"
+        )
+        hkl_back = g.inverse(sol)
+        assert np.allclose(hkl_back, [1, 0, 0], atol=ANGLE_DEGREES_TIGHT_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -3195,14 +3221,14 @@ def test_psic_fixed_alpha_i_fixed_chi_fixed_phi_round_trip(
         sols = g.forward(h, k, l)
         assert len(sols) > 0, f"B3 ({h},{k},{l}) incidence={alpha_target}: no solutions"
         for sol in sols:
-            assert sol["chi"] == pytest.approx(0.0, abs=1e-6)
-            assert sol["phi"] == pytest.approx(0.0, abs=1e-6)
+            assert sol["chi"] == pytest.approx(0.0, abs=PRECISE_ATOL)
+            assert sol["phi"] == pytest.approx(0.0, abs=PRECISE_ATOL)
             ai = incidence_angle(g, angles=sol)
-            assert ai == pytest.approx(alpha_target, abs=1e-3), (
+            assert ai == pytest.approx(alpha_target, abs=ANGLE_DEGREES_ATOL), (
                 f"B3 ({h},{k},{l}) incidence target {alpha_target}: got {ai}"
             )
             hkl_back = g.inverse(sol)
-            assert np.allclose(hkl_back, [h, k, l], atol=1e-5)
+            assert np.allclose(hkl_back, [h, k, l], atol=ANGLE_DEGREES_TIGHT_ATOL)
 
 
 def test_psic_fixed_alpha_i_fixed_chi_fixed_phi_requires_surface_normal():
@@ -3234,11 +3260,11 @@ def test_psic_lifting_detector_eta_round_trip(h, k, l, context):  # noqa: E741
         sols = g.forward(h, k, l)
         assert len(sols) > 0, f"lifting_detector_eta ({h},{k},{l}): no solutions"
         for sol in sols:
-            assert sol["mu"] == pytest.approx(0.0, abs=1e-6)
-            assert sol["chi"] == pytest.approx(0.0, abs=1e-6)
-            assert sol["phi"] == pytest.approx(0.0, abs=1e-6)
+            assert sol["mu"] == pytest.approx(0.0, abs=PRECISE_ATOL)
+            assert sol["chi"] == pytest.approx(0.0, abs=PRECISE_ATOL)
+            assert sol["phi"] == pytest.approx(0.0, abs=PRECISE_ATOL)
             hkl_back = g.inverse(sol)
-            assert np.allclose(hkl_back, [h, k, l], atol=1e-5)
+            assert np.allclose(hkl_back, [h, k, l], atol=ANGLE_DEGREES_TIGHT_ATOL)
 
 
 def test_psic_lifting_detector_eta_lifts_for_out_of_plane_hkl():

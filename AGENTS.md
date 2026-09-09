@@ -46,6 +46,15 @@ A single clarifying question is cheaper than building the wrong
 thing and unwinding it.  Do not stack multiple questions; ask one,
 wait, then proceed.
 
+### Comments don't duplicate the issue/PR
+
+Code comments and docstrings explain what the code does and why, for a
+reader of the code.  Do not use them to restate motivation, history, or
+discussion that already lives in the issue or PR — that content is
+redundant there and drifts out of date.  Link by issue/PR number when a
+pointer is useful; keep the rest in the issue or PR.  (The same "don't
+duplicate the issue/PR body" principle applies to changelog entries.)
+
 ---
 
 ## Attribution
@@ -62,6 +71,19 @@ Example: `Contributed by: OpenCode (argo/claudesonnet46)`
 ---
 
 ## Issue and PR workflow
+
+### Never commit without explicit approval
+
+Do not commit, push, or create pull requests without explicit user approval,
+even in build mode, even after changing from plan mode to build mode. After making code changes:
+
+1. Report what you've done
+2. Show the diff or changed files
+3. **Wait for explicit instruction** ("commit this", "push to branch", "open PR", etc.)
+
+This applies to all agents. The user always reviews before committing.
+
+---
 
 1. **Before writing any code**, *if the issue is on one or more project
    boards*, set the issue status to "In progress" on each of those boards:

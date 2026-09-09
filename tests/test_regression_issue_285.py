@@ -63,6 +63,7 @@ import numpy as np
 import pytest
 
 import ad_hoc_diffractometer as ahd
+from helpers import PRECISE_ATOL
 
 # Trigonal-rhombohedral single-parameter cell from the issue's
 # reproducer block.
@@ -81,9 +82,9 @@ WAVELENGTH = 1.54
         pytest.param("fourch", "bisecting", does_not_raise(), id="fourch-bisecting"),
         pytest.param(
             "psic",
-            "bisecting_vertical",
+            "fixed_omega_vertical",
             does_not_raise(),
-            id="psic-bisecting_vertical",
+            id="psic-fixed_omega_vertical",
         ),
         pytest.param(
             "kappa6c",
@@ -116,4 +117,4 @@ def test_horizontal_bisecting_solves_trigonal_rhombohedral_110(
         )
         for sol in sols:
             hkl_back = g.inverse(sol)
-            np.testing.assert_allclose(hkl_back, (1.0, 1.0, 0.0), atol=1e-6)
+            np.testing.assert_allclose(hkl_back, (1.0, 1.0, 0.0), atol=PRECISE_ATOL)

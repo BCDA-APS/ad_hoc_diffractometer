@@ -57,6 +57,8 @@ from ad_hoc_diffractometer.constants import ZHAT
 from ad_hoc_diffractometer.mode import OPTIONAL
 from ad_hoc_diffractometer.mode import ModeDict
 from ad_hoc_diffractometer.stage import Stage
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import PRECISE_ATOL
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -739,13 +741,15 @@ def test_detector_constraint_evaluate_qaz():
         pytest.param("psi", 90.0, does_not_raise(), id="psi"),
         pytest.param("incidence", 5.0, does_not_raise(), id="incidence"),
         pytest.param("emergence", 5.0, does_not_raise(), id="emergence"),
-        pytest.param("specular", True, does_not_raise(), id="specular-true"),
+        pytest.param(
+            "incidence_equals_emergence", True, does_not_raise(), id="in_eq_em-true"
+        ),
         pytest.param("naz", 0.0, does_not_raise(), id="naz"),
         pytest.param(
-            "specular",
+            "incidence_equals_emergence",
             False,
             pytest.raises(ValueError, match=re.escape("must be True")),
-            id="specular-false-raises",
+            id="in_eq_em-false-raises",
         ),
         pytest.param(
             "unknown",
@@ -769,7 +773,7 @@ def test_reference_constraint_value_coerced_to_float():
 
 
 def test_reference_constraint_a_eq_b_value_is_true():
-    rc = ReferenceConstraint("specular", True)
+    rc = ReferenceConstraint("incidence_equals_emergence", True)
     assert rc.value is True
 
 
@@ -789,7 +793,7 @@ def test_reference_constraint_to_dict_from_dict():
 
 
 def test_reference_constraint_to_dict_from_dict_a_eq_b():
-    rc = ReferenceConstraint("specular", True)
+    rc = ReferenceConstraint("incidence_equals_emergence", True)
     d = rc.to_dict()
     assert d["value"] is True
     rc2 = ReferenceConstraint.from_dict(d)
@@ -799,12 +803,21 @@ def test_reference_constraint_to_dict_from_dict_a_eq_b():
 @pytest.mark.parametrize(
     "name, value, surface_normal, azimuth, expected",
     [
-        # incidence/emergence/specular: implemented when surface_normal is set
+        # incidence/emergence/incidence_equals_emergence: implemented when surface_normal is set
         pytest.param("incidence", 0.0, (0, 0, 1), None, True, id="incidence-with-sn"),
         pytest.param("incidence", 0.0, None, None, False, id="incidence-no-sn"),
         pytest.param("emergence", 0.0, (0, 0, 1), None, True, id="emergence-with-sn"),
-        pytest.param("specular", True, (0, 0, 1), None, True, id="specular-with-sn"),
-        pytest.param("specular", True, None, None, False, id="specular-no-sn"),
+        pytest.param(
+            "incidence_equals_emergence",
+            True,
+            (0, 0, 1),
+            None,
+            True,
+            id="in_eq_em-with-sn",
+        ),
+        pytest.param(
+            "incidence_equals_emergence", True, None, None, False, id="in_eq_em-no-sn"
+        ),
         # psi: implemented (validation filter) when azimuth is set
         pytest.param("psi", 0.0, None, (0, 0, 1), True, id="psi-with-azimuth"),
         pytest.param("psi", 0.0, None, None, False, id="psi-no-azimuth"),
@@ -855,11 +868,11 @@ def _psic_reference_geometry(**kwargs):
             id="emergence-residual",
         ),
         pytest.param(
-            "specular",
+            "incidence_equals_emergence",
             True,
             {"surface_normal": (0, 0, 1)},
             does_not_raise(),
-            id="specular-residual",
+            id="in_eq_em-residual",
         ),
         pytest.param(
             "omega",
@@ -894,7 +907,7 @@ def test_reference_constraint_evaluate(name, value, kwargs, context):
             g.mode_name = {
                 "incidence": "fixed_incidence_vertical",
                 "emergence": "fixed_emergence_vertical",
-                "specular": "specular_vertical",
+                "incidence_equals_emergence": "incidence_equals_emergence_vertical",
                 "omega": "fixed_omega_vertical",
             }[name]
             # Drive forward() with the same (accessible) target the residual
@@ -909,9 +922,9 @@ def test_reference_constraint_evaluate(name, value, kwargs, context):
             angles = sols[0]
             # The solution must reproduce the requested reflection (issue #307).
             rt = g.inverse(angles)
-            assert rt == pytest.approx((1.0, 0.0, 1.0), abs=1e-3)
+            assert rt == pytest.approx((1.0, 0.0, 1.0), abs=ANGLE_DEGREES_ATOL)
         residual = rc.evaluate(angles, g)
-        assert residual == pytest.approx(0.0, abs=1e-6)
+        assert residual == pytest.approx(0.0, abs=PRECISE_ATOL)
 
 
 def test_reference_constraint_is_satisfied():
@@ -1049,8 +1062,8 @@ def test_reference_constraint_hash():
     rc1 = ReferenceConstraint("psi", 90.0)
     rc2 = ReferenceConstraint("psi", 90.0)
     assert hash(rc1) == hash(rc2)
-    # specular with bool value also hashable
-    rc3 = ReferenceConstraint("specular", True)
+    # incidence_equals_emergence with bool value also hashable
+    rc3 = ReferenceConstraint("incidence_equals_emergence", True)
     assert isinstance(hash(rc3), int)
 
 
@@ -1894,11 +1907,15 @@ _SIXC_MODES = {
     "fixed_alpha_5c",
     "fixed_incidence_zaxis",
     "fixed_emergence_zaxis",
-    "specular_zaxis",
+    "incidence_equals_emergence_zaxis",
 }
 
 _SIXC_IMPLEMENTED = {"bisecting_4c", "fixed_gamma_5c", "fixed_alpha_5c"}
-_SIXC_STUBS = {"fixed_incidence_zaxis", "fixed_emergence_zaxis", "specular_zaxis"}
+_SIXC_STUBS = {
+    "fixed_incidence_zaxis",
+    "fixed_emergence_zaxis",
+    "incidence_equals_emergence_zaxis",
+}
 
 
 def test_sixc_factory_mode_names():
@@ -1962,7 +1979,11 @@ def test_sixc_surface_mode_implemented_with_surface_normal(mode_name):
         pytest.param(
             "fixed_emergence_zaxis", False, id="fixed_emergence_zaxis-no-bisect"
         ),
-        pytest.param("specular_zaxis", False, id="specular_zaxis-no-bisect"),
+        pytest.param(
+            "incidence_equals_emergence_zaxis",
+            False,
+            id="incidence_equals_emergence_zaxis-no-bisect",
+        ),
     ],
 )
 def test_sixc_mode_has_bisect(mode_name, expected_has_bisect):
@@ -1997,7 +2018,12 @@ def test_sixc_mode_has_bisect(mode_name, expected_has_bisect):
             None,
             id="fixed_emergence_zaxis-emergence-output",
         ),
-        pytest.param("specular_zaxis", "n_hat", "REQUIRED", id="specular_zaxis-n_hat"),
+        pytest.param(
+            "incidence_equals_emergence_zaxis",
+            "n_hat",
+            "REQUIRED",
+            id="incidence_equals_emergence_zaxis-n_hat",
+        ),
     ],
 )
 def test_sixc_zaxis_extras_declared(mode_name, extras_key, expected_value):
@@ -2529,7 +2555,7 @@ def test_qaz_residual_satisfied(
     with context:
         residual = _qaz_residual(angles, g, target_qaz_deg)
         assert math.isfinite(residual)
-        assert residual == pytest.approx(expected_residual, abs=1e-6)
+        assert residual == pytest.approx(expected_residual, abs=PRECISE_ATOL)
 
 
 def test_qaz_residual_few_detector_stages_raises():
@@ -2566,7 +2592,7 @@ def test_qaz_residual_nonzero():
         "delta": delta_deg,
     }
     residual = _qaz_residual(angles, g, 90.0)
-    assert residual == pytest.approx(qaz_actual - 90.0, abs=1e-6)
+    assert residual == pytest.approx(qaz_actual - 90.0, abs=PRECISE_ATOL)
     assert abs(residual) > 1e-3  # not satisfied
 
 
@@ -2639,19 +2665,19 @@ def _b3_constraint_set():
             id="reference-incidence-5",
         ),
         pytest.param(
-            # ReferenceConstraint('specular', ...) only accepts True
-            # (the constraint expresses the *boolean* condition
+            # ReferenceConstraint('incidence_equals_emergence', ...) only
+            # accepts True (the constraint expresses the *boolean* condition
             # incidence = emergence; there is no False variant).  This
             # case verifies the bool branch of with_constraint_values
             # by re-applying the only legal value.
             lambda: ConstraintSet(
-                [ReferenceConstraint("specular", True)],
+                [ReferenceConstraint("incidence_equals_emergence", True)],
                 extras={"n_hat": REQUIRED},
             ),
-            {"specular": True},
-            {"specular": True},
+            {"incidence_equals_emergence": True},
+            {"incidence_equals_emergence": True},
             does_not_raise(),
-            id="reference-specular-True",
+            id="reference-in_eq_em-True",
         ),
         pytest.param(
             _b3_constraint_set,

@@ -37,6 +37,9 @@ from ad_hoc_diffractometer.constants import XHAT
 from ad_hoc_diffractometer.constants import YHAT
 from ad_hoc_diffractometer.constants import ZHAT
 from ad_hoc_diffractometer.stage import Stage
+from helpers import EXACT_ATOL
+from helpers import IDENTITY_ATOL
+from helpers import PRECISE_ATOL
 
 _VALID_STAGES = [Stage("a", XHAT, parent=None, role="sample")]
 
@@ -311,7 +314,7 @@ def test_psic_sample_rotation(angles, expected_Z, context, psic_geom):
         for name, val in angles.items():
             psic_geom.set_angle(name, val)
         np.testing.assert_allclose(
-            psic_geom.sample_rotation_matrix(), expected_Z, atol=1e-10
+            psic_geom.sample_rotation_matrix(), expected_Z, atol=IDENTITY_ATOL
         )
 
 
@@ -348,7 +351,7 @@ def test_psic_detector_rotation(angles, expected_D, context, psic_geom):
         for name, val in angles.items():
             psic_geom.set_angle(name, val)
         np.testing.assert_allclose(
-            psic_geom.detector_rotation_matrix(), expected_D, atol=1e-10
+            psic_geom.detector_rotation_matrix(), expected_D, atol=IDENTITY_ATOL
         )
 
 
@@ -585,7 +588,7 @@ def test_inverse_all_zero_gives_zero():
     """All motor angles zero → no scattering → hkl = (0, 0, 0)."""
     g = _psic_with_identity_UB()
     hkl = g.inverse({"mu": 0, "eta": 0, "chi": 0, "phi": 0, "nu": 0, "delta": 0})
-    assert hkl == pytest.approx((0.0, 0.0, 0.0), abs=1e-12)
+    assert hkl == pytest.approx((0.0, 0.0, 0.0), abs=EXACT_ATOL)
 
 
 def test_inverse_returns_tuple_of_floats():
@@ -614,7 +617,7 @@ def test_inverse_UB_identity_equals_Q_phi():
     Q_phi = angles_to_phi_vector(g, **_PSIC_ANGLES)
     hkl = g.inverse(_PSIC_ANGLES)
 
-    np.testing.assert_allclose(hkl, Q_phi, atol=1e-10)
+    np.testing.assert_allclose(hkl, Q_phi, atol=IDENTITY_ATOL)
 
 
 def test_inverse_UB_scaled_identity():
@@ -635,7 +638,7 @@ def test_inverse_UB_scaled_identity():
     Q_phi = angles_to_phi_vector(g, **_PSIC_ANGLES)
     hkl = g.inverse(_PSIC_ANGLES)
 
-    np.testing.assert_allclose(hkl, np.array(Q_phi) / s, atol=1e-10)
+    np.testing.assert_allclose(hkl, np.array(Q_phi) / s, atol=IDENTITY_ATOL)
 
 
 def test_inverse_round_trip_ub_identity():
@@ -657,7 +660,7 @@ def test_inverse_round_trip_ub_identity():
     Q_phi = angles_to_phi_vector(g, **_PSIC_ANGLES)
     hkl = g.inverse(_PSIC_ANGLES)
 
-    np.testing.assert_allclose(g.sample.UB @ np.array(hkl), Q_phi, atol=1e-10)
+    np.testing.assert_allclose(g.sample.UB @ np.array(hkl), Q_phi, atol=IDENTITY_ATOL)
 
 
 def test_inverse_round_trip_ub_from_one_reflection():
@@ -688,7 +691,7 @@ def test_inverse_round_trip_ub_from_one_reflection():
     Q_phi = angles_to_phi_vector(g, **_PSIC_ANGLES)
     hkl = g.inverse(_PSIC_ANGLES)
 
-    np.testing.assert_allclose(g.sample.UB @ np.array(hkl), Q_phi, atol=1e-10)
+    np.testing.assert_allclose(g.sample.UB @ np.array(hkl), Q_phi, atol=IDENTITY_ATOL)
 
 
 def test_inverse_partial_angles_uses_current():
@@ -707,7 +710,7 @@ def test_inverse_partial_angles_uses_current():
     hkl_empty = g.inverse({})
     hkl_explicit = g.inverse(_PSIC_ANGLES)
 
-    np.testing.assert_allclose(hkl_empty, hkl_explicit, atol=1e-12)
+    np.testing.assert_allclose(hkl_empty, hkl_explicit, atol=EXACT_ATOL)
 
 
 def test_inverse_restores_stage_angles():
@@ -1762,7 +1765,7 @@ def test_inclination_matrix_set_valid():
     g = psic()
     R = rotation_matrix(np.array([0.0, 0.0, 1.0]), 5.0)
     g.inclination_matrix = R
-    np.testing.assert_allclose(g.inclination_matrix, R, atol=1e-12)
+    np.testing.assert_allclose(g.inclination_matrix, R, atol=EXACT_ATOL)
 
 
 def test_inclination_matrix_wrong_shape_raises():
@@ -1811,7 +1814,7 @@ def test_set_inclination_from_axis_angle():
 
     g = psic()
     g.set_inclination(axis=[0, 0, 1], angle_deg=0.0)
-    np.testing.assert_allclose(g.inclination_matrix, np.eye(3), atol=1e-12)
+    np.testing.assert_allclose(g.inclination_matrix, np.eye(3), atol=EXACT_ATOL)
     g.set_inclination(axis=[1, 0, 0], angle_deg=5.0)
     # det must still be +1
     assert abs(np.linalg.det(g.inclination_matrix) - 1.0) < 1e-10
@@ -1845,7 +1848,7 @@ def test_zero_inclination_reproduces_standard_q():
     Q_default = angles_to_phi_vector(g, **angles)
     g.inclination_matrix = np.eye(3)
     Q_identity = angles_to_phi_vector(g, **angles)
-    np.testing.assert_allclose(Q_default, Q_identity, atol=1e-12)
+    np.testing.assert_allclose(Q_default, Q_identity, atol=EXACT_ATOL)
 
 
 def test_nonzero_inclination_changes_q():
@@ -1865,7 +1868,7 @@ def test_nonzero_inclination_changes_q():
     Q_default = angles_to_phi_vector(g, **angles)
     g.set_inclination(axis=[1, 0, 0], angle_deg=2.0)
     Q_tilted = angles_to_phi_vector(g, **angles)
-    assert not np.allclose(Q_default, Q_tilted, atol=1e-6)
+    assert not np.allclose(Q_default, Q_tilted, atol=PRECISE_ATOL)
 
 
 def test_inclination_matrix_round_trip():
@@ -1884,7 +1887,7 @@ def test_inclination_matrix_round_trip():
     assert "inclination_matrix" in d
     assert json.dumps(d)
     g2 = AdHocDiffractometer.from_dict(d)
-    np.testing.assert_allclose(g2.inclination_matrix, R, atol=1e-12)
+    np.testing.assert_allclose(g2.inclination_matrix, R, atol=EXACT_ATOL)
 
 
 def test_identity_inclination_round_trip():
@@ -2063,14 +2066,14 @@ def test_geometry_from_dict_UB_preserved():
     """from_dict(to_dict()) preserves the UB matrix to float64 precision."""
     original = _sapphire_fourcv()
     restored = AdHocDiffractometer.from_dict(original.to_dict())
-    np.testing.assert_allclose(restored.sample.UB, original.sample.UB, atol=1e-12)
+    np.testing.assert_allclose(restored.sample.UB, original.sample.UB, atol=EXACT_ATOL)
 
 
 def test_geometry_from_dict_U_preserved():
     """from_dict(to_dict()) preserves the U matrix."""
     original = _sapphire_fourcv()
     restored = AdHocDiffractometer.from_dict(original.to_dict())
-    np.testing.assert_allclose(restored.sample.U, original.sample.U, atol=1e-12)
+    np.testing.assert_allclose(restored.sample.U, original.sample.U, atol=EXACT_ATOL)
 
 
 def test_geometry_json_roundtrip():
@@ -2227,9 +2230,9 @@ def test_geometry_to_dict_version_unknown_on_metadata_error():
         ),
         pytest.param(
             "psic",
-            "bisecting_vertical",
+            "fixed_phi_vertical",
             None,
-            id="psic-bisecting-no-reference-constraint",
+            id="psic-fixed_phi-no-reference-constraint",
         ),
         pytest.param(
             "zaxis",

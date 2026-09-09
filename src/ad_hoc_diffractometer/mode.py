@@ -39,7 +39,7 @@ over-constrain the scattered beam direction.
 condition between Q and an external reference vector n̂ (surface normal,
 polarization axis, etc.) stored on the geometry.  The named options are
 physical pseudo-angles from You (1999) and Lohmeier & Vlieg (1993):
-``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``, ``"naz"``.
+``"psi"``, ``"incidence"``, ``"emergence"``, ``"incidence_equals_emergence"``, ``"naz"``.
 At most one reference constraint is allowed.
 
 Classes
@@ -199,7 +199,7 @@ REFERENCE_NAMES: frozenset[str] = frozenset(
         "psi",
         "incidence",
         "emergence",
-        "specular",
+        "incidence_equals_emergence",
         "naz",
         "omega",
     }
@@ -215,7 +215,7 @@ geometry (no reference vector required):
 - ``"psi"`` — azimuthal angle of n̂ about Q (You 1999, eq. 23)
 - ``"incidence"`` — angle of incidence (incident beam vs. surface plane)
 - ``"emergence"`` — angle of emergence (diffracted beam vs. surface plane)
-- ``"specular"`` — specular reflection (relational: incidence = emergence)
+- ``"incidence_equals_emergence"`` — relational: incidence = emergence
 - ``"naz"`` — azimuthal angle of n̂ in the lab frame
 - ``"omega"`` — SPEC ``OMEGA`` pseudo-angle (``Q[6]``): angle between
   Q and the plane of the chi circle (psic family); see
@@ -323,7 +323,7 @@ class _ExtrasDict(dict):
                 f"effect on forward().  Set the reference vector on the "
                 f"geometry instead: use 'g.surface_normal = (h, k, l)' "
                 f"for surface-mode constraints "
-                f"(incidence / emergence / specular), or "
+                f"(incidence / emergence / incidence_equals_emergence), or "
                 f"'g.azimuth = (h, k, l)' for "
                 f"psi / naz constraints.  See "
                 f"AdHocDiffractometer.required_reference_vector to "
@@ -861,8 +861,8 @@ class ReferenceConstraint:
     ``"emergence"``
         Angle of emergence: angle between the diffracted beam and the
         surface plane.
-    ``"specular"``
-        Specular reflection: relational condition ``incidence = emergence``.
+    ``"incidence_equals_emergence"``
+        Relational condition ``incidence = emergence``.
         ``value`` must be ``True``.
     ``"naz"``
         Azimuthal angle of n̂ in the lab frame (You 1999).
@@ -870,17 +870,17 @@ class ReferenceConstraint:
     Parameters
     ----------
     name : str
-        One of ``"psi"``, ``"incidence"``, ``"emergence"``, ``"specular"``,
+        One of ``"psi"``, ``"incidence"``, ``"emergence"``, ``"incidence_equals_emergence"``,
         ``"naz"``, ``"omega"``.
     value : float or bool
-        Target value in degrees (or ``True`` for ``"specular"``).
+        Target value in degrees (or ``True`` for ``"incidence_equals_emergence"``).
 
     Examples
     --------
     >>> ReferenceConstraint("psi", 90.0)
     ReferenceConstraint('psi', 90.0)
-    >>> ReferenceConstraint("specular", True)
-    ReferenceConstraint('specular', True)
+    >>> ReferenceConstraint("incidence_equals_emergence", True)
+    ReferenceConstraint('incidence_equals_emergence', True)
     >>> ReferenceConstraint("incidence", 5.0)
     ReferenceConstraint('incidence', 5.0)
     """
@@ -894,13 +894,15 @@ class ReferenceConstraint:
                 f"ReferenceConstraint name must be one of "
                 f"{sorted(REFERENCE_NAMES)}; got {name!r}."
             )
-        if name == "specular" and value is not True:
+        if name == "incidence_equals_emergence" and value is not True:
             raise ValueError(
-                "ReferenceConstraint('specular', value): value must be True; "
-                f"got {value!r}."
+                "ReferenceConstraint('incidence_equals_emergence', value): "
+                f"value must be True; got {value!r}."
             )
         self._name = name
-        self._value: float | bool = True if name == "specular" else float(value)  # type: ignore[arg-type]
+        self._value: float | bool = (
+            True if name == "incidence_equals_emergence" else float(value)  # type: ignore[arg-type]
+        )
 
     @property
     def name(self) -> str:
@@ -909,7 +911,7 @@ class ReferenceConstraint:
 
     @property
     def value(self) -> float | bool:
-        """Target value in degrees, or ``True`` for ``"specular"``."""
+        """Target value in degrees, or ``True`` for ``"incidence_equals_emergence"``."""
         return self._value
 
     def evaluate(
@@ -927,7 +929,7 @@ class ReferenceConstraint:
 
         - ``"incidence"`` — ``incidence_angle - value``
         - ``"emergence"`` — ``emergence_angle - value``
-        - ``"specular"`` — ``incidence_angle - emergence_angle``
+        - ``"incidence_equals_emergence"`` — ``incidence_angle - emergence_angle``
           (the relational condition α_i = α_f; :attr:`value` is the
           boolean flag ``True`` and does not enter the residual)
         - ``"psi"`` — ``psi_angle - value``
@@ -940,7 +942,7 @@ class ReferenceConstraint:
             Current motor angles in degrees, keyed by stage name.
         geometry : AdHocDiffractometer
             The diffractometer.  The required reference vector
-            (``surface_normal`` for incidence/emergence/specular,
+            (``surface_normal`` for incidence/emergence/incidence_equals_emergence,
             ``azimuth`` for psi/naz) must be set, except for ``"omega"``
             which needs no reference vector.
 
@@ -969,7 +971,7 @@ class ReferenceConstraint:
             return reference.emergence_angle(geometry, angles=angles) - float(
                 self._value
             )
-        if self._name == "specular":
+        if self._name == "incidence_equals_emergence":
             # Relational: incidence == emergence.  value is the flag True.
             return reference.incidence_angle(
                 geometry, angles=angles
@@ -997,7 +999,7 @@ class ReferenceConstraint:
         For ``"psi"`` and ``"naz"``: requires
         :attr:`~geometry.AdHocDiffractometer.azimuth` to be set.
 
-        For ``"incidence"``, ``"emergence"``, and ``"specular"``: requires
+        For ``"incidence"``, ``"emergence"``, and ``"incidence_equals_emergence"``: requires
         :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
 
         For ``"omega"``: no reference vector is required (always returns
@@ -1024,7 +1026,7 @@ class ReferenceConstraint:
 
         - ``"incidence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"emergence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
-        - ``"specular"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
+        - ``"incidence_equals_emergence"`` — requires :attr:`~geometry.AdHocDiffractometer.surface_normal`
         - ``"psi"`` — requires :attr:`~geometry.AdHocDiffractometer.azimuth`.
           The forward solver treats ψ as a **validation filter**: for a given
           (h,k,l) and UB, ψ is a pure phi-frame quantity that is the same for
@@ -1048,7 +1050,7 @@ class ReferenceConstraint:
         if self._name == "omega":
             # Implemented for any geometry with a chi sample stage.
             return any(s.name == "chi" for s in geometry.sample_stages)
-        # incidence, emergence, specular — implemented when surface_normal is set
+        # incidence, emergence, incidence_equals_emergence — implemented when surface_normal is set
         return geometry.surface_normal is not None
 
     def to_dict(self) -> dict:
@@ -1416,7 +1418,7 @@ class ConstraintSet:
             exactly match the ``.name`` attribute of an existing
             :class:`SampleConstraint`, :class:`DetectorConstraint`, or
             :class:`ReferenceConstraint` in the set.  Values are floats
-            (or ``bool`` for the ``"specular"`` :class:`ReferenceConstraint`).
+            (or ``bool`` for the ``"incidence_equals_emergence"`` :class:`ReferenceConstraint`).
 
         Returns
         -------

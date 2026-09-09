@@ -105,11 +105,11 @@ modes:
             incidence: null
             emergence: null
 
-    specular_zaxis:
+    incidence_equals_emergence_zaxis:
         constraints:
             - {type: sample,    stage: chi, value: 0.0}
             - {type: sample,    stage: phi, value: 0.0}
-            - {type: reference, name: specular, value: true}
+            - {type: reference, name: incidence_equals_emergence, value: true}
         computed: [omega, delta, alpha, gamma]
         extras:
             n_hat: REQUIRED

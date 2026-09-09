@@ -9,7 +9,7 @@ Before the fix, the surface-mode solver
 unconditionally.  For psic that last stage is ``delta``, and the
 horizontal surface modes
 (``fixed_incidence_horizontal``, ``fixed_emergence_horizontal``,
-``specular_horizontal``) declare a
+``incidence_equals_emergence_horizontal``) declare a
 :class:`~ad_hoc_diffractometer.mode.DetectorConstraint` that pins
 ``delta = 0``.  The solver therefore overwrote the pinned value
 moments after applying it and left the truly active detector stage
@@ -18,7 +18,7 @@ moments after applying it and left the truly active detector stage
 
 The mirror failure occurred in the vertical surface modes
 (``fixed_incidence_vertical``, ``fixed_emergence_vertical``,
-``specular_vertical``), where the mode pins ``nu = 0`` and
+``incidence_equals_emergence_vertical``), where the mode pins ``nu = 0`` and
 the active detector stage is ``delta`` — but the dispatch picked
 ``delta`` for both roles regardless, so the constraint happened to
 agree with the active stage by accident (the resulting ``nu = 0``
@@ -58,6 +58,8 @@ from helpers import zaxis
 
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import ub_identity
+from helpers import ANGLE_DEGREES_ATOL
+from helpers import NUMERIC_ATOL
 
 WAVELENGTH = 1.5406  # Cu Kα
 
@@ -66,7 +68,7 @@ WAVELENGTH = 1.5406  # Cu Kα
 _PSIC_HORIZONTAL_SURFACE_MODES = (
     "fixed_incidence_horizontal",
     "fixed_emergence_horizontal",
-    "specular_horizontal",
+    "incidence_equals_emergence_horizontal",
 )
 
 # Surface-reference modes on psic whose DetectorConstraint pins the
@@ -74,7 +76,7 @@ _PSIC_HORIZONTAL_SURFACE_MODES = (
 _PSIC_VERTICAL_SURFACE_MODES = (
     "fixed_incidence_vertical",
     "fixed_emergence_vertical",
-    "specular_vertical",
+    "incidence_equals_emergence_vertical",
 )
 
 
@@ -110,14 +112,14 @@ def test_psic_horizontal_surface_honors_delta_pin(mode_name, context):
         sols = g.forward(1, 0, 0)
         assert sols, f"{mode_name}: expected at least one candidate solution"
         for sol in sols:
-            assert sol["delta"] == pytest.approx(0.0, abs=1e-8), (
+            assert sol["delta"] == pytest.approx(0.0, abs=NUMERIC_ATOL), (
                 f"{mode_name}: delta pin violated, delta={sol['delta']}, nu={sol['nu']}"
             )
             # The 2θ magnitude for (1,0,0) on a=4 Å with λ=1.5406 Å is
             # 2·arcsin(λ / 2a) ≈ 22.206°.  nu must be at ±2θ (the sign
             # depends on the sample-stage seeding chosen by the Newton
             # search).
-            assert abs(sol["nu"]) == pytest.approx(22.2062, abs=1e-3), (
+            assert abs(sol["nu"]) == pytest.approx(22.2062, abs=ANGLE_DEGREES_ATOL), (
                 f"{mode_name}: nu should carry the 2θ magnitude, "
                 f"nu={sol['nu']}, delta={sol['delta']}"
             )
@@ -148,10 +150,12 @@ def test_psic_vertical_surface_honors_nu_pin(mode_name, context):
         sols = g.forward(1, 0, 0)
         assert sols, f"{mode_name}: expected at least one candidate solution"
         for sol in sols:
-            assert sol["nu"] == pytest.approx(0.0, abs=1e-8), (
+            assert sol["nu"] == pytest.approx(0.0, abs=NUMERIC_ATOL), (
                 f"{mode_name}: nu pin violated, nu={sol['nu']}, delta={sol['delta']}"
             )
-            assert abs(sol["delta"]) == pytest.approx(22.2062, abs=1e-3), (
+            assert abs(sol["delta"]) == pytest.approx(
+                22.2062, abs=ANGLE_DEGREES_ATOL
+            ), (
                 f"{mode_name}: delta should carry the 2θ magnitude, "
                 f"delta={sol['delta']}, nu={sol['nu']}"
             )
@@ -179,23 +183,28 @@ def test_psic_vertical_surface_honors_nu_pin(mode_name, context):
         ),
         pytest.param(
             sixc,
-            "specular_zaxis",
+            "incidence_equals_emergence_zaxis",
             1,
             0,
             0,
             does_not_raise(),
-            id="sixc-specular_zaxis-100",
+            id="sixc-incidence_equals_emergence_zaxis-100",
         ),
         # zaxis reflectivity mode: confirm at least one returned
         # solution still round-trips, i.e. the legacy path is intact.
+        # Uses the specular (0,0,1) reflection: with signed incidence /
+        # emergence, the equal-angle (reflectivity) condition only admits
+        # front-face solutions when Q is along the surface normal, i.e.
+        # for (0,0,L).  Off-normal reflections no longer produce spurious
+        # back-exit "equal magnitude" matches (see issue #311).
         pytest.param(
             zaxis,
             "reflectivity",
+            0,
+            0,
             1,
-            0,
-            0,
             does_not_raise(),
-            id="zaxis-reflectivity-100",
+            id="zaxis-reflectivity-001",
         ),
     ],
 )

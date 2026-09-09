@@ -31,6 +31,10 @@ from ad_hoc_diffractometer.reference import incidence_angle
 from ad_hoc_diffractometer.reference import natural_psi
 from ad_hoc_diffractometer.reference import naz_angle
 from ad_hoc_diffractometer.reference import psi_angle
+from helpers import EXACT_ATOL
+from helpers import HKL_ATOL
+from helpers import PRECISE_ATOL
+from helpers import TIGHT_ATOL
 
 WAVELENGTH = 1.5406
 
@@ -61,7 +65,7 @@ def test_incidence_angle_with_surface_normal():
     """incidence_angle returns a float in [-90, 90] when surface_normal is set."""
     g = _setup_psic()
     g.surface_normal = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 0, 0)
     assert len(sols) > 0
     for s in sols:
@@ -94,7 +98,7 @@ def test_emergence_angle_with_surface_normal():
     """emergence_angle returns a float in [-90, 90] when surface_normal is set."""
     g = _setup_psic()
     g.surface_normal = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 0, 0)
     for s in sols:
         af = emergence_angle(g, angles=s)
@@ -102,18 +106,18 @@ def test_emergence_angle_with_surface_normal():
         assert -90.0 <= af <= 90.0
 
 
-def test_specular_condition_alpha_i_equals_alpha_f():
-    """At bisecting with surface normal ⊥ to scattering plane, incidence ≈ alpha_f."""
+def test_incidence_equals_emergence_condition_alpha_i_equals_alpha_f():
+    """At the bisecting geometry with surface normal ⊥ to scattering plane, incidence ≈ alpha_f."""
     g = _setup_psic()
     # Surface normal along transverse axis — perpendicular to the scattering plane
     g.surface_normal = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 0, 0)
     for s in sols:
         ai = incidence_angle(g, angles=s)
         af = emergence_angle(g, angles=s)
-        # At bisecting in vertical plane with transverse surface normal, ai ≈ af
-        assert ai == pytest.approx(af, abs=1e-6)
+        # In the vertical bisecting geometry with transverse surface normal, ai ≈ af
+        assert ai == pytest.approx(af, abs=PRECISE_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -139,7 +143,7 @@ def test_psi_angle_with_azimuth():
     """
     g = _setup_psic()
     g.azimuth = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(0, 1, 0)
     for s in sols:
         psi = psi_angle(g, angles=s)
@@ -155,7 +159,7 @@ def test_psi_angle_uses_current_angles_when_none():
     """
     g = _setup_psic()
     g.azimuth = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(0, 1, 0)
     s = sols[0]
     for name, value in s.items():
@@ -240,10 +244,20 @@ def test_naz_angle_vertical_normal_returns_zero():
             "emergence", 0.0, "surface_normal", None, False, id="emergence-no-sn"
         ),
         pytest.param(
-            "specular", True, "surface_normal", (0, 0, 1), True, id="specular-with-sn"
+            "incidence_equals_emergence",
+            True,
+            "surface_normal",
+            (0, 0, 1),
+            True,
+            id="in_eq_em-with-sn",
         ),
         pytest.param(
-            "specular", True, "surface_normal", None, False, id="specular-no-sn"
+            "incidence_equals_emergence",
+            True,
+            "surface_normal",
+            None,
+            False,
+            id="in_eq_em-no-sn",
         ),
         # psi: implemented when azimuth is set
         pytest.param(
@@ -299,10 +313,20 @@ def test_reference_constraint_is_implemented(
             "emergence", 0.0, "surface_normal", (0, 0, 1), True, id="emergence-with-sn"
         ),
         pytest.param(
-            "specular", True, "surface_normal", None, False, id="specular-no-sn"
+            "incidence_equals_emergence",
+            True,
+            "surface_normal",
+            None,
+            False,
+            id="in_eq_em-no-sn",
         ),
         pytest.param(
-            "specular", True, "surface_normal", (0, 0, 1), True, id="specular-with-sn"
+            "incidence_equals_emergence",
+            True,
+            "surface_normal",
+            (0, 0, 1),
+            True,
+            id="in_eq_em-with-sn",
         ),
         pytest.param("psi", 0.0, "azimuth", None, False, id="psi-no-ar"),
         pytest.param("psi", 0.0, "azimuth", (0, 0, 1), True, id="psi-with-ar"),
@@ -426,7 +450,11 @@ def _setup_surface(factory, surface_normal=(0, 0, 1)):
         pytest.param(s2d2, "reflectivity", id="s2d2-reflectivity"),
         pytest.param(sixc, "fixed_incidence_zaxis", id="sixc-fixed_incidence_zaxis"),
         pytest.param(sixc, "fixed_emergence_zaxis", id="sixc-fixed_emergence_zaxis"),
-        pytest.param(sixc, "specular_zaxis", id="sixc-specular_zaxis"),
+        pytest.param(
+            sixc,
+            "incidence_equals_emergence_zaxis",
+            id="sixc-incidence_equals_emergence_zaxis",
+        ),
     ],
 )
 def test_surface_mode_is_implemented_with_surface_normal(factory, mode_name):
@@ -443,7 +471,11 @@ def test_surface_mode_is_implemented_with_surface_normal(factory, mode_name):
         pytest.param(s2d2, "reflectivity", id="s2d2-reflectivity"),
         pytest.param(sixc, "fixed_incidence_zaxis", id="sixc-fixed_incidence_zaxis"),
         pytest.param(sixc, "fixed_emergence_zaxis", id="sixc-fixed_emergence_zaxis"),
-        pytest.param(sixc, "specular_zaxis", id="sixc-specular_zaxis"),
+        pytest.param(
+            sixc,
+            "incidence_equals_emergence_zaxis",
+            id="sixc-incidence_equals_emergence_zaxis",
+        ),
     ],
 )
 def test_surface_mode_not_implemented_without_surface_normal(factory, mode_name):
@@ -466,11 +498,11 @@ def test_surface_mode_not_implemented_without_surface_normal(factory, mode_name)
         ),
         pytest.param(
             sixc,
-            "specular_zaxis",
+            "incidence_equals_emergence_zaxis",
             0,
             1,
             0,
-            id="sixc-specular_zaxis",
+            id="sixc-incidence_equals_emergence_zaxis",
         ),
     ],
 )
@@ -504,7 +536,7 @@ def test_surface_alpha_i_fixed_constraint_satisfied(factory, mode_name, h, k, l)
     assert len(solutions) > 0
     for sol in solutions:
         ai = incidence_angle(g, angles=sol)
-        assert ai == pytest.approx(0.0, abs=1e-4)
+        assert ai == pytest.approx(0.0, abs=HKL_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -528,7 +560,7 @@ def test_surface_beta_out_fixed_constraint_satisfied(factory, mode_name, h, k, l
     assert len(solutions) > 0
     for sol in solutions:
         bo = emergence_angle(g, angles=sol)
-        assert bo == pytest.approx(0.0, abs=1e-4)
+        assert bo == pytest.approx(0.0, abs=HKL_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -536,11 +568,13 @@ def test_surface_beta_out_fixed_constraint_satisfied(factory, mode_name, h, k, l
     [
         pytest.param(zaxis, "reflectivity", 0, 0, 1, id="zaxis-reflectivity"),
         pytest.param(s2d2, "reflectivity", 0, 1, 0, id="s2d2-reflectivity"),
-        pytest.param(sixc, "specular_zaxis", 0, 1, 0, id="sixc-specular"),
+        pytest.param(
+            sixc, "incidence_equals_emergence_zaxis", 0, 1, 0, id="sixc-in_eq_em"
+        ),
     ],
 )
 def test_surface_a_eq_b_constraint_satisfied(factory, mode_name, h, k, l):  # noqa: E741
-    """specular modes: incidence ≈ emergence in all solutions."""
+    """incidence_equals_emergence modes: incidence ≈ emergence in all solutions."""
     g = _setup_surface(factory)
     g.mode_name = mode_name
     solutions = g.forward(h, k, l)
@@ -548,7 +582,7 @@ def test_surface_a_eq_b_constraint_satisfied(factory, mode_name, h, k, l):  # no
     for sol in solutions:
         ai = incidence_angle(g, angles=sol)
         bo = emergence_angle(g, angles=sol)
-        assert ai == pytest.approx(bo, abs=1e-4)
+        assert ai == pytest.approx(bo, abs=HKL_ATOL)
 
 
 def test_surface_mode_not_implemented_raises():
@@ -592,7 +626,7 @@ def test_omega_pseudo_does_not_require_surface_normal():
     g = _setup_psic()
     assert g.surface_normal is None
     assert g.azimuth is None
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 0, 0)
     for s in sols:
         om = omega_pseudo(g, angles=s)
@@ -606,29 +640,35 @@ def test_omega_pseudo_uses_current_angles_when_none():
     assert isinstance(om, float)
 
 
-def test_omega_pseudo_zero_at_bisecting_vertical():
-    """At bisecting_vertical (mu=nu=0, eta=delta/2), OMEGA = 0."""
+def test_omega_pseudo_zero_at_fixed_omega_vertical():
+    """At fixed_omega_vertical (mu=nu=0, eta=delta/2), OMEGA = 0.
+
+    This is the vertical bisecting geometry (issue #313).
+    """
     g = _setup_psic()
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 0, 0)
     assert len(sols) > 0
     for s in sols:
         om = omega_pseudo(g, angles=s)
-        assert om == pytest.approx(0.0, abs=1e-6), (
-            f"OMEGA should be 0 at bisecting; got {om} for {s}"
+        assert om == pytest.approx(0.0, abs=PRECISE_ATOL), (
+            f"OMEGA should be 0 in the bisecting geometry; got {om} for {s}"
         )
 
 
-def test_omega_pseudo_zero_at_bisecting_horizontal():
-    """At bisecting_horizontal (eta=delta=0, mu=nu/2), OMEGA = 0."""
+def test_omega_pseudo_zero_at_fixed_omega_horizontal():
+    """At fixed_omega_horizontal (eta=delta=0, mu=nu/2), OMEGA = 0.
+
+    This is the horizontal bisecting geometry (issue #313).
+    """
     g = _setup_psic()
-    g.mode_name = "bisecting_horizontal"
+    g.mode_name = "fixed_omega_horizontal"
     sols = g.forward(0, 0, 1)
     assert len(sols) > 0
     for s in sols:
         om = omega_pseudo(g, angles=s)
-        assert om == pytest.approx(0.0, abs=1e-6), (
-            f"OMEGA should be 0 at bisecting_horizontal; got {om} for {s}"
+        assert om == pytest.approx(0.0, abs=PRECISE_ATOL), (
+            f"OMEGA should be 0 in the horizontal bisecting geometry; got {om} for {s}"
         )
 
 
@@ -648,7 +688,7 @@ def test_omega_pseudo_independent_of_phi():
     angles_b["phi"] = 73.0
     om_a = omega_pseudo(g, angles=angles_a)
     om_b = omega_pseudo(g, angles=angles_b)
-    assert om_a == pytest.approx(om_b, abs=1e-9), (
+    assert om_a == pytest.approx(om_b, abs=TIGHT_ATOL), (
         f"OMEGA must be independent of phi; got {om_a} vs {om_b}"
     )
 
@@ -670,7 +710,7 @@ def test_omega_pseudo_independent_of_chi():
     angles_b["chi"] = 91.0
     om_a = omega_pseudo(g, angles=angles_a)
     om_b = omega_pseudo(g, angles=angles_b)
-    assert om_a == pytest.approx(om_b, abs=1e-9)
+    assert om_a == pytest.approx(om_b, abs=TIGHT_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -679,7 +719,7 @@ def test_omega_pseudo_independent_of_chi():
         pytest.param("psi", True, id="psi"),
         pytest.param("incidence", True, id="incidence"),
         pytest.param("emergence", True, id="emergence"),
-        pytest.param("specular", True, id="specular"),
+        pytest.param("incidence_equals_emergence", True, id="in_eq_em"),
         pytest.param("naz", True, id="naz"),
         pytest.param("omega", True, id="omega"),
         pytest.param("not_a_pseudo_angle", False, id="invalid"),
@@ -693,7 +733,7 @@ def test_reference_constraint_accepts_omega(name, expected):
         else pytest.raises(ValueError, match=re.escape("ReferenceConstraint name"))
     )
     with context:
-        if name == "specular":
+        if name == "incidence_equals_emergence":
             ReferenceConstraint(name, True)
         else:
             ReferenceConstraint(name, 0.0)
@@ -765,7 +805,7 @@ def test_natural_psi_matches_expected_values(h, k, l, expected, context):  # noq
         g = _setup_psic()
         g.azimuth = (0, 0, 1)
         result = natural_psi(g, h, k, l)
-        assert result == pytest.approx(expected, abs=1e-6)
+        assert result == pytest.approx(expected, abs=PRECISE_ATOL)
 
 
 @pytest.mark.parametrize(
@@ -799,12 +839,12 @@ def test_natural_psi_equals_psi_angle_at_bisecting_solution():
     """
     g = _setup_psic()
     g.azimuth = (0, 0, 1)
-    g.mode_name = "bisecting_vertical"
+    g.mode_name = "fixed_omega_vertical"
     sols = g.forward(1, 1, 0)
-    assert sols, "bisecting_vertical should return at least one solution for (1,1,0)"
+    assert sols, "fixed_omega_vertical should return at least one solution for (1,1,0)"
     nat = natural_psi(g, 1, 1, 0)
     for sol in sols:
-        assert psi_angle(g, angles=sol) == pytest.approx(nat, abs=1e-6)
+        assert psi_angle(g, angles=sol) == pytest.approx(nat, abs=PRECISE_ATOL)
 
 
 def test_natural_psi_independent_of_motor_state():
@@ -815,4 +855,4 @@ def test_natural_psi_independent_of_motor_state():
     # Move every stage to an arbitrary non-zero angle.
     for stage in g._stages.values():  # noqa: SLF001
         stage.angle = 17.5
-    assert natural_psi(g, 1, 1, 0) == pytest.approx(baseline, abs=1e-12)
+    assert natural_psi(g, 1, 1, 0) == pytest.approx(baseline, abs=EXACT_ATOL)

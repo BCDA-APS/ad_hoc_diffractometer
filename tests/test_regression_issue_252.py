@@ -38,6 +38,9 @@ from helpers import kappa6c
 import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer.kappa import eulerian_to_kappa_axes
 from ad_hoc_diffractometer.kappa import kappa_to_eulerian_axes
+from helpers import EXACT_ATOL
+from helpers import IDENTITY_ATOL
+from helpers import NUMERIC_ATOL
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -129,7 +132,7 @@ def test_kappa_axis_matches_published_literature(
         np.testing.assert_allclose(
             g.stage("kappa").axis,
             expected,
-            atol=1e-12,
+            atol=EXACT_ATOL,
             err_msg=(
                 f"{factory.__name__}: kappa axis must lie in the "
                 f"({from_name}, {to_name}) plane, between +{from_name} "
@@ -240,7 +243,7 @@ def test_eulerian_kappa_round_trip(factory, omega, chi, phi, branch):
     om, ch, ph = kappa_to_eulerian_axes(ko, k, kp, convention)
     R_in = _eulerian_rotation(convention, omega, chi, phi)
     R_out = _eulerian_rotation(convention, om, ch, ph)
-    np.testing.assert_allclose(R_in, R_out, atol=1e-10)
+    np.testing.assert_allclose(R_in, R_out, atol=IDENTITY_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -303,7 +306,7 @@ def test_bisecting_reachable_reflections_round_trip(factory, mode_name, hkl):
         )
     for sol in sols:
         hkl_back = g.inverse(sol)
-        np.testing.assert_allclose(hkl_back, hkl, atol=1e-8)
+        np.testing.assert_allclose(hkl_back, hkl, atol=NUMERIC_ATOL)
 
 
 # ---------------------------------------------------------------------------
@@ -350,4 +353,4 @@ def test_sapphire_100_kappa4cv_bisecting_solves():
         "the same code path as the original issue-#241 reproducer."
     )
     for sol in sols:
-        np.testing.assert_allclose(g.inverse(sol), [1, 0, 0], atol=1e-8)
+        np.testing.assert_allclose(g.inverse(sol), [1, 0, 0], atol=NUMERIC_ATOL)

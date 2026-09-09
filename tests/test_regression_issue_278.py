@@ -58,6 +58,7 @@ import ad_hoc_diffractometer as ahd
 from ad_hoc_diffractometer import ub_identity
 from ad_hoc_diffractometer.reference import natural_psi
 from ad_hoc_diffractometer.reference import psi_angle
+from helpers import PRECISE_ATOL
 
 WAVELENGTH = 1.5406  # Cu Kα
 
@@ -206,7 +207,7 @@ def test_fixed_psi_horizontal_with_natural_target_returns_solutions():
     # Every solution must report the same ψ as natural_psi (the central
     # claim of issue #176).
     for sol in solutions:
-        assert psi_angle(g, angles=sol) == pytest.approx(nat, abs=1e-6)
+        assert psi_angle(g, angles=sol) == pytest.approx(nat, abs=PRECISE_ATOL)
 
 
 def test_fixed_psi_vertical_with_natural_target_returns_solutions():
@@ -221,7 +222,7 @@ def test_fixed_psi_vertical_with_natural_target_returns_solutions():
         solutions = g.forward(1, 1, 0)
     assert len(solutions) >= 1
     for sol in solutions:
-        assert psi_angle(g, angles=sol) == pytest.approx(nat, abs=1e-6)
+        assert psi_angle(g, angles=sol) == pytest.approx(nat, abs=PRECISE_ATOL)
 
 
 # ---------------------------------------------------------------------------

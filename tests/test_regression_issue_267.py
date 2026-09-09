@@ -34,6 +34,7 @@ from ad_hoc_diffractometer.mode import ReferenceConstraint
 from ad_hoc_diffractometer.mode import SampleConstraint
 from ad_hoc_diffractometer.mode import VirtualBisectConstraint
 from ad_hoc_diffractometer.stage import Stage
+from helpers import EXACT_ATOL
 
 # ---------------------------------------------------------------------------
 # Hand-built reference geometries
@@ -160,14 +161,6 @@ def _reference_psic() -> AdHocDiffractometer:
     ]
     modes = {
         # ── Vertical scattering plane ───────────────────────────────────
-        "bisecting_vertical": ConstraintSet(
-            [
-                BisectConstraint("eta", "delta"),
-                SampleConstraint("mu", 0.0),
-                DetectorConstraint("nu", 0.0),
-            ],
-            computed=["eta", "chi", "phi", "delta"],
-        ),
         "fixed_phi_vertical": ConstraintSet(
             [
                 SampleConstraint("phi", 0.0),
@@ -202,11 +195,11 @@ def _reference_psic() -> AdHocDiffractometer:
             computed=["eta", "chi", "phi", "delta"],
             extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
-        "specular_vertical": ConstraintSet(
+        "incidence_equals_emergence_vertical": ConstraintSet(
             [
                 SampleConstraint("mu", 0.0),
                 DetectorConstraint("nu", 0.0),
-                ReferenceConstraint("specular", True),
+                ReferenceConstraint("incidence_equals_emergence", True),
             ],
             computed=["eta", "chi", "phi", "delta"],
             extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
@@ -247,14 +240,6 @@ def _reference_psic() -> AdHocDiffractometer:
             extras={"h2": REQUIRED, "k2": REQUIRED, "l2": REQUIRED},
         ),
         # ── Horizontal scattering plane ────────────────────────────────
-        "bisecting_horizontal": ConstraintSet(
-            [
-                BisectConstraint("mu", "nu"),
-                SampleConstraint("eta", 0.0),
-                DetectorConstraint("delta", 0.0),
-            ],
-            computed=["mu", "chi", "phi", "nu"],
-        ),
         "fixed_phi_horizontal": ConstraintSet(
             [
                 SampleConstraint("phi", 0.0),
@@ -289,11 +274,11 @@ def _reference_psic() -> AdHocDiffractometer:
             computed=["mu", "chi", "phi", "nu"],
             extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
-        "specular_horizontal": ConstraintSet(
+        "incidence_equals_emergence_horizontal": ConstraintSet(
             [
                 SampleConstraint("eta", 0.0),
                 DetectorConstraint("delta", 0.0),
-                ReferenceConstraint("specular", True),
+                ReferenceConstraint("incidence_equals_emergence", True),
             ],
             computed=["mu", "chi", "phi", "nu"],
             extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
@@ -376,7 +361,7 @@ def _reference_psic() -> AdHocDiffractometer:
             "(transverse detector, vertical scattering plane, synchrotron)"
         ),
         modes=modes,
-        default_mode="bisecting_vertical",
+        default_mode="fixed_omega_vertical",
     )
 
 
@@ -739,11 +724,11 @@ def _reference_sixc() -> AdHocDiffractometer:
             computed=["omega", "delta", "alpha"],
             extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
-        "specular_zaxis": ConstraintSet(
+        "incidence_equals_emergence_zaxis": ConstraintSet(
             [
                 SampleConstraint("chi", 0.0),
                 SampleConstraint("phi", 0.0),
-                ReferenceConstraint("specular", True),
+                ReferenceConstraint("incidence_equals_emergence", True),
             ],
             computed=["omega", "delta", "alpha", "gamma"],
             extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
@@ -782,7 +767,7 @@ def _reference_zaxis() -> AdHocDiffractometer:
             extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
         "reflectivity": ConstraintSet(
-            [ReferenceConstraint("specular", True)],
+            [ReferenceConstraint("incidence_equals_emergence", True)],
             computed=["Z", "delta", "alpha", "gamma"],
             extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
@@ -818,7 +803,7 @@ def _reference_s2d2() -> AdHocDiffractometer:
             computed=["Z", "nu", "delta"],
         ),
         "reflectivity": ConstraintSet(
-            [ReferenceConstraint("specular", True)],
+            [ReferenceConstraint("incidence_equals_emergence", True)],
             computed=["mu", "Z", "nu", "delta"],
             extras={"n_hat": REQUIRED, "incidence": None, "emergence": None},
         ),
@@ -968,7 +953,7 @@ def _assert_geometries_equivalent(
             np.testing.assert_allclose(
                 getattr(decl_conv, axis_name),
                 getattr(ref_conv, axis_name),
-                atol=1e-12,
+                atol=EXACT_ATOL,
                 err_msg=f"kappa_pseudo_angle_convention.{axis_name} differs",
             )
 

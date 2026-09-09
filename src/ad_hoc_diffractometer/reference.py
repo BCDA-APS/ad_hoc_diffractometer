@@ -98,7 +98,8 @@ def incidence_angle(
 
     The angle between the incident beam and the sample surface (the
     complement of the angle between the incident beam and the surface
-    normal).  Positive when the beam strikes the front face.
+    normal).  Signed: positive when the beam strikes the front face,
+    negative for below-surface (back-face) illumination.
 
     Requires :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
 
@@ -137,7 +138,8 @@ def emergence_angle(
     Compute the angle of emergence α_f in degrees.
 
     The angle between the diffracted beam and the sample surface.
-    Positive when the diffracted beam emerges through the front face.
+    Signed: positive when the diffracted beam emerges through the front
+    face, negative for a below-surface (back-face) exit.
 
     Requires :attr:`~geometry.AdHocDiffractometer.surface_normal` to be set.
 

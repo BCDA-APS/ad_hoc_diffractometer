@@ -71,17 +71,6 @@ changing constraint values at run time.
 - Vertical plane: eta (transverse) ↔ delta (transverse) → `eta = delta/2`
 - Horizontal plane: mu (vertical) ↔ nu (vertical) → `mu = nu/2`
 
-### `bisecting_vertical` *(default)*
-
-{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
-`eta = delta/2`, `mu = 0`, `nu = 0`.
-Vertical scattering plane bisecting condition (You 1999, §5.3).
-
-| | |
-|---|---|
-| **Computed** | eta, chi, phi, delta |
-| **Constant during** `forward()` | mu = 0, nu = 0 |
-
 ### `fixed_phi_vertical`
 
 `phi` held at declared value (default 0°), `mu = 0`, `nu = 0`.
@@ -134,9 +123,10 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | incidence, emergence |
 
-### `specular_vertical`
+### `incidence_equals_emergence_vertical`
 
-Symmetric reflection: α_i = β_out in the vertical scattering plane.
+Incidence-equals-emergence (α_i = α_f) condition in the vertical
+scattering plane.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -186,7 +176,7 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | incidence, emergence |
 
-### `fixed_omega_vertical`
+### `fixed_omega_vertical` *(default)*
 
 Issue #264.  SPEC ``omega-fixed`` family in the vertical scattering
 plane (`mu = 0`, `nu = 0`).  ``omega`` here is the SPEC ``OMEGA``
@@ -195,11 +185,11 @@ scattering vector Q and the plane of the chi circle — *not* the
 four-circle stage of the same name.  See
 {func}`~ad_hoc_diffractometer.reference.omega_pseudo`.
 
-The default target is ``omega = 0``; in that special case the mode
-reduces exactly to ``bisecting_vertical`` (above) because OMEGA = 0
-⇔ Q lies in the chi-circle plane ⇔ bisecting condition.  Non-zero
-targets tilt Q out of the chi-circle plane and are solved by a 1-D
-Newton refinement on the free outer sample stage (`eta`).
+The default target is ``omega = 0``; in that special case this is the
+vertical bisecting geometry (`eta = delta/2`), because OMEGA = 0
+⇔ Q lies in the chi-circle plane ⇔ bisecting condition.
+Non-zero targets tilt Q out of the chi-circle plane and are solved by
+a 1-D Newton refinement on the free outer sample stage (`eta`).
 Override the OMEGA target at run time with `g.modes["fixed_omega_vertical"].with_constraint_values(omega=...)` — see {doc}`../howto/constraints`.
 
 | | |
@@ -252,17 +242,6 @@ g.modes['zone_vertical'].extras['z1'] = (0, 1, 0)
 | **Constant during** `forward()` | mu = 0, nu = 0 |
 | **Extras (input)** | z0, z1 (Miller-index 3-tuples) |
 | **Extras (output)** | in_plane_residual |
-
-### `bisecting_horizontal`
-
-{class}`~ad_hoc_diffractometer.mode.BisectConstraint` + {class}`~ad_hoc_diffractometer.mode.SampleConstraint` + {class}`~ad_hoc_diffractometer.mode.DetectorConstraint`:
-`mu = nu/2`, `eta = 0`, `delta = 0`.
-Horizontal scattering plane bisecting condition (You 1999, §5.1).
-
-| | |
-|---|---|
-| **Computed** | mu, chi, phi, nu |
-| **Constant during** `forward()` | eta = 0, delta = 0 |
 
 ### `fixed_phi_horizontal`
 
@@ -324,9 +303,10 @@ Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 | **Extras (input)** | n̂ → set `g.surface_normal = (h, k, l)` |
 | **Extras (output)** | incidence, emergence |
 
-### `specular_horizontal`
+### `incidence_equals_emergence_horizontal`
 
-Symmetric reflection: α_i = β_out in the horizontal scattering plane.
+Incidence-equals-emergence (α_i = α_f) condition in the horizontal
+scattering plane.
 Set ``g.surface_normal = (h, k, l)`` before calling ``forward()``.
 
 | | |
@@ -356,8 +336,8 @@ Override the eta pin or the psi target at run time with `g.modes["fixed_psi_hori
 
 Issue #264.  SPEC ``omega-fixed`` family in the horizontal scattering
 plane (`eta = 0`, `delta = 0`).  Same OMEGA pseudo-angle definition as
-``fixed_omega_vertical`` above; at ``omega = 0`` the mode reduces
-exactly to ``bisecting_horizontal``.  The free outer sample stage
+``fixed_omega_vertical`` above; at ``omega = 0`` this is the horizontal
+bisecting geometry (`mu = nu/2`).  The free outer sample stage
 rocked by the 1-D Newton is `mu`.
 Override the OMEGA target at run time with `g.modes["fixed_omega_horizontal"].with_constraint_values(omega=...)` — see {doc}`../howto/constraints`.
 
@@ -446,7 +426,6 @@ the Hkl/Soleil `E6C` `hkl` engine, and You (1999).
 
 | mode | SPEC `psic` | Hkl/Soleil E6C | You (1999) |
 |---|---|---|---|
-| `bisecting_vertical` | `(2,0,5,0,0)` | `bissector_vertical` | §5.1 |
 | `fixed_phi_vertical` | `(2,0,4,2,0)` | `constant_phi_vertical` | §5.2 |
 | `fixed_chi_vertical` | `(2,0,3,2,0)` | `constant_chi_vertical` | §5.2 |
 | `fixed_incidence_vertical` | `(2,2,2,0,0)` | — | §6.1 |
@@ -455,9 +434,8 @@ the Hkl/Soleil `E6C` `hkl` engine, and You (1999).
 | `fixed_incidence_fixed_chi_fixed_phi` | `(2,2,3,4,0)` ‡ | — | §6.1 |
 | `fixed_omega_vertical` | `setmode d1 0 0 0` | — | §5 (Q[6]) |
 | `double_diffraction_vertical` | — | `double_diffraction_vertical` | §6.5 |
-| `specular_vertical` | `(2,1,2,0,0)` | — | §6.3 |
+| `incidence_equals_emergence_vertical` | `(2,1,2,0,0)` | — | §6.3 |
 | `zone_vertical` | `setmode 5` | (TODO `HklEngine "zone"`) | §6 |
-| `bisecting_horizontal` | `(1,0,6,0,0)` | `bissector_horizontal` | §5.1 |
 | `fixed_phi_horizontal` | `(1,0,4,1,0)` † | — | §5.2 |
 | `fixed_chi_horizontal` | `(1,0,3,1,0)` † | — | §5.2 |
 | `fixed_incidence_horizontal` | `(1,2,1,0,0)` | — | §6.1 |
@@ -465,7 +443,7 @@ the Hkl/Soleil `E6C` `hkl` engine, and You (1999).
 | `fixed_psi_horizontal` | `(1,4,1,0,0)` | `psi_constant_horizontal` | §6.4 |
 | `fixed_omega_horizontal` | `setmode d1 0 0 0` | — | §5 (Q[6]) |
 | `double_diffraction_horizontal` | — | `double_diffraction_horizontal` | §6.5 |
-| `specular_horizontal` | `(1,1,1,0,0)` | — | §6.3 |
+| `incidence_equals_emergence_horizontal` | `(1,1,1,0,0)` | — | §6.3 |
 | `zone_horizontal` | `setmode 5` | (TODO `HklEngine "zone"`) | §6 |
 | `lifting_detector_phi` | `setmode 0 0 2 3 5` ‡ | `lifting_detector_phi` | §5.4 |
 | `lifting_detector_mu` | `setmode 0 0 1 3 4` ‡ | `lifting_detector_mu` | §5.4 |

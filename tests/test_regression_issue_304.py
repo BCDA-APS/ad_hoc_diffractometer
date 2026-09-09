@@ -7,7 +7,7 @@ Issue #304 reported that ``ReferenceConstraint.evaluate()`` /
 ``.is_satisfied()`` were stubs raising ``NotImplementedError``, with code
 comments pointing at the long-closed "Issue J" (#157).  In fact the
 forward solvers for every reference-constraint mode
-(``incidence`` / ``emergence`` / ``specular`` / ``psi`` / ``omega``)
+(``incidence`` / ``emergence`` / ``incidence_equals_emergence`` / ``psi`` / ``omega``)
 were already implemented in :mod:`ad_hoc_diffractometer.forward`; the
 dispatcher routes those modes to dedicated ``_solve_*`` functions and
 never called the stubbed methods.
@@ -83,19 +83,19 @@ def _setup_cubic(name, a=4.0, **kwargs):
         ),
         pytest.param(
             "psic",
-            "specular_vertical",
+            "incidence_equals_emergence_vertical",
             "surface_normal",
             (0, 0, 1),
             does_not_raise(),
-            id="psic-specular-vertical",
+            id="psic-in_eq_em-vertical",
         ),
         pytest.param(
             "psic",
-            "specular_horizontal",
+            "incidence_equals_emergence_horizontal",
             "surface_normal",
             (0, 0, 1),
             does_not_raise(),
-            id="psic-specular-horizontal",
+            id="psic-in_eq_em-horizontal",
         ),
         pytest.param(
             "psic",
@@ -115,11 +115,11 @@ def _setup_cubic(name, a=4.0, **kwargs):
         ),
         pytest.param(
             "sixc",
-            "specular_zaxis",
+            "incidence_equals_emergence_zaxis",
             "surface_normal",
             (0, 0, 1),
             does_not_raise(),
-            id="sixc-specular-zaxis",
+            id="sixc-in_eq_em-zaxis",
         ),
         pytest.param(
             "zaxis",
