@@ -46,6 +46,15 @@ A single clarifying question is cheaper than building the wrong
 thing and unwinding it.  Do not stack multiple questions; ask one,
 wait, then proceed.
 
+### Comments don't duplicate the issue/PR
+
+Code comments and docstrings explain what the code does and why, for a
+reader of the code.  Do not use them to restate motivation, history, or
+discussion that already lives in the issue or PR — that content is
+redundant there and drifts out of date.  Link by issue/PR number when a
+pointer is useful; keep the rest in the issue or PR.  (The same "don't
+duplicate the issue/PR body" principle applies to changelog entries.)
+
 ---
 
 ## Attribution
