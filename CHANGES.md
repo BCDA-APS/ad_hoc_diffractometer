@@ -8,6 +8,14 @@ issue tracker.  The initial project development roadmap is documented here:
 ## Unreleased
 
 
+## Release v0.11.6
+
+Released 2026-09-10
+
+Automatically generate DOI for each release using zenodo.
+See https://zenodo.org/account/settings/github/repository/BCDA-APS/ad_hoc_diffractometer
+
+
 ## Release v0.11.5
 
 Released 2026-09-10
