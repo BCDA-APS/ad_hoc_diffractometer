@@ -64,6 +64,8 @@ About
      - https://BCDA-APS.github.io/ad_hoc_diffractometer/
    * - Source
      - https://github.com/BCDA-APS/ad_hoc_diffractometer
+   * - DOI
+     - [pending](https://zenodo.org/account/settings/github/repository/BCDA-APS/ad_hoc_diffractometer)
    * - Version
      - |release|
    * - Published
