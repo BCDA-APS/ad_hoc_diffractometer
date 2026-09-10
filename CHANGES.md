@@ -8,6 +8,13 @@ issue tracker.  The initial project development roadmap is documented here:
 ## Unreleased
 
 
+## Release v0.11.7
+
+Released 2026-09-10
+
+Switcher needed some help today.
+
+
 ## Release v0.11.6
 
 Released 2026-09-10
