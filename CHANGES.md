@@ -7,6 +7,11 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+
+## Release v0.11.5
+
+Released 2026-09-10
+
 ### Breaking changes
 
 - Remove redundant psic `bisecting_*` modes; use `fixed_omega_*`. (#313)
