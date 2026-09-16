@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../_static/documentation_options.js?v=8225c609"></script>
+    <script src="../_static/documentation_options.js?v=63788e95"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -66,7 +66,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.11" />
-    <meta name="docbuild:last-update" content="2026-09-10 13:09 CDT"/>
+    <meta name="docbuild:last-update" content="2026-09-15 21:48 CDT"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -656,7 +656,7 @@ than package releases.</p>
 <strong>lacks</strong> the marker, the loader treats the string as a filesystem
 path rather than as YAML text.  When the marker is <strong>present</strong> but
 malformed (wrong type for the value, unsupported <code class="docutils literal notranslate"><span class="pre">schema_revision</span></code>,
-unknown sub-key, …) the loader raises <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a> immediately and
+unknown sub-key, …) the loader raises <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a> immediately and
 does <strong>not</strong> retry as a path — once the document declares itself a
 geometry, the loader honors that declaration by reporting what is
 wrong with it.</p>
@@ -725,7 +725,7 @@ frames in their own canonical orderings.</p>
 <li><p><strong><a class="reference internal" href="../autoapi/ad_hoc_diffractometer/factories/index.html#ad_hoc_diffractometer.factories.BASIS_DEFAULT" title="ad_hoc_diffractometer.factories.BASIS_DEFAULT"><code class="xref py py-data docutils literal notranslate"><span class="pre">BASIS_DEFAULT</span></code></a></strong> — the
 neutral fallback.</p></li>
 </ol>
-<p>Omitting the YAML key emits a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#UserWarning" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserWarning</span></code></a> (“does not declare a
+<p>Omitting the YAML key emits a <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#UserWarning" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserWarning</span></code></a> (“does not declare a
 basis; using BASIS_DEFAULT …”) so accidental omission is visible.  Real
 instruments should declare <code class="docutils literal notranslate"><span class="pre">basis:</span></code> explicitly.</p>
 <section id="worked-example-of-the-precedence-rule">
@@ -990,7 +990,7 @@ two cases work as follows:</p>
 <ul class="simple">
 <li><p><strong>A filesystem path</strong> — passed as a <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>, any
 <a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">os.PathLike</span></code></a>, or a path string.  The loader reads the file
-and parses its contents.  <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> if the file
+and parses its contents.  <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> if the file
 does not exist.</p></li>
 <li><p><strong>YAML text in memory</strong> — passed as a string that begins (after
 optional leading whitespace) with the
@@ -999,7 +999,7 @@ parses the string directly without touching the filesystem.</p></li>
 </ul>
 <p>A string that does not contain the marker is interpreted as a path,
 not as YAML text.  If neither attempt succeeds, the
-<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> message names both (“first attempted as
+<a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> message names both (“first attempted as
 YAML text … then attempted as a path …”) so you can tell what went
 wrong.</p>
 <section id="examples">
@@ -1045,7 +1045,7 @@ wrong.</p>
 <span class="n">g</span> <span class="o">=</span> <span class="n">ahd</span><span class="o">.</span><span class="n">make_geometry</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">ahd</span><span class="o">.</span><span class="n">factories</span><span class="o">.</span><span class="n">BASIS_YOU</span><span class="p">)</span>  <span class="c1"># override</span>
 </pre></div>
 </div>
-<p>A second call with a colliding name raises <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>; pass
+<p>A second call with a colliding name raises <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>; pass
 <code class="docutils literal notranslate"><span class="pre">name=&quot;my_lab_diffr&quot;</span></code> to register under a different name.  The
 registry stores a wrapper that re-reads the file on each call, so
 on-disk edits are picked up without re-registration.</p>
@@ -1464,7 +1464,7 @@ same schema source.</p></li>
     <div class="footer-items__start">
       
         <div class="footer-item"><p class="last-updated">
-  Last updated on 2026-09-10 13:09 CDT.
+  Last updated on 2026-09-15 21:48 CDT.
   <br/>
 </p></div>
       
