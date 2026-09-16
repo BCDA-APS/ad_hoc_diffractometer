@@ -15,7 +15,7 @@ from contextlib import nullcontext as does_not_raise
 
 import numpy as np
 import pytest
-from helpers import STANDARD_BASIS as _STANDARD_BASIS
+from helpers import BASIS_AXES as _BASIS_AXES
 
 from ad_hoc_diffractometer.axes import axis_from_physical
 from ad_hoc_diffractometer.axes import axis_label
@@ -96,7 +96,7 @@ def test_parse_axis(label, expected, context):
     if is_cartesian or is_failure:
         basis = None
     else:
-        basis = _STANDARD_BASIS
+        basis = _BASIS_AXES
     with context:
         result = parse_axis(label, basis=basis)
         np.testing.assert_array_equal(result, expected)
@@ -110,21 +110,21 @@ def test_parse_axis(label, expected, context):
         ),
         pytest.param(
             "vertical",
-            _STANDARD_BASIS,
+            _BASIS_AXES,
             +XHAT,
             does_not_raise(),
             id="physical-with-basis",
         ),
         pytest.param(
             "-transverse",
-            _STANDARD_BASIS,
+            _BASIS_AXES,
             -ZHAT,
             does_not_raise(),
             id="physical-minus-with-basis",
         ),
         pytest.param(
             "+bogus",
-            _STANDARD_BASIS,
+            _BASIS_AXES,
             None,
             pytest.raises(ValueError, match=re.escape("not found in basis dict")),
             id="invalid-direction-not-in-basis",
@@ -189,7 +189,7 @@ def test_axis_label(vector, expected_label, context):
 )
 def test_axis_from_physical(direction, sign, expected, context):
     with context:
-        result = axis_from_physical(direction, sign, _STANDARD_BASIS)
+        result = axis_from_physical(direction, sign, _BASIS_AXES)
         np.testing.assert_array_equal(result, expected)
 
 

@@ -5,7 +5,7 @@ Pure functions and constants used in parametrize() decorators, where
 pytest fixtures cannot be used (collection-time evaluation).
 
 Import explicitly in any test file that needs them:
-    from helpers import Rx, Ry, Rz, STANDARD_BASIS
+    from helpers import Rx, Ry, Rz, BASIS_AXES
     from helpers import fourcv, fourch, psic, sixc      # demo geometries
     from helpers import kappa4cv, kappa4ch, kappa6c     # kappa demos
     from helpers import zaxis, s2d2, fivec              # special demos
@@ -76,10 +76,10 @@ def Rz(deg: float) -> np.ndarray:
 
 
 # ---------------------------------------------------------------------------
-# Standard basis (You 1999 convention)
+# Default definition of basis axes used for testing.
 # ---------------------------------------------------------------------------
 
-STANDARD_BASIS = {
+BASIS_AXES = {
     "vertical": XHAT,
     "longitudinal": YHAT,
     "transverse": ZHAT,
