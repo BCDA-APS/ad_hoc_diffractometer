@@ -7,6 +7,11 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+
+## Release v1.0.0rc1
+
+Released 2026-09-15
+
 ### Changed
 
 - Changed name of a constant used in testing.
