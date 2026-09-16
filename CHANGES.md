@@ -7,6 +7,10 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
+### Changed
+
+- Changed name of a constant used in testing.
+
 
 ## Release v0.11.7
 
