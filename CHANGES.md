@@ -7,13 +7,14 @@ issue tracker.  The initial project development roadmap is documented here:
 
 ## Unreleased
 
-<!--
+
+## Release v1.0.0
+
+Released 2026-09-17
 
 ### Changed
 
 - CI: test with Python 3.11-3.14, try Py 3.15-dev.
-
--->
 
 
 ## Release v1.0.0rc1
