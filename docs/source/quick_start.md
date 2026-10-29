@@ -40,7 +40,7 @@ For a standard four-circle diffractometer (Busing & Levy 1967) choose
 import numpy as np
 import ad_hoc_diffractometer as ahd
 
-BASIS = ahd.BASIS_BL
+BASIS = ahd.factories.BASIS_BL
 TRANSVERSE      = BASIS["transverse"]       # +x
 LONGITUDINAL = BASIS["longitudinal"]  # +y
 VERTICAL     = BASIS["vertical"]      # +z
@@ -63,11 +63,11 @@ The fourcv (vertical scattering plane, synchrotron) stack is:
 ```python
 stages = [
     # Sample stack — base stage first
-    ahd.Stage("omega",  -TRANSVERSE,      parent=None,    role="sample"),
-    ahd.Stage("chi",    +LONGITUDINAL, parent="omega", role="sample"),
-    ahd.Stage("phi",    -TRANSVERSE,      parent="chi",   role="sample"),
+    ahd.stage.Stage("omega",  -TRANSVERSE,      parent=None,    role="sample"),
+    ahd.stage.Stage("chi",    +LONGITUDINAL, parent="omega", role="sample"),
+    ahd.stage.Stage("phi",    -TRANSVERSE,      parent="chi",   role="sample"),
     # Detector — independent of the sample stack
-    ahd.Stage("ttheta", -TRANSVERSE,      parent=None,    role="detector"),
+    ahd.stage.Stage("ttheta", -TRANSVERSE,      parent=None,    role="detector"),
 ]
 ```
 
